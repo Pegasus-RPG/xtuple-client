@@ -1,0 +1,14 @@
+SELECT shiphead_order_id, shiphead_order_type, cohead_number AS number
+FROM shiphead, cohead
+WHERE ((shiphead_id=<? value("shiphead_id") ?>)
+  AND  (cohead_id=shiphead_order_id)
+  AND  (shiphead_order_type='SO'))
+<? if exists("MultiWhs") ?>
+UNION
+SELECT shiphead_order_id, shiphead_order_type, tohead_number AS number
+FROM shiphead, tohead
+WHERE ((shiphead_id=<? value("shiphead_id") ?>)
+  AND  (tohead_id=shiphead_order_id)
+  AND  (shiphead_order_type='TO'))
+<? endif ?>
+;

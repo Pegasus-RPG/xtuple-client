@@ -1,0 +1,313 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>itemCost</class>
+  <widget class="QDialog" name="itemCost" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>522</width>
+        <height>191</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Item Cost</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <item>
+            <widget class="ItemCluster" name="_item" />
+          </item>
+          <item>
+            <layout class="QHBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <spacer name="Spacer289" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Horizontal</enum>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <layout class="QVBoxLayout" >
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <property name="spacing" >
+                        <number>5</number>
+                      </property>
+                      <item>
+                        <widget class="QPushButton" name="_close" >
+                          <property name="text" >
+                            <string>&amp;Cancel</string>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="_save" >
+                          <property name="text" >
+                            <string>&amp;Save</string>
+                          </property>
+                          <property name="shortcut" >
+                            <string>Alt+S</string>
+                          </property>
+                          <property name="default" >
+                            <bool>true</bool>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                  <item>
+                    <spacer name="Spacer3" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>20</width>
+                          <height>0</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Preferred</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Vertical</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="spacing" >
+            <number>5</number>
+          </property>
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="QLabel" name="_costingElementLit" >
+                  <property name="text" >
+                    <string>Costing Element:</string>
+                  </property>
+                  <property name="alignment" >
+                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QLabel" name="_lowerLevelLit" >
+                  <property name="text" >
+                    <string>Lower Level:</string>
+                  </property>
+                  <property name="alignment" >
+                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="XComboBox" name="_costelem" >
+                      <property name="sizePolicy" >
+                        <sizepolicy>
+                          <hsizetype>7</hsizetype>
+                          <vsizetype>5</vsizetype>
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="spacer5" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>20</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Expanding</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Horizontal</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <widget class="QLabel" name="_lowerLevel" >
+                  <property name="sizePolicy" >
+                    <sizepolicy>
+                      <hsizetype>7</hsizetype>
+                      <vsizetype>5</vsizetype>
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                    </sizepolicy>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <widget class="QLabel" name="_actualCostLit" >
+              <property name="text" >
+                <string>Actual Cost:</string>
+              </property>
+              <property name="alignment" >
+                <set>Qt::AlignTop|Qt::AlignRight</set>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="CurrCluster" name="_actualCost" >
+              <property name="decimals" >
+                <number>2</number>
+              </property>
+              <property name="allowNegative" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="QCheckBox" name="_postCost" >
+              <property name="text" >
+                <string>&amp;Post Cost to Standard</string>
+              </property>
+              <property name="shortcut" >
+                <string>Alt+P</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <spacer name="spacer7" >
+              <property name="sizeHint" >
+                <size>
+                  <width>50</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <spacer name="spacer370" >
+          <property name="sizeHint" >
+            <size>
+              <width>10</width>
+              <height>0</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="5" margin="5" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XComboBox</class>
+      <extends>QComboBox</extends>
+      <header>xcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_item</tabstop>
+    <tabstop>_costelem</tabstop>
+    <tabstop>_actualCost</tabstop>
+    <tabstop>_postCost</tabstop>
+    <tabstop>_save</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>itemCost</receiver>
+      <slot>reject()</slot>
+    </connection>
+  </connections>
+</ui>

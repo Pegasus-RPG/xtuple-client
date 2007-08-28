@@ -1,0 +1,172 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>dspFrozenItemSites</class>
+  <widget class="QMainWindow" name="dspFrozenItemSites" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>661</width>
+        <height>334</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Frozen Item Sites</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QVBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="WarehouseGroup" name="_warehouse" >
+                    <property name="title" >
+                      <string/>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="Spacer7" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>16</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Preferred</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" >
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <spacer name="Spacer8" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>323</width>
+                        <height>20</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Expanding</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Horizontal</enum>
+                    </property>
+                  </spacer>
+                </item>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <property name="spacing" >
+                      <number>5</number>
+                    </property>
+                    <item>
+                      <widget class="QPushButton" name="_close" >
+                        <property name="text" >
+                          <string>&amp;Close</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_print" >
+                        <property name="text" >
+                          <string>&amp;Print</string>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>5</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="_countTagsLit" >
+                <property name="text" >
+                  <string>Count Tags:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="XListView" name="_itemsite" >
+                <property name="minimumSize" >
+                  <size>
+                    <width>0</width>
+                    <height>100</height>
+                  </size>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_warehouse</tabstop>
+    <tabstop>_itemsite</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>dspFrozenItemSites</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>

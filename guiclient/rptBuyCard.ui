@@ -1,0 +1,306 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>rptBuyCard</class>
+  <widget class="QDialog" name="rptBuyCard" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>644</width>
+        <height>214</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Report Parameters - Buy Card</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>0</number>
+      </property>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="VendorCluster" name="_vendor" />
+              </item>
+              <item>
+                <spacer name="Spacer6" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>0</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QHBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <spacer name="spacer131" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>188</width>
+                      <height>16</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Horizontal</enum>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_close" >
+                      <property name="text" >
+                        <string>Cancel</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_print" >
+                      <property name="enabled" >
+                        <bool>false</bool>
+                      </property>
+                      <property name="text" >
+                        <string>&amp;Print</string>
+                      </property>
+                      <property name="autoDefault" >
+                        <bool>true</bool>
+                      </property>
+                      <property name="default" >
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QGridLayout" >
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item row="0" column="0" >
+                <widget class="QLabel" name="_itemSourceLit" >
+                  <property name="text" >
+                    <string>Vendor Part Number:</string>
+                  </property>
+                  <property name="alignment" >
+                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                  </property>
+                </widget>
+              </item>
+              <item row="0" column="1" >
+                <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="XComboBox" name="_itemSource" >
+                      <property name="sizePolicy" >
+                        <sizepolicy>
+                          <hsizetype>7</hsizetype>
+                          <vsizetype>0</vsizetype>
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="spacer129" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>67</width>
+                          <height>16</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Expanding</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Horizontal</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item row="1" column="0" >
+                <layout class="QVBoxLayout" >
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="_vendorDescriptionLit" >
+                      <property name="sizePolicy" >
+                        <sizepolicy>
+                          <hsizetype>5</hsizetype>
+                          <vsizetype>0</vsizetype>
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                      <property name="text" >
+                        <string>Vendor Description:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="spacer128" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>16</width>
+                          <height>51</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Expanding</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Vertical</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item row="1" column="1" >
+                <widget class="QTextEdit" name="_vendorDescription" />
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="ItemCluster" name="_item" />
+              </item>
+              <item>
+                <spacer name="spacer130" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>10</width>
+                      <height>41</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XComboBox</class>
+      <extends>QComboBox</extends>
+      <header>xcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_vendor</tabstop>
+    <tabstop>_itemSource</tabstop>
+    <tabstop>_vendorDescription</tabstop>
+    <tabstop>_item</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>rptBuyCard</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>_vendor</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_print</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>

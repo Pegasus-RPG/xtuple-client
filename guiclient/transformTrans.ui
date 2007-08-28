@@ -1,0 +1,429 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>transformTrans</class>
+  <widget class="QMainWindow" name="transformTrans" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>560</width>
+        <height>420</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Transform Transaction</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QVBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="spacing" >
+              <number>7</number>
+            </property>
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <layout class="QHBoxLayout" >
+                    <property name="spacing" >
+                      <number>0</number>
+                    </property>
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="ItemCluster" name="_item" />
+                    </item>
+                    <item>
+                      <spacer name="spacer91" >
+                        <property name="sizeHint" >
+                          <size>
+                            <width>40</width>
+                            <height>20</height>
+                          </size>
+                        </property>
+                        <property name="sizeType" >
+                          <enum>Expanding</enum>
+                        </property>
+                        <property name="orientation" >
+                          <enum>Horizontal</enum>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <layout class="QHBoxLayout" >
+                    <property name="spacing" >
+                      <number>0</number>
+                    </property>
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" >
+                        <property name="spacing" >
+                          <number>5</number>
+                        </property>
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="_warehouseLit" >
+                            <property name="text" >
+                              <string>Warehouse:</string>
+                            </property>
+                            <property name="alignment" >
+                              <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="WComboBox" name="_warehouse" />
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <spacer name="spacer89" >
+                        <property name="sizeHint" >
+                          <size>
+                            <width>66</width>
+                            <height>16</height>
+                          </size>
+                        </property>
+                        <property name="sizeType" >
+                          <enum>Expanding</enum>
+                        </property>
+                        <property name="orientation" >
+                          <enum>Horizontal</enum>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="spacing" >
+                      <number>5</number>
+                    </property>
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="QPushButton" name="_close" >
+                        <property name="text" >
+                          <string>&amp;Close</string>
+                        </property>
+                        <property name="shortcut" >
+                          <string>Alt+C</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_post" >
+                        <property name="text" >
+                          <string>&amp;Post</string>
+                        </property>
+                        <property name="shortcut" >
+                          <string>Alt+P</string>
+                        </property>
+                        <property name="enabled" >
+                          <bool>false</bool>
+                        </property>
+                        <property name="autoDefault" >
+                          <bool>true</bool>
+                        </property>
+                        <property name="default" >
+                          <bool>true</bool>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <spacer name="spacer90" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>10</width>
+                        <height>0</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Preferred</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="spacing" >
+              <number>7</number>
+            </property>
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="QLabel" name="_sourceLit" >
+                    <property name="text" >
+                      <string>Source:</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="XListView" name="_source" >
+                    <property name="sizePolicy" >
+                      <sizepolicy>
+                        <hsizetype>7</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                    <property name="minimumSize" >
+                      <size>
+                        <width>300</width>
+                        <height>100</height>
+                      </size>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="spacing" >
+                      <number>5</number>
+                    </property>
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <layout class="QVBoxLayout" >
+                        <property name="spacing" >
+                          <number>0</number>
+                        </property>
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <item>
+                          <layout class="QHBoxLayout" >
+                            <property name="spacing" >
+                              <number>5</number>
+                            </property>
+                            <property name="margin" >
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="_targetLit" >
+                                <property name="text" >
+                                  <string>Target Item Number:</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <widget class="XComboBox" name="_target" >
+                                <property name="sizePolicy" >
+                                  <sizepolicy>
+                                    <hsizetype>7</hsizetype>
+                                    <vsizetype>0</vsizetype>
+                                    <horstretch>0</horstretch>
+                                    <verstretch>0</verstretch>
+                                  </sizepolicy>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="_descrip1" >
+                            <property name="text" >
+                              <string/>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="_descrip2" >
+                            <property name="text" >
+                              <string/>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <layout class="QHBoxLayout" >
+                        <property name="spacing" >
+                          <number>5</number>
+                        </property>
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="_qtyLit" >
+                            <property name="text" >
+                              <string>Qty. to Transform:</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <layout class="QHBoxLayout" >
+                            <property name="spacing" >
+                              <number>0</number>
+                            </property>
+                            <property name="margin" >
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="XLineEdit" name="_qty" />
+                            </item>
+                            <item>
+                              <spacer name="spacer503" >
+                                <property name="sizeHint" >
+                                  <size>
+                                    <width>21</width>
+                                    <height>10</height>
+                                  </size>
+                                </property>
+                                <property name="sizeType" >
+                                  <enum>Expanding</enum>
+                                </property>
+                                <property name="orientation" >
+                                  <enum>Horizontal</enum>
+                                </property>
+                              </spacer>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <spacer name="spacer504" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>10</width>
+                        <height>26</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Expanding</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>WComboBox</class>
+      <extends>QComboBox</extends>
+      <header>wcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+    <customwidget>
+      <class>XComboBox</class>
+      <extends>QComboBox</extends>
+      <header>xcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+    <include location="global" >qstatusbar.h</include>
+    <include location="global" >qmessagebox.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>transformTrans</receiver>
+      <slot>close()</slot>
+    </connection>
+    <connection>
+      <sender>_item</sender>
+      <signal>warehouseIdChanged(int)</signal>
+      <receiver>_warehouse</receiver>
+      <slot>setId(int)</slot>
+    </connection>
+    <connection>
+      <sender>_item</sender>
+      <signal>privateIdChanged(int)</signal>
+      <receiver>_warehouse</receiver>
+      <slot>findItemsites(int)</slot>
+    </connection>
+    <connection>
+      <sender>_source</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_post</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>

@@ -1,0 +1,133 @@
+SELECT invhist_id,
+       invhist_transdate, formatDateTime(invhist_transdate) AS transdate,
+       invhist_user, invhist_transtype, whs1.warehous_code AS warehous_code,
+       formatQty(invhist_invqty) AS transqty,
+       invhist_invuom,
+       CASE WHEN (invhist_ordtype NOT LIKE '') THEN
+				  (invhist_ordtype || '-' || invhist_ordnumber)
+            ELSE invhist_ordnumber
+       END AS ordernumber,
+       formatQty(invhist_qoh_before) AS qohbefore,
+       formatQty(invhist_qoh_after) AS qohafter,
+       invhist_posted,
+       0 AS invdetail_id, '' AS locationname,
+       '' AS detailqty,
+       '' AS locationqtybefore, '' AS locationqtyafter,
+       CASE WHEN (invhist_transtype='TW') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IB') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IM') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IT') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RB') THEN 'WIP'
+            WHEN (invhist_transtype='RM') THEN 'WIP'
+            WHEN (invhist_transtype='RP') THEN 'PURCH'
+            WHEN (invhist_transtype='RS') THEN 'SHIP'
+            WHEN (invhist_transtype='SH') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SI') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SV') THEN whs1.warehous_code
+	    WHEN (invhist_transtype='TR') THEN whs2.warehous_code
+	    WHEN (invhist_transtype='TS') THEN whs1.warehous_code
+            ELSE ''
+       END AS locfrom,
+       CASE WHEN (invhist_transtype='TW') THEN whs2.warehous_code
+            WHEN (invhist_transtype='AD') THEN whs1.warehous_code
+            WHEN (invhist_transtype='CC') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IB') THEN 'WIP'
+            WHEN (invhist_transtype='IM') THEN 'WIP'
+            WHEN (invhist_transtype='NN') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RB') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RM') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RP') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RS') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RT') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RX') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SH') THEN 'SHIP'
+            WHEN (invhist_transtype='SI') THEN 'SCRAP'
+            WHEN (invhist_transtype='SV') THEN 'SHIP'
+	    WHEN (invhist_transtype='TR') THEN whs1.warehous_code
+	    WHEN (invhist_transtype='TS') THEN whs2.warehous_code
+            ELSE ''
+       END AS locto 
+FROM itemsite, item, warehous AS whs1, invhist LEFT OUTER JOIN
+     warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id) 
+WHERE ( (NOT invhist_hasdetail)
+  AND  (invhist_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=item_id)
+  AND  (itemsite_warehous_id=whs1.warehous_id)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+  AND  (DATE(invhist_transdate) BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+  AND  (transType(invhist_transtype, <? value("transType") ?>))
+
+  <? if exists("warehous_id") ?>
+  AND (itemsite_warehous_id=<? value("warehous_id") ?>)
+  <? endif ?>
+  ) 
+UNION SELECT invhist_id,
+             invhist_transdate, formatDateTime(invhist_transdate) AS transdate,
+             invhist_user, invhist_transtype, whs1.warehous_code AS warehous_code,
+             formatQty(invhist_invqty) AS transqty,
+             invhist_invuom,
+             CASE WHEN (invhist_ordtype NOT LIKE '') THEN
+				(invhist_ordtype || '-' || invhist_ordnumber)
+                  ELSE invhist_ordnumber
+             END AS ordernumber,
+             formatQty(invhist_qoh_before) AS qohbefore,
+             formatQty(invhist_qoh_after) AS qohafter,
+             invhist_posted,
+             invdetail_id,
+             CASE WHEN (invdetail_location_id=-1) THEN invdetail_lotserial
+                  WHEN (invdetail_lotserial IS NULL) THEN formatLocationName(invdetail_location_id)
+                  ELSE (formatLocationName(invdetail_location_id) || '-' || invdetail_lotserial)
+             END AS locationname,
+             formatQty(invdetail_qty) AS detailqty,
+             formatQty(invdetail_qty_before) AS locationqtybefore,
+             formatQty(invdetail_qty_after) AS locationqtyafter,
+             CASE WHEN (invhist_transtype='TW') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='IB') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='IM') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='IT') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RB') THEN 'WIP'
+                  WHEN (invhist_transtype='RM') THEN 'WIP'
+                  WHEN (invhist_transtype='RP') THEN 'PURCH'
+                  WHEN (invhist_transtype='RS') THEN 'SHIP'
+                  WHEN (invhist_transtype='SH') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='SI') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='SV') THEN whs1.warehous_code
+		  WHEN (invhist_transtype='TR') THEN whs2.warehous_code
+		  WHEN (invhist_transtype='TS') THEN whs1.warehous_code
+                  ELSE ''
+             END AS locfrom,
+             CASE WHEN (invhist_transtype='TW') THEN whs2.warehous_code
+                  WHEN (invhist_transtype='AD') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='CC') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='IB') THEN 'WIP'
+                  WHEN (invhist_transtype='IM') THEN 'WIP'
+                  WHEN (invhist_transtype='NN') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RB') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RM') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RP') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RS') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RT') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RX') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='SH') THEN 'SHIP'
+                  WHEN (invhist_transtype='SI') THEN 'SCRAP'
+                  WHEN (invhist_transtype='SV') THEN 'SHIP'
+		  WHEN (invhist_transtype='TR') THEN whs1.warehous_code
+		  WHEN (invhist_transtype='TS') THEN whs2.warehous_code
+                  ELSE ''
+             END AS locto 
+FROM itemsite, item, warehous AS whs1, invdetail, invhist LEFT OUTER JOIN
+     warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id) 
+WHERE ( (invhist_hasdetail)
+  AND  (invhist_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=item_id)
+  AND  (itemsite_warehous_id=whs1.warehous_id)
+  AND  (invdetail_invhist_id=invhist_id)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+  AND  (DATE(invhist_transdate) BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+  AND  (transType(invhist_transtype, <? value("transType") ?>))
+  <? if exists("warehous_id") ?>
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+  <? endif ?>
+  ) 
+
+ORDER BY invhist_transdate DESC, invhist_transtype, locationname;

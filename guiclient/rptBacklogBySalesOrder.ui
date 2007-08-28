@@ -1,0 +1,263 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>rptBacklogBySalesOrder</class>
+  <widget class="QDialog" name="rptBacklogBySalesOrder" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>396</width>
+        <height>89</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Report Parameters - Backlog by Sales Order</string>
+    </property>
+    <layout class="QHBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>7</number>
+      </property>
+      <item>
+        <layout class="QVBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QHBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="_salesOrderLit" >
+                      <property name="text" >
+                        <string>Sales Order #:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="_orderDateLit" >
+                      <property name="text" >
+                        <string>Order Date:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <item>
+                    <layout class="QHBoxLayout" >
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <property name="spacing" >
+                        <number>5</number>
+                      </property>
+                      <item>
+                        <widget class="SoLineEdit" name="_salesOrder" />
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="_salesOrderList" >
+                          <property name="text" >
+                            <string>...</string>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                  <item>
+                    <layout class="QHBoxLayout" >
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <widget class="QLabel" name="_orderDate" />
+                      </item>
+                      <item>
+                        <spacer name="Spacer202" >
+                          <property name="sizeHint" >
+                            <size>
+                              <width>20</width>
+                              <height>20</height>
+                            </size>
+                          </property>
+                          <property name="sizeType" >
+                            <enum>Preferred</enum>
+                          </property>
+                          <property name="orientation" >
+                            <enum>Horizontal</enum>
+                          </property>
+                        </spacer>
+                      </item>
+                    </layout>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <spacer name="Spacer204" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Preferred</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Vertical</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <item>
+            <spacer name="Spacer17" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_close" >
+                      <property name="text" >
+                        <string>&amp;Cancel</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_print" >
+                      <property name="enabled" >
+                        <bool>false</bool>
+                      </property>
+                      <property name="text" >
+                        <string>&amp;Print</string>
+                      </property>
+                      <property name="autoDefault" >
+                        <bool>true</bool>
+                      </property>
+                      <property name="default" >
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="Spacer206" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
+    <tabstop>_salesOrder</tabstop>
+    <tabstop>_salesOrderList</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>rptBacklogBySalesOrder</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>_salesOrder</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_print</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>

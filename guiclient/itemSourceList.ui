@@ -1,0 +1,204 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>itemSourceList</class>
+  <widget class="QDialog" name="itemSourceList" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>551</width>
+        <height>302</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Item Sources</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>5</number>
+      </property>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <item>
+            <widget class="ItemCluster" name="_item" />
+          </item>
+          <item>
+            <layout class="QHBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <spacer name="Spacer88" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Horizontal</enum>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <layout class="QVBoxLayout" >
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <property name="spacing" >
+                        <number>5</number>
+                      </property>
+                      <item>
+                        <widget class="QPushButton" name="_close" >
+                          <property name="text" >
+                            <string>&amp;Cancel</string>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="_select" >
+                          <property name="enabled" >
+                            <bool>false</bool>
+                          </property>
+                          <property name="text" >
+                            <string>&amp;Select</string>
+                          </property>
+                          <property name="default" >
+                            <bool>true</bool>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                  <item>
+                    <spacer name="Spacer87" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>20</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Preferred</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Vertical</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QVBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <item>
+            <widget class="QLabel" name="_itemSourceLit" >
+              <property name="sizePolicy" >
+                <sizepolicy>
+                  <hsizetype>7</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+                <size>
+                  <width>0</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="text" >
+                <string>Item Sources:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="XListView" name="_itemsrc" >
+              <property name="minimumSize" >
+                <size>
+                  <width>0</width>
+                  <height>100</height>
+                </size>
+              </property>
+            </widget>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_item</tabstop>
+    <tabstop>_itemsrc</tabstop>
+    <tabstop>_select</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_itemsrc</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_select</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_itemsrc</sender>
+      <signal>itemSelected(int)</signal>
+      <receiver>_select</receiver>
+      <slot>animateClick()</slot>
+    </connection>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>itemSourceList</receiver>
+      <slot>reject()</slot>
+    </connection>
+  </connections>
+</ui>

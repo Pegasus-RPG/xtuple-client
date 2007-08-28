@@ -1,0 +1,285 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>currencyConversions</class>
+  <widget class="QMainWindow" name="currencyConversions" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>559</width>
+        <height>421</height>
+      </rect>
+    </property>
+    <property name="minimumSize" >
+      <size>
+        <width>365</width>
+        <height>361</height>
+      </size>
+    </property>
+    <property name="windowTitle" >
+      <string>Currency Exchange Rates</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QVBoxLayout" >
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" >
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <item>
+                          <widget class="ParameterGroup" name="_queryParameters" >
+                            <property name="title" >
+                              <string/>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="DateCluster" name="_dateCluster" />
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <layout class="QHBoxLayout" >
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="_currencyLiteral" >
+                            <property name="text" >
+                              <string>Base Currency:</string>
+                            </property>
+                            <property name="alignment" >
+                              <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="_baseCurrency" >
+                            <property name="text" >
+                              <string>NONE DEFINED</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <spacer name="spacer6" >
+                            <property name="sizeHint" >
+                              <size>
+                                <width>188</width>
+                                <height>20</height>
+                              </size>
+                            </property>
+                            <property name="sizeType" >
+                              <enum>Expanding</enum>
+                            </property>
+                            <property name="orientation" >
+                              <enum>Horizontal</enum>
+                            </property>
+                          </spacer>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="_exchSenseLit" >
+                        <property name="alignment" >
+                          <set>Qt::AlignVCenter|Qt::AlignCenter</set>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="QLabel" name="foreignCurrenciesTableLabel" >
+                        <property name="enabled" >
+                          <bool>true</bool>
+                        </property>
+                        <property name="text" >
+                          <string>Foreign Currencies:</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="XListView" name="_conversionRates" >
+                        <property name="sizePolicy" >
+                          <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>2</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="QPushButton" name="_close" >
+                    <property name="text" >
+                      <string>&amp;Close</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_query" >
+                    <property name="text" >
+                      <string>Query</string>
+                    </property>
+                    <property name="autoDefault" >
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_print" >
+                    <property name="text" >
+                      <string>&amp;Print</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="Line" name="line1" >
+                    <property name="frameShape" >
+                      <enum>QFrame::HLine</enum>
+                    </property>
+                    <property name="frameShadow" >
+                      <enum>QFrame::Sunken</enum>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_new" >
+                    <property name="enabled" >
+                      <bool>true</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;New</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_edit" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;Edit</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_view" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;View</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_delete" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;Delete</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="Line" name="line1_2" >
+                    <property name="frameShape" >
+                      <enum>QFrame::HLine</enum>
+                    </property>
+                    <property name="frameShadow" >
+                      <enum>QFrame::Sunken</enum>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_newCurrency" >
+                    <property name="text" >
+                      <string>New Currency</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="spacer46" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>21</width>
+                        <height>61</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Expanding</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="5" margin="5" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_queryParameters</tabstop>
+    <tabstop>_dateCluster</tabstop>
+    <tabstop>_conversionRates</tabstop>
+    <tabstop>_close</tabstop>
+    <tabstop>_query</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_view</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_newCurrency</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="local" >parameter.h</include>
+  </includes>
+</ui>

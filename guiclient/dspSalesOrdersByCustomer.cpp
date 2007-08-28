@@ -1,0 +1,250 @@
+/*
+ * Common Public Attribution License Version 1.0. 
+ * 
+ * The contents of this file are subject to the Common Public Attribution 
+ * License Version 1.0 (the "License"); you may not use this file except 
+ * in compliance with the License. You may obtain a copy of the License 
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+ * Public License Version 1.1 but Sections 14 and 15 have been added to 
+ * cover use of software over a computer network and provide for limited 
+ * attribution for the Original Developer. In addition, Exhibit A has 
+ * been modified to be consistent with Exhibit B.
+ * 
+ * Software distributed under the License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
+ * the License for the specific language governing rights and limitations 
+ * under the License. 
+ * 
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
+ * 
+ * The Original Developer is not the Initial Developer and is __________. 
+ * If left blank, the Original Developer is the Initial Developer. 
+ * The Initial Developer of the Original Code is OpenMFG, LLC, 
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * 
+ * Contributor(s): ______________________.
+ * 
+ * Alternatively, the contents of this file may be used under the terms 
+ * of the xTuple End-User License Agreeement (the xTuple License), in which 
+ * case the provisions of the xTuple License are applicable instead of 
+ * those above.  If you wish to allow use of your version of this file only 
+ * under the terms of the xTuple License and not to allow others to use 
+ * your version of this file under the CPAL, indicate your decision by 
+ * deleting the provisions above and replace them with the notice and other 
+ * provisions required by the xTuple License. If you do not delete the 
+ * provisions above, a recipient may use your version of this file under 
+ * either the CPAL or the xTuple License.
+ * 
+ * EXHIBIT B.  Attribution Information
+ * 
+ * Attribution Copyright Notice: 
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * 
+ * Attribution Phrase: 
+ * Powered by PostBooks, an open source solution from xTuple
+ * 
+ * Attribution URL: www.xtuple.org 
+ * (to be included in the "Community" menu of the application if possible)
+ * 
+ * Graphic Image as provided in the Covered Code, if any. 
+ * (online at www.xtuple.com/poweredby)
+ * 
+ * Display of Attribution Information is required in Larger Works which 
+ * are defined in the CPAL as a work which combines Covered Code or 
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+#include "dspSalesOrdersByCustomer.h"
+
+#include <qvariant.h>
+#include <qstatusbar.h>
+#include <qworkspace.h>
+#include "salesOrder.h"
+#include "dspSalesOrderStatus.h"
+#include "dspShipmentsBySalesOrder.h"
+
+/*
+ *  Constructs a dspSalesOrdersByCustomer as a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'.
+ *
+ */
+dspSalesOrdersByCustomer::dspSalesOrdersByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
+    : QMainWindow(parent, name, fl)
+{
+    setupUi(this);
+
+    (void)statusBar();
+
+    // signals and slots connections
+    connect(_so, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+    connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
+    connect(_selectedPO, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+    connect(_selectedPO, SIGNAL(toggled(bool)), _poNumber, SLOT(setEnabled(bool)));
+    connect(_poNumber, SIGNAL(activated(int)), this, SLOT(sFillList()));
+    connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
+    init();
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSalesOrdersByCustomer::~dspSalesOrdersByCustomer()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSalesOrdersByCustomer::languageChange()
+{
+    retranslateUi(this);
+}
+
+//Added by qt3to4:
+#include <Q3PopupMenu>
+
+void dspSalesOrdersByCustomer::init()
+{
+  statusBar()->hide();
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartCaption(tr("Starting Order Date:"));
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndCaption(tr("Ending Order Date:"));
+
+  _so->addColumn(tr("Order #"),     _orderColumn, Qt::AlignLeft   );
+  _so->addColumn(tr("Ordered"),     _dateColumn,  Qt::AlignRight  );
+  _so->addColumn(tr("Scheduled"),   _dateColumn,  Qt::AlignRight  );
+  _so->addColumn(tr("Status"),      _itemColumn,  Qt::AlignCenter );
+  _so->addColumn(tr("Ship-to"),     -1,           Qt::AlignLeft   );
+  _so->addColumn(tr("Cust. P/O #"), 200,          Qt::AlignLeft   );
+
+  _cust->setFocus();
+  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
+}
+
+void dspSalesOrdersByCustomer::sPopulatePo()
+{
+  _poNumber->clear();
+
+  if ((_cust->isValid()) && (_dates->allValid()))
+  {
+    q.prepare( "SELECT DISTINCT -2, cohead_custponumber "
+               "FROM cohead "
+               "WHERE ( (cohead_cust_id=:cust_id)"
+               " AND (cohead_orderdate BETWEEN :startDate AND :endDate) ) "
+               "ORDER BY cohead_custponumber;" );
+    _dates->bindValue(q);
+    q.bindValue(":cust_id", _cust->id());
+    q.exec();
+    _poNumber->populate(q);
+  }
+
+  sFillList();
+}
+
+void dspSalesOrdersByCustomer::sPopulateMenu(Q3PopupMenu *menuThis)
+{
+  menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
+  menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
+  menuThis->insertSeparator();
+  menuThis->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
+  menuThis->insertItem(tr("Shipments..."), this, SLOT(sDspShipments()), 0);
+}
+
+void dspSalesOrdersByCustomer::sEditOrder()
+{
+  salesOrder::editSalesOrder(_so->id(), false);
+}
+
+void dspSalesOrdersByCustomer::sViewOrder()
+{
+  salesOrder::viewSalesOrder(_so->id());
+}
+
+void dspSalesOrdersByCustomer::sDspShipmentStatus()
+{
+  ParameterList params;
+  params.append("sohead_id", _so->id());
+  params.append("run");
+
+  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspSalesOrdersByCustomer::sDspShipments()
+{
+  ParameterList params;
+  params.append("sohead_id", _so->id());
+  params.append("run");
+
+  dspShipmentsBySalesOrder *newdlg = new dspShipmentsBySalesOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspSalesOrdersByCustomer::sFillList()
+{
+  if ( ( (_allPOs->isChecked()) ||
+         ( (_selectedPO->isChecked()) && (_poNumber->currentItem() != -1) ) ) &&
+       (_dates->allValid())  )
+  {
+    QString sql( "SELECT cohead_id, cohead_number,"
+                 "       formatDate(cohead_orderdate),"
+                 "       formatDate(MIN(soitem.coitem_scheddate)),"
+                 "       CASE"
+                 "        WHEN ( (SELECT COUNT(*)"
+                 "                FROM coitem"
+                 "                WHERE ((coitem_status<>'X') AND (coitem_cohead_id=cohead_id))) = 0) THEN :noLines"
+                 "        WHEN ( ( (SELECT COUNT(*)"
+                 "                  FROM coitem"
+                 "                  WHERE ((coitem_status='C')"
+                 "                   AND (coitem_cohead_id=cohead_id))) > 0) AND"
+                 "               ( (SELECT COUNT(*)"
+                 "                  FROM coitem"
+                 "                  WHERE ((coitem_status NOT IN ('C','X'))"
+                 "                   AND (coitem_cohead_id=cohead_id))) = 0) ) THEN :closed"
+                 "        WHEN ( ( (SELECT COUNT(*)"
+                 "                  FROM coitem"
+                 "                  WHERE ((coitem_status='C')"
+                 "                   AND (coitem_cohead_id=cohead_id))) = 0) AND"
+                 "               ( (SELECT COUNT(*)"
+                 "                  FROM coitem"
+                 "                  WHERE ((coitem_status NOT IN ('C','X'))"
+                 "                   AND (coitem_cohead_id=cohead_id))) > 0) ) THEN :open"
+                 "        ELSE :partial"
+                 "       END,"
+                 "       cohead_shiptoname, cohead_custponumber "
+                 "FROM cohead, coitem as soitem "
+                 "WHERE ( (cohead_cust_id=:cust_id)"
+                 " AND (soitem.coitem_cohead_id=cohead_id)"
+                 " AND (cohead_orderdate BETWEEN :startDate AND :endDate)" );
+
+    if (_selectedPO->isChecked())
+      sql += " AND (cohead_custponumber=:poNumber)";
+
+    sql += ") "
+           "GROUP BY cohead_id, cohead_number, cohead_orderdate,"
+           "         cohead_shiptoname, cohead_custponumber "
+           "ORDER BY cohead_number;";
+
+    q.prepare(sql);
+    _dates->bindValue(q);
+    q.bindValue(":noLines", tr("No Lines"));
+    q.bindValue(":closed", tr("Closed"));
+    q.bindValue(":open", tr("Open"));
+    q.bindValue(":partial", tr("Partial"));
+    q.bindValue(":cust_id", _cust->id());
+    q.bindValue(":poNumber", _poNumber->currentText());
+    q.exec();
+    _so->populate(q);
+  }
+  else
+    _so->clear();
+}
+

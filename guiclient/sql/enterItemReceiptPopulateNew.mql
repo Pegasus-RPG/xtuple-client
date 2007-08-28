@@ -1,0 +1,60 @@
+<? if exists("poitem_id") ?>
+SELECT pohead_number AS order_number, poitem_linenumber AS orderitem_linenumber,
+       (poitem_itemsite_id > 0) AS inventoryitem,
+       COALESCE(itemsite_id, -1) AS itemsiteid,
+       poitem_vend_item_number AS vend_item_number,
+       poitem_vend_uom AS vend_uom,
+       poitem_vend_item_descrip AS vend_item_descrip,
+       formatRatio(poitem_invvenduomratio) AS f_venduomratio,
+       formatDate(poitem_duedate) AS f_duedate,
+       formatQty(poitem_qty_ordered) AS f_qtyordered,
+       formatQty(poitem_qty_received) AS f_qtyreceived,
+       formatQty(qtyToReceive('PO', poitem_id)) AS f_qtytoreceive,
+       (poitem_qty_ordered - poitem_qty_received) AS receivable,
+       ( SELECT recv_notes
+           FROM recv
+          WHERE ((recv_orderitem_id=poitem_id)
+            AND  (NOT recv_posted)
+	    AND  (recv_order_type=<? value("ordertype") ?>))
+	  LIMIT 1 ) AS notes,
+       COALESCE(freightForRecv('PO', poitem_id, false),
+		poitem_freight - freightForRecv('PO', poitem_id, true)) AS recv_freight,
+       pohead_curr_id AS curr_id, CURRENT_DATE AS effective 
+FROM pohead, poitem LEFT OUTER JOIN 
+             ( itemsite JOIN item 
+               ON (itemsite_item_id=item_id)
+             ) ON (poitem_itemsite_id=itemsite_id) 
+WHERE ((poitem_pohead_id=pohead_id)
+  AND  (poitem_status <> 'C')
+  AND  (poitem_id=<? value("poitem_id") ?>) );
+<? elseif exists("toitem_id") ?>
+SELECT tohead_number AS order_number, toitem_linenumber AS orderitem_linenumber,
+       (toitem_item_id IS NOT NULL) AS inventoryitem,
+       COALESCE(itemsite_id, -1) AS itemsiteid,
+       '' AS vend_item_number,
+       '' AS vend_uom,
+       '' AS vend_item_descrip,
+       formatRatio(1) AS f_venduomratio,
+       formatDate(toitem_duedate) AS f_duedate,
+       formatQty(toitem_qty_ordered) AS f_qtyordered,
+       formatQty(toitem_qty_received) AS f_qtyreceived,
+       formatQty(qtyToReceive('TO', toitem_id)) AS f_qtytoreceive,
+       (toitem_qty_ordered - toitem_qty_received) AS receivable,
+       ( SELECT recv_notes
+           FROM recv
+          WHERE ((recv_orderitem_id=toitem_id)
+            AND  (NOT recv_posted)
+	    AND  (recv_order_type=<? value("ordertype") ?>))
+	  LIMIT 1 ) AS notes,
+       COALESCE(freightForRecv('TO', toitem_id, false),
+		toitem_freight - freightForRecv('TO', toitem_id, true)) AS recv_freight,
+       tohead_freight_curr_id AS curr_id, CURRENT_DATE AS effective 
+FROM tohead JOIN
+     toitem ON (toitem_tohead_id=tohead_id)
+     LEFT OUTER JOIN 
+       ( itemsite JOIN item 
+	 ON (itemsite_item_id=item_id)
+       ) ON (toitem_item_id=item_id AND tohead_dest_warehous_id=itemsite_warehous_id) 
+WHERE ((toitem_status <> 'C')
+  AND  (toitem_id=<? value("toitem_id") ?>) );
+<? endif ?>

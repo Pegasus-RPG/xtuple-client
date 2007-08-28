@@ -1,0 +1,87 @@
+SELECT womatl_id AS source_id, TEXT('W/O') AS type,
+       formatWoNumber(wo_id) AS order_number,
+       item_number,
+       formatQty(womatl_qtyreq)  AS totalqty,
+       formatQty(womatl_qtyiss) AS relievedqty,
+       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balanceqty,
+       formatDate(wo_duedate) as duedate, wo_duedate AS r_duedate,
+       (wo_duedate < CURRENT_DATE) AS late 
+FROM womatl, wo, itemsite AS parent, itemsite AS component, item 
+WHERE ((womatl_wo_id=wo_id)
+  AND (wo_status<>'C')
+  AND (wo_itemsite_id=parent.itemsite_id)
+  AND (womatl_itemsite_id=component.itemsite_id)
+  AND (parent.itemsite_item_id=item_id)
+  AND (component.itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND (component.itemsite_item_id=<? value("item_id") ?>)
+<? if exists("leadTime") ?>
+  AND (wo_duedate <= (CURRENT_DATE + component.itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND (wo_duedate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND (wo_duedate <= <? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND (wo_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+
+UNION 
+SELECT coitem_id AS source_id, TEXT('S/O') AS type,
+       formatSoNumber(coitem_id) AS order_number,
+       item_number,
+       formatQty(coitem_qtyord) AS totalqty,
+       formatQty((coitem_qtyshipped + qtyAtShipping(coitem_id)) - coitem_qtyreturned) as relievedqty,
+       formatQty(noNeg(coitem_qtyord - (coitem_qtyshipped + qtyAtShipping(coitem_id)) + coitem_qtyreturned)) AS balanceqty,
+       formatDate(coitem_scheddate) as duedate, coitem_scheddate AS r_duedate,
+       (coitem_scheddate < CURRENT_DATE) AS late  
+FROM cohead, coitem, itemsite, item 
+WHERE ( (coitem_cohead_id=cohead_id)
+  AND  (coitem_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=item_id)
+  AND  (item_sold)
+  AND  (coitem_status NOT IN ('C','X'))
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+<? if exists("leadTime") ?>
+  AND  (coitem_scheddate <= (CURRENT_DATE + itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND  (coitem_scheddate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND  (coitem_scheddate <= <? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND  (coitem_scheddate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+
+<? if exists("MultiWhs") ?>
+UNION 
+SELECT toitem_id AS source_id, TEXT('T/O') AS type,
+       TEXT(tohead_number) AS order_number,
+       item_number,
+       formatQty(toitem_qty_ordered) AS totalqty,
+       formatQty(toitem_qty_shipped + qtyAtShipping(toitem_id)) as relievedqty,
+       formatQty(noNeg(toitem_qty_ordered - (toitem_qty_shipped + qtyAtShipping(toitem_id)))) AS balanceqty,
+       formatDate(toitem_schedshipdate) as duedate,
+       toitem_schedshipdate AS r_duedate,
+       (toitem_schedshipdate < CURRENT_DATE) AS late  
+FROM tohead, toitem, itemsite, item 
+WHERE ((toitem_tohead_id=tohead_id)
+  AND  (toitem_item_id=itemsite_item_id)
+  AND  (tohead_src_warehous_id=<? value("warehous_id") ?>)
+  AND  (itemsite_item_id=item_id)
+  AND  (toitem_status NOT IN ('C','X'))
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+<? if exists("leadTime") ?>
+  AND  (toitem_schedshipdate <= (CURRENT_DATE + itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND  (toitem_schedshipdate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND  (toitem_schedshipdate <= <? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND  (toitem_schedshipdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+<? endif ?>
+
+ORDER BY r_duedate;

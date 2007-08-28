@@ -1,0 +1,43 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+  <qresource prefix="ap">
+    <file alias="displays/CheckRegister/FillListDetail.mql">dspCheckRegisterFillList.mql</file>
+  </qresource>
+  <qresource prefix="im">
+    <file alias="displays/InventoryHistoryByItem/FillListDetail.mql">dspInventoryHistoryByItemFillList.mql</file>
+    <file alias="displays/InventoryHistoryByOrderNumber/FillListDetail.mql">dspInventoryHistoryByOrderNumberFillList.mql</file>
+    <file alias="displays/InventoryHistoryByParameterList/FillListDetail.mql">dspInventoryHistoryByParameterListFillList.mql</file>
+    <file alias="displays/Orders/FillListDetail.mql">dspOrdersFillList.mql</file>
+  </qresource>
+  <qresource prefix="ms">
+    <file alias="displays/RunningAvailability/FillListDetail.mql">dspRunningAvailabilityFillList.mql</file>
+  </qresource>
+  <qresource prefix="pd">
+    <file alias="displays/Allocations/FillListDetail.mql">dspAllocationsFillList.mql</file>
+  </qresource>
+  <qresource prefix="po">
+    <file alias="displays/POsByVendor/FillListDetail.mql">dspPOsByVendorFillList.mql</file>
+  </qresource>
+  <qresource prefix="sr">
+    <file alias="displays/ShipmentsByDate/FillListDetail.mql">dspShipmentsByDateFillList.mql</file>
+    <file alias="enterItemReceipt/PopulateNew.mql">enterItemReceiptPopulateNew.mql</file>
+    <file alias="enterItemReceipt/PopulateEdit.mql">enterItemReceiptPopulateEdit.mql</file>
+    <file alias="enterItemReceipt/GetSrcItemSite.mql">enterItemReceiptGetSrcItemSite.mql</file>
+    <file alias="enterReceipt/FillListDetail.mql">enterReceiptFillList.mql</file>
+    <file alias="enterReceipt/ReceiveAll.mql">enterReceiptReceiveAll.mql</file>
+    <file alias="maintainShipping/FillListDetail.mql">maintainShippingFillList.mql</file>
+    <file alias="unpostedReceipts/FillListDetail.mql">unpostedReceiptsFillList.mql</file>
+    <file alias="forms/packingListBatch/FillListDetail.mql">packingListBatchFillList.mql</file>
+    <file alias="forms/packingListBatch/PrintBatch.mql">packingListBatchPrintBatch.mql</file>
+    <file alias="forms/printPackingList/HandleShipment.mql">printPackingListHandleShipment.mql</file>
+    <file alias="forms/printPackingListBatchByShipvia/ShipVia.mql">printPackingListBatchByShipviaShipVia.mql</file>
+    <file alias="forms/printPackingListBatchByShipvia/ToPrint.mql">printPackingListBatchByShipviaToPrint.mql</file>
+    <file alias="forms/printShippingForm/HandleShipment.mql">printShippingFormHandleShipment.mql</file>
+  </qresource>
+  <qresource prefix="crm">
+    <file alias="opportunityList/FillListDetail.mql">opportunityListFillList.mql</file>
+  </qresource>
+  <qresource prefix="sys">
+    <file alias="eventManager/FillListDetail.mql">eventManagerFillList.mql</file>
+  </qresource>
+</RCC>

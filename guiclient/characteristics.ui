@@ -1,0 +1,182 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>characteristics</class>
+  <widget class="QMainWindow" name="characteristics" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>566</width>
+        <height>389</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Characteristics</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QHBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>0</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="_characteristicsLit" >
+                <property name="sizePolicy" >
+                  <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                  <size>
+                    <width>0</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="text" >
+                  <string>Characteristics:</string>
+                </property>
+                <property name="alignment" >
+                  <set>Qt::AlignVCenter</set>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="XListView" name="_char" >
+                <property name="sizePolicy" >
+                  <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>5</number>
+            </property>
+            <item>
+              <widget class="QPushButton" name="_close" >
+                <property name="text" >
+                  <string>&amp;Close</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="QPushButton" name="_print" >
+                <property name="text" >
+                  <string>&amp;Print</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="QPushButton" name="_new" >
+                    <property name="text" >
+                      <string>&amp;New</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_edit" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;Edit</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_delete" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;Delete</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <spacer name="Spacer12" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_char</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>characteristics</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>

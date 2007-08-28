@@ -1,0 +1,210 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>dspUnusedPurchasedItems</class>
+  <widget class="QMainWindow" name="dspUnusedPurchasedItems" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>653</width>
+        <height>356</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Unused Purchased Items</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QVBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="spacing" >
+              <number>7</number>
+            </property>
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="ParameterGroup" name="_classCode" >
+                    <property name="title" >
+                      <string/>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="Spacer197" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>22</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Preferred</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="QCheckBox" name="_includeUncontrolled" >
+                    <property name="text" >
+                      <string>Include &amp;Uncontrolled Items</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="Spacer196" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>76</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Preferred</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>5</number>
+                </property>
+                <item>
+                  <widget class="QPushButton" name="_close" >
+                    <property name="text" >
+                      <string>&amp;Close</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_query" >
+                    <property name="text" >
+                      <string>&amp;Query</string>
+                    </property>
+                    <property name="autoDefault" >
+                      <bool>true</bool>
+                    </property>
+                    <property name="default" >
+                      <bool>true</bool>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_print" >
+                    <property name="text" >
+                      <string>&amp;Print</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>0</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="_unusedItemsLit" >
+                <property name="text" >
+                  <string>Unused Purchased Items:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="XListView" name="_item" >
+                <property name="enabled" >
+                  <bool>true</bool>
+                </property>
+                <property name="sizePolicy" >
+                  <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>7</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                  <size>
+                    <width>0</width>
+                    <height>0</height>
+                  </size>
+                </property>
+              </widget>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_classCode</tabstop>
+    <tabstop>_includeUncontrolled</tabstop>
+    <tabstop>_query</tabstop>
+    <tabstop>_item</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>dspUnusedPurchasedItems</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>

@@ -1,0 +1,370 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>assortments</class>
+<widget class="QMainWindow">
+    <property name="name">
+        <cstring>assortments</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>591</width>
+            <height>429</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Assortments</string>
+    </property>
+    <vbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>5</number>
+        </property>
+        <property name="spacing">
+            <number>5</number>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout40</cstring>
+            </property>
+            <hbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>7</number>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout5</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>5</number>
+                        </property>
+                        <widget class="QLabel">
+                            <property name="name">
+                                <cstring>_searchForLit</cstring>
+                            </property>
+                            <property name="text">
+                                <string>S&amp;earch for:</string>
+                            </property>
+                            <property name="alignment">
+                                <set>AlignVCenter|AlignRight</set>
+                            </property>
+                            <property name="buddy" stdset="0">
+                                <cstring>_searchFor</cstring>
+                            </property>
+                            <property name="hAlign" stdset="0">
+                            </property>
+                        </widget>
+                        <widget class="XLineEdit">
+                            <property name="name">
+                                <cstring>_searchFor</cstring>
+                            </property>
+                        </widget>
+                    </hbox>
+                </widget>
+                <widget class="QCheckBox">
+                    <property name="name">
+                        <cstring>_showInactive</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Show Assortments for &amp;Inactive Items</string>
+                    </property>
+                    <property name="accel">
+                        <string>Alt+I</string>
+                    </property>
+                </widget>
+                <widget class="QPushButton">
+                    <property name="name">
+                        <cstring>_close</cstring>
+                    </property>
+                    <property name="text">
+                        <string>&amp;Close</string>
+                    </property>
+                </widget>
+            </hbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout171</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>0</number>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>_assortmentsLit</cstring>
+                    </property>
+                    <property name="text">
+                        <string>Assortments:</string>
+                    </property>
+                    <property name="alignment">
+                        <set>AlignVCenter</set>
+                    </property>
+                </widget>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>Layout170</cstring>
+                    </property>
+                    <hbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="margin">
+                            <number>0</number>
+                        </property>
+                        <property name="spacing">
+                            <number>7</number>
+                        </property>
+                        <widget class="XListView">
+                            <property name="name">
+                                <cstring>_ass</cstring>
+                            </property>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>Layout169</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="margin">
+                                    <number>0</number>
+                                </property>
+                                <property name="spacing">
+                                    <number>0</number>
+                                </property>
+                                <widget class="QLayoutWidget">
+                                    <property name="name">
+                                        <cstring>Layout38</cstring>
+                                    </property>
+                                    <vbox>
+                                        <property name="name">
+                                            <cstring>unnamed</cstring>
+                                        </property>
+                                        <property name="margin">
+                                            <number>0</number>
+                                        </property>
+                                        <property name="spacing">
+                                            <number>0</number>
+                                        </property>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>_new</cstring>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;New</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>_edit</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;Edit</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>_view</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;View</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>_print</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;Print</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>_copy</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>Co&amp;py</string>
+                                            </property>
+                                        </widget>
+                                        <widget class="QPushButton">
+                                            <property name="name">
+                                                <cstring>_delete</cstring>
+                                            </property>
+                                            <property name="enabled">
+                                                <bool>false</bool>
+                                            </property>
+                                            <property name="text">
+                                                <string>&amp;Delete</string>
+                                            </property>
+                                        </widget>
+                                    </vbox>
+                                </widget>
+                                <spacer>
+                                    <property name="name">
+                                        <cstring>Spacer1</cstring>
+                                    </property>
+                                    <property name="orientation">
+                                        <enum>Vertical</enum>
+                                    </property>
+                                    <property name="sizeType">
+                                        <enum>Expanding</enum>
+                                    </property>
+                                    <property name="sizeHint">
+                                        <size>
+                                            <width>20</width>
+                                            <height>20</height>
+                                        </size>
+                                    </property>
+                                </spacer>
+                            </vbox>
+                        </widget>
+                    </hbox>
+                </widget>
+            </vbox>
+        </widget>
+    </vbox>
+</widget>
+<toolbars>
+</toolbars>
+<connections>
+    <connection>
+        <sender>_print</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>sPrint()</slot>
+    </connection>
+    <connection>
+        <sender>_edit</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>sEdit()</slot>
+    </connection>
+    <connection>
+        <sender>_copy</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>sCopy()</slot>
+    </connection>
+    <connection>
+        <sender>_delete</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>sDelete()</slot>
+    </connection>
+    <connection>
+        <sender>_searchFor</sender>
+        <signal>textChanged(const QString&amp;)</signal>
+        <receiver>assortments</receiver>
+        <slot>sSearch(const QString&amp;)</slot>
+    </connection>
+    <connection>
+        <sender>_close</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>close()</slot>
+    </connection>
+    <connection>
+        <sender>_ass</sender>
+        <signal>valid(bool)</signal>
+        <receiver>_view</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_view</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>sView()</slot>
+    </connection>
+    <connection>
+        <sender>_ass</sender>
+        <signal>valid(bool)</signal>
+        <receiver>_print</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+        <sender>_showInactive</sender>
+        <signal>toggled(bool)</signal>
+        <receiver>assortments</receiver>
+        <slot>sFillList()</slot>
+    </connection>
+    <connection>
+        <sender>_new</sender>
+        <signal>clicked()</signal>
+        <receiver>assortments</receiver>
+        <slot>sNew()</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>_searchFor</tabstop>
+    <tabstop>_showInactive</tabstop>
+    <tabstop>_ass</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_view</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_copy</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_close</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">parameter.h</include>
+    <include location="local" impldecl="in implementation">assortment.h</include>
+    <include location="local" impldecl="in implementation">copyAssortment.h</include>
+    <include location="global" impldecl="in implementation">qmessagebox.h</include>
+    <include location="local" impldecl="in implementation">rptSingleLevelBOM.h</include>
+    <include location="global" impldecl="in implementation">qstatusbar.h</include>
+    <include location="global" impldecl="in implementation">qworkspace.h</include>
+    <include location="local" impldecl="in declaration">OpenMFGGUIClient.h</include>
+    <include location="local" impldecl="in implementation">assortments.ui.h</include>
+</includes>
+<slots>
+    <slot>sCopy()</slot>
+    <slot>sDelete()</slot>
+    <slot>sEdit()</slot>
+    <slot>sFillList( int pItemid, bool pLocal )</slot>
+    <slot>sNew()</slot>
+    <slot>sPrint()</slot>
+    <slot>sSearch( const QString &amp; pTarget )</slot>
+    <slot>sView()</slot>
+    <slot>sFillList()</slot>
+</slots>
+<functions>
+    <function>init()</function>
+</functions>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

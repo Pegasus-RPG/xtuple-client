@@ -1,0 +1,127 @@
+#!/bin/bash
+
+if [ -z $QTDIR ]; then
+  QTDIR=/opt/qt/4.1.4
+fi
+if ! [ -d $QTDIR ]; then
+  echo "Cannot find QTDIR"
+  exit
+fi
+if [ -z $PGDIR ]; then
+  PGDIR=$QTDIR
+fi
+if ! [ -d $PGDIR/lib ]; then
+  echo "Cannot find PGDIR/lib"
+  exit
+fi
+FRAMEWORKSDIR=../bin/OpenMFG.app/Contents/Frameworks
+
+if ! [ -d $FRAMEWORKSDIR ]; then
+  mkdir $FRAMEWORKSDIR
+fi
+cd $FRAMEWORKSDIR
+
+cp $QTDIR/lib/libQt3Support.4.dylib .
+cp $QTDIR/lib/libQtAssistantClient.4.dylib .
+cp $QTDIR/lib/libQtNetwork.4.dylib .
+cp $QTDIR/lib/libQtSql.4.dylib .
+cp $QTDIR/lib/libQtXml.4.dylib .
+cp $QTDIR/lib/libQtGui.4.dylib .
+cp $QTDIR/lib/libQtCore.4.dylib .
+cp $PGDIR/lib/libpq.4.dylib .
+
+install_name_tool -id @executable_path/../Frameworks/libpq.4.dylib libpq.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQt3Support.4.dylib libQt3Support.4.dylib
+install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libQt3Support.4.dylib
+install_name_tool -change $QTDIR/lib/libQtXml.4.dylib @executable_path/../Frameworks/libQtXml.4.dylib libQt3Support.4.dylib
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libQt3Support.4.dylib
+install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib libQt3Support.4.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQt3Support.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQtAssistantClient.4.dylib libQtAssistantClient.4.dylib
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libQtAssistantClient.4.dylib
+install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib libQtAssistantClient.4.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtAssistantClient.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQtNetwork.4.dylib libQtNetwork.4.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtNetwork.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQtSql.4.dylib libQtSql.4.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtSql.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQtXml.4.dylib libQtXml.4.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtXml.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQtGui.4.dylib libQtGui.4.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtGui.4.dylib
+
+install_name_tool -id @executable_path/../Frameworks/libQtCore.4.dylib libQtCore.4.dylib
+
+cd ../MacOS
+install_name_tool -change $QTDIR/lib/libQt3Support.4.dylib @executable_path/../Frameworks/libQt3Support.4.dylib OpenMFG
+install_name_tool -change $QTDIR/lib/libQtAssistantClient.4.dylib @executable_path/../Frameworks/libQtAssistantClient.4.dylib OpenMFG
+install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib OpenMFG
+install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib OpenMFG
+install_name_tool -change $QTDIR/lib/libQtXml.4.dylib @executable_path/../Frameworks/libQtXml.4.dylib OpenMFG
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib OpenMFG
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib OpenMFG
+
+if ! [ -d "../plugins" ]; then
+  mkdir ../plugins
+fi
+cd ../plugins
+
+if ! [ -d "sqldrivers" ]; then
+  mkdir sqldrivers
+fi
+cd sqldrivers
+
+cp $QTDIR/plugins/sqldrivers/libqsqlpsql.dylib .
+install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libqsqlpsql.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqsqlpsql.dylib
+install_name_tool -change $PGDIR/lib/libpq.4.dylib @executable_path/../Frameworks/libpq.4.dylib libqsqlpsql.dylib
+
+cp $QTDIR/plugins/sqldrivers/libqsqlodbc.dylib .
+install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libqsqlodbc.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqsqlodbc.dylib
+
+cd ..
+if ! [ -d "imageformats" ]; then
+  mkdir imageformats
+fi
+cd imageformats
+cp $QTDIR/plugins/imageformats/libqgif.dylib .
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libqgif.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqgif.dylib
+
+cp $QTDIR/plugins/imageformats/libqjpeg.dylib .
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libqjpeg.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqjpeg.dylib
+
+cp $QTDIR/plugins/imageformats/libqmng.dylib .
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libqmng.dylib
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqmng.dylib
+
+
+cd ../../Resources
+
+echo "[Paths]" > qt.conf
+echo "Prefix = .." >> qt.conf
+
+cp -r $QTDIR/bin/assistant.app .
+cd assistant.app/Contents/MacOS
+install_name_tool -change $QTDIR/lib/libQtXml.4.dylib @executable_path/../Frameworks/libQtXml.4.dylib assistant
+install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib assistant
+install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib assistant
+install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib assistant
+
+cd ../Resources
+# create/copy a qt.conf file pointing to the plugins directory
+echo "[Paths]" > qt.conf
+echo "Prefix = .." >> qt.conf
+
+cd ..
+ln -s ../../../Frameworks
+ln -s ../../../plugins
+

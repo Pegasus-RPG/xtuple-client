@@ -1,0 +1,230 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>rptARAging</class>
+  <widget class="QDialog" name="rptARAging" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>476</width>
+        <height>73</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Report Parameters -- A/R Aging Report</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="_calendarLbl" >
+                      <property name="text" >
+                        <string>Calendar:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="_dateLbl" >
+                      <property name="text" >
+                        <string>Relative Date:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="1" >
+                    <layout class="QHBoxLayout" >
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <widget class="CalendarComboBox" name="_calendar" />
+                      </item>
+                      <item>
+                        <spacer name="spacer3" >
+                          <property name="sizeHint" >
+                            <size>
+                              <width>0</width>
+                              <height>20</height>
+                            </size>
+                          </property>
+                          <property name="sizeType" >
+                            <enum>MinimumExpanding</enum>
+                          </property>
+                          <property name="orientation" >
+                            <enum>Horizontal</enum>
+                          </property>
+                        </spacer>
+                      </item>
+                    </layout>
+                  </item>
+                  <item row="1" column="1" >
+                    <layout class="QHBoxLayout" >
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <widget class="DLineEdit" name="_date" />
+                      </item>
+                      <item>
+                        <spacer name="spacer2" >
+                          <property name="sizeHint" >
+                            <size>
+                              <width>40</width>
+                              <height>20</height>
+                            </size>
+                          </property>
+                          <property name="sizeType" >
+                            <enum>Expanding</enum>
+                          </property>
+                          <property name="orientation" >
+                            <enum>Horizontal</enum>
+                          </property>
+                        </spacer>
+                      </item>
+                    </layout>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="spacer4" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>29</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_close" >
+                      <property name="text" >
+                        <string>&amp;Close</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+C</string>
+                      </property>
+                      <property name="autoDefault" >
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_print" >
+                      <property name="text" >
+                        <string>&amp;Print</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+P</string>
+                      </property>
+                      <property name="autoDefault" >
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="spacer1" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>0</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="5" margin="5" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>CalendarComboBox</class>
+      <extends>QComboBox</extends>
+      <header>calendarcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_calendar</tabstop>
+    <tabstop>_date</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>rptARAging</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>

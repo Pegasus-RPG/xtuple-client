@@ -1,0 +1,41 @@
+-- dspCheckRegister::sFillList() detail query
+-- shows all the checks for a given date range
+-- and additionally fills in the check item detail if showDetail exists
+SELECT apchk_id AS apchkid,
+       CASE WHEN(apchk_void) THEN -1
+            WHEN(apchk_posted) THEN 1
+            ELSE 0
+       END AS extra,
+       -1 AS apchkitem_id,
+       formatBoolYN(apchk_void) AS f_void,
+       formatBoolYN(apchk_misc) AS f_misc,
+       formatBoolYN(apchk_printed) AS f_printed,
+       formatBoolYN(apchk_posted) AS f_posted,
+       TEXT(apchk_number) AS number,
+       (vend_number || '-' || vend_name) AS description,
+       formatDate(apchk_checkdate) AS f_checkdate,
+       formatMoney(apchk_amount) AS f_amount, 
+       currConcat(apchk_curr_id) AS currAbbr,
+       apchk_number,
+       1 AS orderby
+  FROM apchk, vend
+ WHERE ( (apchk_vend_id=vend_id)
+   AND   (apchk_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+   AND   (apchk_bankaccnt_id=<? value("bankaccnt_id") ?>) )
+<? if exists("showDetail") ?>
+UNION
+SELECT apchkitem_apchk_id AS apchkid, 0 AS extra, apchkitem_id,
+       '' AS f_void, '' AS f_misc, '' AS f_printed, '' AS f_posted,
+       apchkitem_vouchernumber AS number,
+       apchkitem_invcnumber AS description,
+       '' AS f_checkdate,
+       formatMoney(apchkitem_amount) AS f_amount,
+       currConcat(apchkitem_curr_id) AS currAbbr, 
+       apchk_number, 
+       2 AS orderby 
+  FROM apchkitem, apchk 
+ WHERE ( (apchkitem_apchk_id=apchk_id)
+   AND   (apchk_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+   AND   (apchk_bankaccnt_id=<? value("bankaccnt_id") ?>) )
+<? endif ?>
+ ORDER BY apchk_number, apchkid, orderby;

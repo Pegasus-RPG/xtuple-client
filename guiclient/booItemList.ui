@@ -1,0 +1,179 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>booItemList</class>
+  <widget class="QDialog" name="booItemList" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>431</width>
+        <height>292</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Bill of Operations Items</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>5</number>
+      </property>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="ItemCluster" name="_item" />
+              </item>
+              <item>
+                <spacer name="Spacer20" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>16</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QHBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <spacer name="Spacer7" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>21</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Horizontal</enum>
+                  </property>
+                </spacer>
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_close" >
+                      <property name="text" >
+                        <string>&amp;Cancel</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+C</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_clear" >
+                      <property name="text" >
+                        <string>Clea&amp;r</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_select" >
+                      <property name="text" >
+                        <string>&amp;Select</string>
+                      </property>
+                      <property name="default" >
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QVBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <item>
+            <widget class="QLabel" name="_booItemsLit" >
+              <property name="text" >
+                <string>Bill of Operation Items:</string>
+              </property>
+            </widget>
+          </item>
+          <item>
+            <widget class="XListView" name="_booitem" />
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_item</tabstop>
+    <tabstop>_booitem</tabstop>
+    <tabstop>_select</tabstop>
+    <tabstop>_clear</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_booitem</sender>
+      <signal>itemSelected(int)</signal>
+      <receiver>_select</receiver>
+      <slot>animateClick()</slot>
+    </connection>
+  </connections>
+</ui>

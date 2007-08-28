@@ -1,0 +1,42 @@
+SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
+       (vend_number || '-' || vend_name) AS vend_number,
+       poitem_linenumber AS orderitem_linenumber,
+       formatDate(recv_duedate) AS recv_duedate,
+       COALESCE(item_number, <? value("nonInventory") ?>) AS item_number,
+       COALESCE(item_invuom, <? value("na") ?>) AS item_invuom,
+       recv_vend_item_number,
+       recv_vend_uom,
+       formatQty(poitem_qty_ordered)  AS qty_ordered,
+       formatQty(poitem_qty_received) AS qty_received,
+       formatQty(recv_qty)     AS recv_qty,
+       formatDate(recv_date)   AS recv_date,
+       formatDate(COALESCE(recv_gldistdate, recv_date)) AS recv_gldistdate
+FROM vend, pohead, poitem, recv LEFT OUTER JOIN 
+     (itemsite JOIN ITEM ON (itemsite_item_id=item_id))
+      ON (recv_itemsite_id=itemsite_id)
+WHERE ( (recv_orderitem_id=poitem_id)
+  AND   (NOT recv_posted)
+  AND   (recv_order_type='PO')
+  AND   (poitem_pohead_id=pohead_id)
+  AND   (pohead_vend_id=vend_id)) 
+<? if exists("MultiWhs") ?>
+UNION
+SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
+       '' AS vend_number,
+       toitem_linenumber AS orderitem_linenumber,
+       formatDate(recv_duedate) AS recv_duedate,
+       COALESCE(item_number, <? value("nonInventory") ?>) AS item_number,
+       COALESCE(item_invuom, <? value("na") ?>) AS item_invuom,
+       recv_vend_item_number,
+       recv_vend_uom,
+       formatQty(toitem_qty_ordered)  AS qty_ordered,
+       formatQty(toitem_qty_received) AS qty_received,
+       formatQty(recv_qty)     AS recv_qty,
+       formatDate(recv_date)   AS recv_date,
+       formatDate(COALESCE(recv_gldistdate, recv_date)) AS recv_gldistdate
+FROM recv, toitem LEFT OUTER JOIN item ON (toitem_item_id=item_id)
+WHERE ( (recv_orderitem_id=toitem_id)
+  AND   (NOT recv_posted)
+  AND   (recv_order_type='TO') )
+<? endif ?>
+ORDER BY recv_order_number, orderitem_linenumber;

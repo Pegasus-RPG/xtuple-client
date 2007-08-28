@@ -1,0 +1,428 @@
+/*
+ * Common Public Attribution License Version 1.0. 
+ * 
+ * The contents of this file are subject to the Common Public Attribution 
+ * License Version 1.0 (the "License"); you may not use this file except 
+ * in compliance with the License. You may obtain a copy of the License 
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+ * Public License Version 1.1 but Sections 14 and 15 have been added to 
+ * cover use of software over a computer network and provide for limited 
+ * attribution for the Original Developer. In addition, Exhibit A has 
+ * been modified to be consistent with Exhibit B.
+ * 
+ * Software distributed under the License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
+ * the License for the specific language governing rights and limitations 
+ * under the License. 
+ * 
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
+ * 
+ * The Original Developer is not the Initial Developer and is __________. 
+ * If left blank, the Original Developer is the Initial Developer. 
+ * The Initial Developer of the Original Code is OpenMFG, LLC, 
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * 
+ * Contributor(s): ______________________.
+ * 
+ * Alternatively, the contents of this file may be used under the terms 
+ * of the xTuple End-User License Agreeement (the xTuple License), in which 
+ * case the provisions of the xTuple License are applicable instead of 
+ * those above.  If you wish to allow use of your version of this file only 
+ * under the terms of the xTuple License and not to allow others to use 
+ * your version of this file under the CPAL, indicate your decision by 
+ * deleting the provisions above and replace them with the notice and other 
+ * provisions required by the xTuple License. If you do not delete the 
+ * provisions above, a recipient may use your version of this file under 
+ * either the CPAL or the xTuple License.
+ * 
+ * EXHIBIT B.  Attribution Information
+ * 
+ * Attribution Copyright Notice: 
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * 
+ * Attribution Phrase: 
+ * Powered by PostBooks, an open source solution from xTuple
+ * 
+ * Attribution URL: www.xtuple.org 
+ * (to be included in the "Community" menu of the application if possible)
+ * 
+ * Graphic Image as provided in the Covered Code, if any. 
+ * (online at www.xtuple.com/poweredby)
+ * 
+ * Display of Attribution Information is required in Larger Works which 
+ * are defined in the CPAL as a work which combines Covered Code or 
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+// TODO: implement transfer order support
+#include "shippingInformation.h"
+
+#include <QSqlError>
+#include <QMessageBox>
+#include <QVariant>
+
+#include "salesOrderList.h"
+#include "issueToShipping.h"
+#include "salesOrderItem.h"
+
+shippingInformation::shippingInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : QDialog(parent, name, modal, fl)
+{
+  setupUi(this);
+  connect(_coitem,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)),
+					  this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_salesOrder,	SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_salesOrder,	SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
+  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
+  connect(_save,	SIGNAL(clicked()), this, SLOT(sSave()));
+
+  _captive = FALSE;
+
+#ifdef Q_WS_MAC
+  _salesOrderList->setMaximumWidth(50);
+#else
+  _salesOrderList->setMaximumWidth(25);
+#endif
+
+  _shippingForm->setCurrentItem(-1);
+
+  _coitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter );
+  _coitem->addColumn(tr("Item"),        -1,         Qt::AlignLeft   );
+  _coitem->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight  );
+  _coitem->addColumn(tr("Net Wght."),   _qtyColumn, Qt::AlignRight  );
+  _coitem->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight  );
+  _coitem->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight  );
+}
+
+shippingInformation::~shippingInformation()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void shippingInformation::languageChange()
+{
+    retranslateUi(this);
+}
+
+enum SetResponse shippingInformation::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("cosmisc_id", &valid);	// deprecated
+  if (valid)
+    _shipment->setId(param.toInt());
+
+  param = pParams.value("shiphead_id", &valid);
+  if (valid)
+    _shipment->setId(param.toInt());
+
+  if (_shipment->isValid())
+  {
+    q.prepare( "SELECT shiphead_order_id, shiphead_order_type "
+               "FROM shiphead "
+               "WHERE (shiphead_id=:shiphead_id);" );
+    q.bindValue(":shiphead_id", _shipment->id());
+    q.exec();
+    if (q.first())
+    {
+      _captive = TRUE;
+
+      if (q.value("shiphead_order_type").toString() == "SO")
+	_salesOrder->setId(q.value("shiphead_order_id").toInt());
+      else
+      {
+	systemError(this, "Transfer Order support not implemented yet",
+		    __FILE__, __LINE__);
+	return UndefinedError;
+	//_to->setId(q.value("shiphead_order_id").toInt());
+      }
+      _close->setText("&Cancel");
+
+      _shipDate->setFocus();
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
+  }
+
+  return NoError;
+}
+
+void shippingInformation::sSave()
+{
+  if (!_shipDate->isValid())
+  {
+    QMessageBox::information( this, tr("No Ship Date Entered"),
+                              tr("<p>You must enter a Ship Date before "
+				 "selecting this order for billing.") );
+
+    _shipDate->setFocus();
+    return;
+  }
+
+  if (_shipment->id() > 0)
+  {
+    q.prepare( "UPDATE shiphead "
+               "SET shiphead_freight=:shiphead_freight,"
+	       "    shiphead_freight_curr_id=:shiphead_freight_curr_id,"
+	       "    shiphead_notes=:shiphead_notes,"
+               "    shiphead_shipdate=:shiphead_shipdate, shiphead_shipvia=:shiphead_shipvia,"
+               "    shiphead_shipchrg_id=:shiphead_shipchrg_id, shiphead_shipform_id=:shiphead_shipform_id "
+               "WHERE (shiphead_id=:shiphead_id);" );
+    q.bindValue(":shiphead_id", _shipment->id());
+  }
+  else
+    q.prepare( "INSERT INTO shiphead "
+               "( shiphead_order_id, shiphead_freight,"
+	       "  shiphead_freight_curr_id, shiphead_notes,"
+               "  shiphead_shipdate, shiphead_shipvia, shiphead_number,"
+               "  shiphead_shipchrg_id, shiphead_shipform_id, shiphead_shipped ) "
+               "VALUES "
+               "( :shiphead_order_id, :shiphead_freight,"
+	       "  :shiphead_freight_curr_id, :shiphead_notes,"
+               "  :shiphead_shipdate, :shiphead_shipvia, fetchShipmentNumber(),"
+               "  :shiphead_shipchrg_id, :shiphead_shipform_id, FALSE );" );
+
+  q.bindValue(":shiphead_order_id",		_salesOrder->id());
+  q.bindValue(":shiphead_freight",		_freight->localValue());
+  q.bindValue(":shiphead_freight_curr_id",	_freight->id());
+  q.bindValue(":shiphead_notes", _notes->text());
+  q.bindValue(":shiphead_shipdate", _shipDate->date());
+  q.bindValue(":shiphead_shipvia", _shipVia->currentText());
+  q.bindValue(":shiphead_shipchrg_id", _shippingCharges->id());
+  q.bindValue(":shiphead_shipform_id", _shippingForm->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (_captive)
+    accept();
+  else
+    _salesOrder->setId(-1);
+}
+
+void shippingInformation::sSalesOrderList()
+{
+  ParameterList params;
+  params.append("sohead_id", _salesOrder->id());
+  params.append("soType", cSoOpen);
+  
+  salesOrderList newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  int soheadid;
+  if ((soheadid = newdlg.exec()) != QDialog::Rejected)
+  {
+    q.prepare( "SELECT cohead_holdtype "
+               "FROM cohead "
+               "WHERE (cohead_id=:cohead_id);" );
+    q.bindValue(":cohist_id", soheadid);
+    q.exec();
+    if (q.first())
+    {
+      if ( (q.value("cohead_holdtype").toString() == "P") || (q.value("cohead_holdtype").toString() == "C") )
+      {
+        QMessageBox::critical( this, tr("Sales Order on Hold"),
+                               tr( "The selected Sales Order is on Hold. \n"
+                                   "You may not issue Inventory for this Sales Order to Shipping\n"
+                                   "or print of Bill of Lading for this Sales Order until\n"
+                                   "it is taken off of Hold." ) );
+        _salesOrder->setId(-1);
+        _salesOrder->setFocus();
+      }
+
+      _salesOrder->setId(soheadid);
+    }
+    else
+      _salesOrder->setId(-1);
+  }
+}
+
+void shippingInformation::sPopulateMenu(QMenu *menuThis)
+{
+  menuThis->insertItem(tr("Issue Additional Stock for this Order Line to Shipping..."), this, SLOT(sIssueStock()), 0);
+  menuThis->insertItem(tr("Return ALL Stock Issued for this Order Line to the Warehouse..."), this, SLOT(sReturnAllLineStock()), 0);
+  menuThis->insertItem(tr("View Order Line..."), this, SLOT(sViewLine()), 0);
+}
+
+void shippingInformation::sIssueStock()
+{
+  ParameterList params;
+  params.append("sohead_id", _coitem->altId());
+
+  issueToShipping *newdlg = new issueToShipping();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void shippingInformation::sReturnAllLineStock()
+{
+  q.prepare("SELECT returnItemShipments(:cohead_id) AS result;");
+  q.bindValue(":coitem_id", _coitem->id());
+  q.exec();
+
+  sFillList();
+}
+
+void shippingInformation::sViewLine()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("soitem_id", _coitem->id());
+
+  salesOrderItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void shippingInformation::sFillList()
+{
+//  Clear any old data
+  _coitem->clear();
+
+  if (_salesOrder->id() != -1)
+  {
+    bool fetchFromSohead = TRUE;
+
+    q.prepare( "SELECT shiphead_notes, shiphead_shipvia,"
+               "       shiphead_shipchrg_id, shiphead_shipform_id,"
+               "       shiphead_freight, shiphead_freight_curr_id,"
+               "       shiphead_shipdate,"
+               "       CASE WHEN (shiphead_shipdate IS NULL) THEN FALSE"
+               "            ELSE TRUE"
+               "       END AS validdata "
+               "FROM shiphead "
+               "WHERE ((NOT shiphead_shipped)"
+	       "  AND  (shiphead_order_type='SO')"
+               "  AND  (shiphead_order_id=:cohead_id) );" );
+    q.bindValue(":cohead_id", _salesOrder->id());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("validdata").toBool())
+      {
+        fetchFromSohead = FALSE;
+
+        _shipDate->setDate(q.value("shiphead_shipdate").toDate());
+        _shipVia->setText(q.value("shiphead_shipvia").toString());
+        _shippingCharges->setId(q.value("shiphead_shipchrg_id").toInt());
+        _shippingForm->setId(q.value("shiphead_shipform_id").toInt());
+        _freight->setId(q.value("shiphead_freight_curr_id").toInt());
+        _freight->setLocalValue(q.value("shiphead_freight").toDouble());
+        _notes->setText(q.value("shiphead_notes").toString());
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    q.prepare( "SELECT cohead_orderdate, cohead_custponumber,"
+               "       cust_name, cust_phone,"
+               "       cohead_shipcomments, cohead_shipvia,"
+               "       cohead_shipchrg_id, cohead_shipform_id "
+               "FROM cohead, cust "
+               "WHERE ((cohead_cust_id=cust_id)"
+               " AND (cohead_id=:cohead_id));" );
+    q.bindValue(":cohead_id", _salesOrder->id());
+    q.exec();
+    if (q.first())
+    {
+      _orderDate->setDate(q.value("cohead_orderdate").toDate());
+      _poNumber->setText(q.value("cohead_custponumber").toString());
+      _custName->setText(q.value("cust_name").toString());
+      _custPhone->setText(q.value("cust_phone").toString());
+
+      if (fetchFromSohead)
+      {
+        _shipDate->setDate(omfgThis->dbDate());
+
+        _shippingCharges->setId(q.value("cohead_shipchrg_id").toInt());
+        _shippingForm->setId(q.value("cohead_shipform_id").toInt());
+        _notes->setText(q.value("cohead_shipcomments").toString());
+        _shipVia->setText(q.value("cohead_shipvia").toString());
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    q.prepare( "SELECT coitem_id, coitem_cohead_id, coitem_linenumber, item_number,"
+               "      (item_prodweight * SUM(shipitem_qty)) AS netweight,"
+               "      (item_packweight * SUM(shipitem_qty)) AS tareweight,"
+               "      SUM(shipitem_qty) AS qtyatshipping,"
+               "      formatQty(SUM(shipitem_qty)) AS f_qtyatshipping "
+               "FROM shiphead, shipitem, coitem, itemsite, item "
+               "WHERE ( (shipitem_orderitem_id=coitem_id)"
+               " AND (shipitem_shiphead_id=shiphead_id)"
+               " AND (coitem_itemsite_id=itemsite_id)"
+               " AND (itemsite_item_id=item_id)"
+               " AND (NOT shiphead_shipped)"
+	       " AND (shiphead_order_type='SO')"
+               " AND (coitem_cohead_id=:cohead_id) ) "
+               "GROUP BY coitem_id, coitem_cohead_id, coitem_linenumber, item_number,"
+               "         item_prodweight, item_packweight "
+               "ORDER BY coitem_linenumber;" );
+    q.bindValue(":cohead_id", _salesOrder->id());
+    q.exec();
+    if (q.first())
+    {
+      double        totalNetWeight   = 0;
+      double        totalTareWeight  = 0;
+
+      XTreeWidgetItem* last = 0;
+      do
+      {
+        totalNetWeight   += q.value("netweight").toDouble();
+        totalTareWeight  += q.value("tareweight").toDouble();
+
+        last = new XTreeWidgetItem( _coitem, last, q.value("coitem_id").toInt(),
+			   q.value("coitem_cohead_id").toInt(),
+                           q.value("coitem_linenumber"), q.value("item_number"),
+                           q.value("f_qtyatshipping"),
+                           formatWeight(q.value("netweight").toDouble()),
+                           formatWeight(q.value("tareweight").toDouble()),
+                           formatWeight((q.value("netweight").toDouble() + q.value("tareweight").toDouble())) );
+      }
+      while (q.next());
+
+      _totalNetWeight->setText(formatWeight(totalNetWeight));
+      _totalTareWeight->setText(formatWeight(totalTareWeight));
+      _totalGrossWeight->setText(formatWeight(totalNetWeight + totalTareWeight));
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+//  else if (_to->id() > 0)
+//  {
+//    systemError(this, "Transfer Order support not implemented yet", __FILE__, __LINE__);
+//  }
+  else
+  {
+    _salesOrder->setId(-1);
+    _orderDate->setNull();
+    _poNumber->clear();
+    _custName->clear();
+    _custPhone->clear();
+    _shipDate->setNull();
+    _shipVia->setNull();
+
+    _freight->reset();
+    _totalNetWeight->clear();
+    _totalTareWeight->clear();
+    _totalGrossWeight->clear();
+  }
+}

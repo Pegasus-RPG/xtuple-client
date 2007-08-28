@@ -1,0 +1,103 @@
+SELECT poitem_id AS source_id, 1 AS type, TEXT('P/O') AS order_type,
+       TEXT(pohead_number) AS order_number,
+       formatQty(poitem_qty_ordered) AS totalqty,
+       formatQty(poitem_qty_received) AS relievedqty,
+       formatQty(noNeg(poitem_qty_ordered - poitem_qty_received)) AS balanceqty,
+       formatDate(poitem_duedate) AS duedate, poitem_duedate AS r_duedate,
+       (poitem_duedate < CURRENT_DATE) AS late
+FROM pohead, poitem, itemsite
+WHERE ((poitem_pohead_id=pohead_id)
+  AND  (poitem_status IN ('O','U'))
+  AND  (poitem_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND  (<? value("itemType") ?>='P')
+<? if exists("useLeadTime") ?>
+  AND  (poitem_duedate <= (CURRENT_DATE + itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND  (poitem_duedate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND  (poitem_duedate<=<? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND  (poitem_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+
+UNION
+SELECT wo_id AS source_id, 2 AS type, TEXT('W/O') AS order_type,
+       formatWONumber(wo_id) AS order_number,
+       formatQty(wo_qtyord) AS totalqty,
+       formatQty(wo_qtyrcv) AS relievedqty,
+       formatQty(noNeg(wo_qtyord - wo_qtyrcv)) AS balanceqty,
+       formatDate(wo_duedate) AS duedate, wo_duedate AS r_duedate,
+       (wo_duedate < CURRENT_DATE) AS late 
+FROM wo, itemsite
+WHERE ((wo_status<>'C')
+  AND  (wo_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND  (<? value("itemType") ?>='M')
+<? if exists("useLeadTime") ?>
+  AND  (wo_duedate <= (CURRENT_DATE + itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND  (wo_duedate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND  (wo_duedate<=<? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND  (wo_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+
+UNION
+SELECT wo_id AS source_id, 2 AS type, TEXT('W/O') AS order_type,
+       formatWONumber(wo_id) AS order_number,
+       formatQty(wo_qtyord) AS totalqty,
+       formatQty(wo_qtyrcv) AS relievedqty,
+       formatQty(noNeg(wo_qtyord - wo_qtyrcv)) AS balanceqty,
+       formatDate(wo_duedate) AS duedate, wo_duedate AS r_duedate,
+       (wo_duedate < CURRENT_DATE) AS late
+FROM wo, brddist, itemsite
+WHERE ((brddist_wo_id=wo_id)
+  AND  (wo_status<>'C')
+  AND  (brddist_itemsite_id=itemsite_id)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND  (<? value("itemType") ?> IN ('C', 'Y'))
+<? if exists("useLeadTime") ?>
+  AND (wo_duedate <= (CURRENT_DATE + itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND (wo_duedate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND (wo_duedate<=<? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND (wo_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+
+UNION
+SELECT toitem_id AS source_id, 3 AS type, TEXT('T/O') AS order_type,
+       TEXT(tohead_number) AS order_number,
+       formatQty(toitem_qty_ordered) AS totalqty,
+       formatQty(toitem_qty_received) AS relievedqty,
+       formatQty(toitem_qty_ordered - toitem_qty_received) AS balanceqty,
+       formatDate(toitem_duedate) AS duedate, toitem_duedate AS r_duedate,
+       (toitem_duedate < CURRENT_DATE) AS late
+FROM tohead, toitem, itemsite
+WHERE ((toitem_tohead_id=tohead_id)
+  AND  (toitem_status='O')
+  AND  (toitem_item_id=itemsite_item_id)
+  AND  (tohead_dest_warehous_id=itemsite_warehous_id)
+  AND  (itemsite_item_id=<? value("item_id") ?>)
+  AND  (itemsite_warehous_id=<? value("warehous_id") ?>)
+<? if exists("useLeadTime") ?>
+  AND  (toitem_duedate <= (CURRENT_DATE + itemsite_leadtime))
+<? elseif exists("days") ?>
+  AND  (toitem_duedate <= (CURRENT_DATE + <? value("days") ?>))
+<? elseif exists("date") ?>
+  AND  (toitem_duedate<=<? value("date") ?>)
+<? elseif exists("startDate") ?>
+  AND  (toitem_duedate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+<? endif ?>
+)
+
+ORDER BY r_duedate;

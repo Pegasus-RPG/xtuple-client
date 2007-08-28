@@ -1,0 +1,360 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>rptWoOperationsByWorkCenter</class>
+  <widget class="QDialog" name="rptWoOperationsByWorkCenter" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>524</width>
+        <height>91</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Report Parameters - Work Order Operations by Work Center</string>
+    </property>
+    <layout class="QHBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>7</number>
+      </property>
+      <item>
+        <layout class="QVBoxLayout" >
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <layout class="QVBoxLayout" >
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <widget class="QLabel" name="_workCenterLit" >
+                          <property name="text" >
+                            <string>Work Center:</string>
+                          </property>
+                          <property name="alignment" >
+                            <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                          </property>
+                        </widget>
+                      </item>
+                      <item>
+                        <spacer name="Spacer17" >
+                          <property name="sizeHint" >
+                            <size>
+                              <width>20</width>
+                              <height>20</height>
+                            </size>
+                          </property>
+                          <property name="sizeType" >
+                            <enum>Fixed</enum>
+                          </property>
+                          <property name="orientation" >
+                            <enum>Vertical</enum>
+                          </property>
+                        </spacer>
+                      </item>
+                    </layout>
+                  </item>
+                  <item>
+                    <layout class="QVBoxLayout" >
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <widget class="XComboBox" name="_wrkcnt" />
+                      </item>
+                      <item>
+                        <widget class="QLabel" name="_description" >
+                          <property name="text" >
+                            <string/>
+                          </property>
+                          <property name="alignment" >
+                            <set>Qt::AlignVCenter</set>
+                          </property>
+                          <property name="buddy" stdset="0" >
+                            <cstring></cstring>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="_warehouseLit" >
+                      <property name="enabled" >
+                        <bool>true</bool>
+                      </property>
+                      <property name="text" >
+                        <string>Warehouse:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                      <property name="buddy" stdset="0" >
+                        <cstring></cstring>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QLabel" name="_warehouse" >
+                      <property name="text" >
+                        <string/>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter</set>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <spacer name="Spacer349" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>16</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Vertical</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QVBoxLayout" >
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="DateCluster" name="_dates" />
+                  </item>
+                  <item>
+                    <spacer name="Spacer110" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>60</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Preferred</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Horizontal</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QCheckBox" name="_loadOnly" >
+                      <property name="sizePolicy" >
+                        <sizepolicy>
+                          <hsizetype>1</hsizetype>
+                          <vsizetype>0</vsizetype>
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                      <property name="text" >
+                        <string>Only Show W/O Operations with Load</string>
+                      </property>
+                      <property name="checked" >
+                        <bool>true</bool>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="spacer392" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>36</width>
+                          <height>10</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Expanding</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Horizontal</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <spacer name="Spacer90" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>16</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Vertical</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QVBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <item>
+                <widget class="QPushButton" name="_close" >
+                  <property name="text" >
+                    <string>&amp;Cancel</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="_print" >
+                  <property name="text" >
+                    <string>&amp;Print</string>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <spacer name="Spacer348" >
+              <property name="sizeHint" >
+                <size>
+                  <width>20</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Vertical</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XComboBox</class>
+      <extends>QComboBox</extends>
+      <header>xcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_wrkcnt</tabstop>
+    <tabstop>_dates</tabstop>
+    <tabstop>_loadOnly</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>rptWoOperationsByWorkCenter</receiver>
+      <slot>reject()</slot>
+    </connection>
+  </connections>
+</ui>

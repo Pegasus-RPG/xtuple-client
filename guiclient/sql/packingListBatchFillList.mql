@@ -1,0 +1,28 @@
+SELECT cohead_id, pack_shiphead_id, 
+       cohead_number, pack_head_type,
+       formatShipmentNumber(pack_shiphead_id), 
+       cust_number, cohead_billtoname,
+       CASE WHEN (cohead_holdtype='N') THEN <? value("none") ?>
+            WHEN (cohead_holdtype='C') THEN <? value("credit") ?>
+            WHEN (cohead_holdtype='S') THEN <? value("ship") ?>
+            WHEN (cohead_holdtype='P') THEN <? value("pack") ?>
+            ELSE <? value("other") ?>
+       END AS f_holdtype,
+       formatBoolYN(pack_printed) 
+FROM pack, cohead, cust 
+WHERE ((pack_head_id=cohead_id)
+  AND  (cohead_cust_id=cust_id)
+  AND  (pack_head_type='SO')) 
+<? if exists("MultiWhs") ?>
+UNION 
+SELECT tohead_id, pack_shiphead_id, 
+       tohead_number, pack_head_type,
+       formatShipmentNumber(pack_shiphead_id), 
+       tohead_destname, tohead_destcntct_name,
+       '' AS f_holdtype,
+       formatBoolYN(pack_printed) 
+FROM pack, tohead 
+WHERE ((pack_head_id=tohead_id)
+  AND  (pack_head_type='TO'))
+<? endif ?>
+ORDER BY 3;

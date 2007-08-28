@@ -1,0 +1,224 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>rptInventoryLocator</class>
+  <widget class="QDialog" name="rptInventoryLocator" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>737</width>
+        <height>92</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Report Parameters - Location/Lot/Serial # Detail</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>0</number>
+      </property>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <widget class="ItemCluster" name="_item" />
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="WarehouseGroup" name="_warehouse" >
+                  <property name="title" >
+                    <string/>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <spacer name="Spacer90" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>17</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="QCheckBox" name="_showZeroLevel" >
+                  <property name="text" >
+                    <string>Show &amp;Zero-Level Locations</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <spacer name="Spacer2" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <spacer name="Spacer16" >
+              <property name="sizeHint" >
+                <size>
+                  <width>16</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_close" >
+                      <property name="text" >
+                        <string>&amp;Cancel</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_print" >
+                      <property name="enabled" >
+                        <bool>false</bool>
+                      </property>
+                      <property name="text" >
+                        <string>&amp;Print</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="Spacer210" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <spacer name="Spacer91" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>16</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
+    <tabstop>_item</tabstop>
+    <tabstop>_warehouse</tabstop>
+    <tabstop>_showZeroLevel</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>rptInventoryLocator</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>_item</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_print</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_item</sender>
+      <signal>warehouseIdChanged(int)</signal>
+      <receiver>_warehouse</receiver>
+      <slot>setId(int)</slot>
+    </connection>
+    <connection>
+      <sender>_item</sender>
+      <signal>newId(int)</signal>
+      <receiver>_warehouse</receiver>
+      <slot>findItemSites(int)</slot>
+    </connection>
+  </connections>
+</ui>

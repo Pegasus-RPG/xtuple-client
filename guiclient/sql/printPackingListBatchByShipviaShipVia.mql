@@ -1,0 +1,15 @@
+SELECT DISTINCT -1, shipvia
+ FROM (SELECT cohead_shipvia AS shipvia
+       FROM pack, cohead
+       WHERE ((pack_head_id=cohead_id)
+         AND  (pack_head_type='SO')
+         AND  (NOT pack_printed) )
+       <? if exists("MultiWhs") ?>
+       UNION
+       SELECT tohead_shipvia AS shipvia
+       FROM pack, tohead
+       WHERE ((pack_head_id=tohead_id)
+         AND  (pack_head_type='TO')
+         AND  (NOT pack_printed) )
+       <? endif ?>
+      ) AS dummy;

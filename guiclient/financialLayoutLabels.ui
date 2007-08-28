@@ -1,0 +1,219 @@
+<ui version="4.0" >
+ <author></author>
+ <comment></comment>
+ <exportmacro></exportmacro>
+ <class>financialLayoutLabels</class>
+ <widget class="QDialog" name="financialLayoutLabels" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>510</width>
+    <height>264</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Financial Layout Labels</string>
+  </property>
+  <layout class="QHBoxLayout" >
+   <property name="margin" >
+    <number>9</number>
+   </property>
+   <property name="spacing" >
+    <number>6</number>
+   </property>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="_altDebitsText" />
+       </item>
+       <item row="5" column="1" >
+        <widget class="QLineEdit" name="_altDiffText" />
+       </item>
+       <item row="6" column="1" >
+        <widget class="QLineEdit" name="_altTotalText" />
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLineEdit" name="_altCreditsText" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QCheckBox" name="_altDebits" >
+         <property name="text" >
+          <string>Alternate Debits:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0" >
+        <widget class="QCheckBox" name="_altDiff" >
+         <property name="text" >
+          <string>Alternate Difference:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLineEdit" name="_altBeginText" />
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="_altEndText" />
+       </item>
+       <item row="3" column="0" >
+        <widget class="QCheckBox" name="_altCredits" >
+         <property name="text" >
+          <string>Alternate Credits:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1" >
+        <widget class="QLineEdit" name="_altBudgetText" />
+       </item>
+       <item row="1" column="0" >
+        <widget class="QCheckBox" name="_altEnd" >
+         <property name="text" >
+          <string>Alternate Ending Balance:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
+        <widget class="QCheckBox" name="_altBudget" >
+         <property name="text" >
+          <string>Alternate Budget:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="1" >
+        <widget class="QLineEdit" name="_customText" />
+       </item>
+       <item row="0" column="0" >
+        <widget class="QCheckBox" name="_altBegin" >
+         <property name="text" >
+          <string>Alternate Begining Balance:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="0" >
+        <widget class="QCheckBox" name="_altTotal" >
+         <property name="text" >
+          <string>Alternat Grand Total:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" >
+        <widget class="QLabel" name="_customLit" >
+         <property name="text" >
+          <string>Alternate Custom Label:</string>
+         </property>
+         <property name="buddy" >
+          <cstring>_customText</cstring>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="_cancel" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_save" >
+       <property name="text" >
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>75</width>
+         <height>34</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <pixmapfunction></pixmapfunction>
+ <tabstops>
+  <tabstop>_altBegin</tabstop>
+  <tabstop>_altBeginText</tabstop>
+  <tabstop>_altEnd</tabstop>
+  <tabstop>_altEndText</tabstop>
+  <tabstop>_altDebits</tabstop>
+  <tabstop>_altDebitsText</tabstop>
+  <tabstop>_altCredits</tabstop>
+  <tabstop>_altCreditsText</tabstop>
+  <tabstop>_altBudget</tabstop>
+  <tabstop>_altBudgetText</tabstop>
+  <tabstop>_altDiff</tabstop>
+  <tabstop>_altDiffText</tabstop>
+  <tabstop>_altTotal</tabstop>
+  <tabstop>_altTotalText</tabstop>
+  <tabstop>_customText</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_cancel</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>financialLayoutLabels</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>441</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>197</x>
+     <y>125</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

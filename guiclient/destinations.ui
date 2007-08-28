@@ -1,0 +1,166 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>destinations</class>
+  <widget class="QMainWindow" name="destinations" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>452</width>
+        <height>332</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Destinations</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QHBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>0</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="_destinationLit" >
+                <property name="text" >
+                  <string>Carriers:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="XListView" name="_destination" />
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>5</number>
+            </property>
+            <item>
+              <widget class="QPushButton" name="_close" >
+                <property name="text" >
+                  <string>&amp;Close</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="QPushButton" name="_new" >
+                    <property name="text" >
+                      <string>&amp;New</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_edit" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;Edit</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_view" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;View</string>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <widget class="QPushButton" name="_delete" >
+                    <property name="enabled" >
+                      <bool>false</bool>
+                    </property>
+                    <property name="text" >
+                      <string>&amp;Delete</string>
+                    </property>
+                  </widget>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <spacer name="Spacer161" >
+                <property name="sizeHint" >
+                  <size>
+                    <width>20</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="sizeType" >
+                  <enum>Expanding</enum>
+                </property>
+                <property name="orientation" >
+                  <enum>Vertical</enum>
+                </property>
+              </spacer>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_destination</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_view</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_destination</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_view</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>destinations</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>

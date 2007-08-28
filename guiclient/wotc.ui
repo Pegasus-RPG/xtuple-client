@@ -1,0 +1,228 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>wotc</class>
+  <widget class="QDialog" name="wotc" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>434</width>
+        <height>260</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Adjust Work Order Time Clock Entry</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="WoCluster" name="_wo" />
+              </item>
+              <item>
+                <widget class="UsernameCluster" name="_user" />
+              </item>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="_wooperLit" >
+                      <property name="text" >
+                        <string>Operation:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                      <property name="buddy" stdset="0" >
+                        <cstring>_operation</cstring>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="XComboBox" name="_wooper" >
+                      <property name="enabled" >
+                        <bool>false</bool>
+                      </property>
+                      <property name="sizePolicy" >
+                        <sizepolicy>
+                          <hsizetype>7</hsizetype>
+                          <vsizetype>0</vsizetype>
+                          <horstretch>0</horstretch>
+                          <verstretch>0</verstretch>
+                        </sizepolicy>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="QPushButton" name="_close" >
+                  <property name="text" >
+                    <string>Cancel</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="_save" >
+                  <property name="enabled" >
+                    <bool>false</bool>
+                  </property>
+                  <property name="text" >
+                    <string>Save</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <spacer name="spacer2" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>21</width>
+                      <height>21</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QGridLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item row="0" column="0" >
+            <widget class="QLabel" name="_dateTimeInLit" >
+              <property name="text" >
+                <string>Clocked In:</string>
+              </property>
+              <property name="alignment" >
+                <set>Qt::AlignVCenter|Qt::AlignRight</set>
+              </property>
+            </widget>
+          </item>
+          <item row="1" column="0" >
+            <widget class="QLabel" name="_dateTimeOutLit" >
+              <property name="text" >
+                <string>Clocked Out:</string>
+              </property>
+              <property name="alignment" >
+                <set>Qt::AlignVCenter|Qt::AlignRight</set>
+              </property>
+            </widget>
+          </item>
+          <item row="0" column="1" >
+            <widget class="DLineEdit" name="_dateIn" >
+              <property name="enabled" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item row="1" column="1" >
+            <widget class="DLineEdit" name="_dateOut" >
+              <property name="enabled" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item row="0" column="2" >
+            <widget class="Q3TimeEdit" name="_timeIn" >
+              <property name="enabled" >
+                <bool>false</bool>
+              </property>
+            </widget>
+          </item>
+          <item row="1" column="2" >
+            <widget class="Q3TimeEdit" name="_timeOut" >
+              <property name="enabled" >
+                <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+                <sizepolicy>
+                  <hsizetype>3</hsizetype>
+                  <vsizetype>0</vsizetype>
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                </sizepolicy>
+              </property>
+            </widget>
+          </item>
+          <item rowspan="2" row="0" column="3" colspan="1" >
+            <spacer name="spacer1" >
+              <property name="sizeHint" >
+                <size>
+                  <width>130</width>
+                  <height>20</height>
+                </size>
+              </property>
+              <property name="sizeType" >
+                <enum>Expanding</enum>
+              </property>
+              <property name="orientation" >
+                <enum>Horizontal</enum>
+              </property>
+            </spacer>
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="5" margin="5" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XComboBox</class>
+      <extends>QComboBox</extends>
+      <header>xcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_wo</tabstop>
+    <tabstop>_user</tabstop>
+    <tabstop>_dateIn</tabstop>
+    <tabstop>_timeIn</tabstop>
+    <tabstop>_dateOut</tabstop>
+    <tabstop>_timeOut</tabstop>
+    <tabstop>_save</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>wotc</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>

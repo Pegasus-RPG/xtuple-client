@@ -1,0 +1,1298 @@
+<!DOCTYPE openRPTDef>
+<report>
+ <title>Inventory History by Parameter List</title>
+ <name>InventoryHistoryByParameterList</name>
+ <description></description>
+ <size>Letter</size>
+ <portrait/>
+ <topmargin>50</topmargin>
+ <bottommargin>50</bottommargin>
+ <rightmargin>50</rightmargin>
+ <leftmargin>50</leftmargin>
+ <querysource>
+  <name>head</name>
+  <sql>SELECT formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
+       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate,
+       &lt;? if exists(&quot;warehous_id&quot;) ?>
+         ( SELECT warehous_code
+             FROM warehous
+            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+       &lt;? else ?>
+         text('All Warehouses')
+       &lt;? endif ?>
+       AS warehouse,
+       &lt;? if exists(&quot;itemgrp_id&quot;) ?>
+         ( SELECT (itemgrp_name||'-'||itemgrp_descrip)
+             FROM itemgrp
+            WHERE (itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>) )
+       &lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
+         text(&lt;? value(&quot;itemgrp_pattern&quot;) ?>)
+       &lt;? elseif exists(&quot;classcode_id&quot;) ?>
+         ( SELECT (classcode_code||'-'||classcode_descrip)
+             FROM classcode
+            WHERE (classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>) )
+       &lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
+         text(&lt;? value(&quot;classcode_pattern&quot;) ?>)
+       &lt;? elseif exists(&quot;plancode_id&quot;) ?>
+         ( SELECT (plancode_code||'-'||plancode_name)
+             FROM plancode
+            WHERE (plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>) )
+       &lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
+         text(&lt;? value(&quot;plancode_pattern&quot;) ?>)
+       &lt;? else ?>
+         text('All')
+       &lt;? endif ?>
+       AS lbl_value,
+       &lt;? if reExists(&quot;itemgrp.*&quot;) ?>
+         text('Item Group:')
+       &lt;? elseif reExists(&quot;classcode.*&quot;) ?>
+         text('Class Code:')
+       &lt;? elseif reExists(&quot;plancode.*&quot;) ?>
+         text('Planner Code:')
+       &lt;? else ?>
+         text('Unknown Class:')
+       &lt;? endif ?>
+       AS lbl_bytype,
+       &lt;? if reExists(&quot;itemgrp.*&quot;) ?>
+         text('Inventory History by Item Group')
+       &lt;? elseif reExists(&quot;classcode.*&quot;) ?>
+         text('Inventory History by Class Code')
+       &lt;? elseif reExists(&quot;plancode.*&quot;) ?>
+         text('Inventory History by Planner Code')
+       &lt;? else ?>
+         text('Inventory History')
+       &lt;? endif ?>
+       AS lbl_title;</sql>
+ </querysource>
+ <querysource>
+  <name>detail</name>
+  <sql>SELECT invhist_id,
+       invhist_transdate,
+       formatDateTime(invhist_transdate) AS transdate,
+       invhist_transtype,
+       whs1.warehous_code AS warehous_code,
+       item_number,
+       item_descrip1,
+       item_descrip2,
+       formatQty(invhist_invqty) AS transqty,
+       invhist_invuom,
+       CASE WHEN (invhist_ordtype NOT LIKE '') THEN (invhist_ordtype || '-' || invhist_ordnumber)
+            ELSE invhist_ordnumber
+       END AS ordernumber,
+       formatQty(invhist_qoh_before) AS qohbefore,
+       formatQty(invhist_qoh_after) AS qohafter,
+       invhist_user AS username,
+       invhist_posted,
+       0 AS invdetail_id,
+       '' AS locationname,
+       '' AS detailqty,
+       '' AS locationqtybefore,
+       '' AS locationqtyafter,
+       CASE WHEN (invhist_transtype='TW') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IB') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IM') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IT') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RB') THEN 'WIP'
+            WHEN (invhist_transtype='RM') THEN 'WIP'
+            WHEN (invhist_transtype='RP') THEN 'PURCH'
+            WHEN (invhist_transtype='RS') THEN 'SHIP'
+            WHEN (invhist_transtype='SH') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SI') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SV') THEN whs1.warehous_code
+	    WHEN (invhist_transtype='TR') THEN whs2.warehous_code
+	    WHEN (invhist_transtype='TS') THEN whs1.warehous_code
+            ELSE ''
+       END AS locfrom,
+       CASE WHEN (invhist_transtype='TW') THEN whs2.warehous_code
+            WHEN (invhist_transtype='AD') THEN whs1.warehous_code
+            WHEN (invhist_transtype='CC') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IB') THEN 'WIP'
+            WHEN (invhist_transtype='IM') THEN 'WIP'
+            WHEN (invhist_transtype='NN') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RB') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RM') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RP') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RS') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RT') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RX') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SH') THEN 'SHIP'
+            WHEN (invhist_transtype='SI') THEN 'SCRAP'
+            WHEN (invhist_transtype='SV') THEN 'SHIP'
+	    WHEN (invhist_transtype='TR') THEN whs1.warehous_code
+	    WHEN (invhist_transtype='TS') THEN whs2.warehous_code
+            ELSE ''
+       END AS locto
+  FROM itemsite, item, warehous AS whs1, invhist LEFT OUTER JOIN warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id)
+ WHERE ( (NOT invhist_hasdetail)
+   AND (invhist_itemsite_id=itemsite_id)
+   AND (itemsite_item_id=item_id)
+   AND (itemsite_warehous_id=whs1.warehous_id)
+   AND (DATE(invhist_transdate) BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
+   AND (transType(invhist_transtype, &lt;? value(&quot;transType&quot;) ?>))
+&lt;? if exists(&quot;warehous_id&quot;) ?>
+   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+&lt;? endif ?>
+&lt;? if exists(&quot;itemgrp_id&quot;) ?>
+   AND (item_id IN (SELECT itemgrpitem_item_id
+                      FROM itemgrpitem
+                     WHERE (itemgrpitem_itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>)))
+&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
+   AND (item_id IN (SELECT itemgrpitem_item_id
+                      FROM itemgrpitem, itemgrp
+                     WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id)
+                       AND (itemgrp_name ~ &lt;? value(&quot;itemgrp_pattern&quot;) ?>) ) ))
+&lt;? elseif exists(&quot;classcode_id&quot;) ?>
+   AND (item_classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
+&lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
+   AND (item_classcode_id IN (SELECT classcode_id
+                                FROM classcode
+                               WHERE (classcode_code ~ &lt;? value(&quot;classcode_pattern&quot;) ?>)))
+&lt;? elseif exists(&quot;plancode_id&quot;) ?>
+   AND (itemsite_plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>)
+&lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
+   AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ &lt;? value(&quot;plancode_pattern&quot;) ?>)))
+&lt;? elseif exists(&quot;itemgrp&quot;) ?>
+   AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))
+&lt;? endif ?>
+)
+UNION
+SELECT invhist_id,
+       invhist_transdate,
+       formatDateTime(invhist_transdate) AS transdate,
+       invhist_transtype,
+       whs1.warehous_code AS warehous_code,
+       item_number,
+       item_descrip1,
+       item_descrip2,
+       formatQty(invhist_invqty) AS transqty,
+       invhist_invuom,
+       CASE WHEN (invhist_ordtype NOT LIKE '') THEN (invhist_ordtype || '-' || invhist_ordnumber)
+            ELSE invhist_ordnumber
+       END AS ordernumber,
+       formatQty(invhist_qoh_before) AS qohbefore,
+       formatQty(invhist_qoh_after) AS qohafter,
+       invhist_user AS username,
+       invhist_posted,
+       invdetail_id,
+       CASE WHEN (invdetail_location_id=-1) THEN invdetail_lotserial
+            WHEN (invdetail_lotserial IS NULL) THEN formatLocationName(invdetail_location_id)
+            ELSE (formatLocationName(invdetail_location_id) || '-' || invdetail_lotserial)
+       END AS locationname,
+       formatQty(invdetail_qty) AS detailqty,
+       formatQty(invdetail_qty_before) AS locationqtybefore,
+       formatQty(invdetail_qty_after) AS locationqtyafter,
+       CASE WHEN (invhist_transtype='TW') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IB') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IM') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IT') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RB') THEN 'WIP'
+            WHEN (invhist_transtype='RM') THEN 'WIP'
+            WHEN (invhist_transtype='RP') THEN 'PURCH'
+            WHEN (invhist_transtype='RS') THEN 'SHIP'
+            WHEN (invhist_transtype='SH') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SI') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SV') THEN whs1.warehous_code
+	    WHEN (invhist_transtype='TR') THEN whs2.warehous_code
+	    WHEN (invhist_transtype='TS') THEN whs1.warehous_code
+            ELSE ''
+       END AS locfrom,
+       CASE WHEN (invhist_transtype='TW') THEN whs2.warehous_code
+            WHEN (invhist_transtype='AD') THEN whs1.warehous_code
+            WHEN (invhist_transtype='CC') THEN whs1.warehous_code
+            WHEN (invhist_transtype='IB') THEN 'WIP'
+            WHEN (invhist_transtype='IM') THEN 'WIP'
+            WHEN (invhist_transtype='NN') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RB') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RM') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RP') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RS') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RT') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RX') THEN whs1.warehous_code
+            WHEN (invhist_transtype='SH') THEN 'SHIP'
+            WHEN (invhist_transtype='SI') THEN 'SCRAP'
+            WHEN (invhist_transtype='SV') THEN 'SHIP'
+	    WHEN (invhist_transtype='TR') THEN whs1.warehous_code
+	    WHEN (invhist_transtype='TS') THEN whs2.warehous_code
+            ELSE ''
+       END AS locto
+  FROM itemsite, item, warehous AS whs1, invdetail, invhist LEFT OUTER JOIN warehous AS whs2 ON (invhist_xfer_warehous_id=whs2.warehous_id)
+ WHERE ((invhist_hasdetail)
+   AND (invhist_itemsite_id=itemsite_id)
+   AND (itemsite_item_id=item_id)
+   AND (itemsite_warehous_id=whs1.warehous_id)
+   AND (invdetail_invhist_id=invhist_id)
+   AND (DATE(invhist_transdate) BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
+   AND (transType(invhist_transtype, &lt;? value(&quot;transType&quot;) ?>))
+&lt;? if exists(&quot;warehous_id&quot;) ?>
+   AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+&lt;? endif ?>
+&lt;? if exists(&quot;itemgrp_id&quot;) ?>
+   AND (item_id IN (SELECT itemgrpitem_item_id
+                      FROM itemgrpitem
+                     WHERE (itemgrpitem_itemgrp_id=&lt;? value(&quot;itemgrp_id&quot;) ?>)))
+&lt;? elseif exists(&quot;itemgrp_pattern&quot;) ?>
+   AND (item_id IN (SELECT itemgrpitem_item_id
+                      FROM itemgrpitem, itemgrp
+                     WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id)
+                       AND (itemgrp_name ~ &lt;? value(&quot;itemgrp_pattern&quot;) ?>) ) ))
+&lt;? elseif exists(&quot;classcode_id&quot;) ?>
+   AND (item_classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
+&lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
+   AND (item_classcode_id IN (SELECT classcode_id
+                                FROM classcode
+                               WHERE (classcode_code ~ &lt;? value(&quot;classcode_pattern&quot;) ?>)))
+&lt;? elseif exists(&quot;plancode_id&quot;) ?>
+   AND (itemsite_plancode_id=&lt;? value(&quot;plancode_id&quot;) ?>)
+&lt;? elseif exists(&quot;plancode_pattern&quot;) ?>
+   AND (itemsite_plancode_id IN (SELECT plancode_id
+                                   FROM plancode
+                                  WHERE (plancode_code ~ &lt;? value(&quot;plancode_pattern&quot;) ?>)))
+&lt;? elseif exists(&quot;itemgrp&quot;) ?>
+   AND (item_id IN (SELECT DISTINCT itemgrpitem_item_id FROM itemgrpitem))
+&lt;? endif ?>
+);</sql>
+ </querysource>
+ <rpthead>
+  <height>250</height>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>200</y>
+    <width>50</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Whs.</string>
+  </label>
+  <label>
+   <rect>
+    <x>473</x>
+    <y>140</y>
+    <width>105</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>213</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Area To</string>
+  </label>
+  <label>
+   <rect>
+    <x>509</x>
+    <y>200</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Trans-Qty</string>
+  </label>
+  <field>
+   <rect>
+    <x>145</x>
+    <y>120</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_value</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>140</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>229</y>
+    <width>130</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Username</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>213</y>
+    <width>130</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>432</x>
+    <y>200</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>33</x>
+    <y>140</y>
+    <width>105</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Warehouse:</string>
+  </label>
+  <label>
+   <rect>
+    <x>585</x>
+    <y>200</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH Before</string>
+  </label>
+  <label>
+   <rect>
+    <x>200</x>
+    <y>213</y>
+    <width>229</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>200</x>
+    <y>200</y>
+    <width>229</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <field>
+   <rect>
+    <x>145</x>
+    <y>140</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>245</ystart>
+   <xend>745</xend>
+   <yend>245</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>584</x>
+    <y>213</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Area From</string>
+  </label>
+  <label>
+   <rect>
+    <x>473</x>
+    <y>120</y>
+    <width>105</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>200</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH After</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>200</y>
+    <width>130</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Time</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>213</y>
+    <width>50</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>120</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>273</x>
+    <y>10</y>
+    <width>450</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_title</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>10</x>
+    <y>120</y>
+    <width>130</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_bytype</column>
+   </data>
+  </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>50</height>
+  <label>
+   <rect>
+    <x>200</x>
+    <y>0</y>
+    <width>229</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>432</x>
+    <y>0</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>13</y>
+    <width>130</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>0</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH After</string>
+  </label>
+  <label>
+   <rect>
+    <x>509</x>
+    <y>0</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Trans-Qty</string>
+  </label>
+  <label>
+   <rect>
+    <x>585</x>
+    <y>13</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Area From</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>13</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Area To</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>30</y>
+    <width>130</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Username</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>45</ystart>
+   <xend>745</xend>
+   <yend>45</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>0</y>
+    <width>130</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Time</string>
+  </label>
+  <label>
+   <rect>
+    <x>585</x>
+    <y>0</y>
+    <width>73</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH Before</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>13</y>
+    <width>33</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>0</y>
+    <width>33</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Whs.</string>
+  </label>
+  <label>
+   <rect>
+    <x>200</x>
+    <y>13</y>
+    <width>229</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+ </pghead>
+ <section>
+  <name>detail</name>
+  <group>
+   <name>invhist_id</name>
+   <column>invhist_id</column>
+   <head>
+    <height>50</height>
+    <field>
+     <rect>
+      <x>660</x>
+      <y>0</y>
+      <width>73</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>qohafter</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>5</x>
+      <y>0</y>
+      <width>50</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>warehous_code</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>200</x>
+      <y>0</y>
+      <width>229</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>item_number</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>5</x>
+      <y>13</y>
+      <width>50</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>invhist_transtype</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>660</x>
+      <y>13</y>
+      <width>73</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>locto</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>585</x>
+      <y>0</y>
+      <width>73</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>qohbefore</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>60</x>
+      <y>13</y>
+      <width>133</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>ordernumber</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>60</x>
+      <y>0</y>
+      <width>133</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>transdate</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>200</x>
+      <y>30</y>
+      <width>229</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>item_descrip2</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>200</x>
+      <y>13</y>
+      <width>229</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>item_descrip1</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>509</x>
+      <y>0</y>
+      <width>73</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>transqty</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>585</x>
+      <y>13</y>
+      <width>73</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>locfrom</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>60</x>
+      <y>30</y>
+      <width>133</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <left/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>username</column>
+     </data>
+    </field>
+    <field>
+     <rect>
+      <x>432</x>
+      <y>0</y>
+      <width>73</width>
+      <height>13</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>bold</weight>
+     </font>
+     <hcenter/>
+     <vcenter/>
+     <data>
+      <query>detail</query>
+      <column>invhist_invuom</column>
+     </data>
+    </field>
+   </head>
+   <foot>
+    <height>10</height>
+    <line>
+     <xstart>5</xstart>
+     <ystart>5</ystart>
+     <xend>745</xend>
+     <yend>5</yend>
+     <weight>0</weight>
+    </line>
+   </foot>
+  </group>
+  <detail>
+   <key>
+    <query>detail</query>
+   </key>
+   <height>14</height>
+   <field>
+    <rect>
+     <x>509</x>
+     <y>0</y>
+     <width>73</width>
+     <height>13</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>detailqty</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>585</x>
+     <y>0</y>
+     <width>73</width>
+     <height>13</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>locationqtybefore</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>200</x>
+     <y>0</y>
+     <width>229</width>
+     <height>13</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>locationname</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>660</x>
+     <y>0</y>
+     <width>73</width>
+     <height>13</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>locationqtyafter</column>
+    </data>
+   </field>
+  </detail>
+ </section>
+ <pgfoot>
+  <height>14</height>
+  <label>
+   <rect>
+    <x>613</x>
+    <y>0</y>
+    <width>85</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>90</x>
+    <y>0</y>
+    <width>100</width>
+    <height>13</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+ </pgfoot>
+</report>

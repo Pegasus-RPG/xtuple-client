@@ -1,0 +1,20 @@
+SELECT pack_head_id, pack_head_type, pack_shiphead_id,
+       CASE WHEN (pack_head_type='SO') THEN findCustomerForm(cohead_cust_id, 'P')
+	   <? if exists("MultiWhs") ?>
+            WHEN (pack_head_type='TO') THEN findTOForm(pack_head_id, 'P')
+	   <? endif ?>
+            ELSE '' END AS packform,
+       CASE WHEN (pack_head_type='SO') THEN findCustomerForm(cohead_cust_id, 'L')
+	   <? if exists("MultiWhs") ?>
+            WHEN (pack_head_type='TO') THEN findTOForm(pack_head_id, 'L')
+	   <? endif ?>
+            ELSE '' END AS pickform
+FROM pack LEFT OUTER JOIN
+     cohead ON (pack_head_type='SO' AND pack_head_id=cohead_id
+                AND cohead_shipvia=<? value("shipvia") ?>)
+     <? if exists("MultiWhs") ?>
+     LEFT OUTER JOIN
+     tohead ON (pack_head_type='TO' AND pack_head_id=tohead_id
+                AND tohead_shipvia=<? value("shipvia") ?>)
+     <? endif ?>
+WHERE (NOT pack_printed);

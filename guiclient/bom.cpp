@@ -1,0 +1,591 @@
+/*
+ * Common Public Attribution License Version 1.0. 
+ * 
+ * The contents of this file are subject to the Common Public Attribution 
+ * License Version 1.0 (the "License"); you may not use this file except 
+ * in compliance with the License. You may obtain a copy of the License 
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+ * Public License Version 1.1 but Sections 14 and 15 have been added to 
+ * cover use of software over a computer network and provide for limited 
+ * attribution for the Original Developer. In addition, Exhibit A has 
+ * been modified to be consistent with Exhibit B.
+ * 
+ * Software distributed under the License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
+ * the License for the specific language governing rights and limitations 
+ * under the License. 
+ * 
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
+ * 
+ * The Original Developer is not the Initial Developer and is __________. 
+ * If left blank, the Original Developer is the Initial Developer. 
+ * The Initial Developer of the Original Code is OpenMFG, LLC, 
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * 
+ * Contributor(s): ______________________.
+ * 
+ * Alternatively, the contents of this file may be used under the terms 
+ * of the xTuple End-User License Agreeement (the xTuple License), in which 
+ * case the provisions of the xTuple License are applicable instead of 
+ * those above.  If you wish to allow use of your version of this file only 
+ * under the terms of the xTuple License and not to allow others to use 
+ * your version of this file under the CPAL, indicate your decision by 
+ * deleting the provisions above and replace them with the notice and other 
+ * provisions required by the xTuple License. If you do not delete the 
+ * provisions above, a recipient may use your version of this file under 
+ * either the CPAL or the xTuple License.
+ * 
+ * EXHIBIT B.  Attribution Information
+ * 
+ * Attribution Copyright Notice: 
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * 
+ * Attribution Phrase: 
+ * Powered by PostBooks, an open source solution from xTuple
+ * 
+ * Attribution URL: www.xtuple.org 
+ * (to be included in the "Community" menu of the application if possible)
+ * 
+ * Graphic Image as provided in the Covered Code, if any. 
+ * (online at www.xtuple.com/poweredby)
+ * 
+ * Display of Attribution Information is required in Larger Works which 
+ * are defined in the CPAL as a work which combines Covered Code or 
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+#include "bom.h"
+
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QWorkspace>
+#include <QValidator>
+#include <Q3PopupMenu>
+#include <QKeyEvent>
+#include "bomItem.h"
+#include "rptSingleLevelBOM.h"
+
+/*
+ *  Constructs a BOM as a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'.
+ *
+ */
+BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
+    : QMainWindow(parent, name, fl)
+{
+  setupUi(this);
+
+  (void)statusBar();
+
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_moveUp, SIGNAL(clicked()), this, SLOT(sMoveUp()));
+  connect(_moveDown, SIGNAL(clicked()), this, SLOT(sMoveDown()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_bomitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
+  connect(_doRequireQtyPer, SIGNAL(toggled(bool)), _requiredQtyPer, SLOT(setEnabled(bool)));
+
+  statusBar()->hide();
+  _totalQtyPerCache = 0.0;
+  
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning);
+  _batchSize->setValidator(omfgThis->qtyVal());
+  
+  _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter );
+  _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft   );
+  _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft   );
+  _bomitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter );
+  _bomitem->addColumn(tr("Issue Method"), _itemColumn,  Qt::AlignCenter );
+  _bomitem->addColumn(tr("Qty. Per"),     _qtyColumn,   Qt::AlignRight  );
+  _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight  );
+  _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter );
+  _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter );
+  _bomitem->setDragString("bomid=");
+  _bomitem->setAltDragString("itemid=");
+  
+  if (!_privleges->check("ViewCosts"))
+  {
+    _currentStdCostLit->hide();
+    _currentActCostLit->hide();
+    _maxCostLit->hide();
+    _currentStdCost->hide();
+    _currentActCost->hide();
+    _maxCost->hide();
+  }
+  
+  connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+BOM::~BOM()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void BOM::languageChange()
+{
+    retranslateUi(this);
+}
+
+enum SetResponse BOM::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+  
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    _item->setId(param.toInt());
+  
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if ( (param.toString() == "new") || (param.toString() == "edit") )
+    {
+      connect(_bomitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      connect(_bomitem, SIGNAL(valid(bool)), _expire, SLOT(setEnabled(bool)));
+      connect(_bomitem, SIGNAL(valid(bool)), _moveUp, SLOT(setEnabled(bool)));
+      connect(_bomitem, SIGNAL(valid(bool)), _moveDown, SLOT(setEnabled(bool)));
+      connect(_bomitem, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+      connect(_bomitem, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    }
+    
+    if (param.toString() == "new")
+    {
+      _mode = cNew;
+      _item->setFocus();
+    }
+    else if (param.toString() == "edit")
+    {
+      _mode = cEdit;
+      _item->setReadOnly(TRUE);
+      _save->setFocus();
+    }
+    else if (param.toString() == "view")
+    {
+      _mode = cView;
+      _item->setReadOnly(TRUE);
+      _documentNum->setEnabled(FALSE);
+      _revision->setEnabled(FALSE);
+      _revisionDate->setEnabled(FALSE);
+      _batchSize->setEnabled(FALSE);
+      _new->setEnabled(FALSE);
+      _edit->setEnabled(FALSE);
+      _expire->setEnabled(FALSE);
+      _moveUp->setEnabled(FALSE);
+      _moveDown->setEnabled(FALSE);
+      _doRequireQtyPer->setEnabled(FALSE);
+      _requiredQtyPer->setEnabled(FALSE);
+      _save->setEnabled(FALSE);
+      
+      connect(_bomitem, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+      
+      _close->setFocus();
+    }
+  }
+  
+  return NoError;
+}
+
+void BOM::sSave()
+{
+  if(!sCheckRequiredQtyPer())
+    return;
+  
+  q.prepare( "SELECT bomhead_id "
+             "FROM bomhead "
+             "WHERE (bomhead_item_id=:item_id);" );
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    int bomheadid = q.value("bomhead_id").toInt();
+    
+    q.prepare( "UPDATE bomhead "
+               "SET bomhead_docnum=:bomhead_docnum,"
+               "    bomhead_revision=:bomhead_revision, bomhead_revisiondate=:bomhead_revisiondate,"
+               "    bomhead_batchsize=:bomhead_batchsize,"
+               "    bomhead_requiredqtyper=:bomhead_requiredqtyper "
+               "WHERE (bomhead_id=:bomhead_id);" );
+    q.bindValue(":bomhead_id", bomheadid);
+  }
+  else
+  {
+    q.prepare( "INSERT INTO bomhead "
+               "( bomhead_item_id, bomhead_docnum,"
+               "  bomhead_revision, bomhead_revisiondate,"
+               "  bomhead_batchsize, bomhead_requiredqtyper ) "
+               "VALUES "
+               "( :bomhead_item_id, :bomhead_docnum,"
+               "  :bomhead_revision, :bomhead_revisiondate, "
+               "  :bomhead_batchsize, :bomhead_requiredqtyper ) " );
+    q.bindValue(":bomhead_item_id", _item->id());
+  }
+  
+  q.bindValue(":bomhead_docnum", _documentNum->text());
+  q.bindValue(":bomhead_revision", _revision->text());
+  q.bindValue(":bomhead_revisiondate", _revisionDate->date());
+  q.bindValue(":bomhead_batchsize", _batchSize->toDouble());
+  if(_doRequireQtyPer->isChecked())
+    q.bindValue(":bomhead_requiredqtyper", _requiredQtyPer->text().toDouble());
+  q.exec();
+  
+  close();
+}
+
+void BOM::sPrint()
+{
+  ParameterList params;
+  params.append("item_id", _item->id());
+  params.append("print");
+  
+  if (_showExpired->isChecked())
+    params.append("expiredDays", 999);
+  
+  if (_showFuture->isChecked())
+    params.append("futureDays", 999);
+  
+  rptSingleLevelBOM newdlg(this, "", TRUE);
+  newdlg.set(params);
+}
+
+void BOM::sPopulateMenu(Q3PopupMenu *menuThis)
+{
+  menuThis->insertItem(tr("View"), this, SLOT(sView()), 0);
+  
+  if ((_mode == cNew) || (_mode == cEdit))
+  {
+    menuThis->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
+    menuThis->insertItem(tr("Expire"), this, SLOT(sExpire()), 0);
+    menuThis->insertItem(tr("Replace"), this, SLOT(sReplace()), 0);
+    
+    menuThis->insertSeparator();
+    
+    menuThis->insertItem(tr("Move Up"),   this, SLOT(sMoveUp()), 0);
+    menuThis->insertItem(tr("Move Down"), this, SLOT(sMoveDown()), 0);
+  }
+}
+
+void BOM::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("item_id", _item->id());
+  
+  bomItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void BOM::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("bomitem_id", _bomitem->id());
+  
+  bomItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void BOM::sView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("bomitem_id", _bomitem->id());
+  
+  bomItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void BOM::sExpire()
+{
+  q.prepare( "UPDATE bomitem "
+             "SET bomitem_expires=CURRENT_DATE "
+             "WHERE (bomitem_id=:bomitem_id);" );
+  q.bindValue(":bomitem_id", _bomitem->id());
+  q.exec();
+  
+  omfgThis->sBOMsUpdated(_item->id(), TRUE);
+}
+
+void BOM::sReplace()
+{
+  ParameterList params;
+  params.append("mode", "replace");
+  params.append("bomitem_id", _bomitem->id());
+  
+  bomItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void BOM::sMoveUp()
+{
+  q.prepare("SELECT moveBomitemUp(:bomitem_id) AS result;");
+  q.bindValue(":bomitem_id", _bomitem->id());
+  q.exec();
+  
+  omfgThis->sBOMsUpdated(_item->id(), TRUE);
+}
+
+void BOM::sMoveDown()
+{
+  q.prepare("SELECT moveBomitemDown(:bomitem_id) AS result;");
+  q.bindValue(":bomitem_id", _bomitem->id());
+  q.exec();
+  
+  omfgThis->sBOMsUpdated(_item->id(), TRUE);
+}
+
+void BOM::sFillList()
+{
+  sFillList(_item->id(), TRUE);
+}
+
+void BOM::sFillList(int pItemid, bool)
+{
+  if (_item->isValid() && (pItemid == _item->id()))
+  {
+    q.prepare( "SELECT bomhead_docnum, bomhead_revision,"
+               "       bomhead_revisiondate,"
+               "       formatQty(bomhead_batchsize) AS f_batchsize,"
+               "       bomhead_requiredqtyper "
+               "FROM bomhead "
+               "WHERE (bomhead_item_id=:item_id);" );
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    if (q.first())
+    {
+      _documentNum->setText(q.value("bomhead_docnum"));
+      _revision->setText(q.value("bomhead_revision"));
+      _revisionDate->setDate(q.value("bomhead_revisiondate").toDate());
+      _batchSize->setText(q.value("f_batchsize"));
+      if(q.value("bomhead_requiredqtyper").toDouble()!=0)
+      {
+        _doRequireQtyPer->setChecked(true);
+        _requiredQtyPer->setText(q.value("bomhead_requiredqtyper").toString());
+      }
+    }
+    else
+    {
+      _documentNum->clear();
+      _revision->clear();
+      _revisionDate->clear();
+      _batchSize->clear();
+    }
+    
+    QString sql( "SELECT bomitem_id, item_id, bomitem_seqnumber,"
+                 "       item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
+                 "       item_invuom,"
+                 "       CASE WHEN (bomitem_issuemethod = 'S') THEN :push"
+                 "            WHEN (bomitem_issuemethod = 'L') THEN :pull"
+                 "            WHEN (bomitem_issuemethod = 'M') THEN :mixed"
+                 "            ELSE :error"
+                 "       END AS issuemethod,"
+                 "       formatQtyPer(bomitem_qtyper) AS f_qtyper,"
+                 "       formatScrap(bomitem_scrap) AS f_scrap,"
+                 "       formatDate(bomitem_effective, :always) AS f_effective,"
+                 "       formatDate(bomitem_expires, :never) AS f_expires,"
+                 "       (bomitem_configtype<>'N') AS config "
+                 "FROM bomitem, item "
+                 "WHERE ((bomitem_item_id=item_id)"
+                 " AND (bomitem_parent_item_id=:item_id)" );
+    
+    if (!_showExpired->isChecked())
+      sql += " AND (bomitem_expires > CURRENT_DATE)";
+    
+    if (!_showFuture->isChecked())
+      sql += " AND (bomitem_effective <= CURRENT_DATE)";
+    
+    sql += ") "
+           "ORDER BY bomitem_seqnumber, bomitem_effective";
+    
+    int bomitemid = _bomitem->id();
+    _bomitem->clear();
+    
+    XListViewItem *selected = 0;
+    
+    q.prepare(sql);
+    q.bindValue(":push", tr("Push"));
+    q.bindValue(":pull", tr("Pull"));
+    q.bindValue(":mixed", tr("Mixed"));
+    q.bindValue(":error", tr("Error"));
+    q.bindValue(":always", tr("Always"));
+    q.bindValue(":never", tr("Never"));
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    while (q.next())
+    {
+      XListViewItem *last = new XListViewItem( _bomitem, _bomitem->lastItem(),
+                                               q.value("bomitem_id").toInt(), q.value("item_id").toInt(),
+                                               q.value("bomitem_seqnumber"), q.value("item_number"),
+                                               q.value("item_description"), q.value("item_invuom"),
+                                               q.value("issuemethod"), q.value("f_qtyper"),
+                                               q.value("f_scrap"), q.value("f_effective"),
+                                               q.value("f_expires") );
+      if (q.value("config").toBool())
+        last->setColor("blue");
+      
+      if (q.value("bomitem_id").toInt() == bomitemid)
+        selected = last;
+    }
+    
+    if (selected)
+    {
+      _bomitem->setSelected(selected, TRUE);
+      _bomitem->ensureItemVisible(selected);
+    }
+    
+    sql = "SELECT item_picklist,"
+          "       COUNT(*) AS total,"
+          "       COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap))) AS qtyper "
+          "FROM bomitem, item "
+          "WHERE ( (bomitem_item_id=item_id)"
+          " AND (bomitem_parent_item_id=:item_id)";
+    
+    if (!_showExpired->isChecked())
+      sql += " AND (bomitem_expires > CURRENT_DATE)";
+    
+    if (!_showFuture->isChecked())
+      sql += " AND (bomitem_effective <= CURRENT_DATE)";
+    
+    sql += " ) "
+           "GROUP BY item_picklist;";
+    
+    q.prepare(sql);
+    q.bindValue(":item_id", _item->id());
+    q.exec();
+    bool   foundPick    = FALSE;
+    bool   foundNonPick = FALSE;
+    int    totalNumber  = 0;
+    double totalQtyPer  = 0.0;
+    while (q.next())
+    {
+      totalNumber += q.value("total").toInt();
+      totalQtyPer += q.value("qtyper").toDouble();
+      
+      if (q.value("item_picklist").toBool())
+      {
+        foundPick = TRUE;
+        _pickNumber->setText(q.value("total").toString());
+        _pickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
+      }
+      else
+      {
+        foundNonPick = TRUE;
+        _nonPickNumber->setText(q.value("total").toString());
+        _nonPickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
+      }
+    }
+    
+    if (!foundPick)
+    {
+      _pickNumber->setText("0");
+      _pickQtyPer->setText(formatQty(0.0));
+    }
+    
+    if (!foundNonPick)
+    {
+      _nonPickNumber->setText("0");
+      _nonPickQtyPer->setText(formatQty(0.0));
+    }
+    
+    _totalNumber->setText(QString("%1").arg(totalNumber));
+    _totalQtyPer->setText(formatQtyPer(totalQtyPer));
+    _totalQtyPerCache = totalQtyPer;
+    
+    if (_privleges->check("ViewCosts"))
+    {
+      sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
+            "       formatCost(COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap) * stdCost(c.item_id)))) AS f_stdcost,"
+            "       formatCost(COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap) * ROUND(actCost(c.item_id),4)))) AS f_actcost "
+            "FROM bomitem, item AS c, item AS p "
+            "WHERE ( (bomitem_parent_item_id=p.item_id)"
+            " AND (bomitem_item_id=c.item_id)"
+            " AND (p.item_id=:item_id)";
+      
+      if (!_showExpired->isChecked())
+        sql += " AND (bomitem_expires > CURRENT_DATE)";
+      
+      if (!_showFuture->isChecked())
+        sql += " AND (bomitem_effective <= CURRENT_DATE)";
+      
+      sql += " ) "
+             "GROUP BY p.item_maxcost;";
+      
+      q.prepare(sql);
+      q.bindValue(":item_id", _item->id());
+      q.exec();
+      if (q.first())
+      {
+        _currentStdCost->setText(q.value("f_stdcost").toString());
+        _currentActCost->setText(q.value("f_actcost").toString());
+        _maxCost->setText(q.value("f_maxcost").toString());
+      }
+    }
+  }
+  else if (!_item->isValid())
+  {
+    _documentNum->clear();
+    _revision->clear();
+    _revisionDate->clear();
+    _batchSize->clear();
+    
+    _bomitem->clear();
+  }
+}
+
+void BOM::keyPressEvent( QKeyEvent * e )
+{
+#ifdef Q_WS_MAC
+  if(e->key() == Qt::Key_S && e->state() == Qt::ControlModifier)
+  {
+    _save->animateClick();
+    e->accept();
+  }
+  if(e->isAccepted())
+    return;
+#endif
+  e->ignore();
+}
+
+void BOM::sClose()
+{
+  if(sCheckRequiredQtyPer())
+    close();
+}
+
+bool BOM::sCheckRequiredQtyPer()
+{
+  if(cView == _mode || !_doRequireQtyPer->isChecked())
+    return true;
+
+  if(_requiredQtyPer->text().toDouble() != _totalQtyPerCache)
+  {
+    QMessageBox::warning( this, tr("Total Qty. Per Required"),
+      tr("A required total Qty. Per was specified but not met.\n "
+         "Please correct the problem before continuing.") );
+    return false;
+  }
+  
+  return true;
+}
+

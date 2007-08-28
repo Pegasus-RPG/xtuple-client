@@ -1,0 +1,317 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>rptTimePhasedRoughCutByWorkCenter</class>
+  <widget class="QDialog" name="rptTimePhasedRoughCutByWorkCenter" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>700</width>
+        <height>199</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Report Parameters - Time-Phased Planned Rough Cut by Work Center</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>5</number>
+      </property>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="QGroupBox" name="_workCenterGroup" >
+                  <property name="title" >
+                    <string/>
+                  </property>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>5</number>
+                    </property>
+                    <property name="spacing" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <layout class="QHBoxLayout" >
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <property name="spacing" >
+                          <number>0</number>
+                        </property>
+                        <item>
+                          <widget class="QRadioButton" name="_allWorkCenters" >
+                            <property name="text" >
+                              <string>All Work Centers</string>
+                            </property>
+                            <property name="checked" >
+                              <bool>true</bool>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <layout class="QHBoxLayout" >
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <property name="spacing" >
+                          <number>5</number>
+                        </property>
+                        <item>
+                          <widget class="QRadioButton" name="_selectedWorkCenter" >
+                            <property name="text" >
+                              <string>Selected Work Center:</string>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="XComboBox" name="_workCenters" >
+                            <property name="enabled" >
+                              <bool>false</bool>
+                            </property>
+                            <property name="sizePolicy" >
+                              <sizepolicy>
+                                <hsizetype>7</hsizetype>
+                                <vsizetype>0</vsizetype>
+                                <horstretch>0</horstretch>
+                                <verstretch>0</verstretch>
+                              </sizepolicy>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </item>
+                  </layout>
+                </widget>
+              </item>
+              <item>
+                <spacer name="Spacer23" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>41</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="WarehouseGroup" name="_warehouse" >
+                  <property name="title" >
+                    <string/>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <spacer name="Spacer24" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>16</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <item>
+                <widget class="QPushButton" name="_close" >
+                  <property name="text" >
+                    <string>&amp;Cancel</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="_print" >
+                  <property name="text" >
+                    <string>&amp;Print</string>
+                  </property>
+                  <property name="autoDefault" >
+                    <bool>true</bool>
+                  </property>
+                  <property name="default" >
+                    <bool>true</bool>
+                  </property>
+                </widget>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>5</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="_calendarLit" >
+                      <property name="text" >
+                        <string>Calendar:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="CalendarComboBox" name="_calendar" />
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="Spacer5_2" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>0</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <widget class="PeriodsListView" name="_periods" />
+          </item>
+        </layout>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>CalendarComboBox</class>
+      <extends>QComboBox</extends>
+      <header>calendarcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+    <customwidget>
+      <class>PeriodsListView</class>
+      <extends>Q3ListView</extends>
+      <header>periodslistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+    <customwidget>
+      <class>XComboBox</class>
+      <extends>QComboBox</extends>
+      <header>xcombobox.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_allWorkCenters</tabstop>
+    <tabstop>_selectedWorkCenter</tabstop>
+    <tabstop>_workCenters</tabstop>
+    <tabstop>_warehouse</tabstop>
+    <tabstop>_calendar</tabstop>
+    <tabstop>_periods</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>rptTimePhasedRoughCutByWorkCenter</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>_calendar</sender>
+      <signal>newCalendarId(int)</signal>
+      <receiver>_periods</receiver>
+      <slot>populate(int)</slot>
+    </connection>
+    <connection>
+      <sender>_selectedWorkCenter</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>_workCenters</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_calendar</sender>
+      <signal>select(PeriodList)</signal>
+      <receiver>_periods</receiver>
+      <slot>load(PeriodList)</slot>
+    </connection>
+  </connections>
+</ui>

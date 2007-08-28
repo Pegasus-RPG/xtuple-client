@@ -1,0 +1,328 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>printPurchaseOrder</class>
+  <widget class="QDialog" name="printPurchaseOrder" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>433</width>
+        <height>151</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Print Purchase Order</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <property name="margin" >
+        <number>5</number>
+      </property>
+      <property name="spacing" >
+        <number>0</number>
+      </property>
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <property name="spacing" >
+            <number>7</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="PoCluster" name="_po" />
+                  </item>
+                  <item>
+                    <spacer name="Spacer35" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>20</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Expanding</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Horizontal</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QHBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QGroupBox" name="_copiesGroup" >
+                      <property name="title" >
+                        <string>Copies:</string>
+                      </property>
+                      <layout class="QHBoxLayout" >
+                        <property name="margin" >
+                          <number>5</number>
+                        </property>
+                        <property name="spacing" >
+                          <number>7</number>
+                        </property>
+                        <item>
+                          <layout class="QVBoxLayout" >
+                            <property name="margin" >
+                              <number>0</number>
+                            </property>
+                            <property name="spacing" >
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QCheckBox" name="_vendorCopy" >
+                                <property name="text" >
+                                  <string>&amp;Vendor</string>
+                                </property>
+                                <property name="shortcut" >
+                                  <string>Alt+V</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <spacer name="Spacer126" >
+                                <property name="sizeHint" >
+                                  <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                  </size>
+                                </property>
+                                <property name="sizeType" >
+                                  <enum>Expanding</enum>
+                                </property>
+                                <property name="orientation" >
+                                  <enum>Vertical</enum>
+                                </property>
+                              </spacer>
+                            </item>
+                          </layout>
+                        </item>
+                        <item>
+                          <layout class="QVBoxLayout" >
+                            <property name="margin" >
+                              <number>0</number>
+                            </property>
+                            <property name="spacing" >
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QCheckBox" name="_internalCopy" >
+                                <property name="text" >
+                                  <string>&amp;Internal</string>
+                                </property>
+                                <property name="shortcut" >
+                                  <string>Alt+I</string>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <layout class="QHBoxLayout" >
+                                <property name="margin" >
+                                  <number>0</number>
+                                </property>
+                                <property name="spacing" >
+                                  <number>0</number>
+                                </property>
+                                <item>
+                                  <spacer name="Spacer125" >
+                                    <property name="sizeHint" >
+                                      <size>
+                                        <width>20</width>
+                                        <height>20</height>
+                                      </size>
+                                    </property>
+                                    <property name="sizeType" >
+                                      <enum>Preferred</enum>
+                                    </property>
+                                    <property name="orientation" >
+                                      <enum>Horizontal</enum>
+                                    </property>
+                                  </spacer>
+                                </item>
+                                <item>
+                                  <layout class="QHBoxLayout" >
+                                    <property name="margin" >
+                                      <number>0</number>
+                                    </property>
+                                    <property name="spacing" >
+                                      <number>5</number>
+                                    </property>
+                                    <item>
+                                      <widget class="QLabel" name="_numOfCopiesLit" >
+                                        <property name="text" >
+                                          <string># of C&amp;opies:</string>
+                                        </property>
+                                        <property name="alignment" >
+                                          <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                                        </property>
+                                        <property name="buddy" stdset="0" >
+                                          <cstring>_numOfCopies</cstring>
+                                        </property>
+                                      </widget>
+                                    </item>
+                                    <item>
+                                      <widget class="QSpinBox" name="_numOfCopies" >
+                                        <property name="enabled" >
+                                          <bool>false</bool>
+                                        </property>
+                                        <property name="minimum" >
+                                          <number>1</number>
+                                        </property>
+                                      </widget>
+                                    </item>
+                                  </layout>
+                                </item>
+                              </layout>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                    </widget>
+                  </item>
+                  <item>
+                    <spacer name="Spacer129" >
+                      <property name="sizeHint" >
+                        <size>
+                          <width>20</width>
+                          <height>20</height>
+                        </size>
+                      </property>
+                      <property name="sizeType" >
+                        <enum>Expanding</enum>
+                      </property>
+                      <property name="orientation" >
+                        <enum>Horizontal</enum>
+                      </property>
+                    </spacer>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>5</number>
+              </property>
+              <item>
+                <widget class="QPushButton" name="_close" >
+                  <property name="text" >
+                    <string>&amp;Cancel</string>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <widget class="QPushButton" name="_print" >
+                  <property name="enabled" >
+                    <bool>false</bool>
+                  </property>
+                  <property name="text" >
+                    <string>&amp;Print</string>
+                  </property>
+                  <property name="default" >
+                    <bool>true</bool>
+                  </property>
+                </widget>
+              </item>
+              <item>
+                <spacer name="Spacer128" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>20</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Expanding</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <spacer name="Spacer34" >
+          <property name="sizeHint" >
+            <size>
+              <width>20</width>
+              <height>20</height>
+            </size>
+          </property>
+          <property name="sizeType" >
+            <enum>Expanding</enum>
+          </property>
+          <property name="orientation" >
+            <enum>Vertical</enum>
+          </property>
+        </spacer>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="5" margin="5" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <tabstops>
+    <tabstop>_po</tabstop>
+    <tabstop>_vendorCopy</tabstop>
+    <tabstop>_internalCopy</tabstop>
+    <tabstop>_numOfCopies</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="global" >parameter.h</include>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>printPurchaseOrder</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>_po</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_print</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_internalCopy</sender>
+      <signal>toggled(bool)</signal>
+      <receiver>_numOfCopies</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>

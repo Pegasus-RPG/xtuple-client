@@ -1,0 +1,22 @@
+<? if exists("pohead_id") ?>
+SELECT enterReceipt('PO', poitem_id,
+		    poitem_qty_ordered - poitem_qty_received,
+		    poitem_freight - poitem_freight_received,
+		    '',
+		    pohead_curr_id, CURRENT_DATE) AS result 
+  FROM pohead, poitem LEFT OUTER JOIN 
+       recv ON (recv_orderitem_id = poitem_id
+		AND recv_order_type = <? value("ordertype") ?>) 
+ WHERE ((poitem_pohead_id=pohead_id) 
+   AND  (pohead_id=<? value("pohead_id") ?>));
+<? elseif exists("tohead_id") ?>
+SELECT enterReceipt('TO', toitem_id,
+		    toitem_qty_ordered - toitem_qty_received,
+		    toitem_freight - toitem_freight_received,
+		    '',
+		    toitem_freight_curr_id, CURRENT_DATE) AS result 
+  FROM toitem LEFT OUTER JOIN 
+       recv ON (recv_orderitem_id = toitem_id
+		AND recv_order_type = <? value("ordertype") ?>) 
+ WHERE (toitem_tohead_id=<? value("tohead_id") ?>);
+<? endif ?>

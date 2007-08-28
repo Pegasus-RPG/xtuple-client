@@ -1,0 +1,280 @@
+<!DOCTYPE UI><UI version="3.2" stdsetdef="1">
+<class>purchaseOrderTypes</class>
+<widget class="QMainWindow">
+    <property name="name">
+        <cstring>purchaseOrderTypes</cstring>
+    </property>
+    <property name="geometry">
+        <rect>
+            <x>0</x>
+            <y>0</y>
+            <width>375</width>
+            <height>398</height>
+        </rect>
+    </property>
+    <property name="caption">
+        <string>Purchase Order Types</string>
+    </property>
+    <hbox>
+        <property name="name">
+            <cstring>unnamed</cstring>
+        </property>
+        <property name="margin">
+            <number>5</number>
+        </property>
+        <property name="spacing">
+            <number>7</number>
+        </property>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>Layout8</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="margin">
+                    <number>0</number>
+                </property>
+                <property name="spacing">
+                    <number>0</number>
+                </property>
+                <widget class="QLabel">
+                    <property name="name">
+                        <cstring>_purchaseOrderTypes</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>0</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                    <property name="minimumSize">
+                        <size>
+                            <width>0</width>
+                            <height>20</height>
+                        </size>
+                    </property>
+                    <property name="text">
+                        <string>Purchase Order Types:</string>
+                    </property>
+                </widget>
+                <widget class="XListView">
+                    <property name="name">
+                        <cstring>_potype</cstring>
+                    </property>
+                    <property name="sizePolicy">
+                        <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>7</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                        </sizepolicy>
+                    </property>
+                </widget>
+            </vbox>
+        </widget>
+        <widget class="QLayoutWidget">
+            <property name="name">
+                <cstring>layout6</cstring>
+            </property>
+            <vbox>
+                <property name="name">
+                    <cstring>unnamed</cstring>
+                </property>
+                <property name="spacing">
+                    <number>0</number>
+                </property>
+                <widget class="QLayoutWidget">
+                    <property name="name">
+                        <cstring>layout5</cstring>
+                    </property>
+                    <vbox>
+                        <property name="name">
+                            <cstring>unnamed</cstring>
+                        </property>
+                        <property name="spacing">
+                            <number>5</number>
+                        </property>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>_close</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Close</string>
+                            </property>
+                            <property name="accel">
+                                <string>Alt+C</string>
+                            </property>
+                        </widget>
+                        <widget class="QPushButton">
+                            <property name="name">
+                                <cstring>_print</cstring>
+                            </property>
+                            <property name="text">
+                                <string>&amp;Print</string>
+                            </property>
+                        </widget>
+                        <widget class="QLayoutWidget">
+                            <property name="name">
+                                <cstring>layout148</cstring>
+                            </property>
+                            <vbox>
+                                <property name="name">
+                                    <cstring>unnamed</cstring>
+                                </property>
+                                <property name="spacing">
+                                    <number>0</number>
+                                </property>
+                                <widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>_new</cstring>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;New</string>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>_edit</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Edit</string>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>_view</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;View</string>
+                                    </property>
+                                </widget>
+                                <widget class="QPushButton">
+                                    <property name="name">
+                                        <cstring>_delete</cstring>
+                                    </property>
+                                    <property name="enabled">
+                                        <bool>false</bool>
+                                    </property>
+                                    <property name="text">
+                                        <string>&amp;Delete</string>
+                                    </property>
+                                </widget>
+                            </vbox>
+                        </widget>
+                    </vbox>
+                </widget>
+                <spacer>
+                    <property name="name">
+                        <cstring>Spacer12</cstring>
+                    </property>
+                    <property name="orientation">
+                        <enum>Vertical</enum>
+                    </property>
+                    <property name="sizeType">
+                        <enum>Expanding</enum>
+                    </property>
+                    <property name="sizeHint">
+                        <size>
+                            <width>20</width>
+                            <height>133</height>
+                        </size>
+                    </property>
+                </spacer>
+            </vbox>
+        </widget>
+    </hbox>
+</widget>
+<toolbars>
+</toolbars>
+<connections>
+    <connection>
+        <sender>_print</sender>
+        <signal>clicked()</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>sPrint()</slot>
+    </connection>
+    <connection>
+        <sender>_new</sender>
+        <signal>clicked()</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>sNew()</slot>
+    </connection>
+    <connection>
+        <sender>_edit</sender>
+        <signal>clicked()</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>sEdit()</slot>
+    </connection>
+    <connection>
+        <sender>_delete</sender>
+        <signal>clicked()</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>sDelete()</slot>
+    </connection>
+    <connection>
+        <sender>_potype</sender>
+        <signal>populateMenu(QPopupMenu*,QListViewItem*,int)</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>sPopulateMenu(QPopupMenu*)</slot>
+    </connection>
+    <connection>
+        <sender>_close</sender>
+        <signal>clicked()</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>close()</slot>
+    </connection>
+    <connection>
+        <sender>_view</sender>
+        <signal>clicked()</signal>
+        <receiver>purchaseOrderTypes</receiver>
+        <slot>sView()</slot>
+    </connection>
+    <connection>
+        <sender>_potype</sender>
+        <signal>valid(bool)</signal>
+        <receiver>_view</receiver>
+        <slot>setEnabled(bool)</slot>
+    </connection>
+</connections>
+<tabstops>
+    <tabstop>_potype</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_view</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+</tabstops>
+<includes>
+    <include location="global" impldecl="in implementation">qstatusbar.h</include>
+    <include location="global" impldecl="in implementation">qmessagebox.h</include>
+    <include location="global" impldecl="in implementation">parameter.h</include>
+    <include location="local" impldecl="in implementation">purchaseOrderType.h</include>
+    <include location="global" impldecl="in implementation">openreports.h</include>
+    <include location="local" impldecl="in declaration">OpenMFGGUIClient.h</include>
+    <include location="local" impldecl="in implementation">purchaseOrderTypes.ui.h</include>
+</includes>
+<slots>
+    <slot>sFillList()</slot>
+    <slot>sNew()</slot>
+    <slot>sEdit()</slot>
+    <slot>sView()</slot>
+    <slot>sDelete()</slot>
+    <slot>sPopulateMenu( QPopupMenu * )</slot>
+    <slot>sPrint()</slot>
+</slots>
+<functions>
+    <function>init()</function>
+</functions>
+<layoutdefaults spacing="6" margin="11"/>
+</UI>

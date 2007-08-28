@@ -1,0 +1,297 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>openSalesOrders</class>
+  <widget class="QMainWindow" name="openSalesOrders" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>579</width>
+        <height>387</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Open Sales Orders</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QVBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="WarehouseGroup" name="_warehouse" >
+                    <property name="title" >
+                      <string/>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <spacer name="Spacer89" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>16</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Preferred</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" >
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <spacer name="Spacer54" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>244</width>
+                        <height>20</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Expanding</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Horizontal</enum>
+                    </property>
+                  </spacer>
+                </item>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="spacing" >
+                      <number>5</number>
+                    </property>
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="QPushButton" name="_close" >
+                        <property name="text" >
+                          <string>&amp;Close</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_print" >
+                        <property name="text" >
+                          <string>&amp;Print</string>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="spacing" >
+              <number>0</number>
+            </property>
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="_salesOrdersLit" >
+                <property name="sizePolicy" >
+                  <sizepolicy>
+                    <hsizetype>7</hsizetype>
+                    <vsizetype>0</vsizetype>
+                    <horstretch>0</horstretch>
+                    <verstretch>0</verstretch>
+                  </sizepolicy>
+                </property>
+                <property name="minimumSize" >
+                  <size>
+                    <width>0</width>
+                    <height>20</height>
+                  </size>
+                </property>
+                <property name="text" >
+                  <string>Sales Orders:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" >
+                <property name="spacing" >
+                  <number>7</number>
+                </property>
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <widget class="XTreeWidget" name="_so" >
+                    <property name="sizePolicy" >
+                      <sizepolicy>
+                        <hsizetype>7</hsizetype>
+                        <vsizetype>7</vsizetype>
+                        <horstretch>0</horstretch>
+                        <verstretch>0</verstretch>
+                      </sizepolicy>
+                    </property>
+                  </widget>
+                </item>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="spacing" >
+                      <number>0</number>
+                    </property>
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="QPushButton" name="_new" >
+                        <property name="enabled" >
+                          <bool>true</bool>
+                        </property>
+                        <property name="text" >
+                          <string>&amp;New</string>
+                        </property>
+                        <property name="shortcut" >
+                          <string>Alt+N</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_edit" >
+                        <property name="enabled" >
+                          <bool>false</bool>
+                        </property>
+                        <property name="text" >
+                          <string>&amp;Edit</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_view" >
+                        <property name="enabled" >
+                          <bool>false</bool>
+                        </property>
+                        <property name="text" >
+                          <string>&amp;View</string>
+                        </property>
+                        <property name="shortcut" >
+                          <string>Alt+V</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_copy" >
+                        <property name="enabled" >
+                          <bool>false</bool>
+                        </property>
+                        <property name="text" >
+                          <string>Co&amp;py</string>
+                        </property>
+                        <property name="shortcut" >
+                          <string>Alt+P</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_delete" >
+                        <property name="enabled" >
+                          <bool>false</bool>
+                        </property>
+                        <property name="text" >
+                          <string>&amp;Delete</string>
+                        </property>
+                        <property name="shortcut" >
+                          <string>Alt+D</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <spacer name="Spacer3" >
+                        <property name="sizeHint" >
+                          <size>
+                            <width>20</width>
+                            <height>166</height>
+                          </size>
+                        </property>
+                        <property name="sizeType" >
+                          <enum>Expanding</enum>
+                        </property>
+                        <property name="orientation" >
+                          <enum>Vertical</enum>
+                        </property>
+                      </spacer>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XTreeWidget</class>
+      <extends>QWidget</extends>
+      <header>xtreewidget.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_warehouse</tabstop>
+    <tabstop>_so</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_view</tabstop>
+    <tabstop>_copy</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>openSalesOrders</receiver>
+      <slot>close()</slot>
+    </connection>
+    <connection>
+      <sender>_so</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_view</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+  </connections>
+</ui>

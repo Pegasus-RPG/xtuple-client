@@ -1,0 +1,511 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>ediProfile</class>
+  <widget class="QDialog" name="ediProfile" >
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>472</width>
+        <height>500</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>EDI Profile</string>
+    </property>
+    <layout class="QVBoxLayout" >
+      <item>
+        <layout class="QHBoxLayout" >
+          <property name="margin" >
+            <number>0</number>
+          </property>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="_typeLit" >
+                      <property name="text" >
+                        <string>Type:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="1" >
+                    <layout class="QHBoxLayout" >
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <widget class="QComboBox" name="_type" >
+                          <item>
+                            <property name="text" >
+                              <string>Ftp</string>
+                            </property>
+                          </item>
+                          <item>
+                            <property name="text" >
+                              <string>Email</string>
+                            </property>
+                          </item>
+                        </widget>
+                      </item>
+                      <item>
+                        <spacer name="spacer1" >
+                          <property name="sizeHint" >
+                            <size>
+                              <width>40</width>
+                              <height>20</height>
+                            </size>
+                          </property>
+                          <property name="sizeType" >
+                            <enum>Expanding</enum>
+                          </property>
+                          <property name="orientation" >
+                            <enum>Horizontal</enum>
+                          </property>
+                        </spacer>
+                      </item>
+                    </layout>
+                  </item>
+                  <item row="0" column="1" >
+                    <widget class="QLineEdit" name="_name" />
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="_nameLit" >
+                      <property name="text" >
+                        <string>Name:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="spacer3" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>0</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+          <item>
+            <layout class="QVBoxLayout" >
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_cancel" >
+                      <property name="text" >
+                        <string>&amp;Cancel</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+C</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_accept" >
+                      <property name="text" >
+                        <string>&amp;OK</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+O</string>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="spacer2" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>0</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </item>
+        </layout>
+      </item>
+      <item>
+        <widget class="Q3WidgetStack" name="_stack" >
+          <widget class="QWidget" name="ftpOptions" >
+            <attribute name="id" >
+              <number>0</number>
+            </attribute>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <property name="spacing" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item row="0" column="1" >
+                    <widget class="QLineEdit" name="_ftpServer" />
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="_ftpServerLit" >
+                      <property name="text" >
+                        <string>Server:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="1" >
+                    <widget class="QLineEdit" name="_ftpLogin" />
+                  </item>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="_ftpLoginLit" >
+                      <property name="text" >
+                        <string>Login Name:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="3" column="1" >
+                    <widget class="QLineEdit" name="_ftpDirectory" />
+                  </item>
+                  <item row="2" column="0" >
+                    <widget class="QLabel" name="_ftpPasswordLit" >
+                      <property name="text" >
+                        <string>Password:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="2" column="1" >
+                    <widget class="QLineEdit" name="_ftpPassword" />
+                  </item>
+                  <item row="3" column="0" >
+                    <widget class="QLabel" name="_ftpDirectoryLit" >
+                      <property name="text" >
+                        <string>Directory:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <spacer name="spacer4" >
+                  <property name="sizeHint" >
+                    <size>
+                      <width>20</width>
+                      <height>0</height>
+                    </size>
+                  </property>
+                  <property name="sizeType" >
+                    <enum>Preferred</enum>
+                  </property>
+                  <property name="orientation" >
+                    <enum>Vertical</enum>
+                  </property>
+                </spacer>
+              </item>
+            </layout>
+          </widget>
+          <widget class="QWidget" name="emailOptions" >
+            <attribute name="id" >
+              <number>1</number>
+            </attribute>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <layout class="QGridLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item row="2" column="1" >
+                    <widget class="QLineEdit" name="_emailSubject" />
+                  </item>
+                  <item row="0" column="1" >
+                    <widget class="QLineEdit" name="_emailTo" />
+                  </item>
+                  <item row="2" column="0" >
+                    <widget class="QLabel" name="_emailSubjectLit" >
+                      <property name="text" >
+                        <string>Subject:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="0" column="0" >
+                    <widget class="QLabel" name="_emailToLit" >
+                      <property name="text" >
+                        <string>To:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                  <item row="1" column="1" >
+                    <widget class="QLineEdit" name="_emailCC" />
+                  </item>
+                  <item row="1" column="0" >
+                    <widget class="QLabel" name="_emailCCLit" >
+                      <property name="text" >
+                        <string>Cc:</string>
+                      </property>
+                      <property name="alignment" >
+                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                      </property>
+                    </widget>
+                  </item>
+                </layout>
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="spacing" >
+                    <number>0</number>
+                  </property>
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QLabel" name="_emailBodyLit" >
+                      <property name="text" >
+                        <string>Message Body:</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QTextEdit" name="_emailBody" />
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </widget>
+        </widget>
+      </item>
+      <item>
+        <widget class="QTabWidget" name="_tab" >
+          <widget class="QWidget" name="forms" >
+            <attribute name="title" >
+              <string>Forms</string>
+            </attribute>
+            <layout class="QHBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="XListView" name="_forms" />
+              </item>
+              <item>
+                <layout class="QVBoxLayout" >
+                  <property name="margin" >
+                    <number>0</number>
+                  </property>
+                  <item>
+                    <widget class="QPushButton" name="_new" >
+                      <property name="text" >
+                        <string>&amp;New</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+N</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <widget class="QPushButton" name="_edit" >
+                      <property name="enabled" >
+                        <bool>false</bool>
+                      </property>
+                      <property name="text" >
+                        <string>&amp;Edit</string>
+                      </property>
+                      <property name="shortcut" >
+                        <string>Alt+E</string>
+                      </property>
+                    </widget>
+                  </item>
+                  <item>
+                    <layout class="QVBoxLayout" >
+                      <property name="spacing" >
+                        <number>0</number>
+                      </property>
+                      <property name="margin" >
+                        <number>0</number>
+                      </property>
+                      <item>
+                        <spacer name="spacer5" >
+                          <property name="sizeHint" >
+                            <size>
+                              <width>20</width>
+                              <height>16</height>
+                            </size>
+                          </property>
+                          <property name="sizeType" >
+                            <enum>Preferred</enum>
+                          </property>
+                          <property name="orientation" >
+                            <enum>Vertical</enum>
+                          </property>
+                        </spacer>
+                      </item>
+                      <item>
+                        <widget class="QPushButton" name="_delete" >
+                          <property name="enabled" >
+                            <bool>false</bool>
+                          </property>
+                          <property name="text" >
+                            <string>&amp;Delete</string>
+                          </property>
+                          <property name="shortcut" >
+                            <string>Alt+D</string>
+                          </property>
+                        </widget>
+                      </item>
+                    </layout>
+                  </item>
+                </layout>
+              </item>
+            </layout>
+          </widget>
+          <widget class="QWidget" name="notes" >
+            <attribute name="title" >
+              <string>Notes</string>
+            </attribute>
+            <layout class="QVBoxLayout" >
+              <property name="margin" >
+                <number>0</number>
+              </property>
+              <item>
+                <widget class="QTextEdit" name="_notes" />
+              </item>
+            </layout>
+          </widget>
+        </widget>
+      </item>
+    </layout>
+  </widget>
+  <layoutdefault spacing="5" margin="5" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_name</tabstop>
+    <tabstop>_type</tabstop>
+    <tabstop>_ftpServer</tabstop>
+    <tabstop>_ftpLogin</tabstop>
+    <tabstop>_ftpPassword</tabstop>
+    <tabstop>_ftpDirectory</tabstop>
+    <tabstop>_emailTo</tabstop>
+    <tabstop>_emailCC</tabstop>
+    <tabstop>_emailSubject</tabstop>
+    <tabstop>_emailBody</tabstop>
+    <tabstop>_tab</tabstop>
+    <tabstop>_forms</tabstop>
+    <tabstop>_new</tabstop>
+    <tabstop>_edit</tabstop>
+    <tabstop>_delete</tabstop>
+    <tabstop>_notes</tabstop>
+    <tabstop>_accept</tabstop>
+    <tabstop>_cancel</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+    <include location="global" >parameter.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_cancel</sender>
+      <signal>clicked()</signal>
+      <receiver>ediProfile</receiver>
+      <slot>reject()</slot>
+    </connection>
+    <connection>
+      <sender>_type</sender>
+      <signal>activated(int)</signal>
+      <receiver>_stack</receiver>
+      <slot>raiseWidget(int)</slot>
+    </connection>
+    <connection>
+      <sender>_forms</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_delete</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_forms</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_edit</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_forms</sender>
+      <signal>itemSelected(int)</signal>
+      <receiver>_edit</receiver>
+      <slot>animateClick()</slot>
+    </connection>
+  </connections>
+</ui>

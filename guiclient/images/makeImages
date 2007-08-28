@@ -1,0 +1,17 @@
+#!/bin/bash
+
+qembed --images dspEvents.xpm splash.png icon.xpm                                                > systemImages.h
+
+qembed --images newBOO.xpm boos.xpm newBOM.xpm boms.xpm newItem.xpm items.xpm                    > pdImages.h
+
+qembed --images dspBacklogByCustomer.xpm dspBacklogByItem.xpm dspBacklogByWarehouse.xpm       \
+                dspPricesByCustomerType.xpm dspPricesByCustomer.xpm dspPricesByItem.xpm       \
+                newSalesOrder.xpm                                                                > soImages.h
+
+qembed --images dspInventoryAvailabilityByItem.xpm dspInventoryAvailabilityByPlannerCode.xpm  \
+                dspInventoryHistoryByItem.xpm newItemSite.xpm itemSites.xpm                      > imImages.h
+
+qembed --images dspWoScheduleByItem.xpm dspWoScheduleByWarehouse.xpm newWorkOrder.xpm            > woImages.h
+
+qembed --images newPurchaseOrder.xpm                                                             > poImages.h
+

@@ -1,0 +1,369 @@
+<ui version="4.0" stdsetdef="1" >
+  <author></author>
+  <comment></comment>
+  <exportmacro></exportmacro>
+  <class>dspBacklogBySalesOrder</class>
+  <widget class="QMainWindow" name="dspBacklogBySalesOrder" >
+    <property name="enabled" >
+      <bool>true</bool>
+    </property>
+    <property name="geometry" >
+      <rect>
+        <x>0</x>
+        <y>0</y>
+        <width>769</width>
+        <height>299</height>
+      </rect>
+    </property>
+    <property name="windowTitle" >
+      <string>Backlog by Sales Order</string>
+    </property>
+    <widget class="QWidget" >
+      <layout class="QVBoxLayout" >
+        <property name="margin" >
+          <number>5</number>
+        </property>
+        <property name="spacing" >
+          <number>5</number>
+        </property>
+        <item>
+          <layout class="QHBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>7</number>
+            </property>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <layout class="QHBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <property name="spacing" >
+                      <number>5</number>
+                    </property>
+                    <item>
+                      <layout class="QVBoxLayout" >
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <property name="spacing" >
+                          <number>5</number>
+                        </property>
+                        <item>
+                          <widget class="QLabel" name="_salesOrderLit" >
+                            <property name="text" >
+                              <string>Sales Order #:</string>
+                            </property>
+                            <property name="alignment" >
+                              <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                            </property>
+                          </widget>
+                        </item>
+                        <item>
+                          <widget class="QLabel" name="_orderDateLit" >
+                            <property name="text" >
+                              <string>Order Date:</string>
+                            </property>
+                            <property name="alignment" >
+                              <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                            </property>
+                          </widget>
+                        </item>
+                      </layout>
+                    </item>
+                    <item>
+                      <layout class="QVBoxLayout" >
+                        <property name="margin" >
+                          <number>0</number>
+                        </property>
+                        <property name="spacing" >
+                          <number>5</number>
+                        </property>
+                        <item>
+                          <layout class="QHBoxLayout" >
+                            <property name="margin" >
+                              <number>0</number>
+                            </property>
+                            <property name="spacing" >
+                              <number>5</number>
+                            </property>
+                            <item>
+                              <widget class="SoLineEdit" name="_salesOrder" />
+                            </item>
+                            <item>
+                              <widget class="QPushButton" name="_salesOrderList" >
+                                <property name="text" >
+                                  <string>...</string>
+                                </property>
+                              </widget>
+                            </item>
+                          </layout>
+                        </item>
+                        <item>
+                          <layout class="QHBoxLayout" >
+                            <property name="margin" >
+                              <number>0</number>
+                            </property>
+                            <property name="spacing" >
+                              <number>0</number>
+                            </property>
+                            <item>
+                              <widget class="QLabel" name="_orderDate" >
+                                <property name="text" >
+                                  <string/>
+                                </property>
+                                <property name="alignment" >
+                                  <set>Qt::AlignVCenter</set>
+                                </property>
+                              </widget>
+                            </item>
+                            <item>
+                              <spacer name="Spacer1" >
+                                <property name="sizeHint" >
+                                  <size>
+                                    <width>20</width>
+                                    <height>20</height>
+                                  </size>
+                                </property>
+                                <property name="sizeType" >
+                                  <enum>Preferred</enum>
+                                </property>
+                                <property name="orientation" >
+                                  <enum>Horizontal</enum>
+                                </property>
+                              </spacer>
+                            </item>
+                          </layout>
+                        </item>
+                      </layout>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <spacer name="Spacer5" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>14</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Fixed</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QHBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>5</number>
+                </property>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <property name="spacing" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="QLabel" name="_custNameLit" >
+                        <property name="text" >
+                          <string>Cust. Name:</string>
+                        </property>
+                        <property name="alignment" >
+                          <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="_custPhoneLit" >
+                        <property name="text" >
+                          <string>Cust. Phone:</string>
+                        </property>
+                        <property name="alignment" >
+                          <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="_poNumberLit" >
+                        <property name="text" >
+                          <string>P/O Number:</string>
+                        </property>
+                        <property name="alignment" >
+                          <set>Qt::AlignVCenter|Qt::AlignRight</set>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <property name="spacing" >
+                      <number>0</number>
+                    </property>
+                    <item>
+                      <widget class="QLabel" name="_custName" >
+                        <property name="sizePolicy" >
+                          <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="_custPhone" >
+                        <property name="sizePolicy" >
+                          <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QLabel" name="_poNumber" >
+                        <property name="sizePolicy" >
+                          <sizepolicy>
+                            <hsizetype>7</hsizetype>
+                            <vsizetype>5</vsizetype>
+                            <horstretch>0</horstretch>
+                            <verstretch>0</verstretch>
+                          </sizepolicy>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+              </layout>
+            </item>
+            <item>
+              <layout class="QVBoxLayout" >
+                <property name="margin" >
+                  <number>0</number>
+                </property>
+                <property name="spacing" >
+                  <number>0</number>
+                </property>
+                <item>
+                  <layout class="QVBoxLayout" >
+                    <property name="margin" >
+                      <number>0</number>
+                    </property>
+                    <property name="spacing" >
+                      <number>5</number>
+                    </property>
+                    <item>
+                      <widget class="QPushButton" name="_close" >
+                        <property name="text" >
+                          <string>&amp;Close</string>
+                        </property>
+                      </widget>
+                    </item>
+                    <item>
+                      <widget class="QPushButton" name="_print" >
+                        <property name="text" >
+                          <string>&amp;Print</string>
+                        </property>
+                      </widget>
+                    </item>
+                  </layout>
+                </item>
+                <item>
+                  <spacer name="Spacer51" >
+                    <property name="sizeHint" >
+                      <size>
+                        <width>20</width>
+                        <height>10</height>
+                      </size>
+                    </property>
+                    <property name="sizeType" >
+                      <enum>Fixed</enum>
+                    </property>
+                    <property name="orientation" >
+                      <enum>Vertical</enum>
+                    </property>
+                  </spacer>
+                </item>
+              </layout>
+            </item>
+          </layout>
+        </item>
+        <item>
+          <layout class="QVBoxLayout" >
+            <property name="margin" >
+              <number>0</number>
+            </property>
+            <property name="spacing" >
+              <number>0</number>
+            </property>
+            <item>
+              <widget class="QLabel" name="_shipmentStatusLit" >
+                <property name="text" >
+                  <string>Shipment Status:</string>
+                </property>
+              </widget>
+            </item>
+            <item>
+              <widget class="XListView" name="_soitem" />
+            </item>
+          </layout>
+        </item>
+      </layout>
+    </widget>
+  </widget>
+  <layoutdefault spacing="6" margin="11" />
+  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+  <customwidgets>
+    <customwidget>
+      <class>XListView</class>
+      <extends>Q3ListView</extends>
+      <header>xlistview.h</header>
+      <container>0</container>
+      <pixmap></pixmap>
+    </customwidget>
+  </customwidgets>
+  <tabstops>
+    <tabstop>_salesOrder</tabstop>
+    <tabstop>_salesOrderList</tabstop>
+    <tabstop>_soitem</tabstop>
+    <tabstop>_print</tabstop>
+    <tabstop>_close</tabstop>
+  </tabstops>
+  <includes>
+    <include location="local" >OpenMFGGUIClient.h</include>
+  </includes>
+  <connections>
+    <connection>
+      <sender>_close</sender>
+      <signal>clicked()</signal>
+      <receiver>dspBacklogBySalesOrder</receiver>
+      <slot>close()</slot>
+    </connection>
+  </connections>
+</ui>
