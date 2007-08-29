@@ -260,6 +260,7 @@ void itemPricingSchedules::sFillList(int pIpsheadid)
 
 void itemPricingSchedules::sSearch( const QString & pTarget)
 {
+  _ipshead->clearSelection();
   int i;
   for (i = 0; i < _ipshead->topLevelItemCount(); i++)
   {

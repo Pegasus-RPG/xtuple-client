@@ -323,7 +323,7 @@ void items::sSearch( const QString &pTarget )
   int i;
   for (i = 0; i < _item->topLevelItemCount(); i++)
   {
-    if (_item->topLevelItem(i)->text(0).startsWith(pTarget.length(), Qt::CaseInsensitive))
+    if (_item->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
       break;
   }
 
