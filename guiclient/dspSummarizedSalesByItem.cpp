@@ -57,10 +57,10 @@
 
 #include "dspSummarizedSalesByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QWorkspace>
 #include <parameter.h>
 #include "dspSalesHistoryByItem.h"
 #include "rptSummarizedSalesByItem.h"
@@ -81,7 +81,7 @@ dspSummarizedSalesByItem::dspSummarizedSalesByItem(QWidget* parent, const char* 
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -103,7 +103,7 @@ void dspSummarizedSalesByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSummarizedSalesByItem::init()
 {
@@ -120,7 +120,7 @@ void dspSummarizedSalesByItem::init()
   _sohist->addColumn(tr("Total Sales"), _qtyColumn,  Qt::AlignRight  );
 }
 
-void dspSummarizedSalesByItem::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspSummarizedSalesByItem::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewDetail()), 0);
 }
@@ -219,9 +219,11 @@ void dspSummarizedSalesByItem::sFillList()
       totalSales += q.value("totalsales").toDouble();
     while (q.next());
 
-    new XListViewItem( _sohist, _sohist->lastItem(), -1,
-                       QVariant(tr("Totals")), "", "", "", "", 
-                       formatMoney(totalSales) );
+    new XTreeWidgetItem(_sohist,
+			_sohist->topLevelItem(_sohist->topLevelItemCount() - 1),
+			-1,
+                        QVariant(tr("Totals")), "", "", "", "", 
+                        formatMoney(totalSales) );
   }
 
 }

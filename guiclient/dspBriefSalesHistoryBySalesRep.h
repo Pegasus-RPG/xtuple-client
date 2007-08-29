@@ -72,13 +72,12 @@ public:
     dspBriefSalesHistoryBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBriefSalesHistoryBySalesRep();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sHandleParams();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sPrint();
     virtual void sFillList();
 

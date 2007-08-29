@@ -63,6 +63,7 @@
 
 #include <parameter.h>
 
+#include "crmacctcluster.h"
 #include "ui_searchForCRMAccount.h"
 
 class searchForCRMAccount : public QMainWindow, public Ui::searchForCRMAccount
@@ -84,12 +85,9 @@ protected slots:
     virtual void languageChange();
 
 protected:
-    enum CRMAccountSubtypes { CRMACCT, COMPETITOR, CUST, PARTNER, PROSPECT,
-			      TAXAUTH, VEND };
-
-    bool			_editpriv;
-    enum CRMAccountSubtypes	_subtype;
-    bool			_viewpriv;
+    bool				_editpriv;
+    CRMAcctLineEdit::CRMAcctSubtype	_subtype;
+    bool				_viewpriv;
 
 private:
     virtual void	openSubwindow(const QString &);

@@ -67,7 +67,7 @@ class WComboBox;
 class QGroupBox;
 class QRadioButton;
 class QPushButton;
-class XListView;
+class XTreeWidget;
 class ParameterList;
 
 class OPENMFGWIDGETS_EXPORT plannedOrderList : public QDialog
@@ -83,7 +83,7 @@ class OPENMFGWIDGETS_EXPORT plannedOrderList : public QDialog
     WComboBox* _warehouse;
     QPushButton* _close;
     QPushButton* _select;
-    XListView* _planord;
+    XTreeWidget* _planord;
 
   public slots:
     virtual void set( ParameterList & pParams );

@@ -57,8 +57,8 @@
 
 #include "dspTimePhasedCapacityByWorkCenter.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <datecluster.h>
 #include <parameter.h>
 #include "rptTimePhasedCapacityByWorkCenter.h"
@@ -81,7 +81,7 @@ dspTimePhasedCapacityByWorkCenter::dspTimePhasedCapacityByWorkCenter(QWidget* pa
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_load, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_load, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
     init();
 }
@@ -104,7 +104,7 @@ void dspTimePhasedCapacityByWorkCenter::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedCapacityByWorkCenter::init()
 {
@@ -124,36 +124,28 @@ void dspTimePhasedCapacityByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspTimePhasedCapacityByWorkCenter::sPopulateMenu(Q3PopupMenu *, Q3ListViewItem *, int)
+void dspTimePhasedCapacityByWorkCenter::sPopulateMenu(QMenu *, QTreeWidgetItem *, int)
 {
 }
 
 void dspTimePhasedCapacityByWorkCenter::sFillList()
 {
   _columnDates.clear();
-  while (_load->columns() > 1)
-    _load->removeColumn(1);
+  _load->setColumnCount(1);
 
   QString sql("SELECT wrkcnt_id, wrkcnt_code ");
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", formatTime(workCenterCapacity(wrkcnt_id, %1)) AS bucket%2")
-               .arg(cursor->id())
-               .arg(columns++);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    sql += QString(", formatTime(workCenterCapacity(wrkcnt_id, %1)) AS bucket%2")
+	   .arg(cursor->id())
+	   .arg(columns++);
 
-        _load->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
-
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _load->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM wrkcnt ";
@@ -168,5 +160,3 @@ void dspTimePhasedCapacityByWorkCenter::sFillList()
   q.exec();
   _load->populate(q);
 }
-
-

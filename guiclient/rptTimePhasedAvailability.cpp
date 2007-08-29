@@ -57,8 +57,8 @@
 
 #include "rptTimePhasedAvailability.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include "submitReport.h"
 
@@ -205,17 +205,12 @@ ParameterList rptTimePhasedAvailability::buildParameters()
   _plannerCode->appendValue(params);
   _warehouse->appendValue(params);
 
-  XListViewItem *cursor = _periods->firstChild();
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
-  while (cursor)
-  {
-    if (cursor->isSelected())
-      periodList.append(cursor->id());
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
 
-    cursor = cursor->nextSibling();
-  }
   params.append("period_id_list", periodList);
 
   return params;
 }
-

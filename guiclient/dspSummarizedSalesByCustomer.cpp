@@ -57,11 +57,11 @@
 
 #include "dspSummarizedSalesByCustomer.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include "dspSalesHistoryByCustomer.h"
 #include "rptSummarizedSalesByCustomer.h"
 
@@ -81,7 +81,7 @@ dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, cons
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_cohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_cohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -103,7 +103,7 @@ void dspSummarizedSalesByCustomer::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSummarizedSalesByCustomer::init()
 {
@@ -123,7 +123,7 @@ void dspSummarizedSalesByCustomer::init()
       _cohist->hideColumn(5);
 }
 
-void dspSummarizedSalesByCustomer::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspSummarizedSalesByCustomer::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewDetail()), 0);
 }

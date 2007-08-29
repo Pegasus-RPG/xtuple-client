@@ -57,10 +57,10 @@
 
 #include "bbom.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
-#include <qstatusbar.h>
+#include <QStatusBar>
 #include "bbomItem.h"
 
 /*
@@ -83,7 +83,7 @@ bbom::bbom(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_bbomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_bbomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_bbomitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
@@ -108,7 +108,7 @@ void bbom::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void bbom::init()
 {
@@ -329,7 +329,7 @@ void bbom::sFillList(int pItemid, bool)
     _bbomitem->clear();
 }
 
-void bbom::sPopulateMenu(Q3PopupMenu *)
+void bbom::sPopulateMenu(QMenu *)
 {
 }
 

@@ -57,11 +57,11 @@
 
 #include "items.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <metasql.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QWorkspace>
 #include "copyItem.h"
 #include "item.h"
 
@@ -84,7 +84,7 @@ items::items(QWidget* parent, const char* name, Qt::WFlags fl)
     _statusGroupInt->addButton(_showSold);
 
     // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
@@ -116,7 +116,7 @@ void items::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void items::init()
 {
@@ -152,7 +152,7 @@ void items::init()
   _searchFor->setFocus();
 }
 
-void items::sPopulateMenu(Q3PopupMenu *pMenu)
+void items::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -319,21 +319,18 @@ void items::sFillList()
 
 void items::sSearch( const QString &pTarget )
 {
-  Q3ListViewItem *target;
-
-  if (_item->selectedItem())
-    _item->setSelected(_item->selectedItem(), FALSE);
-
   _item->clearSelection();
-
-  target = _item->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _item->topLevelItemCount(); i++)
   {
-    _item->setSelected(target, TRUE);
-    _item->ensureItemVisible(target);
+    if (_item->topLevelItem(i)->text(0).startsWith(pTarget.length(), Qt::CaseInsensitive))
+      break;
+  }
+
+  if (i < _item->topLevelItemCount())
+  {
+    _item->setCurrentItem(_item->topLevelItem(i));
+    _item->scrollToItem(_item->topLevelItem(i));
   }
 }
 
@@ -346,4 +343,3 @@ void items::sCopy()
   newdlg.set(params);
   newdlg.exec();
 }
-

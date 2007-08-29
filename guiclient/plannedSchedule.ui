@@ -263,7 +263,7 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="XListView" name="_list" />
+         <widget class="XTreeWidget" name="_list" />
         </item>
         <item>
          <layout class="QVBoxLayout" >
@@ -352,9 +352,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

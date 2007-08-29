@@ -75,7 +75,7 @@ public:
 
 public slots:
     virtual void sPrint();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sEdit();
     virtual void sView();
     virtual void sFillList();

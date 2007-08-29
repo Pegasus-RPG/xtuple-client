@@ -76,7 +76,7 @@ public slots:
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
-    virtual void sToggleReceiving( Q3ListViewItem * pItem );
+    virtual void sToggleReceiving( QTreeWidgetItem * pItem );
     virtual void sFillList();
 
 protected slots:

@@ -57,8 +57,8 @@
 
 #include "dspPendingBOMChanges.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "bomItem.h"
 #include "rptPendingBOMChanges.h"
@@ -79,7 +79,7 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_cutoff, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
     init();
@@ -103,7 +103,7 @@ void dspPendingBOMChanges::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspPendingBOMChanges::init()
 {
@@ -139,7 +139,7 @@ void dspPendingBOMChanges::sPrint()
   newdlg.set(params);
 }
 
-void dspPendingBOMChanges::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

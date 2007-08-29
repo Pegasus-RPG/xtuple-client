@@ -57,7 +57,7 @@
 
 #include "dspShipmentsBySalesOrder.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <Q3Process>
 #include <QMessageBox>
 #include <QRegExp>
@@ -80,7 +80,7 @@ dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sFillList(int)));
   connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-  connect(_soship, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_soship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
   statusBar()->hide();
@@ -131,7 +131,7 @@ enum SetResponse dspShipmentsBySalesOrder::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspShipmentsBySalesOrder::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspShipmentsBySalesOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -227,7 +227,7 @@ void dspShipmentsBySalesOrder::sFillList(int pSoheadid)
     q.exec();
     if (q.first())
     {
-      XListViewItem *soshead = 0;
+      XTreeWidgetItem *soshead = 0;
       int cosmiscid = -1;
       do
       {
@@ -235,13 +235,13 @@ void dspShipmentsBySalesOrder::sFillList(int pSoheadid)
         {
           cosmiscid = q.value("cosmisc_id").toInt();
 
-          soshead = new XListViewItem( _soship, q.value("cosmisc_id").toInt(),
+          soshead = new XTreeWidgetItem( _soship, q.value("cosmisc_id").toInt(),
 				       q.value("coitem_id").toInt(), q.value("cosmisc_number"),
                                        q.value("f_shipdate").toString(), "", "", "", "", "", "",
                                        q.value("cosmisc_tracknum"), q.value("f_freight") );
         }
 
-        new XListViewItem( soshead, q.value("cosmisc_id").toInt(), q.value("coitem_id").toInt(),
+        new XTreeWidgetItem( soshead, q.value("cosmisc_id").toInt(), q.value("coitem_id").toInt(),
                            "", "", q.value("coitem_linenumber"),
                            q.value("item_number"), q.value("itemdescription"),
                            q.value("warehous_code"), q.value("f_qtyord"),

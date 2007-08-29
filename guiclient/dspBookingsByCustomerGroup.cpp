@@ -57,57 +57,25 @@
 
 #include "dspBookingsByCustomerGroup.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
+#include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+#include <QWorkspace>
+
 #include "salesHistoryInformation.h"
 #include "rptBookingsByCustomerGroup.h"
 
-/*
- *  Constructs a dspBookingsByCustomerGroup as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBookingsByCustomerGroup::dspBookingsByCustomerGroup(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrice(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBookingsByCustomerGroup::~dspBookingsByCustomerGroup()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBookingsByCustomerGroup::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
-void dspBookingsByCustomerGroup::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrice(bool)));
 
   _customerGroup->setType(CustomerGroup);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -121,18 +89,33 @@ void dspBookingsByCustomerGroup::init()
   _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
 
+  if (_privleges->check("ViewCustomerPrices"))
+  {
+    _sohist->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight  );
+    _sohist->addColumn(tr("Total"),       _moneyColumn, Qt::AlignRight  );
+    _showPrices->setChecked(TRUE);
+  }
+  else
+    _showPrices->setEnabled(FALSE);
+
   if (_privleges->check("ViewCosts"))
     _showCosts->setChecked(TRUE);
   else
     _showCosts->setEnabled(FALSE);
 
-  if (_privleges->check("ViewCustomerPrices"))
-    _showPrices->setChecked(TRUE);
-  else
-    _showPrices->setEnabled(FALSE);
 }
 
-enum SetResponse dspBookingsByCustomerGroup::set(ParameterList &pParams)
+dspBookingsByCustomerGroup::~dspBookingsByCustomerGroup()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspBookingsByCustomerGroup::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspBookingsByCustomerGroup::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -166,7 +149,7 @@ enum SetResponse dspBookingsByCustomerGroup::set(ParameterList &pParams)
   return NoError;
 }
 
-void dspBookingsByCustomerGroup::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspBookingsByCustomerGroup::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -223,13 +206,13 @@ void dspBookingsByCustomerGroup::sHandlePrice(bool pShowPrice)
 {
   if (pShowPrice)
   {
-    _sohist->addColumn(tr("Unit Price"),   _priceColumn, Qt::AlignRight  );
-    _sohist->addColumn(tr("Total"),        _moneyColumn, Qt::AlignRight  );
+    _sohist->showColumn(7);
+    _sohist->showColumn(8);
   }
   else
   {
-    _sohist->removeColumn(7);
-    _sohist->removeColumn(7);
+    _sohist->hideColumn(7);
+    _sohist->hideColumn(8);
   }
 }
 
@@ -278,21 +261,22 @@ void dspBookingsByCustomerGroup::sFillList()
     double        totalUnits = 0.0;
     double        totalSales = 0.0;
 
+    XTreeWidgetItem *last  = 0;
     do
     {
-      new XListViewItem( _sohist, _sohist->lastItem(), q.value("cohist_id").toInt(),
-                         q.value("cohist_ordernumber"), q.value("cohist_invcnumber"),
-                         q.value("f_orderdate"), q.value("f_invcdate"),
-                         q.value("item_number"), q.value("description"),
-                         q.value("f_shipped"), q.value("f_price"),
-                         q.value("f_extended") );
+      last = new XTreeWidgetItem( _sohist, last, q.value("cohist_id").toInt(),
+			       q.value("cohist_ordernumber"), q.value("cohist_invcnumber"),
+			       q.value("f_orderdate"), q.value("f_invcdate"),
+			       q.value("item_number"), q.value("description"),
+			       q.value("f_shipped"), q.value("f_price"),
+			       q.value("f_extended") );
 
        totalUnits += q.value("shipped").toDouble();
        totalSales += q.value("extended").toDouble();
     }
     while (q.next());
 
-    XListViewItem *totals = new XListViewItem(_sohist, _sohist->lastItem(), -1);
+    XTreeWidgetItem *totals = new XTreeWidgetItem(_sohist, last, -1);
     totals->setText(5, tr("Totals"));
     totals->setText(6, formatQty(totalUnits));
     totals->setText(8, formatMoney(totalSales));

@@ -65,7 +65,7 @@
 //Added by qt3to4:
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>
-#include "xlistview.h"
+#include "xtreewidget.h"
 #include "warehousegroup.h"
 #include "socluster.h"
 
@@ -108,7 +108,8 @@ salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Q
   QLabel *_salesOrdersLit = new QLabel(tr("Sales Orders:"), this, "_salesOrdersLit");
   listLayout->addWidget(_salesOrdersLit);
 
-  _so = new XListView(this, "_so");
+  _so = new XTreeWidget(this);
+  _so->setName("_so");
   listLayout->addWidget(_so);
   mainLayout->addLayout(listLayout);
 

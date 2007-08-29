@@ -117,7 +117,7 @@ void updateOUTLevelByItem::init()
 
 void updateOUTLevelByItem::sUpdate()
 {
-  if (_periods->firstChild())
+  if (_periods->topLevelItemCount() > 0)
   {
     QString sql;
 
@@ -151,7 +151,7 @@ void updateOUTLevelByItem::sUpdate()
 
 void updateOUTLevelByItem::sSubmit()
 {
-  if (_periods->firstChild())
+  if (_periods->topLevelItemCount() > 0)
   {
     ParameterList params;
     _warehouse->appendValue(params);

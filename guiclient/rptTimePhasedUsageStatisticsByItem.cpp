@@ -57,8 +57,8 @@
 
 #include "rptTimePhasedUsageStatisticsByItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include "submitReport.h"
 
@@ -215,18 +215,11 @@ ParameterList rptTimePhasedUsageStatisticsByItem::buildParameters()
 
   params.append("calendar_id", _calendar->id());
   
-  QList<QVariant> pList;  
-  XListViewItem *cursor = _periods->firstChild();
-  while (cursor)
-  {
-    if (cursor->isSelected())
-      pList.append(QVariant(cursor->id()));
-
-    cursor = cursor->nextSibling();
-  }
-  params.append("period_id_list", pList);
-
+  QList<QVariant> periodList;  
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
 
   return params;
 }
-

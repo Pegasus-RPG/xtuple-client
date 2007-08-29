@@ -625,7 +625,7 @@
                <number>5</number>
               </property>
               <item>
-               <widget class="XListView" name="_bomitemsub" >
+               <widget class="XTreeWidget" name="_bomitemsub" >
                 <property name="enabled" >
                  <bool>false</bool>
                 </property>
@@ -720,7 +720,7 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="5" margin="10" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -744,9 +744,9 @@
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
@@ -863,7 +863,7 @@
   </connection>
   <connection>
    <sender>_bomitemsub</sender>
-   <signal>doubleClicked(Q3ListViewItem*)</signal>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
    <receiver>_editSubstitution</receiver>
    <slot>animateClick()</slot>
    <hints>

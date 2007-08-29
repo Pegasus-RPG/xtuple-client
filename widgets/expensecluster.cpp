@@ -56,178 +56,19 @@
  */
 
 //  expensecluster.cpp
-//  Copyright (c) 2002-2007, OpenMFG, LLC
-// TODO: replace with subclasses of VirtualCluster and related classes
-// TODO: add ReadOnly property to VirtualCluster and related classes
+//  Copyright (c) 2007, OpenMFG, LLC
 
-#include <QLabel>
-#include <QPushButton>
-#include <QHBoxLayout>
-
-#include <parameter.h>
-#include <xsqlquery.h>
-
-#include "xcombobox.h"
-#include "xlineedit.h"
-
-#include "expenseList.h"
 #include "expensecluster.h"
 
-#include "../common/format.h"
-
-ExpenseLineEdit::ExpenseLineEdit(QWidget *pParent, const char *name) :
-  XLineEdit(pParent, name)
+ExpenseCluster::ExpenseCluster(QWidget *pParent, const char *pName) :
+  VirtualCluster(pParent, pName)
 {
-  _parsed = TRUE;
-
-  connect(this, SIGNAL(lostFocus()),   this, SLOT(sParse()));
-  connect(this, SIGNAL(requestList()), this, SLOT(sExpenseList()));
+  addNumberWidget(new ExpenseLineEdit(this, pName));
+  _info->hide();
 }
 
-void ExpenseLineEdit::setId(int pId)
+ExpenseLineEdit::ExpenseLineEdit(QWidget *pParent, const char *pName) :
+  VirtualClusterLineEdit(pParent, "expcat", "expcat_id", "expcat_code", "expcat_descrip", 0, 0, pName)
 {
-  if (pId != -1)
-  {
-    XSqlQuery qry;
-    qry.prepare( "SELECT expcat_code AS expnumber"
-                "  FROM expcat"
-                " WHERE (expcat_id=:expcat_id); ");
-    qry.bindValue(":expcat_id", pId);
-    qry.exec();
-    if (qry.first())
-    {
-      _id    = pId;
-      _valid = TRUE;
-
-      setText(qry.value("expnumber").toString());
-
-      emit newId(_id);
-      emit valid(TRUE);
-
-      _parsed = TRUE;
-
-      return;
-    }
-  }
-
-  _id    = -1;
-  _valid = FALSE;
-
-  setText("");
-
-  emit newId(-1);
-  emit valid(FALSE);
-    
-  _parsed = TRUE;
-}
-
-void ExpenseLineEdit::sParse()
-{
-  if (!_parsed)
-  {
-    if (text().stripWhiteSpace().length() == 0)
-      setId(-1);
-    else
-    {
-      XSqlQuery exp;
-      exp.prepare("SELECT expcat_id "
-                  "  FROM expcat "
-                  " WHERE (expcat_code=:expcat_code)");
-      exp.bindValue(":expcat_code", text().stripWhiteSpace().upper());
-      exp.exec();
-      if (exp.first())
-        setId(exp.value("expcat_id").toInt());
-      else
-        setId(-1);
-    }
-  }
-}
-
-void ExpenseLineEdit::sExpenseList()
-{
-  ParameterList params;
-  params.append("id", id());
-
-  expenseList newdlg(parentWidget(), "", TRUE);
-  newdlg.set(params);
-  
-  setId(newdlg.exec());
-}
-
-ExpenseCluster::ExpenseCluster(QWidget *pParent, const char *name) :
-  QWidget(pParent, name)
-{
-  constructor();
-}
-
-void ExpenseCluster::constructor()
-{
-//  Create the component Widgets
-  QHBoxLayout *_expLayout = new QHBoxLayout(this);
-  _expLayout->setMargin(0);
-  _expLayout->setSpacing(5);
-
-  _expNumberLit = new QLabel(tr("Expense Category:"), this, "_expNumberLit");
-  _expNumberLit->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  _expNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-  _expLayout->addWidget(_expNumberLit);
-
-  _expNumber = new ExpenseLineEdit(this);
-  _expNumber->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-  _expLayout->addWidget(_expNumber);
-
-  _expList = new QPushButton(tr("..."), this, "_expList");
-  _expList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifdef Q_WS_MAC
-  _expList->setMaximumWidth(50);
-#else
-  _expList->setMaximumWidth(25);
-#endif
-  _expList->setFocusPolicy(Qt::NoFocus);
-  _expLayout->addWidget(_expList);
-
-  setLayout(_expLayout);
-
-//  Make some internal connections
-  connect(_expNumber, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
-  connect(_expNumber, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
-
-  connect(_expList, SIGNAL(clicked()), SLOT(sExpenseList()));
-
-  setFocusProxy(_expNumber);
-}
-
-void ExpenseCluster::setReadOnly(bool pReadOnly)
-{
-  if (pReadOnly)
-  {
-    _expNumber->setEnabled(FALSE);
-    _expList->hide();
-  }
-  else
-  {
-    _expNumber->setEnabled(TRUE);
-    _expList->show();
-  }
-}
-
-void ExpenseCluster::setLabel(QString label)
-{
-  _expNumberLit->setText(label);
-}
-
-void ExpenseCluster::setId(int pId)
-{
-  _expNumber->setId(pId);
-}
-
-void ExpenseCluster::sExpenseList()
-{
-  _expNumber->sExpenseList();
-
-  if (_expNumber->_id != -1)
-  {
-    _expNumber->setFocus();
-    focusNextPrevChild(TRUE);
-  }
+  setTitles(tr("Expense Category"), tr("Expense Categories"));
 }

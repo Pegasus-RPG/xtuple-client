@@ -57,10 +57,10 @@
 
 #include "printCreditMemos.h"
 
-#include <qvariant.h>
-#include <qvalidator.h>
-#include <qmessagebox.h>
-#include <qapplication.h>
+#include <QVariant>
+#include <QValidator>
+#include <QMessageBox>
+#include <QApplication>
 #include <parameter.h>
 #include <openreports.h>
 #include "OpenMFGGUIClient.h"
@@ -114,11 +114,10 @@ void printCreditMemos::init()
   _creditMemoNumOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt());
   if (_creditMemoNumOfCopies->value())
   {
-    XListViewItem *cursor = _creditMemoWatermarks->firstChild();
-    for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++)
+    for (int i = 0; i < _creditMemoWatermarks->topLevelItemCount(); i++)
     {
-      cursor->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
+      _creditMemoWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(i)));
+      _creditMemoWatermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
     }
   }
 
@@ -153,14 +152,13 @@ void printCreditMemos::sPrint()
 
     do
     {
-      XListViewItem *cursor = _creditMemoWatermarks->firstChild();
-      for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++ )
+      for (int i = 0; i < _creditMemoWatermarks->topLevelItemCount(); i++ )
       {
         ParameterList params;
 
         params.append("cmhead_id", cmhead.value("cmhead_id").toInt());
-        params.append("showcosts", ((cursor->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
-        params.append("watermark", cursor->text(1));
+        params.append("showcosts", ((_creditMemoWatermarks->topLevelItem(i)->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
+        params.append("watermark", _creditMemoWatermarks->topLevelItem(i)->text(1));
 
         orReport report(cmhead.value("_reportname").toString(), params);
         if (!report.isValid())
@@ -220,18 +218,21 @@ void printCreditMemos::sPrint()
 
 void printCreditMemos::sHandleCopies(int pValue)
 {
-  if (_creditMemoWatermarks->childCount() > pValue)
-    _creditMemoWatermarks->takeItem(_creditMemoWatermarks->lastItem());
+  if (_creditMemoWatermarks->topLevelItemCount() > pValue)
+    _creditMemoWatermarks->takeTopLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_creditMemoWatermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_creditMemoWatermarks, _creditMemoWatermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_creditMemoWatermarks->topLevelItemCount() + 1); i <= pValue; i++)
+      new XTreeWidgetItem(_creditMemoWatermarks,
+			  _creditMemoWatermarks->topLevelItem(_creditMemoWatermarks->topLevelItemCount() - 1),
+			  i, i,
+			  tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 
 void printCreditMemos::sEditWatermark()
 {
-  XListViewItem *cursor = _creditMemoWatermarks->selectedItem();
+  QTreeWidgetItem *cursor = _creditMemoWatermarks->currentItem();
   ParameterList params;
   params.append("watermark", cursor->text(1));
   params.append("showPrices", (cursor->text(2) == tr("Yes")));

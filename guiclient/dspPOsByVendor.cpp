@@ -80,7 +80,7 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_poitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _poitem->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight  );
   _poitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
@@ -151,7 +151,7 @@ void dspPOsByVendor::sPrint()
     report.reportError(this);
 }
 
-void dspPOsByVendor::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspPOsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
@@ -243,18 +243,16 @@ void dspPOsByVendor::sFillList()
   }
 
   _poitem->clear();
-  if (q.first())
+  XTreeWidgetItem *last = 0;
+  while (q.next())
   {
-    do
-    {
-      XListViewItem *last = new XListViewItem( _poitem, _poitem->lastItem(),
-                                               q.value("pohead_id").toInt(), -1,
-                                               q.value("pohead_number"), q.value("warehousecode"),
-                                               q.value("poitemstatus"), q.value("vend_number"),
-                                               q.value("f_date"));
-      if (q.value("late").toBool())
-        last->setColor(4, "red");
-    }
-    while (q.next());
+    last = new XTreeWidgetItem(_poitem, last,
+			       q.value("pohead_id").toInt(), -1,
+			       q.value("pohead_number"),
+			       q.value("warehousecode"),
+			       q.value("poitemstatus"), q.value("vend_number"),
+			       q.value("f_date"));
+    if (q.value("late").toBool())
+      last->setTextColor(4, "red");
   }
 }

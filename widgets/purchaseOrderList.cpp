@@ -69,7 +69,7 @@
 #include <parameter.h>
 #include <metasql.h>
 
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 #include "pocluster.h"
 
@@ -97,7 +97,8 @@ purchaseOrderList::purchaseOrderList(QWidget* parent, const char* name, bool mod
   QLabel *_poheadLit = new QLabel(tr("&Purchase Orders:"), this, "_poheadLit");
   tableLayout->addWidget( _poheadLit );
 
-  _pohead = new XListView(this, "_pohead");
+  _pohead = new XTreeWidget(this);
+  _pohead->setName("_pohead");
   _poheadLit->setBuddy(_pohead);
   tableLayout->addWidget(_pohead);
 

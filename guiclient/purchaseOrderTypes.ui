@@ -61,7 +61,7 @@
                         <string>Purchase Order Types:</string>
                     </property>
                 </widget>
-                <widget class="XListView">
+                <widget class="XTreeWidget">
                     <property name="name">
                         <cstring>_potype</cstring>
                     </property>
@@ -256,8 +256,8 @@
     <tabstop>_close</tabstop>
 </tabstops>
 <includes>
-    <include location="global" impldecl="in implementation">qstatusbar.h</include>
-    <include location="global" impldecl="in implementation">qmessagebox.h</include>
+    <include location="global" impldecl="in implementation">QStatusBar</include>
+    <include location="global" impldecl="in implementation">QMessageBox</include>
     <include location="global" impldecl="in implementation">parameter.h</include>
     <include location="local" impldecl="in implementation">purchaseOrderType.h</include>
     <include location="global" impldecl="in implementation">openreports.h</include>

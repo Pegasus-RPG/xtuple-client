@@ -57,10 +57,10 @@
 
 #include "dspTimePhasedProductionByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <datecluster.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "dspInventoryHistoryByParameterList.h"
 #include "rptTimePhasedProductionByPlannerCode.h"
 #include "OpenMFGGUIClient.h"
@@ -85,7 +85,7 @@ dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidg
     // signals and slots connections
     connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_production, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_production, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
@@ -110,7 +110,7 @@ void dspTimePhasedProductionByPlannerCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedProductionByPlannerCode::init()
 {
@@ -160,7 +160,7 @@ void dspTimePhasedProductionByPlannerCode::sViewTransactions()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspTimePhasedProductionByPlannerCode::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewItem *, int pColumn)
+void dspTimePhasedProductionByPlannerCode::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int pColumn)
 {
   int menuItem;
 
@@ -176,8 +176,7 @@ void dspTimePhasedProductionByPlannerCode::sPopulateMenu(Q3PopupMenu *menu, Q3Li
 void dspTimePhasedProductionByPlannerCode::sCalculate()
 {
   _columnDates.clear();
-  while (_production->columns() > 3)
-    _production->removeColumn(3);
+  _production->setColumnCount(3);
 
   QString sql("SELECT plancode_id, warehous_id, plancode_code, warehous_code, ");
 
@@ -191,34 +190,27 @@ void dspTimePhasedProductionByPlannerCode::sCalculate()
     sql += "item_altcapuom AS uom";
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        if (_inventoryUnits->isChecked())
-          sql += QString(", formatQty(SUM(summProd(itemsite_id, %1))) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        else if (_capacityUnits->isChecked())
-          sql += QString(", formatQty(SUM(summProd(itemsite_id, %1) * item_capinvrat)) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        else if (_altCapacityUnits->isChecked())
-          sql += QString(", formatQty(SUM(summProd(itemsite_id, %1) * item_altcapinvrat)) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        _production->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    if (_inventoryUnits->isChecked())
+      sql += QString(", formatQty(SUM(summProd(itemsite_id, %1))) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()));
+    else if (_capacityUnits->isChecked())
+      sql += QString(", formatQty(SUM(summProd(itemsite_id, %1) * item_capinvrat)) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
+
+    else if (_altCapacityUnits->isChecked())
+      sql += QString(", formatQty(SUM(summProd(itemsite_id, %1) * item_altcapinvrat)) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
+
+    _production->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM itemsite, item, warehous, plancode "

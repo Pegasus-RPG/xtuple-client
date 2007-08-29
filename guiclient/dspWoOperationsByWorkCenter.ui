@@ -373,7 +373,7 @@
         </widget>
        </item>
        <item>
-        <widget class="XListView" name="_wooper" >
+        <widget class="XTreeWidget" name="_wooper" >
          <property name="sizePolicy" >
           <sizepolicy>
            <hsizetype>7</hsizetype>
@@ -383,7 +383,7 @@
           </sizepolicy>
          </property>
          <property name="selectionMode" >
-          <enum>Q3ListView::Extended</enum>
+          <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
         </widget>
        </item>
@@ -393,7 +393,7 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -411,9 +411,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

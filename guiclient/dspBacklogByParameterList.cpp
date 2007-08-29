@@ -57,7 +57,7 @@
 
 #include "dspBacklogByParameterList.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 #include <QStatusBar>
 #include <QVariant>
@@ -77,7 +77,7 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
     (void)statusBar();
 
     connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-    connect(_soitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
@@ -86,7 +86,7 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
     _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
     _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-    _soitem->setSelectionMode(Q3ListView::Extended);
+    _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
     _soitem->setRootIsDecorated(TRUE);
     _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,  Qt::AlignRight  );
     _soitem->addColumn(tr("Customer/Item Number"), -1,           Qt::AlignLeft   );
@@ -96,6 +96,7 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
     _soitem->addColumn(tr("Ordered"),              _qtyColumn,   Qt::AlignRight  );
     _soitem->addColumn(tr("Shipped"),              _qtyColumn,   Qt::AlignRight  );
     _soitem->addColumn(tr("Balance"),              _qtyColumn,   Qt::AlignRight  );
+    _soitem->addColumn(tr("Amount $"),             _moneyColumn, Qt::AlignRight  );
 
     if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
       _showPrices->setEnabled(FALSE);
@@ -200,9 +201,9 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 void dspBacklogByParameterList::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->addColumn(tr("Amount $"), _moneyColumn, Qt::AlignRight);
+    _soitem->showColumn(8);
   else
-    _soitem->removeColumn(8);
+    _soitem->hideColumn(8);
 }
 
 void dspBacklogByParameterList::sPrint()
@@ -275,58 +276,41 @@ void dspBacklogByParameterList::sViewItem()
 
 void dspBacklogByParameterList::sPrintPackingList()
 {
-  for (XListViewItem *cursor = _soitem->firstChild(); cursor; cursor = cursor->itemBelow())
+  QList <QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (cursor->isSelected())
-    {
-      ParameterList params;
-      params.append("sohead_id", cursor->id());
+    ParameterList params;
+    params.append("sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
-      printPackingList newdlg(this, "", TRUE);
-      newdlg.set(params);
-      newdlg.exec();
-    }
+    printPackingList newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
   }
 }
 
 void dspBacklogByParameterList::sAddToPackingListBatch()
 {
-  for (XListViewItem *cursor = _soitem->firstChild(); cursor; cursor = cursor->itemBelow())
+  QList <QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (cursor->isSelected())
+    q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
+    q.bindValue(":sohead_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
     {
-      q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
-      q.bindValue(":sohead_id", cursor->id());
-      q.exec();
-      if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-      }
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 }
 
-void dspBacklogByParameterList::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspBacklogByParameterList::sPopulateMenu(QMenu *pMenu)
 {
-  int  selectionCount     = 0;
-  bool multiSelection     = FALSE;
-  XListViewItem *selected = NULL;
-
-  for (XListViewItem *cursor = _soitem->firstChild(); cursor; cursor = cursor->itemBelow())
-  {
-    if (cursor->isSelected())
-    {
-      selected = cursor;
-
-      if ( (++selectionCount > 1) && (!multiSelection) )
-        multiSelection = TRUE;
-    }
-  }
+  QList <QTreeWidgetItem*> selected = _soitem->selectedItems();
 
   int menuItem;
 
-  if (selectionCount == 1)
+  if (selected.size() == 1)
   {
     menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
     if (!_privleges->check("MaintainSalesOrders"))
@@ -336,7 +320,7 @@ void dspBacklogByParameterList::sPopulateMenu(Q3PopupMenu *pMenu)
     if ((!_privleges->check("MaintainSalesOrders")) && (!_privleges->check("ViewSalesOrders")))
       pMenu->setItemEnabled(menuItem, FALSE);
 
-    if (selected->altId() != -1)
+    if (_soitem->altId() != -1)
     {
       pMenu->insertSeparator();
 
@@ -464,7 +448,7 @@ void dspBacklogByParameterList::sFillList()
     q = mql.toQuery(params);
     if (q.first())
     {
-      XListViewItem *head = NULL;
+      XTreeWidgetItem *head = NULL;
       int soheadid        = -1;
       double totalBacklog = 0.0;
 
@@ -473,12 +457,12 @@ void dspBacklogByParameterList::sFillList()
         if (soheadid != q.value("cohead_id").toInt())
         {
           soheadid = q.value("cohead_id").toInt();
-          head = new XListViewItem( _soitem, head, soheadid, -1,
+          head = new XTreeWidgetItem( _soitem, head, soheadid, -1,
                                     q.value("cohead_number"), q.value("cust_name"),
                                     q.value("f_orderdate"), q.value("f_shipdate") );
         }
 
-        new XListViewItem( head, soheadid, q.value("coitem_id").toInt(),
+        new XTreeWidgetItem( head, soheadid, q.value("coitem_id").toInt(),
                            q.value("coitem_linenumber"), q.value("item_number"),
                            "", q.value("f_scheddate"),
                            q.value("item_invuom"), q.value("f_ordered"),
@@ -491,7 +475,7 @@ void dspBacklogByParameterList::sFillList()
 
       if (_showPrices->isChecked())
       {
-        XListViewItem *totals = new XListViewItem(_soitem, head, -1, -1, "", tr("Total Backlog") );
+        XTreeWidgetItem *totals = new XTreeWidgetItem(_soitem, head, -1, -1, "", tr("Total Backlog") );
         totals->setText(8, formatMoney(totalBacklog));
       }
     }

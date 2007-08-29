@@ -57,59 +57,39 @@
 
 #include "customCommands.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
+
 #include <parameter.h>
+
 #include "customCommand.h"
 #include "OpenMFGGUIClient.h"
 
-/*
- *  Constructs a customCommands as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 customCommands::customCommands(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_commands, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    connect(_commands, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_commands, SIGNAL(doubleClicked(Q3ListViewItem*)), _edit, SLOT(animateClick()));
-    init();
-}
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-customCommands::~customCommands()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void customCommands::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void customCommands::init()
-{
   _commands->addColumn(tr("Module"), _itemColumn, Qt::AlignCenter );
   _commands->addColumn(tr("Menu Label"), -1,     Qt::AlignLeft );
 
   sFillList();
+}
+
+customCommands::~customCommands()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void customCommands::languageChange()
+{
+  retranslateUi(this);
 }
 
 void customCommands::sNew()
@@ -168,4 +148,3 @@ void customCommands::sFillList()
   q.exec();
   _commands->populate(q);
 }
-

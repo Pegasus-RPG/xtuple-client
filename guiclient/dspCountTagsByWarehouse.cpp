@@ -57,9 +57,9 @@
 
 #include "dspCountTagsByWarehouse.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include "countTag.h"
 #include "rptCountTagsByWarehouse.h"
@@ -79,7 +79,7 @@ dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* na
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_cnttag, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
 }
@@ -102,7 +102,7 @@ void dspCountTagsByWarehouse::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCountTagsByWarehouse::init()
 {
@@ -140,7 +140,7 @@ void dspCountTagsByWarehouse::sPrint()
   newdlg.set(params);
 }
 
-void dspCountTagsByWarehouse::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspCountTagsByWarehouse::sPopulateMenu(QMenu *pMenu)
 {
   pMenu->insertItem(tr("View Count Tag..."), this, SLOT(sView()), 0);
 }

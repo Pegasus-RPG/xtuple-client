@@ -57,10 +57,10 @@
 
 #include "dspTimePhasedProductionByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <datecluster.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "dspInventoryHistoryByItem.h"
 #include "rptTimePhasedProductionByItem.h"
 #include "OpenMFGGUIClient.h"
@@ -80,7 +80,7 @@ dspTimePhasedProductionByItem::dspTimePhasedProductionByItem(QWidget* parent, co
     // signals and slots connections
     connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_production, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_production, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
@@ -105,7 +105,7 @@ void dspTimePhasedProductionByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedProductionByItem::init()
 {
@@ -156,7 +156,7 @@ void dspTimePhasedProductionByItem::sViewTransactions()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspTimePhasedProductionByItem::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewItem *, int pColumn)
+void dspTimePhasedProductionByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int pColumn)
 {
   int menuItem;
 
@@ -172,29 +172,21 @@ void dspTimePhasedProductionByItem::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewI
 void dspTimePhasedProductionByItem::sCalculate()
 {
   _columnDates.clear();
-  while (_production->columns() > 3)
-    _production->removeColumn(3);
+  _production->setColumnCount(3);
 
   QString sql("SELECT itemsite_id, item_number, warehous_code, item_invuom");
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", formatQty(summProd(itemsite_id, %2)) AS bucket%1")
-               .arg(columns++)
-               .arg(cursor->id());
-  
-        _production->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    sql += QString(", formatQty(summProd(itemsite_id, %2)) AS bucket%1")
+	   .arg(columns++)
+	   .arg(cursor->id());
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _production->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM itemsite, item, warehous "

@@ -75,7 +75,7 @@ public:
     virtual bool checkParameters();
 
 public slots:
-    virtual void sPopulateMenu( Q3PopupMenu * menuThis );
+    virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sViewDetail();
     virtual void sPrint();
     virtual void sFillList();

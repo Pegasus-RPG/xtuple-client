@@ -57,8 +57,8 @@
 
 #include "dspIndentedBOM.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include "rptIndentedBOM.h"
 
 /*
@@ -117,7 +117,7 @@ void dspIndentedBOM::init()
   _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight  );
   _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter );
   _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter );
-  _bomitem->setTreeStepSize(10);
+  _bomitem->setIndentation(10);
 
   _item->setFocus();
 }
@@ -205,11 +205,11 @@ void dspIndentedBOM::sFillList()
       q.exec();
       while (q.next())
       {
-        XListViewItem *last = NULL;
+        XTreeWidgetItem *last = NULL;
 
-//  If the current bomwork is top level, make it a child of the XListView
+//  If the current bomwork is top level, make it a child of the XTreeWidget
         if (q.value("bomwork_parent_id").toInt() == -1)
-          last = new XListViewItem( _bomitem, q.value("bomwork_id").toInt(),
+          last = new XTreeWidgetItem( _bomitem, q.value("bomwork_id").toInt(),
                                     q.value("bomwork_seqnumber"), q.value("item_number"),
                                     q.value("itemdescription"), q.value("item_invuom"),
                                     q.value("f_qtyper"), q.value("f_scrap"),
@@ -217,29 +217,27 @@ void dspIndentedBOM::sFillList()
         else
         {
 //  March though the existing list, looking for the parent for the current bomwork
-          XListViewItem *cursor = _bomitem->firstChild();
-          while (cursor)
-          {
-            cursor->setOpen(TRUE);
+	  for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
+	  {
+	    XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_bomitem->topLevelItem(i));
+            cursor->setExpanded(TRUE);
             if (cursor->id() == q.value("bomwork_parent_id").toInt())
             {
 //  Found it, add the current bomwork as a child of its parent
-              last = new XListViewItem( cursor, q.value("bomwork_id").toInt(),
+              last = new XTreeWidgetItem( cursor, q.value("bomwork_id").toInt(),
                                         q.value("bomwork_seqnumber"), q.value("item_number"),
                                         q.value("itemdescription"), q.value("item_invuom"),
                                         q.value("f_qtyper"), q.value("f_scrap"),
                                         q.value("f_effective"), q.value("f_expires") );
               break;
             }
-            else
-              cursor = cursor->itemBelow();
           }
         }
 
         if (q.value("expired").toBool())
-          last->setColor("red");
+          last->setTextColor("red");
         else if (q.value("future").toBool())
-          last->setColor("blue");
+          last->setTextColor("blue");
       }
 
 //  All done with the bomwork set, delete it

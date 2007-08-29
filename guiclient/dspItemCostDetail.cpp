@@ -57,9 +57,9 @@
 
 #include "dspItemCostDetail.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "bomItem.h"
 
 /*
@@ -324,20 +324,26 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
       q.exec();
       double extendedCost = 0.0;
 
+      XTreeWidgetItem *last = 0;
       while (q.next())
       {
-        new XListViewItem( _bom, _bom->lastItem(), q.value("bomitem_id").toInt(), q.value("item_id").toInt(),
-                           q.value("seqnumber"), q.value("item_number"),
-                           q.value("itemdescrip"), q.value("item_invuom"),
-                           q.value("f_qtyper"), q.value("f_scrap"),
-                           q.value("f_cost"), q.value("f_extendedcost") );
+	last = new XTreeWidgetItem(_bom, last, q.value("bomitem_id").toInt(),
+				   q.value("item_id").toInt(),
+				   q.value("seqnumber"),
+				   q.value("item_number"),
+				   q.value("itemdescrip"),
+				   q.value("item_invuom"),
+				   q.value("f_qtyper"),
+				   q.value("f_scrap"),
+				   q.value("f_cost"),
+				   q.value("f_extendedcost") );
 
         extendedCost += q.value("extendedcost").toDouble();
       }
 
-      new XListViewItem( _bom, _bom->lastItem(), -1, -1,
-                         "", tr("Totals:"),
-                         "", "", "", "", "", formatCost(extendedCost) );
+      last = new XTreeWidgetItem(_bom, last, -1, -1,
+				 "", tr("Totals:"),
+				 "", "", "", "", "", formatCost(extendedCost) );
     }
   }
 }

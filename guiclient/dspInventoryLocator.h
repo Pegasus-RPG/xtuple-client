@@ -79,7 +79,7 @@ public slots:
     virtual void sPrint();
     virtual void sRelocateInventory();
     virtual void sReassignLotSerial();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem * pSelected );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sFillList();
 
 protected slots:

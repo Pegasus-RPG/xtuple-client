@@ -57,11 +57,11 @@
 
 #include "dspSummarizedSalesBySalesRep.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <parameter.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "dspSalesHistoryBySalesrep.h"
 #include "rptSummarizedSalesBySalesRep.h"
 
@@ -81,7 +81,7 @@ dspSummarizedSalesBySalesRep::dspSummarizedSalesBySalesRep(QWidget* parent, cons
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -103,7 +103,7 @@ void dspSummarizedSalesBySalesRep::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSummarizedSalesBySalesRep::init()
 {
@@ -118,7 +118,7 @@ void dspSummarizedSalesBySalesRep::init()
   _sohist->addColumn(tr("Total Sales"), _moneyColumn, Qt::AlignRight  );
 }
 
-void dspSummarizedSalesBySalesRep::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspSummarizedSalesBySalesRep::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewDetail()), 0);
 }

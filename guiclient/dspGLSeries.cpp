@@ -57,8 +57,8 @@
 
 #include "dspGLSeries.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptGLSeries.h"
 #include "reverseGLSeries.h"
@@ -77,7 +77,7 @@ dspGLSeries::dspGLSeries(QWidget* parent, const char* name, Qt::WFlags fl)
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_gltrans, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
@@ -102,7 +102,7 @@ void dspGLSeries::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspGLSeries::init()
 {
@@ -120,16 +120,16 @@ void dspGLSeries::init()
   _gltrans->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter );
 }
 
-void dspGLSeries::sPopulateMenu(Q3PopupMenu * pMenu)
+void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 {
   int menuItem;
 
   bool reversible = false;
-  XListViewItem * item = (XListViewItem*)_gltrans->currentItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_gltrans->currentItem();
   if(0 != item)
   {
     if(item->altId() != -1)
-      item = (XListViewItem*)item->parent();
+      item = (XTreeWidgetItem*)item->parent();
     if(0 != item)
     {
       if(item->text(3) == "ST" || item->text(3) == "JE")
@@ -199,7 +199,7 @@ void dspGLSeries::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *parent  = NULL;
+    XTreeWidgetItem *parent  = NULL;
     int           glSeries = -1;
 
     do
@@ -207,13 +207,13 @@ void dspGLSeries::sFillList()
       if (glSeries != q.value("gltrans_sequence").toInt())
       {
         glSeries = q.value("gltrans_sequence").toInt();
-	parent = new XListViewItem( _gltrans, parent, q.value("gltrans_sequence").toInt(), -1,
+	parent = new XTreeWidgetItem( _gltrans, parent, q.value("gltrans_sequence").toInt(), -1,
                                     q.value("transdate"), q.value("gltrans_journalnumber"), q.value("gltrans_source"),
                                     q.value("gltrans_doctype"), q.value("gltrans_docnumber"),
                                     q.value("f_notes"), "", "", q.value("f_posted") );
       }
 
-      new XListViewItem( parent, q.value("gltrans_sequence").toInt(), q.value("gltrans_id").toInt(),
+      new XTreeWidgetItem( parent, q.value("gltrans_sequence").toInt(), q.value("gltrans_id").toInt(),
                          "", "", "", "", "",
                          q.value("account"), q.value("f_debit"),
                          q.value("f_credit") );

@@ -265,7 +265,7 @@
        </widget>
       </item>
       <item>
-       <widget class="XListView" name="_itemsite" >
+       <widget class="XTreeWidget" name="_itemsite" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>7</hsizetype>
@@ -300,7 +300,7 @@
        </widget>
       </item>
       <item>
-       <widget class="XListView" name="_mps" >
+       <widget class="XTreeWidget" name="_mps" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>7</hsizetype>
@@ -327,7 +327,7 @@
  <customwidgets>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XListView</extends>
+   <extends>XTreeWidget</extends>
    <header>calendarTools.h</header>
    <container>0</container>
    <pixmap></pixmap>
@@ -340,9 +340,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>QTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

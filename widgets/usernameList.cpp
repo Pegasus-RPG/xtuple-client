@@ -71,7 +71,7 @@
 #include <qtooltip.h>
 #include <q3whatsthis.h>
 #include "usernamecluster.h"
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 usernameList::usernameList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
@@ -124,7 +124,8 @@ usernameList::usernameList( QWidget* parent, const char* name, bool modal, Qt::W
   QLabel *_usernamesLit = new QLabel(tr("&Usernames:"), this, "_usernamesLit");
   Layout20->addWidget( _usernamesLit );
 
-  _user = new XListView( this, "_user" );
+  _user = new XTreeWidget(this);
+  _user->setName("_user");
   _usernamesLit->setBuddy(_user);
   Layout20->addWidget(_user);
   usernameListLayout->addLayout( Layout20 );
@@ -184,21 +185,18 @@ void usernameList::sSelect()
 
 void usernameList::sSearch(const QString &pTarget)
 {
-  Q3ListViewItem *target;
-
-  if (_user->selectedItem())
-    _user->setSelected(_user->selectedItem(), FALSE);
-
   _user->clearSelection();
-
-  target = _user->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _user->topLevelItemCount(); i++)
   {
-    _user->setSelected(target, TRUE);
-    _user->ensureItemVisible(target);
+    if (_user->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
+      break;
+  }
+
+  if (i < _user->topLevelItemCount())
+  {
+    _user->setCurrentItem(_user->topLevelItem(i));
+    _user->scrollToItem(_user->topLevelItem(i));
   }
 }
 

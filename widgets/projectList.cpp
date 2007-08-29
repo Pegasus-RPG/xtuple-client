@@ -71,7 +71,7 @@
 #include <qtooltip.h>
 #include <q3whatsthis.h>
 #include "projectcluster.h"
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 projectList::projectList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
@@ -123,7 +123,8 @@ projectList::projectList( QWidget* parent, const char* name, bool modal, Qt::WFl
   QLabel *_projectsLit = new QLabel(tr("&Projects:"), this, "_projectsLit");
   Layout20->addWidget( _projectsLit );
 
-  _project = new XListView( this, "_project" );
+  _project = new XTreeWidget(this);
+  _project->setName("_project" );
   _projectsLit->setBuddy(_project);
   Layout20->addWidget(_project);
   projectListLayout->addLayout( Layout20 );
@@ -175,21 +176,18 @@ void projectList::sSelect()
 
 void projectList::sSearch(const QString &pTarget)
 {
-  Q3ListViewItem *target;
-
-  if (_project->selectedItem())
-    _project->setSelected(_project->selectedItem(), FALSE);
-
   _project->clearSelection();
-
-  target = _project->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _project->topLevelItemCount(); i++)
   {
-    _project->setSelected(target, TRUE);
-    _project->ensureItemVisible(target);
+    if (_project->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
+      break;
+  }
+
+  if (i < _project->topLevelItemCount())
+  {
+    _project->setCurrentItem(_project->topLevelItem(i));
+    _project->scrollToItem(_project->topLevelItem(i));
   }
 }
 

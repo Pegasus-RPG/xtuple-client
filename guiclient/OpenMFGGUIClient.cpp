@@ -122,8 +122,6 @@
 #include "moduleSys.h"
 #include "moduleCRM.h"
 
-#include <itemDock.h>
-
 #include "timeoutHandler.h"
 #include "idleShutdown.h"
 #include "inputManager.h"
@@ -398,12 +396,6 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
     _singleWindow = window.value("usr_window").toString();
   if (_singleWindow.isEmpty())
     initMenuBar();
-
-#if 0
-//  Build the Dock Lists
-  ItemDock *itemDock = new ItemDock(this);
-  moveDockWindow(itemDock, Qt::DockRight);
-#endif
 
 //  Load the user indicated background image
   _splash->showMessage(tr("Loading the Background Image"), SplashTextAlignment, SplashTextColor);

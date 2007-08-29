@@ -57,10 +57,10 @@
 
 #include "dspWoEffortByUser.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QWorkspace>
 #include "implodeWo.h"
 #include "explodeWo.h"
 #include "closeWo.h"
@@ -75,7 +75,6 @@
 #include "rptWoEffortByUser.h"
 #include "dspWoEffortByUser.h"
 #include "wotc.h"
-#include "xlistview.h"
 
 /*
  *  Constructs a dspWoEffortByUser as a child of 'parent', with the
@@ -91,7 +90,7 @@ dspWoEffortByUser::dspWoEffortByUser(QWidget* parent, const char* name, Qt::WFla
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_wotc, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_wotc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_user, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
@@ -117,7 +116,7 @@ void dspWoEffortByUser::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 
 void dspWoEffortByUser::init()
@@ -265,7 +264,7 @@ void dspWoEffortByUser::sDelete()
   }
 }
 
-void dspWoEffortByUser::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *selected)
+void dspWoEffortByUser::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   QString status(selected->text(1));
   int     menuItem;
@@ -351,10 +350,10 @@ void dspWoEffortByUser::sFillList()
     q.bindValue(":usr_id", _user->id());
     q.exec();
 
-    XListViewItem *last = 0;
+    XTreeWidgetItem *last = 0;
     while (q.next() && (q.lastError().type() == QSqlError::NoError))
     {
-      last = new XListViewItem(_wotc, _wotc->lastItem(),
+      last = new XTreeWidgetItem(_wotc, last,
 			       q.value("wotc_id").toInt(), q.value("wo_id").toInt(),
 			       q.value("wonumber"),    q.value("wo_status"),
 			       q.value("wo_priority"), q.value("warehous_code"),
@@ -369,27 +368,29 @@ void dspWoEffortByUser::sFillList()
 
     XSqlQuery total;
     total.prepare("SELECT formatInterval(woTime(:wotc_wo_id, :wotc_usr_id)) AS total;");
-    for (last = _wotc->firstChild(); last; last = last->nextSibling())
+    for (int i = 0; i < _wotc->topLevelItemCount(); i++)
     {
-      bool lastLine = (last->nextSibling() == 0);
-      if (lastLine || last->altId() != last->nextSibling()->altId())
+      last = _wotc->topLevelItem(i);
+      if ((i == _wotc->topLevelItemCount() - 1) ||
+	  last->altId() != ((XTreeWidgetItem*)(_wotc->topLevelItem(i + 1)))->altId())
       {
 	total.bindValue(":wotc_wo_id",  last->altId());
 	total.bindValue(":wotc_usr_id", _user->id());
 	total.exec();
 	if (total.first())
-	  last = new XListViewItem(_wotc, last, -1, last->altId(),
+	{
+	  last = new XTreeWidgetItem(_wotc, last, -1, last->altId(),
 				   last->text(0), last->text(1), last->text(2),
 				   last->text(3), tr("Total"), "", "",
 				   total.value("total"));
+	  i++;
+	}
 	else if (total.lastError().type() != QSqlError::NoError)
 	{
 	  systemError(this, total.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
       }
-      if (lastLine)
-	break;
     } 
   }
 }

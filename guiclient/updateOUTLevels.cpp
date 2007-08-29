@@ -115,7 +115,7 @@ void updateOUTLevels::init()
 
 void updateOUTLevels::sUpdate()
 {
-  if (_periods->firstChild())
+  if (_periods->topLevelItemCount() > 0)
   {
     QString sql;
 
@@ -154,7 +154,7 @@ void updateOUTLevels::sUpdate()
 
 void updateOUTLevels::sSubmit()
 {
-  if (_periods->firstChild())
+  if (_periods->topLevelItemCount() > 0)
   {
     ParameterList params;
     params.append("action_name", "UpdateOUTLevel");

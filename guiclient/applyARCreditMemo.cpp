@@ -83,7 +83,7 @@ applyARCreditMemo::applyARCreditMemo(QWidget* parent, const char* name, bool mod
   connect(_available, SIGNAL(effectiveChanged(const QDate&)), _applied, SLOT(setEffective(const QDate&)));
   connect(_available, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
   connect(_docDate, SIGNAL(newDate(const QDate&)), _available, SLOT(setEffective(const QDate&)));
-  connect(_searchDocNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged()));
+  connect(_searchDocNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged(const QString&)));
 
   _captive = FALSE;
 
@@ -301,28 +301,23 @@ void applyARCreditMemo::sPriceGroup()
 }
 
 
-void applyARCreditMemo::sSearchDocNumChanged()
+void applyARCreditMemo::sSearchDocNumChanged(const QString &pTarget)
 {
-  QString sub = _searchDocNum->text().stripWhiteSpace();
-  if(sub.isEmpty())
+  _aropen->clearSelection();
+
+  if (pTarget.isEmpty())
     return;
 
-  XListViewItem * item = 0;
-  XListViewItem * foundSub = 0;
-  for(item = _aropen->firstChild(); item; item = item->nextSibling())
+  int i;
+  for (i = 0; i < _aropen->topLevelItemCount(); i++)
   {
-    if(item->text(1) == sub)
-    {
-      _aropen->setSelected(item, true);
-      _aropen->ensureItemVisible(item);
-      return;
-    }
-    if(foundSub==0 && item->text(1).startsWith(sub))
-      foundSub = item;
+    if (_aropen->topLevelItem(i)->text(1).startsWith(pTarget))
+      break;
   }
-  if(foundSub)
+
+  if (i < _aropen->topLevelItemCount())
   {
-    _aropen->setSelected(foundSub, true);
-    _aropen->ensureItemVisible(foundSub);
+    _aropen->setCurrentItem(_aropen->topLevelItem(i));
+    _aropen->scrollToItem(_aropen->topLevelItem(i));
   }
 }

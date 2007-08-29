@@ -76,7 +76,7 @@ public slots:
     virtual void sPopulateLocationInfo( int pLocationid );
     virtual void sPrint();
     virtual void sViewTransInfo();
-    virtual void sPopulateMenu( Q3PopupMenu * menuThis );
+    virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sFillList();
 
 protected slots:

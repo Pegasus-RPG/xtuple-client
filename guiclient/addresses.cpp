@@ -82,7 +82,7 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
     (void)statusBar();
 
     // signals and slots connections
-    connect(_address, SIGNAL(populateMenu(Q3PopupMenu*, Q3ListViewItem*, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*, Q3ListViewItem*, int)));
+    connect(_address, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*, int)));
     connect(_edit,		SIGNAL(clicked()),	this, SLOT(sEdit()));
     connect(_view,		SIGNAL(clicked()),	this, SLOT(sView()));
     connect(_delete,		SIGNAL(clicked()),	this, SLOT(sDelete()));
@@ -135,7 +135,7 @@ void addresses::languageChange()
 }
 
 
-void addresses::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem*, int)
+void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
 {
   int menuItem;
 

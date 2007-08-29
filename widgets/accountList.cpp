@@ -69,7 +69,7 @@
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <q3whatsthis.h>
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 #include "OpenMFGWidgets.h"
 
@@ -93,7 +93,8 @@ accountList::accountList(QWidget* parent, const char* name, bool modal, Qt::WFla
   QLabel *accountsLit = new QLabel(tr("Chart of Accounts:"), this, "accountsLit");
   Layout68->addWidget(accountsLit);
 
-  _accnt = new XListView( this, "_accnt" );
+  _accnt = new XTreeWidget(this);
+  _accnt->setName("_accnt");
   Layout68->addWidget( _accnt );
   accountListLayout->addLayout( Layout68 );
 

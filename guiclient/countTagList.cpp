@@ -57,7 +57,7 @@
 
 #include "countTagList.h"
 
-#include <qvariant.h>
+#include <QVariant>
 
 /*
  *  Constructs a countTagList as a child of 'parent', with the
@@ -163,21 +163,18 @@ void countTagList::sSelect()
 
 void countTagList::sSearch(const QString &pTarget)
 {
-  Q3ListViewItem *target;
-
-  if (_cnttag->selectedItem())
-    _cnttag->setSelected(_cnttag->selectedItem(), FALSE);
-
   _cnttag->clearSelection();
-
-  target = _cnttag->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(1).left(pTarget.length())))
-    target = target->nextSibling();
-
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _cnttag->topLevelItemCount(); i++)
   {
-    _cnttag->setSelected(target, TRUE);
-    _cnttag->ensureItemVisible(target);
+    if (_cnttag->topLevelItem(i)->text(1).contains(pTarget, Qt::CaseInsensitive))
+    break;
+  }
+
+  if (i < _cnttag->topLevelItemCount())
+  {
+    _cnttag->setCurrentItem(_cnttag->topLevelItem(i));
+    _cnttag->scrollToItem(_cnttag->topLevelItem(i));
   }
 }
 

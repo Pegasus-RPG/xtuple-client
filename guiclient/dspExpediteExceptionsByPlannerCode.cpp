@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "rptExpediteExceptionsByPlannerCode.h"
 
@@ -78,7 +78,7 @@ dspExpediteExceptionsByPlannerCode::dspExpediteExceptionsByPlannerCode(QWidget* 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_exception, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_exception, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   statusBar()->hide();
@@ -194,10 +194,10 @@ void dspExpediteExceptionsByPlannerCode::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *last = NULL;
+    XTreeWidgetItem *last = NULL;
 
     do
-      last = new XListViewItem( _exception, last, q.value("order_id").toInt(), q.value("order_code").toInt(),
+      last = new XTreeWidgetItem( _exception, last, q.value("order_id").toInt(), q.value("order_code").toInt(),
                                 q.value("order_number"), q.value("warehous_code"),
                                 q.value("item_number"), q.value("item_descrip"),
                                 q.value("f_keydate"), q.value("exception") );
@@ -217,7 +217,7 @@ void dspExpediteExceptionsByPlannerCode::sPrint()
   newdlg.set(params);
 }
 
-void dspExpediteExceptionsByPlannerCode::sPopulateMenu( Q3PopupMenu *, Q3ListViewItem * )
+void dspExpediteExceptionsByPlannerCode::sPopulateMenu( QMenu *, QTreeWidgetItem * )
 {
 
 }

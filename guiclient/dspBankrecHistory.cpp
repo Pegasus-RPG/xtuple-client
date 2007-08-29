@@ -57,10 +57,10 @@
 
 #include "dspBankrecHistory.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <parameter.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QStatusBar>
 #include "OpenMFGGUIClient.h"
 #include "rptBankrecHistory.h"
 
@@ -176,13 +176,13 @@ void dspBankrecHistory::sFillList()
     q.bindValue(":bankrecid", _bankrec->id());
     q.exec();
 
-    new XListViewItem( _details, _details->lastItem(), -1, QVariant(opendate), tr("Opening Balance"), openbal);
+    XTreeWidgetItem *last = 0;
+    last = new XTreeWidgetItem( _details, last, -1, QVariant(opendate), tr("Opening Balance"), openbal);
 
     while (q.next())
-      new XListViewItem( _details, _details->lastItem(), q.value("gltrans_id").toInt(),
-                         q.value("f_date"), q.value("gltrans_docnumber"), q.value("f_amount") );
+      last = new XTreeWidgetItem( _details, last, q.value("gltrans_id").toInt(),
+				 q.value("f_date"), q.value("gltrans_docnumber"), q.value("f_amount") );
 
-    new XListViewItem( _details, _details->lastItem(), -1, QVariant(enddate), tr("Ending Balance"), endbal);
+    last = new XTreeWidgetItem( _details, last, -1, QVariant(enddate), tr("Ending Balance"), endbal);
   }
 }
-

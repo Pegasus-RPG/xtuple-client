@@ -57,8 +57,8 @@
 
 #include "issueWoMaterialBatch.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include "inputManager.h"
 #include "distributeInventory.h"
 
@@ -231,29 +231,35 @@ void issueWoMaterialBatch::sFillList()
     womatl.bindValue(":wo_id", _wo->id());
     womatl.exec();
 
+    XTreeWidgetItem *last = 0;
     while (womatl.next())
     {
-      XListViewItem *last = new XListViewItem( _womatl, _womatl->lastItem(), womatl.value("womatl_id").toInt(),
-                                               womatl.value("item_number"), womatl.value("itemdescrip"),
-                                               womatl.value("item_invuom"), womatl.value("issuemethod"),
-                                               womatl.value("required"), womatl.value("qoh"),
-                                               womatl.value("short") );
+      last = new XTreeWidgetItem(_womatl, last,
+				 womatl.value("womatl_id").toInt(),
+				 womatl.value("item_number"),
+				 womatl.value("itemdescrip"),
+				 womatl.value("item_invuom"),
+				 womatl.value("issuemethod"),
+				 womatl.value("required"),
+				 womatl.value("qoh"),
+				 womatl.value("short") );
 
       if (womatl.value("issuemethod") == "Pull")
       {
-        last->setSelectable(FALSE);
-        last->setColor("blue");
+	// TODO: there's no equivalent to setSelectable with QTreeView
+	// does it matter here?
+        // last->setSelectable(FALSE);
+        last->setTextColor("blue");
       }
       else
       {
         _hasPush = TRUE;
 
         if (womatl.value("short").toDouble() > 0.0)
-          last->setColor(6, "red");
+          last->setTextColor(6, "red");
       }
     }
   }
 
   _issue->setEnabled(_hasPush);
 }
-

@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include <openreports.h>
 #include "applyARCreditMemo.h"
@@ -77,7 +77,7 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
   (void)statusBar();
 
   // signals and slots connections
-  connect(_aropen, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_aropen, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -158,7 +158,7 @@ void unappliedARCreditMemos::sView()
   newdlg.exec();
 }
 
-void unappliedARCreditMemos::sPopulateMenu( Q3PopupMenu * )
+void unappliedARCreditMemos::sPopulateMenu( QMenu * )
 {
 }
 

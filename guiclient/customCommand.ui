@@ -279,7 +279,7 @@
         <number>5</number>
        </property>
        <item>
-        <widget class="XListView" name="_arguments" />
+        <widget class="XTreeWidget" name="_arguments" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
@@ -354,9 +354,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

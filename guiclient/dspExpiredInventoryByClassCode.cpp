@@ -57,16 +57,19 @@
 
 #include "dspExpiredInventoryByClassCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "rptExpiredInventoryByClassCode.h"
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "OpenMFGGUIClient.h"
+
+#define COST_COL	6
+#define VALUE_COL	7
 
 /*
  *  Constructs a dspExpiredInventoryByClassCode as a child of 'parent', with the
@@ -91,7 +94,7 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_expired, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_expired, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -118,7 +121,7 @@ void dspExpiredInventoryByClassCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspExpiredInventoryByClassCode::init()
 {
@@ -132,8 +135,15 @@ void dspExpiredInventoryByClassCode::init()
   _expired->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
   _expired->addColumn(tr("Expiration"),   _dateColumn, Qt::AlignCenter );
   _expired->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
+  _expired->addColumn(tr("Unit Cost"), _costColumn, Qt::AlignRight );
+  _expired->addColumn(tr("Value"),     _costColumn, Qt::AlignRight );
 
   _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
+  if (! _privleges->check("ViewInventoryValue") || ! _showValue->isChecked())
+  {
+    _expired->hideColumn(COST_COL);
+    _expired->hideColumn(VALUE_COL);
+  }
 }
 
 void dspExpiredInventoryByClassCode::sPrint()
@@ -166,12 +176,12 @@ void dspExpiredInventoryByClassCode::sPrint()
   newdlg.set(params);
 }
 
-void dspExpiredInventoryByClassCode::sPopulateMenu(Q3PopupMenu *, Q3ListViewItem *)
+void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 {
 #if 0
   int menuItem;
 
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
   {
     menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
     if (!_privleges->check("CreateInterWarehouseTrans"))
@@ -259,13 +269,13 @@ void dspExpiredInventoryByClassCode::sHandleValue(bool pShowValue)
 {
   if (pShowValue)
   {
-    _expired->addColumn(tr("Unit Cost"), _costColumn, Qt::AlignRight );
-    _expired->addColumn(tr("Value"),     _costColumn, Qt::AlignRight );
+    _expired->showColumn(COST_COL);
+    _expired->showColumn(VALUE_COL);
   }
   else
   {
-    _expired->removeColumn(6);
-    _expired->removeColumn(6);
+    _expired->hideColumn(COST_COL);
+    _expired->hideColumn(VALUE_COL);
   }
 }
 
@@ -318,20 +328,20 @@ void dspExpiredInventoryByClassCode::sFillList()
   _warehouse->bindValue(q);
   _classCode->bindValue(q);
   q.exec();
+  XTreeWidgetItem *last = 0;
   while (q.next())
   {
-    XListViewItem *last = new XListViewItem( _expired, _expired->lastItem(),
-                                             q.value("itemsite_id").toInt(), q.value("itemloc_id").toInt(),
-                                             q.value("warehous_code"), q.value("item_number"),
-                                             q.value("item_invuom"), q.value("itemloc_lotserial"),
-                                             q.value("f_expiration"), q.value("f_qty") );
-
-    if (_showValue->isChecked())
-    {
-      last->setText(6, q.value("f_unitcost").toString());
-      last->setText(7, q.value("f_value").toString());
-    }
-
-    last->setColor("red");
+    last = new XTreeWidgetItem(_expired, last,
+			       q.value("itemsite_id").toInt(),
+			       q.value("itemloc_id").toInt(),
+			       q.value("warehous_code"),
+			       q.value("item_number"),
+			       q.value("item_invuom"),
+			       q.value("itemloc_lotserial"),
+			       q.value("f_expiration"),
+			       q.value("f_qty"),
+			       q.value("f_unitcost"),
+			       q.value("f_value"));
+    last->setTextColor("red");
   }
 }

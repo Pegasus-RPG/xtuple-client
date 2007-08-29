@@ -81,7 +81,7 @@ public slots:
     virtual void sCreateWO();
     virtual void sCreatePR();
     virtual void sCreatePO();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem * pSelected, int pColumn );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected, int pColumn );
     virtual void sCalculate();
 
 protected slots:

@@ -57,10 +57,10 @@
 
 #include "dspBacklogByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
@@ -79,7 +79,7 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
     (void)statusBar();
 
     // signals and slots connections
-    connect(_soitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -108,7 +108,7 @@ void dspBacklogByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspBacklogByItem::init()
 {
@@ -126,6 +126,7 @@ void dspBacklogByItem::init()
   _soitem->addColumn(tr("Ordered"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),   _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Amount $"),  _moneyColumn, Qt::AlignRight  );
 
   if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
     _showPrices->setEnabled(FALSE);
@@ -136,9 +137,9 @@ void dspBacklogByItem::init()
 void dspBacklogByItem::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->addColumn(tr("Amount $"), _moneyColumn, Qt::AlignRight);
+    _soitem->showColumn(8);
   else
-    _soitem->removeColumn(8);
+    _soitem->hideColumn(8);
 
   sFillList();
 }
@@ -201,7 +202,7 @@ void dspBacklogByItem::sPrintPackingList()
   newdlg.exec();
 }
 
-void dspBacklogByItem::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspBacklogByItem::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -233,15 +234,16 @@ void dspBacklogByItem::sPopulateMenu(Q3PopupMenu *pMenu)
 
 void dspBacklogByItem::sFillList()
 {
+  _soitem->clear();
   if (_item->isValid())
   {
     QString sql( "SELECT cohead_id, coitem_id, cohead_number, coitem_linenumber, cust_name, "
-                 "       formatDate(cohead_orderdate),"
-                 "       formatDate(coitem_scheddate),"
-                 "       formatQty(coitem_qtyord),"
-                 "       formatQty(coitem_qtyshipped),"
-                 "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)),"
-                 "       formatMoney(round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / item_invpricerat),2)),"
+                 "       formatDate(cohead_orderdate) AS f_orderdate,"
+                 "       formatDate(coitem_scheddate) AS f_scheddate,"
+                 "       formatQty(coitem_qtyord) AS f_qtyord,"
+                 "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
+                 "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
+                 "       formatMoney(round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / item_invpricerat),2)) AS f_amount,"
                  "       round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / item_invpricerat),2) AS backlog "
                  "FROM cohead, coitem, cust, itemsite, item "
                  "WHERE ( (coitem_cohead_id=cohead_id)"
@@ -263,20 +265,30 @@ void dspBacklogByItem::sFillList()
     _dates->bindValue(q);
     q.bindValue(":item_id", _item->id());
     q.exec();
-    _soitem->populate(q, TRUE);
+    XTreeWidgetItem *last = 0;
+    double totalBacklog = 0.0;
+    while (q.next())
+    {
+      last = new XTreeWidgetItem(_soitem, last,
+				 q.value("cohead_id").toInt(),
+				 q.value("coitem_id").toInt(),
+				 q.value("cohead_number"),
+				 q.value("coitem_linenumber"),
+				 q.value("cust_name"),
+				 q.value("f_orderdate"),
+				 q.value("f_scheddate"),
+				 q.value("f_qtyord"),
+				 q.value("f_qtyshipped"),
+				 q.value("f_balance"),
+				 q.value("f_amount"));
+      totalBacklog += q.value("backlog").toDouble();
+    }
 
     if (_showPrices->isChecked())
     {
-      double totalBacklog = 0.0;
-
-      q.first();
-      do
-        totalBacklog += q.value("backlog").toDouble();
-      while (q.next());
-
-      new XListViewItem( _soitem, _soitem->lastItem(), -1, -1,
-                         "", "", tr("Total Backlog"), "", "", "", "", "",
-                         formatMoney(totalBacklog) );
+      last = new XTreeWidgetItem(_soitem, last, -1, -1,
+				 "", "", tr("Total Backlog"), "", "", "", "", "",
+				 formatMoney(totalBacklog) );
     }
   }
   else

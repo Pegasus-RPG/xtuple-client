@@ -67,7 +67,7 @@
 class QLineEdit;
 class QCheckBox;
 class QPushButton;
-class XListView;
+class XTreeWidget;
 class ParameterList;
 
 class OPENMFGWIDGETS_EXPORT itemSearch : public QDialog
@@ -84,7 +84,7 @@ public:
     QCheckBox* _showInactive;
     QPushButton* _close;
     QPushButton* _select;
-    XListView* _item;
+    XTreeWidget* _item;
 
 public slots:
     virtual void set( ParameterList & pParams );

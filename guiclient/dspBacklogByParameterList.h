@@ -82,7 +82,7 @@ public slots:
     virtual void sViewItem();
     virtual void sPrintPackingList();
     virtual void sAddToPackingListBatch();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sFillList();
 
 protected slots:

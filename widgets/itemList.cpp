@@ -72,7 +72,7 @@
 #include <qtooltip.h>
 #include <q3whatsthis.h>
 #include "itemcluster.h"
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
 QString buildItemLineEditTitle(const unsigned int, const QString);
@@ -132,7 +132,8 @@ itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl
     QLabel *_itemsLit = new QLabel(tr("&Items:"), this, "_itemsLit");
     Layout20->addWidget( _itemsLit );
 
-    _item = new XListView( this, "_item" );
+    _item = new XTreeWidget(this);
+    _item->setName("_item");
     _itemsLit->setBuddy(_item );
     Layout20->addWidget( _item );
     itemListLayout->addLayout( Layout20 );
@@ -207,21 +208,20 @@ void itemList::sSelect()
 
 void itemList::sSearch(const QString &pTarget)
 {
-  Q3ListViewItem *target;
-
-  if (_item->selectedItem())
-    _item->setSelected(_item->selectedItem(), FALSE);
+  if (_item->currentItem())
+    _item->setCurrentItem(0);
 
   _item->clearSelection();
 
-  target = _item->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
+  int i;
+  for (i = 0; i < _item->topLevelItemCount(); i++)
+    if (_item->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
+      break;
 
-  if (target != NULL)
+  if (i < _item->topLevelItemCount())
   {
-    _item->setSelected(target, TRUE);
-    _item->ensureItemVisible(target);
+    _item->setCurrentItem(_item->topLevelItem(i));
+    _item->scrollToItem(_item->topLevelItem(i));
   }
 }
 

@@ -72,12 +72,11 @@ public:
     dspBookingsByCustomerGroup(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBookingsByCustomerGroup();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sEdit();
     virtual void sView();
     virtual void sPrint();

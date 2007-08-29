@@ -57,7 +57,7 @@
 
 #include "printAPChecksReview.h"
 
-#include <qvariant.h>
+#include <QVariant>
 
 /*
  *  Constructs a printAPChecksReview as a child of 'parent', with the
@@ -113,8 +113,6 @@ void printAPChecksReview::init()
 
 void printAPChecksReview::sComplete()
 {
-  XListViewItem *cursor = _checks->firstChild();
-
   XSqlQuery checkPrint;
   checkPrint.prepare( "UPDATE apchk "
                       "SET apchk_printed=TRUE "
@@ -126,8 +124,10 @@ void printAPChecksReview::sComplete()
   XSqlQuery checkReplace;
   checkReplace.prepare( "SELECT replaceVoidedAPCheck(:apchk_id) AS result;" );
 
-  while( cursor )
+  for (int i = 0; i < _checks->topLevelItemCount(); i++)
   {
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_checks->topLevelItem(i));
+
     switch(cursor->altId())
     {
       case ActionPrinted:
@@ -145,7 +145,6 @@ void printAPChecksReview::sComplete()
         checkReplace.exec();
         break;
     }
-    cursor = cursor->nextSibling();
   }
 
   close();
@@ -173,7 +172,7 @@ void printAPChecksReview::sMarkReplaced()
 
 void printAPChecksReview::sSelectAll()
 {
-  _checks->selectAll(TRUE);
+  _checks->selectAll();
 }
 
 void printAPChecksReview::markSelected( int actionId )
@@ -196,15 +195,11 @@ void printAPChecksReview::markSelected( int actionId )
       action = "";
   };
 
-  XListViewItem *cursor = _checks->firstChild();
-  while( cursor )
+  QList<QTreeWidgetItem*> selected = _checks->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if(_checks->isSelected(cursor))
-    {
-      cursor->setText(1, action);
-      cursor->setAltId(actionId);
-    }
-    cursor = cursor->nextSibling();
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+    cursor->setText(1, action);
+    cursor->setAltId(actionId);
   }
 }
-

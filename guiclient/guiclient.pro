@@ -69,7 +69,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                createFinanceCharges.ui createItemSitesByClassCode.ui                                  \
                createPlannedOrdersByItem.ui createPlannedOrdersByPlannerCode.ui                       \
                woMaterialItem.ui createLotSerial.ui creditMemo.ui                                     \
-               creditMemoItem.ui creditMemoEditList.ui creditMemoList.ui                              \
+               creditMemoItem.ui creditMemoEditList.ui                         \
 	       crmaccount.ui crmaccounts.ui                                                           \
                currencies.ui currency.ui currencyConversion.ui currencyConversions.ui                 \
 	       currencySelect.ui                                                                      \
@@ -82,12 +82,12 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                deliverInvoice.ui deliverPurchaseOrder.ui deliverSalesOrder.ui                         \
                department.ui departments.ui                                                           \
                distributeBreederProduction.ui distributeInitialQOH.ui distributeInventory.ui          \
-               distributeToLocation.ui dspAPAging.ui                                                  \
-               dspAllocations.ui dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui dspARAging.ui  \
+               distributeToLocation.ui                                         \
+               dspAllocations.ui dspAPOpenItemsByVendor.ui dspAROpenItemsByCustomer.ui \
                dspAROpenItems.ui                                                                      \
                dspARApplications.ui dspBacklogByCustomer.ui dspBacklogByParameterList.ui              \
                dspBacklogByItem.ui dspBacklogBySalesOrder.ui                                          \
-               dspBalanceSheet.ui dspBankrecHistory.ui                                                \
+               dspBankrecHistory.ui                                            \
                billingEditList.ui dspBillingSelections.ui                                             \
                dspBookingsByCustomer.ui dspBookingsByCustomerGroup.ui dspBookingsByItem.ui            \
                dspBookingsByProductCategory.ui dspBookingsBySalesRep.ui dspBookingsByShipTo.ui        \
@@ -109,7 +109,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspFinancialReport.ui dspFrozenItemSites.ui                                            \
                dspEarnedCommissions.ui dspExpediteExceptionsByPlannerCode.ui                          \
                dspExpiredInventoryByClassCode.ui                                                      \
-               dspGLSeries.ui dspGLTransactions.ui dspRWTransactions.ui dspIncomeStatement.ui         \
+               dspGLSeries.ui dspGLTransactions.ui dspRWTransactions.ui        \
                dspIndentedBOM.ui dspIndentedWhereUsed.ui dspInvalidBillsOfMaterials.ui                \
                dspInventoryAvailabilityByItem.ui dspInventoryAvailabilityByParameterList.ui           \
                dspInventoryAvailabilityBySalesOrder.ui dspInventoryAvailabilityBySourceVendor.ui      \
@@ -155,7 +155,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspShipmentsByDate.ui dspShipmentsBySalesOrder.ui dspSlowMovingInventoryByClassCode.ui \
                dspStandardJournalHistory.ui dspStandardOperationsByWorkCenter.ui maintainShipping.ui  \
                dspSubstituteAvailabilityByItem.ui dspSummarizedBacklogByWarehouse.ui                  \
-               dspSummarizedBankrecHistory.ui                                                         \
+               dspSummarizedBankrecHistory.ui                                  \
                dspSummarizedBOM.ui dspSummarizedGLTransactions.ui                                     \
                dspSummarizedSalesByCustomer.ui dspSummarizedSalesByCustomerByItem.ui                  \
                dspSummarizedSalesByCustomerType.ui dspSummarizedSalesByCustomerTypeByItem.ui          \
@@ -269,7 +269,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptAPOpenItemsByVendor.ui rptAROpenItemsByCustomer.ui rptARApplications.ui             \
                rptAROpenItems.ui rptARAging.ui                                                        \
                rptBacklogByCustomer.ui rptBacklogByParameterList.ui rptBacklogByItem.ui               \
-               rptBacklogBySalesOrder.ui rptBankrecHistory.ui rptBalanceSheet.ui                      \
+               rptBacklogBySalesOrder.ui rptBankrecHistory.ui                  \
                rptBillOfOperations.ui                                                                 \
                rptBookingsByCustomer.ui rptBookingsByCustomerGroup.ui rptBookingsByItem.ui            \
                rptBookingsByProductCategory.ui rptBookingsBySalesRep.ui rptBookingsByShipTo.ui        \
@@ -291,7 +291,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptEarnedCommissions.ui rptExpediteExceptionsByPlannerCode.ui rptFrozenItemSites.ui    \
                rptExpiredInventoryByClassCode.ui                                                      \
                rptGLSeries.ui rptGLTransactions.ui                                                    \
-               rptIncomeStatement.ui                                                                  \
                rptIndentedBOM.ui rptIndentedWhereUsed.ui                                              \
                rptInventoryAvailabilityByItem.ui rptInventoryAvailabilityByParameterList.ui           \
                rptInventoryAvailabilityBySalesOrder.ui rptInventoryAvailabilityBySourceVendor.ui      \
@@ -335,7 +334,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptStandardJournalHistory.ui rptStandardOperationsByWorkCenter.ui                      \
                rptSubstituteAvailabilityByRootItem.ui                                                 \
                rptSummarizedBacklogByWarehouse.ui rptSummarizedBOM.ui rptSummarizedGLTransactions.ui  \
-               rptSummarizedBankrecHistory.ui                                                         \
+               rptSummarizedBankrecHistory.ui                                  \
                rptSummarizedSalesByCustomer.ui rptSummarizedSalesByCustomerType.ui                    \
                rptSummarizedSalesByCustomerTypeByItem.ui rptSummarizedSalesByCustomerByItem.ui        \
                rptSummarizedSalesByItem.ui rptSummarizedSalesBySalesRep.ui                            \
@@ -465,7 +464,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                createFinanceCharges.h createItemSitesByClassCode.h                                    \
                createPlannedOrdersByItem.h createPlannedOrdersByPlannerCode.h                         \
                woMaterialItem.h createLotSerial.h creditMemo.h                                        \
-               creditMemoItem.h creditMemoEditList.h creditMemoList.h                                 \
+               creditMemoItem.h creditMemoEditList.h                           \
 	       crmaccount.h crmaccounts.h                                                             \
                currencies.h currency.h currencyConversion.h currencyConversions.h                     \
 	       currencySelect.h                                                                       \
@@ -478,12 +477,12 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                deliverInvoice.h deliverPurchaseOrder.h deliverSalesOrder.h                            \
                department.h departments.h                                                             \
                distributeBreederProduction.h distributeInitialQOH.h distributeInventory.h             \
-               distributeToLocation.h dspAPAging.h                                                    \
-               dspAllocations.h dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h dspARAging.h      \
+               distributeToLocation.h                                          \
+               dspAllocations.h dspAPOpenItemsByVendor.h dspAROpenItemsByCustomer.h \
                dspAROpenItems.h                                                                       \
                dspARApplications.h dspBacklogByCustomer.h dspBacklogByParameterList.h                 \
                dspBacklogByItem.h dspBacklogBySalesOrder.h                                            \
-               dspBalanceSheet.h dspBankrecHistory.h                                                  \
+               dspBankrecHistory.h                                             \
                billingEditList.h dspBillingSelections.h                                               \
                dspBookingsByCustomer.h dspBookingsByCustomerGroup.h dspBookingsByItem.h               \
                dspBookingsByProductCategory.h dspBookingsBySalesRep.h dspBookingsByShipTo.h           \
@@ -503,7 +502,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspFinancialReport.h dspFrozenItemSites.h                                              \
                dspEarnedCommissions.h dspExpediteExceptionsByPlannerCode.h                            \
                dspExpiredInventoryByClassCode.h                                                       \
-               dspGLSeries.h dspGLTransactions.h dspRWTransactions.h dspIncomeStatement.h             \
+               dspGLSeries.h dspGLTransactions.h dspRWTransactions.h           \
                dspIndentedBOM.h dspIndentedWhereUsed.h dspInvalidBillsOfMaterials.h                   \
                dspInventoryAvailabilityByItem.h dspInventoryAvailabilityByParameterList.h             \
                dspInventoryAvailabilityBySalesOrder.h dspInventoryAvailabilityBySourceVendor.h        \
@@ -549,7 +548,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspShipmentsByDate.h dspShipmentsBySalesOrder.h dspSlowMovingInventoryByClassCode.h    \
                dspStandardJournalHistory.h dspStandardOperationsByWorkCenter.h maintainShipping.h     \
                dspSubstituteAvailabilityByItem.h dspSummarizedBacklogByWarehouse.h                    \
-               dspSummarizedBankrecHistory.h                                                          \
+               dspSummarizedBankrecHistory.h                                   \
                dspSummarizedBOM.h dspSummarizedGLTransactions.h                                       \
                dspSummarizedSalesByCustomer.h dspSummarizedSalesByCustomerByItem.h                    \
                dspSummarizedSalesByCustomerType.h dspSummarizedSalesByCustomerTypeByItem.h            \
@@ -667,7 +666,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptAPOpenItemsByVendor.h rptAROpenItemsByCustomer.h rptARApplications.h                \
                rptAROpenItems.h rptARAging.h                                                          \
                rptBacklogByCustomer.h rptBacklogByParameterList.h rptBacklogByItem.h                  \
-               rptBacklogBySalesOrder.h rptBankrecHistory.h rptBalanceSheet.h                         \
+               rptBacklogBySalesOrder.h rptBankrecHistory.h                    \
                rptBillOfOperations.h                                                                  \
                rptBookingsByCustomer.h rptBookingsByCustomerGroup.h rptBookingsByItem.h               \
                rptBookingsByProductCategory.h rptBookingsBySalesRep.h rptBookingsByShipTo.h           \
@@ -689,7 +688,6 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptEarnedCommissions.h rptExpediteExceptionsByPlannerCode.h rptFrozenItemSites.h       \
                rptExpiredInventoryByClassCode.h                                                       \
                rptGLSeries.h rptGLTransactions.h                                                      \
-               rptIncomeStatement.h                                                                   \
                rptIndentedBOM.h rptIndentedWhereUsed.h                                                \
                rptInventoryAvailabilityByItem.h rptInventoryAvailabilityByParameterList.h             \
                rptInventoryAvailabilityBySalesOrder.h rptInventoryAvailabilityBySourceVendor.h        \
@@ -732,7 +730,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptStandardJournalHistory.h rptStandardOperationsByWorkCenter.h                        \
                rptSubstituteAvailabilityByRootItem.h                                                  \
                rptSummarizedBacklogByWarehouse.h rptSummarizedBOM.h rptSummarizedGLTransactions.h     \
-               rptSummarizedBankrecHistory.h                                                          \
+               rptSummarizedBankrecHistory.h                                   \
                rptSummarizedSalesByCustomer.h rptSummarizedSalesByCustomerType.h                      \
                rptSummarizedSalesByCustomerTypeByItem.h rptSummarizedSalesByCustomerByItem.h          \
                rptSummarizedSalesByItem.h rptSummarizedSalesBySalesRep.h                              \
@@ -863,7 +861,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                createFinanceCharges.cpp createItemSitesByClassCode.cpp                                \
                createPlannedOrdersByItem.cpp createPlannedOrdersByPlannerCode.cpp                     \
                woMaterialItem.cpp createLotSerial.cpp creditMemo.cpp                                  \
-               creditMemoItem.cpp creditMemoEditList.cpp creditMemoList.cpp                           \
+               creditMemoItem.cpp creditMemoEditList.cpp                       \
 	       crmaccount.cpp crmaccounts.cpp                                                         \
                currencies.cpp currency.cpp currencyConversion.cpp currencyConversions.cpp             \
 	       currencySelect.cpp                                                                     \
@@ -876,12 +874,12 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                deliverInvoice.cpp deliverPurchaseOrder.cpp deliverSalesOrder.cpp                      \
                department.cpp departments.cpp                                                         \
                distributeBreederProduction.cpp distributeInitialQOH.cpp distributeInventory.cpp       \
-               distributeToLocation.cpp dspAPAging.cpp                                                \
-               dspAllocations.cpp dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp dspARAging.cpp \
+               distributeToLocation.cpp                                        \
+               dspAllocations.cpp dspAPOpenItemsByVendor.cpp dspAROpenItemsByCustomer.cpp \
                dspAROpenItems.cpp                                                                     \
                dspARApplications.cpp dspBacklogByCustomer.cpp dspBacklogByParameterList.cpp           \
                dspBacklogByItem.cpp dspBacklogBySalesOrder.cpp                                        \
-               dspBalanceSheet.cpp dspBankrecHistory.cpp                                              \
+               dspBankrecHistory.cpp                                           \
                billingEditList.cpp dspBillingSelections.cpp                                           \
                dspBookingsByCustomer.cpp dspBookingsByCustomerGroup.cpp dspBookingsByItem.cpp         \
                dspBookingsByProductCategory.cpp dspBookingsBySalesRep.cpp dspBookingsByShipTo.cpp     \
@@ -902,7 +900,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspFinancialReport.cpp dspFrozenItemSites.cpp                                          \
                dspEarnedCommissions.cpp dspExpediteExceptionsByPlannerCode.cpp                        \
                dspExpiredInventoryByClassCode.cpp                                                     \
-               dspGLSeries.cpp dspGLTransactions.cpp dspRWTransactions.cpp dspIncomeStatement.cpp     \
+               dspGLSeries.cpp dspGLTransactions.cpp dspRWTransactions.cpp     \
                dspIndentedBOM.cpp dspIndentedWhereUsed.cpp dspInvalidBillsOfMaterials.cpp             \
                dspInventoryAvailabilityByItem.cpp dspInventoryAvailabilityByParameterList.cpp         \
                dspInventoryAvailabilityBySalesOrder.cpp dspInventoryAvailabilityBySourceVendor.cpp    \
@@ -946,7 +944,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspShipmentsByDate.cpp dspShipmentsBySalesOrder.cpp dspSlowMovingInventoryByClassCode.cpp \
                dspStandardJournalHistory.cpp dspStandardOperationsByWorkCenter.cpp maintainShipping.cpp \
                dspSubstituteAvailabilityByItem.cpp dspSummarizedBacklogByWarehouse.cpp                \
-               dspSummarizedBankrecHistory.cpp                                                        \
+               dspSummarizedBankrecHistory.cpp                                 \
                dspSummarizedBOM.cpp dspSummarizedGLTransactions.cpp                                   \
                dspSummarizedSalesByCustomer.cpp dspSummarizedSalesByCustomerByItem.cpp                \
                dspSummarizedSalesByCustomerType.cpp dspSummarizedSalesByCustomerTypeByItem.cpp        \
@@ -1066,7 +1064,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptAPOpenItemsByVendor.cpp rptAROpenItemsByCustomer.cpp rptARApplications.cpp          \
                rptAROpenItems.cpp rptARAging.cpp                                                      \
                rptBacklogByCustomer.cpp rptBacklogByParameterList.cpp rptBacklogByItem.cpp            \
-               rptBacklogBySalesOrder.cpp rptBankrecHistory.cpp rptBalanceSheet.cpp                   \
+               rptBacklogBySalesOrder.cpp rptBankrecHistory.cpp                \
                rptBillOfOperations.cpp                                                                \
                rptBookingsByCustomer.cpp rptBookingsByCustomerGroup.cpp rptBookingsByItem.cpp         \
                rptBookingsByProductCategory.cpp rptBookingsBySalesRep.cpp rptBookingsByShipTo.cpp     \
@@ -1087,7 +1085,6 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptEarnedCommissions.cpp rptExpediteExceptionsByPlannerCode.cpp rptFrozenItemSites.cpp \
                rptExpiredInventoryByClassCode.cpp                                                     \
                rptGLSeries.cpp rptGLTransactions.cpp                                                  \
-               rptIncomeStatement.cpp                                                                 \
                rptIndentedBOM.cpp rptIndentedWhereUsed.cpp                                            \
                rptInventoryAvailabilityByItem.cpp rptInventoryAvailabilityByParameterList.cpp         \
                rptInventoryAvailabilityBySalesOrder.cpp rptInventoryAvailabilityBySourceVendor.cpp    \
@@ -1129,7 +1126,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptStandardJournalHistory.cpp rptStandardOperationsByWorkCenter.cpp                    \
                rptSubstituteAvailabilityByRootItem.cpp                                                \
                rptSummarizedBacklogByWarehouse.cpp rptSummarizedBOM.cpp rptSummarizedGLTransactions.cpp \
-               rptSummarizedBankrecHistory.cpp                                                        \
+               rptSummarizedBankrecHistory.cpp                                 \
                rptSummarizedSalesByCustomer.cpp rptSummarizedSalesByCustomerType.cpp                  \
                rptSummarizedSalesByCustomerTypeByItem.cpp rptSummarizedSalesByCustomerByItem.cpp      \
                rptSummarizedSalesByItem.cpp rptSummarizedSalesBySalesRep.cpp                          \

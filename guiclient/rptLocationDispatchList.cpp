@@ -57,9 +57,9 @@
 
 #include "rptLocationDispatchList.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <openreports.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -111,7 +111,7 @@ void rptLocationDispatchList::init()
 {
   _location->addColumn( tr("Location"),    _itemColumn, Qt::AlignLeft   );
   _location->addColumn( tr("Description"), -1,          Qt::AlignLeft   );
-  _location->setSelectionMode(Q3ListView::Extended);
+  _location->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   sPopulateLocations(_warehouse->id());
 }
@@ -120,16 +120,13 @@ void rptLocationDispatchList::sPrint()
 {
   QString locationids;
 
-  for ( Q3ListViewItem *cursor = _location->firstChild();
-        cursor; cursor = cursor->nextSibling() )
+  QList<QTreeWidgetItem*> selected = _location->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (cursor->isSelected())
-    {
-      if (locationids.length())
-        locationids += ", ";
+    if (locationids.length())
+      locationids += ", ";
 
-      locationids += QString("%1").arg(((XListViewItem *)cursor)->id());
-    }
+    locationids += QString("%1").arg(((XTreeWidgetItem *)selected[i])->id());
   }
 
   if (locationids.length())

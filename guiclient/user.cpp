@@ -57,9 +57,9 @@
 
 #include "user.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <qmd5.h>
 
 /*
@@ -357,8 +357,8 @@ void user::sModuleSelected(const QString &pModule)
   privs.exec();
   if (privs.first())
   {
-    XListViewItem *granted = NULL;
-    XListViewItem *available = NULL;
+    XTreeWidgetItem *granted = NULL;
+    XTreeWidgetItem *available = NULL;
 
 //  Insert each priv into either the available or granted list
     XSqlQuery usrpriv;
@@ -373,9 +373,9 @@ void user::sModuleSelected(const QString &pModule)
     do
     {
       if (usrpriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
-        available = new XListViewItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"));
+        available = new XTreeWidgetItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"));
       else
-        granted = new XListViewItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"));
+        granted = new XTreeWidgetItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"));
     }
     while (privs.next());
   }

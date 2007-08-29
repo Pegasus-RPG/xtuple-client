@@ -57,11 +57,11 @@
 
 #include "dspTimePhasedSalesByCustomer.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <datecluster.h>
-#include <qworkspace.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
+#include <QWorkspace>
+#include <QStatusBar>
+#include <QMessageBox>
 #include <q3valuevector.h>
 #include <parameter.h>
 #include <openreports.h>
@@ -84,7 +84,7 @@ dspTimePhasedSalesByCustomer::dspTimePhasedSalesByCustomer(QWidget* parent, cons
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_sohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
@@ -115,7 +115,7 @@ void dspTimePhasedSalesByCustomer::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedSalesByCustomer::init()
 {
@@ -164,7 +164,7 @@ void dspTimePhasedSalesByCustomer::sViewShipments()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspTimePhasedSalesByCustomer::sPopulateMenu(Q3PopupMenu *menuThis, Q3ListViewItem *, int pColumn)
+void dspTimePhasedSalesByCustomer::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
   int intMenuItem;
 
@@ -186,42 +186,34 @@ void dspTimePhasedSalesByCustomer::sCalculate()
     return;
 
   _sohist->clear();
-  while (_sohist->columns() > 2)
-    _sohist->removeColumn(2);
+  _sohist->setColumnCount(2);
 
   _columnDates.clear();
 
   QString sql("SELECT cust_id, cust_number, cust_name");
 
   int           columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        if (_productCategory->isSelected())
-          sql += QString(", shipmentsByCustomerValue(cust_id, %1, %2) AS bucket%3")
-                 .arg(cursor->id())
-                 .arg(_productCategory->id())
-                 .arg(columns++);
-        else if (_productCategory->isPattern())
-          sql += QString(", shipmentsByCustomerValue(cust_id, %1, '%2') AS bucket%3")
-                 .arg(cursor->id())
-                 .arg(_productCategory->pattern())
-                 .arg(columns++);
-        else
-          sql += QString(", shipmentsByCustomerValue(cust_id, %1) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        _sohist->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    if (_productCategory->isSelected())
+      sql += QString(", shipmentsByCustomerValue(cust_id, %1, %2) AS bucket%3")
+	     .arg(cursor->id())
+	     .arg(_productCategory->id())
+	     .arg(columns++);
+    else if (_productCategory->isPattern())
+      sql += QString(", shipmentsByCustomerValue(cust_id, %1, '%2') AS bucket%3")
+	     .arg(cursor->id())
+	     .arg(_productCategory->pattern())
+	     .arg(columns++);
+    else
+      sql += QString(", shipmentsByCustomerValue(cust_id, %1) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _sohist->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM cust ";
@@ -242,23 +234,24 @@ void dspTimePhasedSalesByCustomer::sCalculate()
   if (q.first())
   {
     Q3ValueVector<Numeric> totals(columns);;
+    XTreeWidgetItem *last = 0;
 
     do
     {
-      XListViewItem *item = new XListViewItem( _sohist, _sohist->lastItem(), q.value("cust_id").toInt(),
-                                               q.value("cust_number"), q.value("cust_name") );
+      last = new XTreeWidgetItem( _sohist, last, q.value("cust_id").toInt(),
+				 q.value("cust_number"), q.value("cust_name") );
 
       for (int column = 1; column < columns; column++)
       {
         QString bucketName = QString("bucket%1").arg(column);
-        item->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
+        last->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
         totals[column] += q.value(bucketName).toDouble();
       }
     }
     while (q.next());
 
 //  Add the totals row
-    XListViewItem *total = new XListViewItem(_sohist, _sohist->lastItem(), -1, QVariant(tr("Totals:")));
+    XTreeWidgetItem *total = new XTreeWidgetItem(_sohist, last, -1, QVariant(tr("Totals:")));
     for (int column = 1; column < columns; column++)
       total->setText((column + 1), formatMoney(totals[column].toDouble()));
   }
@@ -294,15 +287,11 @@ ParameterList dspTimePhasedSalesByCustomer::buildParameters()
   _customerType->appendValue(params);
   _productCategory->appendValue(params);
 
-  XListViewItem *cursor = _periods->firstChild();
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
-  while (cursor)
-  {
-    if (cursor->isSelected())
-      periodList.append(cursor->id());
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
 
-    cursor = cursor->nextSibling();
-  }
   params.append("period_id_list", periodList);
 
   if (_bySales->isChecked())

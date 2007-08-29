@@ -63,7 +63,8 @@
 
 #include "OpenMFGWidgets.h"
 
-class XListView;
+#include "xtreewidget.h"
+
 class QPushButton;
 class ParameterList;
 
@@ -74,7 +75,7 @@ class OPENMFGWIDGETS_EXPORT accountList : public QDialog
   public:
     accountList(QWidget * = 0, const char * = 0, bool = FALSE, Qt::WFlags = 0);
 
-    XListView* _accnt;
+    XTreeWidget* _accnt;
     QPushButton* _close;
     QPushButton* _select;
     QPushButton* _clear;

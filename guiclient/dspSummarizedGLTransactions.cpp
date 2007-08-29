@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "glTransactionDetail.h"
 #include "voucher.h"
@@ -86,7 +86,7 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
-  connect(_gltrans, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   statusBar()->hide();
 
@@ -98,6 +98,9 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   _gltrans->addColumn(tr("Doc. #"),            _orderColumn,      Qt::AlignCenter );
   _gltrans->addColumn(tr("Debit"),             _bigMoneyColumn,   Qt::AlignRight  );
   _gltrans->addColumn(tr("Credit"),            _bigMoneyColumn,   Qt::AlignRight  );
+  _gltrans->addColumn( tr("Username"), _userColumn, Qt::AlignLeft );
+
+  sShowUsername(_showUsername->isChecked());
 }
 
 /*
@@ -117,14 +120,14 @@ void dspSummarizedGLTransactions::languageChange()
   retranslateUi(this);
 }
 
-void dspSummarizedGLTransactions::sPopulateMenu(Q3PopupMenu * menuThis)
+void dspSummarizedGLTransactions::sPopulateMenu(QMenu * menuThis)
 {
   if(_gltrans->altId() == -1)
     return;
 
   menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
 
-  Q3ListViewItem * item = _gltrans->currentItem();
+  QTreeWidgetItem * item = _gltrans->currentItem();
   if(0 == item)
     return;
 
@@ -197,7 +200,7 @@ void dspSummarizedGLTransactions::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *header = NULL;
+    XTreeWidgetItem *header = NULL;
     int           accntid = -1;
     double        debits  = 0.0;
     double        credits = 0.0;
@@ -221,11 +224,11 @@ void dspSummarizedGLTransactions::sFillList()
         }
 
         accntid = q.value("accnt_id").toInt();
-        header = new XListViewItem( _gltrans, _gltrans->lastItem(), accntid, 
+        header = new XTreeWidgetItem( _gltrans, header, accntid, 
                                     q.value("account"), q.value("accnt_descrip") );
       }
 
-      XListViewItem *item = new XListViewItem( header,
+      XTreeWidgetItem *item = new XTreeWidgetItem( header,
                                                accntid, q.value("gltrans_id").toInt(),
                                                q.value("transdate"), q.value("f_notes"),
                                                q.value("gltrans_source"), q.value("gltrans_doctype"),
@@ -260,9 +263,9 @@ void dspSummarizedGLTransactions::sFillList()
 void dspSummarizedGLTransactions::sShowUsername( bool yes )
 {
   if(yes)
-    _gltrans->addColumn( tr("Username"), _userColumn, Qt::AlignLeft );
+    _gltrans->showColumn(7);
   else
-    _gltrans->removeColumn(7);
+    _gltrans->hideColumn(7);
 }
 
 void dspSummarizedGLTransactions::sViewTrans()
@@ -278,7 +281,7 @@ void dspSummarizedGLTransactions::sViewTrans()
 
 void dspSummarizedGLTransactions::sViewDocument()
 {
-  Q3ListViewItem * item = _gltrans->currentItem();
+  QTreeWidgetItem * item = _gltrans->currentItem();
   if(0 == item)
     return;
 

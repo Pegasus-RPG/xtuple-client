@@ -75,7 +75,7 @@ public slots:
     virtual void sEditIncident();
     virtual void sEditTodoItem();
     virtual void sFillList();
-    virtual void sPopulateMenu(Q3PopupMenu*);
+    virtual void sPopulateMenu(QMenu*);
     virtual void sPrint();
     virtual void sViewIncident();
     virtual void sViewTodoItem();

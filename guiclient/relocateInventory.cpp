@@ -57,9 +57,9 @@
 
 #include "relocateInventory.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 #include "inputManager.h"
 
 /*
@@ -149,12 +149,13 @@ enum SetResponse relocateInventory::set(ParameterList &pParams)
   if (valid)
   {
     locid = param.toInt();
-    for (Q3ListViewItem *cursor = _source->firstChild(); cursor != 0; cursor = cursor->nextSibling())
+    for (int i = 0; i < _source->topLevelItemCount(); i++)
     {
-      if (((XListViewItem *)cursor)->altId() == locid)
+      XTreeWidgetItem* cursor = (XTreeWidgetItem*)(_source->topLevelItem(i));
+      if (cursor->altId() == locid)
       {
-        _source->setSelected(cursor, TRUE);
-        _source->ensureItemVisible(cursor);
+        _source->setCurrentItem(cursor);
+        _source->scrollToItem(cursor);
         _source->setEnabled(false);
       }
     }
@@ -164,12 +165,13 @@ enum SetResponse relocateInventory::set(ParameterList &pParams)
   if (valid)
   {
     locid = param.toInt();
-    for (Q3ListViewItem *cursor = _target->firstChild(); cursor != 0; cursor = cursor->nextSibling())
+    for (int i = 0; i < _source->topLevelItemCount(); i++)
     {
-      if (((XListViewItem *)cursor)->id() == locid)
+      XTreeWidgetItem* cursor = (XTreeWidgetItem*)(_source->topLevelItem(i));
+      if (cursor->id() == locid)
       {
-        _target->setSelected(cursor, TRUE);
-        _target->ensureItemVisible(cursor);
+        _target->setCurrentItem(cursor);
+        _target->scrollToItem(cursor);
         _target->setEnabled(false);
       }
     }
@@ -192,12 +194,13 @@ enum SetResponse relocateInventory::set(ParameterList &pParams)
       _item->setEnabled(FALSE);
       _warehouse->setEnabled(FALSE);
 
-      for (Q3ListViewItem *cursor = _source->firstChild(); cursor != 0; cursor = cursor->nextSibling())
+      for (int i = 0; i < _source->topLevelItemCount(); i++)
       {
-        if (((XListViewItem *)cursor)->id() == param.toInt())
+	XTreeWidgetItem* cursor = (XTreeWidgetItem*)(_source->topLevelItem(i));
+        if (cursor->id() == param.toInt())
         {
-          _source->setSelected(cursor, TRUE);
-          _source->ensureItemVisible(cursor);
+          _source->setCurrentItem(cursor);
+          _source->scrollToItem(cursor);
         }
       }
 
@@ -217,7 +220,7 @@ enum SetResponse relocateInventory::set(ParameterList &pParams)
 
 void relocateInventory::sMove()
 {
-  if (_source->selectedItem() == 0)
+  if (_source->currentItem() == 0)
   {
     QMessageBox::critical( this, tr("Select Source Location"),
                            tr( "You must select a Source Location before\n"
@@ -226,7 +229,7 @@ void relocateInventory::sMove()
     return;
   }
 
-  if (_target->selectedItem() == 0)
+  if (_target->currentItem() == 0)
   {
     QMessageBox::critical( this, tr("Select Target Location"),
                            tr( "You must select a Target Location before\n"
@@ -235,7 +238,7 @@ void relocateInventory::sMove()
     return;
   }
 
-  if (((XListViewItem *)_source->selectedItem())->id() == ((XListViewItem *)_target->selectedItem())->id())
+  if (((XTreeWidgetItem *)_source->currentItem())->id() == ((XTreeWidgetItem *)_target->currentItem())->id())
   {
     QMessageBox::critical( this, tr("Save Source and Target Location"),
                            tr( "You have selected the same Location for both\n"

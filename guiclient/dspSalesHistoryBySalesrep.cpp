@@ -57,12 +57,17 @@
 
 #include "dspSalesHistoryBySalesrep.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QWorkspace>
 #include "salesHistoryInformation.h"
 #include "rptSalesHistoryBySalesRep.h"
+
+#define UNITPRICE_COL	7
+#define EXTPRICE_COL	8
+#define UNITCOST_COL	( 9 - (_privleges->check("ViewCustomerPrices") ? 0 : 2))
+#define EXTCOST_COL	(10 - (_privleges->check("ViewCustomerPrices") ? 0 : 2))
 
 /*
  *  Constructs a dspSalesHistoryBySalesrep as a child of 'parent', with the
@@ -80,7 +85,7 @@ dspSalesHistoryBySalesrep::dspSalesHistoryBySalesrep(QWidget* parent, const char
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
     connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
     init();
@@ -104,7 +109,7 @@ void dspSalesHistoryBySalesrep::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSalesHistoryBySalesrep::init()
 {
@@ -120,9 +125,21 @@ void dspSalesHistoryBySalesrep::init()
   _sohist->addColumn(tr("Invc. Date"),  _dateColumn,  Qt::AlignLeft  );
   _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft  );
   _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight );
+  if (_privleges->check("ViewCustomerPrices"))
+  {
+    _sohist->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight );
+    _sohist->addColumn(tr("Ext. Price"),  _moneyColumn, Qt::AlignRight );
+  }
+  if (_privleges->check("ViewCosts"))
+  {
+    _sohist->addColumn(tr("Unit Cost"),   _costColumn,  Qt::AlignRight );
+    _sohist->addColumn(tr("Ext. Cost"),   _costColumn,  Qt::AlignRight );
+  }
 
   _showCosts->setEnabled(_privleges->check("ViewCosts"));
   _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
+
+  sHandleParams();
 
   _salesrep->setFocus();
 }
@@ -169,23 +186,30 @@ enum SetResponse dspSalesHistoryBySalesrep::set(ParameterList &pParams)
 
 void dspSalesHistoryBySalesrep::sHandleParams()
 {
-  while (_sohist->columns() > 7)
-    _sohist->removeColumn(7);
-
   if (_showPrices->isChecked())
   {
-    _sohist->addColumn( tr("Unit Price"), _priceColumn, Qt::AlignRight );
-    _sohist->addColumn( tr("Ext. Price"), _moneyColumn, Qt::AlignRight );
+    _sohist->showColumn(UNITPRICE_COL);
+    _sohist->showColumn(EXTPRICE_COL);
+  }
+  else
+  {
+    _sohist->hideColumn(UNITPRICE_COL);
+    _sohist->hideColumn(EXTPRICE_COL);
   }
 
   if (_showCosts->isChecked())
   {
-    _sohist->addColumn( tr("Unit Cost"), _costColumn, Qt::AlignRight );
-    _sohist->addColumn( tr("Ext. Cost"), _costColumn, Qt::AlignRight );
+    _sohist->showColumn(UNITCOST_COL);
+    _sohist->showColumn(EXTCOST_COL);
+  }
+  else
+  {
+    _sohist->hideColumn(UNITCOST_COL);
+    _sohist->hideColumn(EXTCOST_COL);
   }
 }
 
-void dspSalesHistoryBySalesrep::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspSalesHistoryBySalesrep::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -256,15 +280,13 @@ void dspSalesHistoryBySalesrep::sFillList()
                "       item_number,"
                "       cohist_qtyshipped, formatQty(cohist_qtyshipped) AS f_shipped " );
 
-  if (_showPrices->isChecked())
-    sql += ", formatSalesPrice(cohist_unitprice) AS f_price,"
-           "  round(cohist_qtyshipped * cohist_unitprice,2) AS extprice,"
-           "  formatMoney(round(cohist_qtyshipped * cohist_unitprice,2)) AS f_extprice ";
+  sql += ", formatSalesPrice(cohist_unitprice) AS f_price,"
+	 "  round(cohist_qtyshipped * cohist_unitprice,2) AS extprice,"
+	 "  formatMoney(round(cohist_qtyshipped * cohist_unitprice,2)) AS f_extprice ";
 
-  if (_showCosts->isChecked())
-    sql += ", formatCost(cohist_unitcost) AS f_cost,"
-           "  (cohist_qtyshipped * cohist_unitcost) AS extcost,"
-           "  formatCost(cohist_qtyshipped * cohist_unitcost) AS f_extcost ";
+  sql += ", formatCost(cohist_unitcost) AS f_cost,"
+	 "  (cohist_qtyshipped * cohist_unitcost) AS extcost,"
+	 "  formatCost(cohist_qtyshipped * cohist_unitcost) AS f_extcost ";
 
   sql += "FROM cohist, cust, itemsite, item, prodcat "
          "WHERE ( (cohist_itemsite_id=itemsite_id)"
@@ -296,50 +318,35 @@ void dspSalesHistoryBySalesrep::sFillList()
     double totalUnits = 0.0;
     double totalSales = 0.0;
     double totalCosts = 0.0;
+    XTreeWidgetItem *last = 0;
 
     do
     {
-      XListViewItem *last  = new XListViewItem( _sohist, _sohist->lastItem(), q.value("cohist_id").toInt(),
-                                                q.value("cust_name"), q.value("cohist_ordernumber"),
-                                                q.value("invoicenumber"), q.value("f_orderdate"),
-                                                q.value("f_invcdate"), q.value("item_number"),
-                                                q.value("f_shipped")  );
-
-      if (_showPrices->isChecked())
-      {
-        last->setText(7, q.value("f_price"));
-        last->setText(8, q.value("f_extprice"));
-
-        if (_showCosts->isChecked())
-        {
-          last->setText(9, q.value("f_cost"));
-          last->setText(10, q.value("f_extcost"));
-        }
-      }
-      else if (_showCosts->isChecked())
-      {
-        last->setText(7, q.value("f_cost"));
-        last->setText(8, q.value("f_extcost"));
-      }
+      last = new XTreeWidgetItem( _sohist, last, q.value("cohist_id").toInt(),
+				  q.value("cust_name"),
+				  q.value("cohist_ordernumber"),
+				  q.value("invoicenumber"),
+				  q.value("f_orderdate"),
+				  q.value("f_invcdate"),
+				  q.value("item_number"),
+				  q.value("f_shipped"),
+				  q.value("f_price"),
+				  q.value("f_extprice"),
+				  q.value("f_cost"),
+				  q.value("f_extcost"));
  
       totalUnits += q.value("cohist_qtyshipped").toDouble();
-
-      if (_showPrices->isChecked())
-        totalSales += q.value("extprice").toDouble();
-
-      if (_showCosts->isChecked())
-        totalCosts += q.value("extcost").toDouble();
+      totalSales += q.value("extprice").toDouble();
+      totalCosts += q.value("extcost").toDouble();
     }
     while (q.next());
 
-    XListViewItem *totals = new XListViewItem(_sohist, _sohist->lastItem(), -1, QVariant(tr("Total Sales")));
+    XTreeWidgetItem *totals = new XTreeWidgetItem(_sohist, last,
+						  -1,
+						  QVariant(tr("Total Sales")));
     totals->setText(6, formatQty(totalUnits));
-
-    if (_showPrices->isChecked())
-      totals->setText(8, formatMoney(totalSales));
-
-    if (_showCosts->isChecked())
-      totals->setText(10, formatMoney(totalCosts));
+    totals->setText(EXTPRICE_COL, formatMoney(totalSales));
+    totals->setText(EXTCOST_COL, formatMoney(totalCosts));
   }
 }
 

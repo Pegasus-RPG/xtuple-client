@@ -73,7 +73,7 @@ public:
     ~addresses();
 
 public slots:
-    virtual void sPopulateMenu(Q3PopupMenu *, Q3ListViewItem* = NULL, int = 0);
+    virtual void sPopulateMenu(QMenu *, QTreeWidgetItem* = NULL, int = 0);
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();

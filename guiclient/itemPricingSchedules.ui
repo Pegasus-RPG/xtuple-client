@@ -178,7 +178,7 @@
                   <number>0</number>
                 </property>
                 <item>
-                  <widget class="XListView" name="_ipshead" />
+                  <widget class="XTreeWidget" name="_ipshead" />
                 </item>
                 <item>
                   <layout class="QVBoxLayout" >
@@ -277,9 +277,9 @@
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

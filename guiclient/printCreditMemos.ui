@@ -138,7 +138,7 @@
                   </layout>
                 </item>
                 <item>
-                  <widget class="XListView" name="_creditMemoWatermarks" />
+                  <widget class="XTreeWidget" name="_creditMemoWatermarks" />
                 </item>
               </layout>
             </widget>
@@ -210,9 +210,9 @@
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

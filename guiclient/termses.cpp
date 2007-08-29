@@ -57,9 +57,9 @@
 
 #include "termses.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <openreports.h>
 #include "terms.h"
 
@@ -76,7 +76,7 @@ termses::termses(QWidget* parent, const char* name, Qt::WFlags fl)
     (void)statusBar();
 
     // signals and slots connections
-    connect(_terms, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_terms, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -105,7 +105,7 @@ void termses::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void termses::init()
 {
@@ -220,7 +220,7 @@ void termses::sView()
   newdlg.exec();
 }
 
-void termses::sPopulateMenu( Q3PopupMenu * )
+void termses::sPopulateMenu( QMenu * )
 {
 
 }

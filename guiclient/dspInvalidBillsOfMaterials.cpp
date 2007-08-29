@@ -57,10 +57,10 @@
 
 #include "dspInvalidBillsOfMaterials.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "item.h"
 #include "itemSite.h"
 
@@ -77,7 +77,7 @@ dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const ch
     (void)statusBar();
 
     // signals and slots connections
-    connect(_exceptions, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_exceptions, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_update, SIGNAL(toggled(bool)), this, SLOT(sHandleUpdate()));
@@ -102,7 +102,7 @@ void dspInvalidBillsOfMaterials::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspInvalidBillsOfMaterials::init()
 {
@@ -125,8 +125,8 @@ void dspInvalidBillsOfMaterials::sCreateItemSite()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("item_id", _exceptions->selectedItem()->text(0).toInt());
-  params.append("warehous_id", _exceptions->selectedItem()->text(1).toInt());
+  params.append("item_id",     _exceptions->currentItem()->text(0).toInt());
+  params.append("warehous_id", _exceptions->currentItem()->text(1).toInt());
   
   itemSite newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -190,7 +190,7 @@ void dspInvalidBillsOfMaterials::sFillList()
   _exceptions->populate(q, TRUE);                               
 }
 
-void dspInvalidBillsOfMaterials::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspInvalidBillsOfMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

@@ -114,8 +114,8 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
   connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
   connect(_todoList,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_todoList,	SIGNAL(populateMenu(Q3PopupMenu*, Q3ListViewItem*, int)),
-	    this,	SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
+	    this,	SLOT(sPopulateMenu(QMenu*)));
   connect(_todoList,	SIGNAL(valid(bool)),	this,	SLOT(handlePrivs()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
@@ -141,7 +141,7 @@ void todoList::languageChange()
     retranslateUi(this);
 }
 
-void todoList::sPopulateMenu(Q3PopupMenu *pMenu)
+void todoList::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -158,13 +158,13 @@ void todoList::sPopulateMenu(Q3PopupMenu *pMenu)
     menuItem = pMenu->insertItem(tr("Move Up"), this, SLOT(sMoveUp()), 0);
     pMenu->setItemEnabled(menuItem, editPriv && _todoList->id() > 0 &&
 			_todoList->currentItem() > 0 &&
-			_todoList->currentItem() != _todoList->firstChild());
+			_todoList->indexOfTopLevelItem(_todoList->currentItem()) != 0);
 
     menuItem = pMenu->insertItem(tr("Move Down"), this, SLOT(sMoveDown()), 0);
     pMenu->setItemEnabled(menuItem, editPriv && _todoList->id() > 0 &&
 			  _todoList->currentItem() > 0 &&
-			  _todoList->currentItem() != _todoList->lastItem() &&
-			  _todoList->currentItem()->itemBelow()->text(0) == "T");
+			  _todoList->indexOfTopLevelItem(_todoList->currentItem()) < (_todoList->topLevelItemCount() - 1) &&
+			  _todoList->topLevelItem(_todoList->indexOfTopLevelItem(_todoList->currentItem()) + 1)->text(0) == "T");
 
     menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
@@ -227,11 +227,11 @@ void todoList::handlePrivs()
       (_privleges->check("ViewOtherTodoLists"));
     _moveUp->setEnabled(editTodoPriv && _todoList->id() > 0 &&
 			_todoList->currentItem() > 0 &&
-			_todoList->currentItem() != _todoList->firstChild());
+			_todoList->indexOfTopLevelItem(_todoList->currentItem()) != 0);
     _moveDown->setEnabled(editTodoPriv && _todoList->id() > 0 &&
 			  _todoList->currentItem() > 0 &&
-			  _todoList->currentItem() != _todoList->lastItem() &&
-			  _todoList->currentItem()->itemBelow()->text(0) == "T");
+			  _todoList->indexOfTopLevelItem(_todoList->currentItem()) < (_todoList->topLevelItemCount() - 1) &&
+			  _todoList->topLevelItem(_todoList->indexOfTopLevelItem(_todoList->currentItem()) + 1)->text(0) == "T");
   }
   else if (_todoList->currentItem()->text(0) == "I")
   {
@@ -466,10 +466,10 @@ void todoList::sFillList()
   }
 
   _todoList->clear();
-  XListViewItem *last = 0;
+  XTreeWidgetItem *last = 0;
   while (itemQ.next())
   {
-    last = new XListViewItem(_todoList, last,
+    last = new XTreeWidgetItem(_todoList, last,
 			     itemQ.value("id").toInt(),
 			     itemQ.value("altId").toInt(),
 			     itemQ.value("type").toString(),
@@ -486,9 +486,9 @@ void todoList::sFillList()
     if (itemQ.value("status") != "C")
     {
       if (itemQ.value("due").toDate() < QDate::currentDate())
-	last->setColor("red");
+	last->setTextColor("red");
       else if (itemQ.value("due").toDate() > QDate::currentDate())
-	last->setColor("green");
+	last->setTextColor("green");
     }
   }
   handlePrivs();

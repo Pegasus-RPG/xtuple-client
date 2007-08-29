@@ -57,7 +57,7 @@
 
 #include "dspMPSDetail.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
@@ -85,8 +85,8 @@ dspMPSDetail::dspMPSDetail(QWidget* parent, const char* name, Qt::WFlags fl)
   (void)statusBar();
 
   // signals and slots connections
-  connect(_itemsite, SIGNAL(selectionChanged()), this, SLOT(sFillMPSDetail()));
-  connect(_mps, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+  connect(_itemsite, SIGNAL(itemSelectionChanged()), this, SLOT(sFillMPSDetail()));
+  connect(_mps, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -160,23 +160,25 @@ void dspMPSDetail::sPrint()
   newdlg.set(params);
 }
 
-void dspMPSDetail::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *, int pColumn)
+void dspMPSDetail::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
   int           menuItem;
-  Q3ListViewItem *cursor = _mps->firstChild();
+  int		mpsIndex = 0;
 
   _column = pColumn;
 
   menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
-  while ((cursor != 0) && (cursor->text(0) != tr("Allocations")))
-    cursor = cursor->nextSibling();
-  if (cursor->text(pColumn).toDouble() == 0.0)
+  while ((mpsIndex < _mps->topLevelItemCount()) &&
+	 (_mps->topLevelItem(mpsIndex)->text(0) != tr("Allocations")))
+    mpsIndex++;
+  if (_mps->topLevelItem(mpsIndex)->text(pColumn).toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
-  while ((cursor != 0) && (cursor->text(0) != tr("Orders")))
-    cursor = cursor->nextSibling();
-  if (cursor->text(pColumn).toDouble() == 0.0)
+  while ((mpsIndex < _mps->topLevelItemCount()) &&
+	 (_mps->topLevelItem(mpsIndex)->text(0) != tr("Orders")))
+    mpsIndex++;
+  if (_mps->topLevelItem(mpsIndex)->text(pColumn).toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -294,46 +296,42 @@ void dspMPSDetail::sFillMPSDetail()
 {
   _mps->clear();
 
-  while (_mps->columns() > 1)
-    _mps->removeColumn(1);
+  _mps->setColumnCount(1);
 
   if (_periods->isPeriodSelected())
   {
     int           counter = 1;
     QString       sql( "SELECT itemsite_qtyonhand, itemsite_safetystock" );
-    XListViewItem *cursor = _periods->firstChild();
 
-    do
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    for (int i = 0; i < selected.size(); i++)
     {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString( ", qtyAllocated(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS allocations%3, "
-                        "qtyOrdered(itemsite_id, findPeriodStart(%4), findPeriodEnd(%5)) AS orders%6,"
-                        "qtyPlanned(itemsite_id, findPeriodStart(%7), findPeriodEnd(%8)) AS planned%9" )
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter)
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter)
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter);
+      XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+      sql += QString( ", qtyAllocated(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS allocations%3, "
+		      "qtyOrdered(itemsite_id, findPeriodStart(%4), findPeriodEnd(%5)) AS orders%6,"
+		      "qtyPlanned(itemsite_id, findPeriodStart(%7), findPeriodEnd(%8)) AS planned%9" )
+	     .arg(cursor->id())
+	     .arg(cursor->id())
+	     .arg(counter)
+	     .arg(cursor->id())
+	     .arg(cursor->id())
+	     .arg(counter)
+	     .arg(cursor->id())
+	     .arg(cursor->id())
+	     .arg(counter);
 
-        sql += QString( ", qtyForecasted(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS forecast%3")
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter);
+      sql += QString( ", qtyForecasted(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS forecast%3")
+	     .arg(cursor->id())
+	     .arg(cursor->id())
+	     .arg(counter);
 
-        sql += QString( ", (findPeriodStart(%1) < (CURRENT_DATE+itemsite_mps_timefence)) AS inside%2")
-               .arg(cursor->id())
-               .arg(counter);
+      sql += QString( ", (findPeriodStart(%1) < (CURRENT_DATE+itemsite_mps_timefence)) AS inside%2")
+	     .arg(cursor->id())
+	     .arg(counter);
 
-        _mps->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
-        counter++;
-      }
+      _mps->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+      counter++;
     }
-    while ((cursor = cursor->nextSibling()) != 0);
 
     sql +=  QString( " FROM itemsite "
                      "WHERE (itemsite_id=%1);" )
@@ -343,13 +341,13 @@ void dspMPSDetail::sFillMPSDetail()
     q.exec();
     if (q.first())
     {
-      XListViewItem *qoh;
-      XListViewItem *forecast;
-      XListViewItem *allocations;
-      XListViewItem *orders;
-      XListViewItem *availability;
-      XListViewItem *planned;
-      XListViewItem *available;
+      XTreeWidgetItem *qoh;
+      XTreeWidgetItem *forecast;
+      XTreeWidgetItem *allocations;
+      XTreeWidgetItem *orders;
+      XTreeWidgetItem *availability;
+      XTreeWidgetItem *planned;
+      XTreeWidgetItem *available;
       double        forecasted, actual, demand;
       double        runningAvailability;
       //double        safetyStock = q.value("itemsite_safetystock").toDouble();
@@ -371,13 +369,13 @@ void dspMPSDetail::sFillMPSDetail()
                 + q.value("planned1").toDouble()
                 - actual;
 
-      forecast            = new XListViewItem(_mps, 0, QVariant(tr("Forecast")), formatQty(forecasted));
-      allocations         = new XListViewItem(_mps, forecast, 0, QVariant(tr("Allocations")), formatQty(actual));
-      orders              = new XListViewItem(_mps, allocations,  0, QVariant(tr("Orders")), formatQty(q.value("orders1").toDouble()));
-      availability        = new XListViewItem(_mps, orders, 0, QVariant(tr("Projected QOH")), formatQty(runningAvailability));
-      planned             = new XListViewItem(_mps, availability, 0, QVariant(tr("Planned Orders")), formatQty(q.value("planned1").toDouble()));
-      qoh                 = new XListViewItem(_mps, planned, 0, QVariant(tr("Availability")), formatQty(runningAvailability - q.value("planned1").toDouble()));
-      available           = new XListViewItem(_mps, qoh, 0, QVariant(tr("Available to Promise")) );
+      forecast            = new XTreeWidgetItem(_mps, 0, QVariant(tr("Forecast")), formatQty(forecasted));
+      allocations         = new XTreeWidgetItem(_mps, forecast, 0, QVariant(tr("Allocations")), formatQty(actual));
+      orders              = new XTreeWidgetItem(_mps, allocations,  0, QVariant(tr("Orders")), formatQty(q.value("orders1").toDouble()));
+      availability        = new XTreeWidgetItem(_mps, orders, 0, QVariant(tr("Projected QOH")), formatQty(runningAvailability));
+      planned             = new XTreeWidgetItem(_mps, availability, 0, QVariant(tr("Planned Orders")), formatQty(q.value("planned1").toDouble()));
+      qoh                 = new XTreeWidgetItem(_mps, planned, 0, QVariant(tr("Availability")), formatQty(runningAvailability - q.value("planned1").toDouble()));
+      available           = new XTreeWidgetItem(_mps, qoh, 0, QVariant(tr("Available to Promise")) );
                        
       for (int bucketCounter = 2; bucketCounter < counter; bucketCounter++)
       {

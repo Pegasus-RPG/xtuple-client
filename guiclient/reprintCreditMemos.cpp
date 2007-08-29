@@ -57,9 +57,9 @@
 
 #include "reprintCreditMemos.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <openreports.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
 #include "editICMWatermark.h"
 
 /*
@@ -107,7 +107,7 @@ void reprintCreditMemos::init()
   _cmhead->addColumn( tr("C/M #"),     _orderColumn, Qt::AlignRight  );
   _cmhead->addColumn( tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
   _cmhead->addColumn( tr("Customer"),  -1,           Qt::AlignLeft   );
-  _cmhead->setSelectionMode(Q3ListView::Extended);
+  _cmhead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _watermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
   _watermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
@@ -116,13 +116,10 @@ void reprintCreditMemos::init()
   _numOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt());
   if (_numOfCopies->value())
   {
-    int           counter = 0;
-    Q3ListViewItem *cursor = _watermarks->firstChild();
-
-    for (; cursor; cursor = cursor->nextSibling(), counter++)
+    for (int i = 0; i < _watermarks->topLevelItemCount(); i++)
     {
-      cursor->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
+      _watermarks->topLevelItem(i)->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(i)));
+      _watermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
     }
   }
 
@@ -139,7 +136,6 @@ void reprintCreditMemos::sPrint()
   QPrinter printer;
   bool     setupPrinter = TRUE;
 
-  Q3ListViewItem *cursor = _cmhead->firstChild();
   bool userCanceled = false;
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
@@ -147,46 +143,42 @@ void reprintCreditMemos::sPrint()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  while (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _cmhead->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (_cmhead->isSelected(cursor))
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+    for (int j = 0; j < _watermarks->topLevelItemCount(); j++)
     {
-      int counter = 0;
-
-      for ( Q3ListViewItem *watermark = _watermarks->firstChild();
-            watermark; watermark = watermark->nextSibling(), counter++ )
+      QTreeWidgetItem *watermark = _watermarks->topLevelItem(j);
+      q.prepare("SELECT findCustomerForm(:cust_id, 'C') AS _reportname;");
+      q.bindValue(":cust_id", cursor->altId());
+      q.exec();
+      if (q.first())
       {
-        q.prepare("SELECT findCustomerForm(:cust_id, 'C') AS _reportname;");
-        q.bindValue(":cust_id", ((XListViewItem *)cursor)->altId());
-        q.exec();
-        if (q.first())
-        {
-          ParameterList params;
-          params.append("cmhead_id", ((XListViewItem *)cursor)->id());
-          params.append("showcosts", ((watermark->text(2) == tr("Yes")) ? "TRUE" : "FALSE") );
-          params.append("watermark", watermark->text(1));
+	ParameterList params;
+	params.append("cmhead_id", cursor->id());
+	params.append("showcosts", ((watermark->text(2) == tr("Yes")) ? "TRUE" : "FALSE") );
+	params.append("watermark", watermark->text(1));
 
-          orReport report(q.value("_reportname").toString(), params);
-          if (report.isValid())
-          {
-            if (report.print(&printer, setupPrinter))
-                setupPrinter = FALSE;
-            else
-	    {
-	      orReport::endMultiPrint(&printer);
-              return;
-	    }
-          }
+	orReport report(q.value("_reportname").toString(), params);
+	if (report.isValid())
+	{
+	  if (report.print(&printer, setupPrinter))
+	      setupPrinter = FALSE;
 	  else
-            QMessageBox::critical( this, tr("Cannot Find Credit Memo Form"),
-                                   tr( "The Invoice Form '%1' cannot be found.\n"
-                                       "One or more of the selected Credit Memos cannot be printed until a Customer Form Assignment\n"
-                                       "is updated to remove any references to this Credit Memo Form or this Credit Memo Form is created." )
-                                   .arg(q.value("_reportname").toString()) );
-        }
+	  {
+	    orReport::endMultiPrint(&printer);
+	    return;
+	  }
+	}
+	else
+	  QMessageBox::critical( this, tr("Cannot Find Credit Memo Form"),
+				 tr( "The Invoice Form '%1' cannot be found.\n"
+				     "One or more of the selected Credit Memos cannot be printed until a Customer Form Assignment\n"
+				     "is updated to remove any references to this Credit Memo Form or this Credit Memo Form is created." )
+				 .arg(q.value("_reportname").toString()) );
       }
     }
-    cursor = cursor->nextSibling();
   }
   orReport::endMultiPrint(&printer);
 
@@ -197,18 +189,20 @@ void reprintCreditMemos::sPrint()
 
 void reprintCreditMemos::sHandleCopies(int pValue)
 {
-  if (_watermarks->childCount() > pValue)
-    _watermarks->takeItem(_watermarks->lastItem());
+  if (_watermarks->topLevelItemCount() > pValue)
+    _watermarks->takeTopLevelItem(_watermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_watermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_watermarks, _watermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_watermarks->topLevelItemCount() + 1); i <= pValue; i++)
+      new XTreeWidgetItem(_watermarks,
+			  _watermarks->topLevelItem(_watermarks->topLevelItemCount() - 1),
+			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 
 void reprintCreditMemos::sEditWatermark()
 {
-  XListViewItem *cursor = _watermarks->selectedItem();
+  QTreeWidgetItem *cursor = _watermarks->currentItem();
   ParameterList params;
   params.append("watermark", cursor->text(1));
   params.append("showPrices", (cursor->text(2) == tr("Yes")));

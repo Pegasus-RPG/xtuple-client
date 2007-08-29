@@ -57,8 +57,8 @@
 
 #include "dspRoughCutByWorkCenter.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptRoughCutByWorkCenter.h"
 
@@ -81,7 +81,7 @@ dspRoughCutByWorkCenter::dspRoughCutByWorkCenter(QWidget* parent, const char* na
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_roughCut, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_roughCut, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_selectedWorkCenter, SIGNAL(toggled(bool)), _wrkcnt, SLOT(setEnabled(bool)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
     init();
@@ -105,7 +105,7 @@ void dspRoughCutByWorkCenter::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspRoughCutByWorkCenter::init()
 {
@@ -137,7 +137,7 @@ void dspRoughCutByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspRoughCutByWorkCenter::sPopulateMenu(Q3PopupMenu *, Q3ListViewItem *)
+void dspRoughCutByWorkCenter::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 {
 }
 

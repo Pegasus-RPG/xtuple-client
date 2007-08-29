@@ -57,10 +57,10 @@
 
 #include "images.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <parameter.h>
-#include <qstatusbar.h>
+#include <QStatusBar>
 #include "image.h"
 #include "OpenMFGGUIClient.h"
 
@@ -82,7 +82,7 @@ images::images(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_image, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_image, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_image, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -107,7 +107,7 @@ void images::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void images::init()
 {
@@ -175,7 +175,7 @@ void images::sFillList()
                     "ORDER BY image_name;" );
 }
 
-void images::sPopulateMenu(Q3PopupMenu *)
+void images::sPopulateMenu(QMenu *)
 {
 
 }

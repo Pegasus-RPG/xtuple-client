@@ -57,9 +57,9 @@
 
 #include "dspSummarizedSalesByCustomerByItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptSummarizedSalesByCustomerByItem.h"
 
@@ -185,20 +185,27 @@ void dspSummarizedSalesByCustomerByItem::sFillList()
   if (q.first())
   {
     double totalSales = 0.0;
+    XTreeWidgetItem *last = 0;
 
     do
     {
-      new XListViewItem( _sohist, _sohist->lastItem(), q.value("itemsite_id").toInt(), q.value("item_id").toInt(),
-                         q.value("item_number"), q.value("item_descrip"),
-                         q.value("warehous_code"), q.value("f_minprice"),
-                         q.value("f_maxprice"), q.value("f_avgprice"),
-                         q.value("f_totalunits"), q.value("f_totalsales") );
+      last = new XTreeWidgetItem(_sohist, last,
+				 q.value("itemsite_id").toInt(),
+				 q.value("item_id").toInt(),
+				 q.value("item_number"),
+				 q.value("item_descrip"),
+				 q.value("warehous_code"),
+				 q.value("f_minprice"),
+				 q.value("f_maxprice"),
+				 q.value("f_avgprice"),
+				 q.value("f_totalunits"),
+				 q.value("f_totalsales") );
 
       totalSales += q.value("totalsales").toDouble();
     }
     while (q.next());
 
-    new XListViewItem( _sohist, _sohist->lastItem(), -1, -1,
+    new XTreeWidgetItem( _sohist, last, -1, -1,
                        "", tr("Totals"), "", "", "", "", "",
                        formatMoney(totalSales) );
   }

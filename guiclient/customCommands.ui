@@ -1,178 +1,223 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>customCommands</class>
-  <widget class="QMainWindow" name="customCommands" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>461</width>
-        <height>319</height>
-      </rect>
+<ui version="4.0" >
+ <class>customCommands</class>
+ <widget class="QMainWindow" name="customCommands" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>461</width>
+    <height>319</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Custom Commands</string>
+  </property>
+  <widget class="QWidget" name="widget" >
+   <layout class="QHBoxLayout" >
+    <property name="margin" >
+     <number>5</number>
     </property>
-    <property name="windowTitle" >
-      <string>Custom Commands</string>
+    <property name="spacing" >
+     <number>5</number>
     </property>
-    <widget class="QWidget" >
-      <layout class="QHBoxLayout" >
+    <item>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="_commandsLit" >
+        <property name="text" >
+         <string>Commands</string>
+        </property>
+        <property name="buddy" >
+         <cstring>_commands</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="XTreeWidget" name="_commands" >
+        <property name="sizePolicy" >
+         <sizepolicy>
+          <hsizetype>7</hsizetype>
+          <vsizetype>7</vsizetype>
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>5</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="_close" >
+        <property name="text" >
+         <string>&amp;Close</string>
+        </property>
+        <property name="shortcut" >
+         <string>Alt+C</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
         <item>
-          <layout class="QVBoxLayout" >
-            <property name="margin" >
-              <number>0</number>
-            </property>
-            <property name="spacing" >
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="QLabel" name="_commandsLit" >
-                <property name="text" >
-                  <string>Commands</string>
-                </property>
-                <property name="buddy" stdset="0" >
-                  <cstring>_account</cstring>
-                </property>
-              </widget>
-            </item>
-            <item>
-              <widget class="XListView" name="_commands" >
-                <property name="sizePolicy" >
-                  <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                  </sizepolicy>
-                </property>
-              </widget>
-            </item>
-          </layout>
+         <widget class="QPushButton" name="_new" >
+          <property name="text" >
+           <string>&amp;New</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+N</string>
+          </property>
+         </widget>
         </item>
         <item>
-          <layout class="QVBoxLayout" >
-            <property name="margin" >
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="QPushButton" name="_close" >
-                <property name="text" >
-                  <string>&amp;Close</string>
-                </property>
-                <property name="shortcut" >
-                  <string>Alt+C</string>
-                </property>
-              </widget>
-            </item>
-            <item>
-              <layout class="QVBoxLayout" >
-                <property name="margin" >
-                  <number>0</number>
-                </property>
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <widget class="QPushButton" name="_new" >
-                    <property name="text" >
-                      <string>&amp;New</string>
-                    </property>
-                    <property name="shortcut" >
-                      <string>Alt+N</string>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <widget class="QPushButton" name="_edit" >
-                    <property name="enabled" >
-                      <bool>false</bool>
-                    </property>
-                    <property name="text" >
-                      <string>&amp;Edit</string>
-                    </property>
-                    <property name="shortcut" >
-                      <string>Alt+E</string>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <widget class="QPushButton" name="_delete" >
-                    <property name="enabled" >
-                      <bool>false</bool>
-                    </property>
-                    <property name="text" >
-                      <string>&amp;Delete</string>
-                    </property>
-                    <property name="shortcut" >
-                      <string>Alt+D</string>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <spacer name="Spacer15" >
-                    <property name="sizeHint" >
-                      <size>
-                        <width>20</width>
-                        <height>20</height>
-                      </size>
-                    </property>
-                    <property name="sizeType" >
-                      <enum>Expanding</enum>
-                    </property>
-                    <property name="orientation" >
-                      <enum>Vertical</enum>
-                    </property>
-                  </spacer>
-                </item>
-              </layout>
-            </item>
-          </layout>
+         <widget class="QPushButton" name="_edit" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Edit</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+E</string>
+          </property>
+         </widget>
         </item>
-      </layout>
-    </widget>
+        <item>
+         <widget class="QPushButton" name="_delete" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
+          <property name="text" >
+           <string>&amp;Delete</string>
+          </property>
+          <property name="shortcut" >
+           <string>Alt+D</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
-  <layoutdefault spacing="5" margin="5" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <customwidgets>
-    <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
-      <container>0</container>
-      <pixmap></pixmap>
-    </customwidget>
-  </customwidgets>
-  <tabstops>
-    <tabstop>_commands</tabstop>
-    <tabstop>_new</tabstop>
-    <tabstop>_edit</tabstop>
-    <tabstop>_delete</tabstop>
-    <tabstop>_close</tabstop>
-  </tabstops>
-  <connections>
-    <connection>
-      <sender>_close</sender>
-      <signal>clicked()</signal>
-      <receiver>customCommands</receiver>
-      <slot>close()</slot>
-    </connection>
-    <connection>
-      <sender>_commands</sender>
-      <signal>valid(bool)</signal>
-      <receiver>_edit</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-      <sender>_commands</sender>
-      <signal>valid(bool)</signal>
-      <receiver>_delete</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-      <sender>_commands</sender>
-      <signal>doubleClicked(Q3ListViewItem*)</signal>
-      <receiver>_edit</receiver>
-      <slot>animateClick()</slot>
-    </connection>
-  </connections>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_commands</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_delete</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>customCommands</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_commands</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_commands</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_delete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_commands</sender>
+   <signal>itemDoubleClicked(QTreeWidgetItem*,int)</signal>
+   <receiver>_edit</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

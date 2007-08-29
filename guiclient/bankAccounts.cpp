@@ -57,9 +57,9 @@
 
 #include "bankAccounts.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <openreports.h>
 #include "bankAccount.h"
 
@@ -76,7 +76,7 @@ bankAccounts::bankAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     (void)statusBar();
 
     // signals and slots connections
-    connect(_bankaccnt, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_bankaccnt, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -107,7 +107,7 @@ void bankAccounts::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void bankAccounts::init()
 {
@@ -226,7 +226,7 @@ void bankAccounts::sDelete()
   sFillList();
 }
 
-void bankAccounts::sPopulateMenu( Q3PopupMenu * )
+void bankAccounts::sPopulateMenu( QMenu * )
 {
 }
 

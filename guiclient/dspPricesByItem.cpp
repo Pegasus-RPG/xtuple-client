@@ -62,6 +62,10 @@
 #include <parameter.h>
 #include "rptPricesByItem.h"
 
+#define CURR_COL	5
+#define COST_COL	6
+#define MARGIN_COL	7
+
 /*
  *  Constructs a dspPricesByItem as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -87,15 +91,18 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags f
 
   _item->setType(ItemLineEdit::cSold);
 
-  _price->addColumn(tr("Schedule"),               _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Source"),                 _itemColumn,  Qt::AlignLeft  );
-  _price->addColumn(tr("Customer/Customer Type"), -1,           Qt::AlignLeft  );
-  _price->addColumn(tr("Qty. Break"),             _qtyColumn,   Qt::AlignRight );
-  _price->addColumn(tr("Price"),                  _priceColumn, Qt::AlignRight );
-  _price->addColumn(tr("Currency"),		  _currencyColumn, Qt::AlignLeft );
+  _price->addColumn(tr("Schedule"),      _itemColumn, Qt::AlignLeft  );
+  _price->addColumn(tr("Source"),        _itemColumn, Qt::AlignLeft  );
+  _price->addColumn(tr("Customer/Customer Type"), -1, Qt::AlignLeft  );
+  _price->addColumn(tr("Qty. Break"),     _qtyColumn, Qt::AlignRight );
+  _price->addColumn(tr("Price"),        _priceColumn, Qt::AlignRight );
+  _price->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft  );
+  _price->addColumn(tr("Cost"),          _costColumn, Qt::AlignRight );
+  _price->addColumn(tr("Margin"),       _prcntColumn, Qt::AlignRight );
 
   if (omfgThis->singleCurrency())
-      _price->hideColumn(5);
+      _price->hideColumn(CURR_COL);
+  sHandleCosts(_showCosts->isChecked());
 
   _item->setFocus();
 }
@@ -145,13 +152,13 @@ void dspPricesByItem::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
   {
-    _price->addColumn(tr("Cost"),   _costColumn,  Qt::AlignRight );
-    _price->addColumn(tr("Margin"), _prcntColumn, Qt::AlignRight );
+    _price->showColumn(COST_COL);
+    _price->showColumn(MARGIN_COL);
   }
   else
   {
-    _price->removeColumn(5);
-    _price->removeColumn(5);
+    _price->hideColumn(COST_COL);
+    _price->hideColumn(MARGIN_COL);
   }
 
   sFillList();
@@ -334,26 +341,21 @@ void dspPricesByItem::sFillList()
     q.bindValue(":listPrice", tr("List Price"));
     q.bindValue(":item_id", _item->id());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _price, _price->lastItem(), q.value("itemid").toInt(), q.value("sourcetype").toInt(),
-                                               q.value("schedulename"), q.value("type"),
-                                               q.value("typename"), q.value("f_qtybreak"),
-                                               formatSalesPrice(q.value("price").toDouble()),
-					       q.value("currConcat"));
+      double price = q.value("price").toDouble();
+      last = new XTreeWidgetItem(_price, last, q.value("itemid").toInt(),
+				 q.value("sourcetype").toInt(),
+				 q.value("schedulename"), q.value("type"),
+				 q.value("typename"), q.value("f_qtybreak"),
+				 formatSalesPrice(q.value("price").toDouble()),
+				 q.value("currConcat"),
+				 formatCost(cost),
+				 (price != 0) ? formatPercent(((price - cost) / price)) : QString());
 
-
-      if (_showCosts->isChecked())
-      {
-        last->setText(6, formatCost(cost));
-
-        double price = q.value("price").toDouble();
-        if (price != 0)
-          last->setText(7, formatPercent(((price - cost) / price)));
-
-        if (cost > price)
-          last->setColor(7, "red");
-      }
+      if (cost > price)
+	last->setTextColor(MARGIN_COL, "red");
     }
   }
 }

@@ -57,11 +57,11 @@
 
 #include "booList.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QMessageBox>
+#include <QWorkspace>
 #include "boo.h"
 #include "copyBOO.h"
 #include "rptBillOfOperations.h"
@@ -87,7 +87,7 @@ booList::booList(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
     connect(_boo, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_boo, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_boo, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_boo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
     connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -112,7 +112,7 @@ void booList::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void booList::init()
 {
@@ -236,26 +236,21 @@ void booList::sPrint()
 
 void booList::sSearch( const QString & pTarget )
 {
-  Q3ListViewItem *target;
-    
-  if (_boo->selectedItem())
-    _boo->setSelected(_boo->selectedItem(), FALSE);
-    
   _boo->clearSelection();
-    
-  target = _boo->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-    
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _boo->topLevelItemCount(); i++)
   {
-    _boo->setSelected(target, TRUE);
-    _boo->ensureItemVisible(target);
+    if (_boo->topLevelItem(i)->text(0).contains(pTarget, Qt::CaseInsensitive))
+      break;
+  }
+    
+  if (i < _boo->topLevelItemCount())
+  {
+    _boo->setCurrentItem(_boo->topLevelItem(i));
+    _boo->scrollToItem(_boo->topLevelItem(i));
   }
 }
 
-void booList::sPopulateMenu( Q3PopupMenu *, Q3ListViewItem * )
+void booList::sPopulateMenu( QMenu *, QTreeWidgetItem * )
 {
 }
-
-

@@ -71,7 +71,7 @@
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <q3whatsthis.h>
-#include "xlistview.h"
+#include "xtreewidget.h"
 #include "warehouseCluster.h"
 
 #include <xsqlquery.h>
@@ -136,7 +136,8 @@ plannedOrderList::plannedOrderList(QWidget *parent, const char *name, bool modal
     QLabel *_plannedOrdersLit = new QLabel(tr("Planned Orders:"), this, "_plannedOrdersLit");
     Layout185->addWidget( _plannedOrdersLit );
 
-    _planord = new XListView( this, "_planord" );
+    _planord = new XTreeWidget( this);
+    _planord->setName("_planord" );
     Layout185->addWidget( _planord );
     plannedOrderListLayout->addLayout( Layout185 );
 

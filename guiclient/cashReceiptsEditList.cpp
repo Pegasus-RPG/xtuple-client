@@ -57,7 +57,7 @@
 
 #include "cashReceiptsEditList.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QStatusBar>
@@ -83,7 +83,7 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   (void)statusBar();
 
   // signals and slots connections
-  connect(_cashrcpt, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_cashrcpt, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -136,7 +136,7 @@ void cashReceiptsEditList::languageChange()
     retranslateUi(this);
 }
 
-void cashReceiptsEditList::sPopulateMenu(Q3PopupMenu *pMenu)
+void cashReceiptsEditList::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

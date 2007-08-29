@@ -57,8 +57,8 @@
 
 #include "dspStandardJournalHistory.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptStandardJournalHistory.h"
 #include "reverseGLSeries.h"
@@ -77,7 +77,7 @@ dspStandardJournalHistory::dspStandardJournalHistory(QWidget* parent, const char
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_gltrans, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
@@ -101,7 +101,7 @@ void dspStandardJournalHistory::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspStandardJournalHistory::init()
 {
@@ -117,7 +117,7 @@ void dspStandardJournalHistory::init()
   _gltrans->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter );
 }
 
-void dspStandardJournalHistory::sPopulateMenu(Q3PopupMenu * pMenu)
+void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu)
 {
   int menuItem;
 
@@ -162,8 +162,8 @@ void dspStandardJournalHistory::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *parent  = NULL;
-    XListViewItem *child   = 0;
+    XTreeWidgetItem *parent  = NULL;
+    XTreeWidgetItem *child   = 0;
     int           glSeries = -1;
     QString       docnum;
 
@@ -172,7 +172,7 @@ void dspStandardJournalHistory::sFillList()
       if (glSeries != q.value("gltrans_sequence").toInt())
       {
         glSeries = q.value("gltrans_sequence").toInt();
-	parent = new XListViewItem( _gltrans, parent, q.value("gltrans_sequence").toInt(), -1,
+	parent = new XTreeWidgetItem( _gltrans, parent, q.value("gltrans_sequence").toInt(), -1,
                                     q.value("transdate"), q.value("gltrans_journalnumber"),
                                     "", "", "", "", q.value("f_posted") );
         child = 0;
@@ -184,12 +184,12 @@ void dspStandardJournalHistory::sFillList()
         if(doc.isEmpty())
           doc = tr("Unnamed");
         docnum = q.value("gltrans_docnumber").toString();
-        child = new XListViewItem( parent, q.value("gltrans_sequence").toInt(), -1,
+        child = new XTreeWidgetItem( parent, q.value("gltrans_sequence").toInt(), -1,
                                    "", "", doc,
                                    "", "", "");
       }
 
-      new XListViewItem( child, q.value("gltrans_sequence").toInt(), q.value("gltrans_id").toInt(),
+      new XTreeWidgetItem( child, q.value("gltrans_sequence").toInt(), q.value("gltrans_id").toInt(),
                          "", "", "",
                          q.value("account"), q.value("f_debit"),
                          q.value("f_credit") );

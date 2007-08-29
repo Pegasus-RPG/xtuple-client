@@ -61,7 +61,7 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 #include "postProduction.h"
 #include "correctProductionPosting.h"
@@ -94,7 +94,7 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wo, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
@@ -314,13 +314,13 @@ void dspWoScheduleByItem::sDeleteWO()
 	{
 	  msg = tr("Work Order %1 cannot be deleted because time clock "
 			 "entries exist for it.\n")
-		   .arg(_wo->columnText(1));
+		   .arg(_wo->currentItem()->text(1));
 	  if (woStatus == "C")
 	    msg += "Please use Close Work Order instead of Delete Work Order.";
 	}
 	else 
 	  msg = tr("Work Order %1 cannot be deleted (reason %2).")
-		   .arg(_wo->columnText(1))
+		   .arg(_wo->currentItem()->text(1))
 		   .arg(q.value("returnVal").toString());
 
 	QMessageBox::information(this, tr("Work Order Postings Exist"), msg);
@@ -421,7 +421,7 @@ void dspWoScheduleByItem::sInventoryAvailabilityByWorkOrder()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoScheduleByItem::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *selected)
+void dspWoScheduleByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   QString status(selected->text(1));
   int     menuItem;
@@ -584,19 +584,24 @@ void dspWoScheduleByItem::sFillList()
     _dates->bindValue(q);
     q.bindValue(":item_id", _item->id());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _wo, _wo->lastItem(), q.value("wo_id").toInt(),
-                                               q.value("wonumber"), q.value("wo_status"),
-                                               q.value("wo_priority"), q.value("warehous_code"),
-                                               q.value("qtyord"), q.value("qtyrcv"),
-                                               q.value("startdate"), q.value("duedate") );
+      last = new XTreeWidgetItem(_wo, last, q.value("wo_id").toInt(),
+				 q.value("wonumber"),
+				 q.value("wo_status"),
+				 q.value("wo_priority"),
+				 q.value("warehous_code"),
+				 q.value("qtyord"),
+				 q.value("qtyrcv"),
+				 q.value("startdate"),
+				 q.value("duedate") );
 
       if (q.value("latestart").toBool())
-        last->setColor(6, "red");
+        last->setTextColor(6, "red");
 
       if (q.value("latedue").toBool())
-        last->setColor(7, "red");
+        last->setTextColor(7, "red");
     }
   }
 }
@@ -608,4 +613,3 @@ void dspWoScheduleByItem::sHandleAutoUpdate(bool pAutoUpdate)
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }
-

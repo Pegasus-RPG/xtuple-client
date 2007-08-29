@@ -57,7 +57,7 @@
 
 #include "dspWoOperationsByWorkCenter.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QStatusBar>
@@ -85,7 +85,7 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wooper, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   statusBar()->hide();
@@ -171,15 +171,12 @@ void dspWoOperationsByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspWoOperationsByWorkCenter::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
   bool multi = false;
 
-  int cnt = 0;
-  for(Q3ListViewItem * item = _wooper->firstChild(); item; item = item->nextSibling())
-    if(item->isSelected())
-      cnt++;
+  int cnt = _wooper->selectedItems().size();
   multi = (cnt > 1);
 
   menuItem = pMenu->insertItem(tr("View Operation..."), this, SLOT(sViewOperation()), 0);
@@ -380,10 +377,10 @@ void dspWoOperationsByWorkCenter::sFillList()
   q.bindValue(":manual", tr("Manual"));
   q.exec();
 
-  XListViewItem * last = 0;
+  XTreeWidgetItem * last = 0;
   while(q.next())
   {
-    last = new XListViewItem(_wooper, last, q.value("wooper_id").toInt(),
+    last = new XTreeWidgetItem(_wooper, last, q.value("wooper_id").toInt(),
                              q.value("wooper_wo_id").toInt(),
                              q.value("source"),
                              q.value("wonumber"), q.value("f_scheduled"),
@@ -392,7 +389,7 @@ void dspWoOperationsByWorkCenter::sFillList()
                              q.value("setupremain"), q.value("runremain"),
                              q.value("qtyremain"), q.value("item_invuom") );
     if(q.value("overdue").toBool())
-      last->setColor("red");
+      last->setTextColor("red");
   }
   if (q.lastError().type() != QSqlError::None)
   {
@@ -432,24 +429,21 @@ void dspWoOperationsByWorkCenter::sPrintPickLists()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  for(XListViewItem * item = (XListViewItem*)_wooper->firstChild(); item; item = (XListViewItem*)item->nextSibling())
+  QList<QTreeWidgetItem*> selected = _wooper->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if(item->isSelected())
+    ParameterList params;
+    params.append("wo_id", ((XTreeWidgetItem*)selected[i])->altId());
+
+    orReport report("PickList", params);
+    if (! (report.isValid() && report.print(&printer, (counter == 0))) )
     {
-      ParameterList params;
-      params.append("wo_id", item->altId());
-
-      orReport report("PickList", params);
-      if (! (report.isValid() && report.print(&printer, (counter == 0))) )
-      {
-        report.reportError(this);
-	orReport::endMultiPrint(&printer);
-        return;
-      }
-
-      counter++;
+      report.reportError(this);
+      orReport::endMultiPrint(&printer);
+      return;
     }
+
+    counter++;
   }
   orReport::endMultiPrint(&printer);
 }
-

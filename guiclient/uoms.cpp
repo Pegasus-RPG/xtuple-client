@@ -57,9 +57,9 @@
 
 #include "uoms.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
 #include <parameter.h>
 #include <openreports.h>
 #include "uom.h"
@@ -81,7 +81,7 @@ uoms::uoms(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_uoms, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_uoms, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_uoms, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
@@ -106,7 +106,7 @@ void uoms::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void uoms::init()
 {
@@ -183,7 +183,7 @@ void uoms::sDelete()
   sFillList();
 }
 
-void uoms::sPopulateMenu(Q3PopupMenu *)
+void uoms::sPopulateMenu(QMenu *)
 {
 }
 

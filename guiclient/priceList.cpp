@@ -151,7 +151,7 @@ enum SetResponse priceList::set(const ParameterList &pParams)
         _currConcat = q.value("currConcat").toString();
       else
         _currConcat = tr("?????");
-      _price->header()->setLabel(5, tr("Price\n(in %1)").arg(_currConcat));
+      _price->headerItem()->setText(5, tr("Price\n(in %1)").arg(_currConcat));
     }
   }
 
@@ -341,12 +341,13 @@ void priceList::sFillList()
   q.exec();
   _price->populate(q, TRUE);
 
-  for (Q3ListViewItem *cursor = _price->firstChild(); cursor != 0; cursor = cursor->nextSibling())
+  for (int i = 0; i < _price->topLevelItemCount(); i++)
   {
+    QTreeWidgetItem *cursor = _price->topLevelItem(i);
     if ( (cursor->text(2) != tr("N/A")) &&
          (_qty->toDouble() >= cursor->text(2).toDouble()) )
     {
-      _price->setSelected(cursor, TRUE);
+      _price->setCurrentItem(cursor);
       break;
     }
   }

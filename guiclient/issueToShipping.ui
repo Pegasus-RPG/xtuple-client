@@ -196,7 +196,7 @@
          <number>5</number>
         </property>
         <item>
-         <widget class="XListView" name="_soitem" >
+         <widget class="XTreeWidget" name="_soitem" >
           <property name="sizePolicy" >
            <sizepolicy>
             <hsizetype>7</hsizetype>
@@ -400,9 +400,9 @@
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>SoCluster</class>
@@ -427,7 +427,7 @@
  </tabstops>
  <includes>
   <include location="global" >parameter.h</include>
-  <include location="global" >qvalidator.h</include>
+  <include location="global" >QValidator</include>
   <include location="local" >OpenMFGGUIClient.h</include>
  </includes>
  <resources/>

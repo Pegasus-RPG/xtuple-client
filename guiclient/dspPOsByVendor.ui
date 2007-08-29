@@ -322,7 +322,7 @@
         </widget>
        </item>
        <item>
-        <widget class="XListView" name="_poitem" />
+        <widget class="XTreeWidget" name="_poitem" />
        </item>
       </layout>
      </widget>
@@ -339,9 +339,9 @@
    <header>warehousegroup.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>DateCluster</class>

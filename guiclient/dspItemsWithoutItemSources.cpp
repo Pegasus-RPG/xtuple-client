@@ -57,9 +57,9 @@
 
 #include "dspItemsWithoutItemSources.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "item.h"
 #include "itemSource.h"
 
@@ -76,9 +76,10 @@ dspItemsWithoutItemSources::dspItemsWithoutItemSources(QWidget* parent, const ch
     (void)statusBar();
 
     // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+    connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList()));
     init();
 }
 
@@ -100,7 +101,7 @@ void dspItemsWithoutItemSources::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemsWithoutItemSources::init()
 {
@@ -110,10 +111,9 @@ void dspItemsWithoutItemSources::init()
   _item->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _item->addColumn(tr("Type"),        _itemColumn,  Qt::AlignCenter );
 
-  connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 
-void dspItemsWithoutItemSources::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

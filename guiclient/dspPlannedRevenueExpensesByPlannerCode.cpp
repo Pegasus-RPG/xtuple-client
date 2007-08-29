@@ -57,9 +57,9 @@
 
 #include "dspPlannedRevenueExpensesByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
 #include <parameter.h>
 #include "rptPlannedRevenueExpensesByPlannerCode.h"
 
@@ -86,7 +86,7 @@ dspPlannedRevenueExpensesByPlannerCode::dspPlannedRevenueExpensesByPlannerCode(Q
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_planord, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_useAveragePrice, SIGNAL(toggled(bool)), _startEvalDateLit, SLOT(setEnabled(bool)));
     connect(_useAveragePrice, SIGNAL(toggled(bool)), _startEvalDate, SLOT(setEnabled(bool)));
@@ -113,7 +113,7 @@ void dspPlannedRevenueExpensesByPlannerCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspPlannedRevenueExpensesByPlannerCode::init()
 {
@@ -162,7 +162,7 @@ void dspPlannedRevenueExpensesByPlannerCode::sPrint()
   newdlg.set(params);
 }
 
-void dspPlannedRevenueExpensesByPlannerCode::sPopulateMenu(Q3PopupMenu *, Q3ListViewItem *)
+void dspPlannedRevenueExpensesByPlannerCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 {
 }
 
@@ -233,13 +233,13 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
   _plannerCode->bindValue(q);
   q.exec();
 
-  XListViewItem *last = NULL;
+  XTreeWidgetItem *last = NULL;
   double        cost = 0;
   double        revenue = 0;
   
   while (q.next())
   {
-    last = new XListViewItem( _planord, last, q.value("planord_id").toInt(), q.value("planord_itemsite_id").toInt(),
+    last = new XTreeWidgetItem( _planord, last, q.value("planord_id").toInt(), q.value("planord_itemsite_id").toInt(),
                               q.value("plonumber"), q.value("plotype"),
                               q.value("item_number"), q.value("itemdescrip"),
                               q.value("duedate"), q.value("qty"),
@@ -249,16 +249,16 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
     cost += q.value("plocost").toDouble();
     revenue += q.value("plorevenue").toDouble();
 
-    if (q.value("cost").toDouble() > q.value("revenue").toDouble())
-      last->setColor(9, "red");
+    if (q.value("plocost").toDouble() > q.value("plorevenue").toDouble())
+      last->setTextColor(9, "red");
   }
 
-  last = new XListViewItem(_planord, last, -1, -1, tr("Totals:"));
+  last = new XTreeWidgetItem(_planord, last, -1, -1, tr("Totals:"));
   last->setText(7, formatMoney(cost));
   last->setText(8, formatMoney(revenue));
   last->setText(9, formatMoney(revenue - cost));
 
   if (cost > revenue)
-    last->setColor(9, "red");
+    last->setTextColor(9, "red");
 }
 

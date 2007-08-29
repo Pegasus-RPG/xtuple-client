@@ -61,7 +61,7 @@
 #include <QValidator>
 #include <QStatusBar>
 #include <QWorkspace>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "workOrder.h"
 #include "rptWoHistoryByNumber.h"
@@ -80,7 +80,7 @@ dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wo, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -98,7 +98,10 @@ dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt
   _wo->addColumn(tr("Received"),    _qtyColumn,    Qt::AlignRight  );
   _wo->addColumn(tr("Start Date"),  _dateColumn,   Qt::AlignRight  );
   _wo->addColumn(tr("Due Date"),    _dateColumn,   Qt::AlignRight  );
-  
+  _wo->addColumn(tr("Cost"),        _costColumn,   Qt::AlignRight );
+
+  sHandleCosts(_showCost->isChecked());
+
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), SLOT(sFillList()));
 }
 
@@ -158,7 +161,7 @@ void dspWoHistoryByNumber::sEdit()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoHistoryByNumber::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspWoHistoryByNumber::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -169,9 +172,9 @@ void dspWoHistoryByNumber::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
 void dspWoHistoryByNumber::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
-    _wo->addColumn(tr("Cost"), _costColumn, Qt::AlignRight );
+    _wo->showColumn(9);
   else
-    _wo->removeColumn(9);
+    _wo->hideColumn(9);
 
   sFillList();
 }

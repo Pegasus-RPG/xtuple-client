@@ -57,9 +57,9 @@
 
 #include "dspQuotesByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "salesOrder.h"
 
 /*
@@ -76,7 +76,7 @@ dspQuotesByItem::dspQuotesByItem(QWidget* parent, const char* name, Qt::WFlags f
 
     // signals and slots connections
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_so, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
     init();
@@ -100,7 +100,7 @@ void dspQuotesByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspQuotesByItem::init()
 {
@@ -141,7 +141,7 @@ enum SetResponse dspQuotesByItem::set(ParameterList &pParams)
   return NoError;
 }
 
-void dspQuotesByItem::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspQuotesByItem::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
   menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);

@@ -57,9 +57,9 @@
 
 #include "dspWoMaterialsByWorkOrder.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include "inputManager.h"
 #include "rptWoMaterialsByWorkOrder.h"
 #include "woMaterialItem.h"
@@ -79,7 +79,7 @@ dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char
     // signals and slots connections
     connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_womatl, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_womatl, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -102,7 +102,7 @@ void dspWoMaterialsByWorkOrder::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspWoMaterialsByWorkOrder::init()
 {
@@ -152,7 +152,7 @@ void dspWoMaterialsByWorkOrder::sPrint()
   newdlg.set(params);
 }
 
-void dspWoMaterialsByWorkOrder::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspWoMaterialsByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -205,17 +205,18 @@ void dspWoMaterialsByWorkOrder::sFillList()
     q.bindValue(":error", tr("Error"));
     q.bindValue(":wo_id", _wo->id());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _womatl, _womatl->lastItem(), q.value("womatl_id").toInt(),
-                                               q.value("item_number"), q.value("wooperseq"),
-                                               q.value("issuemethod"), q.value("qtyper"),
-                                               q.value("scrap"), q.value("qtyreq"),
-                                               q.value("qtyiss"), q.value("scrapped"),
-                                               q.value("balance"), q.value("duedate") );
+      last = new XTreeWidgetItem( _womatl, last, q.value("womatl_id").toInt(),
+				 q.value("item_number"), q.value("wooperseq"),
+				 q.value("issuemethod"), q.value("qtyper"),
+				 q.value("scrap"), q.value("qtyreq"),
+				 q.value("qtyiss"), q.value("scrapped"),
+				 q.value("balance"), q.value("duedate") );
 
       if (q.value("latedue").toBool())
-        last->setColor(9, "red");
+        last->setTextColor(9, "red");
     }
   }
 }

@@ -63,7 +63,7 @@
 
 #include "OpenMFGWidgets.h"
 
-class XListView;
+class XTreeWidget;
 class WarehouseGroup;
 class QRadioButton;
 class QPushButton;
@@ -79,7 +79,7 @@ class OPENMFGWIDGETS_EXPORT woList : public QDialog
     WarehouseGroup* _warehouse;
     QPushButton* _close;
     QPushButton* _select;
-    XListView* _wo;
+    XTreeWidget* _wo;
 
   public slots:
     virtual void set( ParameterList & pParams );

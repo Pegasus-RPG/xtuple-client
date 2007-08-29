@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
+    <width>644</width>
     <height>600</height>
    </rect>
   </property>
@@ -461,7 +461,14 @@
         </layout>
        </item>
        <item>
-        <widget class="WorkCenterCluster" name="_wrkcnt" />
+        <widget class="WorkCenterCluster" name="_wrkcnt" >
+         <property name="label" >
+          <string>Work Center:</string>
+         </property>
+         <property name="infoVisible" >
+          <bool>false</bool>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>
@@ -973,14 +980,9 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>UsernameCluster</class>
+   <class>WoCluster</class>
    <extends>QWidget</extends>
-   <header>usernamecluster.h</header>
+   <header>wocluster.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -988,9 +990,14 @@
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>WoCluster</class>
+   <class>UsernameCluster</class>
    <extends>QWidget</extends>
-   <header>wocluster.h</header>
+   <header>usernamecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>WorkCenterCluster</class>

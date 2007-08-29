@@ -57,8 +57,8 @@
 
 #include "dspSingleLevelBOM.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include "rptSingleLevelBOM.h"
 
 /*
@@ -203,19 +203,24 @@ void dspSingleLevelBOM::sFillList(int, bool)
     q.bindValue(":expiredDays", _expiredDays->value());
     q.bindValue(":effectiveDays", _effectiveDays->value());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _bomitem, _bomitem->lastItem(), q.value("bomitem_id").toInt(),
-                                               q.value("bomitem_seqnumber"), q.value("item_number"),
-                                               q.value("itemdescription"), q.value("item_invuom"),
-                                               q.value("f_qtyper"), q.value("f_scrap"),
-                                               q.value("f_effective"), q.value("f_expires"),
-                                               q.value("bomitem_ecn") );
+      last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(),
+				 q.value("bomitem_seqnumber"),
+				 q.value("item_number"),
+				 q.value("itemdescription"),
+				 q.value("item_invuom"),
+				 q.value("f_qtyper"),
+				 q.value("f_scrap"),
+				 q.value("f_effective"),
+				 q.value("f_expires"),
+				 q.value("bomitem_ecn") );
 
       if (q.value("expired").toBool())
-        last->setColor("red");
+        last->setTextColor("red");
       else if (q.value("future").toBool())
-        last->setColor("blue");
+        last->setTextColor("blue");
     }
   }
 }

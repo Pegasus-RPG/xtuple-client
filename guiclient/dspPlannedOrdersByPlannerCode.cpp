@@ -57,9 +57,9 @@
 
 #include "dspPlannedOrdersByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <parameter.h>
 #include "dspRunningAvailability.h"
 #include "firmPlannedOrder.h"
@@ -83,7 +83,7 @@ dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, co
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_planord, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
 }
@@ -106,7 +106,7 @@ void dspPlannedOrdersByPlannerCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspPlannedOrdersByPlannerCode::init()
 {
@@ -138,7 +138,7 @@ void dspPlannedOrdersByPlannerCode::sPrint()
   newdlg.set(params);
 }
 
-void dspPlannedOrdersByPlannerCode::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
@@ -206,7 +206,7 @@ void dspPlannedOrdersByPlannerCode::sSoftenOrder()
 
 void dspPlannedOrdersByPlannerCode::sReleaseOrder()
 {
-  if (_planord->selectedItem()->text(1) == "W/O")
+  if (_planord->currentItem()->text(1) == "W/O")
   {
     ParameterList params;
     params.append("mode", "release");
@@ -216,7 +216,7 @@ void dspPlannedOrdersByPlannerCode::sReleaseOrder()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (_planord->selectedItem()->text(1) == "P/O")
+  else if (_planord->currentItem()->text(1) == "P/O")
   {
     ParameterList params;
     params.append("mode", "release");

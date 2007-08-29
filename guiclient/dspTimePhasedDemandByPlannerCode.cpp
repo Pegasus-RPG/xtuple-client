@@ -57,9 +57,9 @@
 
 #include "dspTimePhasedDemandByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <datecluster.h>
 #include "dspWoScheduleByParameterList.h"
 #include "rptTimePhasedDemandByPlannerCode.h"
@@ -83,7 +83,7 @@ dspTimePhasedDemandByPlannerCode::dspTimePhasedDemandByPlannerCode(QWidget* pare
     btngrpDisplayUnits->addButton(_altCapacityUnits);
 
     // signals and slots connections
-    connect(_demand, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_demand, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
@@ -110,7 +110,7 @@ void dspTimePhasedDemandByPlannerCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedDemandByPlannerCode::init()
 {
@@ -157,7 +157,7 @@ void dspTimePhasedDemandByPlannerCode::sViewDemand()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspTimePhasedDemandByPlannerCode::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewItem *, int pColumn)
+void dspTimePhasedDemandByPlannerCode::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int pColumn)
 {
   int menuItem;
 
@@ -174,8 +174,7 @@ void dspTimePhasedDemandByPlannerCode::sPopulateMenu(Q3PopupMenu *menu, Q3ListVi
 void dspTimePhasedDemandByPlannerCode::sFillList()
 {
   _columnDates.clear();
-  while (_demand->columns() > 3)
-    _demand->removeColumn(3);
+  _demand->setColumnCount(3);
 
   QString sql("SELECT plancode_id, warehous_id, plancode_code, warehous_code, ");
 
@@ -189,34 +188,27 @@ void dspTimePhasedDemandByPlannerCode::sFillList()
     sql += "item_altcapuom AS uom";
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        if (_inventoryUnits->isChecked())
-          sql += QString(", formatQty(SUM(summDemand(itemsite_id, %1))) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        else if (_capacityUnits->isChecked())
-          sql += QString(", formatQty(SUM(summDemand(itemsite_id, %1) * item_capinvrat)) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        else if (_altCapacityUnits->isChecked())
-          sql += QString(", formatQty(SUM(summDemand(itemsite_id, %1) * item_altcapinvrat)) AS bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
-  
-        _demand->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _timeColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    if (_inventoryUnits->isChecked())
+      sql += QString(", formatQty(SUM(summDemand(itemsite_id, %1))) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    else if (_capacityUnits->isChecked())
+      sql += QString(", formatQty(SUM(summDemand(itemsite_id, %1) * item_capinvrat)) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
+
+    else if (_altCapacityUnits->isChecked())
+      sql += QString(", formatQty(SUM(summDemand(itemsite_id, %1) * item_altcapinvrat)) AS bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
+
+    _demand->addColumn(formatDate(cursor->startDate()), _timeColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM itemsite, item, warehous, plancode "

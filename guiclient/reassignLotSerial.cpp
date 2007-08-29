@@ -132,12 +132,10 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
 
-      for ( XListViewItem *cursor = _source->firstChild();
-            cursor != 0;
-            cursor = cursor->nextSibling() )
+      for (int i = 0; i < _source->topLevelItemCount(); i++)
       {
-        if (cursor->id() == param.toInt())
-          _source->setSelected(cursor, TRUE);
+        if (((XTreeWidget*)(_source->topLevelItem(i)))->id() == param.toInt())
+          _source->setCurrentItem(_source->topLevelItem(i));
       }
     }
     else if (q.lastError().type() != QSqlError::None)
@@ -152,7 +150,7 @@ enum SetResponse reassignLotSerial::set(const ParameterList &pParams)
 
 void reassignLotSerial::sReassign()
 {
-  if (_source->selectedItem() == 0)
+  if (_source->currentItem() == 0)
   {
     QMessageBox::critical( this, tr("Select Source Location"),
                            tr("You must select a Source Location before reassigning its Lot/Serial #.") );

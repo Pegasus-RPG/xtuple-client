@@ -59,13 +59,14 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include "rptVoucherRegister.h"
 #include "voucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
 #include "glTransactionDetail.h"
 
+#define USERNAME_COL	9
 /*
  *  Constructs a dspVoucherRegister as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -76,18 +77,14 @@ dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char* name, Qt::WF
 {
   setupUi(this);
 
-  (void)statusBar();
-
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_gltrans, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
 
-  statusBar()->hide();
-  
   _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
   _gltrans->addColumn(tr("Vend. #"),   _orderColumn,   Qt::AlignRight  );
   _gltrans->addColumn(tr("Vend. Name"),_itemColumn,    Qt::AlignLeft   );
@@ -97,6 +94,9 @@ dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char* name, Qt::WF
   _gltrans->addColumn(tr("Account"),   _itemColumn,    Qt::AlignLeft   );
   _gltrans->addColumn(tr("Debit"),     _moneyColumn,   Qt::AlignRight  );
   _gltrans->addColumn(tr("Credit"),    _moneyColumn,   Qt::AlignRight  );
+  _gltrans->addColumn(tr("Username"),  _userColumn,    Qt::AlignLeft );
+
+  sShowUsername(_showUsername->isChecked());
 }
 
 /*
@@ -160,11 +160,11 @@ enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspVoucherRegister::sPopulateMenu(Q3PopupMenu * menuThis)
+void dspVoucherRegister::sPopulateMenu(QMenu * menuThis)
 {
   menuThis->insertItem(tr("View..."), this, SLOT(sViewTrans()), 0);
 
-  Q3ListViewItem * item = _gltrans->currentItem();
+  QTreeWidgetItem * item = _gltrans->currentItem();
   if(0 == item)
     return;
 
@@ -228,9 +228,9 @@ void dspVoucherRegister::sFillList()
 void dspVoucherRegister::sShowUsername( bool yes )
 {
   if(yes)
-    _gltrans->addColumn( tr("Username"), _userColumn, Qt::AlignLeft );
+    _gltrans->showColumn(USERNAME_COL);
   else
-    _gltrans->removeColumn(7);
+    _gltrans->hideColumn(USERNAME_COL);
 }
 
 void dspVoucherRegister::sViewTrans()
@@ -246,7 +246,7 @@ void dspVoucherRegister::sViewTrans()
 
 void dspVoucherRegister::sViewDocument()
 {
-  Q3ListViewItem * item = _gltrans->currentItem();
+  QTreeWidgetItem * item = _gltrans->currentItem();
   if(0 == item)
     return;
 

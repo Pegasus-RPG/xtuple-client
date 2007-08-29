@@ -57,10 +57,10 @@
 
 #include "dspTimePhasedBookingsByProductCategory.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include <datecluster.h>
 #include <q3valuevector.h>
@@ -84,7 +84,7 @@ dspTimePhasedBookingsByProductCategory::dspTimePhasedBookingsByProductCategory(Q
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_soitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calculate, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
@@ -115,7 +115,7 @@ void dspTimePhasedBookingsByProductCategory::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedBookingsByProductCategory::init()
 {
@@ -166,13 +166,13 @@ void dspTimePhasedBookingsByProductCategory::sViewBookings()
   }
 }
 
-void dspTimePhasedBookingsByProductCategory::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected, int pColumn)
+void dspTimePhasedBookingsByProductCategory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
   int menuItem;
 
   _column = pColumn;
 
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
     menuItem = pMenu->insertItem(tr("View Bookings..."), this, SLOT(sViewBookings()), 0);
 }
 
@@ -187,8 +187,7 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
   }
 
   _soitem->clear();
-  while (_soitem->columns() > 3)
-    _soitem->removeColumn(3);
+  _soitem->setColumnCount(3);
 
   _columnDates.clear();
 
@@ -207,39 +206,34 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
     sql += ", item_altcapuom AS uom";
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        if (_salesDollars->isChecked())
-          sql += QString(", SUM(bookingsByItemValue(itemsite_id, %2)) AS bucket%1")
-                 .arg(columns++)
-                 .arg(cursor->id());
-  
-        else if (_inventoryUnits->isChecked())
-          sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2)) AS bucket%1")
-                 .arg(columns++)
-                 .arg(cursor->id());
-  
-        else if (_capacityUnits->isChecked())
-          sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * item_capinvrat) AS bucket%1")
-                 .arg(columns++)
-                 .arg(cursor->id());
-  
-        else if (_altCapacityUnits->isChecked())
-          sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * item_altcapinvrat) AS bucket%1")
-                 .arg(columns++)
-                 .arg(cursor->id());
-  
-        _soitem->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    if (_salesDollars->isChecked())
+      sql += QString(", SUM(bookingsByItemValue(itemsite_id, %2)) AS bucket%1")
+	     .arg(columns++)
+	     .arg(cursor->id());
+
+    else if (_inventoryUnits->isChecked())
+      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2)) AS bucket%1")
+	     .arg(columns++)
+	     .arg(cursor->id());
+
+    else if (_capacityUnits->isChecked())
+      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * item_capinvrat) AS bucket%1")
+	     .arg(columns++)
+	     .arg(cursor->id());
+
+    else if (_altCapacityUnits->isChecked())
+      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * item_altcapinvrat) AS bucket%1")
+	     .arg(columns++)
+	     .arg(cursor->id());
+
+    _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM itemsite, item, warehous, prodcat "
@@ -265,13 +259,16 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
   if (q.first())
   {
     Q3ValueVector<Numeric> totals(columns);;
+    XTreeWidgetItem *last = 0;
 
     do
     {
-      XListViewItem *item = new XListViewItem( _soitem, _soitem->lastItem(),
-                                               q.value("prodcat_id").toInt(), q.value("warehous_id").toInt(),
-                                               q.value("prodcat_code"), q.value("warehous_code"),
-                                               q.value("uom") );
+      last = new XTreeWidgetItem( _soitem, last,
+				 q.value("prodcat_id").toInt(),
+				 q.value("warehous_id").toInt(),
+				 q.value("prodcat_code"),
+				 q.value("warehous_code"),
+				 q.value("uom") );
 
       for (int column = 1; column < columns; column++)
       {
@@ -279,14 +276,14 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
         totals[column] += q.value(bucketName).toDouble();
 
         if ( (_inventoryUnits->isChecked()) || (_capacityUnits->isChecked()) || (_altCapacityUnits->isChecked()) )
-          item->setText((column + 2), formatQty(q.value(bucketName).toDouble()));
+          last->setText((column + 2), formatQty(q.value(bucketName).toDouble()));
         else if (_salesDollars->isChecked())
-          item->setText((column + 2), formatMoney(q.value(bucketName).toDouble()));
+          last->setText((column + 2), formatMoney(q.value(bucketName).toDouble()));
       }
     }
     while (q.next());
 
-    XListViewItem *total = new XListViewItem(_soitem, _soitem->lastItem(), -1, QVariant(tr("Totals:")));
+    XTreeWidgetItem *total = new XTreeWidgetItem(_soitem, last, -1, QVariant(tr("Totals:")));
     for (int column = 1; column < columns; column++)
     {
       if ( (_inventoryUnits->isChecked()) || (_capacityUnits->isChecked()) || (_altCapacityUnits->isChecked()) )
@@ -336,17 +333,12 @@ ParameterList dspTimePhasedBookingsByProductCategory::buildParameters()
   else if(_salesDollars->isChecked())
     params.append("salesDollars");
 
-  XListViewItem *cursor = _periods->firstChild();
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
-  while (cursor)
-  {
-    if (cursor->isSelected())
-      periodList.append(cursor->id());
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
 
-    cursor = cursor->nextSibling();
-  }
   params.append("period_id_list", periodList);
 
   return params;
 }
-

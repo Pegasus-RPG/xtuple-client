@@ -57,10 +57,10 @@
 
 #include "dspPartiallyShippedOrders.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
@@ -81,7 +81,7 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_so, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -106,7 +106,7 @@ void dspPartiallyShippedOrders::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 
 void dspPartiallyShippedOrders::init()
@@ -186,7 +186,7 @@ void dspPartiallyShippedOrders::sPrintPackingList()
   newdlg.exec();
 }
 
-void dspPartiallyShippedOrders::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspPartiallyShippedOrders::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -200,7 +200,7 @@ void dspPartiallyShippedOrders::sPopulateMenu(Q3PopupMenu *pMenu)
 
   pMenu->insertSeparator();
 
-  if ( (_so->selectedItem()->text(0) != "P") && (_so->selectedItem()->text(0) != "C") )
+  if ( (_so->currentItem()->text(0) != "P") && (_so->currentItem()->text(0) != "C") )
   {
     menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
     if (!_privleges->check("PrintPackingLists"))
@@ -264,11 +264,11 @@ void dspPartiallyShippedOrders::sFillList()
     q.exec();
     if (q.first())
     {
-      XListViewItem *last = NULL;
+      XTreeWidgetItem *last = NULL;
 
       do
       {
-        last = new XListViewItem( _so, last, q.value("_coheadid").toInt(), q.value("cohead_id").toInt(),
+        last = new XTreeWidgetItem( _so, last, q.value("_coheadid").toInt(), q.value("cohead_id").toInt(),
                                   q.value("cohead_holdtype").toString(), q.value("cohead_number").toString(),
                                   q.value("cust_name").toString(), q.value("f_holdtype").toString(),
                                   q.value("f_orderdate").toString(), q.value("f_scheddate").toString(),
@@ -305,7 +305,7 @@ void dspPartiallyShippedOrders::sFillList()
 	_dates->bindValue(q);
 	q.exec();
 	if (q.first())
-	    new XListViewItem( _so, _so->lastItem(), -1, -1,
+	    new XTreeWidgetItem( _so, last, -1, -1,
 			       "", "", tr("Total Backlog"), "", "", "", "",
 			       formatMoney(q.value("backlog").toDouble()),
 			       q.value("currAbbr"));

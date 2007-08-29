@@ -178,9 +178,6 @@
 #include "dspBankrecHistory.h"
 #include "dspSummarizedBankrecHistory.h"
 
-#include "dspIncomeStatement.h"
-#include "dspBalanceSheet.h"
-
 #include "budgets.h"
 #include "maintainBudget.h"
 #include "forwardUpdateAccounts.h"
@@ -1088,18 +1085,6 @@ void menuAccounting::sDspSummarizedBankrecHistory()
 {
   omfgThis->handleNewWindow(new dspSummarizedBankrecHistory());
 }
-
-
-void menuAccounting::sDspIncomeStatement()
-{
-  omfgThis->handleNewWindow(new dspIncomeStatement());
-}
-
-void menuAccounting::sDspBalanceSheet()
-{
-  omfgThis->handleNewWindow(new dspBalanceSheet());
-}
-
 
 void menuAccounting::sBudgets()
 {

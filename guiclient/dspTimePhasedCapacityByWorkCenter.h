@@ -75,7 +75,7 @@ public:
 
 public slots:
     virtual void sPrint();
-    virtual void sPopulateMenu( Q3PopupMenu *, Q3ListViewItem *, int );
+    virtual void sPopulateMenu( QMenu *, QTreeWidgetItem *, int );
     virtual void sFillList();
 
 protected slots:

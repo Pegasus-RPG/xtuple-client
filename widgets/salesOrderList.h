@@ -65,7 +65,7 @@
 
 class WarehouseGroup;
 class QPushButton;
-class XListView;
+class XTreeWidget;
 class ParameterList;
 
 class OPENMFGWIDGETS_EXPORT salesOrderList : public QDialog
@@ -78,7 +78,7 @@ public:
     WarehouseGroup *_warehouse;
     QPushButton    *_close;
     QPushButton    *_select;
-    XListView      *_so;
+    XTreeWidget      *_so;
 
 public slots:
     virtual void set( ParameterList & pParams );

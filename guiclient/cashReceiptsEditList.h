@@ -71,7 +71,7 @@ public:
     ~cashReceiptsEditList();
 
 public slots:
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();

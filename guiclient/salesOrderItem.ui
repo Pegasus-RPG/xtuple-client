@@ -1571,7 +1571,7 @@
         </widget>
        </item>
        <item>
-        <widget class="XListView" name="_availability" >
+        <widget class="XTreeWidget" name="_availability" >
          <property name="rootIsDecorated" >
           <bool>true</bool>
          </property>
@@ -1637,9 +1637,9 @@
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

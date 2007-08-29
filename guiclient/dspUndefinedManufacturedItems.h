@@ -74,7 +74,7 @@ public:
     virtual void init();
 
 public slots:
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sCreateBOO();
     virtual void sCreateBOM();
     virtual void sEditItem();

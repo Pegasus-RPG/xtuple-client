@@ -319,7 +319,7 @@
  <customwidgets>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XListView</extends>
+   <extends>XTreeWidget</extends>
    <header>calendarTools.h</header>
    <container>0</container>
    <pixmap></pixmap>

@@ -57,9 +57,9 @@
 
 #include "dspSingleLevelWhereUsed.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "item.h"
 #include "bom.h"
 #include "boo.h"
@@ -82,7 +82,7 @@ dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* na
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_effective, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
     init();
@@ -106,7 +106,7 @@ void dspSingleLevelWhereUsed::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSingleLevelWhereUsed::init()
 {
@@ -167,7 +167,7 @@ void dspSingleLevelWhereUsed::sPrint()
   newdlg.set(params);
 }
 
-void dspSingleLevelWhereUsed::sPopulateMenu(Q3PopupMenu *menu)
+void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu)
 {
   int menuItem;
 

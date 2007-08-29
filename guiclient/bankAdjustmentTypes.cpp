@@ -57,9 +57,9 @@
 
 #include "bankAdjustmentTypes.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "bankAdjustmentType.h"
@@ -83,7 +83,7 @@ bankAdjustmentTypes::bankAdjustmentTypes(QWidget* parent, const char* name, Qt::
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bankadjtype, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_bankadjtype, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -106,7 +106,7 @@ void bankAdjustmentTypes::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void bankAdjustmentTypes::init()
 {
@@ -192,7 +192,7 @@ void bankAdjustmentTypes::sFillList()
                       "ORDER BY bankadjtype_name;" );
 }
 
-void bankAdjustmentTypes::sPopulateMenu( Q3PopupMenu * )
+void bankAdjustmentTypes::sPopulateMenu( QMenu * )
 {
 }
 

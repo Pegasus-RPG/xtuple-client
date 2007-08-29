@@ -57,10 +57,10 @@
 
 #include "dspCapacityUOMsByProductCategory.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "rptCapacityUOMsByProductCategory.h"
 #include "item.h"
 #include "OpenMFGGUIClient.h"
@@ -78,7 +78,7 @@ dspCapacityUOMsByProductCategory::dspCapacityUOMsByProductCategory(QWidget* pare
     (void)statusBar();
 
     // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -103,7 +103,7 @@ void dspCapacityUOMsByProductCategory::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCapacityUOMsByProductCategory::init()
 {
@@ -130,7 +130,7 @@ void dspCapacityUOMsByProductCategory::sPrint()
   newdlg.set(params);
 }
 
-void dspCapacityUOMsByProductCategory::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspCapacityUOMsByProductCategory::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

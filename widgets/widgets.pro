@@ -53,8 +53,6 @@ dynamic {
              plugins/polineeditplugin.h \
              plugins/projectclusterplugin.h \
              plugins/projectlineeditplugin.h \
-             plugins/quotecontrolplugin.h \
-             plugins/quotelineplugin.h \
              plugins/shiftclusterplugin.h \
              plugins/shipmentclusterplugin.h \
              plugins/shiptoclusterplugin.h \
@@ -76,7 +74,6 @@ dynamic {
              plugins/workcenterlineeditplugin.h \
              plugins/xcomboboxplugin.h \
              plugins/xlineeditplugin.h \
-             plugins/xlistviewplugin.h \
              plugins/xtreewidgetplugin.h \
              plugins/xurllabelplugin.h
 } else {
@@ -90,12 +87,10 @@ dynamic {
 
 SOURCES    += OpenMFGWidgets.cpp \
 	      addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
-              quoteWidgets.cpp \
-              xlistview.cpp xlistdialog.cpp xlineedit.cpp xcombobox.cpp \
+              xlineedit.cpp xcombobox.cpp \
               xlistbox.cpp \
-              quoteList.cpp \
               custCluster.cpp \
-              itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp itemDock.cpp \
+              itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
               warehouseCluster.cpp warehousegroup.cpp \
               woCluster.cpp woList.cpp \
               glCluster.cpp accountList.cpp accountSearch.cpp \
@@ -113,9 +108,9 @@ SOURCES    += OpenMFGWidgets.cpp \
               comment.cpp comments.cpp \
               xurllabel.cpp \
 	      currCluster.cpp usernameCluster.cpp usernameList.cpp \
-              workcenterCluster.cpp workcenterList.cpp \
+              workcenterCluster.cpp \
               projectCluster.cpp projectList.cpp \
-              expensecluster.cpp expenseList.cpp \
+              expensecluster.cpp \
               datecluster.cpp \
 	      virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
               xtreewidget.cpp \
@@ -124,12 +119,10 @@ SOURCES    += OpenMFGWidgets.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
 	      addresscluster.h contactcluster.h crmacctcluster.h \
-              quoteWidgets.h \
-              xlistview.h xlistdialog.h xlineedit.h xcombobox.h \
+              xlineedit.h xcombobox.h \
               xlistbox.h \
-              quoteList.h \
               custcluster.h \
-              itemcluster.h itemList.h itemSearch.h itemAliasList.h itemDock.h\
+              itemcluster.h itemList.h itemSearch.h itemAliasList.h \
               warehouseCluster.h warehousegroup.h \
               woCluster.h woList.h \
               glcluster.h accountList.h accountSearch.h \
@@ -147,9 +140,9 @@ HEADERS    += OpenMFGWidgets.h \
               comment.h comments.h \
               xurllabel.h \
 	      currcluster.h usernamecluster.h usernameList.h \
-              workcentercluster.h workcenterList.h \
+              workcentercluster.h \
               projectcluster.h projectList.h \
-              expensecluster.h expenseList.h \
+              expensecluster.h \
               datecluster.h \
 	      virtualCluster.h deptcluster.h shiftcluster.h \
               xtreewidget.h \

@@ -107,7 +107,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
     _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
     _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight  );
     _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight  );
-    _soitem->setSelectionMode(Q3ListView::Extended);
+    _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
     _so->setFocus();
 
@@ -220,8 +220,7 @@ void issueToShipping::sHandleTransferOrder(const int porderid)
 void issueToShipping::sCatchSoheadid(int pSoheadid)
 {
   _so->setId(pSoheadid);
-  for (XListViewItem *cursor = _soitem->firstChild(); cursor != 0; cursor = cursor->nextSibling())
-    _soitem->setSelected(cursor, TRUE);
+  _soitem->selectAll();
 }
 
 void issueToShipping::sCatchSoitemid(int pSoitemid)
@@ -248,8 +247,7 @@ void issueToShipping::sCatchSoitemid(int pSoitemid)
 void issueToShipping::sCatchToheadid(int pToheadid)
 {
   _to->setId(pToheadid);
-  for (XListViewItem *cursor = _soitem->firstChild(); cursor != 0; cursor = cursor->nextSibling())
-    _soitem->setSelected(cursor, TRUE);
+  _soitem->selectAll();
 }
 
 void issueToShipping::sCatchToitemid(int porderitemid)
@@ -388,26 +386,21 @@ void issueToShipping::sCatchWoid(int pWoid)
 void issueToShipping::sIssueStock()
 {
   bool update  = FALSE;
-  XListViewItem *cursor = _soitem->firstChild();
-  while (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (_soitem->isSelected(cursor))
-    {
-      ParameterList params;
-      if (_ordertype == "SO")
-	params.append("soitem_id", cursor->id());
-      else if (_ordertype == "TO")
-	params.append("toitem_id", cursor->id());
+    ParameterList params;
+    if (_ordertype == "SO")
+      params.append("soitem_id", ((XTreeWidgetItem*)selected[i])->id());
+    else if (_ordertype == "TO")
+      params.append("toitem_id", ((XTreeWidgetItem*)selected[i])->id());
 
-      if(_requireInventory->isChecked())
-        params.append("requireInventory");
-      
-      issueLineToShipping newdlg(this, "", TRUE);
-      if (newdlg.set(params) == NoError && newdlg.exec() != QDialog::Rejected)
-        update = TRUE;
-    }
-
-    cursor = cursor->nextSibling();
+    if(_requireInventory->isChecked())
+      params.append("requireInventory");
+    
+    issueLineToShipping newdlg(this, "", TRUE);
+    if (newdlg.set(params) == NoError && newdlg.exec() != QDialog::Rejected)
+      update = TRUE;
   }
 
   if (update)
@@ -499,39 +492,34 @@ bool issueToShipping::sufficientInventory(int porderheadid)
 
 void issueToShipping::sIssueLineBalance()
 {
-  XListViewItem *cursor = _soitem->firstChild();
-  while (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (_soitem->isSelected(cursor))
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+    if (! sufficientItemInventory(cursor->id()))
+      return;
+
+    q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, CURRENT_TIMESTAMP) AS result;");
+    q.bindValue(":ordertype", _ordertype);
+    q.bindValue(":soitem_id", cursor->id());
+    q.exec();
+    if (q.first())
     {
-
-      if (! sufficientItemInventory(cursor->id()))
-	return;
-
-      q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, CURRENT_TIMESTAMP) AS result;");
-      q.bindValue(":ordertype", _ordertype);
-      q.bindValue(":soitem_id", cursor->id());
-      q.exec();
-      if (q.first())
+      int result = q.value("result").toInt();
+      if (result < 0)
       {
-        int result = q.value("result").toInt();
-        if (result < 0)
-        {
-          systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
-		      __FILE__, __LINE__);
-          return;
-        }
-        else
-          distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
-      }
-      else if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
+		    __FILE__, __LINE__);
 	return;
       }
+      else
+	distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
     }
-
-    cursor = cursor->nextSibling();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   sFillList();
@@ -575,35 +563,31 @@ void issueToShipping::sIssueAllBalance()
 
 void issueToShipping::sReturnStock()
 {
-  XListViewItem *cursor = _soitem->firstChild();
-  while (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (_soitem->isSelected(cursor))
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+    q.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, CURRENT_TIMESTAMP) AS result;");
+    q.bindValue(":ordertype", _ordertype);
+    q.bindValue(":soitem_id", cursor->id());
+    q.exec();
+    if (q.first())
     {
-      q.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, CURRENT_TIMESTAMP) AS result;");
-      q.bindValue(":ordertype", _ordertype);
-      q.bindValue(":soitem_id", cursor->id());
-      q.exec();
-      if (q.first())
+      int result = q.value("result").toInt();
+      if (result < 0)
       {
-        int result = q.value("result").toInt();
-        if (result < 0)
-        {
-          systemError( this, storedProcErrorLookup("returnItemShipments", result),
-		      __FILE__, __LINE__);
-          return;
-        }
-        else
-          distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
-      }
-      else if (q.lastError().type() != QSqlError::None)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	systemError( this, storedProcErrorLookup("returnItemShipments", result),
+		    __FILE__, __LINE__);
 	return;
       }
+      else
+	distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
     }
-
-    cursor = cursor->nextSibling();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   sFillList();
@@ -751,10 +735,10 @@ void issueToShipping::sFillList()
 	     ;
   MetaSQLQuery listm(sql);
   XSqlQuery listq = listm.toQuery(listp);
-  XListViewItem *last = 0;
+  XTreeWidgetItem *last = 0;
   while (listq.next())
   {
-    last = new XListViewItem(_soitem, last,
+    last = new XTreeWidgetItem(_soitem, last,
 			     listq.value("lineitem_id").toInt(),
 			     listq.value("linenumber"),
 			     listq.value("item_number"),
@@ -767,9 +751,9 @@ void issueToShipping::sFillList()
 			     listq.value("f_balance"),
 			     listq.value("f_atshipping") );
     if (listq.value("tagged").toBool())
-      last->setColor("red");
+      last->setTextColor("red");
     if ((listq.value("in_future").toBool()) && (listq.value("tagged").toBool()))
-      last->setColor("darkgreen");
+      last->setTextColor("darkgreen");
   }
   if (listq.lastError().type() != QSqlError::None)
   {

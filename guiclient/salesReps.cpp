@@ -57,9 +57,9 @@
 
 #include "salesReps.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "salesRep.h"
@@ -82,7 +82,7 @@ salesReps::salesReps(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_salesrep, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_salesrep, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_salesrep, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
@@ -108,7 +108,7 @@ void salesReps::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void salesReps::init()
 {
@@ -246,7 +246,7 @@ void salesReps::sFillList()
                        "ORDER BY salesrep_number;" );
 }
 
-void salesReps::sPopulateMenu( Q3PopupMenu * menu )
+void salesReps::sPopulateMenu( QMenu * menu )
 {
   int menuItem;
 

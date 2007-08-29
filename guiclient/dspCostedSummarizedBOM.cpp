@@ -98,7 +98,7 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   _bomitem->addColumn(tr("Ext'd Qty. Per"), _qtyColumn,   Qt::AlignRight  );
   _bomitem->addColumn(tr("Unit Cost"),      _costColumn,  Qt::AlignRight  );
   _bomitem->addColumn(tr("Ext'd Cost"),     _priceColumn, Qt::AlignRight  );
-  _bomitem->setTreeStepSize(10);
+  _bomitem->setIndentation(10);
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
@@ -210,7 +210,8 @@ void dspCostedSummarizedBOM::sFillList()
       q.bindValue(":effective", _effectiveDays->value());
       q.exec();
       _bomitem->populate(q);
-      _bomitem->closeAll();
+      for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
+	_bomitem->collapseItem(_bomitem->topLevelItem(i));
 
       q.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
       q.bindValue(":bomwork_set_id", worksetid);
@@ -222,4 +223,3 @@ void dspCostedSummarizedBOM::sFillList()
 void dspCostedSummarizedBOM::sFillList(int, bool)
 {
 }
-

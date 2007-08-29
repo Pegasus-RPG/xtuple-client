@@ -67,7 +67,7 @@
              <number>5</number>
             </property>
             <item>
-             <widget class="XListView" name="_layout" />
+             <widget class="XTreeWidget" name="_layout" />
             </item>
             <item>
              <layout class="QVBoxLayout" >
@@ -260,7 +260,7 @@
           <number>6</number>
          </property>
          <item>
-          <widget class="XListView" name="_layouts" />
+          <widget class="XTreeWidget" name="_layouts" />
          </item>
          <item>
           <layout class="QVBoxLayout" >
@@ -911,9 +911,9 @@
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -968,7 +968,7 @@
   <include location="global" >parameter.h</include>
   <include location="global" >q3listview.h</include>
   <include location="global" >q3ptrstack.h</include>
-  <include location="global" >xlistview.h</include>
+  <include location="global" >xtreewidget.h</include>
  </includes>
  <resources/>
  <connections>

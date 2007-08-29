@@ -57,8 +57,8 @@
 
 #include "dspFrozenItemSites.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include "rptFrozenItemSites.h"
 
 /*
@@ -75,7 +75,7 @@ dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WF
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemsite, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
     init();
@@ -99,7 +99,7 @@ void dspFrozenItemSites::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspFrozenItemSites::init()
 {
@@ -124,7 +124,7 @@ void dspFrozenItemSites::sPrint()
   newdlg.set(params);
 }
 
-void dspFrozenItemSites::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspFrozenItemSites::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

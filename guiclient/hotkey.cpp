@@ -123,12 +123,15 @@ hotkey::hotkey(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _action->addColumn( tr("Display Name"), -1,  Qt::AlignLeft );
 
   QStringList addedactions;
+  XTreeWidgetItem *last = 0;
   for (ActionSet::iterator action = omfgThis->actions.begin(); action != omfgThis->actions.end(); action++)
   {
     if(!addedactions.contains((*action)->name()))
     {
       addedactions.append((*action)->name());
-      new XListViewItem(_action, _action->lastItem(), -1, QVariant((*action)->name()), (*action)->displayName()); 
+      last = new XTreeWidgetItem(_action, last, -1,
+				 QVariant((*action)->name()),
+				 (*action)->displayName()); 
     }
   }
 }
@@ -201,8 +204,9 @@ enum SetResponse hotkey::set(const ParameterList &pParams)
 
     if (!value.isNull())
     {
-      for (XListViewItem *cursor = _action->firstChild(); cursor != NULL; cursor = cursor->nextSibling())
+      for (int i = 0; i < _action->topLevelItemCount(); i++)
       {
+	XTreeWidgetItem *cursor = _action->topLevelItem(i);
         if (param.toString().left(1) == "F")
           _hotkey->setText(QString("F%1").arg(param.toString().right(1)));
         else if (param.toString().left(1) == "C")
@@ -210,8 +214,8 @@ enum SetResponse hotkey::set(const ParameterList &pParams)
 
         if (cursor->text(0) == value)
         {
-          cursor->setSelected(TRUE);
-          _action->ensureItemVisible(cursor);
+          _action->setCurrentItem(cursor);
+          _action->scrollToItem(cursor);
           break;
         }
       }
@@ -225,7 +229,7 @@ void hotkey::sSave()
 {
   QString keyValue;
 
-  if(_action->selectedItem() == 0)
+  if(_action->currentItem() == 0)
   { 
     QMessageBox::information( this, tr("No Action Selected"),
       tr("You must select an Action before saving this Hotkey.") );
@@ -239,7 +243,7 @@ void hotkey::sSave()
 
   if (_currentUser)
   {
-    _preferences->set(keyValue, _action->selectedItem()->text(0));
+    _preferences->set(keyValue, _action->currentItem()->text(0));
     _preferences->load();
   }
   else
@@ -247,7 +251,7 @@ void hotkey::sSave()
     q.prepare("SELECT setUserPreference(:username, :name, :value);");
     q.bindValue(":username", _username);
     q.bindValue(":name", keyValue);
-    q.bindValue(":value", _action->selectedItem()->text(0));
+    q.bindValue(":value", _action->currentItem()->text(0));
     q.exec();
   }
 

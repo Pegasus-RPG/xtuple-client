@@ -57,9 +57,9 @@
 
 #include "currencyConversions.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include "currencyConversion.h"
 #include "openreports.h"
 #include "currency.h"
@@ -80,7 +80,7 @@ currencyConversions::currencyConversions(QWidget* parent, const char* name, Qt::
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_conversionRates, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_conversionRates, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -109,7 +109,7 @@ void currencyConversions::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 
 void currencyConversions::init()
@@ -296,7 +296,7 @@ void currencyConversions::sFillList()
     }
 }
 
-void currencyConversions::sPopulateMenu( Q3PopupMenu* pMenu)
+void currencyConversions::sPopulateMenu( QMenu* pMenu)
 {
     int menuItem;
     

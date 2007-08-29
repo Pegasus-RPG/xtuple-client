@@ -79,7 +79,7 @@ public slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem * selected );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sFillList();
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
 

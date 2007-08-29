@@ -57,8 +57,8 @@
 
 #include "dspEarnedCommissions.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptEarnedCommissions.h"
 #include "OpenMFGGUIClient.h"
@@ -171,23 +171,30 @@ void dspEarnedCommissions::sFillList()
     {
       double sales = 0.0;
       double comm  = 0.0;
+      XTreeWidgetItem *last = 0;
       do
       {
-        new XListViewItem( _commission, _commission->lastItem(), q.value("cohist_id").toInt(),
-                           q.value("salesrep_name"), q.value("cohist_ordernumber"),
-                           q.value("cust_number"), q.value("cohist_shiptoname"),
-                           q.value("f_invoicedate"), q.value("item_number"),
-                           q.value("f_shipped"), q.value("f_sales"),
-                           q.value("f_commission"), q.value("f_commissionpaid") );
+	last = new XTreeWidgetItem(_commission, last,
+				   q.value("cohist_id").toInt(),
+				   q.value("salesrep_name"),
+				   q.value("cohist_ordernumber"),
+				   q.value("cust_number"),
+				   q.value("cohist_shiptoname"),
+				   q.value("f_invoicedate"),
+				   q.value("item_number"),
+				   q.value("f_shipped"),
+				   q.value("f_sales"),
+				   q.value("f_commission"),
+				   q.value("f_commissionpaid") );
 
         sales += q.value("sales").toDouble();
         comm+= q.value("commission").toDouble();
       }
       while (q.next());
 
-      new XListViewItem( _commission, _commission->lastItem(), -1, QVariant(tr("Totals")),
-                         "", "", "", "", "", "",
-                         formatMoney(sales), formatMoney(comm) );
+      last = new XTreeWidgetItem(_commission, last, -1, QVariant(tr("Totals")),
+				 "", "", "", "", "", "",
+				 formatMoney(sales), formatMoney(comm) );
     }
   }
 }

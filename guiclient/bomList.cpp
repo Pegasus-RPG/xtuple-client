@@ -57,11 +57,11 @@
 
 #include "bomList.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <parameter.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "bom.h"
 #include "copyBOM.h"
 #include "rptSingleLevelBOM.h"
@@ -217,21 +217,18 @@ void bomList::sPrint()
 
 void bomList::sSearch( const QString &pTarget )
 {
-  Q3ListViewItem *target;
-    
-  if (_bom->selectedItem())
-    _bom->setSelected(_bom->selectedItem(), FALSE);
-    
   _bom->clearSelection();
-    
-  target = _bom->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-    
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _bom->topLevelItemCount(); i++)
   {
-    _bom->setSelected(target, TRUE);
-    _bom->ensureItemVisible(target);
+   if (_bom->topLevelItem(i)->text(0).contains(pTarget, Qt::CaseInsensitive))
+    break;
+  }
+    
+  if (i < _bom->topLevelItemCount())
+  {
+    _bom->setCurrentItem(_bom->topLevelItem(i));
+    _bom->scrollToItem(_bom->topLevelItem(i));
   }
 }
 

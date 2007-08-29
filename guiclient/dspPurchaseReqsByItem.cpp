@@ -57,9 +57,9 @@
 
 #include "dspPurchaseReqsByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <parameter.h>
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
@@ -82,7 +82,7 @@ dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char* name, 
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_pr, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
     connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
     connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
@@ -107,7 +107,7 @@ void dspPurchaseReqsByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspPurchaseReqsByItem::init()
 {
@@ -132,7 +132,7 @@ void dspPurchaseReqsByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspPurchaseReqsByItem::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspPurchaseReqsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

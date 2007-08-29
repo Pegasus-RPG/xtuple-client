@@ -103,8 +103,7 @@ void dspCustomerInformationExport::init()
 void dspCustomerInformationExport::sQuery()
 {
   _cust->clear();
-  while (_cust->columns())
-    _cust->removeColumn(0);
+  _cust->setColumnCount(0);
 
   QString sql("SELECT cust_id ");
 

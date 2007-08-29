@@ -76,7 +76,7 @@ public:
 
 public slots:
     virtual SetResponse set( ParameterList & pParams );
-    virtual void sPopulateMenu( Q3PopupMenu * menuThis );
+    virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sEditOrder();
     virtual void sViewOrder();
     virtual void sDspShipmentStatus();

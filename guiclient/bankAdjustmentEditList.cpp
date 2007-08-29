@@ -57,12 +57,12 @@
 
 #include "bankAdjustmentEditList.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
+#include <QWorkspace>
+#include <QMessageBox>
 #include "OpenMFGGUIClient.h"
 #include "bankAdjustment.h"
 
@@ -87,7 +87,7 @@ bankAdjustmentEditList::bankAdjustmentEditList(QWidget* parent, const char* name
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
     connect(_adjustments, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_adjustments, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_adjustments, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -109,7 +109,7 @@ void bankAdjustmentEditList::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void bankAdjustmentEditList::init()
 {
@@ -219,7 +219,7 @@ void bankAdjustmentEditList::sFillList()
   _adjustments->populate(q);
 }
 
-void bankAdjustmentEditList::sPopulateMenu( Q3PopupMenu * pMenu )
+void bankAdjustmentEditList::sPopulateMenu( QMenu * pMenu )
 {
   int menuItem;
   

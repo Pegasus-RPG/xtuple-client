@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMessageBox>
-#include <Q3PopupMenu>
+#include <QMenu>
 
 #include <openreports.h>
 
@@ -79,7 +79,7 @@ plannedSchedules::plannedSchedules(QWidget * parent, const char * name, Qt::WFla
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_list, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_list, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _list->addColumn(tr("Start Date"),   _dateColumn, Qt::AlignCenter );
   _list->addColumn(tr("End Date"),     _dateColumn, Qt::AlignCenter );
@@ -100,7 +100,7 @@ void plannedSchedules::languageChange()
   retranslateUi(this);
 }
 
-void plannedSchedules::sPopulateMenu(Q3PopupMenu* pMenu)
+void plannedSchedules::sPopulateMenu(QMenu* pMenu)
 {
   int menuItem;
 

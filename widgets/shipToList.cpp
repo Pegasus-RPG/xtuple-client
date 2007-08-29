@@ -72,7 +72,7 @@
 #include <q3whatsthis.h>
 #include <xsqlquery.h>
 
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlags fl) :
   QDialog( parent, name, modal, fl )
@@ -146,7 +146,8 @@ shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlag
     _shipTosList = new QLabel(tr("Ship To's:"), this, "_shipTosList");
     Layout55->addWidget( _shipTosList );
 
-    _shipto = new XListView( this, "_shipto" );
+    _shipto = new XTreeWidget(this);
+    _shipto->setName("_shipto");
     Layout55->addWidget( _shipto );
     shipToListLayout->addLayout( Layout55 );
 
@@ -165,7 +166,7 @@ shipToList::shipToList(QWidget * parent, const char *name, bool modal, Qt::WFlag
   _shipto->addColumn(tr("Name"),    150,          Qt::AlignLeft );
   _shipto->addColumn(tr("Address"), 150,          Qt::AlignLeft );
   _shipto->addColumn(tr("City, State, Zip"), -1,  Qt::AlignLeft );
-  _shipto->setSorting(1);
+  _shipto->sortByColumn(1, Qt::AscendingOrder);
 }
 
 void shipToList::set(ParameterList &pParams)
@@ -219,27 +220,17 @@ void shipToList::sSelect()
 
 void shipToList::sSearch(const QString &pTarget)
 {
-  Q3ListViewItem *target;
-
-  if (pTarget.length())
+  _shipto->clearSelection();
+  int i;
+  for (i = 0; i < _shipto->topLevelItemCount(); i++)
   {
-    target = _shipto->firstChild();
-    while ((target != NULL) && (pTarget.upper() != target->text(1).left(pTarget.length()).upper()))
-      target = target->nextSibling();
+    if (_shipto->topLevelItem(i)->text(1).startsWith(pTarget, Qt::CaseInsensitive))
+      break;
   }
-  else
-    target = NULL;
 
-  if (target == NULL)
+  if (i < _shipto->topLevelItemCount())
   {
-    _selected = NULL;
-    _shipto->clearSelection();
-    _shipto->ensureItemVisible(_shipto->firstChild());
-  }
-  else
-  {
-    _selected = target;
-    _shipto->setSelected(target, TRUE);
-    _shipto->ensureItemVisible(target);
+    _shipto->setCurrentItem(_shipto->topLevelItem(i));
+    _shipto->scrollToItem(_shipto->topLevelItem(i));
   }
 }

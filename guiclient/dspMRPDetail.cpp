@@ -57,9 +57,9 @@
 
 #include "dspMRPDetail.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <datecluster.h>
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -81,9 +81,9 @@ dspMRPDetail::dspMRPDetail(QWidget* parent, const char* name, Qt::WFlags fl)
     (void)statusBar();
 
     // signals and slots connections
-    connect(_itemsite, SIGNAL(selectionChanged()), this, SLOT(sFillMRPDetail()));
+    connect(_itemsite, SIGNAL(itemSelectionChanged()), this, SLOT(sFillMRPDetail()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_mrp, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_mrp, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
@@ -111,7 +111,7 @@ void dspMRPDetail::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspMRPDetail::init()
 {
@@ -142,23 +142,25 @@ void dspMRPDetail::sPrint()
   newdlg.set(params);
 }
 
-void dspMRPDetail::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *, int pColumn)
+void dspMRPDetail::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
   int           menuItem;
-  Q3ListViewItem *cursor = _mrp->firstChild();
+  int		mrpIndex = 0;
 
   _column = pColumn;
 
   menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
-  while ((cursor != 0) && (cursor->text(0) != tr("Allocations")))
-    cursor = cursor->nextSibling();
-  if (cursor->text(pColumn).toDouble() == 0.0)
+  while ((mrpIndex < _mrp->topLevelItemCount()) &&
+	 (_mrp->topLevelItem(mrpIndex)->text(0) != tr("Allocations")))
+    mrpIndex++;
+  if (_mrp->topLevelItem(mrpIndex)->text(pColumn).toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
-  while ((cursor != 0) && (cursor->text(0) != tr("Orders")))
-    cursor = cursor->nextSibling();
-  if (cursor->text(pColumn).toDouble() == 0.0)
+  while ((mrpIndex < _mrp->topLevelItemCount()) &&
+	 (_mrp->topLevelItem(mrpIndex)->text(0) != tr("Orders")))
+    mrpIndex++;
+  if (_mrp->topLevelItem(mrpIndex)->text(pColumn).toDouble() == 0.0)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -276,48 +278,41 @@ void dspMRPDetail::sFillMRPDetail()
 {
   _mrp->clear();
 
-  while (_mrp->columns() > 1)
-    _mrp->removeColumn(1);
+  _mrp->setColumnCount(1);
 
   QString       sql( "SELECT formatQty(itemsite_qtyonhand) AS f_qoh,"
                      "       itemsite_qtyonhand" );
 
   int           counter = 1;
   bool          show    = FALSE;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", qtyAllocated(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS allocations%3, ")
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter);
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+    sql += QString(", qtyAllocated(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS allocations%3, ")
+	   .arg(cursor->id())
+	   .arg(cursor->id())
+	   .arg(counter);
 
-        sql += QString("qtyOrdered(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS orders%3,")
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter);
+    sql += QString("qtyOrdered(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS orders%3,")
+	   .arg(cursor->id())
+	   .arg(cursor->id())
+	   .arg(counter);
 
-        sql += QString("qtyFirmedAllocated(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS firmedallocations%3,")
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter);
+    sql += QString("qtyFirmedAllocated(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS firmedallocations%3,")
+	   .arg(cursor->id())
+	   .arg(cursor->id())
+	   .arg(counter);
 
-        sql += QString("qtyFirmed(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS firmedorders%3")
-               .arg(cursor->id())
-               .arg(cursor->id())
-               .arg(counter);
+    sql += QString("qtyFirmed(itemsite_id, findPeriodStart(%1), findPeriodEnd(%2)) AS firmedorders%3")
+	   .arg(cursor->id())
+	   .arg(cursor->id())
+	   .arg(counter);
 
-        _mrp->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
-        counter++;
-  
-        show = TRUE;
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _mrp->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    counter++;
+
+    show = TRUE;
   }
 
   sql +=  " FROM itemsite "
@@ -331,26 +326,26 @@ void dspMRPDetail::sFillMRPDetail()
     mrp.exec();
     if (mrp.first())
     {
-      XListViewItem *qoh;
-      XListViewItem *allocations;
-      XListViewItem *orders;
-      XListViewItem *availability;
-      XListViewItem *firmedAllocations;
-      XListViewItem *firmedOrders;
-      XListViewItem *firmedAvailability;
+      XTreeWidgetItem *qoh;
+      XTreeWidgetItem *allocations;
+      XTreeWidgetItem *orders;
+      XTreeWidgetItem *availability;
+      XTreeWidgetItem *firmedAllocations;
+      XTreeWidgetItem *firmedOrders;
+      XTreeWidgetItem *firmedAvailability;
       double        runningAvailability;
       double	    runningFirmed;
 
       runningFirmed = mrp.value("firmedorders1").toDouble();
       runningAvailability = (mrp.value("itemsite_qtyonhand").toDouble() - mrp.value("allocations1").toDouble() + mrp.value("orders1").toDouble());
 
-      qoh                = new XListViewItem(_mrp, 0, QVariant(tr("Projected QOH")), mrp.value("f_qoh"));
-      allocations        = new XListViewItem(_mrp, qoh, 0, QVariant(tr("Allocations")), formatQty(mrp.value("allocations1").toDouble()));
-      orders             = new XListViewItem(_mrp, allocations,  0, QVariant(tr("Orders")), formatQty(mrp.value("orders1").toDouble()));
-      availability       = new XListViewItem(_mrp, orders, 0, QVariant(tr("Availability")), formatQty(runningAvailability));
-      firmedAllocations  = new XListViewItem(_mrp, availability, 0, QVariant(tr("Firmed Allocations")), formatQty(mrp.value("firmedallocations1").toDouble()));
-      firmedOrders       = new XListViewItem(_mrp, firmedAllocations, 0, QVariant(tr("Firmed Orders")), formatQty(runningFirmed));
-      firmedAvailability = new XListViewItem(_mrp, firmedOrders, 0, QVariant(tr("Firmed Availability")), formatQty( runningAvailability -
+      qoh                = new XTreeWidgetItem(_mrp, 0, QVariant(tr("Projected QOH")), mrp.value("f_qoh"));
+      allocations        = new XTreeWidgetItem(_mrp, qoh, 0, QVariant(tr("Allocations")), formatQty(mrp.value("allocations1").toDouble()));
+      orders             = new XTreeWidgetItem(_mrp, allocations,  0, QVariant(tr("Orders")), formatQty(mrp.value("orders1").toDouble()));
+      availability       = new XTreeWidgetItem(_mrp, orders, 0, QVariant(tr("Availability")), formatQty(runningAvailability));
+      firmedAllocations  = new XTreeWidgetItem(_mrp, availability, 0, QVariant(tr("Firmed Allocations")), formatQty(mrp.value("firmedallocations1").toDouble()));
+      firmedOrders       = new XTreeWidgetItem(_mrp, firmedAllocations, 0, QVariant(tr("Firmed Orders")), formatQty(runningFirmed));
+      firmedAvailability = new XTreeWidgetItem(_mrp, firmedOrders, 0, QVariant(tr("Firmed Availability")), formatQty( runningAvailability -
                                                                                                           mrp.value("firmedallocations1").toDouble() +
                                                                                                           runningFirmed ) );
                        

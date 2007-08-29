@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "dspRunningAvailability.h"
 #include "firmPlannedOrder.h"
@@ -83,7 +83,7 @@ dspPlannedOrdersByItem::dspPlannedOrdersByItem(QWidget* parent, const char* name
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_planord, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   statusBar()->hide();
@@ -128,7 +128,7 @@ void dspPlannedOrdersByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspPlannedOrdersByItem::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspPlannedOrdersByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
@@ -196,7 +196,7 @@ void dspPlannedOrdersByItem::sSoftenOrder()
 
 void dspPlannedOrdersByItem::sReleaseOrder()
 {
-  if (_planord->selectedItem()->text(1) == "W/O")
+  if (_planord->currentItem()->text(1) == "W/O")
   {
     ParameterList params;
     params.append("mode", "release");
@@ -206,7 +206,7 @@ void dspPlannedOrdersByItem::sReleaseOrder()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if (_planord->selectedItem()->text(1) == "P/O")
+  else if (_planord->currentItem()->text(1) == "P/O")
   {
     ParameterList params;
     params.append("mode", "release");

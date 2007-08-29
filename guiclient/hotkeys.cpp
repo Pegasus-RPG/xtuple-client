@@ -57,7 +57,7 @@
 
 #include "hotkeys.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include "hotkey.h"
 
 /*
@@ -77,7 +77,7 @@ hotkeys::hotkeys(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_hotkey, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_hotkey, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
     connect(_hotkey, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_hotkey, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -103,7 +103,7 @@ void hotkeys::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void hotkeys::init()
 {
@@ -148,6 +148,7 @@ void hotkeys::sFillList()
   QString action;
   char    key;
 
+  XTreeWidgetItem *last = 0;
   if (_currentUser)
   {
     for (key = '1'; key <= '9'; key++)
@@ -155,7 +156,7 @@ void hotkeys::sFillList()
       hotkey = QString("F%1").arg(key);
       action = _preferences->value(hotkey);
       if (!action.isNull())
-        new XListViewItem(_hotkey, _hotkey->lastItem(), -1, QVariant(tr("F%1").arg(key)), action, hotkey);
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(tr("F%1").arg(key)), action, hotkey);
     }
 
     for (key = 'A'; key <= 'Z'; key++)
@@ -163,7 +164,7 @@ void hotkeys::sFillList()
       hotkey = QString("C%1").arg(key);
       action = _preferences->value(hotkey);
       if (!action.isNull())
-        new XListViewItem(_hotkey, _hotkey->lastItem(), -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
     }
 
     for (key = '0'; key <= '9'; key++)
@@ -171,7 +172,7 @@ void hotkeys::sFillList()
       hotkey = QString("C%1").arg(key);
       action = _preferences->value(hotkey);
       if (!action.isNull())
-        new XListViewItem(_hotkey, _hotkey->lastItem(), -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
     }
   }
   else
@@ -183,7 +184,7 @@ void hotkeys::sFillList()
       hotkey = QString("F%1").arg(key);
       action = pref.value(hotkey);
       if (!action.isNull())
-        new XListViewItem(_hotkey, _hotkey->lastItem(), -1, QVariant(tr("F%1").arg(key)), action, hotkey);
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(tr("F%1").arg(key)), action, hotkey);
     }
 
     for (key = 'A'; key <= 'Z'; key++)
@@ -191,7 +192,7 @@ void hotkeys::sFillList()
       hotkey = QString("C%1").arg(key);
       action = pref.value(hotkey);
       if (!action.isNull())
-        new XListViewItem(_hotkey, _hotkey->lastItem(), -1,QVariant( QString("Ctrl+%1").arg(key)), action, hotkey);
+        last = new XTreeWidgetItem(_hotkey, last, -1,QVariant( QString("Ctrl+%1").arg(key)), action, hotkey);
     }
 
     for (key = '0'; key <= '9'; key++)
@@ -199,7 +200,7 @@ void hotkeys::sFillList()
       hotkey = QString("C%1").arg(key);
       action = pref.value(hotkey);
       if (!action.isNull())
-        new XListViewItem(_hotkey, _hotkey->lastItem(), -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
     }
   }
 }
@@ -264,7 +265,7 @@ void hotkeys::sDelete()
   sFillList();
 }
 
-void hotkeys::sPopulateMenu(Q3PopupMenu *)
+void hotkeys::sPopulateMenu(QMenu *)
 {
 }
 

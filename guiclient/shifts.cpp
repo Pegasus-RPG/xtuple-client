@@ -57,9 +57,9 @@
 
 #include "shifts.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <openreports.h>
 #include "shift.h"
 
@@ -82,7 +82,7 @@ shifts::shifts(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_shiftList, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_shiftList, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -104,7 +104,7 @@ void shifts::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 void shifts::init()
 {
@@ -200,7 +200,7 @@ void shifts::sFillList()
 			"ORDER BY shift_number;");
 }
 
-void shifts::sPopulateMenu(Q3PopupMenu *pMenu )
+void shifts::sPopulateMenu(QMenu *pMenu )
 {
     int menuItem;
 

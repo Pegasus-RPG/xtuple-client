@@ -57,9 +57,9 @@
 
 #include "dspItemSitesByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <parameter.h>
 #include "inputManager.h"
 #include "itemSite.h"
@@ -85,7 +85,7 @@ dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WF
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemsite, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
     init();
 }
@@ -108,7 +108,7 @@ void dspItemSitesByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemSitesByItem::init()
 {
@@ -143,7 +143,7 @@ void dspItemSitesByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspItemSitesByItem::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewItem *pSelected)
+void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
@@ -161,7 +161,7 @@ void dspItemSitesByItem::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewItem *pSelec
   if (!_privleges->check("ViewInventoryAvailability"))
     menu->setItemEnabled(menuItem, FALSE);
 
-  if (((XListViewItem *)pSelected)->altId() == 1)
+  if (((XTreeWidgetItem *)pSelected)->altId() == 1)
   {
     menuItem = menu->insertItem(tr("View Location/Lot/Serial # Detail..."), this, SLOT(sViewLocationLotSerialDetail()), 0);
     if (!_privleges->check("ViewQOH"))

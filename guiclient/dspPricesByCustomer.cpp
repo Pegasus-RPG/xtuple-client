@@ -62,6 +62,10 @@
 #include <parameter.h>
 #include "rptPricesByCustomer.h"
 
+#define CURR_COL	7
+#define COST_COL	8
+#define MARGIN_COL	9
+
 /*
  *  Constructs a dspPricesByCustomer as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -93,9 +97,12 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::
   _price->addColumn(tr("Qty. Break"),  _qtyColumn,   Qt::AlignRight );
   _price->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight );
   _price->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft);
+  _price->addColumn(tr("Ext. Cost"),   _costColumn,  Qt::AlignRight );
+  _price->addColumn(tr("Mar. %"),      _prcntColumn, Qt::AlignRight );
 
   if (omfgThis->singleCurrency())
-      _price->hideColumn(7);
+      _price->hideColumn(CURR_COL);
+  sHandleCosts(_showCosts->isChecked());
 }
 
 /*
@@ -143,13 +150,13 @@ void dspPricesByCustomer::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
   {
-    _price->addColumn(tr("Ext. Cost"), _costColumn,  Qt::AlignRight );
-    _price->addColumn(tr("Mar. %"),    _prcntColumn, Qt::AlignRight );
+    _price->showColumn(COST_COL);
+    _price->showColumn(MARGIN_COL);
   }
   else
   {
-    _price->removeColumn(7);
-    _price->removeColumn(7);
+    _price->hideColumn(COST_COL);
+    _price->hideColumn(MARGIN_COL);
   }
 }
 
@@ -323,23 +330,20 @@ void dspPricesByCustomer::sFillList()
     q.bindValue(":listPrice", tr("List Price"));
     q.bindValue(":cust_id", _cust->id());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _price, _price->lastItem(), q.value("itemid").toInt(), q.value("sourcetype").toInt(),
-                                               q.value("schedulename"), q.value("type"),
-                                               q.value("itemnumber"), q.value("itemdescrip"),
-                                               q.value("priceuom"), q.value("f_qtybreak"),
-                                               q.value("f_price"), q.value("currConcat") );
-
-      if (_showCosts->isChecked())
-      {
-        last->setText(8, q.value("f_cost").toString());
-        last->setText(9, q.value("f_margin").toString());
-
-        if (q.value("cost").toDouble() > q.value("price").toDouble())
-          last->setColor(9, "red");
-      }
+      last = new XTreeWidgetItem(_price, last, q.value("itemid").toInt(),
+				 q.value("sourcetype").toInt(),
+				 q.value("schedulename"), q.value("type"),
+				 q.value("itemnumber"), q.value("itemdescrip"),
+				 q.value("priceuom"), q.value("f_qtybreak"),
+				 q.value("f_price"),
+				 q.value("currConcat"),
+				 q.value("f_cost"),
+				 q.value("f_margin"));
+      if (q.value("cost").toDouble() > q.value("price").toDouble())
+	last->setTextColor(MARGIN_COL, "red");
     }
   }
 }
-

@@ -195,6 +195,9 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 			       const char*, const char*, const char*,
 			       const char* = 0);
 
+    public slots:
+	virtual void setId(const int);
+
     protected slots:
 	virtual void clear();
 	inline virtual void clearExtraClause()	{ _extraClause = ""; }
@@ -209,7 +212,6 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 	virtual void sEllipses();
 	virtual void sParse();
 
-	virtual void setId(const int);
 	virtual void setNumber(const QString&);
 	virtual void setTitles(const QString&, const QString& = 0);
 	inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
@@ -270,6 +272,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    infoVisible READ infoVisible WRITE setInfoVisible);
     Q_PROPERTY(bool    listVisible READ listVisible WRITE setListVisible);
     Q_PROPERTY(bool    nameVisible READ nameVisible WRITE setNameVisible);
+    Q_PROPERTY(bool    readOnly    READ readOnly    WRITE setReadOnly);
 
     friend class VirtualClusterLineEdit;
 
@@ -287,6 +290,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 	inline virtual bool    isValid()     const { return _number->isValid(); };
 	inline virtual QString name()        const { return _name->text(); };
         inline virtual bool    isStrict()    const { return _number->isStrict(); };
+	inline virtual bool    readOnly()    const { return _readOnly; };
 
     public slots:
 	// most of the heavy lifting is done by VirtualClusterLineEdit _number
@@ -305,6 +309,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 	virtual void clear();
 	virtual void setEnabled(const bool p);
         virtual void setStrict(const bool b);
+	virtual void setReadOnly(const bool b);
 
     signals:
 	void newId(int);
@@ -320,6 +325,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 	QPushButton*	_info;
 	QLabel*		_description;
 	QLabel*		_name;
+	bool		_readOnly;
 
     private:
 	virtual void init();

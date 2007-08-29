@@ -100,9 +100,9 @@
       </widget>
      </item>
      <item>
-      <widget class="XListView" name="_po" >
+      <widget class="XTreeWidget" name="_po" >
        <property name="selectionMode" >
-        <enum>Q3ListView::Extended</enum>
+        <enum>QAbstractItemView::ExtendedSelection</enum>
        </property>
       </widget>
      </item>
@@ -110,13 +110,13 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

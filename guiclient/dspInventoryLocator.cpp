@@ -57,9 +57,9 @@
 
 #include "dspInventoryLocator.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
 #include "relocateInventory.h"
 #include "reassignLotSerial.h"
 #include "rptInventoryLocator.h"
@@ -79,7 +79,7 @@ dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char* name, Qt::
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemloc, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
     connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -105,7 +105,7 @@ void dspInventoryLocator::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspInventoryLocator::init()
 {
@@ -177,11 +177,11 @@ void dspInventoryLocator::sReassignLotSerial()
     sFillList();
 }
 
-void dspInventoryLocator::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspInventoryLocator::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
-  if (((XListViewItem *)pSelected)->altId() == -1)
+  if (((XTreeWidgetItem *)pSelected)->altId() == -1)
   {
     menuItem = pMenu->insertItem(tr("Relocate..."), this, SLOT(sRelocateInventory()), 0);
     if (!_privleges->check("RelocateInventory"))
@@ -255,15 +255,16 @@ void dspInventoryLocator::sFillList()
     q.exec();
 
     _itemloc->clear();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _itemloc, _itemloc->lastItem(),
-                                               q.value("itemloc_id").toInt(), q.value("type").toInt(),
-                                               q.value("warehous_code"), q.value("locationname"),
-                                               q.value("netable"), q.value("lotserial"),
-                                               q.value("f_expiration"), q.value("f_qoh") );
+      last = new XTreeWidgetItem( _itemloc, last,
+				 q.value("itemloc_id").toInt(), q.value("type").toInt(),
+				 q.value("warehous_code"), q.value("locationname"),
+				 q.value("netable"), q.value("lotserial"),
+				 q.value("f_expiration"), q.value("f_qoh") );
       if (q.value("expired").toBool())
-        last->setColor("red");
+        last->setTextColor("red");
     }
   }
   else

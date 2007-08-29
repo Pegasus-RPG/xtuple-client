@@ -57,9 +57,9 @@
 
 #include "dspCostedIndentedBOM.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QStatusBar>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 #include "rptCostedIndentedBOM.h"
@@ -85,7 +85,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
     init();
 }
@@ -108,7 +108,7 @@ void dspCostedIndentedBOM::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCostedIndentedBOM::init()
 {
@@ -125,7 +125,7 @@ void dspCostedIndentedBOM::init()
   _bomitem->addColumn(tr("Expires"),       _dateColumn,  Qt::AlignCenter );
   _bomitem->addColumn(tr("Unit Cost"),     _costColumn,  Qt::AlignRight  );
   _bomitem->addColumn(tr("Ext'd Cost"),    _priceColumn, Qt::AlignRight  );
-  _bomitem->setTreeStepSize(10);
+  _bomitem->setIndentation(10);
 }
 
 enum SetResponse dspCostedIndentedBOM::set(ParameterList &pParams)
@@ -162,12 +162,12 @@ void dspCostedIndentedBOM::sPrint()
   newdlg.set(params);
 }
 
-void dspCostedIndentedBOM::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspCostedIndentedBOM::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
     pMenu->insertItem(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()), 0);
 
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
     pMenu->insertItem(tr("View Item Costing..."), this, SLOT(sViewItemCosting()), 0);
 }
 
@@ -256,7 +256,7 @@ void dspCostedIndentedBOM::sFillList()
       q.bindValue(":bomwork_set_id", _worksetid);
       q.bindValue(":item_id", _item->id());
       q.exec();
-      XListViewItem *last = NULL;
+      XTreeWidgetItem *last = NULL;
 
       while (q.next())
       {
@@ -264,7 +264,7 @@ void dspCostedIndentedBOM::sFillList()
         {
           if (q.value("bomwork_id").toInt() == -1)
           {
-            last = new XListViewItem( _bomitem, last, -1, -1,
+            last = new XTreeWidgetItem( _bomitem, last, -1, -1,
                                       "", q.value("item_number"),
                                       "", "", "", "", "" );
             last->setText(7, "");
@@ -273,7 +273,7 @@ void dspCostedIndentedBOM::sFillList()
           }
           else
           {
-            last = new XListViewItem( _bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
+            last = new XTreeWidgetItem( _bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                                       q.value("bomwork_seqnumber"), q.value("item_number"),
                                       q.value("itemdescription"), q.value("item_invuom"),
                                       q.value("qtyper"), q.value("scrap"),
@@ -285,41 +285,36 @@ void dspCostedIndentedBOM::sFillList()
         }
         else
         {
-          XListViewItem *cursor = _bomitem->firstChild();
-          if (cursor)
+          XTreeWidgetItem *cursor = 0;
+	  int i;
+	  for (i = 0; i < _bomitem->topLevelItemCount(); i++)
+	  {
+	    cursor = (XTreeWidgetItem*)(_bomitem->topLevelItem(i));
+	    if (cursor->id() == q.value("bomwork_parent_id").toInt())
+	      break;
+	  }
+
+          if (cursor && i < _bomitem->topLevelItemCount())
           {
-            do
-            {
-              if (cursor->id() == q.value("bomwork_parent_id").toInt())
-              {
-                XListViewItem *sibling = NULL;
-                XListViewItem *child;
-
-                if (cursor->firstChild() != NULL)
-                {
-                  sibling = cursor->firstChild();
-
-                  while (sibling->nextSibling() != NULL)
-                    sibling = sibling->nextSibling();
-                }
-
-                child = new XListViewItem( cursor, sibling, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                                           q.value("bomwork_seqnumber"), q.value("item_number"),
-                                           q.value("itemdescription"), q.value("item_invuom"),
-                                           q.value("qtyper"), q.value("scrap"),
-                                           q.value("effective"), q.value("expires"),
-                                           q.value("f_unitcost"), q.value("f_extendedcost") );
-                cursor->setOpen(TRUE);
-
-                break;
-              }
-            }
-            while ((cursor = cursor->itemBelow()) != NULL);
+	    cursor->addChild(new XTreeWidgetItem(cursor,
+						q.value("bomwork_id").toInt(),
+						q.value("item_id").toInt(),
+						q.value("bomwork_seqnumber"),
+						q.value("item_number"),
+						q.value("itemdescription"),
+						q.value("item_invuom"),
+						q.value("qtyper"),
+						q.value("scrap"),
+						q.value("effective"),
+						q.value("expires"),
+						q.value("f_unitcost"),
+						q.value("f_extendedcost") ));
+	    cursor->setExpanded(TRUE);
           }
         }
       }
  
-      last = new XListViewItem(_bomitem, last, -1, -1);
+      last = new XTreeWidgetItem(_bomitem, last, -1, -1);
       last->setText(1, tr("Total Cost"));
       last->setText(9, formatCost(totalCosts));
 
@@ -329,11 +324,11 @@ void dspCostedIndentedBOM::sFillList()
       q.exec();
       if (q.first())
       {
-        last = new XListViewItem(_bomitem, last, -1, -1);
+        last = new XTreeWidgetItem(_bomitem, last, -1, -1);
         last->setText(1, tr("Actual Cost"));
         last->setText(9, q.value("actual").toString());
 
-        last = new XListViewItem( _bomitem, last, -1, -1);
+        last = new XTreeWidgetItem( _bomitem, last, -1, -1);
         last->setText(1, tr("Standard Cost"));
         last->setText(9, q.value("standard").toString());
       }

@@ -57,9 +57,9 @@
 
 #include "dspCostedSingleLevelBOM.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 #include "rptCostedSingleLevelBOM.h"
@@ -85,7 +85,7 @@ dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* na
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
     init();
 }
@@ -108,7 +108,7 @@ void dspCostedSingleLevelBOM::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCostedSingleLevelBOM::init()
 {
@@ -167,12 +167,12 @@ void dspCostedSingleLevelBOM::sPrint()
   newdlg.set(params);
 }
 
-void dspCostedSingleLevelBOM::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspCostedSingleLevelBOM::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
     pMenu->insertItem(tr("Maintain Item Costs..."), this, SLOT(sMaintainItemCosts()), 0);
 
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
     pMenu->insertItem(tr("View Item Costing..."), this, SLOT(sViewItemCosting()), 0);
 }
 
@@ -256,15 +256,15 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
     q.prepare(sql);
     q.bindValue(":item_id", _item->id());
     q.exec();
-    XListViewItem *last = NULL;
+    XTreeWidgetItem *last = NULL;
     double        totalCost = 0;
 
     while (q.next())
     {
       if (q.value("bomitem_id") == -1)
-        last = new XListViewItem( _bomitem, last, -1, -1, "", q.value("item_number").toString());
+        last = new XTreeWidgetItem( _bomitem, last, -1, -1, "", q.value("item_number").toString());
       else
-        last = new XListViewItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("item_id").toInt(),
+        last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("item_id").toInt(),
                                   q.value("bomitem_seqnumber").toString(), q.value("item_number").toString(),
                                   q.value("itemdescription").toString(), q.value("item_invuom").toString(),
                                   q.value("f_qtyper").toString(), q.value("f_scrap").toString(),
@@ -276,7 +276,7 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
       totalCost += q.value("extendedcost").toDouble();
     }
 
-    last = new XListViewItem(_bomitem, last, -1, -1, "", tr("Total Cost"));
+    last = new XTreeWidgetItem(_bomitem, last, -1, -1, "", tr("Total Cost"));
     last->setText(9, formatCost(totalCost));
 
     q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
@@ -285,10 +285,10 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
     q.exec();
     if (q.first())
     {
-      last = new XListViewItem(_bomitem, last, -1, -1, "", tr("Actual Cost"));
+      last = new XTreeWidgetItem(_bomitem, last, -1, -1, "", tr("Actual Cost"));
       last->setText(9, q.value("actual").toString());
 
-      last = new XListViewItem(_bomitem, last, -1, -1, "", tr("Standard Cost") );
+      last = new XTreeWidgetItem(_bomitem, last, -1, -1, "", tr("Standard Cost") );
       last->setText(9, q.value("standard").toString());
     }
   }

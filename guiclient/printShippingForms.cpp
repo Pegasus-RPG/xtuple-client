@@ -82,11 +82,10 @@ printShippingForms::printShippingForms(QWidget* parent, const char* name, bool m
   _shipformNumOfCopies->setValue(_metrics->value("ShippingFormCopies").toInt());
   if (_shipformNumOfCopies->value())
   {
-    Q3ListViewItem *cursor = _shipformWatermarks->firstChild();
-    for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++)
+    for (int i = 0; i < _shipformWatermarks->topLevelItemCount(); i++)
     {
-      cursor->setText(1, _metrics->value(QString("ShippingFormWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(counter))) ? tr("Yes") : tr("No")));
+      _shipformWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("ShippingFormWatermark%1").arg(i)));
+      _shipformWatermarks->topLevelItem(i)->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(i))) ? tr("Yes") : tr("No")));
     }
   }
 }
@@ -109,20 +108,20 @@ enum SetResponse printShippingForms::set(const ParameterList &)
 
 void printShippingForms::sHandleShippingFormCopies(int pValue)
 {
-  if (_shipformWatermarks->childCount() > pValue)
-    _shipformWatermarks->takeItem(_shipformWatermarks->lastItem());
+  if (_shipformWatermarks->topLevelItemCount() > pValue)
+    _shipformWatermarks->takeTopLevelItem(_shipformWatermarks->topLevelItemCount() - 1);
   else
   {
-    for ( unsigned int counter = (_shipformWatermarks->childCount() + 1);
-          counter <= (unsigned int)pValue;
-          counter++ )
-      new Q3ListViewItem(_shipformWatermarks, _shipformWatermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_shipformWatermarks->topLevelItemCount() + 1); i <= pValue; i++ )
+      new XTreeWidgetItem(_shipformWatermarks,
+			  _shipformWatermarks->topLevelItem(_shipformWatermarks->topLevelItemCount() - 1),
+			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 
 void printShippingForms::sEditShippingFormWatermark()
 {
-  XListViewItem *cursor = _shipformWatermarks->selectedItem();
+  QTreeWidgetItem *cursor = _shipformWatermarks->currentItem();
   if (cursor)
   {
     ParameterList params;
@@ -185,22 +184,21 @@ void printShippingForms::sPrint()
 
     do
     {
-      XListViewItem *cursor = _shipformWatermarks->firstChild();
-      for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++ )
+      for (int i = 0; i < _shipformWatermarks->topLevelItemCount(); i++ )
       {
         ParameterList params;
 
         params.append("cosmisc_id", reports.value("shiphead_id").toInt());
         params.append("shiphead_id", reports.value("shiphead_id").toInt());
 
-        params.append("watermark", cursor->text(1));
+        params.append("watermark", _shipformWatermarks->topLevelItem(i)->text(1));
 
 #if 0
         params.append("shipchrg_id", _shipchrg->id());
 
 #endif
 
-        if (cursor->text(2) == tr("Yes"))
+        if (_shipformWatermarks->topLevelItem(i)->text(2) == tr("Yes"))
           params.append("showcosts");
 
         orReport report(reports.value("report_name").toString(), params);

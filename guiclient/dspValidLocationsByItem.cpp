@@ -57,10 +57,10 @@
 
 #include "dspValidLocationsByItem.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <parameter.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QStatusBar>
 #include "rptValidLocationsByItem.h"
 
 /*
@@ -78,7 +78,7 @@ dspValidLocationsByItem::dspValidLocationsByItem(QWidget* parent, const char* na
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_location, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_location, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
     connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
@@ -104,7 +104,7 @@ void dspValidLocationsByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspValidLocationsByItem::init()
 {
@@ -131,7 +131,7 @@ void dspValidLocationsByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspValidLocationsByItem::sPopulateMenu(Q3PopupMenu *)
+void dspValidLocationsByItem::sPopulateMenu(QMenu *)
 {
 }
 

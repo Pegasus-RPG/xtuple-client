@@ -69,7 +69,7 @@
 class QLabel;
 class QLineEdit;
 class QPushButton;
-class XListView;
+class XTreeWidget;
 class Q3ListViewItem;
 class ParameterList;
 
@@ -87,7 +87,7 @@ class OPENMFGWIDGETS_EXPORT shipToList : public QDialog
     QPushButton* _close;
     QPushButton* _select;
     QLabel* _shipTosList;
-    XListView* _shipto;
+    XTreeWidget* _shipto;
 
   public slots:
     virtual void set( ParameterList & pParams );

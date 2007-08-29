@@ -57,332 +57,167 @@
 
 #include "creditMemoEditList.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
-#include <qworkspace.h>
+
 #include "selectOrderForBilling.h"
 #include "selectBillingQty.h"
 #include "printInvoices.h"
 #include "creditMemo.h"
 #include "creditMemoItem.h"
 
-/*
- *  Constructs a creditMemoEditList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 creditMemoEditList::creditMemoEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_cmhead, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-creditMemoEditList::~creditMemoEditList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void creditMemoEditList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
-
-void creditMemoEditList::init()
-
-{
-
-  statusBar()->hide();
-
-  
+  connect(_cmhead, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _cmhead->setRootIsDecorated(TRUE);
-
-  _cmhead->addColumn(tr("Document #"),       (_itemColumn+ _cmhead->treeStepSize()),  Qt::AlignLeft   );
-
+  _cmhead->addColumn(tr("Document #"),       (_itemColumn+ _cmhead->indentation()),  Qt::AlignLeft   );
   _cmhead->addColumn(tr("Order #"),          _orderColumn,                            Qt::AlignLeft   );
-
   _cmhead->addColumn(tr("Cust./Item #"),     _itemColumn,                             Qt::AlignLeft   );
-
   _cmhead->addColumn(tr("Name/Description"), -1,                                      Qt::AlignLeft   );
-
   _cmhead->addColumn(tr("UOM"),              _uomColumn,                              Qt::AlignCenter );
-
   _cmhead->addColumn(tr("Qty. to Bill"),     _qtyColumn,                              Qt::AlignRight  );
-
   _cmhead->addColumn(tr("Price"),            _costColumn,                             Qt::AlignRight  );
-
   _cmhead->addColumn(tr("Ext. Price"),       _moneyColumn,                            Qt::AlignRight  );
-
-
 
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillList()));
 
-
-
   sFillList();
-
 }
 
+creditMemoEditList::~creditMemoEditList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
 
+void creditMemoEditList::languageChange()
+{
+  retranslateUi(this);
+}
 
 void creditMemoEditList::sEditCreditMemo()
-
 {
-
   ParameterList params;
-
   params.append("mode", "edit");
-
   params.append("cmhead_id", _cmhead->id());
 
-
-
   creditMemo *newdlg = new creditMemo();
-
   newdlg->set(params);
-
   omfgThis->handleNewWindow(newdlg);
-
 }
-
-
 
 void creditMemoEditList::sEditCreditMemoItem()
-
 {
-
   ParameterList params;
-
   params.append("mode", "edit");
-
   params.append("cmitem_id", _cmhead->altId());
 
-
-
   creditMemoItem newdlg(this, "", TRUE);
-
   newdlg.set(params);
-
   newdlg.exec();
-
 }
 
-
-
-void creditMemoEditList::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
-
+void creditMemoEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-
   _orderid = _cmhead->id();
-
-
 
   pMenu->insertItem("Edit Credit Memo...", this, SLOT(sEditCreditMemo()), 0);
 
-
-
-  if (((XListViewItem *)pSelected)->altId() != -1)
-
+  if (((XTreeWidgetItem *)pSelected)->altId() != -1)
     pMenu->insertItem("Edit Credit Memo Item...", this, SLOT(sEditCreditMemoItem()), 0);
-
 }
-
-
 
 void creditMemoEditList::sFillList()
-
 {
-
   _cmhead->clear();
 
-
-
   q.exec("SELECT * FROM creditMemoEditList;");
-
   if (q.first())
-
   {
-
     int           thisOrderid;
-
     int           orderid    = -9999;
+    XTreeWidgetItem *orderLine = NULL;
+    XTreeWidgetItem *lastLine  = NULL;
+    XTreeWidgetItem *selected  = NULL;
 
-    XListViewItem *orderLine = NULL;
-
-    XListViewItem *lastLine  = NULL;
-
-    XListViewItem *selected  = NULL;
-
-
-
-//  Fill the list with the query contents
-
+    //  Fill the list with the query contents
     do
-
     {
-
       thisOrderid = q.value("orderid").toInt();
 
-
-
 //  Check to see if this a new order number
-
       if (thisOrderid != orderid)
-
       {
-
 //  New order number, make a new list item header
-
         orderid  = thisOrderid;
-
         lastLine = NULL;
 
-
-
-        XListViewItem *thisLine = new XListViewItem( _cmhead, orderLine, q.value("orderid").toInt(), -1,
-
+        XTreeWidgetItem *thisLine = new XTreeWidgetItem( _cmhead, orderLine, q.value("orderid").toInt(), -1,
                                                      q.value("documentnumber"), q.value("ordernumber"),
-
                                                      q.value("cust_number"), q.value("billtoname") );
-
         orderLine = thisLine;
 
-
-
 //  Add the distribution line
-
-        thisLine = new XListViewItem( orderLine, q.value("orderid").toInt(), -1,
-
+        thisLine = new XTreeWidgetItem( orderLine, q.value("orderid").toInt(), -1,
                                       "", "",
-
                                       q.value("sence"), q.value("account"),
-
                                       "", "", "", q.value("extprice") );
-
         if (q.value("account") == "Not Assigned")
-
         {
-
-          thisLine->setColor("red");
-
-          orderLine->setColor("red");
-
+          thisLine->setTextColor("red");
+          orderLine->setTextColor("red");
         }
-
-
 
 //  If we are looking for a selected order and this is it, cache it
-
         if (thisOrderid == _orderid)
-
           selected = orderLine;
-
       }
-
       else
-
       {
-
-        XListViewItem *itemLine = new XListViewItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
-
+        XTreeWidgetItem *itemLine = new XTreeWidgetItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
                                                      "", "",
-
                                                      q.value("item"), q.value("itemdescrip"),
-
                                                      q.value("item_invuom"), q.value("qtytobill"),
-
                                                      q.value("price"), q.value("extprice") );
 
-
-
 //  Add the distribution line
-
-        XListViewItem *thisLine = new XListViewItem( itemLine, q.value("orderid").toInt(), -1,
-
+        XTreeWidgetItem *thisLine = new XTreeWidgetItem( itemLine, q.value("orderid").toInt(), -1,
                                                      "", "",
-
                                                      q.value("sence"), q.value("account"),
-
                                                      "", "", "", q.value("extprice") );
-
         if (q.value("account") == "Not Assigned")
-
         {
-
-          thisLine->setColor("red");
-
-          itemLine->setColor("red");
-
-          orderLine->setColor("red");
-
+          thisLine->setTextColor("red");
+          itemLine->setTextColor("red");
+          orderLine->setTextColor("red");
         }
 
-
-
         lastLine = itemLine;
-
       }
-
     }
-
     while (q.next());
 
-
-
 //  Select and show the select item, if any
-
     if (selected != NULL)
-
     {
-
-      _cmhead->setSelected(selected, TRUE);
-
-      _cmhead->ensureItemVisible(selected);
-
+      _cmhead->setCurrentItem(selected);
+      _cmhead->scrollToItem(selected);
     }
-
   }
-
 }
-
-
 
 void creditMemoEditList::sPrint()
-
 {
-
   orReport report("CreditMemoEditList");
-
   if (report.isValid())
-
     report.print();
-
   else
-
     report.reportError(this);
-
 }
-
-
-

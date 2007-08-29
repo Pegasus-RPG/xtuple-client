@@ -57,11 +57,11 @@
 
 #include "dspTimePhasedOpenAPItems.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
 #include <datecluster.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include <q3valuevector.h>
 #include <openreports.h>
 #include "dspAPOpenItemsByVendor.h"
@@ -83,7 +83,7 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
     // signals and slots connections
     connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_apopen, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -116,7 +116,7 @@ void dspTimePhasedOpenAPItems::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedOpenAPItems::init()
 {
@@ -201,7 +201,7 @@ void dspTimePhasedOpenAPItems::sViewOpenItems()
 
 }
 
-void dspTimePhasedOpenAPItems::sPopulateMenu(Q3PopupMenu *menuThis, Q3ListViewItem *, int pColumn)
+void dspTimePhasedOpenAPItems::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
   int intMenuItem;
   _column = pColumn;
@@ -230,29 +230,21 @@ void dspTimePhasedOpenAPItems::sFillCustom()
 
   _columnDates.clear();
   _apopen->clear();
-  while (_apopen->columns() > 2)
-    _apopen->removeColumn(2);
+  _apopen->setColumnCount(2);
 
   QString sql("SELECT vend_id, vend_number, vend_name");
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", openAPItemsValue(vend_id, %2) AS bucket%1")
-               .arg(columns++)
-               .arg(cursor->id());
-  
-        _apopen->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _bigMoneyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    sql += QString(", openAPItemsValue(vend_id, %2) AS bucket%1")
+	   .arg(columns++)
+	   .arg(cursor->id());
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _apopen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM vend ";
@@ -274,29 +266,33 @@ void dspTimePhasedOpenAPItems::sFillCustom()
   if (q.first())
   {
     Q3ValueVector<Numeric> totals(columns);;
+    XTreeWidgetItem *last = 0;
 
     do
     {
       double lineTotal = 0.0;
 
-      XListViewItem *item = new XListViewItem( _apopen, _apopen->lastItem(), q.value("vend_id").toInt(),
-                                               q.value("vend_number"), q.value("vend_name") );
+      last = new XTreeWidgetItem( _apopen, last, q.value("vend_id").toInt(),
+				 q.value("vend_number"), q.value("vend_name") );
 
       for (int column = 1; column < columns; column++)
       {
         QString bucketName = QString("bucket%1").arg(column);
-        item->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
+        last->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
         totals[column] += q.value(bucketName).toDouble();
         lineTotal += q.value(bucketName).toDouble();
       }
 
       if (lineTotal == 0.0)
-        delete item;
+      {
+        delete last;
+	last = _apopen->topLevelItem(_apopen->topLevelItemCount() - 1);
+      }
     }
     while (q.next());
 
 //  Add the totals row
-    XListViewItem *total = new XListViewItem(_apopen, _apopen->lastItem(), -1, QVariant(tr("Totals:")));
+    XTreeWidgetItem *total = new XTreeWidgetItem(_apopen, last, -1, QVariant(tr("Totals:")));
     for (int column = 1; column < columns; column++)
       total->setText((column + 1), formatMoney(totals[column].toDouble()));
   }
@@ -363,8 +359,8 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
 	_calendar->setHidden(TRUE);
 	_periods->setHidden(TRUE);
 	_asOf->setEnabled(TRUE);
-    while (_apopen->columns() > 2)
-      _apopen->removeColumn(2);
+
+	_apopen->setColumnCount(2);
 	_apopen->addColumn(tr("Total Open"), _bigMoneyColumn, Qt::AlignRight);
 	_apopen->addColumn(tr("0+ Days"), _bigMoneyColumn, Qt::AlignRight);
 	_apopen->addColumn(tr("0-30 Days"), _bigMoneyColumn, Qt::AlignRight);
@@ -373,4 +369,3 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
 	_apopen->addColumn(tr("90+ Days"), _bigMoneyColumn, Qt::AlignRight);
   }
 }
-

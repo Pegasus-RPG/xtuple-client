@@ -57,9 +57,9 @@
 
 #include "dspCustomersByCustomerType.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "customer.h"
 #include "customerTypeList.h"
 #include "rptCustomersByCustomerType.h"
@@ -77,7 +77,7 @@ dspCustomersByCustomerType::dspCustomersByCustomerType(QWidget* parent, const ch
     (void)statusBar();
 
     // signals and slots connections
-    connect(_cust, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_cust, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -103,7 +103,7 @@ void dspCustomersByCustomerType::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCustomersByCustomerType::init()
 {
@@ -133,7 +133,7 @@ void dspCustomersByCustomerType::sPrint()
   newdlg.set(params);
 }
 
-void dspCustomersByCustomerType::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspCustomersByCustomerType::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

@@ -57,15 +57,14 @@
 
 #include "dspWoEffortByWorkOrder.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QWorkspace>
 #include "math.h"
 #include "rptWoEffortByWorkOrder.h"
 #include "dspWoEffortByWorkOrder.h"
 #include "wotc.h"
-#include "xlistview.h"
 #include "wocluster.h"
 
 /*
@@ -82,7 +81,7 @@ dspWoEffortByWorkOrder::dspWoEffortByWorkOrder(QWidget* parent, const char* name
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_wotc, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_wotc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
@@ -108,7 +107,7 @@ void dspWoEffortByWorkOrder::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 void dspWoEffortByWorkOrder::init()
 {
@@ -155,7 +154,7 @@ void dspWoEffortByWorkOrder::sPrint()
   newdlg.set(params);
 }
 
-void dspWoEffortByWorkOrder::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspWoEffortByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -277,7 +276,8 @@ void dspWoEffortByWorkOrder::sFillList()
     }
 
     // we have to piece together the TOTAL line because one select won't work
-    XListViewItem* lastLine = new XListViewItem(_wotc, _wotc->lastItem(),
+    XTreeWidgetItem* lastLine = new XTreeWidgetItem(_wotc,
+		       _wotc->topLevelItem(_wotc->topLevelItemCount() - 1),
 		       _wo->id(), "", tr("Total"));
 
     q.prepare("SELECT formatDateTime(MIN(wotc_timein)) AS timein,"
@@ -311,7 +311,7 @@ void dspWoEffortByWorkOrder::sFillList()
       lastLine->setText(4, q.value("setup_time"));
       lastLine->setText(5, q.value("run_time"));
       if (fabs(q.value("variance").toDouble()) > 1.5)	// rounding errors that appear <= 1 min
-	lastLine->setColor("red");
+	lastLine->setTextColor("red");
     }
     else if (q.lastError().type() != QSqlError::NoError)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

@@ -72,7 +72,7 @@ public:
     ~dspSummarizedGLTransactions();
 
 public slots:
-    virtual void sPopulateMenu( Q3PopupMenu * );
+    virtual void sPopulateMenu( QMenu * );
     virtual void sPrint();
     virtual void sFillList();
     virtual void sViewTrans();

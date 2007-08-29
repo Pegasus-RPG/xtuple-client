@@ -57,10 +57,10 @@
 
 #include "dspItemsByClassCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "item.h"
 #include "bom.h"
 #include "boo.h"
@@ -80,7 +80,7 @@ dspItemsByClassCode::dspItemsByClassCode(QWidget* parent, const char* name, Qt::
     (void)statusBar();
 
     // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -105,7 +105,7 @@ void dspItemsByClassCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemsByClassCode::init()
 {
@@ -134,7 +134,7 @@ void dspItemsByClassCode::sPrint()
   newdlg.set(params);
 }
 
-void dspItemsByClassCode::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *selected)
+void dspItemsByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
 {
   int menuItem;
 

@@ -248,7 +248,7 @@
        </widget>
       </item>
       <item>
-       <widget class="XListView" name="_roughCut" />
+       <widget class="XTreeWidget" name="_roughCut" />
       </item>
      </layout>
     </item>
@@ -273,9 +273,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

@@ -72,7 +72,7 @@
 #include <qlayout.h>
 #include <qtooltip.h>
 #include <q3whatsthis.h>
-#include "xlistview.h"
+#include "xtreewidget.h"
 #include "warehousegroup.h"
 #include "wocluster.h"
 
@@ -117,7 +117,8 @@ woList::woList(QWidget * parent, const char * name, bool modal, Qt::WFlags fl) :
   QLabel *_workOrdersLit = new QLabel(tr("Work Orders:"), this, "_workOrdersLit");
   listLayout->addWidget(_workOrdersLit);
 
-  _wo = new XListView( this, "_wo" );
+  _wo = new XTreeWidget(this);
+  _wo->setName("_wo");
   listLayout->addWidget( _wo );
   mainLayout->addLayout(listLayout);
 

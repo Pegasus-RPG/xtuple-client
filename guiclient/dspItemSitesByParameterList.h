@@ -81,7 +81,7 @@ public slots:
     virtual void sEdit();
     virtual void sInventoryAvailability();
     virtual void sIssueCountTag();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sFillList();
 
 protected slots:

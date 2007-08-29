@@ -57,8 +57,8 @@
 
 #include "rptTimePhasedSalesByCustomer.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include "submitReport.h"
 
@@ -218,15 +218,10 @@ ParameterList rptTimePhasedSalesByCustomer::buildParameters()
   _customerType->appendValue(params);
   _productCategory->appendValue(params);
 
-  XListViewItem *cursor = _periods->firstChild();
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
-  while (cursor)
-  {
-    if (cursor->isSelected())
-      periodList.append(cursor->id());
-
-    cursor = cursor->nextSibling();
-  }
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
   params.append("period_id_list", periodList);
 
   if (_bySales->isChecked())

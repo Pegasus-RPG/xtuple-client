@@ -76,7 +76,7 @@ deliverInvoice::deliverInvoice(QWidget* parent, const char* name, bool modal, Qt
     // signals and slots connections
     connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
     connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_invoice, SIGNAL(selectionChanged()), this, SLOT(sHandlePoheadid()));
+    connect(_invoice, SIGNAL(itemSelectionChanged()), this, SLOT(sHandlePoheadid()));
     connect(_invoice, SIGNAL(valid(bool)), _submit, SLOT(setEnabled(bool)));
     init();
 }

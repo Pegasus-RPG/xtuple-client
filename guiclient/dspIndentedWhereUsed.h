@@ -78,7 +78,7 @@ public slots:
     virtual enum SetResponse set( ParameterList & pParams );
     virtual void sPrint();
     virtual void sViewInventoryHistory();
-    virtual void sPopulateMenu( Q3PopupMenu * menu );
+    virtual void sPopulateMenu( QMenu * menu );
     virtual void sFillList();
 
 protected slots:

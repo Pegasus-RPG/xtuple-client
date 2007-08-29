@@ -209,7 +209,7 @@
               </widget>
             </item>
             <item>
-              <widget class="XListView" name="_itemsite" >
+              <widget class="XTreeWidget" name="_itemsite" >
                 <property name="sizePolicy" >
                   <sizepolicy>
                     <hsizetype>7</hsizetype>
@@ -235,9 +235,9 @@
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

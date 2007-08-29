@@ -57,59 +57,25 @@
 
 #include "dspBriefSalesHistoryBySalesRep.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include "salesHistoryInformation.h"
 #include "rptBriefSalesHistoryBySalesRep.h"
 
-/*
- *  Constructs a dspBriefSalesHistoryBySalesRep as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-    connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBriefSalesHistoryBySalesRep::~dspBriefSalesHistoryBySalesRep()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBriefSalesHistoryBySalesRep::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
-void dspBriefSalesHistoryBySalesRep::init()
-{
-  statusBar()->hide();
-
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
+  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
   _salesrep->setType(XComboBox::SalesRepsActive);
   _productCategory->setType(ProductCategory);
@@ -119,6 +85,8 @@ void dspBriefSalesHistoryBySalesRep::init()
   _sohist->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignRight  );
   _sohist->addColumn(tr("Ord. Date"),  _dateColumn,  Qt::AlignCenter );
   _sohist->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
+  _sohist->addColumn( tr("Ext. Price"), _moneyColumn, Qt::AlignRight );
+  _sohist->addColumn( tr("Ext. Cost"), _costColumn, Qt::AlignRight );
 
   _showCosts->setEnabled(_privleges->check("ViewCosts"));
   _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
@@ -126,7 +94,17 @@ void dspBriefSalesHistoryBySalesRep::init()
   _salesrep->setFocus();
 }
 
-enum SetResponse dspBriefSalesHistoryBySalesRep::set(ParameterList &pParams)
+dspBriefSalesHistoryBySalesRep::~dspBriefSalesHistoryBySalesRep()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspBriefSalesHistoryBySalesRep::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspBriefSalesHistoryBySalesRep::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -166,17 +144,18 @@ enum SetResponse dspBriefSalesHistoryBySalesRep::set(ParameterList &pParams)
 
 void dspBriefSalesHistoryBySalesRep::sHandleParams()
 {
-  while (_sohist->columns() > 5)
-    _sohist->removeColumn(5);
-
   if (_showPrices->isChecked())
-    _sohist->addColumn( tr("Ext. Price"), _moneyColumn, Qt::AlignRight );
+    _sohist->showColumn(5);
+  else
+    _sohist->hideColumn(5);
 
   if (_showCosts->isChecked())
-    _sohist->addColumn( tr("Ext. Cost"), _costColumn, Qt::AlignRight );
+    _sohist->showColumn(6);
+  else
+    _sohist->hideColumn(6);
 }
 
-void dspBriefSalesHistoryBySalesRep::sPopulateMenu(Q3PopupMenu *)
+void dspBriefSalesHistoryBySalesRep::sPopulateMenu(QMenu *)
 {
 }
 
@@ -212,23 +191,18 @@ void dspBriefSalesHistoryBySalesRep::sFillList()
                "            ELSE TEXT(cohist_invcnumber)"
                "       END AS invoicenumber,"
                "       formatDate(cohist_orderdate) AS f_orderdate,"
-               "       formatDate(cohist_invcdate, 'Return') AS f_invcdate " );
-
-  if (_showPrices->isChecked())
-    sql += ", SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS extprice,"
-           "  formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS f_extprice ";
-
-  if (_showCosts->isChecked())
-    sql += ", SUM(cohist_qtyshipped * cohist_unitcost) AS extcost,"
-           "  formatCost(SUM(cohist_qtyshipped * cohist_unitcost)) AS f_extcost ";
-
-  sql += "FROM cohist, cust, itemsite, item, prodcat "
-         "WHERE ( (cohist_itemsite_id=itemsite_id)"
-         " AND (cohist_cust_id=cust_id)"
-         " AND (itemsite_item_id=item_id)"
-         " AND (item_prodcat_id=prodcat_id)"
-         " AND (cohist_salesrep_id=:salesrep_id)"
-         " AND (cohist_invcdate BETWEEN :startDate AND :endDate)";
+               "       formatDate(cohist_invcdate, 'Return') AS f_invcdate,"
+	       "       SUM(round(cohist_qtyshipped * cohist_unitprice,2)) AS extprice,"
+	       "       formatMoney(SUM(round(cohist_qtyshipped * cohist_unitprice,2))) AS f_extprice,"
+	       "       SUM(cohist_qtyshipped * cohist_unitcost) AS extcost,"
+	       "       formatCost(SUM(cohist_qtyshipped * cohist_unitcost)) AS f_extcost "
+	       "FROM cohist, cust, itemsite, item, prodcat "
+	       "WHERE ( (cohist_itemsite_id=itemsite_id)"
+	       " AND (cohist_cust_id=cust_id)"
+	       " AND (itemsite_item_id=item_id)"
+	       " AND (item_prodcat_id=prodcat_id)"
+	       " AND (cohist_salesrep_id=:salesrep_id)"
+	       " AND (cohist_invcdate BETWEEN :startDate AND :endDate)" );
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
@@ -254,36 +228,29 @@ void dspBriefSalesHistoryBySalesRep::sFillList()
     double totalSales = 0.0;
     double totalCosts = 0.0;
 
+    XTreeWidgetItem *last  = 0;
     do
     {
-      XListViewItem *last  = new XListViewItem( _sohist, _sohist->lastItem(), q.value("cust_id").toInt(),
-                                                q.value("cust_name"), q.value("cohist_ordernumber"),
-                                                q.value("invoicenumber"), q.value("f_orderdate"),
-                                                q.value("f_invcdate") );
-
-      if (_showPrices->isChecked())
-        last->setText(5, q.value("f_extprice"));
-
-      if (_showCosts->isChecked())
-        last->setText(((_showPrices->isChecked()) ? 6 : 5), q.value("f_extcost"));
+      last = new XTreeWidgetItem(_sohist, 0, q.value("cust_id").toInt(),
+				 q.value("cust_name"),
+				 q.value("cohist_ordernumber"),
+				 q.value("invoicenumber"),
+				 q.value("f_orderdate"),
+				 q.value("f_invcdate"),
+				 q.value("f_extprice"),
+				 q.value("f_extcost"));
  
-      if (_showPrices->isChecked())
-        totalSales += q.value("extprice").toDouble();
-
-      if (_showCosts->isChecked())
-        totalCosts += q.value("extcost").toDouble();
+      totalSales += q.value("extprice").toDouble();
+      totalCosts += q.value("extcost").toDouble();
     }
     while (q.next());
 
     if ( (_showPrices->isChecked()) || (_showCosts->isChecked()) )
     {
-      XListViewItem *totals = new XListViewItem(_sohist, _sohist->lastItem(), -1, QVariant(tr("Total Sales")));
+      XTreeWidgetItem *totals = new XTreeWidgetItem(_sohist, last, -1, QVariant(tr("Total Sales")));
 
-      if (_showPrices->isChecked())
-        totals->setText(5, formatMoney(totalSales));
-
-      if (_showCosts->isChecked())
-        totals->setText(((_showPrices->isChecked()) ? 6 : 5), formatCost(totalCosts));
+      totals->setText(5, formatMoney(totalSales));
+      totals->setText(6, formatCost(totalCosts));
     }
   }
 }
@@ -311,4 +278,3 @@ bool dspBriefSalesHistoryBySalesRep::checkParameters()
 
   return TRUE;
 }
-

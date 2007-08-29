@@ -61,7 +61,7 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
@@ -85,7 +85,7 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_invhist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_location, SIGNAL(newID(int)), this, SLOT(sPopulateLocationInfo(int)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateLocations()));
@@ -189,7 +189,7 @@ void dspDetailedInventoryHistoryByLocation::sPrint()
 
 void dspDetailedInventoryHistoryByLocation::sViewTransInfo()
 {
-  QString transType(((XListViewItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
 
   ParameterList params;
   params.append("mode", "view");
@@ -233,9 +233,9 @@ void dspDetailedInventoryHistoryByLocation::sViewTransInfo()
   }
 }
 
-void dspDetailedInventoryHistoryByLocation::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspDetailedInventoryHistoryByLocation::sPopulateMenu(QMenu *menuThis)
 {
-  QString transType(((XListViewItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
 
   if ( (transType == "AD") ||
        (transType == "TW") ||
@@ -288,13 +288,17 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
   q.bindValue(":transType", _transType->id());
   q.exec();
 
+  XTreeWidgetItem *last = 0;
   while (q.next())
   {
-    XListViewItem *last = new XListViewItem( _invhist, _invhist->lastItem(), q.value("invhist_id").toInt(),
-                                             q.value("transdate"), q.value("invhist_transtype"),
-                                             q.value("ordernumber"), q.value("item_number"),
-                                             q.value("invdetail_lotserial"), q.value("invhist_invuom"),
-                                             q.value("transqty") );
+    last = new XTreeWidgetItem( _invhist, last, q.value("invhist_id").toInt(),
+			       q.value("transdate"),
+			       q.value("invhist_transtype"),
+			       q.value("ordernumber"),
+			       q.value("item_number"),
+			       q.value("invdetail_lotserial"),
+			       q.value("invhist_invuom"),
+			       q.value("transqty") );
 
     if (q.value("invhist_posted").toBool())
     {
@@ -302,7 +306,7 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
       last->setText(8, q.value("qohafter").toString());
     }
     else
-      last->setColor("orange");
+      last->setTextColor("orange");
   }
 }
 

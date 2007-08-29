@@ -57,11 +57,11 @@
 
 #include "dspTimePhasedBookingsByCustomer.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <datecluster.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QWorkspace>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include <q3valuevector.h>
 #include <openreports.h>
@@ -84,7 +84,7 @@ dspTimePhasedBookingsByCustomer::dspTimePhasedBookingsByCustomer(QWidget* parent
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_soitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -115,7 +115,7 @@ void dspTimePhasedBookingsByCustomer::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedBookingsByCustomer::init()
 {
@@ -154,13 +154,13 @@ void dspTimePhasedBookingsByCustomer::sViewBookings()
   }
 }
 
-void dspTimePhasedBookingsByCustomer::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected, int pColumn)
+void dspTimePhasedBookingsByCustomer::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
   int menuItem;
 
   _column = pColumn;
 
-  if (((XListViewItem *)pSelected)->id() != -1)
+  if (((XTreeWidgetItem *)pSelected)->id() != -1)
     menuItem = pMenu->insertItem(tr("View Bookings..."), this, SLOT(sViewBookings()), 0);
 }
 
@@ -176,31 +176,23 @@ void dspTimePhasedBookingsByCustomer::sFillList()
   }
 
   _soitem->clear();
-  while (_soitem->columns() > 2)
-    _soitem->removeColumn(2);
+  _soitem->setColumnCount(2);
 
   _columnDates.clear();
 
   QString sql("SELECT cust_id, cust_number, cust_name");
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", bookingsByCustomerValue(cust_id, %2) AS bucket%1")
-               .arg(columns++)
-               .arg(cursor->id());
-  
-        _soitem->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    sql += QString(", bookingsByCustomerValue(cust_id, %2) AS bucket%1")
+	     .arg(columns++)
+	     .arg(cursor->id());
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _soitem->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM cust ";
@@ -218,22 +210,23 @@ void dspTimePhasedBookingsByCustomer::sFillList()
   if (q.first())
   {
     Q3ValueVector<Numeric> totals(columns);;
+    XTreeWidgetItem *last = 0;
 
     do
     {
-      XListViewItem *item = new XListViewItem( _soitem, _soitem->lastItem(), q.value("cust_id").toInt(),
-                                               q.value("cust_number"), q.value("cust_name") );
+      last = new XTreeWidgetItem( _soitem, last, q.value("cust_id").toInt(),
+				 q.value("cust_number"), q.value("cust_name") );
 
       for (int column = 1; column < columns; column++)
       {
         QString bucketName = QString("bucket%1").arg(column);
-        item->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
+        last->setText((column + 1), formatMoney(q.value(bucketName).toDouble()));
         totals[column] += q.value(bucketName).toDouble();
       }
     }
     while (q.next());
 
-    XListViewItem *total = new XListViewItem(_soitem, _soitem->lastItem(), -1, QVariant(tr("Totals:")));
+    XTreeWidgetItem *total = new XTreeWidgetItem(_soitem, last, -1, QVariant(tr("Totals:")));
     for (int column = 1; column < columns; column++)
       total->setText((column + 1), formatMoney(totals[column].toDouble()));
   }
@@ -268,15 +261,11 @@ ParameterList dspTimePhasedBookingsByCustomer::buildParameters()
 
   _customerType->appendValue(params);
 
-  XListViewItem *cursor = _periods->firstChild();
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QList<QVariant> periodList;
-  while (cursor)
-  {
-    if (cursor->isSelected())
-      periodList.append(cursor->id());
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
 
-    cursor = cursor->nextSibling();
-  }
   params.append("period_id_list", periodList);
 
   return params;

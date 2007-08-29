@@ -68,7 +68,7 @@
 
 #include "OpenMFGWidgets.h"
 #include "xcombobox.h"
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 class QString;
 
@@ -121,7 +121,7 @@ class OPENMFGWIDGETS_EXPORT CalendarComboBox : public XComboBox
 
 class PeriodListViewItem;
 
-class OPENMFGWIDGETS_EXPORT PeriodsListView : public XListView
+class OPENMFGWIDGETS_EXPORT PeriodsListView : public XTreeWidget
 {
   Q_OBJECT
 
@@ -141,10 +141,10 @@ class OPENMFGWIDGETS_EXPORT PeriodsListView : public XListView
     int _calheadid;
 };
 
-class OPENMFGWIDGETS_EXPORT PeriodListViewItem : public XListViewItem
+class OPENMFGWIDGETS_EXPORT PeriodListViewItem : public XTreeWidgetItem
 {
   public:
-    PeriodListViewItem( PeriodsListView *, XListViewItem *, int,
+    PeriodListViewItem( PeriodsListView *, XTreeWidgetItem *, int,
                         QDate, QDate,
                         QString, QString );
 

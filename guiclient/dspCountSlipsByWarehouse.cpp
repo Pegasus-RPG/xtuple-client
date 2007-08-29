@@ -57,9 +57,9 @@
 
 #include "dspCountSlipsByWarehouse.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptCountSlipsByWarehouse.h"
 
@@ -77,7 +77,7 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_cntslip, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_showUnposted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_numericSlips, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -104,7 +104,7 @@ void dspCountSlipsByWarehouse::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCountSlipsByWarehouse::init()
 {
@@ -143,7 +143,7 @@ void dspCountSlipsByWarehouse::sPrint()
   newdlg.set(params);
 }
 
-void dspCountSlipsByWarehouse::sPopulateMenu(Q3PopupMenu *, Q3ListViewItem *)
+void dspCountSlipsByWarehouse::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 {
 }
 
@@ -187,7 +187,7 @@ void dspCountSlipsByWarehouse::sFillList()
   if (q.first())
   {
     int           slipNumber = -1;
-    XListViewItem *last      = NULL;
+    XTreeWidgetItem *last      = NULL;
 
     do
     {
@@ -196,23 +196,23 @@ void dspCountSlipsByWarehouse::sFillList()
         if ( (slipNumber != -1) && (slipNumber != (q.value("slipnumber").toInt() - 1)) )
         {
           if (slipNumber == q.value("slipnumber").toInt() - 2)
-            last = new XListViewItem( _cntslip, last, -1,
+            last = new XTreeWidgetItem( _cntslip, last, -1,
                                       QVariant("----"), "----", "----", "----",
                                       tr("Missing Slip #%1").arg(slipNumber + 1),
                                       "----", "----", "----" );
           else
-            last = new XListViewItem( _cntslip, last, -1,
+            last = new XTreeWidgetItem( _cntslip, last, -1,
                                       QVariant("----"), "----", "----", "----",
                                       tr("Missing Slips #%1 to #%2").arg(slipNumber + 1).arg(q.value("slipnumber").toInt() - 1),
                                       "----", "----", "----" );
 
-          last->setColor("red");
+          last->setTextColor("red");
         }
 
         slipNumber = q.value("slipnumber").toInt();
       }
 
-      last = new XListViewItem( _cntslip, last, q.value("cntslip_id").toInt(),
+      last = new XTreeWidgetItem( _cntslip, last, q.value("cntslip_id").toInt(),
                                 q.value("slipnumber"), q.value("invcnt_tagnumber").toString(),
                                 q.value("warehous_code").toString(), q.value("item_number").toString(),
                                 q.value("description").toString(), q.value("f_entered").toString(),

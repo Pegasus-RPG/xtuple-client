@@ -124,15 +124,11 @@ void closePurchaseOrder::sClosePo()
 {
   q.prepare("SELECT closePo(:pohead_id) AS result;");
 
-  XListViewItem *cursor = _po->firstChild();
-  while (cursor != 0)
+  QList<QTreeWidgetItem*>selected = _po->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (_po->isSelected(cursor))
-    {
-      q.bindValue(":pohead_id", cursor->id());
-      q.exec();
-    }
-    cursor = cursor->nextSibling();
+    q.bindValue(":pohead_id", ((XTreeWidgetItem*)selected[i])->id());
+    q.exec();
   }
 
   if (_captive)

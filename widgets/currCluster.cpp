@@ -66,7 +66,6 @@
 
 #include "xsqlquery.h"
 #include "xcombobox.h"
-#include "xlistview.h"
 #include "format.h"
 
 #include <math.h>

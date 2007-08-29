@@ -57,10 +57,10 @@
 
 #include "dspDetailedInventoryHistoryByLotSerial.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
+#include <QMessageBox>
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
 #include "scrapTrans.h"
@@ -83,7 +83,7 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_invhist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
@@ -107,7 +107,7 @@ void dspDetailedInventoryHistoryByLotSerial::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspDetailedInventoryHistoryByLotSerial::init()
 {
@@ -154,7 +154,7 @@ void dspDetailedInventoryHistoryByLotSerial::sPrint()
 
 void dspDetailedInventoryHistoryByLotSerial::sViewTransInfo()
 {
-  QString transType(((XListViewItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
 
   ParameterList params;
   params.append("mode", "view");
@@ -198,9 +198,9 @@ void dspDetailedInventoryHistoryByLotSerial::sViewTransInfo()
   }
 }
 
-void dspDetailedInventoryHistoryByLotSerial::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspDetailedInventoryHistoryByLotSerial::sPopulateMenu(QMenu *menuThis)
 {
-  QString transType(((XListViewItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
 
   if ( (transType == "AD") ||
        (transType == "TW") ||
@@ -266,10 +266,10 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
   q.bindValue(":transType", _transType->id());
   q.exec();
 
-  XListViewItem *last = 0;
+  XTreeWidgetItem *last = 0;
   while (q.next())
   {
-    last = new XListViewItem( _invhist, last, q.value("invhist_id").toInt(),
+    last = new XTreeWidgetItem( _invhist, last, q.value("invhist_id").toInt(),
 			     q.value("transdate"), q.value("invhist_transtype"),
 			     q.value("ordernumber"), q.value("item_number"),
 			     q.value("locationname"), q.value("invdetail_lotserial"),
@@ -281,7 +281,7 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
       last->setText(9, q.value("qohafter").toString());
     }
     else
-      last->setColor("orange");
+      last->setTextColor("orange");
   }
 }
 

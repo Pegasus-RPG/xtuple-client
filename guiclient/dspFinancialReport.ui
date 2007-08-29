@@ -23,7 +23,7 @@
     <number>6</number>
    </property>
    <item row="2" column="0" colspan="3" >
-    <widget class="XListView" name="_layout" >
+    <widget class="XTreeWidget" name="_layout" >
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>7</hsizetype>
@@ -70,7 +70,7 @@
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
            <property name="buddy" >
-            <cstring>_name</cstring>
+            <cstring>_type</cstring>
            </property>
           </widget>
          </item>
@@ -83,7 +83,7 @@
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
            <property name="buddy" >
-            <cstring>_name</cstring>
+            <cstring></cstring>
            </property>
           </widget>
          </item>
@@ -527,7 +527,7 @@
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
            <property name="buddy" >
-            <cstring>_name</cstring>
+            <cstring></cstring>
            </property>
           </widget>
          </item>
@@ -540,7 +540,7 @@
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
            <property name="buddy" >
-            <cstring>_name</cstring>
+            <cstring>_flcol</cstring>
            </property>
           </widget>
          </item>
@@ -604,9 +604,9 @@
         </widget>
        </item>
        <item>
-        <widget class="XListView" name="_periods" >
+        <widget class="XTreeWidget" name="_periods" >
          <property name="selectionMode" >
-          <enum>Q3ListView::Multi</enum>
+          <enum>QAbstractItemView::MultiSelection</enum>
          </property>
         </widget>
        </item>
@@ -644,9 +644,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>QTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
@@ -689,7 +689,7 @@
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>
   <include location="global" >parameter.h</include>
-  <include location="global" >xlistview.h</include>
+  <include location="global" >xtreewidget.h</include>
   <include location="global" >xlistbox.h</include>
  </includes>
  <resources/>

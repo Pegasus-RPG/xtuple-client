@@ -57,9 +57,9 @@
 
 #include "customerTypes.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 #include "customerType.h"
@@ -82,7 +82,7 @@ customerTypes::customerTypes(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_custtype, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_custtype, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -105,7 +105,7 @@ void customerTypes::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void customerTypes::init()
 {
@@ -191,7 +191,7 @@ void customerTypes::sDelete()
   }
 }
 
-void customerTypes::sPopulateMenu(Q3PopupMenu *)
+void customerTypes::sPopulateMenu(QMenu *)
 {
 }
 

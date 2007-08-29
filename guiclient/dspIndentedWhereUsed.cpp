@@ -57,9 +57,9 @@
 
 #include "dspIndentedWhereUsed.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "dspInventoryHistoryByItem.h"
 #include "rptIndentedWhereUsed.h"
 
@@ -78,7 +78,7 @@ dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
 }
@@ -101,7 +101,7 @@ void dspIndentedWhereUsed::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspIndentedWhereUsed::init()
 {
@@ -121,7 +121,7 @@ void dspIndentedWhereUsed::init()
   _bomitem->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight  );
   _bomitem->addColumn(tr("Effective"),     _dateColumn,  Qt::AlignCenter );
   _bomitem->addColumn(tr("Expires"),       _dateColumn,  Qt::AlignCenter );
-  _bomitem->setTreeStepSize(10);
+  _bomitem->setIndentation(10);
 
   _item->setFocus();
 }
@@ -171,7 +171,7 @@ void dspIndentedWhereUsed::sViewInventoryHistory()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspIndentedWhereUsed::sPopulateMenu(Q3PopupMenu *menu)
+void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu)
 {
   int menuItem;
 
@@ -219,31 +219,27 @@ void dspIndentedWhereUsed::sFillList()
       while (q.next())
       {
         if (q.value("bomwork_parent_id").toInt() == -1)
-          new XListViewItem( _bomitem, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
+          new XTreeWidgetItem( _bomitem, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                              q.value("bomwork_seqnumber"), q.value("item_number"),
                              q.value("itemdescription"), q.value("item_invuom"),
                              q.value("qtyper"), q.value("scrap"),
                              q.value("effective"), q.value("expires") );
         else
         {
-          XListViewItem *cursor = _bomitem->firstChild();
-          if (cursor)
-          {
-            do
-            {
-              if (cursor->id() == q.value("bomwork_parent_id").toInt())
-              {
-                new XListViewItem( cursor, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                                   q.value("bomwork_seqnumber"), q.value("item_number"),
-                                   q.value("itemdescription"), q.value("item_invuom"),
-                                   q.value("qtyper"), q.value("scrap"),
-                                   q.value("effective"), q.value("expires") );
-                cursor->setOpen(TRUE);
+	  for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
+	  {
+	    XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_bomitem->topLevelItem(i));
+	    if (cursor->id() == q.value("bomwork_parent_id").toInt())
+	    {
+	      new XTreeWidgetItem(cursor, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
+				 q.value("bomwork_seqnumber"), q.value("item_number"),
+				 q.value("itemdescription"), q.value("item_invuom"),
+				 q.value("qtyper"), q.value("scrap"),
+				 q.value("effective"), q.value("expires") );
+	      cursor->setExpanded(TRUE);
 
-                break;
-              }
+	      break;
             }
-            while ((cursor = cursor->itemBelow()) != NULL);
           }
         }
       }

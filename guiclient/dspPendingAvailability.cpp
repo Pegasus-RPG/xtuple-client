@@ -191,24 +191,25 @@ void dspPendingAvailability::sFillList()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":effective", _effective->date());
   q.exec();
+  XTreeWidgetItem *last = 0;
   while (q.next())
   {
     if ( (!_showShortages->isChecked()) ||
          (q.value("totalavail").toDouble() < 0.0) )
     {
-      XListViewItem *last = new XListViewItem( _items, _items->lastItem(), q.value("itemsite_id").toInt(),
-                                               q.value("bomitem_seqnumber"), q.value("item_number"),
-                                               q.value("item_descrip"), q.value("item_invuom"),
-                                               q.value("f_pendalloc"), q.value("f_totalalloc"),
-                                               q.value("f_qoh"), q.value("f_totalavail")  );
+      last = new XTreeWidgetItem( _items, last, q.value("itemsite_id").toInt(),
+				 q.value("bomitem_seqnumber"), q.value("item_number"),
+				 q.value("item_descrip"), q.value("item_invuom"),
+				 q.value("f_pendalloc"), q.value("f_totalalloc"),
+				 q.value("f_qoh"), q.value("f_totalavail")  );
 
       if (q.value("qoh").toDouble() < q.value("pendalloc").toDouble())
-        last->setColor(6, "red");
+        last->setTextColor(6, "red");
 
       if (q.value("totalavail").toDouble() < 0.0)
-        last->setColor(7, "red");
+        last->setTextColor(7, "red");
       else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
-        last->setColor(7, "orange");
+        last->setTextColor(7, "orange");
     }
   }
 }

@@ -57,7 +57,7 @@
 
 #include "substituteList.h"
 
-#include <qvariant.h>
+#include <QVariant>
 
 /*
  *  Constructs a substituteList as a child of 'parent', with the
@@ -258,9 +258,13 @@ void substituteList::sFillList()
     _sub.bindValue(":date", _date->date());
 
   _sub.exec();
+  XTreeWidgetItem *last = 0;
   while (_sub.next())
-    new XListViewItem( _subs, _subs->lastItem(), _sub.value("item_id").toInt(),
-                       _sub.value("item_number"), _sub.value("itemdescrip"),
-                       _sub.value("f_qoh"), _sub.value("f_normqoh"),
-                       _sub.value("f_available"), _sub.value("f_normavailable") );
+    last = new XTreeWidgetItem(_subs, last, _sub.value("item_id").toInt(),
+			       _sub.value("item_number"),
+			       _sub.value("itemdescrip"),
+			       _sub.value("f_qoh"),
+			       _sub.value("f_normqoh"),
+			       _sub.value("f_available"),
+			       _sub.value("f_normavailable") );
 }

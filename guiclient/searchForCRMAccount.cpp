@@ -116,7 +116,7 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   else if (_viewpriv)
     connect(_crmacct, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
-  _subtype = CRMACCT;
+  _subtype = CRMAcctLineEdit::Crmacct;
   _searchCombo->setVisible(FALSE);
   _comboCombo->setVisible(FALSE);
 }
@@ -141,16 +141,16 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
   {
     if (param == "crmacct")
     {
-      _subtype = CRMACCT;
+      _subtype = CRMAcctLineEdit::Crmacct;
     }
     else if (param == "competitor")	// for now just use crmacct
     {
-      _subtype = COMPETITOR;
+      _subtype = CRMAcctLineEdit::Competitor;
       setWindowTitle(tr("Search For Competitor CRM Accoun"));
     }
     else if (param == "partner")	// for now just use crmacct
     {
-      _subtype = PARTNER;
+      _subtype = CRMAcctLineEdit::Partner;
       setWindowTitle(tr("Search For Partner CRM Accoun"));
     }
     else
@@ -163,7 +163,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
 
       if (param == "cust")
       {
-	_subtype = CUST;
+	_subtype = CRMAcctLineEdit::Cust;
 	_editpriv = _privleges->check("MaintainCustomerMasters");
 	_viewpriv = _privleges->check("ViewCustomerMasters");
 	setWindowTitle(tr("Search For Customer"));
@@ -177,7 +177,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       }
       else if (param == "prospect")
       {
-	_subtype = PROSPECT;
+	_subtype = CRMAcctLineEdit::Prospect;
 	_editpriv = _privleges->check("MaintainProspects");
 	_viewpriv = _privleges->check("ViewProspects");
 	setWindowTitle(tr("Search For Prospect"));
@@ -188,7 +188,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       }
       else if (param == "taxauth")
       {
-	_subtype = TAXAUTH;
+	_subtype = CRMAcctLineEdit::Taxauth;
 	_editpriv = _privleges->check("MaintainTaxAuthorities");
 	_viewpriv = _privleges->check("ViewTaxAuthorities");
 	setWindowTitle(tr("Search For Tax Authority"));
@@ -206,7 +206,7 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       }
       else if (param == "vend")
       {
-	_subtype = VEND;
+	_subtype = CRMAcctLineEdit::Vend;
 	_editpriv = _privleges->check("MaintainVendors");
 	_viewpriv = _privleges->check("ViewVendors");
 	setWindowTitle(tr("Search For Vendor"));
@@ -256,7 +256,7 @@ void searchForCRMAccount::openSubwindow(const QString& mode)
 
   switch (_subtype)
   {
-    case CRMACCT:
+    case CRMAcctLineEdit::Crmacct:
       {
       params.append("crmacct_id", _crmacct->id());
       crmaccount *newdlg = new crmaccount();
@@ -265,7 +265,7 @@ void searchForCRMAccount::openSubwindow(const QString& mode)
       }
       break;
 
-    case CUST:
+    case CRMAcctLineEdit::Cust:
       {
       params.append("cust_id", _crmacct->id());
       customer *newdlg = new customer();
@@ -274,7 +274,7 @@ void searchForCRMAccount::openSubwindow(const QString& mode)
       }
       break;
 
-    case PROSPECT:
+    case CRMAcctLineEdit::Prospect:
       {
       params.append("prospect_id", _crmacct->id());
       prospect *newdlg = new prospect();
@@ -283,7 +283,7 @@ void searchForCRMAccount::openSubwindow(const QString& mode)
       }
       break;
 
-    case TAXAUTH:
+    case CRMAcctLineEdit::Taxauth:
       {
       params.append("taxauth_id", _crmacct->id());
       taxAuthority newdlg(this, "", true);
@@ -292,7 +292,7 @@ void searchForCRMAccount::openSubwindow(const QString& mode)
       }
       break;
 
-    case VEND:
+    case CRMAcctLineEdit::Vend:
       {
       params.append("vend_id", _crmacct->id());
       vendor *newdlg = new vendor();
@@ -301,8 +301,8 @@ void searchForCRMAccount::openSubwindow(const QString& mode)
       }
       break;
 
-    case COMPETITOR:
-    case PARTNER:
+    case CRMAcctLineEdit::Competitor:
+    case CRMAcctLineEdit::Partner:
     default:
       break;
   }
@@ -443,28 +443,28 @@ void searchForCRMAccount::sFillList()
 
   switch (_subtype)
   {
-    case CRMACCT:
+    case CRMAcctLineEdit::Crmacct:
       params.append("crmacct");
       break;
 
-    case CUST:
+    case CRMAcctLineEdit::Cust:
       params.append("cust");
       break;
 
-    case PROSPECT:
+    case CRMAcctLineEdit::Prospect:
       params.append("prospect");
       break;
 
-    case TAXAUTH:
+    case CRMAcctLineEdit::Taxauth:
       params.append("taxauth");
       break;
 
-    case VEND:
+    case CRMAcctLineEdit::Vend:
       params.append("vend");
       break;
 
-    case COMPETITOR:
-    case PARTNER:
+    case CRMAcctLineEdit::Competitor:
+    case CRMAcctLineEdit::Partner:
     default:
       return;
   }
@@ -478,7 +478,7 @@ void searchForCRMAccount::sFillList()
   if (_searchName->isChecked())
     params.append("searchName");
 
-  if (_subtype != TAXAUTH)	// taxauth doesn't have contacts (yet?)
+  if (_subtype != CRMAcctLineEdit::Taxauth)	// taxauth doesn't have contacts (yet?)
   {
     if (_searchContact->isChecked())
       params.append("searchContactName");

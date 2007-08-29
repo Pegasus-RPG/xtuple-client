@@ -57,9 +57,9 @@
 
 #include "reasonCodes.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <openreports.h>
 #include "reasonCode.h"
 
@@ -82,7 +82,7 @@ reasonCodes::reasonCodes(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_rsncode, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_rsncode, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -105,7 +105,7 @@ void reasonCodes::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void reasonCodes::init()
 {
@@ -210,7 +210,7 @@ void reasonCodes::sFillList()
 	               "ORDER BY rsncode_code;" );
 }
 
-void reasonCodes::sPopulateMenu( Q3PopupMenu * )
+void reasonCodes::sPopulateMenu( QMenu * )
 {
 
 }

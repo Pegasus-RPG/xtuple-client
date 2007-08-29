@@ -145,7 +145,7 @@
          </widget>
         </item>
         <item>
-         <widget class="XListView" name="_account" >
+         <widget class="XTreeWidget" name="_account" >
           <property name="sizePolicy" >
            <sizepolicy>
             <hsizetype>7</hsizetype>
@@ -155,7 +155,7 @@
            </sizepolicy>
           </property>
           <property name="selectionMode" >
-           <enum>Q3ListView::Multi</enum>
+           <enum>QAbstractItemView::MultiSelection</enum>
           </property>
          </widget>
         </item>
@@ -212,9 +212,9 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

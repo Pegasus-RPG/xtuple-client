@@ -46,7 +46,7 @@
                 </widget>
               </item>
               <item>
-                <widget class="XListView" name="_cmhead" />
+                <widget class="XTreeWidget" name="_cmhead" />
               </item>
             </layout>
           </item>
@@ -125,7 +125,7 @@
                   </layout>
                 </item>
                 <item>
-                  <widget class="XListView" name="_watermarks" />
+                  <widget class="XTreeWidget" name="_watermarks" />
                 </item>
               </layout>
             </widget>
@@ -200,9 +200,9 @@
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

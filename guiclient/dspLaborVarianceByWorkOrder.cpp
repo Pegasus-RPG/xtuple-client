@@ -57,8 +57,8 @@
 
 #include "dspLaborVarianceByWorkOrder.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "inputManager.h"
 #include "rptLaborVarianceByWorkOrder.h"
@@ -77,7 +77,7 @@ dspLaborVarianceByWorkOrder::dspLaborVarianceByWorkOrder(QWidget* parent, const 
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_woopervar, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
     init();
@@ -101,7 +101,7 @@ void dspLaborVarianceByWorkOrder::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspLaborVarianceByWorkOrder::init()
 {
@@ -132,7 +132,7 @@ void dspLaborVarianceByWorkOrder::sPrint()
   newdlg.set(params);
 }
 
-void dspLaborVarianceByWorkOrder::sPopulateMenu(Q3PopupMenu *)
+void dspLaborVarianceByWorkOrder::sPopulateMenu(QMenu *)
 {
 }
 

@@ -57,8 +57,8 @@
 
 #include "dspRWTransactions.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <openreports.h>
 
 /*
@@ -75,7 +75,7 @@ dspRWTransactions::dspRWTransactions(QWidget* parent, const char* name, Qt::WFla
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_gltrans, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
@@ -100,7 +100,7 @@ void dspRWTransactions::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspRWTransactions::init()
 {
@@ -161,7 +161,7 @@ enum SetResponse dspRWTransactions::set(ParameterList &pParams)
   return NoError;
 }
 
-void dspRWTransactions::sPopulateMenu(Q3PopupMenu *)
+void dspRWTransactions::sPopulateMenu(QMenu *)
 {
 }
 
@@ -242,16 +242,15 @@ void dspRWTransactions::sFillList()
 
   double debit = 0.0;
   double credit = 0.0;
+  XTreeWidgetItem *last =  0;
   while(q.next())
   {
     debit += q.value("debit").toDouble();
     credit += q.value("credit").toDouble();
-    new XListViewItem( _gltrans, _gltrans->lastItem(), q.value("gltrans_id").toInt(),
+    last = new XTreeWidgetItem( _gltrans, last, q.value("gltrans_id").toInt(),
                        q.value("f_date"), q.value("gltrans_source"), q.value("gltrans_doctype"),
                        q.value("gltrans_docnumber"), q.value("f_notes"),
                        q.value("f_accnt"), q.value("f_debit"), q.value("f_credit"), q.value("f_exported") );
   }
-  new XListViewItem( _gltrans, _gltrans->lastItem(), -1, "", "", "", "", tr("Total:"), "", formatMoney(debit), formatMoney(credit));
-
+  last = new XTreeWidgetItem( _gltrans, last, -1, "", "", "", "", tr("Total:"), "", formatMoney(debit), formatMoney(credit));
 }
-

@@ -57,9 +57,9 @@
 
 #include "dspItemCostsByClassCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 #include "updateActualCostsByItem.h"
@@ -80,7 +80,7 @@ dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* na
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemcost, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
@@ -104,7 +104,7 @@ void dspItemCostsByClassCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemCostsByClassCode::init()
 {
@@ -152,7 +152,7 @@ void dspItemCostsByClassCode::sPrint()
   newdlg.set(params);
 }
 
-void dspItemCostsByClassCode::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

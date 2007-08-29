@@ -57,8 +57,8 @@
 
 #include "dspWoSoStatus.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "closeWo.h"
 #include "rptWoSoStatus.h"
@@ -79,7 +79,7 @@ dspWoSoStatus::dspWoSoStatus(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    connect(_wo, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
     init();
 }
@@ -102,7 +102,7 @@ void dspWoSoStatus::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspWoSoStatus::init()
 {
@@ -144,7 +144,7 @@ void dspWoSoStatus::sCloseWo()
     sFillList();
 }
 
-void dspWoSoStatus::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspWoSoStatus::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if ((pSelected->text(1) == "E") || (pSelected->text(1) == "I"))
     pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatlreq()), 0);

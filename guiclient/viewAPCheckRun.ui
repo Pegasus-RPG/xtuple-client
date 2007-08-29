@@ -185,7 +185,7 @@
                   <number>0</number>
                 </property>
                 <item>
-                  <widget class="XListView" name="_apchk" >
+                  <widget class="XTreeWidget" name="_apchk" >
                     <property name="sizePolicy" >
                       <sizepolicy>
                         <hsizetype>7</hsizetype>
@@ -340,9 +340,9 @@
       <pixmap></pixmap>
     </customwidget>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

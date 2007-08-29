@@ -61,7 +61,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QWorkspace>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "workOrder.h"
 #include "rptWoHistoryByItem.h"
@@ -80,7 +80,7 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char* name, Qt::WF
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wo, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
@@ -100,6 +100,9 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char* name, Qt::WF
   _wo->addColumn(tr("Received"),   _qtyColumn,    Qt::AlignRight  );
   _wo->addColumn(tr("Start Date"), _dateColumn,   Qt::AlignCenter );
   _wo->addColumn(tr("Due Date"),   _dateColumn,   Qt::AlignCenter );
+  _wo->addColumn(tr("Cost"),	   _costColumn,   Qt::AlignRight );
+
+  sHandleCosts(_showCost->isChecked());
   
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -163,7 +166,7 @@ void dspWoHistoryByItem::sEdit()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspWoHistoryByItem::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspWoHistoryByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 
@@ -174,9 +177,9 @@ void dspWoHistoryByItem::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
 void dspWoHistoryByItem::sHandleCosts(bool pShowCosts)
 {
   if (pShowCosts)
-    _wo->addColumn(tr("Cost"), _costColumn, Qt::AlignRight );
+    _wo->showColumn(7);
   else
-    _wo->removeColumn(7);
+    _wo->hideColumn(7);
 
   sFillList();
 }
@@ -218,19 +221,20 @@ void dspWoHistoryByItem::sFillList()
   _warehouse->bindValue(q);
   q.bindValue(":item_id", _item->id());
   q.exec();
+  XTreeWidgetItem *last = 0;
   while (q.next())
   {
-    XListViewItem *last = new XListViewItem( _wo, _wo->lastItem(), q.value("wo_id").toInt(),
-                                             q.value("wonumber"), q.value("wo_status"),
-                                             q.value("warehous_code"),  q.value("qtyord"),
-                                             q.value("qtyrcv"), q.value("startdate"),
-                                             q.value("duedate") );
+    last = new XTreeWidgetItem( _wo, last, q.value("wo_id").toInt(),
+			       q.value("wonumber"), q.value("wo_status"),
+			       q.value("warehous_code"),  q.value("qtyord"),
+			       q.value("qtyrcv"), q.value("startdate"),
+			       q.value("duedate") );
 
     if (q.value("latestart").toBool())
-      last->setColor(5, "red");
+      last->setTextColor(5, "red");
 
     if (q.value("latedue").toBool())
-      last->setColor(6, "red");
+      last->setTextColor(6, "red");
 
     if (_showCost->isChecked())
       last->setText(7, q.value("value").toString());

@@ -136,20 +136,15 @@ void duplicateAccountNumbers::sDuplicate()
 
   q.prepare(sql);
 
-  XListViewItem *cursor = _account->firstChild();
-  while(cursor != 0)
+  QList<QTreeWidgetItem*> selected = _account->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if(_account->isSelected(cursor))
-    {
-      q.bindValue(":company", _company->currentText());
-      q.bindValue(":profit", _profit->currentText());
-      q.bindValue(":sub", _sub->currentText());
-      q.bindValue(":accnt_id", cursor->id());
-      q.bindValue(":descrip", _descrip->text());
-      q.exec();
-    }
-
-    cursor = cursor->nextSibling();
+    q.bindValue(":company",	_company->currentText());
+    q.bindValue(":profit",	_profit->currentText());
+    q.bindValue(":sub",		_sub->currentText());
+    q.bindValue(":accnt_id",	((XTreeWidgetItem*)selected[i])->id());
+    q.bindValue(":descrip",	_descrip->text());
+    q.exec();
   }
 
   close();
@@ -184,8 +179,7 @@ void duplicateAccountNumbers::sBuildList()
   bool bProf = (_metrics->value("GLProfitSize").toInt() > 0);
   bool bSub  = (_metrics->value("GLSubaccountSize").toInt() > 0);
 
-  while(_account->columns() > 0)
-    _account->removeColumn(0);
+  _account->setColumnCount(0);
 
   if(bComp)
     _account->addColumn(tr("Company"), 50, Qt::AlignCenter);

@@ -57,8 +57,8 @@
 
 #include "dspSequencedBOM.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include "rptSequencedBOM.h"
 
 /*
@@ -223,19 +223,19 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     q.bindValue(":never", tr("Never"));
     q.bindValue(":item_id", _item->id());
     q.exec();
-    XListViewItem *last = 0;
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      last = new XListViewItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("seqnumber"),
+      last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("seqnumber"),
                                 q.value("bomitem_seqnumber"), q.value("item_number"),
                                 q.value("f_descrip"), q.value("item_invuom"),
                                 q.value("f_qtyper"), q.value("f_scrap"),
                                 q.value("f_effective"), q.value("f_expires") );
 
       if (q.value("expired").toBool())
-        last->setColor("red");
+        last->setTextColor("red");
       else if (q.value("future").toBool())
-        last->setColor("blue");
+        last->setTextColor("blue");
     }
   }
 }

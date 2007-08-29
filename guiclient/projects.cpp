@@ -57,11 +57,11 @@
 
 #include "projects.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "project.h"
 
 /*
@@ -79,7 +79,7 @@ projects::projects(QWidget* parent, const char* name, Qt::WFlags fl)
     // signals and slots connections
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_prj, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_prj, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
@@ -105,7 +105,7 @@ void projects::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void projects::init()
 {
@@ -208,7 +208,7 @@ void projects::sDelete()
   sFillList();
 }
 
-void projects::sPopulateMenu(Q3PopupMenu *pMenu)
+void projects::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

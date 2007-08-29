@@ -57,7 +57,7 @@
 
 #include "honorifics.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
@@ -86,7 +86,7 @@ honorifics::honorifics(QWidget* parent, const char* name, Qt::WFlags fl)
     (void)statusBar();
 
     // signals and slots connections
-    connect(_honorifics, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_honorifics, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -196,7 +196,7 @@ void honorifics::sView()
   newdlg.exec();
 }
 
-void honorifics::sPopulateMenu( Q3PopupMenu *pMenu)
+void honorifics::sPopulateMenu( QMenu *pMenu)
 {
   int menuItem;
 

@@ -92,7 +92,7 @@ financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, 
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   //connect(_editLabels, SIGNAL(clicked()), this, SLOT(sEditLabels()));
   connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-  connect(_layout, SIGNAL(selectionChanged()), this, SLOT(sHandleButtons()));
+  connect(_layout, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
   connect(_addTopLevelGroup, SIGNAL(clicked()), this, SLOT(sAddTopLevelGroup()));
   connect(_addGroup, SIGNAL(clicked()), this, SLOT(sAddGroup()));
   connect(_layout, SIGNAL(itemSelected(int)), this, SLOT(sHandleSelection()));
@@ -111,8 +111,7 @@ financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, 
   connect(_editCol, SIGNAL(clicked()), this, SLOT(sEditCol()));
   connect(_viewCol, SIGNAL(clicked()), this, SLOT(sEditCol()));
   connect(_deleteCol, SIGNAL(clicked()), this, SLOT(sDeleteCol()));
-  connect(_layout, SIGNAL(selectionChanged()), this, SLOT(sHandleButtons()));
-  connect(_layouts, SIGNAL(selectionChanged()), this, SLOT(sHandleButtonsCol()));
+  connect(_layouts, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtonsCol()));
   connect(_layouts, SIGNAL(itemSelected(int)), this, SLOT(sEditCol()));
   connect(_showTotal, SIGNAL(toggled(bool)), this, SLOT(sUncheckAltGrandTotal()));
   connect(_showGrandTotal, SIGNAL(toggled(bool)), this, SLOT(sUncheckAltGrandTotal()));
@@ -418,7 +417,7 @@ void financialLayout::sFillList()
 {
   int pId = -1, pType = -1;
 
-  XListViewItem * item = _layout->selectedItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)(_layout->currentItem());
   if(0 != item)
   {
     pId = item->id();
@@ -436,11 +435,11 @@ void financialLayout::sFillList()
   {
     insertFlGroup(-1, "", 0, pId, pType);
    }
-  _layout->openAll();
+  _layout->expandAll();
 
-  item = _layout->selectedItem();
+  item = (XTreeWidgetItem*)(_layout->currentItem());
   if(0 != item)
-    _layout->ensureItemVisible(item);
+    _layout->scrollToItem(item);
 
 // fill Column layouts
   _layouts->clear();
@@ -454,9 +453,9 @@ void financialLayout::sFillList()
     _layouts->populate(q);
 }
 
-void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XListViewItem *pParent, int pId, int pType)
+void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XTreeWidgetItem *pParent, int pId, int pType)
 {
-  XListViewItem *root = 0;
+  XTreeWidgetItem *root = 0;
   XSqlQuery thisLevel;
 
   if (pFlgrpid != -1)
@@ -474,18 +473,18 @@ void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XListViewI
     thisLevel.exec();
     thisLevel.first();
     if (pParent)
-      _last = root = new XListViewItem(pParent, _last, pFlgrpid, cFlGroup, pFlgrpname,
+      _last = root = new XTreeWidgetItem(pParent, _last, pFlgrpid, cFlGroup, pFlgrpname,
                                thisLevel.value("summary").toString(),
                                ( thisLevel.value("subtract").toBool() ? tr("-") : tr("+") ) );
     else
-      _last = root = new XListViewItem(_layout, _last, pFlgrpid, cFlGroup, pFlgrpname,
+      _last = root = new XTreeWidgetItem(_layout, _last, pFlgrpid, cFlGroup, pFlgrpname,
                                thisLevel.value("summary").toString(),
                                ( thisLevel.value("subtract").toBool() ? tr("-") : tr("+") ) );
 
     if ( (pFlgrpid == pId) && (pType == cFlGroup) )
     {
-      _layout->setSelected(root, TRUE);
-      _layout->ensureItemVisible(root);
+      _layout->setCurrentItem(root);
+      _layout->scrollToItem(root);
     }
 
     _lastStack.push(_last);
@@ -524,15 +523,15 @@ void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XListViewI
       insertFlGroup(thisLevel.value("id").toInt(), thisLevel.value("name").toString(), root, pId, pType);
     else if (pFlgrpid != -1)
     {
-      _last = new XListViewItem( root, _last,
+      _last = new XTreeWidgetItem( root, _last,
                                 thisLevel.value("id").toInt(), thisLevel.value("type").toInt(),
                                 thisLevel.value("name"), "",
                                 ( thisLevel.value("subtract").toBool() ? tr("-") : tr("+") ) );
 
       if ( (thisLevel.value("id").toInt() == pId) && (thisLevel.value("type").toInt() == pType) )
       {
-        _layout->setSelected(_last, TRUE);
-        _layout->ensureItemVisible(root);
+        _layout->setCurrentItem(_last);
+        _layout->scrollToItem(root);
       }
     }
   }
@@ -540,9 +539,9 @@ void financialLayout::insertFlGroup(int pFlgrpid, QString pFlgrpname, XListViewI
   _last = _lastStack.pop();
 }
 
-void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XListViewItem *pParent, int pId, int pType)
+void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XTreeWidgetItem *pParent, int pId, int pType)
 {
-  XListViewItem *root = 0;
+  XTreeWidgetItem *root = 0;
   XSqlQuery thisLevel;
 
   if (pFlgrpid != -1)
@@ -578,7 +577,7 @@ void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XList
     thisLevel.exec();
     thisLevel.first();
     if (pParent)
-      _last = root = new XListViewItem(pParent, _last, pFlgrpid, cFlGroup, pFlgrpname,
+      _last = root = new XTreeWidgetItem(pParent, _last, pFlgrpid, cFlGroup, pFlgrpname,
                                thisLevel.value("showbeg").toString(),
                                thisLevel.value("showend").toString(),
                                thisLevel.value("showdbcr").toString(),
@@ -588,7 +587,7 @@ void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XList
                                thisLevel.value("summary").toString(),
                                ( thisLevel.value("subtract").toBool() ? tr("-") : tr("+") ) );
     else
-      _last = root = new XListViewItem(_layout, _last, pFlgrpid, cFlGroup, pFlgrpname,
+      _last = root = new XTreeWidgetItem(_layout, _last, pFlgrpid, cFlGroup, pFlgrpname,
                                thisLevel.value("showbeg").toString(),
                                thisLevel.value("showend").toString(),
                                thisLevel.value("showdbcr").toString(),
@@ -600,8 +599,8 @@ void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XList
 
     if ( (pFlgrpid == pId) && (pType == cFlGroup) )
     {
-      _layout->setSelected(root, TRUE);
-      _layout->ensureItemVisible(root);
+      _layout->setCurrentItem(root);
+      _layout->scrollToItem(root);
     }
 
     _lastStack.push(_last);
@@ -674,7 +673,7 @@ void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XList
       insertFlGroupAdHoc(thisLevel.value("id").toInt(), thisLevel.value("name").toString(), root, pId, pType);
     else if (pFlgrpid != -1)
     {
-      _last = new XListViewItem( root, _last,
+      _last = new XTreeWidgetItem( root, _last,
                                 thisLevel.value("id").toInt(), thisLevel.value("type").toInt(),
                                 thisLevel.value("name"), thisLevel.value("showbeg"),
                                 thisLevel.value("showend"), thisLevel.value("showdbcr"),
@@ -684,8 +683,8 @@ void financialLayout::insertFlGroupAdHoc(int pFlgrpid, QString pFlgrpname, XList
 
       if ( (thisLevel.value("id").toInt() == pId) && (thisLevel.value("type").toInt() == pType) )
       {
-        _layout->setSelected(_last, TRUE);
-        _layout->ensureItemVisible(root);
+        _layout->setCurrentItem(_last);
+        _layout->scrollToItem(root);
       }
     }
   }
@@ -888,9 +887,9 @@ void financialLayout::sDelete()
   q.bindValue(":item_id", _layout->id());
   q.exec();
 
-  XListViewItem * item = _layout->selectedItem();
-  if(0 != item)
-    _layout->setSelected(item->itemAbove(), TRUE);
+  QTreeWidgetItem *item = _layout->currentItem();
+  if (0 != item)
+    _layout->setCurrentItem(_layout->topLevelItem(_layout->indexOfTopLevelItem(item) - 1));
   sFillList();
 }
 
@@ -1051,11 +1050,12 @@ void financialLayout::sSetType()
     } 
   }
       
-  if ( (_layout->columns() == 1) || ((_layout->columns() <= 4) && (_adHoc->isChecked())) || ((_layout->columns() > 4) && (!_adHoc->isChecked())) )
+  if ((_layout->columnCount() == 1) ||
+      ((_layout->columnCount() <= 4) && (_adHoc->isChecked())) ||
+      ((_layout->columnCount() > 4) && (!_adHoc->isChecked())) )
   {
     _layout->clear();
-    while(_layout->columns() > 1)
-      _layout->removeColumn(1);
+    _layout->setColumnCount(1);
 
     if ( _adHoc->isChecked() )
     {
@@ -1172,9 +1172,9 @@ void financialLayout::sDeleteCol()
   q.bindValue(":flcol_id", _layouts->id());
   q.exec();
 
-  XListViewItem * item = _layout->selectedItem();
+  QTreeWidgetItem *item = _layout->currentItem();
   if(0 != item)
-    _layout->setSelected(item->itemAbove(), TRUE);
+    _layout->setCurrentItem(_layout->topLevelItem(_layout->indexOfTopLevelItem(item) - 1));
   sFillList();
 }
 

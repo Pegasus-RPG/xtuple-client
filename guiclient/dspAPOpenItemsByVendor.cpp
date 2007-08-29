@@ -57,10 +57,10 @@
 
 #include "dspAPOpenItemsByVendor.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
+#include <QMessageBox>
 #include "apOpenItem.h"
 #include "rptAPOpenItemsByVendor.h"
 
@@ -80,7 +80,7 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_apopen, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_vend, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
     init();
 }
@@ -103,7 +103,7 @@ void dspAPOpenItemsByVendor::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspAPOpenItemsByVendor::init()
 {
@@ -138,7 +138,7 @@ void dspAPOpenItemsByVendor::init()
       currConcat = q.value("currConcat").toString();
     else
       currConcat = tr("?????");
-    _apopen->setColumnText(10, tr("Balance\n(in %1)").arg(currConcat));
+    _apopen->headerItem()->setText(10, tr("Balance\n(in %1)").arg(currConcat));
   }
 
   _vend->setFocus();
@@ -170,7 +170,7 @@ enum SetResponse dspAPOpenItemsByVendor::set(ParameterList &pParams)
   return NoError;
 }
 
-void dspAPOpenItemsByVendor::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -256,21 +256,22 @@ void dspAPOpenItemsByVendor::sFillList()
   {
     double total= 0.0;
 
+    XTreeWidgetItem *last = 0;
     do
     {
-      new XListViewItem( _apopen, _apopen->lastItem(), q.value("apopen_id").toInt(),
-                         q.value("f_doctype"), q.value("apopen_docnumber"),
-                         q.value("apopen_ponumber"), q.value("invoicenumber"), q.value("f_docdate"),
-                         q.value("f_duedate"), q.value("f_amount"),
-                         q.value("f_paid"), formatMoney(q.value("balance").toDouble()),
-			 q.value("currAbbr"),
-			 formatMoney(q.value("base_balance").toDouble()));
+      last = new XTreeWidgetItem( _apopen, last, q.value("apopen_id").toInt(),
+				 q.value("f_doctype"), q.value("apopen_docnumber"),
+				 q.value("apopen_ponumber"), q.value("invoicenumber"), q.value("f_docdate"),
+				 q.value("f_duedate"), q.value("f_amount"),
+				 q.value("f_paid"), formatMoney(q.value("balance").toDouble()),
+				 q.value("currAbbr"),
+				 formatMoney(q.value("base_balance").toDouble()));
  
       total += q.value("base_balance").toDouble();
     }
     while (q.next());
 
-    new XListViewItem( _apopen, _apopen->lastItem(), -1,
+    last = new XTreeWidgetItem( _apopen, last, -1,
                        QVariant(tr("Total")), "", "", "", "", "", "", "", "", "",
                        formatMoney(total) );
   }

@@ -288,18 +288,19 @@ void dspCashReceipts::sFillList()
   {
     double total = 0;
 
+    XTreeWidgetItem *last = 0;
     do
     {
-      new XListViewItem( _arapply, _arapply->lastItem(), q.value("arapply_id").toInt(),
-                         q.value("cust_number"), q.value("cust_name"),
-                         q.value("f_postdate"), q.value("source"),
-                         q.value("target"), q.value("f_applied") );
+      last = new XTreeWidgetItem( _arapply, last, q.value("arapply_id").toInt(),
+				 q.value("cust_number"), q.value("cust_name"),
+				 q.value("f_postdate"), q.value("source"),
+				 q.value("target"), q.value("f_applied") );
 
       total += q.value("arapply_applied").toDouble();
     }
     while (q.next());
 
-    //XListViewItem *totals = new XListViewItem(_arapply, _arapply->lastItem(), -1, "", tr("Total Applications:"));
+    //XTreeWidgetItem *totals = new XTreeWidgetItem(_arapply, _arapply->lastItem(), -1, "", tr("Total Applications:"));
     //totals->setText(5, formatMoney(total));
   }
 }

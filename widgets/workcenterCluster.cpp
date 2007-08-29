@@ -56,141 +56,23 @@
  */
 
 // workcenterCluster.cpp
-// Copyright (c) 2002-2007, OpenMFG, LLC
+// Copyright (c) 2007, OpenMFG, LLC
 
-#include <QPushButton>
-#include <QLabel>
-#include <QValidator>
-#include <QHBoxLayout>
-
-#include <parameter.h>
-#include <xsqlquery.h>
-
-#include "workcenterList.h"
 #include "workcentercluster.h"
 
-WorkCenterLineEdit::WorkCenterLineEdit(QWidget * parent, const char * name)
-  : XLineEdit(parent, name)
+WorkCenterCluster::WorkCenterCluster(QWidget* pParent, const char* pName) :
+    VirtualCluster(pParent, pName)
 {
-  _id = -1;
-
-  setMaximumWidth(100);
-
-  connect(this, SIGNAL(lostFocus()), SLOT(sParse()));
+  addNumberWidget(new WorkCenterLineEdit(this, pName));
 }
 
-void WorkCenterLineEdit::setId(int pId)
+WorkCenterLineEdit::WorkCenterLineEdit(QWidget *pParent, const char *pName)
+  : VirtualClusterLineEdit(pParent, "wrkcnt", "wrkcnt_id", "wrkcnt_code", "wrkcnt_descrip", 0, 0, pName)
 {
-  QString sql("SELECT wrkcnt_code"
-              "  FROM wrkcnt"
-              " WHERE (wrkcnt_id=:id);");
-
-  XSqlQuery query;
-  query.prepare(sql);
-  query.bindValue(":id", pId);
-  query.exec();
-  if(query.first())
-  {
-    _id = pId;
-    _valid = true;
-    _workcenter = query.value("wrkcnt_code").toString();
-  }
-  else
-  {
-    _id = -1;
-    _valid = false;
-    _workcenter = "";
-  }
-
-  setText(_workcenter);
-  emit newId(_id);
-  emit valid(_valid);
-
-  _parsed = true;
+  setTitles(tr("Work Center"), tr("Work Centers"));
 }
 
 void WorkCenterLineEdit::setWorkCenter(const QString & pWorkCenter)
 {
-  XSqlQuery query;
-  query.prepare("SELECT wrkcnt_id"
-                "  FROM wrkcnt"
-                " WHERE (wrkcnt_code=:workcenter);");
-  query.bindValue(":workcenter", pWorkCenter);
-  query.exec();
-  if(query.first())
-    setId(query.value("wrkcnt_id").toInt());
-  else
-    setId(-1);
-}
-
-void WorkCenterLineEdit::clear()
-{
-  setId(-1);
-}
-
-void WorkCenterLineEdit::sParse()
-{
-  if(!_parsed)
-  {
-    _parsed = true;
-    setWorkCenter(text());
-  }
-}
-
-WorkCenterCluster::WorkCenterCluster(QWidget * parent, const char * name)
-  : QWidget(parent, name)
-{
-  QHBoxLayout *layout = new QHBoxLayout(this);
-  layout->setMargin(0);
-  layout->setSpacing(0);
-
-  _label = new QLabel(tr("Work Center:"), this);
-  _label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-  layout->addWidget(_label);
-
-  _workcenter = new WorkCenterLineEdit(this);
-  layout->addWidget(_workcenter);
-
-  _list = new QPushButton(tr("..."), this);
-  _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifdef Q_WS_MAC
-  _list->setMaximumWidth(50);
-#else
-  _list->setMaximumWidth(25);
-#endif
-  _list->setFocusPolicy(Qt::NoFocus);
-  layout->addWidget(_list);
-
-  QSpacerItem * spacer = new QSpacerItem(0, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
-  layout->addItem(spacer);
-
-  setLayout(layout);
-
-  connect(_list, SIGNAL(clicked()), this, SLOT(sList()));
-  connect(_workcenter, SIGNAL(newId(int)), this, SIGNAL(newId(int)));
-  connect(_workcenter, SIGNAL(valid(bool)), this, SIGNAL(valid(bool)));
-
-  setFocusProxy(_workcenter);
-}
-
-void WorkCenterCluster::sList()
-{
-  ParameterList params;
-  params.append("id", _workcenter->id());
-
-  workcenterList newdlg(parentWidget(), "", TRUE);
-  newdlg.set(params);
-
-  int id;
-  if((id = newdlg.exec()) != QDialog::Rejected)
-    _workcenter->setId(id);
-}
-
-void WorkCenterCluster::setReadOnly(bool pReadOnly)
-{
-  if(pReadOnly)
-    _list->hide();
-  else
-    _list->show();
-  _workcenter->setEnabled(!pReadOnly);
+  setNumber(pWorkCenter);
 }

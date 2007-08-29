@@ -57,12 +57,12 @@
 
 #include "printInvoice.h"
 
-#include <qvariant.h>
-#include <qvalidator.h>
-#include <qmessagebox.h>
-#include <qapplication.h>
+#include <QVariant>
+#include <QValidator>
+#include <QMessageBox>
+#include <QApplication>
 #include <openreports.h>
-#include <qstatusbar.h>
+#include <QStatusBar>
 #include "editICMWatermark.h"
 #include "deliverInvoice.h"
 #include "submitAction.h"
@@ -124,11 +124,10 @@ void printInvoice::init()
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
   {
-    Q3ListViewItem *cursor = _invoiceWatermarks->firstChild();
-    for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++)
+    for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++)
     {
-      cursor->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
+      _invoiceWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(i)));
+      _invoiceWatermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
     }
   }
 
@@ -215,10 +214,10 @@ void printInvoice::sPrint()
       }
     }
 
-    // ToDo: do we really want error checking & invoice posting INSIDE the loop?
-    Q3ListViewItem *cursor = _invoiceWatermarks->firstChild();
-    for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++ )
+    // TODO: do we really want error checking & invoice posting INSIDE the loop?
+    for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++ )
     {
+      QTreeWidgetItem *cursor = _invoiceWatermarks->topLevelItem(i);
       ParameterList params;
       params.append("invchead_id", _invcheadid);
       params.append("showcosts", ((cursor->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
@@ -358,18 +357,20 @@ void printInvoice::sPrint()
 
 void printInvoice::sHandleCopies(int pValue)
 {
-  if (_invoiceWatermarks->childCount() > pValue)
-    _invoiceWatermarks->takeItem(_invoiceWatermarks->lastItem());
+  if (_invoiceWatermarks->topLevelItemCount() > pValue)
+    _invoiceWatermarks->takeTopLevelItem(_invoiceWatermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_invoiceWatermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_invoiceWatermarks, _invoiceWatermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_invoiceWatermarks->topLevelItemCount() + 1); i <= pValue; i++)
+      new XTreeWidgetItem(_invoiceWatermarks,
+			  _invoiceWatermarks->topLevelItem(_invoiceWatermarks->topLevelItemCount() - 1),
+			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 
 void printInvoice::sEditWatermark()
 {
-  XListViewItem *cursor = _invoiceWatermarks->selectedItem();
+  QTreeWidgetItem *cursor = _invoiceWatermarks->currentItem();
   ParameterList params;
   params.append("watermark", cursor->text(1));
   params.append("showPrices", (cursor->text(2) == tr("Yes")));

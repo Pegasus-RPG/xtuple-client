@@ -68,62 +68,23 @@
 
 #include <xsqlquery.h>
 
-class QPushButton;
-class ExpenseCluster;
-class XComboBox;
+#include "virtualCluster.h"
 
-
-class OPENMFGWIDGETS_EXPORT ExpenseLineEdit : public XLineEdit
+class OPENMFGWIDGETS_EXPORT ExpenseLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT;
-
-friend class ExpenseCluster;
 
   public:
     ExpenseLineEdit(QWidget *, const char * = 0);
 
-  public slots:
-    void setId(int);
-    void sParse();
-    void sExpenseList();
-
-  signals:
-    void newId(int);
-    void valid(bool);
 };
 
-class OPENMFGWIDGETS_EXPORT ExpenseCluster : public QWidget
+class OPENMFGWIDGETS_EXPORT ExpenseCluster : public VirtualCluster
 {
   Q_OBJECT
 
-  Q_PROPERTY(bool readonly READ isReadOnly WRITE setReadOnly )
-  Q_PROPERTY(QString label READ label WRITE setLabel )
-
   public:
     ExpenseCluster(QWidget *, const char * = 0);
-
-    inline int id() const { return _expNumber->_id; }
-    inline bool isValid() const { return _expNumber->_valid; }
-    inline QString label() const { return _expNumberLit->text(); }
-    inline bool isReadOnly() const { return !_expNumber->isEnabled(); }
-
-  public slots:
-    void setId(int);
-    void setReadOnly(bool);
-    void sExpenseList();
-    void setLabel(QString);
-
-  private:
-    void constructor();
-
-    QLabel *_expNumberLit;
-    ExpenseLineEdit  *_expNumber;
-    QPushButton *_expList;
-
-  signals:
-    void newId(int);
-    void valid(bool);
 };
 
 #endif
-

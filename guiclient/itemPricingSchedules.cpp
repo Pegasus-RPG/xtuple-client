@@ -260,16 +260,16 @@ void itemPricingSchedules::sFillList(int pIpsheadid)
 
 void itemPricingSchedules::sSearch( const QString & pTarget)
 {
-  Q3ListViewItem * target;
-
-  target = _ipshead->firstChild();
-  while((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-
-  if(target != NULL)
+  int i;
+  for (i = 0; i < _ipshead->topLevelItemCount(); i++)
   {
-    _ipshead->setSelected(target, TRUE);
-    _ipshead->ensureItemVisible(target);
+    if (_ipshead->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
+      break;
+  }
+
+  if (i < _ipshead->topLevelItemCount())
+  {
+    _ipshead->setCurrentItem(_ipshead->topLevelItem(i));
+    _ipshead->scrollToItem(_ipshead->topLevelItem(i));
   }
 }
-

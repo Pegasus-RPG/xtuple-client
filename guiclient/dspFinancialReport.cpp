@@ -62,7 +62,7 @@
 #include <QStack>
 #include <QInputDialog>
 #include <QList>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <openreports.h>
 #include <QCloseEvent>
 #include "dspFinancialReport.h"
@@ -91,11 +91,11 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_layout, SIGNAL(collapsed(Q3ListViewItem*)), this, SLOT(sCollapsed(Q3ListViewItem*)));
-  connect(_layout, SIGNAL(expanded(Q3ListViewItem*)), this, SLOT(sExpanded(Q3ListViewItem*)));
+  connect(_layout, SIGNAL(itemCollapsed(QTreeWidgetItem*)), this, SLOT(sCollapsed(QTreeWidgetItem*)));
+  connect(_layout, SIGNAL(itemExpanded(QTreeWidgetItem*)), this, SLOT(sExpanded(QTreeWidgetItem*)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_periods, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
-  connect(_periods, SIGNAL(doubleClicked(Q3ListViewItem*)), this, SLOT(sEditPeriodLabel()));
+  connect(_periods, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_periods, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sEditPeriodLabel()));
   connect(_flhead, SIGNAL(newID(int)), this, SLOT(sReportChanged(int)));
   connect(_trend, SIGNAL(toggled(bool)), this, SLOT(sToggleTrend()));
   connect(_trend, SIGNAL(toggled(bool)), this, SLOT(sTogglePeriod()));
@@ -108,6 +108,7 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
 
   // populate _periods
   _periods->addColumn(tr("Period"), _itemColumn, Qt::AlignLeft );
+  _periods->addColumn(tr("Alternate Label"), -1, Qt::AlignLeft );
   sFillPeriods();
 
   _layout->addColumn( tr("Group/Account Name"), -1,              Qt::AlignLeft  );
@@ -186,13 +187,9 @@ void dspFinancialReport::sFillListStatement()
   if (q.first())
   {
     //Find which period selected
-    XListViewItem* item = _periods->firstChild();
-    while(item)
-    {
-      if(item->isSelected())
-            periodsRef.prepend(item->id());
-      item = item->nextSibling();    
-    }
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    for (int i = 0; i < selected.size(); i++)
+      periodsRef.prepend(((XTreeWidgetItem*)(selected[i]))->id());
     if(periodsRef.count() < 1)
       return;
 
@@ -206,8 +203,7 @@ void dspFinancialReport::sFillListStatement()
     {
       //Clear columns
       _layout->clear();
-      while(_layout->columns() > 1)
-        _layout->removeColumn(1);
+      _layout->setColumnCount(1);
 
       //Build report query
       qc = ("SELECT flstmtitem_order AS orderby, flstmtitem_level AS level,"
@@ -463,8 +459,8 @@ void dspFinancialReport::sFillListStatement()
       q.bindValue(":shownumbers", _shownumbers->isChecked());
       q.exec();
       
-      QStack<XListViewItem*> parent;
-      XListViewItem *last = 0;
+      QStack<XTreeWidgetItem*> parent;
+      XTreeWidgetItem *last = 0;
       int level = 0;
       while(q.next())
       {
@@ -488,14 +484,14 @@ void dspFinancialReport::sFillListStatement()
         // If there is an item in the stack use that as the parameter to the new xlistviewitem
         // otherwise we'll just use the xlistview _layout
         if(!parent.isEmpty() && parent.top())
-          last = new XListViewItem(parent.top(), last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
+          last = new XTreeWidgetItem(parent.top(), last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
         else
-          last = new XListViewItem(_layout, last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
+          last = new XTreeWidgetItem(_layout, last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
         for(c = 0; c < colCount; c++)
           last->setText(1+c, q.value(5+c).toString());
       }
 
-      _layout->openAll();
+      _layout->expandAll();
     }
   }
 }
@@ -526,26 +522,19 @@ void dspFinancialReport::sFillListTrend()
   if(customlabel.isEmpty())
     customlabel = tr("Custom");
 
-  XListViewItem* item = _periods->firstChild();
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   QString label;
-  while(item)
+  for (int i = 0; i < selected.size(); i++)
   {
-    if(item->isSelected())
-    {
-      label = item->text(1);
-      if(label.isEmpty())
-        label = item->text(0);
-      periodsRef.prepend(item->id());
-      periods.prepend(label);
-    }
-    item = item->nextSibling();    
+    label = selected[i]->text(1).isEmpty() ? selected[i]->text(0) : selected[i]->text(1);
+    periodsRef.prepend(((XTreeWidgetItem*)(selected[i]))->id());
+    periods.prepend(label);
   }
   if(periodsRef.count() < 1)
     return;
 
   _layout->clear();
-  while(_layout->columns() > 1)
-    _layout->removeColumn(1);
+  _layout->setColumnCount(1);
 
   q.prepare("SELECT financialReport(:flhead_id, :period_id, :interval) AS result;");
   
@@ -831,8 +820,8 @@ void dspFinancialReport::sFillListTrend()
   q.bindValue(":spec", cFlSpec);
   q.exec();
 
-  QStack<XListViewItem*> parent;
-  XListViewItem *last = 0;
+  QStack<XTreeWidgetItem*> parent;
+  XTreeWidgetItem *last = 0;
   int level = 0;
   while(q.next())
   {
@@ -856,14 +845,14 @@ void dspFinancialReport::sFillListTrend()
     // If there is an item in the stack use that as the parameter to the new xlistviewitem
     // otherwise we'll just use the xlistview _layout
     if(!parent.isEmpty() && parent.top())
-      last = new XListViewItem(parent.top(), last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
+      last = new XTreeWidgetItem(parent.top(), last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
     else
-      last = new XListViewItem(_layout, last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
+      last = new XTreeWidgetItem(_layout, last, q.value("id").toInt(), q.value("type").toInt(), q.value("name"));
     for(unsigned int uc = 0; uc < colCount; uc++)
       last->setText(1+uc, q.value(5+uc).toString());
   }
 
-  _layout->openAll();
+  _layout->expandAll();
 }
 
 void dspFinancialReport::sFillPeriods()
@@ -872,17 +861,12 @@ void dspFinancialReport::sFillPeriods()
     
   if ((!_trend->isChecked()) || (_month->isChecked()))
   {
-  if (_periods->columns() == 1)
-    _periods->addColumn(tr("Alternate Label"), -1, Qt::AlignLeft );
-  
   _periods->populate("SELECT period_id, (formatDate(period_start) || '-' || formatDate(period_end)) AS f_name, period_name "
             "  FROM period "
             "ORDER BY period_start DESC;" );
   }
   else if (_quarter->isChecked())
   {
-  if (_periods->columns() > 1)
-    _periods->removeColumn(1);
     _periods->populate("SELECT LAST(period_id), ('Q' || period_quarter || '-' || EXTRACT(year from yearperiod_end)) FROM "
             " (SELECT period_id, period_quarter, yearperiod_end "
             " FROM period,yearperiod "
@@ -893,8 +877,6 @@ void dspFinancialReport::sFillPeriods()
   }
   else
   {
-    if (_periods->columns() > 1)
-    _periods->removeColumn(1);
     _periods->populate("SELECT (SELECT LAST(period_id) FROM "
             "(SELECT period_id,period_start FROM period "
             " WHERE period_yearperiod_id=yearperiod_id "
@@ -906,25 +888,24 @@ void dspFinancialReport::sFillPeriods()
   
 }                     
 
-void dspFinancialReport::sCollapsed( Q3ListViewItem * item )
+void dspFinancialReport::sCollapsed( QTreeWidgetItem * item )
 {
-  XListViewItem * child = (XListViewItem*)item->firstChild();
-  while(child)
+  for (int i = 0; i < item->childCount(); i++)
   {
+    XTreeWidgetItem *child = (XTreeWidgetItem*)item->child(i);
     if(child->altId() == -1)
     {
-      for(int i = 1; i < _layout->columns(); i++)
+      for (int i = 1; i < _layout->columnCount(); i++)
         item->setText(i, child->text(i));
       return;
     }
-    child = child->nextSibling();
   }
 }
 
-void dspFinancialReport::sExpanded( Q3ListViewItem * item )
+void dspFinancialReport::sExpanded( QTreeWidgetItem * item )
 {
   if(item->childCount() > 0)
-    for(int i = 1; i < _layout->columns(); i++)
+    for(int i = 1; i < _layout->columnCount(); i++)
       item->setText(i, "");
 }
 
@@ -948,13 +929,9 @@ void dspFinancialReport::sPrint()
   
 
   QList<QVariant> periodList;
-  XListViewItem* item = _periods->firstChild();
-  while(item)
-  {
-    if(item->isSelected())
-      periodList.prepend(item->id());
-    item = item->nextSibling();    
-  }
+  QList<QTreeWidgetItem*> selected;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.prepend(((XTreeWidgetItem*)(selected[i]))->id());
   
   if (_trend->isChecked())
   {
@@ -995,14 +972,14 @@ void dspFinancialReport::sPrint()
   }
 }
 
-void dspFinancialReport::sPopulateMenu( Q3PopupMenu * pMenu )
+void dspFinancialReport::sPopulateMenu( QMenu * pMenu )
 {
   pMenu->insertItem(tr("Edit Alternate Label..."), this, SLOT(sEditPeriodLabel()));
 }
 
 void dspFinancialReport::sEditPeriodLabel()
 {
-  XListViewItem * item = (XListViewItem*)_periods->currentItem();
+  XTreeWidgetItem * item = (XTreeWidgetItem*)_periods->currentItem();
   if(!item)
     return;
 
@@ -1092,7 +1069,7 @@ void dspFinancialReport::sReportChanged(int flheadid)
     {
       _showColumnsGroup->setEnabled(true);
       _trend->setChecked(true);
-      _periods->setSelectionMode(Q3ListView::Extended);
+      _periods->setSelectionMode(QAbstractItemView::ExtendedSelection);
       _flcol->setEnabled(false);
       _type->setText("Ad Hoc");
     }
@@ -1127,12 +1104,12 @@ void dspFinancialReport::sTogglePeriod()
 
   if (_trend->isChecked())
   {
-    _periods->setSelectionMode(Q3ListView::Multi);
+    _periods->setSelectionMode(QAbstractItemView::MultiSelection);
     _flcol->setEnabled(false);
   }
   else
   {
-    _periods->setSelectionMode(Q3ListView::Single); 
+    _periods->setSelectionMode(QAbstractItemView::SingleSelection); 
     _flcol->setEnabled(true); 
   }  
 

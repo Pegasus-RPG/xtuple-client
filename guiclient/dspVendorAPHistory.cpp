@@ -62,7 +62,7 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QSqlError>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include "apOpenItem.h"
 #include "rptVendorAPHistory.h"
 
@@ -82,7 +82,7 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WF
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_vendhist, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_vendhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_searchInvoiceNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchInvoiceNum()));
 
   statusBar()->hide();
@@ -143,11 +143,11 @@ enum SetResponse dspVendorAPHistory::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspVendorAPHistory::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
-  XListViewItem * item = (XListViewItem*)pSelected;
+  XTreeWidgetItem * item = (XTreeWidgetItem*)pSelected;
   if (item->id() != -1)
   {
     menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
@@ -279,11 +279,11 @@ void dspVendorAPHistory::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *document = NULL;
+    XTreeWidgetItem *document = NULL;
     do
     {
       if (q.value("type").toInt() == 1)
-        document = new XListViewItem( _vendhist, _vendhist->lastItem(),
+        document = new XTreeWidgetItem( _vendhist, document,
                                       q.value("apopen_id").toInt(), q.value("applyid").toInt(),
                                       q.value("f_open"), q.value("documenttype"),
                                       q.value("docnumber"), q.value("invoicenumber"),q.value("f_docdate"),
@@ -291,7 +291,7 @@ void dspVendorAPHistory::sFillList()
                                       q.value("f_balance") );
       else if (document)
       {
-        new XListViewItem( document,
+        new XTreeWidgetItem( document,
                            -1, q.value("applyid").toInt(),
                            "", q.value("documenttype"),
                            q.value("docnumber"),q.value("invoicenumber"), q.value("f_docdate"),
@@ -342,23 +342,23 @@ void dspVendorAPHistory::sSearchInvoiceNum()
   if(sub.isEmpty())
     return;
 
-  XListViewItem * item = 0;
-  XListViewItem * foundSub = 0;
-  for(item = _vendhist->firstChild(); item; item = item->nextSibling())
+  QTreeWidgetItem *item     = 0;
+  QTreeWidgetItem *foundSub = 0;
+  for (int i = 0; i < _vendhist->topLevelItemCount(); i++)
   {
-    if(item->text(3) == sub)
+    item = _vendhist->topLevelItem(i);
+    if (item->text(3) == sub)
     {
-      _vendhist->setSelected(item, true);
-      _vendhist->ensureItemVisible(item);
-      return;
+      foundSub = item;
+      break;
     }
-    if(foundSub==0 && item->text(3).startsWith(sub))
+    else if (foundSub == 0 && item->text(3).startsWith(sub))
       foundSub = item;
   }
-  if(foundSub)
+  if (foundSub)
   {
-    _vendhist->setSelected(foundSub, true);
-    _vendhist->ensureItemVisible(foundSub);
+    _vendhist->setCurrentItem(foundSub);
+    _vendhist->scrollToItem(foundSub);
   }
 }
 

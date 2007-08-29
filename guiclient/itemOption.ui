@@ -386,7 +386,7 @@
                                 <property name="spacing">
                                     <number>7</number>
                                 </property>
-                                <widget class="XListView">
+                                <widget class="XTreeWidget">
                                     <property name="name">
                                         <cstring>_itematr</cstring>
                                     </property>
@@ -1050,10 +1050,10 @@
 </tabstops>
 <includes>
     <include location="local" impldecl="in declaration">OpenMFGGUIClient.h</include>
-    <include location="global" impldecl="in implementation">qmessagebox.h</include>
+    <include location="global" impldecl="in implementation">QMessageBox</include>
     <include location="global" impldecl="in declaration">parameter.h</include>
     <include location="local" impldecl="in implementation">itemAttribute.h</include>
-    <include location="global" impldecl="in implementation">qvalidator.h</include>
+    <include location="global" impldecl="in implementation">QValidator</include>
     <include location="global" impldecl="in implementation">math.h</include>
     <include location="local" impldecl="in implementation">itemOption.ui.h</include>
 </includes>

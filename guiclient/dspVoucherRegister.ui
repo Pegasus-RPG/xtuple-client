@@ -290,7 +290,7 @@
         </widget>
        </item>
        <item>
-        <widget class="XListView" name="_gltrans" />
+        <widget class="XTreeWidget" name="_gltrans" />
        </item>
       </layout>
      </widget>
@@ -309,9 +309,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>
@@ -336,7 +336,7 @@
  </tabstops>
  <includes>
   <include location="global" >parameter.h</include>
-  <include location="global" >qworkspace.h</include>
+  <include location="global" >QWorkspace</include>
   <include location="local" >OpenMFGGUIClient.h</include>
  </includes>
  <resources/>

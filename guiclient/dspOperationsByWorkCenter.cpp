@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QWorkspace>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <parameter.h>
 #include "boo.h"
 #include "booItem.h"
@@ -80,7 +80,7 @@ dspOperationsByWorkCenter::dspOperationsByWorkCenter(QWidget* parent, const char
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-  connect(_booitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_booitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
@@ -124,7 +124,7 @@ void dspOperationsByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspOperationsByWorkCenter::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

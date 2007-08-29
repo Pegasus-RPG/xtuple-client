@@ -331,7 +331,7 @@
        </widget>
       </item>
       <item>
-       <widget class="XListView" name="_sohist" >
+       <widget class="XTreeWidget" name="_sohist" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>7</hsizetype>
@@ -362,9 +362,9 @@
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>ParameterGroup</class>
@@ -373,7 +373,7 @@
   </customwidget>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XListView</extends>
+   <extends>XTreeWidget</extends>
    <header>calendarTools.h</header>
   </customwidget>
  </customwidgets>

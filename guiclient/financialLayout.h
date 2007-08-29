@@ -72,8 +72,8 @@ public:
     financialLayout(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~financialLayout();
 
-    virtual void insertFlGroup( int pFlgrpid, QString pFlgrpname, XListViewItem * pParent, int pId, int pType );
-    virtual void insertFlGroupAdHoc( int pFlgrpid, QString pFlgrpname, XListViewItem * pParent, int pId, int pType );
+    virtual void insertFlGroup( int pFlgrpid, QString pFlgrpname, XTreeWidgetItem * pParent, int pId, int pType );
+    virtual void insertFlGroupAdHoc( int pFlgrpid, QString pFlgrpname, XTreeWidgetItem * pParent, int pId, int pType );
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
@@ -105,8 +105,8 @@ protected slots:
 
 
 private:
-    XListViewItem * _last;
-    Q3PtrStack<XListViewItem> _lastStack;
+    XTreeWidgetItem * _last;
+    Q3PtrStack<XTreeWidgetItem> _lastStack;
     int _flheadid;
     int _mode;
     int _cachedType;

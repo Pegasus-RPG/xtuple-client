@@ -57,8 +57,8 @@
 
 #include "dspWoSoStatusMismatch.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "closeWo.h"
 #include "rptWoSoStatusMismatch.h"
@@ -100,7 +100,7 @@ void dspWoSoStatusMismatch::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspWoSoStatusMismatch::init()
 {
@@ -142,7 +142,7 @@ void dspWoSoStatusMismatch::sCloseWo()
     sFillList();
 }
 
-void dspWoSoStatusMismatch::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspWoSoStatusMismatch::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if ((pSelected->text(1) == "E") || (pSelected->text(1) == "I"))
     pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatlreq()), 0);

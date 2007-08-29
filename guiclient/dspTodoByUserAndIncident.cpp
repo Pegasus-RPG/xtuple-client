@@ -85,7 +85,7 @@ dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char* 
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_todoitem, SIGNAL(populateMenu(Q3PopupMenu*, Q3ListViewItem*, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_todoitem, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*)));
 
     statusBar()->hide();
     
@@ -125,7 +125,7 @@ void dspTodoByUserAndIncident::languageChange()
     retranslateUi(this);
 }
 
-void dspTodoByUserAndIncident::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspTodoByUserAndIncident::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -222,10 +222,10 @@ void dspTodoByUserAndIncident::sFillList()
   MetaSQLQuery mql(sql);
   XSqlQuery todos = mql.toQuery(params);
   todos.exec();
-  XListViewItem *last = 0;
+  XTreeWidgetItem *last = 0;
   while (todos.next())
   {
-    last = new XListViewItem(_todoitem, last,
+    last = new XTreeWidgetItem(_todoitem, last,
 			     todos.value("todoitem_id").toInt(),
 			     todos.value("incdt_id").toInt(),
 			     todos.value("usr_username").toString(),
@@ -240,9 +240,9 @@ void dspTodoByUserAndIncident::sFillList()
     if (todos.value("todoitem_status") != "C")
     {
       if (todos.value("todoitem_due_date").toDate() < QDate::currentDate())
-	last->setColor("red");
+	last->setTextColor("red");
       else if (todos.value("todoitem_due_date").toDate() > QDate::currentDate())
-	last->setColor("green");
+	last->setTextColor("green");
     }
   }
   if (todos.lastError().type() != QSqlError::None)

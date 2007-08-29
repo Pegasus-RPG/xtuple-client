@@ -60,8 +60,8 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+
 #include <xlistbox.h>
-#include <xlistview.h>
 #include <accountList.h>
 #include <glcluster.h>
 #include <openreports.h>
@@ -283,28 +283,25 @@ void maintainBudget::sAccountsAdd()
   params.append("type", (GLCluster::cAsset | GLCluster::cLiability | GLCluster::cExpense | GLCluster::cRevenue | GLCluster::cEquity));
 
   accountList newdlg(this, "", true);
-  newdlg._accnt->setSelectionMode(Q3ListView::Extended);
+  newdlg._accnt->setSelectionMode(QAbstractItemView::ExtendedSelection);
   newdlg.set(params);
   int accnt_id=newdlg.exec();
 
-  if(accnt_id == -1)
+  if (accnt_id == -1)
     return;
 
-  XListViewItem * child = (XListViewItem*)newdlg._accnt->firstChild();
-  while(child)
+  QList<QTreeWidgetItem*> selected = newdlg._accnt->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if(newdlg._accnt->isSelected(child))
+    XTreeWidgetItem *child = (XTreeWidgetItem*)selected[i];
+    q.prepare("SELECT formatGLAccountLong(:accnt_id) AS result;");
+    q.bindValue(":accnt_id", child->id());
+    q.exec();
+    if(q.first())
     {
-      q.prepare("SELECT formatGLAccountLong(:accnt_id) AS result;");
-      q.bindValue(":accnt_id", child->id());
-      q.exec();
-      if(q.first())
-      {
-        XListBoxText *item = new XListBoxText(q.value("result").toString(), child->id());
-        _accounts->insertItem(item);
-      }
+      XListBoxText *item = new XListBoxText(q.value("result").toString(), child->id());
+      _accounts->insertItem(item);
     }
-    child = child->nextSibling();
   }
 }
 

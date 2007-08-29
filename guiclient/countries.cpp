@@ -192,7 +192,7 @@ void countries::sFillList()
     /*
     while (q.next())
     {
-	new XListViewItem(_countries, _countries->lastItem(),
+	new XTreeWidgetItem(_countries, _countries->lastItem(),
 			  q.value("country_id").toInt(),
 			  q.value("country_abbr"),
 			  q.value("country_name"),

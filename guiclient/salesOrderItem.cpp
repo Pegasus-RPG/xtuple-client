@@ -1485,11 +1485,11 @@ void salesOrderItem::sDetermineAvailability()
             availability.exec();
             while(availability.next())
             {
-              XListViewItem *last = NULL;
+              XTreeWidgetItem *last = NULL;
 
-              //  If the current bomwork is top level, make it a child of the XListView
+              //  If the current bomwork is top level, make it a child of the XTreeWidget
               if (availability.value("bomwork_parent_id").toInt() == -1)
-                last = new XListViewItem( _availability, availability.value("bomwork_id").toInt(),
+                last = new XTreeWidgetItem( _availability, availability.value("bomwork_id").toInt(),
                                           availability.value("bomitem_seqnumber"), availability.value("item_number"),
                                           availability.value("item_descrip"), availability.value("item_invuom"),
                                           availability.value("f_pendalloc"), availability.value("f_totalalloc"),
@@ -1499,14 +1499,14 @@ void salesOrderItem::sDetermineAvailability()
               else
               {
                 //  March though the existing list, looking for the parent for the current bomwork
-                XListViewItem *cursor = _availability->firstChild();
-                while (cursor)
+                for (int i = 0; i < _availability->topLevelItemCount(); i++)
                 {
-                  cursor->setOpen(TRUE);
+		  XTreeWidgetItem *cursor = _availability->topLevelItem(i);
+                  cursor->setExpanded(TRUE);
                   if (cursor->id() == availability.value("bomwork_parent_id").toInt())
                   {
                     //  Found it, add the current bomwork as a child of its parent
-                    last = new XListViewItem( cursor, availability.value("bomwork_id").toInt(),
+                    last = new XTreeWidgetItem( cursor, availability.value("bomwork_id").toInt(),
                                               availability.value("bomitem_seqnumber"), availability.value("item_number"),
                                               availability.value("item_descrip"), availability.value("item_invuom"),
                                               availability.value("f_pendalloc"), availability.value("f_totalalloc"),
@@ -1514,18 +1514,16 @@ void salesOrderItem::sDetermineAvailability()
                                               availability.value("f_totalavail")  );
                     break;
                   }
-                  else
-                    cursor = cursor->itemBelow();
                 }
               }
 
               if (availability.value("qoh").toDouble() < availability.value("pendalloc").toDouble())
-                last->setColor(7, "red");
+                last->setTextColor(7, "red");
     
               if (availability.value("totalavail").toDouble() < 0.0)
-                last->setColor(8, "red");
+                last->setTextColor(8, "red");
               else if (availability.value("totalavail").toDouble() <= availability.value("reorderlevel").toDouble())
-                last->setColor(8, "orange");
+                last->setTextColor(8, "orange");
             }
       
             //  All done with the bomwork set, delete it
@@ -1581,22 +1579,28 @@ void salesOrderItem::sDetermineAvailability()
           availability.bindValue(":schedDate", _scheduledDate->date());
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
           availability.exec();
+	  XTreeWidgetItem *last = 0;
           while (availability.next())
           {
-            XListViewItem *last = new XListViewItem( _availability, _availability->lastItem(), availability.value("itemsiteid").toInt(),
-                                                     availability.value("bomitem_seqnumber"), availability.value("item_number"),
-                                                     availability.value("item_descrip"), availability.value("item_invuom"),
-                                                     availability.value("f_pendalloc"), availability.value("f_totalalloc"),
-                                                     availability.value("f_ordered"), availability.value("f_qoh"),
-                                                     availability.value("f_totalavail")  );
+	    last = new XTreeWidgetItem(_availability, last,
+				       availability.value("itemsiteid").toInt(),
+				       availability.value("bomitem_seqnumber"),
+				       availability.value("item_number"),
+				       availability.value("item_descrip"),
+				       availability.value("item_invuom"),
+				       availability.value("f_pendalloc"),
+				       availability.value("f_totalalloc"),
+				       availability.value("f_ordered"),
+				       availability.value("f_qoh"),
+				       availability.value("f_totalavail")  );
   
             if (availability.value("qoh").toDouble() < availability.value("pendalloc").toDouble())
-              last->setColor(7, "red");
+              last->setTextColor(7, "red");
   
             if (availability.value("totalavail").toDouble() < 0.0)
-              last->setColor(8, "red");
+              last->setTextColor(8, "red");
             else if (availability.value("totalavail").toDouble() <= availability.value("reorderlevel").toDouble())
-              last->setColor(8, "orange");
+              last->setTextColor(8, "orange");
           }
         }
       }

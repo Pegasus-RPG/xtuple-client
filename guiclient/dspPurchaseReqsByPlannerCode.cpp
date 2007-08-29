@@ -57,10 +57,10 @@
 
 #include "dspPurchaseReqsByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <QWorkspace>
 #include <parameter.h>
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
@@ -82,7 +82,7 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_pr, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     init();
 }
 
@@ -104,7 +104,7 @@ void dspPurchaseReqsByPlannerCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspPurchaseReqsByPlannerCode::init()
 {
@@ -132,7 +132,7 @@ void dspPurchaseReqsByPlannerCode::sPrint()
   newdlg.set(params);
 }
 
-void dspPurchaseReqsByPlannerCode::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspPurchaseReqsByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

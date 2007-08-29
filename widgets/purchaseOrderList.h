@@ -64,7 +64,7 @@
 #include "OpenMFGWidgets.h"
 #include "vendorcluster.h"
 
-class XListView;
+class XTreeWidget;
 class QPushButton;
 class ParameterList;
 
@@ -75,7 +75,7 @@ class OPENMFGWIDGETS_EXPORT purchaseOrderList : public QDialog
 public:
     purchaseOrderList( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags fl = 0 );
 
-    XListView* _pohead;
+    XTreeWidget* _pohead;
     QPushButton* _close;
     QPushButton* _select;
 

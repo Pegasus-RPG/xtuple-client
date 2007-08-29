@@ -57,9 +57,9 @@
 
 #include "dspTimePhasedAvailability.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QStatusBar>
 #include <datecluster.h>
 #include "OpenMFGGUIClient.h"
 #include "dspInventoryAvailabilityByItem.h"
@@ -88,7 +88,7 @@ dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_availability, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     init();
 }
 
@@ -110,7 +110,7 @@ void dspTimePhasedAvailability::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedAvailability::init()
 {
@@ -208,7 +208,7 @@ void dspTimePhasedAvailability::sCreatePO()
     omfgThis->handleNewWindow(newdlg);
 }
 
-void dspTimePhasedAvailability::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected, int pColumn)
+void dspTimePhasedAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected, int pColumn)
 {
   int menuItem;
 
@@ -219,12 +219,12 @@ void dspTimePhasedAvailability::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem
     menuItem = pMenu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
     menuItem = pMenu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
   
-    if (((XListViewItem *)pSelected)->altId() == 1)
+    if (((XTreeWidgetItem *)pSelected)->altId() == 1)
     {
       pMenu->insertSeparator();
       menuItem = pMenu->insertItem(tr("Create W/O..."), this, SLOT(sCreateWO()), 0);
     }
-    else if (((XListViewItem *)pSelected)->altId() == 2)
+    else if (((XTreeWidgetItem *)pSelected)->altId() == 2)
     {
       pMenu->insertSeparator();
       menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
@@ -237,8 +237,7 @@ void dspTimePhasedAvailability::sCalculate()
 {
   _columnDates.clear();
   _availability->clear();
-  while (_availability->columns() > 3)
-    _availability->removeColumn(3);
+  _availability->setColumnCount(3);
 
   QString sql( "SELECT itemsite_id, item_number, item_invuom, warehous_code,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
@@ -249,23 +248,17 @@ void dspTimePhasedAvailability::sCalculate()
                "       END AS itemtype" );
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", formatQty(qtyAvailable(itemsite_id, findPeriodStart(%1))) AS bucket%2")
-               .arg(cursor->id())
-               .arg(columns++);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    sql += QString(", formatQty(qtyAvailable(itemsite_id, findPeriodStart(%1))) AS bucket%2")
+	   .arg(cursor->id())
+	   .arg(columns++);
 
-        _availability->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    _availability->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM itemsite, item, warehous "
@@ -290,13 +283,13 @@ void dspTimePhasedAvailability::sCalculate()
   if (q.first())
   {
     double        reorderLevel;
-    XListViewItem *last = NULL;
+    XTreeWidgetItem *last = NULL;
 
     do
     {
       reorderLevel = q.value("reorderlevel").toDouble();
 
-      last = new XListViewItem( _availability, last, q.value("itemsite_id").toInt(), q.value("itemtype").toInt(),
+      last = new XTreeWidgetItem( _availability, last, q.value("itemsite_id").toInt(), q.value("itemtype").toInt(),
                                 q.value("item_number"), q.value("item_invuom"),
                                 q.value("warehous_code") );
 
@@ -305,7 +298,7 @@ void dspTimePhasedAvailability::sCalculate()
         last->setText((column + 2), q.value(QString("bucket%1").arg(column)).toString());
 
         if (q.value(QString("bucket%1").arg(column)).toDouble() < reorderLevel)
-          last->setColor((column + 2), "red");
+          last->setTextColor((column + 2), "red");
 
       }
     }

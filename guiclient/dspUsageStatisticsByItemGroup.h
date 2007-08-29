@@ -82,7 +82,7 @@ public slots:
     virtual void sViewSold();
     virtual void sViewScrap();
     virtual void sViewAdjustment();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem *, int pColumn );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem *, int pColumn );
     virtual void sFillList();
 
 protected slots:

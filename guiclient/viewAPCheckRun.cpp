@@ -57,8 +57,8 @@
 
 #include "viewAPCheckRun.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <openreports.h>
 #include "miscAPCheck.h"
 #include "postAPCheck.h"
@@ -82,7 +82,7 @@ viewAPCheckRun::viewAPCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_replaceAll, SIGNAL(clicked()), this, SLOT(sReplaceAll()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_apchk, SIGNAL(selectionChanged(Q3ListViewItem*)), this, SLOT(sHandleItemSelection(Q3ListViewItem*)));
+    connect(_apchk, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleItemSelection()));
     connect(_apchk, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
@@ -209,9 +209,11 @@ void viewAPCheckRun::sPost()
   newdlg.exec();
 }
 
-void viewAPCheckRun::sHandleItemSelection(Q3ListViewItem *pSelected)
+void viewAPCheckRun::sHandleItemSelection()
 {
-  if (pSelected->text(0) == tr("Yes"))
+  QTreeWidgetItem *selected = _apchk->currentItem();
+
+  if (selected->text(0) == tr("Yes"))
   {
     _void->setEnabled(FALSE);
     _delete->setEnabled(TRUE);
@@ -221,15 +223,15 @@ void viewAPCheckRun::sHandleItemSelection(Q3ListViewItem *pSelected)
     _edit->setEnabled(FALSE);
     _postCheck->setEnabled(FALSE);
   }
-  else if (pSelected->text(0) == tr("No"))
+  else if (selected->text(0) == tr("No"))
   {
     _void->setEnabled(TRUE);
     _delete->setEnabled(FALSE);
     _replace->setEnabled(FALSE);
     _printCheck->setEnabled(TRUE);
 
-    _edit->setEnabled((pSelected->text(1) == tr("Yes")) && (pSelected->text(2) == tr("No")));
-    _postCheck->setEnabled((pSelected->text(2) == tr("Yes")) && (_privleges->check("PostPayments")));
+    _edit->setEnabled((selected->text(1) == tr("Yes")) && (selected->text(2) == tr("No")));
+    _postCheck->setEnabled((selected->text(2) == tr("Yes")) && (_privleges->check("PostPayments")));
   }
 }
 
@@ -286,7 +288,7 @@ void viewAPCheckRun::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *header = NULL;
+    XTreeWidgetItem *header = NULL;
     int           apchkid = -1;
 
     do
@@ -294,7 +296,7 @@ void viewAPCheckRun::sFillList()
       if (q.value("apchkid").toInt() != apchkid)
       {
         apchkid = q.value("apchkid").toInt();
-        header = new XListViewItem( _apchk, _apchk->lastItem(), apchkid, q.value("misc").toInt(),
+        header = new XTreeWidgetItem( _apchk, header, apchkid, q.value("misc").toInt(),
                                     q.value("f_void"), q.value("f_misc"),
                                     q.value("f_printed"), q.value("number"),
                                     q.value("description"), q.value("f_checkdate"),
@@ -302,7 +304,7 @@ void viewAPCheckRun::sFillList()
       }
       else if (header)
       {
-        XListViewItem *item = new XListViewItem( header, apchkid, 0);
+        XTreeWidgetItem *item = new XTreeWidgetItem( header, apchkid, 0);
         item->setText(3, q.value("number"));
         item->setText(4, q.value("description"));
         item->setText(6, q.value("f_amount"));

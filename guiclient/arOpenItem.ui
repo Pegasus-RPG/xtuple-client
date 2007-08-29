@@ -739,7 +739,7 @@
          </widget>
         </item>
         <item>
-         <widget class="XListView" name="_arapply" >
+         <widget class="XTreeWidget" name="_arapply" >
           <property name="sizePolicy" >
            <sizepolicy>
             <hsizetype>7</hsizetype>
@@ -802,9 +802,9 @@
    <header>glcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

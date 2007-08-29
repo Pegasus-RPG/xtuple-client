@@ -117,11 +117,6 @@
 #include "dspSummarizedBankrecHistory.h"
 #include "rptSummarizedBankrecHistory.h"
 
-#include "dspIncomeStatement.h"
-#include "rptIncomeStatement.h"
-#include "dspBalanceSheet.h"
-#include "rptBalanceSheet.h"
-
 #include "budgets.h"
 #include "maintainBudget.h"
 #include "forwardUpdateAccounts.h"
@@ -197,15 +192,6 @@ moduleGL::moduleGL(OpenMFGGUIClient *Pparent) :
     { "gl.viewFinancialReport",	  tr("View Financial Report..."),	SLOT(sViewFinancialReport()),		financialReportsMenu,		_privleges->check("ViewFinancialReports"),   new QPixmap(":/images/viewFinancialReport.png"), toolBar, true},
     { "gl.dspTrialBalances",	  tr("View Trial Balances..."),		SLOT(sDspTrialBalances()),		financialReportsMenu,		_privleges->check("ViewTrialBalances"),	   new QPixmap(":/images/viewTrialBalance.png"), toolBar,  true},
     { "separator",		  NULL,					NULL,					financialReportsMenu,		true,					       NULL, NULL, true},
-/*
-    { "menu",			  tr("Legacy Displays"),		(char*)financialReportsDisplaysMenu,	financialReportsMenu,		true,					       NULL, NULL, true},
-    { "gl.dspIncomeStatement",	  tr("Income Statement..."),		SLOT(sDspIncomeStatement()),		financialReportsDisplaysMenu,	_privleges->check("ViewFinancialReports"),     NULL, NULL, true},
-    { "gl.dspBalanceSheet",	  tr("Balance Sheet..."),		SLOT(sDspBalanceSheet()),		financialReportsDisplaysMenu,	_privleges->check("ViewFinancialReports"),     NULL, NULL, true},
-    { "menu",			  tr("Legacy Reports"),			(char*)financialReportsReportsMenu,	financialReportsMenu,		true,					       NULL, NULL, true},
-  //{ "gl.rptTrialBalances",      tr("Trial Balances..."),             	SLOT(sRptTrialBalances()),		financialReportsReportsMenu,	_privleges->check("ViewTrialBalances"), NULL, NULL, true},
-    { "gl.rptIncomeStatement",	  tr("Income Statement..."),		SLOT(sRptIncomeStatement()),		financialReportsReportsMenu,	_privleges->check("ViewFinancialReports"),     NULL, NULL, true},
-    { "gl.rptBalanceSheet",	  tr("Balance Sheet..."),		SLOT(sRptBalanceSheet()),		financialReportsReportsMenu,	_privleges->check("ViewFinancialReports"),     NULL, NULL, true},
-*/
 
     { "menu",			tr("Budget"),		(char*)budgetMenu,	 mainMenu,	true,	NULL, NULL, true},
     { "gl.maintainBudget",	tr("New Budget..."),	SLOT(sMaintainBudget()), budgetMenu,	_privleges->check("MaintainBudgets"),	NULL, NULL, true},
@@ -560,26 +546,6 @@ void moduleGL::sRptSummarizedBankrecHistory()
 void moduleGL::sRptBankrecHistory()
 {
   rptBankrecHistory(parent, "", TRUE).exec();
-}
-
-void moduleGL::sDspIncomeStatement()
-{
-  omfgThis->handleNewWindow(new dspIncomeStatement());
-}
-
-void moduleGL::sDspBalanceSheet()
-{
-  omfgThis->handleNewWindow(new dspBalanceSheet());
-}
-
-void moduleGL::sRptIncomeStatement()
-{
-  rptIncomeStatement(parent, "", TRUE).exec();
-}
-
-void moduleGL::sRptBalanceSheet()
-{
-  rptBalanceSheet(parent, "", TRUE).exec();
 }
 
 void moduleGL::sBudgets()

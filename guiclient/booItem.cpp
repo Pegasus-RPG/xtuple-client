@@ -61,60 +61,29 @@
 #include <qmessagebox.h>
 #include "booitemImage.h"
 
-/*
- *  Constructs a booItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+static char *costReportTypes[] = { "D", "O", "N" };
+
 booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_runTime, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-    connect(_runTimePer, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-    connect(_prodUOM, SIGNAL(textChanged(const QString&)), _prodUOM2, SLOT(setText(const QString&)));
-    connect(_stdopn, SIGNAL(newID(int)), this, SLOT(sHandleStdopn(int)));
-    connect(_fixedFont, SIGNAL(toggled(bool)), this, SLOT(sHandleFont(bool)));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_invProdUOMRatio, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
-    connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
-    connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
-    connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
-    connect(_booimage, SIGNAL(itemSelected(int)), _editImage, SLOT(animateClick()));
-    connect(_booimage, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
-    connect(_booimage, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-booItem::~booItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void booItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-static char *costReportTypes[] = { "D", "O", "N" };
-
-void booItem::init()
-{
+  // signals and slots connections
+  connect(_runTime, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
+  connect(_runTimePer, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
+  connect(_prodUOM, SIGNAL(textChanged(const QString&)), _prodUOM2, SLOT(setText(const QString&)));
+  connect(_stdopn, SIGNAL(newID(int)), this, SLOT(sHandleStdopn(int)));
+  connect(_fixedFont, SIGNAL(toggled(bool)), this, SLOT(sHandleFont(bool)));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_invProdUOMRatio, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
+  connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
+  connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
+  connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
+  connect(_booimage, SIGNAL(itemSelected(int)), _editImage, SLOT(animateClick()));
+  connect(_booimage, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
+  connect(_booimage, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
   _booitemid = -1;
   _item->setReadOnly(TRUE);
 
@@ -126,14 +95,14 @@ void booItem::init()
   _prodUOM->setType(XComboBox::UOMs);
 
   _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
-                     "FROM wrkcnt "
-                     "ORDER BY wrkcnt_code" );
+		     "FROM wrkcnt "
+		     "ORDER BY wrkcnt_code" );
 
   _stdopn->populate( "SELECT -1, TEXT('None') AS stdopn_number "
-                     "UNION "
-                     "SELECT stdopn_id, stdopn_number "
-                     "FROM stdopn "
-                     "ORDER BY stdopn_number" );
+		     "UNION "
+		     "SELECT stdopn_id, stdopn_number "
+		     "FROM stdopn "
+		     "ORDER BY stdopn_number" );
 
   _setupReport->insertItem(tr("Direct Labor"));
   _setupReport->insertItem(tr("Overhead"));
@@ -155,6 +124,16 @@ void booItem::init()
   // hide the Allow Pull Through option as it doesn't perform
   // any function at this time.
   _pullThrough->hide();
+}
+
+booItem::~booItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void booItem::languageChange()
+{
+  retranslateUi(this);
 }
 
 enum SetResponse booItem::set(ParameterList &pParams)

@@ -57,8 +57,8 @@
 
 #include "dspStandardOperationsByWorkCenter.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "standardOperation.h"
 #include "rptStandardOperationsByWorkCenter.h"
@@ -78,7 +78,7 @@ dspStandardOperationsByWorkCenter::dspStandardOperationsByWorkCenter(QWidget* pa
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_stdopn, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_stdopn, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -101,7 +101,7 @@ void dspStandardOperationsByWorkCenter::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspStandardOperationsByWorkCenter::init()
 {
@@ -127,7 +127,7 @@ void dspStandardOperationsByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspStandardOperationsByWorkCenter::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspStandardOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

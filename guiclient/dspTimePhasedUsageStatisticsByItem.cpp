@@ -57,9 +57,9 @@
 
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <datecluster.h>
 #include <parameter.h>
 #include "dspInventoryHistoryByItem.h"
@@ -81,7 +81,7 @@ dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* 
     // signals and slots connections
     connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_usage, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
     connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
@@ -108,7 +108,7 @@ void dspTimePhasedUsageStatisticsByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspTimePhasedUsageStatisticsByItem::init()
 {
@@ -140,7 +140,7 @@ void dspTimePhasedUsageStatisticsByItem::sViewTransactions()
     params.append("endDate", _columnDates[_column - 2].endDate);
     params.append("run");
 
-    QString type = _usage->selectedItem()->text(0);
+    QString type = _usage->currentItem()->text(0);
     if (type == "Received")
       params.append("transtype", "R");
     else if (type == "Issued")
@@ -158,7 +158,7 @@ void dspTimePhasedUsageStatisticsByItem::sViewTransactions()
   }
 }
 
-void dspTimePhasedUsageStatisticsByItem::sPopulateMenu(Q3PopupMenu *menu, Q3ListViewItem *, int pColumn)
+void dspTimePhasedUsageStatisticsByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *, int pColumn)
 {
   int menuItem;
 
@@ -175,42 +175,35 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
   {
     _columnDates.clear();
     _usage->clear();
-    while (_usage->columns() > 2)
-      _usage->removeColumn(2);
+    _usage->setColumnCount(2);
 
     QString sql("SELECT itemsite_id, warehous_code");
 
     int columns = 1;
-    XListViewItem *cursor = _periods->firstChild();
-    if (cursor != 0)
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    for (int i = 0; i < selected.size(); i++)
     {
-      do
-      {
-        if (_periods->isSelected(cursor))
-        {
-          sql += QString( ", formatQty(summTransR(itemsite_id, %1)) AS r_bucket%2,"
-                          "formatQty(summTransI(itemsite_id, %3)) AS i_bucket%4,"
-                          "formatQty(summTransS(itemsite_id, %5)) AS s_bucket%6,"
-                          "formatQty(summTransC(itemsite_id, %7)) AS c_bucket%8," )
-                 .arg(cursor->id())
-                 .arg(columns)
-                 .arg(cursor->id())
-                 .arg(columns)
-                 .arg(cursor->id())
-                 .arg(columns)
-                 .arg(cursor->id())
-                 .arg(columns);
+      PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+      sql += QString( ", formatQty(summTransR(itemsite_id, %1)) AS r_bucket%2,"
+		      "formatQty(summTransI(itemsite_id, %3)) AS i_bucket%4,"
+		      "formatQty(summTransS(itemsite_id, %5)) AS s_bucket%6,"
+		      "formatQty(summTransC(itemsite_id, %7)) AS c_bucket%8," )
+	     .arg(cursor->id())
+	     .arg(columns)
+	     .arg(cursor->id())
+	     .arg(columns)
+	     .arg(cursor->id())
+	     .arg(columns)
+	     .arg(cursor->id())
+	     .arg(columns);
 
-          sql += QString("formatQty(summTransA(itemsite_id, %1)) AS a_bucket%2")
-                 .arg(cursor->id())
-                 .arg(columns++);
+      sql += QString("formatQty(summTransA(itemsite_id, %1)) AS a_bucket%2")
+	     .arg(cursor->id())
+	     .arg(columns++);
 
-          _usage->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+      _usage->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
 
-          _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-        }
-      }
-      while ((cursor = cursor->nextSibling()) != 0);
+      _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
     }
 
     sql += QString( " FROM itemsite, warehous "
@@ -231,17 +224,17 @@ void dspTimePhasedUsageStatisticsByItem::sCalculate()
     {
       do
       {
-        XListViewItem *received;
-        XListViewItem *issued;
-        XListViewItem *sold;
-        XListViewItem *scrap;
-        XListViewItem *adjustments;
+        XTreeWidgetItem *received;
+        XTreeWidgetItem *issued;
+        XTreeWidgetItem *sold;
+        XTreeWidgetItem *scrap;
+        XTreeWidgetItem *adjustments;
 
-        received    = new XListViewItem(_usage,           q.value("itemsite_id").toInt(), QVariant(tr("Received")),    q.value("warehous_code") );
-        issued      = new XListViewItem(_usage, received, q.value("itemsite_id").toInt(), QVariant(tr("Issued")),      q.value("warehous_code") );
-        sold        = new XListViewItem(_usage, issued,   q.value("itemsite_id").toInt(), QVariant(tr("Sold")),        q.value("warehous_code") );
-        scrap       = new XListViewItem(_usage, sold,     q.value("itemsite_id").toInt(), QVariant(tr("Scrap")),       q.value("warehous_code") );
-        adjustments = new XListViewItem(_usage, scrap,    q.value("itemsite_id").toInt(), QVariant(tr("Adjustments")), q.value("warehous_code") );
+        received    = new XTreeWidgetItem(_usage,           q.value("itemsite_id").toInt(), QVariant(tr("Received")),    q.value("warehous_code") );
+        issued      = new XTreeWidgetItem(_usage, received, q.value("itemsite_id").toInt(), QVariant(tr("Issued")),      q.value("warehous_code") );
+        sold        = new XTreeWidgetItem(_usage, issued,   q.value("itemsite_id").toInt(), QVariant(tr("Sold")),        q.value("warehous_code") );
+        scrap       = new XTreeWidgetItem(_usage, sold,     q.value("itemsite_id").toInt(), QVariant(tr("Scrap")),       q.value("warehous_code") );
+        adjustments = new XTreeWidgetItem(_usage, scrap,    q.value("itemsite_id").toInt(), QVariant(tr("Adjustments")), q.value("warehous_code") );
 
         for (int bucketCounter = 1; bucketCounter < columns; bucketCounter++)
         {

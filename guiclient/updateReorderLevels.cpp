@@ -117,7 +117,7 @@ void updateReorderLevels::init()
 
 void updateReorderLevels::sUpdate()
 {
-  if (_periods->firstChild())
+  if (_periods->topLevelItemCount() > 0)
   {
     QString sql;
 
@@ -156,7 +156,7 @@ void updateReorderLevels::sUpdate()
 
 void updateReorderLevels::sSubmit()
 {
-  if (_periods->firstChild())
+  if (_periods->topLevelItemCount() > 0)
   {
     ParameterList params;
     params.append("action_name", "UpdateReorderLevel");

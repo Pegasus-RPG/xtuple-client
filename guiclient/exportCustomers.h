@@ -72,7 +72,7 @@ public:
     ~exportCustomers();
 
 public slots:
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sView();
     virtual void sMarkAsExported();
     virtual void sFillList();

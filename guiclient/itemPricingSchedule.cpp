@@ -356,10 +356,7 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
   else
     _ipsitem->populate(q, true, pIpsitemid);
 
-  if(_ipsitem->firstChild())
-    _currency->setEnabled(false);
-  else
-    _currency->setEnabled(true);
+  _currency->setEnabled(_ipsitem->topLevelItemCount() <= 0);
 }
 
 void itemPricingSchedule::populate()

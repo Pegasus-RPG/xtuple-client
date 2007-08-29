@@ -57,7 +57,7 @@
 
 #include "maintainItemCosts.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QStatusBar>
@@ -84,9 +84,9 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFla
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemcost, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_itemcost, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_itemcost, SIGNAL(selectionChanged()), this, SLOT(sSelectionChanged()));
+    connect(_itemcost, SIGNAL(itemSelectionChanged()), this, SLOT(sSelectionChanged()));
 
     statusBar()->hide();
     
@@ -141,9 +141,9 @@ enum SetResponse maintainItemCosts::set(const ParameterList &pParams)
   return NoError;
 }
 
-void maintainItemCosts::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void maintainItemCosts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-  if (((XListViewItem *)pSelected)->id() == -1)
+  if (((XTreeWidgetItem *)pSelected)->id() == -1)
     return;
 
   int menuItem;
@@ -181,7 +181,7 @@ void maintainItemCosts::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelec
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
-  if (((XListViewItem *)pSelected)->altId() == 0)
+  if (((XTreeWidgetItem *)pSelected)->altId() == 0)
   {
     menuItem = pMenu->insertItem(tr("Delete Cost..."), this, SLOT(sDelete()), 0);
     if (!_privleges->check("DeleteCosts"))
@@ -411,11 +411,15 @@ void maintainItemCosts::sFillList()
     }
     convert.exec();
     if (convert.first())
-	new XListViewItem( _itemcost, _itemcost->lastItem(), -1,
-			   QVariant(tr("Totals")), "", formatCost(standardCost),
-			   convert.value("baseConcat"), "",
-			   baseKnown ? formatCost(actualCost) : tr("?????"),
-			   convert.value("currConcat"));
+	new XTreeWidgetItem(_itemcost,
+			    _itemcost->topLevelItem(_itemcost->topLevelItemCount() - 1), -1,
+			    QVariant(tr("Totals")),
+			    "",
+			    formatCost(standardCost),
+			    convert.value("baseConcat"),
+			    "",
+			    baseKnown ? formatCost(actualCost) : tr("?????"),
+			    convert.value("currConcat"));
     else if (convert.lastError().type() != QSqlError::NoError)
 	systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
 

@@ -57,9 +57,9 @@
 
 #include "dspItemsByProductCategory.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <parameter.h>
 #include "item.h"
 #include "rptItemsByProductCategory.h"
@@ -78,7 +78,7 @@ dspItemsByProductCategory::dspItemsByProductCategory(QWidget* parent, const char
     (void)statusBar();
 
     // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -103,7 +103,7 @@ void dspItemsByProductCategory::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemsByProductCategory::init()
 {
@@ -133,7 +133,7 @@ void dspItemsByProductCategory::sPrint()
   newdlg.set(params);
 }
 
-void dspItemsByProductCategory::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspItemsByProductCategory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

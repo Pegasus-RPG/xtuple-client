@@ -57,11 +57,11 @@
 
 #include "dspUsageStatisticsByWarehouse.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "dspInventoryHistoryByItem.h"
 #include "rptUsageStatisticsByWarehouse.h"
 
@@ -79,7 +79,7 @@ dspUsageStatisticsByWarehouse::dspUsageStatisticsByWarehouse(QWidget* parent, co
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_usage, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
@@ -110,7 +110,7 @@ void dspUsageStatisticsByWarehouse::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspUsageStatisticsByWarehouse::init()
 {
@@ -171,7 +171,7 @@ void dspUsageStatisticsByWarehouse::sViewTransactions()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspUsageStatisticsByWarehouse::sPopulateMenu(Q3PopupMenu *menuThis, Q3ListViewItem *, int pColumn)
+void dspUsageStatisticsByWarehouse::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *, int pColumn)
 {
   int intMenuItem;
 

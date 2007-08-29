@@ -57,8 +57,8 @@
 
 #include "dspLaborVarianceByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptLaborVarianceByItem.h"
 #include "OpenMFGGUIClient.h"
@@ -77,7 +77,7 @@ dspLaborVarianceByItem::dspLaborVarianceByItem(QWidget* parent, const char* name
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_woopervar, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
     connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
@@ -105,7 +105,7 @@ void dspLaborVarianceByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspLaborVarianceByItem::init()
 {
@@ -140,7 +140,7 @@ void dspLaborVarianceByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspLaborVarianceByItem::sPopulateMenu(Q3PopupMenu *)
+void dspLaborVarianceByItem::sPopulateMenu(QMenu *)
 {
 }
 

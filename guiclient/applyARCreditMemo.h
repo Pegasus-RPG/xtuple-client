@@ -86,7 +86,7 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void sSearchDocNumChanged();
+    virtual void sSearchDocNumChanged(const QString &);
 
 
 private:

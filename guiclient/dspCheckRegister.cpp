@@ -57,7 +57,7 @@
 
 #include "dspCheckRegister.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSqlError>
@@ -88,7 +88,7 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_apchk, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_apchk, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   statusBar()->hide();
   
@@ -103,7 +103,7 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   _apchk->addColumn(tr("Check Date") , _dateColumn,     Qt::AlignCenter );
   _apchk->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight  );
   _apchk->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight  );
-  _apchk->setSortColumn(4);
+  _apchk->sortByColumn(4);
 
   if (omfgThis->singleCurrency())
   {
@@ -168,7 +168,7 @@ void dspCheckRegister::sFillList()
   _apchk->clear();
   if (q.first())
   {
-    XListViewItem *header = NULL;
+    XTreeWidgetItem *header = NULL;
     int           apchkid = -1;
 
     do
@@ -176,7 +176,7 @@ void dspCheckRegister::sFillList()
       if (q.value("apchkid").toInt() != apchkid)
       {
         apchkid = q.value("apchkid").toInt();
-        header = new XListViewItem( _apchk, _apchk->lastItem(), apchkid, q.value("extra").toInt(),
+        header = new XTreeWidgetItem( _apchk, header, apchkid, q.value("extra").toInt(),
                                     q.value("f_void"), q.value("f_misc"),
                                     q.value("f_printed"), q.value("f_posted"), q.value("number"),
                                     q.value("description"), q.value("f_checkdate"),
@@ -184,7 +184,7 @@ void dspCheckRegister::sFillList()
       }
       else if (header)
       {
-        XListViewItem *item = new XListViewItem( header, apchkid, 0);
+        XTreeWidgetItem *item = new XTreeWidgetItem( header, apchkid, 0);
         item->setText(4, q.value("number"));
         item->setText(5, q.value("description"));
         item->setText(7, q.value("f_amount"));
@@ -194,7 +194,7 @@ void dspCheckRegister::sFillList()
   }
 
   if(_showDetail->isChecked())
-    _apchk->openAll();
+    _apchk->expandAll();
 
   q.prepare( "SELECT formatMoney(SUM(currToCurr(apchk_curr_id, bankaccnt_curr_id,"
 	     "	                                apchk_amount, apchk_checkdate))) AS f_amount,"
@@ -228,7 +228,7 @@ bool dspCheckRegister::checkParams()
 }
 
 
-void dspCheckRegister::sPopulateMenu( Q3PopupMenu * pMenu )
+void dspCheckRegister::sPopulateMenu( QMenu * pMenu )
 {
   int menuItem;
 

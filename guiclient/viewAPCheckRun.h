@@ -81,7 +81,7 @@ public slots:
     virtual void sReplaceAll();
     virtual void sPrint();
     virtual void sPost();
-    virtual void sHandleItemSelection( Q3ListViewItem * pSelected );
+    virtual void sHandleItemSelection();
     virtual void sFillList(int);
     virtual void sFillList();
     virtual void sPrintEditList();

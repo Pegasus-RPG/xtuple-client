@@ -81,7 +81,7 @@ public slots:
     virtual void sDelete();
     virtual void sNewCurrency();
     virtual void sFillList();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void setBaseCurrency();
 
 protected:

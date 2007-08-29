@@ -57,386 +57,194 @@
 
 #include "billingEditList.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMenu>
+#include <QMessageBox>
+
 #include <openreports.h>
-#include <qworkspace.h>
+
 #include "selectOrderForBilling.h"
 #include "selectBillingQty.h"
 #include "printInvoices.h"
 
-/*
- *  Constructs a billingEditList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 billingEditList::billingEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_cobill, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-billingEditList::~billingEditList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void billingEditList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
-
-void billingEditList::init()
-
-{
-
-  statusBar()->hide();
-
-  
+  connect(_cobill, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _cobill->setRootIsDecorated(TRUE);
-
-  _cobill->addColumn(tr("Document #"),       (_itemColumn+ _cobill->treeStepSize()),  Qt::AlignLeft   );
-
+  _cobill->addColumn(tr("Document #"),       (_itemColumn+ _cobill->indentation()),  Qt::AlignLeft   );
   _cobill->addColumn(tr("Order #"),          _orderColumn,                            Qt::AlignLeft   );
-
   _cobill->addColumn(tr("Cust./Item #"),     _itemColumn,                             Qt::AlignLeft   );
-
   _cobill->addColumn(tr("Name/Description"), -1,                                      Qt::AlignLeft   );
-
   _cobill->addColumn(tr("UOM"),              _uomColumn,                              Qt::AlignCenter );
-
   _cobill->addColumn(tr("Qty. to Bill"),     _qtyColumn,                              Qt::AlignRight  );
-
   _cobill->addColumn(tr("Price"),            _costColumn,                             Qt::AlignRight  );
-
   _cobill->addColumn(tr("Ext. Price"),       _moneyColumn,                            Qt::AlignRight  );
-
-
 
   connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
 
-
-
   sFillList();
-
 }
 
+billingEditList::~billingEditList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
 
+void billingEditList::languageChange()
+{
+  retranslateUi(this);
+}
 
 void billingEditList::sEditBillingOrd()
-
 {
-
   ParameterList params;
-
   params.append("mode", "edit");
-
   params.append("sohead_id", _cobill->id());
 
-
-
   selectOrderForBilling *newdlg = new selectOrderForBilling();
-
   newdlg->set(params);
-
   omfgThis->handleNewWindow(newdlg);
-
 }
-
-
 
 void billingEditList::sCancelBillingOrd()
-
 {
-
   if ( QMessageBox::critical( this, tr("Cancel Billing"),
-
                               tr("Are you sure that you want to cancel billing for the selected order?"),
-
                               tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-
   {
-
     q.prepare( "SELECT cancelBillingSelection(cobmisc_id) AS result "
-
                "FROM cobmisc "
-
                "WHERE (cobmisc_cohead_id=:sohead_id);" );
-
     q.bindValue(":sohead_id", _cobill->id());
-
     q.exec();
 
-
-
     sFillList();
-
   }
-
 }
-
-
 
 void billingEditList::sEditBillingQty()
-
 { 
-
   ParameterList params;
-
   params.append("soitem_id", _cobill->altId());
 
-
-
   selectBillingQty newdlg(this, "", TRUE);
-
   newdlg.set(params);
 
-
-
   if (newdlg.exec() != QDialog::Rejected)
-
     sFillList();
-
 }
-
-
 
 void billingEditList::sCancelBillingQty()
-
 {
-
 }
 
-
-
-void billingEditList::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
-
+void billingEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
-
   _orderid = _cobill->id();
 
-
-
-  if (((XListViewItem *)pSelected)->altId() == -2)
-
+  if (((XTreeWidgetItem *)pSelected)->altId() == -2)
   {
-
     _itemtype = 1;
-
     pMenu->insertItem("Edit Billing...", this, SLOT(sEditBillingOrd()), 0);
-
     pMenu->insertItem("Cancel Billing...", this, SLOT(sCancelBillingOrd()), 0);
-
   }
-
-  else if (((XListViewItem *)pSelected)->altId() != -1)
-
+  else if (((XTreeWidgetItem *)pSelected)->altId() != -1)
   {
-
     _itemtype = 2;
-
     pMenu->insertItem("Edit Billing...", this, SLOT(sEditBillingQty()), 0);
-
     pMenu->insertItem("Cancel Billing...", this, SLOT(sCancelBillingQty()), 0);
-
   }
-
 }
-
-
 
 void billingEditList::sFillList()
-
 {
-
   _cobill->clear();
 
-
-
   q.exec("SELECT * FROM billingEditList;");
-
   if (q.first())
-
   {
-
     int           thisOrderid;
-
     int           orderid    = -9999;
-
-    XListViewItem *orderLine = NULL;
-
-    XListViewItem *lastLine  = NULL;
-
-    XListViewItem *selected  = NULL;
-
-
+    XTreeWidgetItem *orderLine = NULL;
+    XTreeWidgetItem *lastLine  = NULL;
+    XTreeWidgetItem *selected  = NULL;
 
 //  Fill the list with the query contents
-
     do
-
     {
-
       thisOrderid = q.value("orderid").toInt();
 
-
-
 //  Check to see if this a new order number
-
       if (thisOrderid != orderid)
-
       {
-
 //  New order number, make a new list item header
-
         orderid  = thisOrderid;
-
         lastLine = NULL;
 
-
-
-        XListViewItem *thisLine = new XListViewItem( _cobill, orderLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
-
+        XTreeWidgetItem *thisLine = new XTreeWidgetItem( _cobill, orderLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
                                                      q.value("documentnumber"), q.value("ordernumber"),
-
                                                      q.value("cust_number"), q.value("billtoname") );
-
         orderLine = thisLine;
 
-
-
 //  Add the distribution line
-
-        thisLine = new XListViewItem( orderLine, q.value("orderid").toInt(), -1,
-
+        thisLine = new XTreeWidgetItem( orderLine, q.value("orderid").toInt(), -1,
                                       "", "",
-
                                       q.value("sence"), q.value("account"),
-
                                       "", "", "", q.value("extprice") );
-
         if (q.value("account") == "Not Assigned")
-
         {
-
-          thisLine->setColor("red");
-
-          orderLine->setColor("red");
-
+          thisLine->setTextColor("red");
+          orderLine->setTextColor("red");
         }
-
-
 
 //  If we are looking for a selected order and this is it, cache it
-
         if (thisOrderid == _orderid)
-
           selected = orderLine;
-
       }
-
       else
-
       {
-
-        XListViewItem *itemLine = new XListViewItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
-
+        XTreeWidgetItem *itemLine = new XTreeWidgetItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
                                                      "", "",
-
                                                      q.value("item"), q.value("itemdescrip"),
-
                                                      q.value("item_invuom"), q.value("qtytobill"),
-
                                                      q.value("price"), q.value("extprice") );
 
-
-
 //  Add the distribution line
-
-        XListViewItem *thisLine = new XListViewItem( itemLine, q.value("orderid").toInt(), -1,
-
+        XTreeWidgetItem *thisLine = new XTreeWidgetItem( itemLine, q.value("orderid").toInt(), -1,
                                                      "", "",
-
                                                      q.value("sence"), q.value("account"),
-
                                                      "", "", "", q.value("extprice") );
-
         if (q.value("account") == "Not Assigned")
-
         {
-
-          thisLine->setColor("red");
-
-          itemLine->setColor("red");
-
-          orderLine->setColor("red");
-
+          thisLine->setTextColor("red");
+          itemLine->setTextColor("red");
+          orderLine->setTextColor("red");
         }
 
-
-
         lastLine = itemLine;
-
       }
-
     }
-
     while (q.next());
 
-
-
 //  Select and show the select item, if any
-
     if (selected != NULL)
-
     {
-
-      _cobill->setSelected(selected, TRUE);
-
-      _cobill->ensureItemVisible(selected);
-
+      _cobill->setCurrentItem(selected);
+      _cobill->scrollToItem(selected);
     }
-
   }
-
 }
-
-
 
 void billingEditList::sPrint()
-
 {
-
   orReport report("BillingEditList");
-
   if (report.isValid())
-
     report.print();
-
   else
-
     report.reportError(this);
-
 }
-

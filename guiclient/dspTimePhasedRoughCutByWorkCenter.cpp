@@ -57,8 +57,8 @@
 
 #include "dspTimePhasedRoughCutByWorkCenter.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <datecluster.h>
 #include <parameter.h>
 #include "rptTimePhasedRoughCutByWorkCenter.h"
@@ -133,43 +133,35 @@ void dspTimePhasedRoughCutByWorkCenter::sFillList()
 {
   _columnDates.clear();
   _roughCut->clear();
-  while (_roughCut->columns() > 1)
-    _roughCut->removeColumn(1);
+  _roughCut->setColumnCount(1);
 
   QString sql("SELECT");
   int     columns = 1;
   bool    show    = FALSE;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++, columns++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        if (show)
-          sql += ",";
-        else
-          show = TRUE;
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    if (show)
+      sql += ",";
+    else
+      show = TRUE;
 
-        sql += QString( " formatTime(SUM(plannedSetupTime(wrkcnt_id, %1))) AS setup%2,"
-                        " formatCost(SUM(plannedSetupTime(wrkcnt_id, %3) * wrkcnt_setuprate / 60.0)) AS setupcost%4,"
-                        " formatTime(SUM(plannedRunTime(wrkcnt_id, %5))) AS run%6,"
-                        " formatCost(SUM(plannedRunTime(wrkcnt_id, %7) * wrkcnt_runrate / 60.0)) AS runcost%8" )
-               .arg(cursor->id())
-               .arg(columns)
-               .arg(cursor->id())
-               .arg(columns)
-               .arg(cursor->id())
-               .arg(columns)
-               .arg(cursor->id())
-               .arg(columns++);
-    
-        _roughCut->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
+    sql += QString( " formatTime(SUM(plannedSetupTime(wrkcnt_id, %1))) AS setup%2,"
+		    " formatCost(SUM(plannedSetupTime(wrkcnt_id, %3) * wrkcnt_setuprate / 60.0)) AS setupcost%4,"
+		    " formatTime(SUM(plannedRunTime(wrkcnt_id, %5))) AS run%6,"
+		    " formatCost(SUM(plannedRunTime(wrkcnt_id, %7) * wrkcnt_runrate / 60.0)) AS runcost%8" )
+	   .arg(cursor->id())
+	   .arg(columns)
+	   .arg(cursor->id())
+	   .arg(columns)
+	   .arg(cursor->id())
+	   .arg(columns)
+	   .arg(cursor->id())
+	   .arg(columns);
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _roughCut->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM wrkcnt ";
@@ -193,10 +185,10 @@ void dspTimePhasedRoughCutByWorkCenter::sFillList()
     q.exec();
     if (q.first())
     {
-      XListViewItem *setup     = new XListViewItem(_roughCut, 0, QVariant(tr("Setup Time")), q.value("setup1"));
-      XListViewItem *setupCost = new XListViewItem(_roughCut, setup, 0, QVariant(tr("Setup Cost")), q.value("setupcost1"));
-      XListViewItem *run       = new XListViewItem(_roughCut, setupCost,  0, QVariant(tr("Run Time")), q.value("run1"));
-      XListViewItem *runCost   = new XListViewItem(_roughCut, run, 0, QVariant(tr("Run Cost")), q.value("runcost1"));
+      XTreeWidgetItem *setup     = new XTreeWidgetItem(_roughCut, 0, QVariant(tr("Setup Time")), q.value("setup1"));
+      XTreeWidgetItem *setupCost = new XTreeWidgetItem(_roughCut, setup, 0, QVariant(tr("Setup Cost")), q.value("setupcost1"));
+      XTreeWidgetItem *run       = new XTreeWidgetItem(_roughCut, setupCost,  0, QVariant(tr("Run Time")), q.value("run1"));
+      XTreeWidgetItem *runCost   = new XTreeWidgetItem(_roughCut, run, 0, QVariant(tr("Run Cost")), q.value("runcost1"));
                        
       for (int column = 1; column < columns; column++)
       {

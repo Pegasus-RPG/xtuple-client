@@ -85,7 +85,7 @@ protected slots:
     virtual void sView();
     virtual void sFillList();
     virtual void sDelete();
-    virtual void sPopulateMenu( Q3PopupMenu * );
+    virtual void sPopulateMenu( QMenu * );
     virtual void sPrint();
 
 

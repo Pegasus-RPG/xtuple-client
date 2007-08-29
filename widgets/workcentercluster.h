@@ -56,76 +56,32 @@
  */
 
 // workcentercluster.h
-// Copyright (c) 2002-2007, OpenMFG, LLC
+// Copyright (c) 2007, OpenMFG, LLC
 
 #ifndef __WORKCENTERCLUSTER_H__
 #define __WORKCENTERCLUSTER_H__
 
-#include "xlineedit.h"
+#include "virtualCluster.h"
 
-#include "OpenMFGWidgets.h"
-
-class QLabel;
-class QPushButton;
-
-class WorkCenterCluster;
-
-class OPENMFGWIDGETS_EXPORT WorkCenterLineEdit : public XLineEdit
+class OPENMFGWIDGETS_EXPORT WorkCenterLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT
-
-  friend class WorkCenterCluster;
 
   public:
     WorkCenterLineEdit(QWidget*, const char* = 0);
 
-    inline int id() const { return _id; }
-    inline const QString & workcenter() const { return _workcenter; }
-
-  public slots:
-    void setId(int);
     void setWorkCenter(const QString &);
-    void clear();
-    void sParse();
-
-  signals:
-    void valid(bool);
-    void newId(int);
-
-  private:
-    int _id;
-    QString _workcenter;
 };
 
-class OPENMFGWIDGETS_EXPORT WorkCenterCluster : public QWidget
+class OPENMFGWIDGETS_EXPORT WorkCenterCluster : public VirtualCluster
 {
   Q_OBJECT
 
   public:
     WorkCenterCluster(QWidget*, const char* = 0);
+    inline void setWorkCenter(const QString & pWorkCenter) { setNumber(pWorkCenter); }
+    inline const QString workcenter() const { return _number->text(); }
 
-    inline void setId(int pId)  { _workcenter->setId(pId);   }
-    inline int  id()      const { return _workcenter->id();  }
-
-    inline void setWorkCenter(const QString & pWorkCenter) { _workcenter->setWorkCenter(pWorkCenter); }
-    inline const QString & workcenter() const { return _workcenter->workcenter(); }
-
-    inline bool isValid() const { return _workcenter->_valid; }
-
-    void setReadOnly(bool);
-
-  signals:
-    void newId(int);
-    void valid(bool);
-
-  private slots:
-    void sList();
-
-  private:
-    WorkCenterLineEdit * _workcenter;
-    QPushButton        * _list;
-    QLabel             * _label;
 };
 
 #endif
-

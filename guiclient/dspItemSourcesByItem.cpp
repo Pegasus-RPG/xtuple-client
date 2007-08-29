@@ -57,9 +57,9 @@
 
 #include "dspItemSourcesByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <parameter.h>
 #include "itemSource.h"
 #include "buyCard.h"
@@ -82,7 +82,7 @@ dspItemSourcesByItem::dspItemSourcesByItem(QWidget* parent, const char* name, Qt
     // signals and slots connections
     connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemsrc, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -105,7 +105,7 @@ void dspItemSourcesByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemSourcesByItem::init()
 {
@@ -131,7 +131,7 @@ void dspItemSourcesByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspItemSourcesByItem::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspItemSourcesByItem::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem("Edit...",           this, SLOT(sEdit()),     0 );
   menuThis->insertItem("View Buy Card...",  this, SLOT(sBuyCard()),  0 );

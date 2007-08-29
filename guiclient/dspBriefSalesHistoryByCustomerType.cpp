@@ -57,9 +57,9 @@
 
 #include "dspBriefSalesHistoryByCustomerType.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptBriefSalesHistoryByCustomerType.h"
 
@@ -170,21 +170,22 @@ void dspBriefSalesHistoryByCustomerType::sFillList()
   {
     double totalSales = 0.0;
 
+    XTreeWidgetItem *last = 0;
     do
     {
-      new XListViewItem( _sohist, _sohist->lastItem(), q.value("custtype_id").toInt(),
-                         q.value("custtype_code"), q.value("cust_name"),
-                         q.value("cohist_ordernumber"), q.value("cohist_invcnumber"),
-                         q.value("f_orderdate"), q.value("f_invcdate"),
-                         q.value("f_extended") );
+      last = new XTreeWidgetItem( _sohist, last, q.value("custtype_id").toInt(),
+			       q.value("custtype_code"), q.value("cust_name"),
+			       q.value("cohist_ordernumber"), q.value("cohist_invcnumber"),
+			       q.value("f_orderdate"), q.value("f_invcdate"),
+			       q.value("f_extended") );
 
        totalSales += q.value("extended").toDouble();
     }
     while (q.next());
 
-    new XListViewItem( _sohist, _sohist->lastItem(), -1,
-                       "", "", "", "", "", tr("Totals"),
-                       formatMoney(totalSales) );
+    last = new XTreeWidgetItem( _sohist, last, -1,
+			       "", "", "", "", "", tr("Totals"),
+			       formatMoney(totalSales) );
   }
 }
 

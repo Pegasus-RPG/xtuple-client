@@ -57,8 +57,8 @@
 
 #include "dspBriefEarnedCommissions.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptBriefEarnedCommissions.h"
 
@@ -174,7 +174,9 @@ void dspBriefEarnedCommissions::sFillList()
     q.bindValue(":salesrep_id", _salesrep->id());
     q.exec();
     if (q.first())
-      new XListViewItem( _commission, _commission->lastItem(), -1, QVariant(tr("Totals")),
+      new XTreeWidgetItem(_commission,
+			  _commission->topLevelItem(_commission->topLevelItemCount() - 1),
+			  -1, QVariant(tr("Totals")),
                          "", "", "", "", "", "",
                          q.value("extprice"), q.value("commission") );
   }

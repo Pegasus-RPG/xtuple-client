@@ -81,7 +81,7 @@ public slots:
     virtual void sReschedule();
     virtual void sDelete();
     virtual void sPrintPackingList();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu );
+    virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sFillList();
 
 protected slots:

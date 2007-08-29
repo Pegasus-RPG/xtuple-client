@@ -434,7 +434,7 @@
    <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
-   <class>Q3ListView</class>
+   <class>QTreeWidget</class>
    <extends>Q3Frame</extends>
    <header>q3listview.h</header>
   </customwidget>
@@ -450,7 +450,7 @@
   </customwidget>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XListView</extends>
+   <extends>XTreeWidget</extends>
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>

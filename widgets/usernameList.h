@@ -67,7 +67,7 @@
 
 class QLineEdit;
 class QPushButton;
-class XListView;
+class XTreeWidget;
 class ParameterList;
 
 class OPENMFGWIDGETS_EXPORT usernameList : public QDialog
@@ -80,7 +80,7 @@ class OPENMFGWIDGETS_EXPORT usernameList : public QDialog
     QLineEdit* _searchFor;
     QPushButton* _close;
     QPushButton* _select;
-    XListView* _user;
+    XTreeWidget* _user;
 
   public slots:
     virtual void set( ParameterList & pParams );

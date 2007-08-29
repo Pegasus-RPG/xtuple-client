@@ -475,7 +475,7 @@
        </widget>
       </item>
       <item>
-       <widget class="XListView" name="_plannedRE" >
+       <widget class="XTreeWidget" name="_plannedRE" >
         <property name="sizePolicy" >
          <sizepolicy>
           <hsizetype>7</hsizetype>
@@ -516,7 +516,7 @@
   </customwidget>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XListView</extends>
+   <extends>XTreeWidget</extends>
    <header>calendarTools.h</header>
    <container>0</container>
    <pixmap></pixmap>
@@ -529,9 +529,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

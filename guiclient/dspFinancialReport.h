@@ -79,7 +79,7 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sFillList();
     virtual void sPrint();
-    virtual void sPopulateMenu(Q3PopupMenu * pMenu);
+    virtual void sPopulateMenu(QMenu * pMenu);
     virtual void sFillListStatement();
     virtual void sFillListTrend();
     virtual void sFillPeriods();
@@ -91,8 +91,8 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void sCollapsed( Q3ListViewItem * item );
-    virtual void sExpanded( Q3ListViewItem * item );
+    virtual void sCollapsed( QTreeWidgetItem * item );
+    virtual void sExpanded( QTreeWidgetItem * item );
     virtual void sReportChanged(int);
 
 

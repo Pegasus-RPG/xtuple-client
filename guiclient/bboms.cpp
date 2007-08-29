@@ -57,11 +57,11 @@
 
 #include "bboms.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "bbom.h"
 #include "OpenMFGGUIClient.h"
 
@@ -199,22 +199,17 @@ void bboms::sView()
 
 void bboms::sSearch( const QString &pTarget )
 {
-  Q3ListViewItem *target;
-    
-  if (_bbom->selectedItem())
-    _bbom->setSelected(_bbom->selectedItem(), FALSE);
-    
   _bbom->clearSelection();
-    
-  target = _bbom->firstChild();
-  while ((target != NULL) && (pTarget.upper() != target->text(0).left(pTarget.length())))
-    target = target->nextSibling();
-    
-  if (target != NULL)
+  int i;
+  for (i = 0; i < _bbom->topLevelItemCount(); i++)
   {
-    _bbom->setSelected(target, TRUE);
-    _bbom->ensureItemVisible(target);
+    if (_bbom->topLevelItem(i)->text(0).startsWith(pTarget, Qt::CaseInsensitive))
+      break;
+  }
+    
+  if (i < _bbom->topLevelItemCount())
+  {
+    _bbom->setCurrentItem(_bbom->topLevelItem(i));
+    _bbom->scrollToItem(_bbom->topLevelItem(i));
   }
 }
-
-

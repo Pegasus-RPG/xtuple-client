@@ -29,9 +29,9 @@
             <number>0</number>
           </property>
           <item>
-            <widget class="XListView" name="_checks" >
+            <widget class="XTreeWidget" name="_checks" >
               <property name="selectionMode" >
-                <enum>Extended</enum>
+                <enum>QAbstractItemView::ExtendedSelection</enum>
               </property>
             </widget>
           </item>
@@ -153,9 +153,9 @@
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

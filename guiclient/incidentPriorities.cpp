@@ -57,7 +57,7 @@
 
 #include "incidentPriorities.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
@@ -81,7 +81,7 @@ incidentPriorities::incidentPriorities(QWidget* parent, const char* name, Qt::WF
   connect(_close,  SIGNAL(clicked()), this, SLOT(close()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_incidentPriorities, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_incidentPriorities, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_incidentPriorities, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_new,   SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -184,7 +184,7 @@ void incidentPriorities::sView()
   newdlg.exec();
 }
 
-void incidentPriorities::sPopulateMenu( Q3PopupMenu *pMenu)
+void incidentPriorities::sPopulateMenu( QMenu *pMenu)
 {
   int menuItem;
 

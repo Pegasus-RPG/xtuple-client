@@ -74,7 +74,7 @@
 #include "itemcluster.h"
 
 #include <xsqlquery.h>
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
 QString buildItemLineEditTitle(const unsigned int, const QString);
@@ -150,7 +150,8 @@ itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlag
     QLabel *_itemsLit = new QLabel(tr("&Items:"), this, "_itemsLit");
     Layout20->addWidget( _itemsLit );
 
-    _item = new XListView( this, "_item" );
+    _item = new XTreeWidget(this);
+    _item->setName("_item");
     _itemsLit->setBuddy( _item );
     Layout20->addWidget( _item );
 
@@ -239,7 +240,7 @@ void itemSearch::sFillList()
     XSqlQuery item(_sql);
     if (item.first())
     {
-      XListViewItem *last = NULL;
+      XTreeWidgetItem *last = NULL;
       bool          addToList;
       do
       {
@@ -258,7 +259,7 @@ void itemSearch::sFillList()
           addToList = TRUE;
 
         if (addToList)
-          last = new XListViewItem( _item, last, item.value("item_id").toInt(),
+          last = new XTreeWidgetItem( _item, last, item.value("item_id").toInt(),
                                     item.value("item_number"),
                                     (item.value("item_descrip1").toString() + " " + item.value("item_descrip2").toString()) );
       }

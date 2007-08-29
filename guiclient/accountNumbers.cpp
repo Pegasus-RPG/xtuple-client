@@ -253,8 +253,7 @@ void accountNumbers::sFillList()
 
 void accountNumbers::sBuildList()
 {
-  while(_account->columns() > 0)
-    _account->removeColumn(0);
+  _account->setColumnCount(0);
 
   if (_metrics->value("GLCompanySize").toInt() > 0)
     _account->addColumn(tr("Company"), 50, Qt::AlignCenter);

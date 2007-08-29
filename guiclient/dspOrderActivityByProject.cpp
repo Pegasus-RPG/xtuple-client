@@ -57,10 +57,10 @@
 
 #include "dspOrderActivityByProject.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <q3popupmenu.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QMenu>
+#include <QMessageBox>
 #include "OpenMFGGUIClient.h"
 #include <parameter.h>
 #include "salesOrder.h"
@@ -88,7 +88,7 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
     connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_orders, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -110,7 +110,7 @@ void dspOrderActivityByProject::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspOrderActivityByProject::init()
 {
@@ -121,7 +121,7 @@ void dspOrderActivityByProject::init()
   _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignLeft   );
 }
 
-void dspOrderActivityByProject::sPopulateMenu( Q3PopupMenu * pMenu )
+void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
 {
   int menuItem;
 

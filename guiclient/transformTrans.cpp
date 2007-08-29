@@ -57,8 +57,8 @@
 
 #include "transformTrans.h"
 
-#include <qvariant.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QValidator>
 #include "distributeInventory.h"
 
 /*
@@ -163,7 +163,7 @@ void transformTrans::sPost()
     return;
   }
 
-  if (_qty->toDouble() > _source->selectedItem()->text(2).toDouble())
+  if (_qty->toDouble() > _source->currentItem()->text(2).toDouble())
   {
     QMessageBox::critical( this, tr("Cannot Post Transform Transaction"),
                            tr("You may not transform a quantity that is greater that the quantity of the Transform Source.") );
@@ -265,11 +265,12 @@ void transformTrans::sFillList()
     q.bindValue(":na", tr("N/A"));
     q.bindValue(":itemsite_id", itemsiteid);
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
-      new XListViewItem( _source, _source->lastItem(),
-                         q.value("itemsiteid").toInt(), q.value("itemlocid").toInt(),
-                         q.value("locationname"), q.value("lotserial"),
-                         formatQty(q.value("qty").toDouble()) );
+      last = new XTreeWidgetItem( _source, last,
+				 q.value("itemsiteid").toInt(),
+				 q.value("itemlocid").toInt(),
+				 q.value("locationname"), q.value("lotserial"),
+				 formatQty(q.value("qty").toDouble()) );
   }
 }
-

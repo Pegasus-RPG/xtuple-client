@@ -57,11 +57,11 @@
 
 #include "dspUsageStatisticsByItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "inputManager.h"
 #include "dspInventoryHistoryByItem.h"
 #include "rptUsageStatisticsByItem.h"
@@ -80,7 +80,7 @@ dspUsageStatisticsByItem::dspUsageStatisticsByItem(QWidget* parent, const char* 
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_usage, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*,int)));
+    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
@@ -105,7 +105,7 @@ void dspUsageStatisticsByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspUsageStatisticsByItem::init()
 {
@@ -180,7 +180,7 @@ void dspUsageStatisticsByItem::viewTransactions(QString pType)
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspUsageStatisticsByItem::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *, int pColumn)
+void dspUsageStatisticsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
 {
   int intMenuItem;
 

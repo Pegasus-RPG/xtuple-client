@@ -92,11 +92,9 @@ configureSR::configureSR(QWidget* parent, const char* name, bool modal, Qt::WFla
 
     if (_shipformNumOfCopies->value())
     {
-      int           counter = 0;
-      Q3ListViewItem *cursor = _shipformWatermarks->firstChild();
-
-      for (; cursor; cursor = cursor->nextSibling(), counter++)
+      for (int counter = 0; counter < _shipformWatermarks->topLevelItemCount(); counter++)
       {
+	QTreeWidgetItem *cursor = _shipformWatermarks->topLevelItem(counter);
 	cursor->setText(1, _metrics->value(QString("ShippingFormWatermark%1").arg(counter)));
 	cursor->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(counter))) ? tr("Yes") : tr("No")));
       }
@@ -129,11 +127,9 @@ void configureSR::sSave()
 
   if (_shipformNumOfCopies->value())
   {
-    Q3ListViewItem *cursor;
-    int           counter;
-    for ( cursor = _shipformWatermarks->firstChild(), counter = 0;
-          cursor; cursor = cursor->nextSibling(), counter++ )
+    for (int counter = 0; counter < _shipformWatermarks->topLevelItemCount(); counter++)
     {
+      QTreeWidgetItem *cursor = _shipformWatermarks->topLevelItem(counter);
       _metrics->set(QString("ShippingFormWatermark%1").arg(counter), cursor->text(1));
       _metrics->set(QString("ShippingFormShowPrices%1").arg(counter), (cursor->text(2) == tr("Yes")));
     }
@@ -159,18 +155,21 @@ void configureSR::sSave()
 
 void configureSR::sHandleShippingFormCopies(int pValue)
 {
-  if (_shipformWatermarks->childCount() > pValue)
-    _shipformWatermarks->takeItem(_shipformWatermarks->lastItem());
+  if (_shipformWatermarks->topLevelItemCount() > pValue)
+    _shipformWatermarks->takeTopLevelItem(_shipformWatermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_shipformWatermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_shipformWatermarks, _shipformWatermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (unsigned int counter = (_shipformWatermarks->topLevelItemCount() + 1); counter <= (unsigned int)pValue; counter++)
+      new XTreeWidgetItem(_shipformWatermarks,
+			  (XTreeWidgetItem*)(_shipformWatermarks->topLevelItem(_shipformWatermarks->topLevelItemCount() - 1)),
+			  counter,
+			  QVariant(tr("Copy #%1").arg(counter)), "", tr("Yes"));
   }
 }
 
 void configureSR::sEditShippingFormWatermark()
 {
-  XListViewItem *cursor = _shipformWatermarks->selectedItem();
+  XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_shipformWatermarks->currentItem());
 
   if (cursor)
   {

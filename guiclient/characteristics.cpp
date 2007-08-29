@@ -57,7 +57,7 @@
 
 #include "characteristics.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QStatusBar>
@@ -85,7 +85,7 @@ characteristics::characteristics(QWidget* parent, const char* name, Qt::WFlags f
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_char, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_char, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
     statusBar()->hide();
@@ -199,7 +199,7 @@ void characteristics::sFillList()
                    "ORDER BY char_name;"  );
 }
 
-void characteristics::sPopulateMenu(Q3PopupMenu *)
+void characteristics::sPopulateMenu(QMenu *)
 {
 }
 

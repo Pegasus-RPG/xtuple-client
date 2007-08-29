@@ -74,7 +74,7 @@
 
 #include <xsqlquery.h>
 #include "itemcluster.h"
-#include "xlistview.h"
+#include "xtreewidget.h"
 
 QString buildItemLineEditQuery(const QString, const QStringList, const QString, const unsigned int);
 QString buildItemLineEditTitle(const unsigned int, const QString);
@@ -131,7 +131,7 @@ itemAliasList::itemAliasList(QWidget* parent, const char* name, bool modal, Qt::
   QLabel *_itemsLit = new QLabel(tr("&Items:"), this);
   _listLayout->addWidget(_itemsLit);
 
-  _item = new XListView(this);
+  _item = new XTreeWidget(this);
   _item->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
   _itemsLit->setBuddy(_item);
   _listLayout->addWidget(_item);
@@ -219,11 +219,11 @@ void itemAliasList::sFillList()
       XSqlQuery item(_sql);
       if (item.first())
       {
-          XListViewItem *last = NULL;
+          XTreeWidgetItem *last = NULL;
           do
           {
             if (item.findFirst("item_id", alias.value("item_id").toInt()) != -1)
-              last = new XListViewItem( _item, last, alias.value("item_id").toInt(), alias.value("itemalias_id").toInt(),
+              last = new XTreeWidgetItem( _item, last, alias.value("item_id").toInt(), alias.value("itemalias_id").toInt(),
                                         alias.value("itemalias_number").toString(), alias.value("item_number").toString(), alias.value("item_descrip").toString() );
           }
           while (alias.next());

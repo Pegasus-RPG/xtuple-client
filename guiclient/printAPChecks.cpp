@@ -63,7 +63,6 @@
 #include <QVariant>
 
 #include <openreports.h>
-#include <xlistview.h>
 #include "printAPChecksReview.h"
 
 /*
@@ -217,7 +216,7 @@ void printAPChecks::sPrint()
       newdlg._checks->populate(query);
       newdlg.sSelectAll();
       newdlg.sMarkPrinted();
-      newdlg._checks->selectAll(false);
+      newdlg._checks->clearSelection();
       newdlg.exec();
     }
   }

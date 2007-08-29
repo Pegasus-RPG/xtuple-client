@@ -117,8 +117,14 @@ void dspPoItemReceivingsByVendor::init()
   _porecv->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _porecv->addColumn(tr("Rcvd/Rtnd"),   _qtyColumn,   Qt::AlignRight  );
   _porecv->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
+  if (_privleges->check("ViewCosts"))
+  {
+    _porecv->addColumn(tr("Purch. Cost"), _priceColumn,  Qt::AlignRight );
+    _porecv->addColumn(tr("Recv. Cost"),  _priceColumn,  Qt::AlignRight );
+  }
 
   _showVariances->setEnabled(_privleges->check("ViewCosts"));
+  sHandleVariance(_showVariances->isChecked());
 }
 
 void dspPoItemReceivingsByVendor::sPrint()
@@ -143,13 +149,13 @@ void dspPoItemReceivingsByVendor::sHandleVariance(bool pShowVariances)
 {
   if (pShowVariances)
   {
-    _porecv->addColumn(tr("Purch. Cost"), _priceColumn,  Qt::AlignRight );
-    _porecv->addColumn(tr("Recv. Cost"),  _priceColumn,  Qt::AlignRight );
+    _porecv->showColumn(7);
+    _porecv->showColumn(8);
   }
   else
   {
-    _porecv->removeColumn(7);
-    _porecv->removeColumn(7);
+    _porecv->hideColumn(7);
+    _porecv->hideColumn(8);
   }
 }
 

@@ -57,9 +57,9 @@
 
 #include "dspSalesOrdersByParameterList.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "salesOrder.h"
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
@@ -77,7 +77,7 @@ dspSalesOrdersByParameterList::dspSalesOrdersByParameterList(QWidget* parent, co
     (void)statusBar();
 
     // signals and slots connections
-    connect(_so, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
     connect(_parameter, SIGNAL(updated()), this, SLOT(sFillList()));
@@ -102,7 +102,7 @@ void dspSalesOrdersByParameterList::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSalesOrdersByParameterList::init()
 {
@@ -161,7 +161,7 @@ enum SetResponse dspSalesOrdersByParameterList::set(const ParameterList &pParams
   return NoError;
 }
 
-void dspSalesOrdersByParameterList::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspSalesOrdersByParameterList::sPopulateMenu(QMenu *menuThis)
 {
   if(_so->altId() == -1)
     return;
@@ -266,18 +266,18 @@ void dspSalesOrdersByParameterList::sFillList()
     q.bindValue(":partial", tr("Partial"));
     q.exec();
     int custid = -1;
-    XListViewItem *lastcust = 0;
-    XListViewItem *lastorder = 0;
+    XTreeWidgetItem *lastcust = 0;
+    XTreeWidgetItem *lastorder = 0;
     while(q.next())
     {
       if(q.value("cust_id").toInt() != custid)
       {
         custid = q.value("cust_id").toInt();
-        lastcust = new XListViewItem(_so, lastcust, custid, -1, q.value("cust_number"));
+        lastcust = new XTreeWidgetItem(_so, lastcust, custid, -1, q.value("cust_number"));
         lastorder = 0;
       }
 
-      lastorder = new XListViewItem(lastcust, lastorder, custid, q.value("cohead_id").toInt(),
+      lastorder = new XTreeWidgetItem(lastcust, lastorder, custid, q.value("cohead_id").toInt(),
                                 "", q.value("cohead_number"), q.value("f_orderdate"),
                                 q.value("f_scheddate"), q.value("f_status"),
                                 q.value("cohead_shiptoname"), q.value("cohead_custponumber") );

@@ -194,9 +194,9 @@
                         <set>AlignVCenter</set>
                     </property>
                 </widget>
-                <widget class="XListView">
+                <widget class="XTreeWidget">
                     <property name="name">
-                        <cstring>XListView12</cstring>
+                        <cstring>QTreeWidget12</cstring>
                     </property>
                 </widget>
             </vbox>
@@ -219,7 +219,7 @@
 </connections>
 <tabstops>
     <tabstop>_carrier</tabstop>
-    <tabstop>XListView12</tabstop>
+    <tabstop>QTreeWidget12</tabstop>
     <tabstop>_print</tabstop>
     <tabstop>_close</tabstop>
 </tabstops>

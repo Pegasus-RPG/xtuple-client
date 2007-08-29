@@ -57,9 +57,9 @@
 
 #include "dspItemCostSummary.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "dspItemCostDetail.h"
 #include "itemCost.h"
 #include "rptItemCostSummary.h"
@@ -81,7 +81,7 @@ dspItemCostSummary::dspItemCostSummary(QWidget* parent, const char* name, Qt::WF
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_itemcost, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     init();
 }
 
@@ -103,7 +103,7 @@ void dspItemCostSummary::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspItemCostSummary::init()
 {
@@ -148,7 +148,7 @@ void dspItemCostSummary::sPrint()
   newdlg.set(params);
 }
 
-void dspItemCostSummary::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspItemCostSummary::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   if (pSelected->text(1) == "Yes")
   {
@@ -200,9 +200,11 @@ void dspItemCostSummary::sFillList()
       }
       while (q.next());
 
-      new XListViewItem( _itemcost, _itemcost->lastItem(), -1,
-                       QVariant(tr("Totals")), "", formatCost(standardCost),
-                       "", formatCost(actualCost) );
+      new XTreeWidgetItem( _itemcost,
+			   _itemcost->topLevelItem(_itemcost->topLevelItemCount() - 1),
+			   -1,
+			   QVariant(tr("Totals")), "", formatCost(standardCost),
+			   "", formatCost(actualCost) );
     }
   }
   else

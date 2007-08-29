@@ -79,7 +79,7 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_uninvoiced, SIGNAL(doubleClicked(Q3ListViewItem*)), this, SLOT(sToggleReceiving(Q3ListViewItem*)));
+  connect(_uninvoiced, SIGNAL(doubleClicked(QTreeWidgetItem*)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
 
   _item->setReadOnly(TRUE);
   _qtyToVoucher->setValidator(omfgThis->qtyVal());
@@ -240,18 +240,23 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
     if (q.first())
     {
       double totalQty = 0;
+      XTreeWidgetItem *last = 0;
 
       do
       {
-        new XListViewItem( _uninvoiced, _uninvoiced->lastItem(), q.value("item_id").toInt(), q.value("item_type").toInt(),
-                           q.value("action"), q.value("f_item_date"),
-                           q.value("f_qty"), q.value("f_tagged") );
+	last = new XTreeWidgetItem( _uninvoiced, last,
+				   q.value("item_id").toInt(),
+				   q.value("item_type").toInt(),
+				   q.value("action"),
+				   q.value("f_item_date"),
+				   q.value("f_qty"),
+				   q.value("f_tagged") );
 
         totalQty += q.value("qty").toDouble();
       }
       while (q.next());
 
-      new XListViewItem(_uninvoiced, _uninvoiced->lastItem(), -1, QVariant(tr("Uninvoiced")), "", formatQty(totalQty));
+      new XTreeWidgetItem(_uninvoiced, last, -1, QVariant(tr("Uninvoiced")), "", formatQty(totalQty));
     }
   }
 
@@ -362,8 +367,9 @@ void voucherItem::sSave()
   q.exec();
   
   //  Tag all the Tagged Uninvoiced P/O Receivings
-  for (XListViewItem *cursor = _uninvoiced->firstChild(); cursor != 0; cursor = cursor->nextSibling())
+  for (int i = 0; i < _uninvoiced->topLevelItemCount(); i++)
   {
+    XTreeWidgetItem *cursor = ((XTreeWidgetItem*)(_uninvoiced->topLevelItem(i)));
     if (cursor->text(3) == "Yes")
     {
       if (cursor->altId() == 1)
@@ -453,11 +459,11 @@ void voucherItem::sDelete()
   sFillList();
 }
 
-void voucherItem::sToggleReceiving(Q3ListViewItem *pItem)
+void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
 {
   double n;
   QString s;
-  XListViewItem* item = (XListViewItem*)pItem;
+  XTreeWidgetItem* item = (XTreeWidgetItem*)pItem;
   if(item->id() == -1)
     return;
   if (item->text(3) == "Yes")

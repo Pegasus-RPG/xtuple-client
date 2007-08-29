@@ -63,7 +63,7 @@
 #include "OpenMFGGUIClient.h"
 #include <parameter.h>
 
-class Q3PopupMenu;
+class QMenu;
 
 #include "ui_plannedSchedules.h"
 
@@ -81,7 +81,7 @@ class plannedSchedules : public QMainWindow, public Ui::plannedSchedules
     virtual void sCopy();
     virtual void sPrint();
     virtual void sFillList();
-    virtual void sPopulateMenu(Q3PopupMenu*);
+    virtual void sPopulateMenu(QMenu*);
     virtual void sRelease();
 
   protected slots:

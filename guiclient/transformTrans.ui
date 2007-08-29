@@ -210,7 +210,7 @@
                   </widget>
                 </item>
                 <item>
-                  <widget class="XListView" name="_source" >
+                  <widget class="XTreeWidget" name="_source" >
                     <property name="sizePolicy" >
                       <sizepolicy>
                         <hsizetype>7</hsizetype>
@@ -387,9 +387,9 @@
       <pixmap></pixmap>
     </customwidget>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>
@@ -397,8 +397,8 @@
   <includes>
     <include location="local" >OpenMFGGUIClient.h</include>
     <include location="global" >parameter.h</include>
-    <include location="global" >qstatusbar.h</include>
-    <include location="global" >qmessagebox.h</include>
+    <include location="global" >QStatusBar</include>
+    <include location="global" >QMessageBox</include>
   </includes>
   <connections>
     <connection>

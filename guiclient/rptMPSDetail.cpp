@@ -57,8 +57,8 @@
 
 #include "rptMPSDetail.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 
 /*
@@ -168,15 +168,11 @@ void rptMPSDetail::sPrint()
       _plannerCode->appendValue(params);
       _warehouse->appendValue(params);
 
-      XListViewItem *cursor = _periods->firstChild();
+      QList<QTreeWidgetItem*> selected = _periods->selectedItems();
       QList<QVariant> periodList;
-      while (cursor)
-      {
-        if (cursor->isSelected())
-          periodList.append(cursor->id());
+      for (int i = 0; i < selected.size(); i++)
+	periodList.append(((XTreeWidgetItem*)selected[i])->id());
 
-        cursor = cursor->nextSibling();
-      }
       params.append("period_id_list", periodList);
       params.append("itemsite_id", _itemsite->id());
       params.append("workset_id", wsq.value("worksetid").toInt());

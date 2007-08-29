@@ -62,7 +62,7 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QValidator>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QKeyEvent>
 #include "bomItem.h"
 #include "rptSingleLevelBOM.h"
@@ -88,7 +88,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_bomitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_bomitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
@@ -265,7 +265,7 @@ void BOM::sPrint()
   newdlg.set(params);
 }
 
-void BOM::sPopulateMenu(Q3PopupMenu *menuThis)
+void BOM::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("View"), this, SLOT(sView()), 0);
   
@@ -421,7 +421,7 @@ void BOM::sFillList(int pItemid, bool)
     int bomitemid = _bomitem->id();
     _bomitem->clear();
     
-    XListViewItem *selected = 0;
+    XTreeWidgetItem *selected = 0;
     
     q.prepare(sql);
     q.bindValue(":push", tr("Push"));
@@ -432,17 +432,21 @@ void BOM::sFillList(int pItemid, bool)
     q.bindValue(":never", tr("Never"));
     q.bindValue(":item_id", _item->id());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _bomitem, _bomitem->lastItem(),
-                                               q.value("bomitem_id").toInt(), q.value("item_id").toInt(),
-                                               q.value("bomitem_seqnumber"), q.value("item_number"),
-                                               q.value("item_description"), q.value("item_invuom"),
-                                               q.value("issuemethod"), q.value("f_qtyper"),
-                                               q.value("f_scrap"), q.value("f_effective"),
-                                               q.value("f_expires") );
+      last = new XTreeWidgetItem(_bomitem, last,
+				 q.value("bomitem_id").toInt(),
+				 q.value("item_id").toInt(),
+				 q.value("bomitem_seqnumber"),
+				 q.value("item_number"),
+				 q.value("item_description"),
+				 q.value("item_invuom"),
+				 q.value("issuemethod"), q.value("f_qtyper"),
+				 q.value("f_scrap"), q.value("f_effective"),
+				 q.value("f_expires") );
       if (q.value("config").toBool())
-        last->setColor("blue");
+        last->setTextColor("blue");
       
       if (q.value("bomitem_id").toInt() == bomitemid)
         selected = last;
@@ -450,8 +454,8 @@ void BOM::sFillList(int pItemid, bool)
     
     if (selected)
     {
-      _bomitem->setSelected(selected, TRUE);
-      _bomitem->ensureItemVisible(selected);
+      _bomitem->setCurrentItem(selected);
+      _bomitem->scrollToItem(selected);
     }
     
     sql = "SELECT item_picklist,"

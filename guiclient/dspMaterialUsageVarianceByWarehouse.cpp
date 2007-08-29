@@ -57,8 +57,8 @@
 
 #include "dspMaterialUsageVarianceByWarehouse.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptMaterialUsageVarianceByWarehouse.h"
 #include "OpenMFGGUIClient.h"
@@ -77,7 +77,7 @@ dspMaterialUsageVarianceByWarehouse::dspMaterialUsageVarianceByWarehouse(QWidget
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_womatlvar, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_womatlvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
@@ -101,7 +101,7 @@ void dspMaterialUsageVarianceByWarehouse::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspMaterialUsageVarianceByWarehouse::init()
 {
@@ -134,7 +134,7 @@ void dspMaterialUsageVarianceByWarehouse::sPrint()
   newdlg.set(params);
 }
 
-void dspMaterialUsageVarianceByWarehouse::sPopulateMenu(Q3PopupMenu *)
+void dspMaterialUsageVarianceByWarehouse::sPopulateMenu(QMenu *)
 {
 }
 

@@ -86,7 +86,7 @@ class todoList : public QMainWindow, public Ui::todoList
     virtual void	sMoveDown();
     virtual void	sMoveUp();
     virtual void	sNew();
-    virtual void	sPopulateMenu(Q3PopupMenu*);
+    virtual void	sPopulateMenu(QMenu*);
     virtual void	sPrint();
     virtual void	sView();
     virtual void	sViewIncident();

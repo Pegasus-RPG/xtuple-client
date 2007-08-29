@@ -57,8 +57,8 @@
 
 #include "dspLaborVarianceByWorkCenter.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptLaborVarianceByWorkCenter.h"
 
@@ -76,7 +76,7 @@ dspLaborVarianceByWorkCenter::dspLaborVarianceByWorkCenter(QWidget* parent, cons
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_woopervar, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
@@ -100,7 +100,7 @@ void dspLaborVarianceByWorkCenter::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspLaborVarianceByWorkCenter::init()
 {
@@ -135,7 +135,7 @@ void dspLaborVarianceByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspLaborVarianceByWorkCenter::sPopulateMenu(Q3PopupMenu *)
+void dspLaborVarianceByWorkCenter::sPopulateMenu(QMenu *)
 {
 }
 

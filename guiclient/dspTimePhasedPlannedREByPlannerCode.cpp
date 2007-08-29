@@ -57,9 +57,9 @@
 
 #include "dspTimePhasedPlannedREByPlannerCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
 #include <parameter.h>
 #include "rptTimePhasedPlannedREByPlannerCode.h"
 #include "OpenMFGGUIClient.h"
@@ -161,48 +161,39 @@ void dspTimePhasedPlannedREByPlannerCode::sFillList()
   }
 
   _plannedRE->clear();
-
-  while (_plannedRE->columns() > 1)
-    _plannedRE->removeColumn(1);
+  _plannedRE->setColumnCount(1);
 
   QString       sql("SELECT ");
 
   bool show    = FALSE;
   int  columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        if (show)
-          sql += ",";
-        else
-          show = TRUE;
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    if (show)
+      sql += ",";
+    else
+      show = TRUE;
 
-        sql += QString(" SUM(plannedCost(plancode_id, warehous_id, '%1', %2)) AS cost%3,")
-               .arg((_useStandardCost->isChecked()) ? 'S' : 'A')
-               .arg(cursor->id())
-               .arg(columns);
+    sql += QString(" SUM(plannedCost(plancode_id, warehous_id, '%1', %2)) AS cost%3,")
+	   .arg((_useStandardCost->isChecked()) ? 'S' : 'A')
+	   .arg(cursor->id())
+	   .arg(columns);
 
-        if (_useListPrice->isChecked())
-          sql += QString(" SUM(plannedRevenue(plancode_id, warehous_id, 'L', %1)) AS revenue%2 ")
-                 .arg(cursor->id())
-                 .arg(columns++);
-        else
-          sql += QString(" SUM(plannedRevenue(plancode_id, warehous_id, 'A', %1, date('%2'), date('%3'))) AS revenue%4 ")
-                 .arg(cursor->id())
-                 .arg(_startEvalDate->dateString())
-                 .arg(_endEvalDate->dateString())
-                 .arg(columns++);
+    if (_useListPrice->isChecked())
+      sql += QString(" SUM(plannedRevenue(plancode_id, warehous_id, 'L', %1)) AS revenue%2 ")
+	     .arg(cursor->id())
+	     .arg(columns++);
+    else
+      sql += QString(" SUM(plannedRevenue(plancode_id, warehous_id, 'A', %1, date('%2'), date('%3'))) AS revenue%4 ")
+	     .arg(cursor->id())
+	     .arg(_startEvalDate->dateString())
+	     .arg(_endEvalDate->dateString())
+	     .arg(columns++);
 
-        _plannedRE->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _qtyColumn, Qt::AlignRight);
-
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()));
+    _plannedRE->addColumn(formatDate(cursor->startDate()), _qtyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   if (show)
@@ -238,13 +229,13 @@ void dspTimePhasedPlannedREByPlannerCode::sFillList()
     q.exec();
     if (q.first())
     {
-      XListViewItem *cost    = new XListViewItem( _plannedRE, 0, QVariant(tr("Cost")),
+      XTreeWidgetItem *cost    = new XTreeWidgetItem( _plannedRE, 0, QVariant(tr("Cost")),
                                                   formatMoney(q.value("cost1").toDouble()) );
 
-      XListViewItem *revenue = new XListViewItem( _plannedRE, cost, 0, QVariant(tr("Revenue")),
+      XTreeWidgetItem *revenue = new XTreeWidgetItem( _plannedRE, cost, 0, QVariant(tr("Revenue")),
                                                   formatMoney(q.value("revenue1").toDouble()) );
 
-      XListViewItem *profit  = new XListViewItem( _plannedRE, revenue,  0, QVariant(tr("Gross Profit")),
+      XTreeWidgetItem *profit  = new XTreeWidgetItem( _plannedRE, revenue,  0, QVariant(tr("Gross Profit")),
                                                   formatMoney(q.value("revenue1").toDouble() - q.value("cost1").toDouble() ) );
                        
       for (int bucketCounter = 1; bucketCounter < columns; bucketCounter++)

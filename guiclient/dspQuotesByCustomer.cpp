@@ -57,10 +57,10 @@
 
 #include "dspQuotesByCustomer.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
+#include <QMessageBox>
 #include "salesOrder.h"
 
 /*
@@ -76,7 +76,7 @@ dspQuotesByCustomer::dspQuotesByCustomer(QWidget* parent, const char* name, Qt::
     (void)statusBar();
 
     // signals and slots connections
-    connect(_so, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulatePo()));
     connect(_selectedPO, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -104,7 +104,7 @@ void dspQuotesByCustomer::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspQuotesByCustomer::init()
 {
@@ -144,7 +144,7 @@ void dspQuotesByCustomer::sPopulatePo()
   sFillList();
 }
 
-void dspQuotesByCustomer::sPopulateMenu(Q3PopupMenu *menuThis)
+void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
   menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
@@ -229,68 +229,66 @@ void dspQuotesByCustomer::sConvert()
 
     int counter = 0;
     int soheadid = -1;
-    XListViewItem *cursor = _so->firstChild();
-    while (cursor)
+
+    QList<QTreeWidgetItem*> selected = _so->selectedItems();
+    for (int i = 0; i < selected.size(); i++)
     {
-      if (_so->isSelected(cursor))
+      XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+      check.bindValue(":quhead_id", cursor->id());
+      check.exec();
+      if (check.first())
       {
-        check.bindValue(":quhead_id", _so->id());
-        check.exec();
-        if (check.first())
-        {
-          if ( (check.value("cust_creditstatus").toString() == "H") && (!_privleges->check("CreateSOForHoldCustomer")) )
-          {
-            QMessageBox::warning( this, tr("Cannot Convert Quote"),
-                                  tr( "Quote #%1 is for a Customer that has been placed on a Credit Hold and you do not have\n"
-                                      "privilege to create Sales Orders for Customers on Credit Hold.  The selected\n"
-                                      "Customer must be taken off of Credit Hold before you may create convert this Quote." )
-                                  .arg(check.value("quhead_number").toString()) );
-            return;
-          }	
+	if ( (check.value("cust_creditstatus").toString() == "H") && (!_privleges->check("CreateSOForHoldCustomer")) )
+	{
+	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
+				tr( "Quote #%1 is for a Customer that has been placed on a Credit Hold and you do not have\n"
+				    "privilege to create Sales Orders for Customers on Credit Hold.  The selected\n"
+				    "Customer must be taken off of Credit Hold before you may create convert this Quote." )
+				.arg(check.value("quhead_number").toString()) );
+	  return;
+	}	
 
-          if ( (check.value("cust_creditstatus").toString() == "W") && (!_privleges->check("CreateSOForWarnCustomer")) )
-          {
-            QMessageBox::warning( this, tr("Cannot Convert Quote"),
-                                  tr( "Quote #%1 is for a Customer that has been placed on a Credit Warning and you do not have\n"
-                                      "privilege to create Sales Orders for Customers on Credit Warning.  The selected\n"
-                                      "Customer must be taken off of Credit Warning before you may create convert this Quote." )
-                                  .arg(check.value("quhead_number").toString()) );
-            return;
-          }	
-        }
-        else
-        {
-          systemError( this, tr("A System Error occurred at %1::%2.")
-                             .arg(__FILE__)
-                             .arg(__LINE__) );
-          continue;
-        }
-
-        convert.bindValue(":quhead_id", _so->id());
-        convert.exec();
-        if (convert.first())
-        { 
-          soheadid = convert.value("sohead_id").toInt();
-          if(soheadid < 0)
-          {
-            QMessageBox::warning( this, tr("Cannot Convert Quote"),
-                                  tr( "Quote #%1 has one or more line items without a warehouse specified.\n"
-                                      "These line items must be fixed before you may convert this quote." )
-                                  .arg(check.value("quhead_number").toString()) );
-            return;
-          }
-          counter++;
-          omfgThis->sSalesOrdersUpdated(soheadid);
-        }
-        else
-        {
-          systemError( this, tr("A System Error occurred at %1::%2.")
-                             .arg(__FILE__)
-                             .arg(__LINE__) );
-          return;
-        }
+	if ( (check.value("cust_creditstatus").toString() == "W") && (!_privleges->check("CreateSOForWarnCustomer")) )
+	{
+	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
+				tr( "Quote #%1 is for a Customer that has been placed on a Credit Warning and you do not have\n"
+				    "privilege to create Sales Orders for Customers on Credit Warning.  The selected\n"
+				    "Customer must be taken off of Credit Warning before you may create convert this Quote." )
+				.arg(check.value("quhead_number").toString()) );
+	  return;
+	}	
       }
-      cursor = cursor->nextSibling();
+      else
+      {
+	systemError( this, tr("A System Error occurred at %1::%2.")
+			   .arg(__FILE__)
+			   .arg(__LINE__) );
+	continue;
+      }
+
+      convert.bindValue(":quhead_id", cursor->id());
+      convert.exec();
+      if (convert.first())
+      { 
+	soheadid = convert.value("sohead_id").toInt();
+	if(soheadid < 0)
+	{
+	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
+				tr( "Quote #%1 has one or more line items without a warehouse specified.\n"
+				    "These line items must be fixed before you may convert this quote." )
+				.arg(check.value("quhead_number").toString()) );
+	  return;
+	}
+	counter++;
+	omfgThis->sSalesOrdersUpdated(soheadid);
+      }
+      else
+      {
+	systemError( this, tr("A System Error occurred at %1::%2.")
+			   .arg(__FILE__)
+			   .arg(__LINE__) );
+	return;
+      }
     }
 
     if (counter)
@@ -300,4 +298,3 @@ void dspQuotesByCustomer::sConvert()
       salesOrder::editSalesOrder(soheadid, true);
   }
 }
-

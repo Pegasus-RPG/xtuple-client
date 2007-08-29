@@ -57,7 +57,7 @@
 
 #include "dspSummarizedBacklogByWarehouse.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QStatusBar>
@@ -79,7 +79,7 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
     (void)statusBar();
 
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_so, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
@@ -95,11 +95,20 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
     _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight  );
     _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight  );
     _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight  );
+    if (_privleges->check("ViewCustomerPrices") ||
+	_privleges->check("MaintainCustomerPrices"))
+    {
+      _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight);
+      _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight);
+      _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight);
+    }
+
     _so->setRootIsDecorated(TRUE);
     _so->setDragString("soheadid=");
 
     if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
       _showPrices->setEnabled(FALSE);
+    sHandlePrices(_showPrices->isChecked());
 
     connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
@@ -120,15 +129,15 @@ void dspSummarizedBacklogByWarehouse::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
   {
-    _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight);
-    _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight);
-    _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight);
+    _so->showColumn(6);
+    _so->showColumn(7);
+    _so->showColumn(8);
   }
   else
   {
-    _so->removeColumn(6);
-    _so->removeColumn(6);
-    _so->removeColumn(6);
+    _so->hideColumn(6);
+    _so->hideColumn(7);
+    _so->hideColumn(8);
   }
 
   sFillList();
@@ -258,7 +267,7 @@ void dspSummarizedBacklogByWarehouse::sPrintPackingList()
   newdlg.exec();
 }
 
-void dspSummarizedBacklogByWarehouse::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -289,8 +298,8 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(Q3PopupMenu *pMenu)
   }
 
   if (_so->altId() > -1 ||
-      (_so->id() != -1 && _so->selectedItem()->text(2) != tr("Pack") &&
-       _so->selectedItem()->text(2) != tr("Credit")))
+      (_so->id() != -1 && _so->currentItem()->text(2) != tr("Pack") &&
+       _so->currentItem()->text(2) != tr("Credit")))
   {
     if (_so->id() != -1)
       pMenu->insertSeparator();
@@ -305,7 +314,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 {
   _so->clear();
 
-  XListViewItem *orderLine  = NULL;
+  XTreeWidgetItem *orderLine  = NULL;
 
   if (_dates->allValid())
   {
@@ -401,7 +410,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
           unshipped = FALSE;
           overbilled = FALSE;
 
-          orderLine = new XListViewItem( _so, orderLine,
+          orderLine = new XTreeWidgetItem( _so, orderLine,
 					 q.value("cohead_id").toInt(),
 					 -1,
                                          q.value("cohead_number"), q.value("cust_name"),
@@ -418,28 +427,28 @@ void dspSummarizedBacklogByWarehouse::sFillList()
         if (q.value("overbilled").toBool())
         {
           overbilled = TRUE;
-          orderLine->setColor("red");
+          orderLine->setTextColor("red");
         }
 
         if (q.value("shipstatus").toInt())
         {
-          XListViewItem *shipLine = new XListViewItem(orderLine, -1,
+          XTreeWidgetItem *shipLine = new XTreeWidgetItem(orderLine, -1,
 						 q.value("cosmisc_id").toInt());
 
           if (q.value("shipstatus").toInt() == 1)
           {
             shipLine->setText(0, tr("Yes"));
-            shipLine->setColor("green");
+            shipLine->setTextColor("green");
 
             if (!unshipped && !overbilled)
-              orderLine->setColor("green");
+              orderLine->setTextColor("green");
           }
           else if (q.value("shipstatus").toInt() == 2)
           {
             shipLine->setText(0, tr("No"));
-            shipLine->setColor("blue");
+            shipLine->setTextColor("blue");
             if(!overbilled)
-              orderLine->setColor("blue");
+              orderLine->setTextColor("blue");
             unshipped = TRUE;
           }
 
@@ -451,7 +460,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
       while (q.next());
 
       if (_showPrices->isChecked())
-        new XListViewItem( _so, orderLine, -1,
+        new XTreeWidgetItem( _so, orderLine, -1,
                            "", "", tr("Total Backlog"), "", "", "",
                            formatMoney(totalSales),
                            formatCost(totalCost),

@@ -77,7 +77,7 @@ public:
 public slots:
     virtual SetResponse set( ParameterList & pParams );
     virtual void sAllWarehousesToggled( int pEvnttypeid );
-    virtual void sWarehouseToggled( Q3ListViewItem * selected );
+    virtual void sWarehouseToggled( QTreeWidgetItem * selected );
     virtual void sFillWarehouseList();
 
 protected slots:

@@ -59,7 +59,7 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <Q3PopupMenu>
+#include <QMenu>
 #include "rptDepositsRegister.h"
 
 /*
@@ -76,7 +76,7 @@ dspDepositsRegister::dspDepositsRegister(QWidget* parent, const char* name, Qt::
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_gltrans, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
@@ -147,7 +147,7 @@ enum SetResponse dspDepositsRegister::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspDepositsRegister::sPopulateMenu(Q3PopupMenu *)
+void dspDepositsRegister::sPopulateMenu(QMenu *)
 {
 }
 
@@ -197,8 +197,8 @@ void dspDepositsRegister::sFillList()
   q.bindValue(":creditmemo", tr("Credit Memo"));
   q.exec();
 
-  //XListViewItem * parent = 0;
-  XListViewItem * last = 0;
+  //XTreeWidgetItem * parent = 0;
+  XTreeWidgetItem * last = 0;
   QString date;
   double debit = 0.0, credit = 0.0;
   double totdebit = 0.0, totcredit = 0.0;
@@ -209,19 +209,19 @@ void dspDepositsRegister::sFillList()
     {
       if(parent)
       {
-        last = new XListViewItem(parent, last, -2, "", "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
+        last = new XTreeWidgetItem(parent, last, -2, "", "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
         parent->setOpen(TRUE);
       }
 
       date = q.value("f_date").toString();
-      parent = new XListViewItem(_gltrans, parent, -1, date);
+      parent = new XTreeWidgetItem(_gltrans, parent, -1, date);
       last = 0;
       debit = 0.0;
       credit = 0.0;
     }
 */
 
-    last = new XListViewItem(_gltrans, last, q.value("gltrans_id").toInt(), q.value("f_date"), q.value("gltrans_source"), q.value("doctype"), q.value("gltrans_docnumber"), q.value("f_notes"), q.value("f_accnt"), q.value("f_debit"), q.value("f_credit"), q.value("f_balance"));
+    last = new XTreeWidgetItem(_gltrans, last, q.value("gltrans_id").toInt(), q.value("f_date"), q.value("gltrans_source"), q.value("doctype"), q.value("gltrans_docnumber"), q.value("f_notes"), q.value("f_accnt"), q.value("f_debit"), q.value("f_credit"), q.value("f_balance"));
 
     debit += q.value("debit").toDouble();
     totdebit += q.value("debit").toDouble();
@@ -232,11 +232,11 @@ void dspDepositsRegister::sFillList()
 /*
   if(parent)
   {
-    last = new XListViewItem(parent, last, -2, "", "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
+    last = new XTreeWidgetItem(parent, last, -2, "", "", "", tr("Subtotal"), "", "", formatMoney(debit), formatMoney(credit));
     parent->setOpen(TRUE);
   }
 */
 
-  last = new XListViewItem(_gltrans, last, -3, "", "", "", tr("Total"), "", "", formatMoney(totdebit), formatMoney(totcredit));
+  last = new XTreeWidgetItem(_gltrans, last, -3, "", "", "", tr("Total"), "", "", formatMoney(totdebit), formatMoney(totcredit));
 }
 

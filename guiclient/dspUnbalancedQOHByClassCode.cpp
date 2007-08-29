@@ -57,9 +57,9 @@
 
 #include "dspUnbalancedQOHByClassCode.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
@@ -78,7 +78,7 @@ dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const 
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemsite, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
 }
@@ -101,7 +101,7 @@ void dspUnbalancedQOHByClassCode::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspUnbalancedQOHByClassCode::init()
 {
@@ -171,7 +171,7 @@ void dspUnbalancedQOHByClassCode::sIssueCountTag()
   newdlg.exec();
 }
 
-void dspUnbalancedQOHByClassCode::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspUnbalancedQOHByClassCode::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 

@@ -57,6 +57,7 @@
 
 #include "dspCustomersByCharacteristic.h"
 
+#include <QMenu>
 #include <QSqlError>
 #include <QVariant>
 
@@ -66,46 +67,15 @@
 #include "customer.h"
 #include "OpenMFGGUIClient.h"
 
-/*
- *  Constructs a dspCustomersByCharacteristic as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCustomersByCharacteristic::dspCustomersByCharacteristic(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    // signals and slots connections
-    connect(_cust, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
-}
+  connect(_cust, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCustomersByCharacteristic::~dspCustomersByCharacteristic()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCustomersByCharacteristic::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
-void dspCustomersByCharacteristic::init()
-{
   _char->populate( "SELECT char_id, char_name "
                    "FROM char "
                    "WHERE (char_customers) "
@@ -117,6 +87,16 @@ void dspCustomersByCharacteristic::init()
   _cust->addColumn(tr("Value"),          _itemColumn, Qt::AlignLeft   );
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
+}
+
+dspCustomersByCharacteristic::~dspCustomersByCharacteristic()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspCustomersByCharacteristic::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspCustomersByCharacteristic::setParams(ParameterList &params)
@@ -142,7 +122,7 @@ void dspCustomersByCharacteristic::sPrint()
   newdlg.set(params);
 }
 
-void dspCustomersByCharacteristic::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

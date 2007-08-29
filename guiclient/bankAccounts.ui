@@ -39,7 +39,7 @@
               </widget>
             </item>
             <item>
-              <widget class="XListView" name="_bankaccnt" >
+              <widget class="XTreeWidget" name="_bankaccnt" >
                 <property name="sizePolicy" >
                   <sizepolicy>
                     <hsizetype>7</hsizetype>
@@ -182,13 +182,13 @@
       </layout>
     </widget>
   </widget>
-  <layoutdefault spacing="6" margin="11" />
+  <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
-      <class>XListView</class>
-      <extends>Q3ListView</extends>
-      <header>xlistview.h</header>
+      <class>XTreeWidget</class>
+      <extends>QTreeWidget</extends>
+      <header>xtreewidget.h</header>
       <container>0</container>
       <pixmap></pixmap>
     </customwidget>

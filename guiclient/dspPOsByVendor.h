@@ -76,7 +76,7 @@ public slots:
     virtual void sEditOrder();
     virtual void sViewOrder();
     virtual void sFillList();
-    virtual void sPopulateMenu(Q3PopupMenu * pMenu, Q3ListViewItem * pSelected);
+    virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected);
 
 protected slots:
     virtual void languageChange();

@@ -57,7 +57,7 @@
 
 #include "dspWoOperationBufrStsByWorkCenter.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
@@ -78,7 +78,7 @@ dspWoOperationBufrStsByWorkCenter::dspWoOperationBufrStsByWorkCenter(QWidget* pa
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_wooper, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+  connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_wrkcnt, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
@@ -153,7 +153,7 @@ void dspWoOperationBufrStsByWorkCenter::sPrint()
   newdlg.set(params);
 }
 
-void dspWoOperationBufrStsByWorkCenter::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspWoOperationBufrStsByWorkCenter::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -275,18 +275,18 @@ void dspWoOperationBufrStsByWorkCenter::sFillList()
   q.bindValue(":complete", tr("Complete"));
   q.bindValue(":wrkcnt_id", _wrkcnt->id());
   q.exec();
+  XTreeWidgetItem *last = 0;
   while(q.next())
   {
-    XListViewItem *last = new XListViewItem(_wooper, _wooper->lastItem(),
-            q.value("wooper_id").toInt(),
-            q.value("f_wonumber"), q.value("bufrsts_status"),
-            q.value("f_type"), q.value("item_number"),
-            q.value("wooper_seqnumber"), q.value("f_stdoper"),
-            q.value("f_descrip"), q.value("f_sucomplete"),
-            q.value("f_rncomplete"), q.value("f_qtyremain"),
-            q.value("item_invuom") );
+    last = new XTreeWidgetItem(_wooper, last,
+			      q.value("wooper_id").toInt(),
+			      q.value("f_wonumber"), q.value("bufrsts_status"),
+			      q.value("f_type"), q.value("item_number"),
+			      q.value("wooper_seqnumber"), q.value("f_stdoper"),
+			      q.value("f_descrip"), q.value("f_sucomplete"),
+			      q.value("f_rncomplete"), q.value("f_qtyremain"),
+			      q.value("item_invuom") );
     if(q.value("emergency").toBool())
-      last->setColor(1, "red");
+      last->setTextColor(1, "red");
   }
 }
-

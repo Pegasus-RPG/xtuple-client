@@ -90,11 +90,10 @@ printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, 
     _numberOfCopies->setValue(_metrics->value("CreditMemoCopies").toInt());
     if (_numberOfCopies->value())
     {
-      Q3ListViewItem *cursor = _watermarks->firstChild();
-      for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++)
+      for (int i = 0; i < _watermarks->topLevelItemCount(); i++)
       {
-	cursor->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(counter)));
-	cursor->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
+	_watermarks->topLevelItem(i)->setText(1, _metrics->value(QString("CreditMemoWatermark%1").arg(i)));
+	_watermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("CreditMemoShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
       }
     }
 
@@ -180,13 +179,12 @@ void printCreditMemo::sPrint()
     }
 
 
-    Q3ListViewItem *cursor = _watermarks->firstChild();
-    for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++ )
+    for (int i = 0; i < _watermarks->topLevelItemCount(); i++ )
     {
       ParameterList params;
       params.append("cmhead_id", _cmheadid);
-      params.append("showcosts", ((cursor->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
-      params.append("watermark", cursor->text(1));
+      params.append("showcosts", ((_watermarks->topLevelItem(i)->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
+      params.append("watermark", _watermarks->topLevelItem(i)->text(1));
 
       orReport report(reportname, params);
       if (!report.isValid())
@@ -252,18 +250,21 @@ void printCreditMemo::sPrint()
 
 void printCreditMemo::sHandleCopies(int pValue)
 {
-  if (_watermarks->childCount() > pValue)
-    _watermarks->takeItem(_watermarks->lastItem());
+  if (_watermarks->topLevelItemCount() > pValue)
+    _watermarks->takeTopLevelItem(_watermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_watermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_watermarks, _watermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_watermarks->topLevelItemCount() + 1); i <= pValue; i++)
+      new XTreeWidgetItem(_watermarks,
+			  _watermarks->topLevelItem(_watermarks->topLevelItemCount() - 1),
+			  i, i,
+			  tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 
 void printCreditMemo::sEditWatermark()
 {
-  XListViewItem *cursor = _watermarks->selectedItem();
+  QTreeWidgetItem *cursor = _watermarks->currentItem();
   ParameterList params;
   params.append("watermark", cursor->text(1));
   params.append("showPrices", (cursor->text(2) == tr("Yes")));

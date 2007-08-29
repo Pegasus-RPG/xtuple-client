@@ -57,10 +57,10 @@
 
 #include "printInvoicesByShipvia.h"
 
-#include <qvariant.h>
+#include <QVariant>
 #include <parameter.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QMessageBox>
+#include <QValidator>
 #include <openreports.h>
 #include "editICMWatermark.h"
 #include "deliverInvoice.h"
@@ -118,11 +118,10 @@ void printInvoicesByShipvia::init()
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
   {
-    Q3ListViewItem *cursor = _invoiceWatermarks->firstChild();
-    for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++)
+    for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++)
     {
-      cursor->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
+      _invoiceWatermarks->topLevelItem(i)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(i)));
+      _invoiceWatermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
     }
   }
 
@@ -231,9 +230,9 @@ void printInvoicesByShipvia::sPrint()
       message( tr("Printing Invoice #%1...")
                .arg(invoiceNumber) );
 
-      Q3ListViewItem *cursor = _invoiceWatermarks->firstChild();
-      for (int counter = 0; cursor; cursor = cursor->nextSibling(), counter++ )
+      for (int i = 0; i < _invoiceWatermarks->topLevelItemCount(); i++ )
       {
+	QTreeWidgetItem *cursor = _invoiceWatermarks->topLevelItem(i);
         ParameterList params;
         params.append("invchead_id", invoices.value("invchead_id").toInt());
         params.append("showcosts", ((cursor->text(2) == tr("Yes")) ? "TRUE" : "FALSE"));
@@ -409,7 +408,7 @@ void printInvoicesByShipvia::sPrint()
 
 void printInvoicesByShipvia::sEditWatermark()
 {
-  XListViewItem *cursor = _invoiceWatermarks->selectedItem();
+  QTreeWidgetItem *cursor = _invoiceWatermarks->currentItem();
   ParameterList params;
   params.append("watermark", cursor->text(1));
   params.append("showPrices", (cursor->text(2) == tr("Yes")));
@@ -425,12 +424,14 @@ void printInvoicesByShipvia::sEditWatermark()
 
 void printInvoicesByShipvia::sHandleCopies( int pValue )
 {
-  if (_invoiceWatermarks->childCount() > pValue)
-    _invoiceWatermarks->takeItem(_invoiceWatermarks->lastItem());
+  if (_invoiceWatermarks->topLevelItemCount() > pValue)
+    _invoiceWatermarks->takeTopLevelItem(_invoiceWatermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_invoiceWatermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_invoiceWatermarks, _invoiceWatermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_invoiceWatermarks->topLevelItemCount() + 1); i <= pValue; i++)
+      new XTreeWidgetItem(_invoiceWatermarks,
+			  _invoiceWatermarks->topLevelItem(_invoiceWatermarks->topLevelItemCount() - 1),
+			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 

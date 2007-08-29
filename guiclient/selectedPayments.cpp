@@ -108,7 +108,7 @@ selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags
   if (omfgThis->singleCurrency())
   {
     _apselect->hideColumn(7);
-    _apselect->setColumnText(8, tr("Running"));
+    _apselect->headerItem()->setText(8, tr("Running"));
   }
 
   connect(omfgThis, SIGNAL(paymentsUpdated(int, int, bool)), this, SLOT(sFillList(int)));
@@ -202,24 +202,23 @@ void selectedPayments::sFillList()
     q.bindValue(":bankaccnt_id", _bankaccnt->id());
 
   q.exec();
-  if (q.first())
+  XTreeWidgetItem *last = 0;
+  double running = 0;
+  while (q.next());
   {
-    double running = 0;
+    running += q.value("apselect_amount_base").toDouble();
 
-    do
-    {
-      running += q.value("apselect_amount_base").toDouble();
-
-      new XListViewItem( _apselect, _apselect->lastItem(),
-                         q.value("apopen_id").toInt(), q.value("apselect_id").toInt(),
-                         q.value("f_bank"), q.value("f_vendor"),
-                         q.value("doctype"), q.value("apopen_docnumber"), q.value("apopen_invcnumber"),
-                         q.value("apopen_ponumber"),
-			 formatMoney(q.value("apselect_amount").toDouble()),
-			 q.value("currAbbr"),
-                         formatMoney(running) );
-    }
-    while (q.next());
+    last = new XTreeWidgetItem(_apselect, last,
+			       q.value("apopen_id").toInt(),
+			       q.value("apselect_id").toInt(),
+			       q.value("f_bank"),
+			       q.value("f_vendor"),
+			       q.value("doctype"),
+			       q.value("apopen_docnumber"),
+			       q.value("apopen_invcnumber"),
+			       q.value("apopen_ponumber"),
+			       formatMoney(q.value("apselect_amount").toDouble()),
+			       q.value("currAbbr"),
+			       formatMoney(running) );
   }
 }
-

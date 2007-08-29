@@ -57,9 +57,9 @@
 
 #include "standardJournalGroups.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <openreports.h>
 #include <parameter.h>
 #include "postStandardJournalGroup.h"
@@ -82,7 +82,7 @@ standardJournalGroups::standardJournalGroups(QWidget* parent, const char* name, 
     connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_stdjrnlgrp, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_stdjrnlgrp, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_stdjrnlgrp, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
@@ -108,7 +108,7 @@ void standardJournalGroups::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void standardJournalGroups::init()
 {
@@ -194,7 +194,7 @@ void standardJournalGroups::sFillList()
                          "ORDER BY stdjrnlgrp_name;" );
 }
 
-void standardJournalGroups::sPopulateMenu(Q3PopupMenu *)
+void standardJournalGroups::sPopulateMenu(QMenu *)
 {
 
 }

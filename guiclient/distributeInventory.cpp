@@ -492,18 +492,19 @@ void distributeInventory::sFillList()
     q.exec();
 
     _itemloc->clear();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _itemloc, _itemloc->lastItem(),
-                                               q.value("id").toInt(), q.value("type").toInt(),
-                                               q.value("locationname"), q.value("defaultlocation"),
-                                               q.value("netable"), q.value("lotserial"),
-                                               q.value("f_expiration"),
-                                               formatNumber(q.value("qty").toDouble(),6),
-                                               formatNumber(q.value("qtytagged").toDouble(),6),
-                                               formatNumber(q.value("balance").toDouble(),6) );
+      last = new XTreeWidgetItem(_itemloc, last,
+				 q.value("id").toInt(), q.value("type").toInt(),
+				 q.value("locationname"), q.value("defaultlocation"),
+				 q.value("netable"), q.value("lotserial"),
+				 q.value("f_expiration"),
+				 formatNumber(q.value("qty").toDouble(),6),
+				 formatNumber(q.value("qtytagged").toDouble(),6),
+				 formatNumber(q.value("balance").toDouble(),6) );
       if (q.value("expired").toBool())
-        last->setColor("red");
+        last->setTextColor("red");
     }
   }
 }

@@ -764,7 +764,7 @@
         <number>5</number>
        </property>
        <item>
-        <widget class="XListView" name="_available" />
+        <widget class="XTreeWidget" name="_available" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
@@ -857,7 +857,7 @@
         </layout>
        </item>
        <item>
-        <widget class="XListView" name="_granted" />
+        <widget class="XTreeWidget" name="_granted" />
        </item>
       </layout>
      </item>
@@ -876,9 +876,9 @@
    <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XListView</class>
-   <extends>Q3ListView</extends>
-   <header>xlistview.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
    <container>0</container>
    <pixmap></pixmap>
   </customwidget>

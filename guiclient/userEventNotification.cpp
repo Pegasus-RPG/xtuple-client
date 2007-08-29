@@ -57,7 +57,7 @@
 
 #include "userEventNotification.h"
 
-#include <qvariant.h>
+#include <QVariant>
 
 /*
  *  Constructs a userEventNotification as a child of 'parent', with the
@@ -74,9 +74,9 @@ userEventNotification::userEventNotification(QWidget* parent, const char* name, 
 
     // signals and slots connections
     connect(_close, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(_warehouse, SIGNAL(clicked(Q3ListViewItem*)), this, SLOT(sWarehouseToggled(Q3ListViewItem*)));
+    connect(_warehouse, SIGNAL(clicked(QTreeWidgetItem*)), this, SLOT(sWarehouseToggled(QTreeWidgetItem*)));
     connect(_event, SIGNAL(itemSelected(int)), this, SLOT(sAllWarehousesToggled(int)));
-    connect(_event, SIGNAL(selectionChanged()), this, SLOT(sFillWarehouseList()));
+    connect(_event, SIGNAL(itemSelectionChanged()), this, SLOT(sFillWarehouseList()));
     init();
 }
 
@@ -143,10 +143,10 @@ enum SetResponse userEventNotification::set(ParameterList &pParams)
 
 void userEventNotification::sAllWarehousesToggled(int pEvnttypeid)
 {
-  if(!_warehouse->firstChild())
+  if(!_warehouse->topLevelItemCount() > 0)
     return;
 
-  if (_warehouse->firstChild()->text(0) == tr("Yes"))
+  if (_warehouse->topLevelItem(0)->text(0) == tr("Yes"))
     q.prepare( "DELETE FROM evntnot "
                "WHERE ( (evntnot_username=:username)"
                " AND (evntnot_evnttype_id=:evnttype_id) );" );
@@ -166,7 +166,7 @@ void userEventNotification::sAllWarehousesToggled(int pEvnttypeid)
   sFillWarehouseList();
 }
 
-void userEventNotification::sWarehouseToggled(Q3ListViewItem *selected)
+void userEventNotification::sWarehouseToggled(QTreeWidgetItem *selected)
 {
   if(!selected)
     return;
@@ -184,7 +184,7 @@ void userEventNotification::sWarehouseToggled(Q3ListViewItem *selected)
 
   q.bindValue(":username", _cUsername);
   q.bindValue(":evnttype_id", _event->id());
-  q.bindValue(":warehous_id", ((XListViewItem *)selected)->id());
+  q.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
   q.exec();
 
   sFillWarehouseList();
@@ -192,7 +192,7 @@ void userEventNotification::sWarehouseToggled(Q3ListViewItem *selected)
 
 void userEventNotification::sFillWarehouseList()
 {
-  for (Q3ListViewItem *cursor = _warehouse->firstChild(); cursor != 0; cursor = cursor->nextSibling())
+  for (int i = 0; i < _warehouse->topLevelItemCount(); i++)
   {
     q.prepare( "SELECT evntnot_id "
                "FROM evntnot "
@@ -200,13 +200,12 @@ void userEventNotification::sFillWarehouseList()
                " AND (evntnot_warehous_id=:warehous_id)"
                " AND (evntnot_evnttype_id=:evnttype_id) );" );
     q.bindValue(":username", _cUsername);
-    q.bindValue(":warehous_id", ((XListViewItem *)cursor)->id());
+    q.bindValue(":warehous_id", ((XTreeWidgetItem *)(_warehouse->topLevelItem(i)))->id());
     q.bindValue(":evnttype_id", _event->id());
     q.exec();
     if (q.first())
-      cursor->setText(0, tr("Yes"));
+      _warehouse->topLevelItem(i)->setText(0, tr("Yes"));
     else
-      cursor->setText(0, tr("No"));
+      _warehouse->topLevelItem(i)->setText(0, tr("No"));
   }
 }
-

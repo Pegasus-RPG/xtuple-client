@@ -57,8 +57,8 @@
 
 #include "dspMaterialUsageVarianceByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include "rptMaterialUsageVarianceByItem.h"
 
 /*
@@ -75,7 +75,7 @@ dspMaterialUsageVarianceByItem::dspMaterialUsageVarianceByItem(QWidget* parent, 
 
     // signals and slots connections
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_womatlvar, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_womatlvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
@@ -101,7 +101,7 @@ void dspMaterialUsageVarianceByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspMaterialUsageVarianceByItem::init()
 {
@@ -135,7 +135,7 @@ void dspMaterialUsageVarianceByItem::sPrint()
   newdlg.set(params);
 }
 
-void dspMaterialUsageVarianceByItem::sPopulateMenu(Q3PopupMenu *)
+void dspMaterialUsageVarianceByItem::sPopulateMenu(QMenu *)
 {
 }
 

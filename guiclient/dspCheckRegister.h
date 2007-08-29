@@ -81,7 +81,7 @@ protected:
 protected slots:
     virtual void languageChange();
 
-    virtual void sPopulateMenu(Q3PopupMenu *);
+    virtual void sPopulateMenu(QMenu *);
 
 };
 

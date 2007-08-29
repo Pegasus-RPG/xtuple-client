@@ -57,9 +57,9 @@
 
 #include "dspUndefinedManufacturedItems.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qworkspace.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QWorkspace>
 #include <parameter.h>
 #include "boo.h"
 #include "bom.h"
@@ -78,7 +78,7 @@ dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, co
     (void)statusBar();
 
     // signals and slots connections
-    connect(_item, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_item, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
@@ -102,7 +102,7 @@ void dspUndefinedManufacturedItems::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspUndefinedManufacturedItems::init()
 {
@@ -131,17 +131,17 @@ void dspUndefinedManufacturedItems::init()
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 
-void dspUndefinedManufacturedItems::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspUndefinedManufacturedItems::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  if (((XListViewItem *)_item->selectedItem())->altId() == 1)
+  if (((XTreeWidgetItem *)_item->currentItem())->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Create BOO..."), this, SLOT(sCreateBOO()), 0);
     if (!_privleges->check("MaintainBOOs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
-  else if (((XListViewItem *)_item->selectedItem())->altId() == 2)
+  else if (((XTreeWidgetItem *)_item->currentItem())->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Create BOM..."), this, SLOT(sCreateBOM()), 0);
     if (!_privleges->check("MaintainBOMs"))

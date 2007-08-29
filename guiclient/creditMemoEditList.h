@@ -72,12 +72,10 @@ public:
     creditMemoEditList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~creditMemoEditList();
 
-    virtual void init();
-
 public slots:
     virtual void sEditCreditMemo();
     virtual void sEditCreditMemoItem();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem * pSelected );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sFillList();
     virtual void sPrint();
 

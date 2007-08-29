@@ -185,6 +185,21 @@ void VirtualCluster::sRefresh()
   _info->setEnabled(_number && _number->_id > 0);
 }
 
+void VirtualCluster::setReadOnly(bool b)
+{
+  _readOnly = b;
+  if (b)
+  {
+    _number->setEnabled(false);
+    _list->hide();
+  }
+  else
+  {
+    _number->setEnabled(true);
+    _list->show();
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 VirtualClusterLineEdit::VirtualClusterLineEdit(QWidget* pParent,

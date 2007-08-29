@@ -57,7 +57,7 @@
 
 #include "dspBillingSelections.h"
 
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QStatusBar>
@@ -83,7 +83,7 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
 
   // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_cobill, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+  connect(_cobill, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancel()));
@@ -126,7 +126,7 @@ void dspBillingSelections::languageChange()
     retranslateUi(this);
 }
 
-void dspBillingSelections::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *)
+void dspBillingSelections::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
 {
   int menuItem;
 

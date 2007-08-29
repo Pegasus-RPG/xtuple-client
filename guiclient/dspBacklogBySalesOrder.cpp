@@ -57,9 +57,9 @@
 
 #include "dspBacklogBySalesOrder.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QStatusBar>
 #include <parameter.h>
 #include "inputManager.h"
 #include "salesOrderList.h"
@@ -83,7 +83,7 @@ dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char* name
     connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sFillList()));
     connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_soitem, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
     init();
 }
@@ -106,7 +106,7 @@ void dspBacklogBySalesOrder::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspBacklogBySalesOrder::init()
 {
@@ -131,7 +131,7 @@ void dspBacklogBySalesOrder::init()
   _soitem->addColumn(tr("Available"),   _qtyColumn,  Qt::AlignRight  );
 }
 
-void dspBacklogBySalesOrder::sPopulateMenu(Q3PopupMenu *pMenu)
+void dspBacklogBySalesOrder::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -226,20 +226,21 @@ void dspBacklogBySalesOrder::sFillList()
                "       ORDER BY coitem_linenumber ) AS data;" );
     q.bindValue(":sohead_id", _salesOrder->id());
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _soitem, _soitem->lastItem(),
-                                               q.value("coitem_id").toInt(), q.value("itemsite_id").toInt(),
-                                               q.value("coitem_linenumber"), q.value("item_number"),
-                                               q.value("f_description"), q.value("warehous_code"),
-                                               q.value("f_ordered"), q.value("f_shipped"),
-                                               q.value("f_balance"), q.value("f_atshipping"),
-                                               q.value("f_available") );
+      last = new XTreeWidgetItem(_soitem, last,
+				 q.value("coitem_id").toInt(), q.value("itemsite_id").toInt(),
+				 q.value("coitem_linenumber"), q.value("item_number"),
+				 q.value("f_description"), q.value("warehous_code"),
+				 q.value("f_ordered"), q.value("f_shipped"),
+				 q.value("f_balance"), q.value("f_atshipping"),
+				 q.value("f_available") );
 
       if (q.value("stockout").toBool())
-        last->setColor(8, "red");
+        last->setTextColor(8, "red");
       else if (q.value("reorder").toBool())
-        last->setColor(8, "orange");
+        last->setTextColor(8, "orange");
     }
   }
   else

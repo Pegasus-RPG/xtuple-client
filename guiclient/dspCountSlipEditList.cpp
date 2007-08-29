@@ -57,9 +57,9 @@
 
 #include "dspCountSlipEditList.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include "countTagList.h"
 #include "countSlip.h"
 #include "rptCountSlipEditList.h"
@@ -80,7 +80,7 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
     connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_cntslip, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*,Q3ListViewItem*)));
+    connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_countTagList, SIGNAL(clicked()), this, SLOT(sCountTagList()));
     connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
@@ -115,7 +115,7 @@ void dspCountSlipEditList::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspCountSlipEditList::init()
 {
@@ -177,7 +177,7 @@ void dspCountSlipEditList::sPrint()
   newdlg.set(params);
 }
 
-void dspCountSlipEditList::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSelected)
+void dspCountSlipEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 {
   int menuItem;
 
@@ -185,7 +185,7 @@ void dspCountSlipEditList::sPopulateMenu(Q3PopupMenu *pMenu, Q3ListViewItem *pSe
   if (!_privleges->check("EnterCountSlips"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  if (((XListViewItem *)pSelected)->altId() == 0)
+  if (((XTreeWidgetItem *)pSelected)->altId() == 0)
   {
     menuItem = pMenu->insertItem("Post Count Slip...", this, SLOT(sPost()), 0);
     if (!_privleges->check("PostCountSlips"))

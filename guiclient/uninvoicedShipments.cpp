@@ -57,12 +57,12 @@
 
 #include "uninvoicedShipments.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "selectOrderForBilling.h"
 
 /*
@@ -81,7 +81,7 @@ uninvoicedShipments::uninvoicedShipments(QWidget* parent, const char* name, Qt::
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_showUnselected, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_coship, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_coship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
     init();
 }
@@ -104,7 +104,7 @@ void uninvoicedShipments::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void uninvoicedShipments::init()
 {
@@ -134,7 +134,7 @@ void uninvoicedShipments::sPrint()
     report.reportError(this);
 }
 
-void uninvoicedShipments::sPopulateMenu(Q3PopupMenu *menu)
+void uninvoicedShipments::sPopulateMenu(QMenu *menu)
 {
   int menuItem;
 
@@ -193,7 +193,7 @@ void uninvoicedShipments::sFillList()
   q.exec();
   if (q.first())
   {
-    XListViewItem *head = NULL;
+    XTreeWidgetItem *head = NULL;
     int coheadid        = -1;
 
     do
@@ -203,12 +203,12 @@ void uninvoicedShipments::sFillList()
         if (coheadid != q.value("cohead_id").toInt())
         {
           coheadid = q.value("cohead_id").toInt();
-          head = new XListViewItem( _coship, _coship->lastItem(), coheadid, -1,
+          head = new XTreeWidgetItem( _coship, head, coheadid, -1,
                                     q.value("cohead_number"), q.value("cust_number"),
                                     q.value("cust_name") );
         }
 
-        new XListViewItem( head, q.value("cohead_id").toInt(), q.value("coship_id").toInt(),
+        new XTreeWidgetItem( head, q.value("cohead_id").toInt(), q.value("coship_id").toInt(),
                            q.value("coitem_linenumber"), q.value("item_number"),
                            q.value("description"), q.value("f_shipped"),
                            q.value("f_selected") );
@@ -217,4 +217,3 @@ void uninvoicedShipments::sFillList()
     while (q.next());
   }
 }
-

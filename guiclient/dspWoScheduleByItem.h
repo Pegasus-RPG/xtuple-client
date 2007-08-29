@@ -93,7 +93,7 @@ public slots:
     virtual void sViewWomatl();
     virtual void sViewWooper();
     virtual void sInventoryAvailabilityByWorkOrder();
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem * selected );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sFillList();
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
 

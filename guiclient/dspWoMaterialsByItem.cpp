@@ -57,8 +57,8 @@
 
 #include "dspWoMaterialsByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
 #include "inputManager.h"
 #include "rptWoMaterialsByItem.h"
@@ -184,23 +184,24 @@ void dspWoMaterialsByItem::sFillList()
   {
     double totalRequired  = 0;
 
+    XTreeWidgetItem *last = 0;
     do
     {
       totalRequired += q.value("balance").toDouble();
 
-      XListViewItem *last = new XListViewItem( _womatl, _womatl->lastItem(), q.value("womatl_id").toInt(),
-                                               q.value("wonumber"), q.value("item_number"),
-                                               q.value("wooperseq"), q.value("issuemethod"),
-                                               q.value("qtyper"), q.value("scrap"),
-                                               q.value("qtyreq"), q.value("qtyiss"),
-                                               q.value("scrapped"), q.value("f_balance"),
-                                               q.value("duedate") );
+      last = new XTreeWidgetItem( _womatl, last, q.value("womatl_id").toInt(),
+				 q.value("wonumber"), q.value("item_number"),
+				 q.value("wooperseq"), q.value("issuemethod"),
+				 q.value("qtyper"), q.value("scrap"),
+				 q.value("qtyreq"), q.value("qtyiss"),
+				 q.value("scrapped"), q.value("f_balance"),
+				 q.value("duedate") );
       if (q.value("latedue").toBool())
-        last->setColor(10, "red");
+        last->setTextColor(10, "red");
     }
     while (q.next());
 
-    new XListViewItem( _womatl, _womatl->lastItem(), -1,
+    new XTreeWidgetItem( _womatl, last, -1,
                        "", tr("Total Required:"), "", "", "", "", "", "", "",
                        formatQty(totalRequired) );
   }

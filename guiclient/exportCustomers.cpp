@@ -57,10 +57,10 @@
 
 #include "exportCustomers.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "customer.h"
 
 /*
@@ -76,7 +76,7 @@ exportCustomers::exportCustomers(QWidget* parent, const char* name, Qt::WFlags f
     (void)statusBar();
 
     // signals and slots connections
-    connect(_cust, SIGNAL(populateMenu(Q3PopupMenu *, Q3ListViewItem *, int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_cust, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     init();
 }
@@ -99,7 +99,7 @@ void exportCustomers::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void exportCustomers::init()
 {
@@ -113,7 +113,7 @@ void exportCustomers::init()
   sFillList();
 }
 
-void exportCustomers::sPopulateMenu(Q3PopupMenu *pMenu)
+void exportCustomers::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
@@ -165,16 +165,18 @@ void exportCustomers::sFillList(int, bool)
              "WHERE (NOT cust_exported) "
              "ORDER BY cust_number;" );
   q.exec();
+  XTreeWidgetItem *last = 0;
   while (q.next())
   {
-    XListViewItem *last = new XListViewItem( _cust, _cust->lastItem(), q.value("cust_id").toInt(),
-                                             q.value("cust_number"), q.value("cust_name"),
-                                             q.value("cust_address1"), q.value("f_dateadded") );
+    last = new XTreeWidgetItem( _cust, last, q.value("cust_id").toInt(),
+			       q.value("cust_number"),
+			       q.value("cust_name"),
+			       q.value("cust_address1"),
+			       q.value("f_dateadded") );
 
     if (q.value("_aropenid").toInt() != 0)
-      last->setColor("red");
+      last->setTextColor("red");
   }
 
   _cust->setDragString("custid=");
 }
-

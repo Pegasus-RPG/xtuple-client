@@ -88,7 +88,7 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
   _invoice->addColumn( tr("Invoice #"), _orderColumn, Qt::AlignRight  );
   _invoice->addColumn( tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
   _invoice->addColumn( tr("Customer"),  -1,           Qt::AlignLeft   );
-  _invoice->setSelectionMode(Q3ListView::Extended);
+  _invoice->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _watermarks->addColumn( tr("Copy #"),      _dateColumn, Qt::AlignCenter );
   _watermarks->addColumn( tr("Watermark"),   -1,          Qt::AlignLeft   );
@@ -97,13 +97,10 @@ reprintInvoices::reprintInvoices(QWidget* parent, const char* name, bool modal, 
   _numOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_numOfCopies->value())
   {
-    int           counter = 0;
-    XListViewItem *cursor = _watermarks->firstChild();
-
-    for (; cursor; cursor = cursor->nextSibling(), counter++)
+    for (int i = 0; i < _watermarks->topLevelItemCount(); i++)
     {
-      cursor->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(counter)));
-      cursor->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(counter)) == "t") ? tr("Yes") : tr("No")));
+      _watermarks->topLevelItem(i)->setText(1, _metrics->value(QString("InvoiceWatermark%1").arg(i)));
+      _watermarks->topLevelItem(i)->setText(2, ((_metrics->value(QString("InvoiceShowPrices%1").arg(i)) == "t") ? tr("Yes") : tr("No")));
     }
   }
 }
@@ -153,7 +150,6 @@ void reprintInvoices::sPrint()
   QPrinter printer;
   bool     setupPrinter = TRUE;
 
-  XListViewItem *cursor = _invoice->firstChild();
   bool userCanceled = false;
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
@@ -161,98 +157,94 @@ void reprintInvoices::sPrint()
       systemError(this, tr("Could not initialize printing system for multiple reports."));
     return;
   }
-  while (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _invoice->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    if (_invoice->isSelected(cursor))
+    XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+
+    for (int j = 0; j < _watermarks->topLevelItemCount(); j++)
     {
-      int counter = 0;
-
-      for ( XListViewItem *watermark = _watermarks->firstChild();
-            watermark; watermark = watermark->nextSibling(), counter++ )
+      q.prepare("SELECT findCustomerForm(:cust_id, 'I') AS _reportname;");
+      q.bindValue(":cust_id", cursor->altId());
+      q.exec();
+      if (q.first())
       {
-        q.prepare("SELECT findCustomerForm(:cust_id, 'I') AS _reportname;");
-        q.bindValue(":cust_id", cursor->altId());
-        q.exec();
-        if (q.first())
-        {
-          ParameterList params;
-          params.append("invchead_id", cursor->id());
-          params.append("showcosts", ((watermark->text(2) == tr("Yes")) ? "TRUE" : "FALSE") );
-          params.append("watermark", watermark->text(1));
+	ParameterList params;
+	params.append("invchead_id", cursor->id());
+	params.append("showcosts", ((_watermarks->topLevelItem(j)->text(2) == tr("Yes")) ? "TRUE" : "FALSE") );
+	params.append("watermark", _watermarks->topLevelItem(j)->text(1));
 
-          orReport report(q.value("_reportname").toString(), params);
-          if (report.isValid())
-          {
-            if (report.print(&printer, setupPrinter))
-	           setupPrinter = FALSE;
-	        else 
-	        {
-	          report.reportError(this);
-	          orReport::endMultiPrint(&printer);
-	          return;
-  	        }
-          }
-	      else
-            QMessageBox::critical( this, tr("Cannot Find Invoice Form"),
-                                   tr( "The Invoice Form '%1' cannot be found.\n"
-                                       "One or more of the selected Invoices cannot be printed until a Customer Form Assignment\n"
-                                       "is updated to remove any references to this Invoice Form or this Invoice Form is created." )
-                                   .arg(q.value("_reportname").toString()) );
-        }
-	    else if (q.lastError().type() != QSqlError::None)
-	    {
-	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	     return;
-        }
-      }
-      if (_metrics->boolean("EnableBatchManager"))
-      {
-        // TODO: Check for EDI and handle submission to Batch here
-        q.prepare("SELECT CASE WHEN (COALESCE(shipto_ediprofile_id, -2) = -2)"
-                "              THEN COALESCE(cust_ediprofile_id,-1)"
-                "            ELSE COALESCE(shipto_ediprofile_id,-2)"
-                "       END AS result,"
-                "       COALESCE(cust_emaildelivery, false) AS custom"
-                "  FROM cust, invchead"
-                "       LEFT OUTER JOIN shipto"
-                "         ON (invchead_shipto_id=shipto_id)"
-                "  WHERE ((invchead_cust_id=cust_id)"
-                "    AND  (invchead_id=:invchead_id)); ");
-        q.bindValue(":invchead_id", cursor->id());
-        q.exec();
-        if(q.first())
-        {
-          if(q.value("result").toInt() == -1)
-          {
-            if(q.value("custom").toBool())
-            {
-              ParameterList params;
-              params.append("invchead_id", cursor->id());
-    
-              deliverInvoice newdlg(this, "", TRUE);
-              newdlg.set(params);
-              newdlg.exec();
-            }
-          }
-          else
-          {
-            ParameterList params;
-            params.append("action_name", "TransmitInvoice");
-            params.append("invchead_id", cursor->id());
-    
-            submitAction newdlg(this, "", TRUE);
-            newdlg.set(params);
-            newdlg.exec();
-          }
-        }
+	orReport report(q.value("_reportname").toString(), params);
+	if (report.isValid())
+	{
+	  if (report.print(&printer, setupPrinter))
+		 setupPrinter = FALSE;
+	      else 
+	      {
+		report.reportError(this);
+		orReport::endMultiPrint(&printer);
+		return;
+	      }
+	}
+	else
+	  QMessageBox::critical( this, tr("Cannot Find Invoice Form"),
+				 tr( "The Invoice Form '%1' cannot be found.\n"
+				     "One or more of the selected Invoices cannot be printed until a Customer Form Assignment\n"
+				     "is updated to remove any references to this Invoice Form or this Invoice Form is created." )
+				 .arg(q.value("_reportname").toString()) );
       }
       else if (q.lastError().type() != QSqlError::None)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
       }
     }
-  cursor = cursor->nextSibling();
+    if (_metrics->boolean("EnableBatchManager"))
+    {
+      // TODO: Check for EDI and handle submission to Batch here
+      q.prepare("SELECT CASE WHEN (COALESCE(shipto_ediprofile_id, -2) = -2)"
+	      "              THEN COALESCE(cust_ediprofile_id,-1)"
+	      "            ELSE COALESCE(shipto_ediprofile_id,-2)"
+	      "       END AS result,"
+	      "       COALESCE(cust_emaildelivery, false) AS custom"
+	      "  FROM cust, invchead"
+	      "       LEFT OUTER JOIN shipto"
+	      "         ON (invchead_shipto_id=shipto_id)"
+	      "  WHERE ((invchead_cust_id=cust_id)"
+	      "    AND  (invchead_id=:invchead_id)); ");
+      q.bindValue(":invchead_id", cursor->id());
+      q.exec();
+      if(q.first())
+      {
+	if(q.value("result").toInt() == -1)
+	{
+	  if(q.value("custom").toBool())
+	  {
+	    ParameterList params;
+	    params.append("invchead_id", cursor->id());
+  
+	    deliverInvoice newdlg(this, "", TRUE);
+	    newdlg.set(params);
+	    newdlg.exec();
+	  }
+	}
+	else
+	{
+	  ParameterList params;
+	  params.append("action_name", "TransmitInvoice");
+	  params.append("invchead_id", cursor->id());
+  
+	  submitAction newdlg(this, "", TRUE);
+	  newdlg.set(params);
+	  newdlg.exec();
+	}
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
   orReport::endMultiPrint(&printer);
 
@@ -263,18 +255,20 @@ void reprintInvoices::sPrint()
 
 void reprintInvoices::sHandleInvoiceCopies(int pValue)
 {
-  if (_watermarks->childCount() > pValue)
-    _watermarks->takeItem(_watermarks->lastItem());
+  if (_watermarks->topLevelItemCount() > pValue)
+    _watermarks->takeTopLevelItem(_watermarks->topLevelItemCount() - 1);
   else
   {
-    for (unsigned int counter = (_watermarks->childCount() + 1); counter <= (unsigned int)pValue; counter++)
-      new Q3ListViewItem(_watermarks, _watermarks->lastItem(), tr("Copy #%1").arg(counter), "", tr("Yes"));
+    for (int i = (_watermarks->topLevelItemCount() + 1); i <= pValue; i++)
+      new XTreeWidgetItem(_watermarks,
+			  _watermarks->topLevelItem(_watermarks->topLevelItemCount() - 1),
+			  i, i, tr("Copy #%1").arg(i), "", tr("Yes"));
   }
 }
 
 void reprintInvoices::sEditWatermark()
 {
-  XListViewItem *cursor = _watermarks->selectedItem();
+  QTreeWidgetItem *cursor = _watermarks->currentItem();
   ParameterList params;
   params.append("watermark", cursor->text(1));
   params.append("showPrices", (cursor->text(2) == tr("Yes")));

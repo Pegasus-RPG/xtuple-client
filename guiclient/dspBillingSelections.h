@@ -71,7 +71,7 @@ public:
     ~dspBillingSelections();
 
 public slots:
-    virtual void sPopulateMenu( Q3PopupMenu * pMenu, Q3ListViewItem * );
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
     virtual void sFillList();
     virtual void sPostAll();
     virtual void sPost();

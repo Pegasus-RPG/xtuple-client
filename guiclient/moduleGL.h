@@ -127,11 +127,6 @@ class moduleGL : public QObject
     void sRptBankrecHistory();
     void sRptSummarizedBankrecHistory();
 
-    void sDspIncomeStatement();
-    void sRptIncomeStatement();
-    void sDspBalanceSheet();
-    void sRptBalanceSheet();
-
     void sBudgets();
     void sMaintainBudget();
 

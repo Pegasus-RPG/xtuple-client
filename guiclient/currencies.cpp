@@ -57,11 +57,11 @@
 
 #include "currencies.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
-#include <qworkspace.h>
+#include <QWorkspace>
 #include "currency.h"
 
 /*
@@ -83,7 +83,7 @@ currencies::currencies(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
     connect(_curr, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_curr, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_curr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     init();
 }
 
@@ -105,7 +105,7 @@ void currencies::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 #include <QSqlError>
 
 void currencies::init()
@@ -222,18 +222,19 @@ void currencies::sFillList()
 	       "FROM curr_symbol "
 	       "ORDER BY flag DESC, curr_name;" );
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-	new XListViewItem(_curr, _curr->lastItem(),
-			  q.value("curr_id").toInt(),
-			  q.value("flag"),
-			  q.value("curr_name"),
-			  q.value("curr_symbol"),
-			  q.value("curr_abbr") );
+      last = new XTreeWidgetItem(_curr, last,
+				 q.value("curr_id").toInt(),
+				 q.value("flag"),
+				 q.value("curr_name"),
+				 q.value("curr_symbol"),
+				 q.value("curr_abbr") );
     }
 }
 
-void currencies::sPopulateMenu(Q3PopupMenu* pMenu)
+void currencies::sPopulateMenu(QMenu* pMenu)
 {
     int menuItem;
     

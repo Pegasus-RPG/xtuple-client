@@ -57,9 +57,9 @@
 
 #include "dspSummarizedSalesByCustomerType.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
 #include <parameter.h>
 #include "rptSummarizedSalesByCustomerType.h"
 
@@ -191,9 +191,11 @@ void dspSummarizedSalesByCustomerType::sFillList()
       totalSales += q.value("totalsales").toDouble();
     while (q.next());
 
-    new XListViewItem( _sohist, _sohist->lastItem(), -1,
-                       QVariant(tr("Totals")), "", "", "", "", "",
-                       formatMoney(totalSales) );
+    new XTreeWidgetItem(_sohist,
+			_sohist->topLevelItem(_sohist->topLevelItemCount() - 1),
+			-1,
+                        QVariant(tr("Totals")), "", "", "", "", "",
+                        formatMoney(totalSales) );
   }
 }
 

@@ -71,8 +71,7 @@ class Q3GridLayout;
 class QLineEdit;
 class QCheckBox;
 class QPushButton;
-class XListView;
-class Q3ListViewItem;
+class XTreeWidget;
 class ParameterList;
 
 class OPENMFGWIDGETS_EXPORT itemAliasList : public QDialog
@@ -86,7 +85,7 @@ class OPENMFGWIDGETS_EXPORT itemAliasList : public QDialog
     QCheckBox* _showInactive;
     QPushButton* _close;
     QPushButton* _select;
-    XListView* _item;
+    XTreeWidget* _item;
 
     virtual void set( ParameterList & pParams );
 

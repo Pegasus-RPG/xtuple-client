@@ -242,23 +242,16 @@ void dspTimePhasedOpenARItems::sFillCustom()
   QString sql("SELECT cust_id, cust_number, cust_name");
 
   int columns = 1;
-  XListViewItem *cursor = _periods->firstChild();
-  if (cursor != 0)
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
   {
-    do
-    {
-      if (_periods->isSelected(cursor))
-      {
-        sql += QString(", openARItemsValue(cust_id, %2) AS bucket%1")
-               .arg(columns++)
-               .arg(cursor->id());
-  
-        _aropen->addColumn(formatDate(((PeriodListViewItem *)cursor)->startDate()), _bigMoneyColumn, Qt::AlignRight);
+    PeriodListViewItem *cursor = (PeriodListViewItem*)selected[i];
+    sql += QString(", openARItemsValue(cust_id, %2) AS bucket%1")
+	   .arg(columns++)
+	   .arg(cursor->id());
 
-        _columnDates.append(DatePair(((PeriodListViewItem *)cursor)->startDate(), ((PeriodListViewItem *)cursor)->endDate()));
-      }
-    }
-    while ((cursor = cursor->nextSibling()) != 0);
+    _aropen->addColumn(formatDate(cursor->startDate()), _bigMoneyColumn, Qt::AlignRight);
+    _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
   sql += " FROM cust ";

@@ -57,9 +57,9 @@
 
 #include "dspSubstituteAvailabilityByItem.h"
 
-#include <qvariant.h>
-#include <qworkspace.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QWorkspace>
+#include <QStatusBar>
 #include "dspAllocations.h"
 #include "dspOrders.h"
 #include "rptSubstituteAvailabilityByRootItem.h"
@@ -112,7 +112,7 @@ void dspSubstituteAvailabilityByItem::languageChange()
 }
 
 //Added by qt3to4:
-#include <Q3PopupMenu>
+#include <QMenu>
 
 void dspSubstituteAvailabilityByItem::init()
 {
@@ -236,7 +236,7 @@ void dspSubstituteAvailabilityByItem::sViewOrders()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspSubstituteAvailabilityByItem::sPopulateMenu(Q3PopupMenu *menu)
+void dspSubstituteAvailabilityByItem::sPopulateMenu(QMenu *menu)
 {
   menu->insertItem(tr("View Allocations..."), this, SLOT(sViewAllocations()), 0);
   menu->insertItem(tr("View Orders..."), this, SLOT(sViewOrders()), 0);
@@ -315,17 +315,23 @@ void dspSubstituteAvailabilityByItem::sFillList()
     q.bindValue(":item_id", _item->id());
     _warehouse->bindValue(q);
     q.exec();
+    XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      XListViewItem *last = new XListViewItem( _availability, _availability->lastItem(), q.value("s_itemsite_id").toInt(),
-                                               q.value("warehous_code"), q.value("item_number"),
-                                               q.value("itemdescrip"), q.value("leadtime"),
-                                               q.value("qtyonhand"), q.value("allocated"),
-                                               q.value("ordered"), q.value("reorderlevel"),
-                                               q.value("available") );
+      last = new XTreeWidgetItem(_availability, last,
+				 q.value("s_itemsite_id").toInt(),
+				 q.value("warehous_code"),
+				 q.value("item_number"),
+				 q.value("itemdescrip"),
+				 q.value("leadtime"),
+				 q.value("qtyonhand"),
+				 q.value("allocated"),
+				 q.value("ordered"),
+				 q.value("reorderlevel"),
+				 q.value("available") );
 
       if (last->text(7).toDouble() >= last->text(8).toDouble())
-        last->setColor(8, "red");
+        last->setTextColor(8, "red");
     }
   }
 }
