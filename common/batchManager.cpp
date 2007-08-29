@@ -57,10 +57,12 @@
 
 #include "batchManager.h"
 
+#include <QMenu>
 #include <qvariant.h>
 #include <qmessagebox.h>
 #include <qstatusbar.h>
 #include <qsqldatabase.h>
+
 #include "xsqlquery.h"
 #include "batchItem.h"
 
@@ -70,7 +72,7 @@
  *
  */
 batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
-    : Q3MainWindow(parent, name, fl)
+    : QMainWindow(parent, name, fl)
 {
     setupUi(this);
 
@@ -86,7 +88,7 @@ batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_usr, SIGNAL(newID(int)), this, SLOT(sFillList()));
     connect(buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
     connect(_showCompleted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_batch, SIGNAL(populateMenu(Q3PopupMenu*,Q3ListViewItem*,int)), this, SLOT(sPopulateMenu(Q3PopupMenu*)));
+    connect(_batch, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_batch, SIGNAL(valid(bool)), _reschedule, SLOT(setEnabled(bool)));
@@ -113,9 +115,6 @@ void batchManager::languageChange()
     retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <Q3PopupMenu>
-
 void batchManager::init()
 {
   _db = QSqlDatabase();
@@ -132,7 +131,7 @@ void batchManager::init()
   setDatabase(_db);
 }
 
-void batchManager::sPopulateMenu(Q3PopupMenu *)
+void batchManager::sPopulateMenu(QMenu *)
 {
 }
 

@@ -60,11 +60,11 @@
 
 class QSqlDatabase;
 
-#include <Qt3Support/Q3MainWindow>
+#include <QMainWindow>
 
 #include "ui_batchManager.h"
 
-class batchManager : public Q3MainWindow, public Ui::batchManager
+class batchManager : public QMainWindow, public Ui::batchManager
 {
     Q_OBJECT
 
@@ -83,7 +83,7 @@ protected slots:
     virtual void languageChange();
 
     virtual void init();
-    virtual void sPopulateMenu( Q3PopupMenu * );
+    virtual void sPopulateMenu( QMenu * );
     virtual void sFillList();
 
 
