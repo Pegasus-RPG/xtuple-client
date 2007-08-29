@@ -65,6 +65,7 @@
 #include <QMessageBox>
 #include <QPixmap>
 #include <QWorkspace>
+#include <QSettings>
 
 #include "OpenMFGGUIClient.h"
 
@@ -129,7 +130,9 @@ moduleSys::moduleSys(OpenMFGGUIClient *Pparent) :
 
   errorLogListener::initialize();
 
-  cascade = tile = closeActive = closeAll = 0;
+  cascade = tile = closeActive = closeAll = _rememberPos = _rememberSize = 0;
+  _lastActive = 0;
+  geometryMenu = 0;
 
   systemMenu		= new QMenu();
   configModulesMenu	= new QMenu();
@@ -153,6 +156,13 @@ moduleSys::moduleSys(OpenMFGGUIClient *Pparent) :
 
   closeAll = new Action( parent, "window.closeAllWindows", tr("Close All Windows"), this, SLOT(sCloseAll()), windowMenu, true);
   parent->actions.append( closeAll );
+
+  _rememberPos = new Action( parent, "window.rememberPositionToggle", tr("Remember Position"), this, SLOT(sRememberPositionToggle()), windowMenu, true);
+ _rememberPos->setCheckable(true);
+
+ _rememberSize = new Action( parent, "window.rememberSizeToggle", tr("Remember Size"), this,SLOT(sRememberSizeToggle()), windowMenu, true);
+ _rememberSize->setCheckable(true);
+
 
   parent->menuBar()->insertItem(tr("Window"),  windowMenu );
   connect(windowMenu, SIGNAL(aboutToShow()), this, SLOT(sPrepareWindowMenu()));
@@ -326,6 +336,28 @@ void moduleSys::sPrepareWindowMenu()
   QWidget * activeWindow = parent->workspace()->activeWindow();
   if(omfgThis->showTopLevel())
     activeWindow = qApp->activeWindow();
+  _lastActive = activeWindow;
+
+  if(activeWindow)
+  {
+    if(!geometryMenu)
+      geometryMenu = new QMenu();
+
+    geometryMenu->clear();
+    geometryMenu->setTitle(activeWindow->caption());
+
+    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+    QString objName = activeWindow->objectName();
+
+    _rememberPos->setChecked(settings.value(objName + "/geometry/rememberPos", true).toBool());
+    _rememberPos->addTo(geometryMenu);
+    _rememberSize->setChecked(settings.value(objName + "/geometry/rememberSize", true).toBool());
+    _rememberSize->addTo(geometryMenu);
+
+    windowMenu->addMenu(geometryMenu);
+    windowMenu->insertSeparator();
+  }
+
   for (int cursor = 0; cursor < windows.count(); cursor++)
   {
     int menuId = windowMenu->insertItem(windows.at(cursor)->caption(), this, SLOT(sActivateWindow(int)));
@@ -353,6 +385,26 @@ void moduleSys::sActivateWindow(int intWindowid)
       window->activateWindow();
     else
       window->setFocus();
+}
+
+void moduleSys::sRememberPositionToggle()
+{
+  if(!_lastActive)
+    return;
+
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  QString objName = _lastActive->objectName();
+  settings.setValue(objName + "/geometry/rememberPos", _rememberPos->isChecked());
+}
+
+void moduleSys::sRememberSizeToggle()
+{
+  if(!_lastActive)
+    return;
+
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  QString objName = _lastActive->objectName();
+  settings.setValue(objName + "/geometry/rememberSize", _rememberSize->isChecked());
 }
 
 void moduleSys::sCloseAll()

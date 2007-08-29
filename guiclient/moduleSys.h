@@ -94,6 +94,8 @@ class moduleSys : public QObject
     void sActivateWindow(int);
     void sCloseAll();
     void sCloseActive();
+    void sRememberPositionToggle();
+    void sRememberSizeToggle();
 
     void sConfigureIM();
     void sConfigurePD();
@@ -172,10 +174,16 @@ class moduleSys : public QObject
     QMenu *helpMenu;
     QMenu *communityMenu;
 
-    Action     *cascade;
-    Action     *tile;
-    Action     *closeActive;
-    Action     *closeAll;
+    QMenu *geometryMenu;
+
+    Action *cascade;
+    Action *tile;
+    Action *closeActive;
+    Action *closeAll;
+    Action *_rememberPos;
+    Action *_rememberSize;
+
+    QWidget *_lastActive;
 
     void	addActionsToMenu(actionProperties [], unsigned int);
 

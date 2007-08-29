@@ -87,6 +87,7 @@
 #include <QCloseEvent>
 #include <QMainWindow>
 #include <QSettings>
+#include <QDesktopWidget>
 
 #include <parameter.h>
 #include <dbtools.h>
@@ -1151,17 +1152,44 @@ QWidgetList OpenMFGGUIClient::windowList()
 void OpenMFGGUIClient::windowDestroyed(QObject * o)
 {
   QWidget * w = qobject_cast<QWidget *>(o);
-  _windowList.removeAll(w);
+  if(w)
+  {
+    _windowList.removeAll(w);
+
+    QString objName = w->objectName();
+    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+    settings.setValue(objName + "/geometry/size", w->size());
+    if(_showTopLevel)
+      settings.setValue(objName + "/geometry/pos", w->pos());
+    else
+      settings.setValue(objName + "/geometry/pos", w->parentWidget()->pos());
+  }
 }
 
 void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 {
   w->setWindowModality(m);
 
+  connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
+
+  QRect availableGeometry = QApplication::desktop()->availableGeometry();
+  if(!_showTopLevel)
+    availableGeometry = _workspace->geometry();
+
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  QString objName = w->objectName();
+  QPoint pos = settings.value(objName + "/geometry/pos").toPoint();
+  QSize size = settings.value(objName + "/geometry/size").toSize();
+
+  if(size.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
+    w->resize(size);
+  QRect r(pos, w->size());
+  if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+    w->move(pos);
+
   if(_showTopLevel)
   {
     _windowList.append(w);
-    connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
     w->setWindowFlags(Qt::WDestructiveClose);
     QMainWindow *mw = qobject_cast<QMainWindow*>(w);
     if (mw)
