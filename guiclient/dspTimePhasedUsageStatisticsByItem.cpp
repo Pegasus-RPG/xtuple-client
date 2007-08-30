@@ -60,11 +60,14 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include <datecluster.h>
 #include <parameter.h>
 #include "dspInventoryHistoryByItem.h"
-#include "rptTimePhasedUsageStatisticsByItem.h"
 #include "OpenMFGGUIClient.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedUsageStatisticsByItem as a child of 'parent', with the
@@ -74,20 +77,26 @@
 dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    init();
+  // signals and slots connections
+  connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
+
+  _usage->addColumn(tr("Transaction Type"), 120,        Qt::AlignLeft   );
+  _usage->addColumn(tr("Whs."),             _whsColumn, Qt::AlignCenter );
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -95,7 +104,7 @@ dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* 
  */
 dspTimePhasedUsageStatisticsByItem::~dspTimePhasedUsageStatisticsByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -104,30 +113,67 @@ dspTimePhasedUsageStatisticsByItem::~dspTimePhasedUsageStatisticsByItem()
  */
 void dspTimePhasedUsageStatisticsByItem::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedUsageStatisticsByItem::init()
-{
-  statusBar()->hide();
-
-  _usage->addColumn(tr("Transaction Type"), 120,        Qt::AlignLeft   );
-  _usage->addColumn(tr("Whs."),             _whsColumn, Qt::AlignCenter );
+  retranslateUi(this);
 }
 
 void dspTimePhasedUsageStatisticsByItem::sPrint()
 {
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedStatisticsByItem", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+void dspTimePhasedUsageStatisticsByItem::sSubmit()
+{
+  if (_periods->isPeriodSelected())
+  {
+    ParameterList params(buildParameters());
+    params.append("report_name", "TimePhasedStatisticsByItem");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedStatisticsByItem\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedUsageStatisticsByItem::buildParameters()
+{
   ParameterList params;
-  params.append("print");
+
   params.append("item_id", _item->id());
-  _periods->getSelected(params);
   _warehouse->appendValue(params);
 
-  rptTimePhasedUsageStatisticsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  params.append("calendar_id", _calendar->id());
+
+  QList<QVariant> periodList;
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
+
+  return params;
 }
 
 void dspTimePhasedUsageStatisticsByItem::sViewTransactions()

@@ -170,7 +170,6 @@
 #include "rptUsageStatisticsByClassCode.h"
 #include "rptUsageStatisticsByItemGroup.h"
 #include "rptUsageStatisticsByWarehouse.h"
-#include "rptTimePhasedUsageStatisticsByItem.h"
 #include "printItemLabelsByClassCode.h"
 
 #include "warehouses.h"
@@ -398,7 +397,6 @@ moduleIM::moduleIM(OpenMFGGUIClient *Pparent) :
     { "im.rptItemUsageStatisticsByClassCode",		tr("Item Usage Statistics by Class Code..."),		SLOT(sRptItemUsageStatisticsByClassCode()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
     { "im.rptItemUsageStatisticsByItemGroup",		tr("Item Usage Statistics by Item Group..."),		SLOT(sRptItemUsageStatisticsByItemGroup()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
     { "im.rptItemUsageStatisticsByWarehouse",		tr("Item Usage Statistics by Warehouse..."),		SLOT(sRptItemUsageStatisticsByWarehouse()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptTimePhasedItemUsageStatisticsByItem",	tr("Time-Phased Item Usage Statistics by Item..."), 	SLOT(sRptTimePhasedUsageStatisticsByItem()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
     { "separator",					NULL,							NULL,						reportsMenu, true, NULL, NULL, true },
     { "im.printItemLabelsByClassCode",			tr("Print Item Labels by Class Code..."),		SLOT(sPrintItemLabelsByClassCode()),		reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
 
@@ -1210,11 +1208,6 @@ void moduleIM::sRptItemUsageStatisticsByItemGroup()
 void moduleIM::sRptItemUsageStatisticsByWarehouse()
 {
   rptUsageStatisticsByWarehouse(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptTimePhasedUsageStatisticsByItem()
-{
-  rptTimePhasedUsageStatisticsByItem(parent, "", TRUE).exec();
 }
 
 void moduleIM::sRptInventoryBufferStatusByItem()

@@ -101,7 +101,6 @@
 #include "dspTimePhasedOpenAPItems.h"
 //#include "dspAPAging.h"
 
-#include "rptTimePhasedOpenAPItems.h"
 #include "rptCheckRegister.h"
 #include "rptVoucherRegister.h"
 #include "rptAPOpenItemsByVendor.h"
@@ -308,10 +307,6 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ap.rptOpenAPItemsByVendor", tr("Open Items by Vendor..."),
                                       this, SLOT(sRptAPOpenItemsByVendor()),
-                                      reportsMenu, _privleges->check("ViewAPOpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ap.rptAPAging", tr("A/P Aging..."),
-                                      this, SLOT(sRptTimePhasedOpenAPItems()),
                                       reportsMenu, _privleges->check("ViewAPOpenItems") ) );
 
   reportsMenu->insertSeparator();
@@ -577,11 +572,6 @@ void moduleAP::sRptVoucherRegister()
 void moduleAP::sRptAPOpenItemsByVendor()
 {
   rptAPOpenItemsByVendor(parent, "", TRUE).exec();
-}
-
-void moduleAP::sRptTimePhasedOpenAPItems()
-{
-  rptTimePhasedOpenAPItems(parent, "", TRUE).exec();
 }
 
 void moduleAP::sRptPayablesJournal()

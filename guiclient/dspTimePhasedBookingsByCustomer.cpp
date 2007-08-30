@@ -58,16 +58,16 @@
 #include "dspTimePhasedBookingsByCustomer.h"
 
 #include <QVariant>
-#include <datecluster.h>
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QStatusBar>
-#include <parameter.h>
+#include <QMenu>
 #include <q3valuevector.h>
+#include <datecluster.h>
+#include <parameter.h>
 #include <openreports.h>
 #include "OpenMFGGUIClient.h"
 #include "dspBookingsByCustomer.h"
-#include "rptTimePhasedBookingsByCustomer.h"
 #include "submitReport.h"
 
 /*
@@ -78,23 +78,26 @@
 dspTimePhasedBookingsByCustomer::dspTimePhasedBookingsByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
     
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-      
-    init();
+  _customerType->setType(CustomerType);
+
+  _soitem->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
+  _soitem->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
 }
 
 /*
@@ -102,7 +105,7 @@ dspTimePhasedBookingsByCustomer::dspTimePhasedBookingsByCustomer(QWidget* parent
  */
 dspTimePhasedBookingsByCustomer::~dspTimePhasedBookingsByCustomer()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -111,31 +114,26 @@ dspTimePhasedBookingsByCustomer::~dspTimePhasedBookingsByCustomer()
  */
 void dspTimePhasedBookingsByCustomer::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedBookingsByCustomer::init()
-{
-  statusBar()->hide();
-
-  _customerType->setType(CustomerType);
-
-  _soitem->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
-  _soitem->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
+  retranslateUi(this);
 }
 
 void dspTimePhasedBookingsByCustomer::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _customerType->appendValue(params);
-
-  rptTimePhasedBookingsByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedBookingsByCustomer", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
 }
 
 void dspTimePhasedBookingsByCustomer::sViewBookings()

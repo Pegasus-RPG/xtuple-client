@@ -338,19 +338,14 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptSummarizedSalesByCustomerTypeByItem.ui rptSummarizedSalesByCustomerByItem.ui        \
                rptSummarizedSalesByItem.ui rptSummarizedSalesBySalesRep.ui                            \
                rptSummarizedSalesByShippingZone.ui rptSummarizedTaxableSales.ui                       \
-               rptTimePhasedAvailability.ui rptTimePhasedAvailableCapacityByWorkCenter.ui             \
-               rptTimePhasedBookingsByCustomer.ui rptTimePhasedBookingsByItem.ui                      \
-               rptTimePhasedBookingsByProductCategory.ui                                              \
-               rptTimePhasedCapacityByWorkCenter.ui rptTimePhasedDemandByPlannerCode.ui               \
+                                            rptTimePhasedAvailableCapacityByWorkCenter.ui             \
+               rptTimePhasedCapacityByWorkCenter.ui                                                   \
                rptTimePhasedLoadByWorkCenter.ui                                                       \
-               rptTimePhasedOpenARItems.ui rptTimePhasedOpenAPItems.ui                                \
                rptTimePhasedPlannedREByPlannerCode.ui                                                 \
-               rptTimePhasedProductionByItem.ui rptTimePhasedProductionByPlannerCode.ui               \
                rptTimePhasedRoughCutByWorkCenter.ui                                                   \
                rptTimePhasedSalesByCustomer.ui rptTimePhasedSalesByCustomerGroup.ui                   \
                rptTimePhasedSalesByCustomerByItem.ui rptTimePhasedSalesByItem.ui                      \
                rptTimePhasedSalesByProductCategory.ui                                                 \
-               rptTimePhasedUsageStatisticsByItem.ui                                                  \
                rptTrialBalances.ui                                                                    \
                rptUsageStatisticsByItem.ui rptUsageStatisticsByClassCode.ui                           \
                rptUsageStatisticsByItemGroup.ui rptUsageStatisticsByWarehouse.ui                      \
@@ -733,19 +728,14 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptSummarizedSalesByCustomerTypeByItem.h rptSummarizedSalesByCustomerByItem.h          \
                rptSummarizedSalesByItem.h rptSummarizedSalesBySalesRep.h                              \
                rptSummarizedSalesByShippingZone.h rptSummarizedTaxableSales.h                         \
-               rptTimePhasedAvailability.h rptTimePhasedAvailableCapacityByWorkCenter.h               \
-               rptTimePhasedBookingsByCustomer.h rptTimePhasedBookingsByItem.h                        \
-               rptTimePhasedBookingsByProductCategory.h                                               \
-               rptTimePhasedCapacityByWorkCenter.h rptTimePhasedDemandByPlannerCode.h                 \
+                                           rptTimePhasedAvailableCapacityByWorkCenter.h               \
+               rptTimePhasedCapacityByWorkCenter.h                                                    \
                rptTimePhasedLoadByWorkCenter.h                                                        \
-               rptTimePhasedOpenARItems.h rptTimePhasedOpenAPItems.h                                  \
                rptTimePhasedPlannedREByPlannerCode.h                                                  \
-               rptTimePhasedProductionByItem.h rptTimePhasedProductionByPlannerCode.h                 \
                rptTimePhasedRoughCutByWorkCenter.h                                                    \
                rptTimePhasedSalesByCustomer.h rptTimePhasedSalesByCustomerGroup.h                     \
                rptTimePhasedSalesByCustomerByItem.h rptTimePhasedSalesByItem.h                        \
                rptTimePhasedSalesByProductCategory.h                                                  \
-               rptTimePhasedUsageStatisticsByItem.h                                                   \
                rptTrialBalances.h                                                                     \
                rptUsageStatisticsByItem.h rptUsageStatisticsByClassCode.h                             \
                rptUsageStatisticsByItemGroup.h rptUsageStatisticsByWarehouse.h                        \
@@ -1128,19 +1118,14 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptSummarizedSalesByCustomerTypeByItem.cpp rptSummarizedSalesByCustomerByItem.cpp      \
                rptSummarizedSalesByItem.cpp rptSummarizedSalesBySalesRep.cpp                          \
                rptSummarizedSalesByShippingZone.cpp rptSummarizedTaxableSales.cpp                     \
-               rptTimePhasedAvailability.cpp rptTimePhasedAvailableCapacityByWorkCenter.cpp           \
-               rptTimePhasedBookingsByCustomer.cpp rptTimePhasedBookingsByItem.cpp                    \
-               rptTimePhasedBookingsByProductCategory.cpp                                             \
-               rptTimePhasedCapacityByWorkCenter.cpp rptTimePhasedDemandByPlannerCode.cpp             \
+                                             rptTimePhasedAvailableCapacityByWorkCenter.cpp           \
+               rptTimePhasedCapacityByWorkCenter.cpp                                                  \
                rptTimePhasedLoadByWorkCenter.cpp                                                      \
-               rptTimePhasedOpenARItems.cpp rptTimePhasedOpenAPItems.cpp                              \
                rptTimePhasedPlannedREByPlannerCode.cpp                                                \
-               rptTimePhasedProductionByItem.cpp rptTimePhasedProductionByPlannerCode.cpp             \
                rptTimePhasedRoughCutByWorkCenter.cpp                                                  \
                rptTimePhasedSalesByCustomer.cpp rptTimePhasedSalesByCustomerGroup.cpp                 \
                rptTimePhasedSalesByCustomerByItem.cpp rptTimePhasedSalesByItem.cpp                    \
                rptTimePhasedSalesByProductCategory.cpp                                                \
-               rptTimePhasedUsageStatisticsByItem.cpp                                                 \
                rptTrialBalances.cpp                                                                   \
                rptUsageStatisticsByItem.cpp rptUsageStatisticsByClassCode.cpp                         \
                rptUsageStatisticsByItemGroup.cpp rptUsageStatisticsByWarehouse.cpp                    \

@@ -201,7 +201,6 @@ class moduleIM : public QObject
     void sRptItemUsageStatisticsByClassCode();
     void sRptItemUsageStatisticsByItemGroup();
     void sRptItemUsageStatisticsByWarehouse();
-    void sRptTimePhasedUsageStatisticsByItem();
     void sRptInventoryBufferStatusByItem();
     void sRptInventoryBufferStatusByItemGroup();
     void sRptInventoryBufferStatusByClassCode();

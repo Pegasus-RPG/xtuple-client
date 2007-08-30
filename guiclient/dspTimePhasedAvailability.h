@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDAVAILABILITY_H
 #define DSPTIMEPHASEDAVAILABILITY_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 
 #include "ui_dspTimePhasedAvailability.h"
@@ -71,10 +71,9 @@ public:
     dspTimePhasedAvailability(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedAvailability();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
+    virtual void sSubmit();
     virtual void sViewAvailability();
     virtual void sViewOrders();
     virtual void sViewAllocations();
@@ -91,6 +90,7 @@ private:
     int _column;
     QList<DatePair> _columnDates;
 
+    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDAVAILABILITY_H

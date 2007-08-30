@@ -59,11 +59,14 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <datecluster.h>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
+#include <datecluster.h>
 #include "dspInventoryHistoryByParameterList.h"
-#include "rptTimePhasedProductionByPlannerCode.h"
 #include "OpenMFGGUIClient.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedProductionByPlannerCode as a child of 'parent', with the
@@ -73,23 +76,34 @@
 dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    QButtonGroup* _unitsGroupInt = new QButtonGroup(this);
-    _unitsGroupInt->addButton(_inventoryUnits);
-    _unitsGroupInt->addButton(_capacityUnits);
-    _unitsGroupInt->addButton(_altCapacityUnits);
+  QButtonGroup* _unitsGroupInt = new QButtonGroup(this);
+  _unitsGroupInt->addButton(_inventoryUnits);
+  _unitsGroupInt->addButton(_capacityUnits);
+  _unitsGroupInt->addButton(_altCapacityUnits);
 
-    // signals and slots connections
-    connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_production, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    init();
+  // signals and slots connections
+  connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_production, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+
+  statusBar()->hide();
+
+  _plannerCode->setType(PlannerCode);
+
+  _production->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
+  _production->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _production->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -97,7 +111,7 @@ dspTimePhasedProductionByPlannerCode::dspTimePhasedProductionByPlannerCode(QWidg
  */
 dspTimePhasedProductionByPlannerCode::~dspTimePhasedProductionByPlannerCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -106,43 +120,75 @@ dspTimePhasedProductionByPlannerCode::~dspTimePhasedProductionByPlannerCode()
  */
 void dspTimePhasedProductionByPlannerCode::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedProductionByPlannerCode::init()
-{
-  statusBar()->hide();
-
-  _plannerCode->setType(PlannerCode);
-
-  _production->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
-  _production->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
-  _production->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
+  retranslateUi(this);
 }
 
 void dspTimePhasedProductionByPlannerCode::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
-  _plannerCode->appendValue(params);
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedProductionByPlannerCode", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
 
-  if (_inventoryUnits->isChecked())
-    params.append("inventoryUnits");
-  else if (_capacityUnits->isChecked())
+void dspTimePhasedProductionByPlannerCode::sSubmit()
+{
+  if (_periods->isPeriodSelected())
+  {
+    ParameterList params(buildParameters());
+    params.append("report_name", "TimePhasedProductionByPlannerCode");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedProductionByPlannerCode\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedProductionByPlannerCode::buildParameters()
+{
+  ParameterList params;
+
+  _plannerCode->appendValue(params);
+  _warehouse->appendValue(params);
+
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<QVariant> periodList;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
+
+  if (_capacityUnits->isChecked())
     params.append("capacityUnits");
-  else if (_altCapacityUnits->isChecked())
+  else if(_altCapacityUnits->isChecked())
     params.append("altCapacityUnits");
+  else if(_inventoryUnits->isChecked())
+    params.append("inventoryUnits");
 
   if(_showInactive->isChecked())
     params.append("showInactive");
 
-  rptTimePhasedProductionByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  return params;
 }
 
 void dspTimePhasedProductionByPlannerCode::sViewTransactions()

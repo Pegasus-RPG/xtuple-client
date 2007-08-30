@@ -106,7 +106,6 @@ class moduleAR : public QObject
     void sDspAROpenItemsByCustomer();
     void sDspAROpenItems();
     void sDspTimePhasedOpenItems();
-//    void sDspARAging();
     void sDspInvoiceRegister();
     void sDspDepositsRegister();
 
@@ -116,10 +115,8 @@ class moduleAR : public QObject
     void sRptInvoiceInformation();
     void sRptAROpenItemsByCustomer();
     void sRptAROpenItems();
-    void sRptTimePhasedOpenItems();
     void sRptSalesJournal();
     void sRptCreditMemoJournal();
-//    void sRptARAging();
     void sRptInvoiceRegister();
     void sRptDepositsRegister();
 

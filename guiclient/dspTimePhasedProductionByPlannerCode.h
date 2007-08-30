@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDPRODUCTIONBYPLANNERCODE_H
 #define DSPTIMEPHASEDPRODUCTIONBYPLANNERCODE_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 
 #include "ui_dspTimePhasedProductionByPlannerCode.h"
@@ -71,10 +71,9 @@ public:
     dspTimePhasedProductionByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedProductionByPlannerCode();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
+    virtual void sSubmit();
     virtual void sViewTransactions();
     virtual void sPopulateMenu( QMenu * menu, QTreeWidgetItem *, int pColumn );
     virtual void sCalculate();
@@ -86,6 +85,7 @@ private:
     int _column;
     QList<DatePair> _columnDates;
 
+    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDPRODUCTIONBYPLANNERCODE_H

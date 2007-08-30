@@ -105,7 +105,6 @@
 #include "rptARApplications.h"
 #include "rptAROpenItemsByCustomer.h"
 #include "rptAROpenItems.h"
-#include "rptTimePhasedOpenARItems.h"
 #include "printJournal.h"
 #include "rptInvoiceRegister.h"
 #include "rptDepositsRegister.h"
@@ -323,10 +322,6 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ar.rptOpenItemsByCustomer", tr("Open Items by Customer..."),
                                       this, SLOT(sRptAROpenItemsByCustomer()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptARAging", tr("A/R Aging..."),
-                                      this, SLOT(sRptTimePhasedOpenItems()),
                                       reportsMenu, _privleges->check("ViewAROpenItems") ) );
 
   reportsMenu->insertSeparator();
@@ -624,11 +619,6 @@ void moduleAR::sRptAROpenItemsByCustomer()
 void moduleAR::sRptAROpenItems()
 {
   rptAROpenItems(parent, "", TRUE).exec();
-}
-
-void moduleAR::sRptTimePhasedOpenItems()
-{
-  rptTimePhasedOpenARItems(parent, "", TRUE).exec();
 }
 
 void moduleAR::sPrintStatementByCustomer()

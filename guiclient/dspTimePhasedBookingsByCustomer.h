@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDBOOKINGSBYCUSTOMER_H
 #define DSPTIMEPHASEDBOOKINGSBYCUSTOMER_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 #include <parameter.h>
 #include "ui_dspTimePhasedBookingsByCustomer.h"
@@ -71,7 +71,6 @@ public:
     dspTimePhasedBookingsByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedBookingsByCustomer();
 
-    virtual void init();
     virtual ParameterList buildParameters();
 
 public slots:

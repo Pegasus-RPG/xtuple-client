@@ -121,7 +121,6 @@ class moduleMS : public QObject
     void sRptTimePhasedRoughCutByWorkCenter();
     void sRptPlannedRevenueExpensesByPlannerCode();
     void sRptTimePhasedPlannedREByPlannerCode();
-    void sRptTimePhasedAvailability();
     void sRptRunningAvailability();
     void sRptMRPDetail();
     void sRptExpediteExceptionsByPlannerCode();

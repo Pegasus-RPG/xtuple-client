@@ -6,74 +6,21 @@
     <x>0</x>
     <y>0</y>
     <width>653</width>
-    <height>469</height>
+    <height>495</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>A/R Aging</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QGridLayout" >
+   <layout class="QVBoxLayout" >
     <property name="margin" >
      <number>9</number>
     </property>
     <property name="spacing" >
      <number>6</number>
     </property>
-    <item row="1" column="0" >
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="_asOfLit" >
-          <property name="text" >
-           <string>As of:</string>
-          </property>
-          <property name="buddy" >
-           <cstring>_asOf</cstring>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="DLineEdit" name="_asOf" />
-        </item>
-        <item>
-         <widget class="QCheckBox" name="_custom" >
-          <property name="text" >
-           <string>Use Custom Calendar</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="0" column="0" >
+    <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
        <number>0</number>
@@ -135,7 +82,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="CustInfo" native="1" name="_cust" >
+              <widget class="CustInfo" name="_cust" >
                <property name="enabled" >
                 <bool>false</bool>
                </property>
@@ -226,7 +173,7 @@
          <number>0</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QPushButton" name="_close" >
@@ -262,12 +209,19 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="_submit" >
+          <property name="text" >
+           <string>&amp;Submit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
+           <enum>QSizePolicy::Expanding</enum>
           </property>
           <property name="sizeHint" >
            <size>
@@ -281,7 +235,60 @@
       </item>
      </layout>
     </item>
-    <item row="2" column="0" >
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="_asOfLit" >
+          <property name="text" >
+           <string>As of:</string>
+          </property>
+          <property name="buddy" >
+           <cstring>_asOf</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="DLineEdit" name="_asOf" />
+        </item>
+        <item>
+         <widget class="QCheckBox" name="_custom" >
+          <property name="text" >
+           <string>Use Custom Calendar</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
      <layout class="QHBoxLayout" >
       <property name="margin" >
        <number>0</number>
@@ -325,6 +332,11 @@
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <item>
+             <property name="text" >
+              <string/>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -335,7 +347,7 @@
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
+           <enum>QSizePolicy::Expanding</enum>
           </property>
           <property name="sizeHint" >
            <size>
@@ -367,50 +379,56 @@
       </item>
      </layout>
     </item>
-    <item row="3" column="0" >
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+    <item>
+     <widget class="QFrame" name="frame" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>5</hsizetype>
+        <vsizetype>7</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
       </property>
-      <property name="spacing" >
-       <number>5</number>
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
       </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="_openARItemsLit" >
-          <property name="text" >
-           <string>A/R Open Items:</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="XTreeWidget" name="_aropen" >
-          <property name="sizePolicy" >
-           <sizepolicy>
-            <hsizetype>7</hsizetype>
-            <vsizetype>7</vsizetype>
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>100</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
+      <property name="frameShadow" >
+       <enum>QFrame::Plain</enum>
+      </property>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_openARItemsLit" >
+         <property name="text" >
+          <string>A/R Open Items:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeWidget" name="_aropen" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>7</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>100</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -419,9 +437,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustInfo</class>
+   <extends>QWidget</extends>
+   <header>custcluster.h</header>
   </customwidget>
   <customwidget>
    <class>CalendarComboBox</class>
@@ -429,19 +457,9 @@
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>QTreeWidget</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
+   <class>PeriodsListView</class>
+   <extends>XTreeWidget</extends>
+   <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -449,14 +467,9 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
-   <header>calendarTools.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CustInfo</class>
-   <extends>QWidget</extends>
-   <header>custcluster.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -468,12 +481,13 @@
   <tabstop>_customerType</tabstop>
   <tabstop>_asOf</tabstop>
   <tabstop>_custom</tabstop>
+  <tabstop>_calendar</tabstop>
+  <tabstop>_periods</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_aropen</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_calendar</tabstop>
-  <tabstop>_periods</tabstop>
  </tabstops>
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>

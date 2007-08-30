@@ -59,7 +59,7 @@
 #define DSPTIMEPHASEDPRODUCTIONBYITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspTimePhasedProductionByItem.h"
 
@@ -71,10 +71,9 @@ public:
     dspTimePhasedProductionByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedProductionByItem();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
+    virtual void sSubmit();
     virtual void sViewTransactions();
     virtual void sPopulateMenu( QMenu * menu, QTreeWidgetItem *, int pColumn );
     virtual void sCalculate();
@@ -86,6 +85,7 @@ private:
     int _column;
     Q3ValueList<DatePair> _columnDates;
 
+    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDPRODUCTIONBYITEM_H

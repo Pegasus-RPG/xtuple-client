@@ -60,10 +60,13 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
 #include <datecluster.h>
 #include "dspWoScheduleByParameterList.h"
-#include "rptTimePhasedDemandByPlannerCode.h"
 #include "OpenMFGGUIClient.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedDemandByPlannerCode as a child of 'parent', with the
@@ -73,23 +76,32 @@
 dspTimePhasedDemandByPlannerCode::dspTimePhasedDemandByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    QButtonGroup* btngrpDisplayUnits = new QButtonGroup(this);
-    btngrpDisplayUnits->addButton(_inventoryUnits);
-    btngrpDisplayUnits->addButton(_capacityUnits);
-    btngrpDisplayUnits->addButton(_altCapacityUnits);
+  QButtonGroup* btngrpDisplayUnits = new QButtonGroup(this);
+  btngrpDisplayUnits->addButton(_inventoryUnits);
+  btngrpDisplayUnits->addButton(_capacityUnits);
+  btngrpDisplayUnits->addButton(_altCapacityUnits);
 
-    // signals and slots connections
-    connect(_demand, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    init();
+  // signals and slots connections
+  connect(_demand, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+
+  _plannerCode->setType(PlannerCode);
+
+  _demand->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
+  _demand->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
+  _demand->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -97,7 +109,7 @@ dspTimePhasedDemandByPlannerCode::dspTimePhasedDemandByPlannerCode(QWidget* pare
  */
 dspTimePhasedDemandByPlannerCode::~dspTimePhasedDemandByPlannerCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -106,40 +118,73 @@ dspTimePhasedDemandByPlannerCode::~dspTimePhasedDemandByPlannerCode()
  */
 void dspTimePhasedDemandByPlannerCode::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedDemandByPlannerCode::init()
-{
-  statusBar()->hide();
-
-  _plannerCode->setType(PlannerCode);
-
-  _demand->addColumn(tr("Planner Code"), _itemColumn, Qt::AlignLeft   );
-  _demand->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
-  _demand->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignLeft   );
+  retranslateUi(this);
 }
 
 void dspTimePhasedDemandByPlannerCode::sPrint()
 {
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedDemandByPlannerCode", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+void dspTimePhasedDemandByPlannerCode::sSubmit()
+{
+  if (_periods->isPeriodSelected())
+  {
+    ParameterList params(buildParameters());
+    params.append("report_name", "TimePhasedDemandByPlannerCode");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedDemandByPlannerCode\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedDemandByPlannerCode::buildParameters()
+{
   ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
+
   _plannerCode->appendValue(params);
+  _warehouse->appendValue(params);
 
-  if (_inventoryUnits->isChecked())
-    params.append("inventoryUnits");
-  else if (_capacityUnits->isChecked())
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<QVariant> periodList;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
+
+  if(_capacityUnits->isChecked())
     params.append("capacityUnits");
-  else if (_altCapacityUnits->isChecked())
+  else if(_altCapacityUnits->isChecked())
     params.append("altCapacityUnits");
+  else if(_inventoryUnits->isChecked())
+    params.append("inventoryUnits");
 
-  rptTimePhasedDemandByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  return params;
+
 }
 
 void dspTimePhasedDemandByPlannerCode::sViewDemand()

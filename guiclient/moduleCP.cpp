@@ -84,9 +84,6 @@
 #include "rptTimePhasedCapacityByWorkCenter.h"
 #include "rptTimePhasedLoadByWorkCenter.h"
 #include "rptTimePhasedAvailableCapacityByWorkCenter.h"
-#include "rptTimePhasedDemandByPlannerCode.h"
-#include "rptTimePhasedProductionByItem.h"
-#include "rptTimePhasedProductionByPlannerCode.h"
 #include "rptCapacityBufferStatusByWorkCenter.h"
 
 #include "workCenters.h"
@@ -204,20 +201,6 @@ moduleCP::moduleCP(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "cp.rptTimePhasedLoadByWorkCenter", tr("Time-Phased Load by Work Center..."),
                                       this, SLOT(sRptTimePhasedLoadByWorkCenter()),
                                       reportsMenu, _privleges->check("ViewWorkCenterLoad") && _metrics->boolean("Routings") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "cp.rptTimePhasedDemandByPlannerCode", tr("Time-Phased Demand by Planner Code..."),
-                                      this, SLOT(sRptTimePhasedDemandByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewProductionDemand") ) );
-
-  parent->actions.append( new Action( parent, "cp.rptTimePhasedProductionByItem", tr("Time-Phased Production by Item..."),
-                                      this, SLOT(sRptTimePhasedProductionByItem()),
-                                      reportsMenu, _privleges->check("ViewProduction") ) );
-
-  parent->actions.append( new Action( parent, "cp.rptTimePhasedProductionByPlannerCode", tr("Time-Phased Production by Planner Code..."),
-                                      this, SLOT(sRptTimePhasedProductionByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewProduction") ) );
 
   reportsMenu->insertSeparator();
 
@@ -371,21 +354,6 @@ void moduleCP::sRptTimePhasedAvailableCapacityByWorkCenter()
 void moduleCP::sRptTimePhasedLoadByWorkCenter()
 {
   rptTimePhasedLoadByWorkCenter(parent, "", TRUE).exec();
-}
-
-void moduleCP::sRptTimePhasedDemandByPlannerCode()
-{
-  rptTimePhasedDemandByPlannerCode(parent,"", TRUE).exec();
-}
-
-void moduleCP::sRptTimePhasedProductionByItem()
-{
-  rptTimePhasedProductionByItem(parent,"", TRUE).exec();
-}
-
-void moduleCP::sRptTimePhasedProductionByPlannerCode()
-{
-  rptTimePhasedProductionByPlannerCode(parent,"", TRUE).exec();
 }
 
 void moduleCP::sRptCapacityBufferStatusByWorkCenter()

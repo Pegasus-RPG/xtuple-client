@@ -74,6 +74,7 @@ public:
 
 public slots:
     virtual void sPrint();
+    virtual void sSubmit();
     virtual void sViewOpenItems();
     virtual void sPrintStatement();
     virtual void sPopulateMenu( QMenu *, QTreeWidgetItem *, int ); 
@@ -89,6 +90,7 @@ private:
     int _column;
     QList<DatePair> _columnDates;
 
+    ParameterList buildParameters();
 };
 
 #endif // DSPTIMEPHASEDOPENARITEMS_H

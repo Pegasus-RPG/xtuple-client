@@ -59,11 +59,14 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <datecluster.h>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
+#include <datecluster.h>
 #include "dspInventoryHistoryByItem.h"
-#include "rptTimePhasedProductionByItem.h"
 #include "OpenMFGGUIClient.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedProductionByItem as a child of 'parent', with the
@@ -73,18 +76,27 @@
 dspTimePhasedProductionByItem::dspTimePhasedProductionByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_production, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    init();
+  // signals and slots connections
+  connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_production, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+
+  _plannerCode->setType(PlannerCode);
+
+  _production->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
+  _production->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  _production->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -92,7 +104,7 @@ dspTimePhasedProductionByItem::dspTimePhasedProductionByItem(QWidget* parent, co
  */
 dspTimePhasedProductionByItem::~dspTimePhasedProductionByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -104,41 +116,62 @@ void dspTimePhasedProductionByItem::languageChange()
     retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedProductionByItem::init()
-{
-  statusBar()->hide();
-
-  _plannerCode->setType(PlannerCode);
-
-  _production->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _production->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
-  _production->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
-}
-
 void dspTimePhasedProductionByItem::sPrint()
 {
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedProductionByItem", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+void dspTimePhasedProductionByItem::sSubmit()
+{
+  if (_periods->isPeriodSelected())
+  {
+    ParameterList params(buildParameters());
+    params.append("report_name", "TimePhasedProductionByItem");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedProductionByItem\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedProductionByItem::buildParameters()
+{
   ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
+
   _plannerCode->appendValue(params);
+  _warehouse->appendValue(params);
 
-#if 0
-  if (_inventoryUnits->isChecked())
-    params.append("inventoryUnits");
-  else if (_capacityUnits->isChecked())
-    params.append("capacityUnits");
-  else if (_altCapacityUnits->isChecked())
-    params.append("altCapacityUnits");
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<QVariant> periodList;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
 
-  params.append("showInactive", _showInactive->isChecked());
-#endif
-
-  rptTimePhasedProductionByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  return params;
 }
 
 void dspTimePhasedProductionByItem::sViewTransactions()

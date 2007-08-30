@@ -65,9 +65,9 @@
 #include <QMenu>
 #include <datecluster.h>
 #include <openreports.h>
-#include "rptTimePhasedOpenARItems.h"
 #include "printStatementByCustomer.h"
 #include "dspAROpenItemsByCustomer.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedOpenARItems as a child of 'parent', with the
@@ -85,6 +85,7 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
   connect(_selectedCustomerType, SIGNAL(toggled(bool)), _customerTypes, SLOT(setEnabled(bool)));
   connect(_customerTypePattern, SIGNAL(toggled(bool)), _customerType, SLOT(setEnabled(bool)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
@@ -93,8 +94,6 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
   connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
   connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
   
-  statusBar()->hide();
-
   _customerTypes->setType(XComboBox::CustomerTypes);
   
   _aropen->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
@@ -104,6 +103,9 @@ dspTimePhasedOpenARItems::dspTimePhasedOpenARItems(QWidget* parent, const char* 
   
   _asOf->setDate(omfgThis->dbDate(), true);
   sToggleCustom();
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -125,8 +127,57 @@ void dspTimePhasedOpenARItems::languageChange()
 
 void dspTimePhasedOpenARItems::sPrint()
 {
+  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  {
+    QString reportName;
+    if(_custom->isChecked())
+      reportName = "TimePhasedOpenARItems";
+    else
+      reportName = "ARAging";
+    orReport report(reportName, buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+void dspTimePhasedOpenARItems::sSubmit()
+{
+  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  {
+    ParameterList params(buildParameters());
+    if(_custom->isChecked())
+      params.append("report_name", "TimePhasedOpenARItems");
+    else
+      params.append("report_name", "ARAging");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedOpenARItems\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedOpenARItems::buildParameters()
+{
   ParameterList params;
-  params.append("print");
 
   if (_selectedCustomer->isChecked())
     params.append("cust_id", _cust->id());
@@ -135,21 +186,18 @@ void dspTimePhasedOpenARItems::sPrint()
   else if (_customerTypePattern->isChecked())
     params.append("custtype_pattern", _customerType->text());
 
-  if (_custom->isChecked())
+  if(_custom->isChecked())
   {
-    _periods->getSelected(params);
-    rptTimePhasedOpenARItems newdlg(this, "", TRUE);
-    newdlg.set(params);
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<QVariant> periodList;
+    for (int i = 0; i < selected.size(); i++)
+      periodList.append(((XTreeWidgetItem*)selected[i])->id());
+    params.append("period_id_list", periodList);
   }
   else
-  {
     params.append("relDate", _asOf->date());
-    orReport report("ARAging", params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
+
+  return params;
 }
 
 void dspTimePhasedOpenARItems::sViewOpenItems()

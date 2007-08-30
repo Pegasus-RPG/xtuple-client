@@ -60,13 +60,14 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QMenu>
 #include <datecluster.h>
 #include <QWorkspace>
 #include <q3valuevector.h>
 #include <openreports.h>
 #include "dspAPOpenItemsByVendor.h"
-#include "rptTimePhasedOpenAPItems.h"
 #include "OpenMFGGUIClient.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedOpenAPItems as a child of 'parent', with the
@@ -76,26 +77,33 @@
 dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_selectedVendor, SIGNAL(toggled(bool)), _vend, SLOT(setEnabled(bool)));
-    connect(_selectedVendorType, SIGNAL(toggled(bool)), _vendorTypes, SLOT(setEnabled(bool)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
+  // signals and slots connections
+  connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_selectedVendor, SIGNAL(toggled(bool)), _vend, SLOT(setEnabled(bool)));
+  connect(_selectedVendorType, SIGNAL(toggled(bool)), _vendorTypes, SLOT(setEnabled(bool)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_custom, SIGNAL(toggled(bool)), this, SLOT(sToggleCustom()));
+  
+  _vendorTypes->setType(XComboBox::VendorTypes);
+  
+  _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft );
+  _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft );
     
-    init();
-    
-    _asOf->setDate(omfgThis->dbDate(), true);
-    sToggleCustom();
+  _asOf->setDate(omfgThis->dbDate(), true);
+  sToggleCustom();
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -103,7 +111,7 @@ dspTimePhasedOpenAPItems::dspTimePhasedOpenAPItems(QWidget* parent, const char* 
  */
 dspTimePhasedOpenAPItems::~dspTimePhasedOpenAPItems()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -112,26 +120,63 @@ dspTimePhasedOpenAPItems::~dspTimePhasedOpenAPItems()
  */
 void dspTimePhasedOpenAPItems::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedOpenAPItems::init()
-{
-  statusBar()->hide();
-
-  _vendorTypes->setType(XComboBox::VendorTypes);
-  
-  _apopen->addColumn(tr("Vend. #"), _orderColumn, Qt::AlignLeft );
-  _apopen->addColumn(tr("Vendor"),  180,          Qt::AlignLeft );
+  retranslateUi(this);
 }
 
 void dspTimePhasedOpenAPItems::sPrint()
 {
+  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  {
+    QString reportName;
+    if(_custom->isChecked())
+      reportName = "TimePhasedOpenAPItems";
+    else
+      reportName = "APAging";
+    
+    orReport report(reportName, buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+void dspTimePhasedOpenAPItems::sSubmit()
+{
+  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  {
+    ParameterList params(buildParameters());
+    if(_custom->isChecked())
+      params.append("report_name", "TimePhasedOpenAPItems");
+    else
+      params.append("report_name", "APAging");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedOpenAPItems\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedOpenAPItems::buildParameters()
+{
   ParameterList params;
-  params.append("print");
 
   if (_selectedVendor->isChecked())
     params.append("vend_id", _vend->id());
@@ -140,22 +185,18 @@ void dspTimePhasedOpenAPItems::sPrint()
   else if (_vendorTypePattern->isChecked())
     params.append("vendtype_pattern", _vendorType->text());
 
-  if (_custom->isChecked())
+  if(_custom->isChecked())
   {
-	_periods->getSelected(params);
-    rptTimePhasedOpenAPItems newdlg(this, "", TRUE);
-    newdlg.set(params);
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<QVariant> periodList;
+    for (int i = 0; i < selected.size(); i++)
+      periodList.append(((XTreeWidgetItem*)selected[i])->id());
+    params.append("period_id_list", periodList);
   }
   else
-  {
     params.append("relDate", _asOf->date());
-    orReport report("APAging", params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
 
+  return params;
 }
 
 void dspTimePhasedOpenAPItems::sViewOpenItems()

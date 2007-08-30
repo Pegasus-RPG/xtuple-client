@@ -119,9 +119,6 @@
 #include "rptSummarizedSalesByItem.h"
 #include "rptSummarizedSalesBySalesRep.h"
 #include "rptSummarizedSalesByShippingZone.h"
-#include "rptTimePhasedBookingsByItem.h"
-#include "rptTimePhasedBookingsByProductCategory.h"
-#include "rptTimePhasedBookingsByCustomer.h"
 #include "rptTimePhasedSalesByItem.h"
 #include "rptTimePhasedSalesByProductCategory.h"
 #include "rptTimePhasedSalesByCustomer.h"
@@ -383,18 +380,6 @@ moduleSA::moduleSA(OpenMFGGUIClient *pParent) :
                                       reportsMenu, _privleges->check("ViewSalesOrders") ) );
 
   reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedBookingsByItem", tr("Time-Phased Bookings by Item..."),
-                                      this, SLOT(sRptTimePhasedBookingsByItem()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedBookingsByProductCategory", tr("Time-Phased Bookings by Product Category..."),
-                                      this, SLOT(sRptTimePhasedBookingsByProductCategory()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedBookingsByCustomer", tr("Time-Phased Bookings by Customer..."),
-                                      this, SLOT(sRptTimePhasedBookingsByCustomer()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByItem", tr("Time-Phased Sales History by Item..."),
                                       this, SLOT(sRptTimePhasedSalesByItem()),
@@ -752,21 +737,6 @@ void moduleSA::sRptSummarizedSalesBySalesRep()
 void moduleSA::sRptSummarizedSalesHistoryByShippingZone()
 {
   rptSummarizedSalesByShippingZone(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedBookingsByItem()
-{
-  rptTimePhasedBookingsByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedBookingsByProductCategory()
-{
-  rptTimePhasedBookingsByProductCategory(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedBookingsByCustomer()
-{
-  rptTimePhasedBookingsByCustomer(parent, "", TRUE).exec();
 }
 
 void moduleSA::sRptTimePhasedSalesByItem()

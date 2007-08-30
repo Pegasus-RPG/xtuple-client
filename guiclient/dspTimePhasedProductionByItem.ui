@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspTimePhasedProductionByItem</class>
  <widget class="QMainWindow" name="dspTimePhasedProductionByItem" >
   <property name="geometry" >
@@ -16,20 +13,12 @@
    <string>Time-Phased Production by Item</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>700</width>
-     <height>485</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" >
     <property name="margin" >
-     <number>5</number>
+     <number>9</number>
     </property>
     <property name="spacing" >
-     <number>5</number>
+     <number>6</number>
     </property>
     <item>
      <layout class="QHBoxLayout" >
@@ -65,6 +54,9 @@
             </property>
             <item>
              <widget class="WarehouseGroup" name="_warehouse" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
+              </property>
               <property name="title" >
                <string/>
               </property>
@@ -87,6 +79,9 @@
           </item>
           <item>
            <widget class="ParameterGroup" name="_plannerCode" >
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
             <property name="title" >
              <string/>
             </property>
@@ -135,6 +130,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -145,7 +145,7 @@
                <enum>Qt::Vertical</enum>
               </property>
               <property name="sizeType" >
-               <enum>QSizePolicy::MinimumExpanding</enum>
+               <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="sizeHint" >
                <size>
@@ -225,6 +225,13 @@
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="_submit" >
+          <property name="text" >
+           <string>&amp;Submit</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
@@ -245,33 +252,49 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+     <widget class="QFrame" name="frame" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>5</hsizetype>
+        <vsizetype>7</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
       </property>
-      <property name="spacing" >
-       <number>0</number>
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
       </property>
-      <item>
-       <widget class="QLabel" name="_productionLit" >
-        <property name="text" >
-         <string>Production:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_production" >
-        <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>7</vsizetype>
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <property name="frameShadow" >
+       <enum>QFrame::Plain</enum>
+      </property>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_productionLit" >
+         <property name="text" >
+          <string>Production:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeWidget" name="_production" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>7</hsizetype>
+           <vsizetype>7</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
@@ -280,46 +303,29 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ParameterGroup</class>
-   <extends>QGroupBox</extends>
-   <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>QMainWindow</class>
-   <extends>QWidget</extends>
-   <header>qmainwindow.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
-   <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>CalendarComboBox</class>
-   <extends>XComboBox</extends>
-   <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>ParameterGroup</class>
+   <extends>QGroupBox</extends>
+   <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>CalendarComboBox</class>
+   <extends>XComboBox</extends>
+   <header>calendarTools.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PeriodsListView</class>
+   <extends>XTreeWidget</extends>
+   <header>calendarTools.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -327,9 +333,10 @@
   <tabstop>_plannerCode</tabstop>
   <tabstop>_calendar</tabstop>
   <tabstop>_periods</tabstop>
-  <tabstop>_production</tabstop>
   <tabstop>_query</tabstop>
+  <tabstop>_production</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <includes>

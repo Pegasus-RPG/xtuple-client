@@ -99,9 +99,6 @@ class moduleCP : public QObject
     void sRptTimePhasedCapacityByWorkCenter();
     void sRptTimePhasedLoadByWorkCenter();
     void sRptTimePhasedAvailableCapacityByWorkCenter();
-    void sRptTimePhasedDemandByPlannerCode();
-    void sRptTimePhasedProductionByItem();
-    void sRptTimePhasedProductionByPlannerCode();
     void sRptCapacityBufferStatusByWorkCenter();
 
     void sWorkCenters();

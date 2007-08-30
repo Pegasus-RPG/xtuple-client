@@ -110,7 +110,6 @@
 #include "rptPlannedRevenueExpensesByPlannerCode.h"
 #include "rptTimePhasedPlannedREByPlannerCode.h"
 #include "rptRunningAvailability.h"
-#include "rptTimePhasedAvailability.h"
 #include "rptExpediteExceptionsByPlannerCode.h"
 #include "rptReorderExceptionsByPlannerCode.h"
 
@@ -336,10 +335,6 @@ moduleMS::moduleMS(OpenMFGGUIClient *Pparent) :
                                       reportsMenu, _privleges->check("ViewPlannedOrders") ) );
 
   reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ms.rptTimePhasedAvailabiltiy", tr("Time-Phased Availability..."),
-                                      this, SLOT(sRptTimePhasedAvailability()),
-                                      reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
 
   parent->actions.append( new Action( parent, "ms.rptRunningAvailability", tr("Running Availability..."),
                                       this, SLOT(sRptRunningAvailability()),
@@ -610,11 +605,6 @@ void moduleMS::sRptPlannedRevenueExpensesByPlannerCode()
 void moduleMS::sRptTimePhasedPlannedREByPlannerCode()
 {
   rptTimePhasedPlannedREByPlannerCode(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptTimePhasedAvailability()
-{
-  rptTimePhasedAvailability(parent, "", TRUE).exec();
 }
 
 void moduleMS::sRptRunningAvailability()

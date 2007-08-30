@@ -61,13 +61,13 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <q3valuevector.h>
 #include <parameter.h>
 #include <datecluster.h>
-#include <q3valuevector.h>
 #include <openreports.h>
 #include "OpenMFGGUIClient.h"
 #include "dspBookingsByProductCategory.h"
-#include "rptTimePhasedBookingsByProductCategory.h"
 #include "submitReport.h"
 
 /*
@@ -78,23 +78,27 @@
 dspTimePhasedBookingsByProductCategory::dspTimePhasedBookingsByProductCategory(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calculate, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calculate, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
     
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-      
-    init();
+  _productCategory->setType(ProductCategory);
+
+  _soitem->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft   );
+  _soitem->addColumn(tr("Whs."),       _whsColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignLeft   );
 }
 
 /*
@@ -102,7 +106,7 @@ dspTimePhasedBookingsByProductCategory::dspTimePhasedBookingsByProductCategory(Q
  */
 dspTimePhasedBookingsByProductCategory::~dspTimePhasedBookingsByProductCategory()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -111,42 +115,26 @@ dspTimePhasedBookingsByProductCategory::~dspTimePhasedBookingsByProductCategory(
  */
 void dspTimePhasedBookingsByProductCategory::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedBookingsByProductCategory::init()
-{
-  statusBar()->hide();
-
-  _productCategory->setType(ProductCategory);
-
-  _soitem->addColumn(tr("Prod. Cat."), _itemColumn, Qt::AlignLeft   );
-  _soitem->addColumn(tr("Whs."),       _whsColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("UOM"),        _uomColumn,  Qt::AlignLeft   );
+  retranslateUi(this);
 }
 
 void dspTimePhasedBookingsByProductCategory::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-
-  if (_salesDollars->isChecked())
-    params.append("salesDollars");
-  else if (_inventoryUnits->isChecked())
-    params.append("inventoryUnits");
-  else if (_capacityUnits->isChecked())
-    params.append("capacityUnits");
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedBookingsByProductCategory", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
   else
-    params.append("altCapacityUnits");
-
-  rptTimePhasedBookingsByProductCategory newdlg(this, "", TRUE);
-  newdlg.set(params);
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
 }
 
 void dspTimePhasedBookingsByProductCategory::sViewBookings()

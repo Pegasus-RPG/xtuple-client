@@ -60,7 +60,10 @@
 #include <QVariant>
 #include <QWorkspace>
 #include <QStatusBar>
+#include <QMenu>
+#include <QMessageBox>
 #include <datecluster.h>
+#include <openreports.h>
 #include "OpenMFGGUIClient.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspAllocations.h"
@@ -68,7 +71,7 @@
 #include "workOrder.h"
 #include "purchaseRequest.h"
 #include "purchaseOrder.h"
-#include "rptTimePhasedAvailability.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspTimePhasedAvailability as a child of 'parent', with the
@@ -78,18 +81,27 @@
 dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    init();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+
+  _plannerCode->setType(PlannerCode);
+
+  _availability->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
+  _availability->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
+  _availability->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 }
 
 /*
@@ -97,7 +109,7 @@ dspTimePhasedAvailability::dspTimePhasedAvailability(QWidget* parent, const char
  */
 dspTimePhasedAvailability::~dspTimePhasedAvailability()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -106,33 +118,66 @@ dspTimePhasedAvailability::~dspTimePhasedAvailability()
  */
 void dspTimePhasedAvailability::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedAvailability::init()
-{
-  statusBar()->hide();
-
-  _plannerCode->setType(PlannerCode);
-
-  _availability->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-  _availability->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignLeft   );
-  _availability->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
+  retranslateUi(this);
 }
 
 void dspTimePhasedAvailability::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
-  _plannerCode->appendValue(params);
+  if (_calendar->isValid() && (_periods->isPeriodSelected()))
+  {
+    orReport report("TimePhasedAvailability", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
 
-  rptTimePhasedAvailability newdlg(this, "", TRUE);
-  newdlg.set(params);
+void dspTimePhasedAvailability::sSubmit()
+{
+  if (_calendar->isValid() && (_periods->isPeriodSelected()))
+  {
+    ParameterList params(buildParameters());
+    params.append("report_name", "TimePhasedAvailability");
+
+    submitReport newdlg(this, "", TRUE);
+    newdlg.set(params);
+
+    if (newdlg.check() == cNoReportDefinition)
+      QMessageBox::critical( this, tr("Report Definition Not Found"),
+                             tr( "The report defintions for this report, \"TimePhasedAvailability\" cannot be found.\n"
+                                 "Please contact your Systems Administrator and report this issue." ) );
+    else
+      newdlg.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
+}
+
+ParameterList dspTimePhasedAvailability::buildParameters()
+{
+  ParameterList params;
+
+  _plannerCode->appendValue(params);
+  _warehouse->appendValue(params);
+
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<QVariant> periodList;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+
+  params.append("period_id_list", periodList);
+
+  return params;
 }
 
 void dspTimePhasedAvailability::sViewAvailability()
