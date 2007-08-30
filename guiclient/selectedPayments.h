@@ -59,6 +59,7 @@
 #define SELECTEDPAYMENTS_H
 
 #include <QMainWindow>
+#include <parameter.h>
 #include "ui_selectedPayments.h"
 
 class selectedPayments : public QMainWindow, public Ui::selectedPayments
@@ -68,6 +69,8 @@ class selectedPayments : public QMainWindow, public Ui::selectedPayments
 public:
     selectedPayments(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~selectedPayments();
+
+    void setParams(ParameterList&);
 
 public slots:
     virtual void sEdit();

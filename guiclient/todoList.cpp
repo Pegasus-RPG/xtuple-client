@@ -68,6 +68,15 @@
 #include "incident.h"
 #include "storedProcErrorLookup.h"
 
+#define ENABLEUP(Priv, I) (Priv && I->id() > 0 && \
+			   I->currentItem() > 0 && \
+			   I->indexOfTopLevelItem(I->currentItem()) != 0)
+#define ENABLEDOWN(Priv, I) (Priv && I->id() > 0 && \
+			     I->currentItem() > 0 && \
+			     I->indexOfTopLevelItem(I->currentItem()) < \
+				  (I->topLevelItemCount() - 1) && \
+			     I->topLevelItem(I->indexOfTopLevelItem(I->currentItem()) + 1)->text(0) == "T")
+
 todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -116,12 +125,10 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
 	    this,	SLOT(sPopulateMenu(QMenu*)));
-  connect(_todoList,	SIGNAL(valid(bool)),	this,	SLOT(handlePrivs()));
+  connect(_todoList,	SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),	this,	SLOT(handlePrivs()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
-
-  statusBar()->hide();
 
   _todoList->addColumn(tr("Type"),    _statusColumn,	Qt::AlignCenter);
   _todoList->addColumn(tr("Seq"),	 _seqColumn,	Qt::AlignRight);
@@ -156,15 +163,10 @@ void todoList::sPopulateMenu(QMenu *pMenu)
 	(_myUsrId != _todoList->altId() && _privleges->check("ViewOtherTodoLists"));
 
     menuItem = pMenu->insertItem(tr("Move Up"), this, SLOT(sMoveUp()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv && _todoList->id() > 0 &&
-			_todoList->currentItem() > 0 &&
-			_todoList->indexOfTopLevelItem(_todoList->currentItem()) != 0);
+    pMenu->setItemEnabled(menuItem, ENABLEUP(editPriv, _todoList));
 
     menuItem = pMenu->insertItem(tr("Move Down"), this, SLOT(sMoveDown()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv && _todoList->id() > 0 &&
-			  _todoList->currentItem() > 0 &&
-			  _todoList->indexOfTopLevelItem(_todoList->currentItem()) < (_todoList->topLevelItemCount() - 1) &&
-			  _todoList->topLevelItem(_todoList->indexOfTopLevelItem(_todoList->currentItem()) + 1)->text(0) == "T");
+    pMenu->setItemEnabled(menuItem, ENABLEDOWN(editPriv, _todoList));
 
     menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
     pMenu->setItemEnabled(menuItem, editPriv);
@@ -225,13 +227,8 @@ void todoList::handlePrivs()
     viewTodoPriv =
       (_myUsrId == _todoList->altId() && _privleges->check("ViewPersonalTodoList")) ||
       (_privleges->check("ViewOtherTodoLists"));
-    _moveUp->setEnabled(editTodoPriv && _todoList->id() > 0 &&
-			_todoList->currentItem() > 0 &&
-			_todoList->indexOfTopLevelItem(_todoList->currentItem()) != 0);
-    _moveDown->setEnabled(editTodoPriv && _todoList->id() > 0 &&
-			  _todoList->currentItem() > 0 &&
-			  _todoList->indexOfTopLevelItem(_todoList->currentItem()) < (_todoList->topLevelItemCount() - 1) &&
-			  _todoList->topLevelItem(_todoList->indexOfTopLevelItem(_todoList->currentItem()) + 1)->text(0) == "T");
+    _moveUp->setEnabled(ENABLEUP(editTodoPriv, _todoList));
+    _moveDown->setEnabled(ENABLEDOWN(editTodoPriv, _todoList));
   }
   else if (_todoList->currentItem()->text(0) == "I")
   {

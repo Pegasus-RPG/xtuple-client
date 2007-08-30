@@ -57,39 +57,25 @@
 
 #include "selectedPayments.h"
 
+#include <QSqlError>
 #include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
-#include <openreports.h>
-#include "selectPayment.h"
 
-/*
- *  Constructs a selectedPayments as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+
+#include "selectPayment.h"
+#include "storedProcErrorLookup.h"
+
 selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_apselect, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-  connect(_apselect, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));
-  connect(_apselect, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_selectedBankAccount, SIGNAL(toggled(bool)), _bankaccnt, SLOT(setEnabled(bool)));
-  connect(_selectedBankAccount, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-
-  statusBar()->hide();
-  
-  _bankaccnt->setType(XComboBox::APBankAccounts);
+  connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_selectedBankAccount, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   QString base;
   q.exec("SELECT currConcat(baseCurrID()) AS base;");
@@ -116,21 +102,20 @@ selectedPayments::selectedPayments(QWidget* parent, const char* name, Qt::WFlags
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 selectedPayments::~selectedPayments()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void selectedPayments::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
+}
+
+void selectedPayments::setParams(ParameterList & params)
+{
+  if (_selectedBankAccount->isChecked())
+    params.append("bankaccntid", _bankaccnt->id());
 }
 
 void selectedPayments::sPrint()
@@ -158,6 +143,20 @@ void selectedPayments::sClear()
   q.prepare("SELECT clearPayment(:apselect_id) AS result;");
   q.bindValue(":apselect_id", _apselect->altId());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("clearPayment", result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   omfgThis->sPaymentsUpdated(_bankaccnt->id(), _apselect->altId(), TRUE);
 }
@@ -185,26 +184,20 @@ void selectedPayments::sFillList()
 	       "       currConcat(apselect_curr_id) AS currAbbr "
                "FROM apopen, apselect, vend, bankaccnt "
                "WHERE ( (apopen_vend_id=vend_id)"
-               " AND (apselect_apopen_id=apopen_id)"
-               " AND (apselect_bankaccnt_id=bankaccnt_id)" );
-
-  if (_selectedBankAccount->isChecked())
-    sql += " AND (bankaccnt_id=:bankaccnt_id)";
-
-  sql += " ) "
-         "ORDER BY bankaccnt_name, vend_number, apopen_docnumber;";
-
-  q.prepare(sql);
-  q.bindValue(":voucher", tr("Voucher"));
-  q.bindValue(":debitMemo", tr("D/M"));
-
-  if (_selectedBankAccount->isChecked())
-    q.bindValue(":bankaccnt_id", _bankaccnt->id());
-
-  q.exec();
+               "  AND   (apselect_apopen_id=apopen_id)"
+               "  AND   (apselect_bankaccnt_id=bankaccnt_id)" 
+	       "<? if exists(\"bankaccntid\") ?>"
+	       "  AND   (bankaccnt_id=<? value(\"bankaccntid\") ?>)"
+	       "<? endif ?>"
+	       " ) "
+	       "ORDER BY bankaccnt_name, vend_number, apopen_docnumber;" );
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
   XTreeWidgetItem *last = 0;
   double running = 0;
-  while (q.next());
+  while (q.next())
   {
     running += q.value("apselect_amount_base").toDouble();
 
@@ -220,5 +213,10 @@ void selectedPayments::sFillList()
 			       formatMoney(q.value("apselect_amount").toDouble()),
 			       q.value("currAbbr"),
 			       formatMoney(running) );
+  }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
