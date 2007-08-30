@@ -106,8 +106,7 @@
 #include "rptAROpenItemsByCustomer.h"
 #include "rptAROpenItems.h"
 #include "rptTimePhasedOpenARItems.h"
-#include "rptJournal.h"
-//#include "rptARAging.h"
+#include "printJournal.h"
 #include "rptInvoiceRegister.h"
 #include "rptDepositsRegister.h"
 
@@ -325,11 +324,7 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "ar.rptOpenItemsByCustomer", tr("Open Items by Customer..."),
                                       this, SLOT(sRptAROpenItemsByCustomer()),
                                       reportsMenu, _privleges->check("ViewAROpenItems") ) );
-/*
-  parent->actions.append( new Action( parent, "ar.rptTimePhasedOpenItems", tr("Time-Phased Open Items..."),
-                                      this, SLOT(sRptTimePhasedOpenItems()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-*/
+
   parent->actions.append( new Action( parent, "ar.rptARAging", tr("A/R Aging..."),
                                       this, SLOT(sRptTimePhasedOpenItems()),
                                       reportsMenu, _privleges->check("ViewAROpenItems") ) );
@@ -606,7 +601,7 @@ void moduleAR::sRptSalesJournal()
   ParameterList params;
   params.append("type", SalesJournal);
 
-  rptJournal newdlg(parent, "", TRUE);
+  printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -616,7 +611,7 @@ void moduleAR::sRptCreditMemoJournal()
   ParameterList params;
   params.append("type", CreditMemoJournal);
 
-  rptJournal newdlg(parent, "", TRUE);
+  printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -635,13 +630,6 @@ void moduleAR::sRptTimePhasedOpenItems()
 {
   rptTimePhasedOpenARItems(parent, "", TRUE).exec();
 }
-
-/*
-void moduleAR::sRptARAging()
-{
-  rptARAging(parent, "", TRUE).exec();
-}
-*/
 
 void moduleAR::sPrintStatementByCustomer()
 {

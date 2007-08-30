@@ -132,7 +132,7 @@
 #include "dspTimePhasedOpenARItems.h"
 #include "dspInvoiceRegister.h"
 #include "dspDepositsRegister.h"
-#include "rptJournal.h"
+#include "printJournal.h"
 #include "printStatementByCustomer.h"
 #include "printStatementsByCustomerType.h"
 
@@ -839,7 +839,7 @@ void menuAccounting::sRptSalesJournal()
   ParameterList params;
   params.append("type", SalesJournal);
 
-  rptJournal newdlg(parent, "", TRUE);
+  printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -849,7 +849,7 @@ void menuAccounting::sRptCreditMemoJournal()
   ParameterList params;
   params.append("type", CreditMemoJournal);
 
-  rptJournal newdlg(parent, "", TRUE);
+  printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }

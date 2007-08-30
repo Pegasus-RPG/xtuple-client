@@ -206,7 +206,6 @@ class moduleIM : public QObject
     void sRptInventoryBufferStatusByItemGroup();
     void sRptInventoryBufferStatusByClassCode();
     void sRptInventoryBufferStatusByPlannerCode();
-    void sBarCodeDispatchList();
     void sPrintItemLabelsByClassCode();
 
     void sWarehouses();

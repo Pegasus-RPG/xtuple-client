@@ -55,34 +55,33 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef RPTBALANCESHEET_H
-#define RPTBALANCESHEET_H
+#ifndef PRINTJOURNAL_H
+#define PRINTJOURNAL_H
 
 #include "OpenMFGGUIClient.h"
 #include <QtGui/QDialog>
 #include <parameter.h>
-#include "ui_rptBalanceSheet.h"
+#include "ui_printJournal.h"
 
-class rptBalanceSheet : public QDialog, public Ui::rptBalanceSheet
+class printJournal : public QDialog, public Ui::printJournal
 {
     Q_OBJECT
 
 public:
-    rptBalanceSheet(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~rptBalanceSheet();
+    printJournal(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~printJournal();
 
 public slots:
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
-    virtual SetResponse set( const ParameterList & pParams );
 
 protected slots:
     virtual void languageChange();
 
 private:
+    int _type;
     bool _captive;
-
-    virtual void init();
 
 };
 
-#endif // RPTBALANCESHEET_H
+#endif // PRINTJOURNAL_H

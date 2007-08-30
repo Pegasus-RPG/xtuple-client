@@ -2,8 +2,8 @@
  <author></author>
  <comment></comment>
  <exportmacro></exportmacro>
- <class>rptJournal</class>
- <widget class="QDialog" name="rptJournal" >
+ <class>printJournal</class>
+ <widget class="QDialog" name="printJournal" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -154,7 +154,7 @@
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>rptJournal</receiver>
+   <receiver>printJournal</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >

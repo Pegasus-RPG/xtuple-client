@@ -250,6 +250,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printStatementByCustomer.ui printStatementsByCustomerType.ui                           \
                printVendorForm.ui                                                                     \
                printWoForm.ui printWoPickList.ui printWoRouting.ui printWoTraveler.ui                 \
+               printJournal.ui                                                                        \
                productCategory.ui productCategories.ui profitCenter.ui profitCenters.ui               \
                project.ui projects.ui purchaseOrder.ui purchaseOrderItem.ui                           \
 	       prospect.ui prospects.ui                                                               \
@@ -265,9 +266,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                reports.ui reprioritizeWo.ui                                                           \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                resetQOHBalances.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui                   \
-               reverseGLSeries.ui rptAPAging.ui                                                       \
+               reverseGLSeries.ui                                                                     \
                rptAPOpenItemsByVendor.ui rptAROpenItemsByCustomer.ui rptARApplications.ui             \
-               rptAROpenItems.ui rptARAging.ui                                                        \
+               rptAROpenItems.ui                                                                      \
                rptBacklogByCustomer.ui rptBacklogByParameterList.ui rptBacklogByItem.ui               \
                rptBacklogBySalesOrder.ui rptBankrecHistory.ui                  \
                rptBillOfOperations.ui                                                                 \
@@ -305,7 +306,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptItemSourcesByItem.ui rptItemSourcesByVendor.ui                                      \
                rptLaborVarianceByBOOItem.ui rptLaborVarianceByItem.ui                                 \
                rptLaborVarianceByWorkCenter.ui rptLaborVarianceByWorkOrder.ui                         \
-               rptLocationDispatchList.ui                                                             \
                rptMaterialUsageVarianceByBOMItem.ui rptMaterialUsageVarianceByComponentItem.ui        \
                rptMaterialUsageVarianceByItem.ui rptMaterialUsageVarianceByWarehouse.ui               \
                rptMaterialUsageVarianceByWorkOrder.ui                                                 \
@@ -327,7 +327,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptSalesHistoryByBilltoName.ui rptSalesHistoryByCustomer.ui                            \
                rptSalesHistoryByItem.ui rptSalesHistoryByParameterList.ui                             \
                rptSalesHistoryBySalesRep.ui rptSalesHistoryByShipTo.ui                                \
-               rptJournal.ui                                                                          \
                rptSalesOrderStatus.ui rptSequencedBOM.ui rptSingleLevelBOM.ui                         \
                rptSingleLevelWhereUsed.ui rptShipmentsByDate.ui rptShipmentsBySalesOrder.ui           \
                rptSlowMovingInventoryByClassCode.ui                                                   \
@@ -647,6 +646,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                printStatementByCustomer.h printStatementsByCustomerType.h                             \
                printVendorForm.h                                                                      \
                printWoForm.h printWoPickList.h printWoRouting.h printWoTraveler.h                     \
+               printJournal.h                                                                         \
                productCategory.h productCategories.h profitCenter.h profitCenters.h                   \
                project.h projects.h purchaseOrder.h purchaseOrderItem.h                               \
 	       prospect.h prospects.h                                                                 \
@@ -662,9 +662,9 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                reports.h reprioritizeWo.h                                                             \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                resetQOHBalances.h returnWoMaterialBatch.h returnWoMaterialItem.h                      \
-               reverseGLSeries.h rptAPAging.h                                                         \
+               reverseGLSeries.h                                                                      \
                rptAPOpenItemsByVendor.h rptAROpenItemsByCustomer.h rptARApplications.h                \
-               rptAROpenItems.h rptARAging.h                                                          \
+               rptAROpenItems.h                                                                       \
                rptBacklogByCustomer.h rptBacklogByParameterList.h rptBacklogByItem.h                  \
                rptBacklogBySalesOrder.h rptBankrecHistory.h                    \
                rptBillOfOperations.h                                                                  \
@@ -701,7 +701,6 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptItemSourcesByItem.h rptItemSourcesByVendor.h                                        \
                rptLaborVarianceByBOOItem.h rptLaborVarianceByItem.h                                   \
                rptLaborVarianceByWorkCenter.h rptLaborVarianceByWorkOrder.h                           \
-               rptLocationDispatchList.h                                                              \
                rptMaterialUsageVarianceByBOMItem.h rptMaterialUsageVarianceByComponentItem.h          \
                rptMaterialUsageVarianceByItem.h rptMaterialUsageVarianceByWarehouse.h                 \
                rptMaterialUsageVarianceByWorkOrder.h                                                  \
@@ -723,7 +722,6 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptSalesHistoryByBilltoName.h rptSalesHistoryByCustomer.h                              \
                rptSalesHistoryByItem.h rptSalesHistoryByParameterList.h                               \
                rptSalesHistoryBySalesRep.h rptSalesHistoryByShipTo.h                                  \
-               rptJournal.h                                                                           \
                rptSalesOrderStatus.h rptSequencedBOM.h rptSingleLevelBOM.h                            \
                rptSingleLevelWhereUsed.h rptShipmentsByDate.h rptShipmentsBySalesOrder.h              \
                rptSlowMovingInventoryByClassCode.h                                                    \
@@ -1045,6 +1043,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                printStatementByCustomer.cpp printStatementsByCustomerType.cpp                         \
                printVendorForm.cpp                                                                    \
                printWoForm.cpp printWoPickList.cpp printWoRouting.cpp printWoTraveler.cpp             \
+               printJournal.cpp                                                                       \
                productCategory.cpp productCategories.cpp profitCenter.cpp profitCenters.cpp           \
                project.cpp projects.cpp purchaseOrder.cpp purchaseOrderItem.cpp                       \
 	       prospect.cpp prospects.cpp                                                             \
@@ -1060,9 +1059,9 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                reports.cpp reprioritizeWo.cpp                                                         \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                resetQOHBalances.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp                \
-               reverseGLSeries.cpp rptAPAging.cpp                                                     \
+               reverseGLSeries.cpp                                                                    \
                rptAPOpenItemsByVendor.cpp rptAROpenItemsByCustomer.cpp rptARApplications.cpp          \
-               rptAROpenItems.cpp rptARAging.cpp                                                      \
+               rptAROpenItems.cpp                                                                     \
                rptBacklogByCustomer.cpp rptBacklogByParameterList.cpp rptBacklogByItem.cpp            \
                rptBacklogBySalesOrder.cpp rptBankrecHistory.cpp                \
                rptBillOfOperations.cpp                                                                \
@@ -1098,7 +1097,6 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptItemSourcesByItem.cpp rptItemSourcesByVendor.cpp                                    \
                rptLaborVarianceByBOOItem.cpp rptLaborVarianceByItem.cpp                               \
                rptLaborVarianceByWorkCenter.cpp rptLaborVarianceByWorkOrder.cpp                       \
-               rptLocationDispatchList.cpp                                                            \
                rptMaterialUsageVarianceByBOMItem.cpp rptMaterialUsageVarianceByComponentItem.cpp      \
                rptMaterialUsageVarianceByItem.cpp rptMaterialUsageVarianceByWarehouse.cpp             \
                rptMaterialUsageVarianceByWorkOrder.cpp                                                \
@@ -1119,7 +1117,6 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptSalesHistoryByBilltoName.cpp rptSalesHistoryByCustomer.cpp                          \
                rptSalesHistoryByItem.cpp rptSalesHistoryByParameterList.cpp                           \
                rptSalesHistoryBySalesRep.cpp rptSalesHistoryByShipTo.cpp                              \
-               rptJournal.cpp                                                                         \
                rptSalesOrderStatus.cpp rptSequencedBOM.cpp rptSingleLevelBOM.cpp                      \
                rptSingleLevelWhereUsed.cpp rptShipmentsByDate.cpp rptShipmentsBySalesOrder.cpp        \
                rptSlowMovingInventoryByClassCode.cpp                                                  \

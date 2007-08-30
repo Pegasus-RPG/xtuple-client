@@ -106,8 +106,7 @@
 #include "rptVoucherRegister.h"
 #include "rptAPOpenItemsByVendor.h"
 #include "rptVendorAPHistory.h"
-#include "rptJournal.h"
-//#include "rptAPAging.h"
+#include "printJournal.h"
 
 #include "vendors.h"
 #include "termses.h"
@@ -310,11 +309,7 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "ap.rptOpenAPItemsByVendor", tr("Open Items by Vendor..."),
                                       this, SLOT(sRptAPOpenItemsByVendor()),
                                       reportsMenu, _privleges->check("ViewAPOpenItems") ) );
-/*
-  parent->actions.append( new Action( parent, "ap.rptTimePhasedOpenAPItems", tr("Time-Phased Open Items..."),
-                                      this, SLOT(sRptTimePhasedOpenAPItems()),
-                                      reportsMenu, _privleges->check("ViewAPOpenItems") ) );
-*/
+
   parent->actions.append( new Action( parent, "ap.rptAPAging", tr("A/P Aging..."),
                                       this, SLOT(sRptTimePhasedOpenAPItems()),
                                       reportsMenu, _privleges->check("ViewAPOpenItems") ) );
@@ -589,19 +584,12 @@ void moduleAP::sRptTimePhasedOpenAPItems()
   rptTimePhasedOpenAPItems(parent, "", TRUE).exec();
 }
 
-/*
-void moduleAP::sRptAPAging()
-{
-  rptAPAging(parent, "", TRUE).exec();
-}
-*/
-
 void moduleAP::sRptPayablesJournal()
 {
   ParameterList params;
   params.append("type", PayablesJournal);
 
-  rptJournal newdlg(parent, "", TRUE);
+  printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
@@ -611,7 +599,7 @@ void moduleAP::sRptCheckJournal()
   ParameterList params;
   params.append("type", CheckJournal);
 
-  rptJournal newdlg(parent, "", TRUE);
+  printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }

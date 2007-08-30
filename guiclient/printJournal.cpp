@@ -55,54 +55,48 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "rptJournal.h"
+#include "printJournal.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 
 /*
- *  Constructs a rptJournal as a child of 'parent', with the
+ *  Constructs a printJournal as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  *
  *  The dialog will by default be modeless, unless you set 'modal' to
  *  true to construct a modal dialog.
  */
-rptJournal::rptJournal(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+printJournal::printJournal(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 }
 
 /*
  *  Destroys the object and frees any allocated resources
  */
-rptJournal::~rptJournal()
+printJournal::~printJournal()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
  *  Sets the strings of the subwidgets using the current
  *  language.
  */
-void rptJournal::languageChange()
+void printJournal::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void rptJournal::init()
-{
-}
-
-enum SetResponse rptJournal::set(ParameterList &pParams)
+enum SetResponse printJournal::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -162,7 +156,7 @@ enum SetResponse rptJournal::set(ParameterList &pParams)
   return NoError;
 }
 
-void rptJournal::sPrint()
+void printJournal::sPrint()
 {
   QString reportName;
 

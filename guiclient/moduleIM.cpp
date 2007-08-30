@@ -171,7 +171,6 @@
 #include "rptUsageStatisticsByItemGroup.h"
 #include "rptUsageStatisticsByWarehouse.h"
 #include "rptTimePhasedUsageStatisticsByItem.h"
-#include "rptLocationDispatchList.h"
 #include "printItemLabelsByClassCode.h"
 
 #include "warehouses.h"
@@ -1251,11 +1250,6 @@ void moduleIM::sRptInventoryBufferStatusByPlannerCode()
   rptInventoryBufferStatusByParameterList newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void moduleIM::sBarCodeDispatchList()
-{
-  rptLocationDispatchList(parent, "", TRUE).exec();
 }
 
 void moduleIM::sPrintItemLabelsByClassCode()
