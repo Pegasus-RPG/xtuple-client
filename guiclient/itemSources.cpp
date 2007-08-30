@@ -57,9 +57,10 @@
 
 #include "itemSources.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <QMenu>
 #include <parameter.h>
 #include <openreports.h>
 #include "itemSource.h"
@@ -104,8 +105,6 @@ void itemSources::languageChange()
     retranslateUi(this);
 }
 
-//Added by qt3to4:
-#include <Q3PopupMenu>
 
 void itemSources::init()
 {
@@ -203,7 +202,7 @@ void itemSources::sDelete()
   }
 }
 
-void itemSources::sPopulateMenu(Q3PopupMenu *menuThis)
+void itemSources::sPopulateMenu(QMenu *menuThis)
 {
   int intMenuItem;
 

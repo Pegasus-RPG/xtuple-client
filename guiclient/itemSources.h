@@ -59,7 +59,7 @@
 #define ITEMSOURCES_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_itemSources.h"
 
@@ -80,7 +80,7 @@ protected slots:
     virtual void sEdit();
     virtual void sView();
     virtual void sDelete();
-    virtual void sPopulateMenu( Q3PopupMenu * menuThis );
+    virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sFillList();
 
 

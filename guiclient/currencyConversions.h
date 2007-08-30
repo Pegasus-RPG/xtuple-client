@@ -84,9 +84,6 @@ public slots:
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void setBaseCurrency();
 
-protected:
-    Q3PopupMenu* pMenu;
-
 protected slots:
     virtual void languageChange();
 
