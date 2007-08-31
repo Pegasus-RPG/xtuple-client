@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDSALESBYCUSTOMERBYITEM_H
 #define DSPTIMEPHASEDSALESBYCUSTOMERBYITEM_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 #include <parameter.h>
 #include "ui_dspTimePhasedSalesByCustomerByItem.h"
@@ -71,7 +71,6 @@ public:
     dspTimePhasedSalesByCustomerByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedSalesByCustomerByItem();
 
-    virtual void init();
     virtual ParameterList buildParameters();
 
 public slots:

@@ -133,11 +133,7 @@ class moduleSA : public QObject
     void sRptSummarizedSalesByItem();
     void sRptSummarizedSalesBySalesRep();
     void sRptSummarizedSalesHistoryByShippingZone();
-    void sRptTimePhasedSalesByItem();
-    void sRptTimePhasedSalesByProductCategory();
-    void sRptTimePhasedSalesByCustomer();
     void sRptTimePhasedSalesByCustomerGroup();
-    void sRptTimePhasedSalesByCustomerByItem();
     void sPrintSASpecialCalendarForm();
 
     void sArchiveSalesHistory();

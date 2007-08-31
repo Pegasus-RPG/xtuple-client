@@ -58,15 +58,15 @@
 #include "dspTimePhasedSalesByItem.h"
 
 #include <QVariant>
-#include <datecluster.h>
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
 #include <q3valuevector.h>
+#include <datecluster.h>
 #include <parameter.h>
 #include <openreports.h>
 #include "dspSalesHistoryByItem.h"
-#include "rptTimePhasedSalesByItem.h"
 #include "OpenMFGGUIClient.h"
 #include "submitReport.h"
 
@@ -78,49 +78,22 @@
 dspTimePhasedSalesByItem::dspTimePhasedSalesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  // signals and slots connections
+  connect(_query, SIGNAL(clicked()), this, SLOT(sCalculate()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
     
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-    
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspTimePhasedSalesByItem::~dspTimePhasedSalesByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspTimePhasedSalesByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedSalesByItem::init()
-{
-  statusBar()->hide();
-
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
+  
   _productCategory->setType(ProductCategory);
   
   _sohist->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
@@ -130,28 +103,40 @@ void dspTimePhasedSalesByItem::init()
   _salesDollars->setEnabled(_privleges->check("ViewCustomerPrices"));
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspTimePhasedSalesByItem::~dspTimePhasedSalesByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspTimePhasedSalesByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspTimePhasedSalesByItem::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-
-  if (_salesDollars->isChecked())
-    params.append("salesDollars");
-  else if (_inventoryUnits->isChecked())
-    params.append("inventoryUnits");
-
-#if 0
-  else if (_capacityUnits->isChecked())
-    params.append("capacityUnits");
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedSalesHistoryByItem", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
   else
-    params.append("altCapacityUnits");
-#endif
-
-  rptTimePhasedSalesByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
 }
 
 void dspTimePhasedSalesByItem::sViewShipments()

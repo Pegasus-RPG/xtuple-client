@@ -343,9 +343,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptTimePhasedLoadByWorkCenter.ui                                                       \
                rptTimePhasedPlannedREByPlannerCode.ui                                                 \
                rptTimePhasedRoughCutByWorkCenter.ui                                                   \
-               rptTimePhasedSalesByCustomer.ui rptTimePhasedSalesByCustomerGroup.ui                   \
-               rptTimePhasedSalesByCustomerByItem.ui rptTimePhasedSalesByItem.ui                      \
-               rptTimePhasedSalesByProductCategory.ui                                                 \
+                                               rptTimePhasedSalesByCustomerGroup.ui                   \
                rptTrialBalances.ui                                                                    \
                rptUsageStatisticsByItem.ui rptUsageStatisticsByClassCode.ui                           \
                rptUsageStatisticsByItemGroup.ui rptUsageStatisticsByWarehouse.ui                      \
@@ -733,9 +731,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptTimePhasedLoadByWorkCenter.h                                                        \
                rptTimePhasedPlannedREByPlannerCode.h                                                  \
                rptTimePhasedRoughCutByWorkCenter.h                                                    \
-               rptTimePhasedSalesByCustomer.h rptTimePhasedSalesByCustomerGroup.h                     \
-               rptTimePhasedSalesByCustomerByItem.h rptTimePhasedSalesByItem.h                        \
-               rptTimePhasedSalesByProductCategory.h                                                  \
+                                              rptTimePhasedSalesByCustomerGroup.h                     \
                rptTrialBalances.h                                                                     \
                rptUsageStatisticsByItem.h rptUsageStatisticsByClassCode.h                             \
                rptUsageStatisticsByItemGroup.h rptUsageStatisticsByWarehouse.h                        \
@@ -1123,9 +1119,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptTimePhasedLoadByWorkCenter.cpp                                                      \
                rptTimePhasedPlannedREByPlannerCode.cpp                                                \
                rptTimePhasedRoughCutByWorkCenter.cpp                                                  \
-               rptTimePhasedSalesByCustomer.cpp rptTimePhasedSalesByCustomerGroup.cpp                 \
-               rptTimePhasedSalesByCustomerByItem.cpp rptTimePhasedSalesByItem.cpp                    \
-               rptTimePhasedSalesByProductCategory.cpp                                                \
+                                                rptTimePhasedSalesByCustomerGroup.cpp                 \
                rptTrialBalances.cpp                                                                   \
                rptUsageStatisticsByItem.cpp rptUsageStatisticsByClassCode.cpp                         \
                rptUsageStatisticsByItemGroup.cpp rptUsageStatisticsByWarehouse.cpp                    \

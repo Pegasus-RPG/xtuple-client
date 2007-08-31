@@ -119,11 +119,7 @@
 #include "rptSummarizedSalesByItem.h"
 #include "rptSummarizedSalesBySalesRep.h"
 #include "rptSummarizedSalesByShippingZone.h"
-#include "rptTimePhasedSalesByItem.h"
-#include "rptTimePhasedSalesByProductCategory.h"
-#include "rptTimePhasedSalesByCustomer.h"
 #include "rptTimePhasedSalesByCustomerGroup.h"
-#include "rptTimePhasedSalesByCustomerByItem.h"
 #include "printSASpecialCalendarForm.h"
 
 #include "archRestoreSalesHistory.h"
@@ -381,24 +377,8 @@ moduleSA::moduleSA(OpenMFGGUIClient *pParent) :
 
   reportsMenu->insertSeparator();
 
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByItem", tr("Time-Phased Sales History by Item..."),
-                                      this, SLOT(sRptTimePhasedSalesByItem()),
-                                      reportsMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByProductCategory", tr("Time-Phased Sales History by Product Category..."),
-                                      this, SLOT(sRptTimePhasedSalesByProductCategory()),
-                                      reportsMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByCustomer", tr("Time-Phased Sales History by Customer..."),
-                                      this, SLOT(sRptTimePhasedSalesByCustomer()),
-                                      reportsMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
-
   parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByCustomerGroup", tr("Time-Phased Sales History by Customer Group..."),
                                       this, SLOT(sRptTimePhasedSalesByCustomerGroup()),
-                                      reportsMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByCustomerByItem", tr("Time-Phased Sales History by Customer by Item..."),
-                                      this, SLOT(sRptTimePhasedSalesByCustomerByItem()),
                                       reportsMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
 
   reportsMenu->insertSeparator();
@@ -739,29 +719,9 @@ void moduleSA::sRptSummarizedSalesHistoryByShippingZone()
   rptSummarizedSalesByShippingZone(parent, "", TRUE).exec();
 }
 
-void moduleSA::sRptTimePhasedSalesByItem()
-{
-  rptTimePhasedSalesByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedSalesByProductCategory()
-{
-  rptTimePhasedSalesByProductCategory(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedSalesByCustomer()
-{
-  rptTimePhasedSalesByCustomer(parent, "", TRUE).exec();
-}
-
 void moduleSA::sRptTimePhasedSalesByCustomerGroup()
 {
   rptTimePhasedSalesByCustomerGroup(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedSalesByCustomerByItem()
-{
-  rptTimePhasedSalesByCustomerByItem(parent, "", TRUE).exec();
 }
 
 void moduleSA::sPrintSASpecialCalendarForm()

@@ -60,14 +60,14 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QWorkspace>
+#include <QMenu>
 #include <q3valuevector.h>
+#include <parameter.h>
 #include <dbtools.h>
 #include <datecluster.h>
 #include <openreports.h>
 #include "dspSalesHistoryByCustomer.h"
-#include "rptTimePhasedSalesByCustomerByItem.h"
 #include "OpenMFGGUIClient.h"
 #include "submitReport.h"
 
@@ -79,48 +79,21 @@
 dspTimePhasedSalesByCustomerByItem::dspTimePhasedSalesByCustomerByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
-    
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-    
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspTimePhasedSalesByCustomerByItem::~dspTimePhasedSalesByCustomerByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspTimePhasedSalesByCustomerByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedSalesByCustomerByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
   
   _customerType->setType(CustomerType);
   _productCategory->setType(ProductCategory);
@@ -129,34 +102,40 @@ void dspTimePhasedSalesByCustomerByItem::init()
   _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspTimePhasedSalesByCustomerByItem::~dspTimePhasedSalesByCustomerByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspTimePhasedSalesByCustomerByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspTimePhasedSalesByCustomerByItem::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
-
-  if (_byCustomer->isChecked())
-    params.append("orderByCustomer");
-  else if (_bySales->isChecked())
-    params.append("orderBySales");
-
-#if 0
-  if (_selectedWarehouse->isChecked())
-    params.append("warehous_id", _warehouse->id());
-#endif
-
-  if (_customerType->isSelected())
-    params.append("custtype_id", _customerType->id());
-  else if (_customerType->isPattern())
-    params.append("custtype_pattern", _customerType->pattern());
-
-  if (_productCategory->isSelected())
-    params.append("prodcat_id", _productCategory->id());
-  else if (_productCategory->isPattern())
-    params.append("prodcat_pattern", _productCategory->pattern());
-
-  rptTimePhasedSalesByCustomerByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (_periods->isPeriodSelected())
+  {
+    orReport report("TimePhasedSalesHistoryByCustomerByItem", buildParameters());
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical( this, tr("Incomplete criteria"),
+                           tr( "The criteria you specified is not complete. Please make sure all\n"
+                               "fields are correctly filled out before running the report." ) );
 }
 
 void dspTimePhasedSalesByCustomerByItem::sViewShipments()
