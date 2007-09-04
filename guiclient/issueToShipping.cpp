@@ -473,7 +473,6 @@ bool issueToShipping::sufficientInventory(int porderheadid)
     if (q.first())
     {
       int result = q.value("result").toInt();
-      qDebug("inventory to ship order? %d", result);
       if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("sufficientInventoryToShipOrder", result), __FILE__, __LINE__);
@@ -764,7 +763,6 @@ void issueToShipping::sFillList()
 
 void issueToShipping::sBcFind()
 {
-qDebug("sBcFind");
   // find item that matches barcode and is a line item in this order.
   // then call issueLineToShipping passing in params to preset and
   // run the issue button.
@@ -856,10 +854,10 @@ qDebug("sBcFind");
 	"         ( shipitem JOIN shiphead"
 	"           ON ( (shipitem_shiphead_id=shiphead_id)"
 	"                 AND (NOT shiphead_shipped)"
-	"                 AND (shiphead_order_type=:ordertype))"
+	"                 AND (shiphead_order_type=<? value(\"ordertype\") ?>))"
 	"         ) ON  (shipitem_orderitem_id=coitem_id)"
 	" WHERE ( (coitem_status NOT IN ('C','X'))"
-	"   AND   (coitem_cohead_id=:sohead_id) )"
+	"   AND   (coitem_cohead_id=<? value(\"sohead_id\") ?>) )"
 	" GROUP BY coitem_id, coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned "
 	"HAVING ((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) - COALESCE(SUM(shipitem_qty),0)) > 0);"
 	"<? elseif exists(\"tohead_id\") ?>"
@@ -869,10 +867,10 @@ qDebug("sBcFind");
 	"         ( shipitem JOIN shiphead"
 	"           ON ( (shipitem_shiphead_id=shiphead_id)"
 	"                 AND (NOT shiphead_shipped)"
-	"                 AND (shiphead_order_type=:ordertype))"
+	"                 AND (shiphead_order_type=<? value(\"ordertype\") ?>))"
 	"         ) ON  (shipitem_orderitem_id=toitem_id)"
 	" WHERE ( (toitem_status NOT IN ('C','X'))"
-	"   AND   (toitem_tohead_id=:tohead_id) )"
+	"   AND   (toitem_tohead_id=<? value(\"tohead_id\") ?>) )"
 	" GROUP BY toitem_id, toitem_qty_ordered, toitem_qty_shipped "
 	"HAVING ((noNeg(toitem_qty_ordered - toitem_qty_shipped) - COALESCE(SUM(shipitem_qty),0)) > 0);"
 	"<? endif ?>"
