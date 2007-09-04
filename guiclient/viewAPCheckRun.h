@@ -59,7 +59,7 @@
 #define VIEWAPCHECKRUN_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 #include "ui_viewAPCheckRun.h"
 
@@ -70,8 +70,6 @@ class viewAPCheckRun : public QMainWindow, public Ui::viewAPCheckRun
 public:
     viewAPCheckRun(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~viewAPCheckRun();
-
-    virtual void init();
 
 public slots:
     virtual void sVoid();

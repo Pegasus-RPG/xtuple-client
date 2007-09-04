@@ -57,49 +57,18 @@
 
 #include "userEventNotification.h"
 
+#include <QSqlError>
 #include <QVariant>
 
-/*
- *  Constructs a userEventNotification as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 userEventNotification::userEventNotification(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_warehouse, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(sWarehouseToggled(QTreeWidgetItem*)));
+  connect(_event, SIGNAL(itemSelected(int)), this, SLOT(sAllWarehousesToggled(int)));
+  connect(_event, SIGNAL(itemSelectionChanged()), this, SLOT(sFillWarehouseList()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(accept()));
-    connect(_warehouse, SIGNAL(clicked(QTreeWidgetItem*)), this, SLOT(sWarehouseToggled(QTreeWidgetItem*)));
-    connect(_event, SIGNAL(itemSelected(int)), this, SLOT(sAllWarehousesToggled(int)));
-    connect(_event, SIGNAL(itemSelectionChanged()), this, SLOT(sFillWarehouseList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-userEventNotification::~userEventNotification()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void userEventNotification::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void userEventNotification::init()
-{
   _event->addColumn(tr("Module"),      50,   Qt::AlignCenter );
   _event->addColumn(tr("Name"),        150,  Qt::AlignLeft   );
   _event->addColumn(tr("Description"), -1,   Qt::AlignLeft   );
@@ -115,7 +84,17 @@ void userEventNotification::init()
                         "ORDER BY warehous_code" );
 }
 
-enum SetResponse userEventNotification::set(ParameterList &pParams)
+userEventNotification::~userEventNotification()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void userEventNotification::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse userEventNotification::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -162,6 +141,11 @@ void userEventNotification::sAllWarehousesToggled(int pEvnttypeid)
   q.bindValue(":username", _cUsername);
   q.bindValue(":evnttype_id", pEvnttypeid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillWarehouseList();
 }
@@ -171,7 +155,7 @@ void userEventNotification::sWarehouseToggled(QTreeWidgetItem *selected)
   if(!selected)
     return;
 
-  if (selected->text(0) == "Yes")
+  if (selected->text(0) == tr("Yes"))
     q.prepare( "DELETE FROM evntnot "
                "WHERE ( (evntnot_username=:username)"
                " AND (evntnot_evnttype_id=:evnttype_id)"
@@ -186,6 +170,11 @@ void userEventNotification::sWarehouseToggled(QTreeWidgetItem *selected)
   q.bindValue(":evnttype_id", _event->id());
   q.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillWarehouseList();
 }
@@ -207,5 +196,10 @@ void userEventNotification::sFillWarehouseList()
       _warehouse->topLevelItem(i)->setText(0, tr("Yes"));
     else
       _warehouse->topLevelItem(i)->setText(0, tr("No"));
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }

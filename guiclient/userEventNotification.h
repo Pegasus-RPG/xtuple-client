@@ -72,10 +72,8 @@ public:
     userEventNotification(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~userEventNotification();
 
-    virtual void init();
-
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set(const ParameterList & pParams );
     virtual void sAllWarehousesToggled( int pEvnttypeid );
     virtual void sWarehouseToggled( QTreeWidgetItem * selected );
     virtual void sFillWarehouseList();

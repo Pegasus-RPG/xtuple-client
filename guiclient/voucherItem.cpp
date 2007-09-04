@@ -61,25 +61,17 @@
 #include <QMessageBox>
 #include <QValidator>
 #include "voucherItemDistrib.h"
-/*
- *  Constructs a voucherItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+
 voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_uninvoiced, SIGNAL(doubleClicked(QTreeWidgetItem*)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
+  connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
 
   _item->setReadOnly(TRUE);
   _qtyToVoucher->setValidator(omfgThis->qtyVal());
@@ -93,18 +85,11 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 voucherItem::~voucherItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void voucherItem::languageChange()
 {
   retranslateUi(this);

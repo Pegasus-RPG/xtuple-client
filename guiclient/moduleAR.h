@@ -89,11 +89,6 @@ class moduleAR : public QObject
     void sCashReceiptEditList();
     void sPostCashReceipts();
 
-    void sEnterFinanceCharge();
-    void sCreateFinanceChargesByCustomerType();
-    void sUnpostedFinanceCharges();
-    void sPostFinanceCharges();
-
     void sEnterMiscCreditMemo();
     void sUnappliedCreditMemos();
     void sEnterMiscDebitMemo();
@@ -140,7 +135,6 @@ class moduleAR : public QObject
     QMenu *invoicesMenu;
     QMenu *cashReceiptsMenu;
     QMenu *memosMenu;
-    QMenu *financeChargesMenu;
     QMenu *displaysMenu;
     QMenu *reportsMenu;
     QMenu *masterInfoMenu;

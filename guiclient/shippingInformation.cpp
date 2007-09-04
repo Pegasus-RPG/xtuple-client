@@ -55,22 +55,25 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-// TODO: implement transfer order support
 #include "shippingInformation.h"
 
 #include <QSqlError>
 #include <QMessageBox>
 #include <QVariant>
 
-#include "salesOrderList.h"
+#include <metasql.h>
+
 #include "issueToShipping.h"
 #include "salesOrderItem.h"
+#include "salesOrderList.h"
+#include "storedProcErrorLookup.h"
+#include "transferOrderItem.h"
 
 shippingInformation::shippingInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
-  connect(_coitem,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)),
+  connect(_item,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)),
 					  this, SLOT(sPopulateMenu(QMenu*)));
   connect(_salesOrder,	SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_salesOrder,	SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
@@ -87,12 +90,12 @@ shippingInformation::shippingInformation(QWidget* parent, const char* name, bool
 
   _shippingForm->setCurrentItem(-1);
 
-  _coitem->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter );
-  _coitem->addColumn(tr("Item"),        -1,         Qt::AlignLeft   );
-  _coitem->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight  );
-  _coitem->addColumn(tr("Net Wght."),   _qtyColumn, Qt::AlignRight  );
-  _coitem->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight  );
-  _coitem->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight  );
+  _item->addColumn(tr("#"),           _seqColumn, Qt::AlignCenter );
+  _item->addColumn(tr("Item"),        -1,         Qt::AlignLeft   );
+  _item->addColumn(tr("At Shipping"), _qtyColumn, Qt::AlignRight  );
+  _item->addColumn(tr("Net Wght."),   _qtyColumn, Qt::AlignRight  );
+  _item->addColumn(tr("Tare Wght."),  _qtyColumn, Qt::AlignRight  );
+  _item->addColumn(tr("Gross Wght."), _qtyColumn, Qt::AlignRight  );
 }
 
 shippingInformation::~shippingInformation()
@@ -132,12 +135,8 @@ enum SetResponse shippingInformation::set(const ParameterList &pParams)
       if (q.value("shiphead_order_type").toString() == "SO")
 	_salesOrder->setId(q.value("shiphead_order_id").toInt());
       else
-      {
-	systemError(this, "Transfer Order support not implemented yet",
-		    __FILE__, __LINE__);
-	return UndefinedError;
-	//_to->setId(q.value("shiphead_order_id").toInt());
-      }
+	_to->setId(q.value("shiphead_order_id").toInt());
+
       _close->setText("&Cancel");
 
       _shipDate->setFocus();
@@ -205,7 +204,10 @@ void shippingInformation::sSave()
   if (_captive)
     accept();
   else
+  {
     _salesOrder->setId(-1);
+    _to->setId(-1);
+  }
 }
 
 void shippingInformation::sSalesOrderList()
@@ -255,7 +257,10 @@ void shippingInformation::sPopulateMenu(QMenu *menuThis)
 void shippingInformation::sIssueStock()
 {
   ParameterList params;
-  params.append("sohead_id", _coitem->altId());
+  if (_salesOrder->isValid())
+    params.append("sohead_id", _item->altId());
+  else if (_to->isValid())
+    params.append("tohead_id", _item->altId());
 
   issueToShipping *newdlg = new issueToShipping();
   newdlg->set(params);
@@ -264,9 +269,29 @@ void shippingInformation::sIssueStock()
 
 void shippingInformation::sReturnAllLineStock()
 {
-  q.prepare("SELECT returnItemShipments(:cohead_id) AS result;");
-  q.bindValue(":coitem_id", _coitem->id());
+  q.prepare("SELECT returnItemShipments(:ordertype, :lineitemid,"
+	    "                           0, CURRENT_TIMESTAMP) AS result;");
+  if (_salesOrder->isValid())
+    q.bindValue(":ordertype", "SO");
+  else if (_to->isValid())
+    q.bindValue(":ordertype", "TO");
+
+  q.bindValue(":lineitemid", _item->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("returnItemShipments", result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
@@ -275,23 +300,30 @@ void shippingInformation::sViewLine()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("soitem_id", _coitem->id());
+  if (_salesOrder->isValid())
+  {
+    params.append("soitem_id", _item->id());
 
-  salesOrderItem newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
+    salesOrderItem newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+  else if (_to->isValid())
+  {
+    params.append("toitem_id", _item->id());
+
+    transferOrderItem newdlg(this, "", TRUE);
+    newdlg.set(params);
+    newdlg.exec();
+  }
 }
 
 void shippingInformation::sFillList()
 {
 //  Clear any old data
-  _coitem->clear();
+  _item->clear();
 
-  if (_salesOrder->id() != -1)
-  {
-    bool fetchFromSohead = TRUE;
-
-    q.prepare( "SELECT shiphead_notes, shiphead_shipvia,"
+  QString shs( "SELECT shiphead_notes, shiphead_shipvia,"
                "       shiphead_shipchrg_id, shiphead_shipform_id,"
                "       shiphead_freight, shiphead_freight_curr_id,"
                "       shiphead_shipdate,"
@@ -300,116 +332,19 @@ void shippingInformation::sFillList()
                "       END AS validdata "
                "FROM shiphead "
                "WHERE ((NOT shiphead_shipped)"
-	       "  AND  (shiphead_order_type='SO')"
-               "  AND  (shiphead_order_id=:cohead_id) );" );
-    q.bindValue(":cohead_id", _salesOrder->id());
-    q.exec();
-    if (q.first())
-    {
-      if (q.value("validdata").toBool())
-      {
-        fetchFromSohead = FALSE;
-
-        _shipDate->setDate(q.value("shiphead_shipdate").toDate());
-        _shipVia->setText(q.value("shiphead_shipvia").toString());
-        _shippingCharges->setId(q.value("shiphead_shipchrg_id").toInt());
-        _shippingForm->setId(q.value("shiphead_shipform_id").toInt());
-        _freight->setId(q.value("shiphead_freight_curr_id").toInt());
-        _freight->setLocalValue(q.value("shiphead_freight").toDouble());
-        _notes->setText(q.value("shiphead_notes").toString());
-      }
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    q.prepare( "SELECT cohead_orderdate, cohead_custponumber,"
-               "       cust_name, cust_phone,"
-               "       cohead_shipcomments, cohead_shipvia,"
-               "       cohead_shipchrg_id, cohead_shipform_id "
-               "FROM cohead, cust "
-               "WHERE ((cohead_cust_id=cust_id)"
-               " AND (cohead_id=:cohead_id));" );
-    q.bindValue(":cohead_id", _salesOrder->id());
-    q.exec();
-    if (q.first())
-    {
-      _orderDate->setDate(q.value("cohead_orderdate").toDate());
-      _poNumber->setText(q.value("cohead_custponumber").toString());
-      _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cust_phone").toString());
-
-      if (fetchFromSohead)
-      {
-        _shipDate->setDate(omfgThis->dbDate());
-
-        _shippingCharges->setId(q.value("cohead_shipchrg_id").toInt());
-        _shippingForm->setId(q.value("cohead_shipform_id").toInt());
-        _notes->setText(q.value("cohead_shipcomments").toString());
-        _shipVia->setText(q.value("cohead_shipvia").toString());
-      }
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
-    q.prepare( "SELECT coitem_id, coitem_cohead_id, coitem_linenumber, item_number,"
-               "      (item_prodweight * SUM(shipitem_qty)) AS netweight,"
-               "      (item_packweight * SUM(shipitem_qty)) AS tareweight,"
-               "      SUM(shipitem_qty) AS qtyatshipping,"
-               "      formatQty(SUM(shipitem_qty)) AS f_qtyatshipping "
-               "FROM shiphead, shipitem, coitem, itemsite, item "
-               "WHERE ( (shipitem_orderitem_id=coitem_id)"
-               " AND (shipitem_shiphead_id=shiphead_id)"
-               " AND (coitem_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-               " AND (NOT shiphead_shipped)"
-	       " AND (shiphead_order_type='SO')"
-               " AND (coitem_cohead_id=:cohead_id) ) "
-               "GROUP BY coitem_id, coitem_cohead_id, coitem_linenumber, item_number,"
-               "         item_prodweight, item_packweight "
-               "ORDER BY coitem_linenumber;" );
-    q.bindValue(":cohead_id", _salesOrder->id());
-    q.exec();
-    if (q.first())
-    {
-      double        totalNetWeight   = 0;
-      double        totalTareWeight  = 0;
-
-      XTreeWidgetItem* last = 0;
-      do
-      {
-        totalNetWeight   += q.value("netweight").toDouble();
-        totalTareWeight  += q.value("tareweight").toDouble();
-
-        last = new XTreeWidgetItem( _coitem, last, q.value("coitem_id").toInt(),
-			   q.value("coitem_cohead_id").toInt(),
-                           q.value("coitem_linenumber"), q.value("item_number"),
-                           q.value("f_qtyatshipping"),
-                           formatWeight(q.value("netweight").toDouble()),
-                           formatWeight(q.value("tareweight").toDouble()),
-                           formatWeight((q.value("netweight").toDouble() + q.value("tareweight").toDouble())) );
-      }
-      while (q.next());
-
-      _totalNetWeight->setText(formatWeight(totalNetWeight));
-      _totalTareWeight->setText(formatWeight(totalTareWeight));
-      _totalGrossWeight->setText(formatWeight(totalNetWeight + totalTareWeight));
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+	       "  AND  (shiphead_order_type=<? value(\"ordertype\") ?>)"
+               "  AND  (shiphead_order_id=<? value(\"orderid\") ?>) );" ) ;
+  ParameterList shp;
+  if (_salesOrder->isValid())
+  {
+    shp.append("ordertype", "SO");
+    shp.append("orderid",   _salesOrder->id());
   }
-//  else if (_to->id() > 0)
-//  {
-//    systemError(this, "Transfer Order support not implemented yet", __FILE__, __LINE__);
-//  }
+  else if (_to->isValid())
+  {
+    shp.append("ordertype", "TO");
+    shp.append("orderid",   _to->id());
+  }
   else
   {
     _salesOrder->setId(-1);
@@ -424,5 +359,142 @@ void shippingInformation::sFillList()
     _totalNetWeight->clear();
     _totalTareWeight->clear();
     _totalGrossWeight->clear();
+    return;
   }
+
+  MetaSQLQuery shm(shs);
+  q = shm.toQuery(shp);
+  bool fetchFromHead = TRUE;
+
+  if (q.first())
+  {
+    if (q.value("validdata").toBool())
+    {
+      fetchFromHead = FALSE;
+
+      _shipDate->setDate(q.value("shiphead_shipdate").toDate());
+      _shipVia->setText(q.value("shiphead_shipvia").toString());
+      _shippingCharges->setId(q.value("shiphead_shipchrg_id").toInt());
+      _shippingForm->setId(q.value("shiphead_shipform_id").toInt());
+      _freight->setId(q.value("shiphead_freight_curr_id").toInt());
+      _freight->setLocalValue(q.value("shiphead_freight").toDouble());
+      _notes->setText(q.value("shiphead_notes").toString());
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (_salesOrder->isValid())
+  {
+    q.prepare( "SELECT cohead_orderdate AS orderdate,"
+	       "       cohead_custponumber AS ponumber,"
+               "       cust_name AS name, cust_phone AS phone,"
+               "       cohead_shipcomments AS shipcomments,"
+	       "       cohead_shipvia AS shipvia,"
+               "       cohead_shipchrg_id AS shipchrg_id,"
+	       "       cohead_shipform_id AS shipform_id "
+               "FROM cohead, cust "
+               "WHERE ((cohead_cust_id=cust_id)"
+               " AND (cohead_id=:cohead_id));" );
+    q.bindValue(":cohead_id", _salesOrder->id());
+  }
+  else if (_to->isValid())
+  {
+    q.prepare( "SELECT tohead_orderdate AS orderdate,"
+	       "       :to AS ponumber,"
+	       "       tohead_destname AS name, tohead_destphone AS phone,"
+	       "       tohead_shipcomments AS shipcomments,"
+	       "       tohead_shipvia AS shipvia,"
+	       "       tohead_shipchrg_id AS shipchrg_id,"
+	       "       tohead_shipform_id AS shipform_id "
+	       "FROM tohead "
+	       "WHERE (tohead_id=:tohead_id);" );
+    q.bindValue(":tohead_id", _to->id());
+  }
+  q.exec();
+  if (q.first())
+  {
+    _orderDate->setDate(q.value("orderdate").toDate());
+    _poNumber->setText(q.value("custponumber").toString());
+    _custName->setText(q.value("name").toString());
+    _custPhone->setText(q.value("phone").toString());
+
+    if (fetchFromHead)
+    {
+      _shipDate->setDate(omfgThis->dbDate());
+
+      _shippingCharges->setId(q.value("shipchrg_id").toInt());
+      _shippingForm->setId(q.value("shipform_id").toInt());
+      _notes->setText(q.value("shipcomments").toString());
+      _shipVia->setText(q.value("shipvia").toString());
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  if (_salesOrder->isValid())
+  {
+    q.prepare( "SELECT coitem_id AS itemid, coitem_cohead_id AS headid,"
+	       "       coitem_linenumber AS linenumber, item_number,"
+               "      (item_prodweight * SUM(shipitem_qty)) AS netweight,"
+               "      (item_packweight * SUM(shipitem_qty)) AS tareweight,"
+               "      qtyAtShipping('SO', coitem_id) AS qtyatshipping,"
+               "      formatQty(qtyAtShipping('SO', coitem_id)) AS f_qtyatshipping "
+               "FROM coitem, itemsite, item "
+               "WHERE ((coitem_itemsite_id=itemsite_id)"
+               "  AND  (itemsite_item_id=item_id)"
+               "  AND  (coitem_cohead_id=:cohead_id) ) "
+               "ORDER BY coitem_linenumber;" );
+    q.bindValue(":cohead_id", _salesOrder->id());
+  }
+  else if (_to->isValid())
+  {
+    q.prepare( "SELECT toitem_id AS itemid, toitem_tohead_id AS headid,"
+	       "       toitem_linenumber AS linenumber, item_number,"
+               "      (item_prodweight * SUM(shipitem_qty)) AS netweight,"
+               "      (item_packweight * SUM(shipitem_qty)) AS tareweight,"
+               "      qtyAtShipping('TO', toitem_id) AS qtyatshipping,"
+               "      formatQty(qtyAtShipping('TO', toitem_id)) AS f_qtyatshipping "
+               "FROM toitem, item "
+               "WHERE ((toitem_item_id=item_id)"
+               "  AND  (toitem_tohead_id=:tohead_id) ) "
+               "ORDER BY toitem_linenumber;" ) ;
+    q.bindValue(":tohead_id", _to->id());
+  } 
+  q.exec();
+
+  double        totalNetWeight   = 0;
+  double        totalTareWeight  = 0;
+
+  XTreeWidgetItem* last = 0;
+
+  while (q.next())
+  {
+    totalNetWeight   += q.value("netweight").toDouble();
+    totalTareWeight  += q.value("tareweight").toDouble();
+
+    last = new XTreeWidgetItem( _item, last, q.value("itemid").toInt(),
+		       q.value("headid").toInt(),
+		       q.value("linenumber"), q.value("item_number"),
+		       q.value("f_qtyatshipping"),
+		       formatWeight(q.value("netweight").toDouble()),
+		       formatWeight(q.value("tareweight").toDouble()),
+		       formatWeight((q.value("netweight").toDouble() +
+				     q.value("tareweight").toDouble())) );
+  }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  _totalNetWeight->setText(formatWeight(totalNetWeight));
+  _totalTareWeight->setText(formatWeight(totalTareWeight));
+  _totalGrossWeight->setText(formatWeight(totalNetWeight + totalTareWeight));
 }

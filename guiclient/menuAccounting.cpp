@@ -114,10 +114,6 @@
 #include "cashReceiptsEditList.h"
 #include "postCashReceipts.h"
 
-#include "createFinanceCharges.h"
-#include "unpostedFinanceCharges.h"
-#include "postFinanceCharges.h"
-
 #include "unappliedARCreditMemos.h"
 #include "arOpenItem.h"
 

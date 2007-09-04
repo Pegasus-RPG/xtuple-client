@@ -57,65 +57,32 @@
 
 #include "viewAPCheckRun.h"
 
-#include <QVariant>
-#include <QStatusBar>
+#include <QSqlError>
+
 #include <openreports.h>
+
 #include "miscAPCheck.h"
 #include "postAPCheck.h"
 #include "printAPCheck.h"
 #include "printAPChecks.h"
-/*
- *  Constructs a viewAPCheckRun as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "storedProcErrorLookup.h"
+
 viewAPCheckRun::viewAPCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_replace, SIGNAL(clicked()), this, SLOT(sReplace()));
-    connect(_replaceAll, SIGNAL(clicked()), this, SLOT(sReplaceAll()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_apchk, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleItemSelection()));
-    connect(_apchk, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-    connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_printCheck, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_postCheck, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_printCheckRun, SIGNAL(clicked()), this, SLOT(sPrintCheckRun()));
-    connect(_printEditList, SIGNAL(clicked()), this, SLOT(sPrintEditList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-viewAPCheckRun::~viewAPCheckRun()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void viewAPCheckRun::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void viewAPCheckRun::init()
-{
-  statusBar()->hide();
-  
-  _bankaccnt->setType(XComboBox::APBankAccounts);
+  connect(_apchk, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(sHandleItemSelection()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_postCheck, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_printCheck, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_printCheckRun, SIGNAL(clicked()), this, SLOT(sPrintCheckRun()));
+  connect(_printEditList, SIGNAL(clicked()), this, SLOT(sPrintEditList()));
+  connect(_replace, SIGNAL(clicked()), this, SLOT(sReplace()));
+  connect(_replaceAll, SIGNAL(clicked()), this, SLOT(sReplaceAll()));
+  connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
 
   _apchk->setRootIsDecorated(TRUE);
   _apchk->addColumn(tr("Void"),           _ynColumn,    Qt::AlignCenter );
@@ -135,6 +102,16 @@ void viewAPCheckRun::init()
   sFillList();
 }
 
+viewAPCheckRun::~viewAPCheckRun()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void viewAPCheckRun::languageChange()
+{
+  retranslateUi(this);
+}
+
 void viewAPCheckRun::sVoid()
 {
   q.prepare( "SELECT apchk_bankaccnt_id, voidAPCheck(apchk_id) AS result "
@@ -143,7 +120,20 @@ void viewAPCheckRun::sVoid()
   q.bindValue(":apchk_id", _apchk->id());
   q.exec();
   if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("voidAPCheck", result), __FILE__, __LINE__);
+      return;
+    }
     omfgThis->sAPChecksUpdated(q.value("apchk_bankaccnt_id").toInt(), _apchk->id(), TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void viewAPCheckRun::sDelete()
@@ -154,7 +144,20 @@ void viewAPCheckRun::sDelete()
   q.bindValue(":apchk_id", _apchk->id());
   q.exec();
   if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteAPCheck", result), __FILE__, __LINE__);
+      return;
+    }
     omfgThis->sAPChecksUpdated(q.value("apchk_bankaccnt_id").toInt(), _apchk->id(), TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void viewAPCheckRun::sEdit()
@@ -176,8 +179,21 @@ void viewAPCheckRun::sReplace()
   q.bindValue(":apchk_id", _apchk->id());
   q.exec();
   if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("replaceVoidedAPCheck", result), __FILE__, __LINE__);
+      return;
+    }
     omfgThis->sAPChecksUpdated( q.value("apchk_bankaccnt_id").toInt(),
                                 q.value("result").toInt(), TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void viewAPCheckRun::sReplaceAll()
@@ -186,7 +202,20 @@ void viewAPCheckRun::sReplaceAll()
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
   if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("replaceAllVoidedAPChecks", result), __FILE__, __LINE__);
+      return;
+    }
     omfgThis->sAPChecksUpdated(_bankaccnt->id(), -1, TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void viewAPCheckRun::sPrint()
@@ -212,6 +241,9 @@ void viewAPCheckRun::sPost()
 void viewAPCheckRun::sHandleItemSelection()
 {
   QTreeWidgetItem *selected = _apchk->currentItem();
+
+  if (! selected)
+    return;
 
   if (selected->text(0) == tr("Yes"))
   {
@@ -312,8 +344,12 @@ void viewAPCheckRun::sFillList()
     }
     while (q.next());
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
 
 void viewAPCheckRun::sPrintEditList()
 {

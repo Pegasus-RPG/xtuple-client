@@ -66,7 +66,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                createBufferStatusByItem.ui createBufferStatusByPlannerCode.ui                         \
                createCycleCountTags.ui                                                                \
                createCountTagsByParameterList.ui createCountTagsByItem.ui                             \
-               createFinanceCharges.ui createItemSitesByClassCode.ui                                  \
+               createItemSitesByClassCode.ui                                   \
                createPlannedOrdersByItem.ui createPlannedOrdersByPlannerCode.ui                       \
                woMaterialItem.ui createLotSerial.ui creditMemo.ui                                     \
                creditMemoItem.ui creditMemoEditList.ui                         \
@@ -229,7 +229,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                plannedSchedules.ui plannedSchedule.ui plannedScheduleItem.ui                          \
                poLiabilityDistrib.ui postAPCheck.ui postAPChecks.ui postCashReceipts.ui               \
                postCostsByClassCode.ui postCostsByItem.ui                                             \
-               postCountSlips.ui postCountTags.ui postBillingSelections.ui postFinanceCharges.ui      \
+               postCountSlips.ui postCountTags.ui postBillingSelections.ui     \
                postCreditMemos.ui postInvoices.ui                                                     \
                postPurchaseOrder.ui postPurchaseOrdersByAgent.ui postPoReturnCreditMemo.ui            \
                postOperations.ui postGLTransactionsToExternal.ui                                      \
@@ -385,7 +385,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
 	       transferTrans.ui                                                                       \
                transformTrans.ui                                                                      \
                unappliedARCreditMemos.ui unappliedAPCreditMemos.ui                                    \
-               unpostedCreditMemos.ui unpostedFinanceCharges.ui                                       \
+               unpostedCreditMemos.ui                                          \
 	       unpostedGLTransactions.ui unpostedInvoices.ui                                          \
 	       unpostedPoReceipts.ui unpostedGlSeries.ui                                              \
                uom.ui uoms.ui                                                                         \
@@ -453,7 +453,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                createBufferStatusByItem.h createBufferStatusByPlannerCode.h                           \
                createCycleCountTags.h                                                                 \
                createCountTagsByParameterList.h createCountTagsByItem.h                               \
-               createFinanceCharges.h createItemSitesByClassCode.h                                    \
+               createItemSitesByClassCode.h                                    \
                createPlannedOrdersByItem.h createPlannedOrdersByPlannerCode.h                         \
                woMaterialItem.h createLotSerial.h creditMemo.h                                        \
                creditMemoItem.h creditMemoEditList.h                           \
@@ -618,7 +618,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                poitemTableModel.h poitemTableView.h poLiabilityDistrib.h                              \
                postAPCheck.h postAPChecks.h postCashReceipts.h                                        \
                postCostsByClassCode.h postCostsByItem.h                                               \
-               postCountSlips.h postCountTags.h postBillingSelections.h postFinanceCharges.h          \
+               postCountSlips.h postCountTags.h postBillingSelections.h        \
                postCreditMemos.h postInvoices.h                                                       \
                postPurchaseOrder.h postPurchaseOrdersByAgent.h postPoReturnCreditMemo.h               \
                postOperations.h postGLTransactionsToExternal.h                                        \
@@ -774,7 +774,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
 	       transferTrans.h                                                                        \
                transformTrans.h                                                                       \
                unappliedARCreditMemos.h unappliedAPCreditMemos.h                                      \
-               unpostedCreditMemos.h unpostedFinanceCharges.h                                         \
+               unpostedCreditMemos.h                                           \
 	       unpostedGLTransactions.h unpostedInvoices.h                                            \
 	       unpostedPoReceipts.h unpostedGlSeries.h                                                \
                uom.h uoms.h                                                                           \
@@ -842,7 +842,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                createBufferStatusByItem.cpp createBufferStatusByPlannerCode.cpp                       \
                createCycleCountTags.cpp                                                               \
                createCountTagsByParameterList.cpp createCountTagsByItem.cpp                           \
-               createFinanceCharges.cpp createItemSitesByClassCode.cpp                                \
+               createItemSitesByClassCode.cpp                                  \
                createPlannedOrdersByItem.cpp createPlannedOrdersByPlannerCode.cpp                     \
                woMaterialItem.cpp createLotSerial.cpp creditMemo.cpp                                  \
                creditMemoItem.cpp creditMemoEditList.cpp                       \
@@ -1008,7 +1008,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                poitemTableModel.cpp poitemTableView.cpp poLiabilityDistrib.cpp                        \
                postAPCheck.cpp postAPChecks.cpp postCashReceipts.cpp                                  \
                postCostsByClassCode.cpp postCostsByItem.cpp                                           \
-               postCountSlips.cpp postCountTags.cpp postBillingSelections.cpp postFinanceCharges.cpp  \
+               postCountSlips.cpp postCountTags.cpp postBillingSelections.cpp  \
                postCreditMemos.cpp postInvoices.cpp                                                   \
                postPurchaseOrder.cpp postPurchaseOrdersByAgent.cpp postPoReturnCreditMemo.cpp         \
                postOperations.cpp postGLTransactionsToExternal.cpp                                    \
@@ -1163,7 +1163,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
 	       transferTrans.cpp                                                                      \
                transformTrans.cpp                                                                     \
                unappliedARCreditMemos.cpp unappliedAPCreditMemos.cpp                                  \
-               unpostedCreditMemos.cpp unpostedFinanceCharges.cpp                                     \
+               unpostedCreditMemos.cpp                                         \
 	       unpostedGLTransactions.cpp unpostedInvoices.cpp                                        \
 	       unpostedPoReceipts.cpp unpostedGlSeries.cpp                                            \
                uom.cpp uoms.cpp                                                                       \

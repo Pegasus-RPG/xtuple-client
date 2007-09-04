@@ -80,10 +80,6 @@
 #include "cashReceiptsEditList.h"
 #include "postCashReceipts.h"
 
-#include "createFinanceCharges.h"
-#include "unpostedFinanceCharges.h"
-#include "postFinanceCharges.h"
-
 #include "unappliedARCreditMemos.h"
 #include "arOpenItem.h"
 
@@ -217,28 +213,6 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "ar.enterMiscDebitMemo", tr("Enter Misc. Debit Memo..."),
                                       this, SLOT(sEnterMiscDebitMemo()),
                                       memosMenu, _privleges->check("MaintainARMemos") ) );
-
-#if 0
-//  Finance Charges
-  financeChargesMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "ar.enterFinanceCharge", tr("Enter Finance Charge..."),
-                                      this, SLOT(sEnterFinanceCharge()),
-                                      financeChargesMenu, TRUE ) );
-
-  parent->actions.append( new Action( parent, "ar.createFinanceChargesByCustomerType", tr("Create Finance Charges by Customer Type..."),
-                                      this, SLOT(sCreateFinanceChargesByCustomerType()),
-                                      financeChargesMenu, TRUE ) );
-
-  parent->actions.append( new Action( parent, "ar.listUnpostedFinanceCharges", tr("List Unposted Finance Charges..."),
-                                      this, SLOT(sUnpostedFinanceCharges()),
-                                      financeChargesMenu, TRUE ) );
-
-  parent->actions.append( new Action( parent, "ar.postFinanceCharges", tr("Post Finance Charges..."),
-                                      this, SLOT(sPostFinanceCharges()),
-                                      financeChargesMenu, TRUE ) );
-
-#endif
 
 //  Displays
   displaysMenu = new QMenu();
@@ -383,9 +357,6 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
   mainMenu->insertItem(tr("Invoices"), invoicesMenu);
   mainMenu->insertItem(tr("Cash Receipts..."), cashReceiptsMenu);
   mainMenu->insertItem(tr("Debit and Credit Memos..."), memosMenu);
-#if 0
-  mainMenu->insertItem(tr("Finance Charges..."), financeChargesMenu);
-#endif
   mainMenu->insertItem(tr("Displays"), displaysMenu);
   mainMenu->insertItem(tr("Reports"), reportsMenu);
   mainMenu->insertItem(tr("Master Information"), masterInfoMenu);
@@ -478,27 +449,6 @@ void moduleAR::sEnterMiscDebitMemo()
   arOpenItem newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-
-//  Finance Charges
-void moduleAR::sEnterFinanceCharge()
-{
-}
-
-void moduleAR::sCreateFinanceChargesByCustomerType()
-{
-  createFinanceCharges(parent, "", TRUE).exec();
-}
-
-void moduleAR::sUnpostedFinanceCharges()
-{
-  omfgThis->handleNewWindow(new unpostedFinanceCharges());
-}
-
-void moduleAR::sPostFinanceCharges()
-{
-  postFinanceCharges(parent, "", TRUE).exec();
 }
 
 
