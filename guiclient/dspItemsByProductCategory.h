@@ -58,7 +58,7 @@
 #ifndef DSPITEMSBYPRODUCTCATEGORY_H
 #define DSPITEMSBYPRODUCTCATEGORY_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspItemsByProductCategory.h"
 
@@ -69,8 +69,6 @@ class dspItemsByProductCategory : public QMainWindow, public Ui::dspItemsByProdu
 public:
     dspItemsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemsByProductCategory();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

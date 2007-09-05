@@ -92,18 +92,10 @@
 #include "dspAROpenItemsByCustomer.h"
 #include "dspAROpenItems.h"
 #include "dspTimePhasedOpenARItems.h"
-//#include "dspARAging.h"
 #include "dspInvoiceRegister.h"
 #include "dspDepositsRegister.h"
 
-#include "rptCustomerARHistory.h"
-#include "rptCashReceipts.h"
-#include "rptARApplications.h"
-#include "rptAROpenItemsByCustomer.h"
-#include "rptAROpenItems.h"
 #include "printJournal.h"
-#include "rptInvoiceRegister.h"
-#include "rptDepositsRegister.h"
 
 #include "printStatementByCustomer.h"
 #include "printStatementsByCustomerType.h"
@@ -263,42 +255,6 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
 
 //  Reports
   reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "ar.rptCustomerHistory", tr("Customer History..."),
-                                      this, SLOT(sRptCustomerHistory()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptCashReceipts", tr("Cash Receipts by Customer..."),
-                                      this, SLOT(sRptCashReceipts()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptARApplications", tr("A/R Applications..."),
-                                      this, SLOT(sRptARApplications()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptInvoiceInformation", tr("Invoice Information..."),
-                                      this, SLOT(sRptInvoiceInformation()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptInvoiceRegister", tr("Invoice Register..."),
-                                      this, SLOT(sRptInvoiceRegister()),
-                                      reportsMenu, _privleges->check("ViewInvoiceRegister") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptDepositsRegister", tr("Deposits Register..."),
-                                      this, SLOT(sRptDepositsRegister()),
-                                      reportsMenu, _privleges->check("ViewDepositsRegister") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ar.rptOpenItems", tr("Open Items..."),
-                                      this, SLOT(sRptAROpenItems()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ar.rptOpenItemsByCustomer", tr("Open Items by Customer..."),
-                                      this, SLOT(sRptAROpenItemsByCustomer()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
-
-  reportsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.printStatementByCustomer", tr("Print Statement by Customer..."),
                                       this, SLOT(sPrintStatementByCustomer()),
@@ -511,36 +467,6 @@ void moduleAR::sDspARAging()
 */
 
 //  Reports
-void moduleAR::sRptCustomerHistory()
-{
-  rptCustomerARHistory(parent, "", TRUE).exec();
-}
-
-void moduleAR::sRptCashReceipts()
-{
-  rptCashReceipts(parent, "", TRUE).exec();
-}
-
-void moduleAR::sRptARApplications()
-{
-  rptARApplications(parent, "", TRUE).exec();
-}
-
-void moduleAR::sRptInvoiceInformation()
-{
-  omfgThis->handleNewWindow(new dspInvoiceInformation());
-}
-
-void moduleAR::sRptInvoiceRegister()
-{
-  rptInvoiceRegister(parent, "", TRUE).exec();
-}
-
-void moduleAR::sRptDepositsRegister()
-{
-  rptDepositsRegister(parent, "", TRUE).exec();
-}
-
 void moduleAR::sRptSalesJournal()
 {
   ParameterList params;
@@ -559,16 +485,6 @@ void moduleAR::sRptCreditMemoJournal()
   printJournal newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void moduleAR::sRptAROpenItemsByCustomer()
-{
-  rptAROpenItemsByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleAR::sRptAROpenItems()
-{
-  rptAROpenItems(parent, "", TRUE).exec();
 }
 
 void moduleAR::sPrintStatementByCustomer()

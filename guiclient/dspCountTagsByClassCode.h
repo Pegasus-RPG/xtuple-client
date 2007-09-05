@@ -59,7 +59,7 @@
 #define DSPCOUNTTAGSBYCLASSCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspCountTagsByClassCode.h"
 
@@ -70,8 +70,6 @@ class dspCountTagsByClassCode : public QMainWindow, public Ui::dspCountTagsByCla
 public:
     dspCountTagsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCountTagsByClassCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

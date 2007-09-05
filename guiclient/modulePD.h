@@ -110,12 +110,6 @@ class modulePD : public QObject
     void sDspItemCostsByClassCode();
     void sDspItemCostSummary();
     void sDspItemCostHistory();
-    void sRptCostedSingleLevelBOM();
-    void sRptCostedIndentedBOM();
-    void sRptCostedSummarizedBOM();
-    void sRptItemCostsByClassCode();
-    void sRptItemCostSummary();
-    void sRptItemCostHistory();
     void sUserCostingElements();
 
     void sDspItemsByClassCode();
@@ -134,20 +128,12 @@ class modulePD : public QObject
     void sDspCapacityUOMsByProductCategory();
     void sDspItemAvailabilityWorkbench();
 
-    void sRptItemsByClassCode();
-    void sRptItemsByProductCategory();
-    void sRptItemsByCharacteristic();
     void sRptSingleLevelBOM();
-    void sRptIndentedBOM();
     void sRptSummarizedBOM();
     void sRptSequencedBOM();
     void sRptSingleLevelWhereUsed();
-    void sRptIndentedWhereUsed();
     void sRptPendingBOMChanges();
-    void sRptOperationsByWorkCenter();
     void sRptStandardOperByWorkCenter();
-    void sRptCapacityUOMsByClassCode();
-    void sRptCapacityUOMsByProductCategory();
 
     void sUnitsOfMeasure();
     void sClassCodes();

@@ -59,7 +59,7 @@
 #define DSPCUSTOMERSBYCUSTOMERTYPE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspCustomersByCustomerType.h"
@@ -71,8 +71,6 @@ class dspCustomersByCustomerType : public QMainWindow, public Ui::dspCustomersBy
 public:
     dspCustomersByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCustomersByCustomerType();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

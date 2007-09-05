@@ -62,8 +62,8 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include "arOpenItem.h"
-#include "rptCustomerARHistory.h"
 
 /*
  *  Constructs a dspCustomerARHistory as a child of 'parent', with the
@@ -184,12 +184,14 @@ void dspCustomerARHistory::sPrint()
     return;
 
   ParameterList params;
-  _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
+  _dates->appendValue(params);
 
-  rptCustomerARHistory newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CustomerARHistory", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCustomerARHistory::sFillList()

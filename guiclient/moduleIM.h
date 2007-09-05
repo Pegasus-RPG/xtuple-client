@@ -129,13 +129,6 @@ class moduleIM : public QObject
     void sDspCountTagsByItem();
     void sDspCountTagsByWarehouse();
     void sDspCountTagsByClassCode();
-    void sRptFrozenItemSites();
-    void sRptCountSlipEditList();
-    void sRptCountTagEditList();
-    void sRptCountSlipsByWarehouse();
-    void sRptCountTagsByItem();
-    void sRptCountTagsByWarehouse();
-    void sRptCountTagsByClassCode();
 
     void sDspItemSitesByItem();
     void sDspItemSitesByClassCode();
@@ -172,39 +165,13 @@ class moduleIM : public QObject
     void sDspInventoryBufferStatusByClassCode();
     void sDspInventoryBufferStatusByPlannerCode();
 
-    void sRptItemSitesByItem();
-    void sRptItemSitesByClassCode();
-    void sRptItemSitesByPlannerCode();
-    void sRptItemSitesByCostCategory();
     void sRptValidLocationsByItem();
     void sRptQOHByItem();
     void sRptQOHByClassCode();
     void sRptQOHByItemGroup();
     void sRptQOHByLocation();
-    void sRptLocationLotSerialDetail();
     void sRptSlowMovingInventoryByClassCode();
-    void sRptExpiredInventoryByClassCode();
-    void sRptInventoryAvailabilityByItem();
-    void sRptInventoryAvailabilityByItemGroup();
-    void sRptInventoryAvailabilityByClassCode();
-    void sRptInventoryAvailabilityByPlannerCode();
-    void sRptInventoryAvailabilityBySourceVendor();
     void sRptSubstituteAvailabilityByRootItem();
-    void sRptInventoryHistoryByItem();
-    void sRptInventoryHistoryByItemGroup();
-    void sRptInventoryHistoryByOrderNumber();
-    void sRptInventoryHistoryByClassCode();
-    void sRptInventoryHistoryByPlannerCode();
-    void sRptDetailedInventoryHistoryByLotSerial();
-    void sRptDetailedInventoryHistoryByLocation();
-    void sRptItemUsageStatisticsByItem();
-    void sRptItemUsageStatisticsByClassCode();
-    void sRptItemUsageStatisticsByItemGroup();
-    void sRptItemUsageStatisticsByWarehouse();
-    void sRptInventoryBufferStatusByItem();
-    void sRptInventoryBufferStatusByItemGroup();
-    void sRptInventoryBufferStatusByClassCode();
-    void sRptInventoryBufferStatusByPlannerCode();
     void sPrintItemLabelsByClassCode();
 
     void sWarehouses();

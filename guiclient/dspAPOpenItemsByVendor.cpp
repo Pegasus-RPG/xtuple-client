@@ -61,8 +61,9 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "apOpenItem.h"
-#include "rptAPOpenItemsByVendor.h"
 
 /*
  *  Constructs a dspAPOpenItemsByVendor as a child of 'parent', with the
@@ -72,42 +73,16 @@
 dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_vend, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspAPOpenItemsByVendor::~dspAPOpenItemsByVendor()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspAPOpenItemsByVendor::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspAPOpenItemsByVendor::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_apopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_vend, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -144,7 +119,24 @@ void dspAPOpenItemsByVendor::init()
   _vend->setFocus();
 }
 
-enum SetResponse dspAPOpenItemsByVendor::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspAPOpenItemsByVendor::~dspAPOpenItemsByVendor()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspAPOpenItemsByVendor::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -209,12 +201,13 @@ void dspAPOpenItemsByVendor::sPrint()
 {
   ParameterList params;
   params.append("vend_id", _vend->id());
-  params.append("print");
-
   _dates->appendValue(params);
 
-  rptAPOpenItemsByVendor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("APOpenItemsByVendor", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspAPOpenItemsByVendor::sFillList()

@@ -60,7 +60,8 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMenu>
-#include "rptDepositsRegister.h"
+#include <QMessageBox>
+#include <openreports.h>
 
 /*
  *  Constructs a dspDepositsRegister as a child of 'parent', with the
@@ -80,8 +81,6 @@ dspDepositsRegister::dspDepositsRegister(QWidget* parent, const char* name, Qt::
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  statusBar()->hide();
-  
   _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
   _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter );
   _gltrans->addColumn(tr("Doc Type"),  _orderColumn,   Qt::AlignLeft   );
@@ -98,7 +97,7 @@ dspDepositsRegister::dspDepositsRegister(QWidget* parent, const char* name, Qt::
  */
 dspDepositsRegister::~dspDepositsRegister()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -107,7 +106,7 @@ dspDepositsRegister::~dspDepositsRegister()
  */
 void dspDepositsRegister::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspDepositsRegister::set(const ParameterList &pParams)
@@ -155,10 +154,13 @@ void dspDepositsRegister::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
-  rptDepositsRegister newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("DepositsRegister", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspDepositsRegister::sFillList()

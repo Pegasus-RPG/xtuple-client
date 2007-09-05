@@ -63,6 +63,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "adjustmentTrans.h"
 #include "countTag.h"
@@ -70,7 +71,6 @@
 #include "inputManager.h"
 #include "materialReceiptTrans.h"
 #include "mqlutil.h"
-#include "rptInventoryHistoryByItem.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
@@ -117,7 +117,7 @@ dspInventoryHistoryByItem::dspInventoryHistoryByItem(QWidget* parent, const char
 
 dspInventoryHistoryByItem::~dspInventoryHistoryByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspInventoryHistoryByItem::languageChange()
@@ -200,12 +200,25 @@ void dspInventoryHistoryByItem::setParams(ParameterList & params)
 
 void dspInventoryHistoryByItem::sPrint()
 {
-  ParameterList params;
-  setParams(params);
-  params.append("print");
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Invalid Data"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
 
-  rptInventoryHistoryByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  ParameterList params;
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+  params.append("item_id", _item->id());
+  params.append("transType", _transType->id());
+
+  orReport report("InventoryHistoryByItem", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryHistoryByItem::sViewTransInfo()

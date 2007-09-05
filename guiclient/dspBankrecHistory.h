@@ -58,7 +58,7 @@
 #ifndef DSPBANKRECHISTORY_H
 #define DSPBANKRECHISTORY_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspBankrecHistory.h"
 
@@ -74,9 +74,6 @@ public slots:
     virtual void sPrint();
     virtual void sBankaccntChanged();
     virtual void sFillList();
-
-protected:
-    virtual void init();
 
 protected slots:
     virtual void languageChange();

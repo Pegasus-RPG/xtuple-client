@@ -110,14 +110,6 @@
 #include "dspCountTagsByWarehouse.h"
 #include "dspCountTagsByClassCode.h"
 
-#include "rptFrozenItemSites.h"
-#include "rptCountSlipEditList.h"
-#include "rptCountTagEditList.h"
-#include "rptCountSlipsByWarehouse.h"
-#include "rptCountTagsByItem.h"
-#include "rptCountTagsByWarehouse.h"
-#include "rptCountTagsByClassCode.h"
-
 #include "itemAvailabilityWorkbench.h"
 
 #include "dspItemSitesByItem.h"
@@ -146,26 +138,12 @@
 #include "dspUsageStatisticsByWarehouse.h"
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
-#include "rptItemSitesByItem.h"
-#include "rptItemSitesByParameterList.h"
 #include "rptValidLocationsByItem.h"
 #include "rptQOHByItem.h"
 #include "rptQOHByParameterList.h"
 #include "rptQOHByLocation.h"
-#include "rptInventoryLocator.h"
 #include "rptSlowMovingInventoryByClassCode.h"
-#include "rptExpiredInventoryByClassCode.h"
-#include "rptInventoryAvailabilityByItem.h"
-#include "rptInventoryAvailabilityByParameterList.h"
-#include "rptInventoryAvailabilityBySourceVendor.h"
 #include "rptSubstituteAvailabilityByRootItem.h"
-//#include "rptInventoryBufferStatusByItem.h"
-#include "rptInventoryBufferStatusByParameterList.h"
-#include "rptInventoryHistoryByItem.h"
-#include "rptInventoryHistoryByOrderNumber.h"
-#include "rptInventoryHistoryByParameterList.h"
-#include "rptDetailedInventoryHistoryByLotSerial.h"
-#include "rptDetailedInventoryHistoryByLocation.h"
 #include "rptUsageStatisticsByItem.h"
 #include "rptUsageStatisticsByClassCode.h"
 #include "rptUsageStatisticsByItemGroup.h"
@@ -299,19 +277,6 @@ moduleIM::moduleIM(OpenMFGGUIClient *Pparent) :
     { "im.dspCountTagsByWarehouse",	tr("Count Tags by Warehouse..."), SLOT(sDspCountTagsByWarehouse()), physicalDisplaysMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
     { "im.dspCountTagsByClassCode",	tr("Count Tags by ClassCode..."), SLOT(sDspCountTagsByClassCode()), physicalDisplaysMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
 
-    //  I/M | Physical Inventory | Reports
-    { "menu",				tr("&Reports"),			  (char*)physicalReportsMenu,	    physicalMenu,	 true,	NULL, NULL, true },
-    { "im.rptFrozenItemSites",		tr("Frozen Item Sites..."),	  SLOT(sRptFrozenItemSites()),	    physicalReportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
-    { "separator",			NULL,				  NULL,				    physicalReportsMenu, true, NULL, NULL, true },
-    { "im.rptCountSlipEditList",	tr("Count Slip Edit List..."),	  SLOT(sRptCountSlipEditList()),    physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
-    { "im.rptCountTagEditList",		tr("Count Tag Edit List..."),	  SLOT(sRptCountTagEditList()),     physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
-    { "separator",			NULL,				  NULL,				    physicalReportsMenu, true, NULL, NULL, true },
-    { "im.rptCountSlipsByWarehouse",	tr("Count Slips by Warehouse..."),SLOT(sRptCountSlipsByWarehouse()),physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
-    { "separator",			NULL,				  NULL,				    physicalReportsMenu, true, NULL, NULL, true },
-    { "im.rptCountTagsByItem",		tr("Count Tags by Item..."),	  SLOT(sRptCountTagsByItem()),	    physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
-    { "im.rptCountTagsByWarehouse",	tr("Count Tags by Warehouse..."), SLOT(sRptCountTagsByWarehouse()), physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
-    { "im.rptCountTagsByClassCode",	tr("Count Tags by ClassCode..."), SLOT(sRptCountTagsByClassCode()), physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true}, 
-
     //  I/M | Displays
     { "menu",				tr("&Displays"),			  (char*)displaysMenu,			mainMenu,	true,	NULL, NULL, true },
     { "im.dspItemSitesByItem",		tr("Item Sites by Item..."),		  SLOT(sDspItemSitesByItem()),		displaysMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
@@ -357,10 +322,6 @@ moduleIM::moduleIM(OpenMFGGUIClient *Pparent) :
 
     //  I/M | Reports
     { "menu",				tr("&Reports"),				(char*)reportsMenu,		    mainMenu,	 true,					NULL, NULL, true },
-    { "im.rptItemSitesByItem",		tr("Item Sites by Item..."),		SLOT(sRptItemSitesByItem()),	    reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
-    { "im.rptItemSitesByClassCode",	tr("Item Sites by Class Code..."),	SLOT(sRptItemSitesByClassCode()),   reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
-    { "im.rptItemSitesByPlannerCode",	tr("Item Sites by Planner Code..."),	SLOT(sRptItemSitesByPlannerCode()), reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
-    { "im.rptItemSitesByCostCategory",	tr("Item Sites by Cost Category..."),	SLOT(sRptItemSitesByCostCategory()),reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
     { "im.rptValidLocationsByItem",	tr("Valid Locations by Item..."),	SLOT(sRptValidLocationsByItem()),   reportsMenu, _privleges->check("ViewLocations"),	NULL, NULL, true}, 
     { "separator",			NULL,					NULL,				    reportsMenu, true,					NULL, NULL, true },
 
@@ -368,36 +329,10 @@ moduleIM::moduleIM(OpenMFGGUIClient *Pparent) :
     { "im.rptQOHByClassCode",		tr("Quantities On Hand by Class Code..."),SLOT(sRptQOHByClassCode()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
     { "im.rptQOHByItemGroup",		tr("Quantities On Hand by Item Group..."),SLOT(sRptQOHByItemGroup()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
     { "im.rptQOHByLocation",		tr("Quantities On Hand by Location..."),  SLOT(sRptQOHByLocation()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
-    { "im.rptLocationLotSerialDetail",	tr("Location/Lot/Serial # Detail..."),	  SLOT(sRptLocationLotSerialDetail()),	     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, _metrics->boolean("LotSerialControl")}, 
     { "im.rptSlowMovingInventory",	tr("Slow Moving Inventory..."),		  SLOT(sRptSlowMovingInventoryByClassCode()),reportsMenu, _privleges->check("ViewQOH"), NULL, NULL, true}, 
-    { "im.rptExpiredInventory",		tr("Expired Inventory..."),		  SLOT(sRptExpiredInventoryByClassCode()),   reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, _metrics->boolean("LotSerialControl")}, 
     { "separator",			NULL,					  NULL,					     reportsMenu, true,				NULL, NULL, true },
-    { "im.rptInventoryAvailabilityByItem",		tr("Inventory Availability by Item..."),	 SLOT(sRptInventoryAvailabilityByItem()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
-    { "im.rptInventoryAvailabilityByItemGroup",		tr("Inventory Availability by Item Group..."),	 SLOT(sRptInventoryAvailabilityByItemGroup()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
-    { "im.rptInventoryAvailabilityByClassCode",		tr("Inventory Availability by Class Code..."),	 SLOT(sRptInventoryAvailabilityByClassCode()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
-    { "im.rptInventoryAvailabilityByPlannerCode",	tr("Inventory Availability by Planner Code..."), SLOT(sRptInventoryAvailabilityByPlannerCode()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
-    { "im.rptInventoryAvailabilityBySourceVendor",	tr("Inventory Availability by Source Vendor..."),SLOT(sRptInventoryAvailabilityBySourceVendor()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
     { "im.rptSubstituteAvailabilityByRootItem",		tr("Substitute Availability by Root Item..."),	 SLOT(sRptSubstituteAvailabilityByRootItem()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
     { "separator",					NULL,	NULL,	reportsMenu,	true, NULL, NULL, _metrics->boolean("BufferMgt") },
- // { "im.rptInventoryBufferStatusByItem",		tr("Inventory Buffer Status by Item..."),	 SLOT(sRptInventoryBufferStatusByItem()), reportsMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt")}, 
-    { "im.rptInventoryBufferStatusByItemGroup",		tr("Inventory Buffer Status by Item Group..."),	 SLOT(sRptInventoryBufferStatusByItemGroup()), reportsMenu, _privleges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt")}, 
-    { "im.rptInventoryBufferStatusByClassCode",		tr("Inventory Buffer Status by Class Code..."),	 SLOT(sRptInventoryBufferStatusByClassCode()), reportsMenu, _privleges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt")}, 
-    { "im.rptInventoryBufferStatusByPlannerCode",	tr("Inventory Buffer Status by Planner Code..."),SLOT(sRptInventoryBufferStatusByPlannerCode()), reportsMenu, _privleges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt")}, 
-    { "separator",					NULL,						 NULL,					    reportsMenu, true, NULL, NULL, true },
-    { "im.rptInventoryHistoryByItem",			tr("Inventory History by Item..."),		 SLOT(sRptInventoryHistoryByItem()), 	    reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptInventoryHistoryByItemGroup",		tr("Inventory History by Item Group..."),	 SLOT(sRptInventoryHistoryByItemGroup()),   reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptInventoryHistoryByOrderNumber",		tr("Inventory History by Order Number..."),	 SLOT(sRptInventoryHistoryByOrderNumber()), reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptInventoryHistoryByClassCode",		tr("Inventory History by Class Code..."),	 SLOT(sRptInventoryHistoryByClassCode()),   reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptInventoryHistoryByPlannerCode",		tr("Inventory History by Planner Code..."),	 SLOT(sRptInventoryHistoryByPlannerCode()), reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "separator",					NULL,						 NULL,					    reportsMenu, true, NULL, NULL, true },
-    { "im.rptDetailedInventoryHistoryByLot/SerialNumber",tr("Detailed Inventory History by Lot/Serial #..."),	SLOT(sRptDetailedInventoryHistoryByLotSerial()),reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl")}, 
-    { "im.rptDetailedInventoryHistoryByLocation",	tr("Detailed Inventory History by Location..."),	SLOT(sRptDetailedInventoryHistoryByLocation()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "separator",					NULL,							NULL,						reportsMenu,	true, NULL, NULL, true },
-    { "im.rptItemUsageStatisticsByItem",		tr("Item Usage Statistics by Item..."),			SLOT(sRptItemUsageStatisticsByItem()),		reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptItemUsageStatisticsByClassCode",		tr("Item Usage Statistics by Class Code..."),		SLOT(sRptItemUsageStatisticsByClassCode()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptItemUsageStatisticsByItemGroup",		tr("Item Usage Statistics by Item Group..."),		SLOT(sRptItemUsageStatisticsByItemGroup()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "im.rptItemUsageStatisticsByWarehouse",		tr("Item Usage Statistics by Warehouse..."),		SLOT(sRptItemUsageStatisticsByWarehouse()),	reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true}, 
-    { "separator",					NULL,							NULL,						reportsMenu, true, NULL, NULL, true },
     { "im.printItemLabelsByClassCode",			tr("Print Item Labels by Class Code..."),		SLOT(sPrintItemLabelsByClassCode()),		reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
 
     { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,	     mainMenu,	     true,												NULL, NULL, true },
@@ -730,41 +665,6 @@ void moduleIM::sDspCountTagsByClassCode()
   omfgThis->handleNewWindow(new dspCountTagsByClassCode());
 }
 
-void moduleIM::sRptFrozenItemSites()
-{
-  rptFrozenItemSites(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptCountSlipEditList()
-{
-  rptCountSlipEditList(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptCountTagEditList()
-{
-  rptCountTagEditList(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptCountSlipsByWarehouse()
-{
-  rptCountSlipsByWarehouse(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptCountTagsByItem()
-{
-  rptCountTagsByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptCountTagsByWarehouse()
-{
-  rptCountTagsByWarehouse(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptCountTagsByClassCode()
-{
-  rptCountTagsByClassCode(parent, "", TRUE).exec();
-}
-
 void moduleIM::sDspItemAvailabilityWorkbench()
 {
   omfgThis->handleNewWindow(new itemAvailabilityWorkbench());
@@ -1010,41 +910,6 @@ void moduleIM::sDspTimePhasedUsageStatisticsByItem()
   omfgThis->handleNewWindow(new dspTimePhasedUsageStatisticsByItem());
 }
 
-void moduleIM::sRptItemSitesByItem()
-{
-  rptItemSitesByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptItemSitesByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  rptItemSitesByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptItemSitesByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  rptItemSitesByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptItemSitesByCostCategory()
-{
-  ParameterList params;
-  params.append("costcat");
-
-  rptItemSitesByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void moduleIM::sRptValidLocationsByItem()
 {
   rptValidLocationsByItem(parent, "", TRUE).exec();
@@ -1080,169 +945,14 @@ void moduleIM::sRptQOHByLocation()
   rptQOHByLocation(parent, "", TRUE).exec();
 }
 
-void moduleIM::sRptLocationLotSerialDetail()
-{
-  rptInventoryLocator(parent, "", TRUE).exec();
-}
-
 void moduleIM::sRptSlowMovingInventoryByClassCode()
 {
   rptSlowMovingInventoryByClassCode(parent, "", TRUE).exec();
 }
 
-void moduleIM::sRptExpiredInventoryByClassCode()
-{
-  rptExpiredInventoryByClassCode(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryAvailabilityByItem()
-{
-  rptInventoryAvailabilityByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryAvailabilityByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  rptInventoryAvailabilityByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryAvailabilityByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  rptInventoryAvailabilityByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryAvailabilityByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  rptInventoryAvailabilityByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryAvailabilityBySourceVendor()
-{
-  rptInventoryAvailabilityBySourceVendor(parent, "", TRUE).exec();
-}
-
 void moduleIM::sRptSubstituteAvailabilityByRootItem()
 {
   rptSubstituteAvailabilityByRootItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryHistoryByItem()
-{
-  rptInventoryHistoryByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryHistoryByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  rptInventoryHistoryByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryHistoryByOrderNumber()
-{
-  rptInventoryHistoryByOrderNumber(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryHistoryByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  rptInventoryHistoryByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryHistoryByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  rptInventoryHistoryByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptDetailedInventoryHistoryByLotSerial()
-{
-  rptDetailedInventoryHistoryByLotSerial(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptDetailedInventoryHistoryByLocation()
-{
-  rptDetailedInventoryHistoryByLocation(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptItemUsageStatisticsByItem()
-{
-  rptUsageStatisticsByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptItemUsageStatisticsByClassCode()
-{
-  rptUsageStatisticsByClassCode(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptItemUsageStatisticsByItemGroup()
-{
-  rptUsageStatisticsByItemGroup(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptItemUsageStatisticsByWarehouse()
-{
-  rptUsageStatisticsByWarehouse(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryBufferStatusByItem()
-{
-  //rptInventoryBufferStatusByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptInventoryBufferStatusByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  rptInventoryBufferStatusByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryBufferStatusByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  rptInventoryBufferStatusByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptInventoryBufferStatusByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  rptInventoryBufferStatusByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 
 void moduleIM::sPrintItemLabelsByClassCode()

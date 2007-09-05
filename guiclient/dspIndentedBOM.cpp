@@ -59,7 +59,8 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include "rptIndentedBOM.h"
+#include <QMessageBox>
+#include <openreports.h>
 
 /*
  *  Constructs a dspIndentedBOM as a child of 'parent', with the
@@ -69,42 +70,18 @@
 dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_showExpired, SIGNAL(toggled(bool)), _expiredDaysLit, SLOT(setEnabled(bool)));
-    connect(_showExpired, SIGNAL(toggled(bool)), _expiredDays, SLOT(setEnabled(bool)));
-    connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDaysLit, SLOT(setEnabled(bool)));
-    connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspIndentedBOM::~dspIndentedBOM()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspIndentedBOM::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspIndentedBOM::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDaysLit, SLOT(setEnabled(bool)));
+  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDays, SLOT(setEnabled(bool)));
+  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDaysLit, SLOT(setEnabled(bool)));
+  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
 
@@ -122,7 +99,24 @@ void dspIndentedBOM::init()
   _item->setFocus();
 }
 
-enum SetResponse dspIndentedBOM::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspIndentedBOM::~dspIndentedBOM()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspIndentedBOM::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspIndentedBOM::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -142,18 +136,36 @@ enum SetResponse dspIndentedBOM::set(ParameterList &pParams)
 
 void dspIndentedBOM::sPrint()
 {
-  ParameterList params;
-  params.append( "item_id", _item->id() );
-  params.append( "print",   TRUE        );
+  q.prepare("SELECT indentedBOM(:item_id) AS result;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    int worksetid = q.value("result").toInt();
+    ParameterList params;
 
-  if (_showExpired->isChecked())
-    params.append("expiredDays", _expiredDays->value());
+    params.append("item_id", _item->id());
+    params.append("bomworkset_id", worksetid);
 
-  if (_showFuture->isChecked())
-    params.append("futureDays", _effectiveDays->value());
+    if(_showExpired->isChecked())
+      params.append("expiredDays", _expiredDays->value());
 
-  rptIndentedBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+    if(_showFuture->isChecked())
+      params.append("futureDays", _effectiveDays->value());
+
+    orReport report("IndentedBOM", params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+
+    q.prepare("SELECT deleteBOMWorkset(:bomworkset_id) AS result;");
+    q.bindValue(":bomworkset_id", worksetid);
+    q.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Error Executing Report"),
+                           tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void dspIndentedBOM::sFillList()

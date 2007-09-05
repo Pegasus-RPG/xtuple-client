@@ -62,8 +62,8 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include "arOpenItem.h"
-#include "rptAROpenItemsByCustomer.h"
 #include "dspInvoiceInformation.h"
 
 /*
@@ -224,10 +224,12 @@ void dspAROpenItemsByCustomer::sPrint()
   ParameterList params;
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
 
-  rptAROpenItemsByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("AROpenItemsByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspAROpenItemsByCustomer::sFillList()

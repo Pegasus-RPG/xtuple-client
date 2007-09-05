@@ -122,15 +122,11 @@ class modulePO : public QObject
 
     void sRptPurchaseReqsByItem();
     void sRptPurchaseReqsByPlannerCode();
-    void sRptItemSitesByPlannerCode();
     void sRptPoItemsByVendor();
     void sRptPoItemsByItem();
     void sRptPoItemsByDate();
     void sRptPoItemsByBufferStatus();
     void sRptPoHistory();
-    void sRptItemSourcesByVendor();
-    void sRptItemSourcesByItem();
-    void sRptBuyCard();
     void sRptReceiptsReturnsByVendor();
     void sRptReceiptsReturnsByItem();
     void sRptReceiptsReturnsByDate();

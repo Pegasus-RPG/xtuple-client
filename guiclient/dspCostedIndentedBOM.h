@@ -59,7 +59,7 @@
 #define DSPCOSTEDINDENTEDBOM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspCostedIndentedBOM.h"
@@ -72,10 +72,8 @@ public:
     dspCostedIndentedBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCostedIndentedBOM();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sMaintainItemCosts();

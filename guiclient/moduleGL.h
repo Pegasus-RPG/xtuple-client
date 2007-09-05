@@ -97,9 +97,7 @@ class moduleGL : public QObject
     void sDspStandardJournalHistory();
     void sDspTrialBalances();
 
-    void sRptGLTransactions();
     void sRptSummarizedGLTransactions();
-    void sRptGLSeries();
     void sRptStandardJournalHistory();
     void sRptTrialBalances();
 
@@ -124,7 +122,6 @@ class moduleGL : public QObject
     void sAdjustmentTypes();
     void sDspBankrecHistory();
     void sDspSummarizedBankrecHistory();
-    void sRptBankrecHistory();
     void sRptSummarizedBankrecHistory();
 
     void sBudgets();

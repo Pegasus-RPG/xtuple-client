@@ -60,11 +60,13 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "itemSource.h"
 #include "buyCard.h"
 #include "dspPoItemsByItem.h"
-#include "rptItemSourcesByItem.h"
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -75,41 +77,15 @@
 dspItemSourcesByItem::dspItemSourcesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemSourcesByItem::~dspItemSourcesByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemSourcesByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemSourcesByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _item->setType(ItemLineEdit::cGeneralPurchased);
 
@@ -121,14 +97,33 @@ void dspItemSourcesByItem::init()
   _item->setFocus();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemSourcesByItem::~dspItemSourcesByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemSourcesByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspItemSourcesByItem::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
-  rptItemSourcesByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ItemSourcesByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemSourcesByItem::sPopulateMenu(QMenu *menuThis)

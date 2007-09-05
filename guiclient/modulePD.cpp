@@ -102,13 +102,6 @@
 #include "dspItemCostSummary.h"
 #include "dspItemCostHistory.h"
 
-#include "rptCostedSingleLevelBOM.h"
-#include "rptCostedIndentedBOM.h"
-#include "rptCostedSummarizedBOM.h"
-#include "rptItemCostsByClassCode.h"
-#include "rptItemCostSummary.h"
-#include "rptItemCostHistory.h"
-
 #include "costingElements.h"
 
 #include "dspItemsByClassCode.h"
@@ -128,20 +121,12 @@
 
 #include "itemAvailabilityWorkbench.h"
 
-#include "rptItemsByClassCode.h"
-#include "rptItemsByCharacteristic.h"
-#include "rptItemsByProductCategory.h"
 #include "rptSingleLevelBOM.h"
-#include "rptIndentedBOM.h"
 #include "rptSummarizedBOM.h"
 #include "rptSequencedBOM.h"
 #include "rptSingleLevelWhereUsed.h"
-#include "rptIndentedWhereUsed.h"
 #include "rptPendingBOMChanges.h"
-#include "rptBOOItemsByWorkCenter.h"
 #include "rptStandardOperationsByWorkCenter.h"
-#include "rptCapacityUOMsByClassCode.h"
-#include "rptCapacityUOMsByProductCategory.h"
 
 #include "uoms.h"
 #include "classCodes.h"
@@ -295,30 +280,6 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
 
   costingReportsMenu = new QMenu();
 
-  parent->actions.append( new Action( parent, "pd.rptCostedSingleLevelBOM", tr("Costed Single Level BOM..."),
-                                      this, SLOT(sRptCostedSingleLevelBOM()),
-                                      costingReportsMenu, _privleges->check("ViewCosts") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptCostedIndentedBOM", tr("Costed Indented BOM..."),
-                                      this, SLOT(sRptCostedIndentedBOM()),
-                                      costingReportsMenu, _privleges->check("ViewCosts") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptCostedSummarizedBOM", tr("Costed Summarized BOM..."),
-                                      this, SLOT(sRptCostedSummarizedBOM()),
-                                      costingReportsMenu, _privleges->check("ViewCosts") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptItemCostsByClassCode", tr("Item Costs by Class Code..."),
-                                      this, SLOT(sRptItemCostsByClassCode()),
-                                      costingReportsMenu, _privleges->check("ViewCosts") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptItemCostsSummary", tr("Item Costs Summary..."),
-                                      this, SLOT(sRptItemCostSummary()),
-                                      costingReportsMenu, _privleges->check("ViewCosts") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptItemCostsHistory", tr("Item Costs History..."),
-                                      this, SLOT(sRptItemCostHistory()),
-                                      costingReportsMenu, _privleges->check("ViewCosts") ) );
-
   costingMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "pd.maintainItemCosts", tr("Maintain Item Costs..."),
@@ -441,26 +402,8 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
 //  P/D | Reports
   reportsMenu = new QMenu();
 
-  parent->actions.append( new Action( parent, "pd.rptItemsByClassCode", tr("Items by Class Code..."),
-                                      this, SLOT(sRptItemsByClassCode()),
-                                      reportsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
-
-  parent->actions.append( new Action( parent, "pd.rptItemsByProductCategory", tr("Items by Product Category..."),
-                                      this, SLOT(sRptItemsByProductCategory()),
-                                      reportsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
-
-  parent->actions.append( new Action( parent, "pd.rptItemsByCharacteristic", tr("Items by Characteristic..."),
-                                      this, SLOT(sRptItemsByCharacteristic()),
-                                      reportsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
-
-  reportsMenu->insertSeparator();
-
   parent->actions.append( new Action( parent, "pd.rptSingleLevelBOM", tr("Single Level Bill of Materials..."),
                                       this, SLOT(sRptSingleLevelBOM()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptIndentedBOM", tr("Indented Bill of Materials..."),
-                                      this, SLOT(sRptIndentedBOM()),
                                       reportsMenu, _privleges->check("ViewBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.rptSummarizedBOM", tr("Summarized Bill of Materials..."),
@@ -477,10 +420,6 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sRptSingleLevelWhereUsed()),
                                       reportsMenu, _privleges->check("ViewBOMs") ) );
 
-  parent->actions.append( new Action( parent, "pd.rptIndentedWhereUsed", tr("Indented Where Used..."),
-                                      this, SLOT(sRptIndentedWhereUsed()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
   parent->actions.append( new Action( parent, "pd.rptPendingBOMChanges", tr("Pending BOM Changes..."),
                                       this, SLOT(sRptPendingBOMChanges()),
                                       reportsMenu, _privleges->check("ViewBOMs") ) );
@@ -489,25 +428,11 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
  {
       reportsMenu->insertSeparator();
 
-      parent->actions.append( new Action( parent, "pd.rptOperationsByWorkCenter", tr("Operations by Work Center..."),
-                                          this, SLOT(sRptOperationsByWorkCenter()),
-                                          reportsMenu, ((_privleges->check("ViewBOOs")) && (_metrics->boolean("Routings"))) ) );
-
       parent->actions.append( new Action( parent, "pd.rptStandardOperationsByWorkCenter", tr("Standard Operations by Work Center..."),
                                           this, SLOT(sRptStandardOperByWorkCenter()),
                                           reportsMenu, ((_privleges->check("ViewStandardOperations")) && (_metrics->boolean("Routings"))) ) );
   }
   
-      reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "pd.rptCapacityUOMsByClassCode", tr("Capacity UOMs by Class Code..."),
-                                      this, SLOT(sRptCapacityUOMsByClassCode()),
-                                      reportsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
-
-  parent->actions.append( new Action( parent, "pd.rptCapacityUOMsByProductCategory", tr("Capacity UOMs by Product Category..."),
-                                      this, SLOT(sRptCapacityUOMsByProductCategory()),
-                                      reportsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
-
 //  P/D | Master Information
   masterInfoMenu = new QMenu();
 
@@ -768,36 +693,6 @@ void modulePD::sDspItemCostHistory()
   omfgThis->handleNewWindow(new dspItemCostHistory());
 }
 
-void modulePD::sRptCostedSingleLevelBOM()
-{
-  rptCostedSingleLevelBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptCostedIndentedBOM()
-{
-  rptCostedIndentedBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptCostedSummarizedBOM()
-{
-  rptCostedSummarizedBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptItemCostsByClassCode()
-{
-  rptItemCostsByClassCode(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptItemCostSummary()
-{
-  rptItemCostSummary(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptItemCostHistory()
-{
-  rptItemCostHistory(parent, "", TRUE).exec();
-}
-
 void modulePD::sUserCostingElements()
 {
   omfgThis->handleNewWindow(new costingElements());
@@ -880,29 +775,9 @@ void modulePD::sDspItemAvailabilityWorkbench()
 }
 
 //  Reports
-void modulePD::sRptItemsByClassCode()
-{
-  rptItemsByClassCode(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptItemsByProductCategory()
-{
-  rptItemsByProductCategory(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptItemsByCharacteristic()
-{
-  rptItemsByCharacteristic(parent, "", TRUE).exec();
-}
-
 void modulePD::sRptSingleLevelBOM()
 {
   rptSingleLevelBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptIndentedBOM()
-{
-  rptIndentedBOM(parent, "", TRUE).exec();
 }
 
 void modulePD::sRptSummarizedBOM()
@@ -920,34 +795,14 @@ void modulePD::sRptSingleLevelWhereUsed()
   rptSingleLevelWhereUsed(parent, "", TRUE).exec();
 }
 
-void modulePD::sRptIndentedWhereUsed()
-{
-  rptIndentedWhereUsed(parent, "", TRUE).exec();
-}
-
 void modulePD::sRptPendingBOMChanges()
 {
   rptPendingBOMChanges(parent, "", TRUE).exec();
 }
 
-void modulePD::sRptOperationsByWorkCenter()
-{
-  rptBOOItemsByWorkCenter(parent, "", TRUE).exec();
-}
-
 void modulePD::sRptStandardOperByWorkCenter()
 {
   rptStandardOperationsByWorkCenter(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptCapacityUOMsByClassCode()
-{
-  rptCapacityUOMsByClassCode(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptCapacityUOMsByProductCategory()
-{
-  rptCapacityUOMsByProductCategory(parent, "", TRUE).exec();
 }
 
 

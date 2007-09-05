@@ -123,7 +123,6 @@ class moduleMS : public QObject
     void sRptTimePhasedPlannedREByPlannerCode();
     void sRptRunningAvailability();
     void sRptMRPDetail();
-    void sRptExpediteExceptionsByPlannerCode();
     void sRptReorderExceptionsByPlannerCode();
 
     void sPlannerCodes();

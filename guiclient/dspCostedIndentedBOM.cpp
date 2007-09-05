@@ -60,9 +60,11 @@
 #include <QVariant>
 #include <QWorkspace>
 #include <QStatusBar>
+#include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
-#include "rptCostedIndentedBOM.h"
 
 /*
  *  Constructs a dspCostedIndentedBOM as a child of 'parent', with the
@@ -72,46 +74,22 @@
 dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    QButtonGroup* _costsGroupInt = new QButtonGroup(this);
-    _costsGroupInt->addButton(_useStandardCosts);
-    _costsGroupInt->addButton(_useActualCosts);
+  QButtonGroup* _costsGroupInt = new QButtonGroup(this);
+  _costsGroupInt->addButton(_useStandardCosts);
+  _costsGroupInt->addButton(_useActualCosts);
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCostedIndentedBOM::~dspCostedIndentedBOM()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCostedIndentedBOM::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCostedIndentedBOM::init()
-{
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
   _bomitem->setRootIsDecorated(TRUE);
@@ -128,7 +106,24 @@ void dspCostedIndentedBOM::init()
   _bomitem->setIndentation(10);
 }
 
-enum SetResponse dspCostedIndentedBOM::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCostedIndentedBOM::~dspCostedIndentedBOM()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCostedIndentedBOM::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspCostedIndentedBOM::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -148,18 +143,33 @@ enum SetResponse dspCostedIndentedBOM::set(ParameterList &pParams)
 
 void dspCostedIndentedBOM::sPrint()
 {
-  ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("print");
+  q.prepare("SELECT indentedBOM(:item_id) AS result;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
 
-  if (_useStandardCosts->isChecked())
-    params.append("useStandardCosts");
+    params.append("item_id", _item->id());
+    params.append("bomworkset_id", q.value("result").toInt());
 
-  if (_useActualCosts->isChecked())
-    params.append("useActualCosts");
+    if(_useStandardCosts->isChecked())
+      params.append("useStandardCosts");
 
-  rptCostedIndentedBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+    if(_useActualCosts->isChecked())
+      params.append("useActualCosts");
+
+    orReport report("CostedIndentedBOM", params);
+
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+  else
+    QMessageBox::critical( this, tr("Error Executing Report"),
+                           tr( "Was unable to create/collect the required information to create this report." ) );
+
 }
 
 void dspCostedIndentedBOM::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

@@ -59,9 +59,10 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
 #include "rptRoughCutByWorkCenter.h"
-#include "rptCapacityBufferStatusByWorkCenter.h"
 
 
 /*
@@ -117,15 +118,18 @@ void dspCapacityBufferStatusByWorkCenter::languageChange()
 void dspCapacityBufferStatusByWorkCenter::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  params.append("maxdaysload", _maxdaysload->value());
-  params.append("print");
 
   if (_selectedWorkCenter->isChecked())
     params.append("wrkcnt_id", _wrkcnt->id());
 
-  rptCapacityBufferStatusByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+  _warehouse->appendValue(params);
+  params.append("maxdaysload", _maxdaysload->value());
+
+  orReport report("CapacityBufferStatusByWorkCenter", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCapacityBufferStatusByWorkCenter::sQuery()

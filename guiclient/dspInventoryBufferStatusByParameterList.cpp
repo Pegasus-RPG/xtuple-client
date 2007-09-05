@@ -61,6 +61,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStringList>
+#include <openreports.h>
 #include "dspInventoryHistoryByItem.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -72,7 +73,6 @@
 #include "dspSubstituteAvailabilityByItem.h"
 #include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
-#include "rptInventoryBufferStatusByParameterList.h"
 
 /*
  *  Constructs a dspInventoryBufferStatusByParameterList as a child of 'parent', with the
@@ -113,7 +113,7 @@ dspInventoryBufferStatusByParameterList::dspInventoryBufferStatusByParameterList
  */
 dspInventoryBufferStatusByParameterList::~dspInventoryBufferStatusByParameterList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -122,7 +122,7 @@ dspInventoryBufferStatusByParameterList::~dspInventoryBufferStatusByParameterLis
  */
 void dspInventoryBufferStatusByParameterList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspInventoryBufferStatusByParameterList::set(const ParameterList &pParams)
@@ -214,10 +214,9 @@ enum SetResponse dspInventoryBufferStatusByParameterList::set(const ParameterLis
 void dspInventoryBufferStatusByParameterList::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
   _parameter->appendValue(params);
-  params.append("print");
-  
+  _warehouse->appendValue(params);
+
   if (_parameter->isAll())
   {
     if (_parameter->type() == ItemGroup)
@@ -231,12 +230,16 @@ void dspInventoryBufferStatusByParameterList::sPrint()
   if (_GreaterThanZero->isChecked())
     params.append("GreaterThanZero");
   else if (_EmergencyZone->isChecked())
-    params.append("EmergencyZone" );
+    params.append("EmergencyZone");
   else if (_All->isChecked())
     params.append("All");
 
-  rptInventoryBufferStatusByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("InventoryBufferStatusByParameterList", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
+
 }
 
 void dspInventoryBufferStatusByParameterList::sPopulateMenu(QMenu *menu, QTreeWidgetItem *selected)

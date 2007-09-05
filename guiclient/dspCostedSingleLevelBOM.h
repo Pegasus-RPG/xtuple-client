@@ -59,7 +59,7 @@
 #define DSPCOSTEDSINGLELEVELBOM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspCostedSingleLevelBOM.h"
@@ -72,10 +72,8 @@ public:
     dspCostedSingleLevelBOM(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCostedSingleLevelBOM();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu(QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sMaintainItemCosts();

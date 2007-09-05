@@ -65,7 +65,8 @@
 #include <QVariant>
 #include <QWorkspace>
 
-#include "rptCustomerInformation.h"
+#include <openreports.h>
+
 #include "salesOrder.h"
 #include "invoice.h"
 #include "creditMemo.h"
@@ -554,10 +555,12 @@ void dspCustomerInformation::sPrint()
 {
   ParameterList params;
   params.append("cust_id", _cust->id());
-  params.append("print");
 
-  rptCustomerInformation newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CustomerInformation", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCustomerInformation::sFillQuoteList()

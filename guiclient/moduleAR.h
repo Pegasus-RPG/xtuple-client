@@ -104,16 +104,8 @@ class moduleAR : public QObject
     void sDspInvoiceRegister();
     void sDspDepositsRegister();
 
-    void sRptCustomerHistory();
-    void sRptCashReceipts();
-    void sRptARApplications();
-    void sRptInvoiceInformation();
-    void sRptAROpenItemsByCustomer();
-    void sRptAROpenItems();
     void sRptSalesJournal();
     void sRptCreditMemoJournal();
-    void sRptInvoiceRegister();
-    void sRptDepositsRegister();
 
     void sPrintStatementByCustomer();
     void sPrintStatementsByCustomerType();

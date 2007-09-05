@@ -60,12 +60,14 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "inputManager.h"
 #include "itemSite.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "createCountTagsByItem.h"
-#include "rptItemSitesByItem.h"
 #include "dspInventoryLocator.h"
 #include "OpenMFGGUIClient.h"
 
@@ -77,42 +79,16 @@
 dspItemSitesByItem::dspItemSitesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemSitesByItem::~dspItemSitesByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemSitesByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemSitesByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setId(int)));
 
@@ -130,17 +106,39 @@ void dspItemSitesByItem::init()
   _item->setFocus();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemSitesByItem::~dspItemSitesByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemSitesByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspItemSitesByItem::sPrint()
 {
   ParameterList params;
-  params.append("print");
   params.append("item_id", _item->id());
+
+//  Ack - HackHackHack
+  params.append("placeHolder", -1);
 
   if (_showInactive->isChecked())
     params.append("showInactive");
-  
-  rptItemSitesByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("ItemSitesByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected)

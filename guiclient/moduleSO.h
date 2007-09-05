@@ -146,22 +146,9 @@ class moduleSO : public QObject
     void sDspBriefEarnedCommissions();
     void sDspSummarizedTaxableSales();
 
-    void sRptInventoryAvailabilityByItem();
-    void sRptInventoryAvailabilityBySalesOrder();
-    void sRptCustomersByCusttype();
-    void sRptCustomersByCharacteristic();
-    void sRptCustomerInformation();
     void sRptSalesOrderStatus();
-    void sRptBacklogByItem();
-    void sRptBacklogBySalesOrder();
-    void sRptBacklogByCustomer();
-    void sRptBacklogByCustomerType();
-    void sRptBacklogByCustomerGroup();
-    void sRptBacklogByProductCategory();
     void sRptSummarizedBacklogByWarehouse();
     void sRptPartiallyShippedOrders();
-    void sRptEarnedCommissions();
-    void sRptBriefEarnedCommissions();
     void sRptSummarizedTaxableSales();
     void sPrintSalesOrderForm();
 

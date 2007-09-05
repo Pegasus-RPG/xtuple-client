@@ -60,9 +60,11 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "dspItemCostDetail.h"
 #include "itemCost.h"
-#include "rptItemCostSummary.h"
 
 /*
  *  Constructs a dspItemCostSummary as a child of 'parent', with the
@@ -72,42 +74,16 @@
 dspItemCostSummary::dspItemCostSummary(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemCostSummary::~dspItemCostSummary()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemCostSummary::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemCostSummary::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _itemcost->addColumn(tr("Element"),   -1,           Qt::AlignLeft   );
   _itemcost->addColumn(tr("Lower"),     _costColumn,  Qt::AlignCenter );
@@ -117,7 +93,24 @@ void dspItemCostSummary::init()
   _itemcost->addColumn(tr("Updated"),   _dateColumn,  Qt::AlignCenter );
 }
 
-enum SetResponse dspItemCostSummary::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemCostSummary::~dspItemCostSummary()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemCostSummary::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspItemCostSummary::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -142,10 +135,12 @@ void dspItemCostSummary::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
-  rptItemCostSummary newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ItemCostSummary", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemCostSummary::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

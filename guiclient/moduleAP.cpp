@@ -101,9 +101,7 @@
 #include "dspTimePhasedOpenAPItems.h"
 //#include "dspAPAging.h"
 
-#include "rptCheckRegister.h"
 #include "rptVoucherRegister.h"
-#include "rptAPOpenItemsByVendor.h"
 #include "rptVendorAPHistory.h"
 #include "printJournal.h"
 
@@ -295,19 +293,9 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sRptVendorHistory()),
                                       reportsMenu, _privleges->check("ViewAPOpenItems") ) );
 
-  parent->actions.append( new Action( parent, "ap.rptCheckRegister", tr("Check Register..."),
-                                      this, SLOT(sRptCheckRegister()),
-                                      reportsMenu, _privleges->check("MaintainPayments") ) );
-
   parent->actions.append( new Action( parent, "ap.rptVoucherRegister", tr("Voucher Register..."),
                                       this, SLOT(sRptVoucherRegister()),
                                       reportsMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")) ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ap.rptOpenAPItemsByVendor", tr("Open Items by Vendor..."),
-                                      this, SLOT(sRptAPOpenItemsByVendor()),
-                                      reportsMenu, _privleges->check("ViewAPOpenItems") ) );
 
   reportsMenu->insertSeparator();
 
@@ -559,19 +547,9 @@ void moduleAP::sRptVendorHistory()
   rptVendorAPHistory(parent, "", TRUE).exec();
 }
 
-void moduleAP::sRptCheckRegister()
-{
-  rptCheckRegister(parent, "", TRUE).exec();
-}
-
 void moduleAP::sRptVoucherRegister()
 {
   rptVoucherRegister(parent, "", TRUE).exec();
-}
-
-void moduleAP::sRptAPOpenItemsByVendor()
-{
-  rptAPOpenItemsByVendor(parent, "", TRUE).exec();
 }
 
 void moduleAP::sRptPayablesJournal()

@@ -67,90 +67,90 @@
 
 #include <metasql.h>
 #include <parameter.h>
+#include <openreports.h>
 
 #include "countSlip.h"
 #include "countTag.h"
 #include "dspInventoryHistoryByItem.h"
 #include "dspCountSlipEditList.h"
 #include "storedProcErrorLookup.h"
-#include "rptCountTagEditList.h"
 
 dspCountTagEditList::dspCountTagEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    _highlightGroupInt = new QButtonGroup(this);
-    _highlightGroupInt->addButton(_noHighlight);
-    _highlightGroupInt->addButton(_highlightValue);
-    _highlightGroupInt->addButton(_highlightPercent);
+  _highlightGroupInt = new QButtonGroup(this);
+  _highlightGroupInt->addButton(_noHighlight);
+  _highlightGroupInt->addButton(_highlightValue);
+  _highlightGroupInt->addButton(_highlightPercent);
 
-    _codeGroup = new QButtonGroup(this);
-    _codeGroup->addButton(_plancode);
-    _codeGroup->addButton(_classcode);
+  _codeGroup = new QButtonGroup(this);
+  _codeGroup->addButton(_plancode);
+  _codeGroup->addButton(_classcode);
 
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_showSlips, SIGNAL(clicked()), this, SLOT(sToggleList()));
-    connect(_enterSlip, SIGNAL(clicked()), this, SLOT(sEnterCountSlip()));
-    connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_showSlips, SIGNAL(clicked()), this, SLOT(sToggleList()));
+  connect(_enterSlip, SIGNAL(clicked()), this, SLOT(sEnterCountSlip()));
+  connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
 
-    _parameter->setType(ClassCode);
+  _parameter->setType(ClassCode);
 
-    _cnttag->setRootIsDecorated(TRUE);
-    _cnttag->addColumn(tr("Pri."),        (_whsColumn + 10),  Qt::AlignCenter );
-    _cnttag->addColumn(tr("Tag/Slip #"),  _orderColumn, Qt::AlignRight  );
-    _cnttag->addColumn(tr("Tag Date"),    _dateColumn,  Qt::AlignCenter );
-    _cnttag->addColumn(tr("Item Number"), -1,           Qt::AlignLeft   );
-    _cnttag->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-    _cnttag->addColumn(tr("Location"),	  _ynColumn,    Qt::AlignCenter );
-    _cnttag->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight  );
-    _cnttag->addColumn(tr("Count Qty."),  _qtyColumn,   Qt::AlignRight  );
-    _cnttag->addColumn(tr("Variance"),    _qtyColumn,   Qt::AlignRight  );
-    _cnttag->addColumn(tr("%"),           _prcntColumn, Qt::AlignRight  );
-    _cnttag->addColumn(tr("Amount"),       _costColumn,  Qt::AlignRight );
-    _cnttag->setIndentation(10);
-    
-    if (_privleges->check("EnterCountTags"))
-    {
-      connect(_cnttag, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-      connect(_cnttag, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-    }
+  _cnttag->setRootIsDecorated(TRUE);
+  _cnttag->addColumn(tr("Pri."),        (_whsColumn + 10),  Qt::AlignCenter );
+  _cnttag->addColumn(tr("Tag/Slip #"),  _orderColumn, Qt::AlignRight  );
+  _cnttag->addColumn(tr("Tag Date"),    _dateColumn,  Qt::AlignCenter );
+  _cnttag->addColumn(tr("Item Number"), -1,           Qt::AlignLeft   );
+  _cnttag->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _cnttag->addColumn(tr("Location"),	  _ynColumn,    Qt::AlignCenter );
+  _cnttag->addColumn(tr("QOH"),         _qtyColumn,   Qt::AlignRight  );
+  _cnttag->addColumn(tr("Count Qty."),  _qtyColumn,   Qt::AlignRight  );
+  _cnttag->addColumn(tr("Variance"),    _qtyColumn,   Qt::AlignRight  );
+  _cnttag->addColumn(tr("%"),           _prcntColumn, Qt::AlignRight  );
+  _cnttag->addColumn(tr("Amount"),       _costColumn,  Qt::AlignRight );
+  _cnttag->setIndentation(10);
+  
+  if (_privleges->check("EnterCountTags"))
+  {
+    connect(_cnttag, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+    connect(_cnttag, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  }
 
-    if (_privleges->check("DeleteCountTags"))
-      connect(_cnttag, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  if (_privleges->check("DeleteCountTags"))
+    connect(_cnttag, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
-    if (_privleges->check("PostCountTags"))
-      connect(_cnttag, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
+  if (_privleges->check("PostCountTags"))
+    connect(_cnttag, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
-    if (_privleges->check("EnterCountSlips"))
-      connect(_cnttag, SIGNAL(valid(bool)), _enterSlip, SLOT(setEnabled(bool)));
+  if (_privleges->check("EnterCountSlips"))
+    connect(_cnttag, SIGNAL(valid(bool)), _enterSlip, SLOT(setEnabled(bool)));
 
-    _searchFor->setFocus();
+  _searchFor->setFocus();
 }
 
 dspCountTagEditList::~dspCountTagEditList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspCountTagEditList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspCountTagEditList::sToggleList()
 {
   if (_showSlips->isChecked())
-	_cnttag->setSelectionMode(QAbstractItemView::SingleSelection);
+    _cnttag->setSelectionMode(QAbstractItemView::SingleSelection);
   else
-	_cnttag->setSelectionMode(QAbstractItemView::ExtendedSelection);
+    _cnttag->setSelectionMode(QAbstractItemView::ExtendedSelection);
   sFillList();
 }
 
@@ -167,13 +167,16 @@ void dspCountTagEditList::setParams(ParameterList &params)
 void dspCountTagEditList::sPrint()
 {
   ParameterList params;
-  setParams(params);
-  params.append("maxTags", 10000);
-  params.append("print");
+  _parameter->appendValue(params);
+  _warehouse->appendValue(params);
 
-  rptCountTagEditList newdlg(this, "", TRUE);
-  newdlg.set(params);
-  //newdlg.exec();
+  params.append("maxTags", 10000);
+
+  orReport report("CountTagEditList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCountTagEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

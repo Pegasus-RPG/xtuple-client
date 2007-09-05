@@ -59,7 +59,7 @@
 #define DSPBOOKINGSBYSALESREP_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspBookingsBySalesRep.h"
@@ -72,7 +72,6 @@ public:
     dspBookingsBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBookingsBySalesRep();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:

@@ -58,7 +58,7 @@
 #ifndef DSPITEMSOURCESBYVENDOR_H
 #define DSPITEMSOURCESBYVENDOR_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspItemSourcesByVendor.h"
 
@@ -69,8 +69,6 @@ class dspItemSourcesByVendor : public QMainWindow, public Ui::dspItemSourcesByVe
 public:
     dspItemSourcesByVendor(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemSourcesByVendor();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

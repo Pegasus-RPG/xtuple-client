@@ -59,6 +59,7 @@
 
 #include <QVariant>
 #include <QSqlError>
+#include <QMessageBox>
 #include "inputManager.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -68,7 +69,6 @@
 #include "createCountTagsByItem.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "salesOrderList.h"
-#include "rptInventoryAvailabilityBySalesOrder.h"
 
 #include <openreports.h>
 #include <metasql.h>
@@ -169,22 +169,17 @@ void dspInventoryAvailabilityBySalesOrder::sSoList()
 void dspInventoryAvailabilityBySalesOrder::sPrint()
 {
   ParameterList params;
-  params.append("sohead_id", _so->id());
-  params.append("print");
 
-  if (_onlyShowShortages->isChecked())
+  params.append("sohead_id", _so->id());
+
+  if(_onlyShowShortages->isChecked())
     params.append("onlyShowShortages");
-  if (_showWoSupply->isChecked())
-    params.append("showWoSupply");
 
   orReport report("InventoryAvailabilityBySalesOrder", params);
   if (report.isValid())
     report.print();
   else
-  {
     report.reportError(this);
-    return;
-  }
 }
 
 void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)

@@ -61,7 +61,7 @@
 #include <QStatusBar>
 #include <QMenu>
 #include <parameter.h>
-#include "rptExpediteExceptionsByPlannerCode.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspExpediteExceptionsByPlannerCode as a child of 'parent', with the
@@ -81,8 +81,6 @@ dspExpediteExceptionsByPlannerCode::dspExpediteExceptionsByPlannerCode(QWidget* 
   connect(_exception, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  statusBar()->hide();
-  
   _plannerCode->setType(PlannerCode);
 
   _exception->addColumn(tr("Order Type/#"),   _itemColumn, Qt::AlignCenter );
@@ -98,7 +96,7 @@ dspExpediteExceptionsByPlannerCode::dspExpediteExceptionsByPlannerCode(QWidget* 
  */
 dspExpediteExceptionsByPlannerCode::~dspExpediteExceptionsByPlannerCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -107,7 +105,7 @@ dspExpediteExceptionsByPlannerCode::~dspExpediteExceptionsByPlannerCode()
  */
 void dspExpediteExceptionsByPlannerCode::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspExpediteExceptionsByPlannerCode::sFillList()
@@ -208,13 +206,17 @@ void dspExpediteExceptionsByPlannerCode::sFillList()
 void dspExpediteExceptionsByPlannerCode::sPrint()
 {
   ParameterList params;
-  params.append("lookAheadDays", _days->value());
-  params.append("print");
-  _warehouse->appendValue(params);
-  _plannerCode->appendValue(params);
 
-  rptExpediteExceptionsByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  _plannerCode->appendValue(params);
+  _warehouse->appendValue(params);
+
+  params.append("lookAheadDays", _days->value());
+
+  orReport report("ExpediteExceptionsByPlannerCode", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspExpediteExceptionsByPlannerCode::sPopulateMenu( QMenu *, QTreeWidgetItem * )

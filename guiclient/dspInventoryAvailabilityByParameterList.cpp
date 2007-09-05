@@ -61,6 +61,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStringList>
+#include <openreports.h>
 #include "dspInventoryHistoryByItem.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -72,7 +73,6 @@
 #include "dspSubstituteAvailabilityByItem.h"
 #include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
-#include "rptInventoryAvailabilityByParameterList.h"
 
 /*
  *  Constructs a dspInventoryAvailabilityByParameterList as a child of 'parent', with the
@@ -224,19 +224,9 @@ enum SetResponse dspInventoryAvailabilityByParameterList::set(const ParameterLis
 void dspInventoryAvailabilityByParameterList::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
   _parameter->appendValue(params);
-  params.append("print");
+  _warehouse->appendValue(params);
 
-  if (_showReorder->isChecked())
-    params.append("showReorder");
-
-  if (_ignoreReorderAtZero->isChecked())
-    params.append("ignoreReorderAtZero");
-
-  if (_showShortages->isChecked())
-    params.append("showShortages");
-  
   if (_parameter->isAll())
   {
     if (_parameter->type() == ItemGroup)
@@ -250,18 +240,30 @@ void dspInventoryAvailabilityByParameterList::sPrint()
   if (_byLeadTime->isChecked())
     params.append("byLeadTime");
   else if (_byDays->isChecked())
-    params.append("byDays", _days->value());
+    params.append("byDays", _days->text().toInt());
   else if (_byDate->isChecked())
     params.append("byDate", _date->date());
   else if (_byDates->isChecked())
   {
-    params.append("byRange");
+    params.append("byDates");
     params.append("startDate", _startDate->date());
     params.append("endDate", _endDate->date());
   }
 
-  rptInventoryAvailabilityByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if(_showReorder->isChecked())
+    params.append("showReorder");
+
+  if(_ignoreReorderAtZero->isChecked())
+    params.append("ignoreReorderAtZero");
+
+  if(_showShortages->isChecked())
+    params.append("showShortages");
+
+  orReport report("InventoryAvailabilityByParameterList", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryAvailabilityByParameterList::sPopulateMenu(QMenu *menu, QTreeWidgetItem *selected)

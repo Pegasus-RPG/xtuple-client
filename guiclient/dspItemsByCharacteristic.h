@@ -58,7 +58,7 @@
 #ifndef DSPITEMSBYCHARACTERISTIC_H
 #define DSPITEMSBYCHARACTERISTIC_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspItemsByCharacteristic.h"
 
@@ -84,9 +84,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 };
 

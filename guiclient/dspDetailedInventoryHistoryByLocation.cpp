@@ -62,6 +62,7 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
@@ -69,7 +70,6 @@
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "countTag.h"
-#include "rptDetailedInventoryHistoryByLocation.h"
 
 /*
  *  Constructs a dspDetailedInventoryHistoryByLocation as a child of 'parent', with the
@@ -89,8 +89,6 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_location, SIGNAL(newID(int)), this, SLOT(sPopulateLocationInfo(int)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateLocations()));
-
-  statusBar()->hide();
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -119,7 +117,7 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
  */
 dspDetailedInventoryHistoryByLocation::~dspDetailedInventoryHistoryByLocation()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -128,7 +126,7 @@ dspDetailedInventoryHistoryByLocation::~dspDetailedInventoryHistoryByLocation()
  */
 void dspDetailedInventoryHistoryByLocation::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspDetailedInventoryHistoryByLocation::sPopulateLocations()
@@ -174,17 +172,25 @@ void dspDetailedInventoryHistoryByLocation::sPopulateLocationInfo(int pLocationi
 
 void dspDetailedInventoryHistoryByLocation::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("location_id", _location->id());
-  params.append("print");
-
-  _warehouse->appendValue(params);
-
   params.append("transType", _transType->id());
 
-  rptDetailedInventoryHistoryByLocation newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("DetailedInventoryHistoryByLocation", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspDetailedInventoryHistoryByLocation::sViewTransInfo()

@@ -59,7 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include "rptFrozenItemSites.h"
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 
 /*
  *  Constructs a dspFrozenItemSites as a child of 'parent', with the
@@ -69,42 +71,16 @@
 dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspFrozenItemSites::~dspFrozenItemSites()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspFrozenItemSites::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspFrozenItemSites::init()
-{
-  statusBar()->hide();
-  
   _itemsite->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
   _itemsite->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
   _itemsite->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
@@ -113,15 +89,34 @@ void dspFrozenItemSites::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspFrozenItemSites::~dspFrozenItemSites()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspFrozenItemSites::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspFrozenItemSites::sPrint()
 {
   ParameterList params;
-  params.append("print");
 
   _warehouse->appendValue(params);
 
-  rptFrozenItemSites newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("FrozenItemSites", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspFrozenItemSites::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

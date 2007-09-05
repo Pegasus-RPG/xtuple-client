@@ -62,8 +62,8 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include "arOpenItem.h"
-#include "rptAROpenItems.h"
 #include "dspInvoiceInformation.h"
 
 /*
@@ -199,10 +199,12 @@ void dspAROpenItems::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
-  rptAROpenItems newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("AROpenItems", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspAROpenItems::sFillList()

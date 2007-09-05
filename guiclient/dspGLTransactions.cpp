@@ -59,7 +59,8 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include "rptGLTransactions.h"
+#include <QMessageBox>
+#include <openreports.h>
 #include "voucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
@@ -86,8 +87,6 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
   connect(_selectedAccount, SIGNAL(toggled(bool)), _account, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
 
-  statusBar()->hide();
-  
   _gltrans->addColumn(tr("Date"),      _dateColumn,    Qt::AlignCenter );
   _gltrans->addColumn(tr("Source"),    _orderColumn,   Qt::AlignCenter );
   _gltrans->addColumn(tr("Doc. Type"), _docTypeColumn, Qt::AlignCenter );
@@ -106,7 +105,7 @@ dspGLTransactions::dspGLTransactions(QWidget* parent, const char* name, Qt::WFla
  */
 dspGLTransactions::~dspGLTransactions()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -115,7 +114,7 @@ dspGLTransactions::~dspGLTransactions()
  */
 void dspGLTransactions::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspGLTransactions::set(const ParameterList &pParams)
@@ -182,19 +181,22 @@ void dspGLTransactions::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
   if (_selectedAccount->isChecked())
     params.append("accnt_id", _account->id());
 
-  if(_selectedSource->isChecked())
+  if (_selectedSource->isChecked())
     params.append("source", _source->currentText());
 
   if (_showUsername->isChecked())
     params.append("showUsernames");
 
-  rptGLTransactions newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("GLTransactions", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspGLTransactions::sFillList()

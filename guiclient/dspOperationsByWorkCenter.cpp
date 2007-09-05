@@ -61,9 +61,9 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <parameter.h>
+#include <openreports.h>
 #include "boo.h"
 #include "booItem.h"
-#include "rptBOOItemsByWorkCenter.h"
 
 /*
  *  Constructs a dspOperationsByWorkCenter as a child of 'parent', with the
@@ -118,10 +118,12 @@ void dspOperationsByWorkCenter::sPrint()
 {
   ParameterList params;
   params.append("wrkcnt_id", _wrkcnt->id());
-  params.append("print");
 
-  rptBOOItemsByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("OperationsByWorkCenter", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)

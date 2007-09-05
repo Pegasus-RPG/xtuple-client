@@ -99,9 +99,6 @@
 #include "dspShipmentsBySalesOrder.h"
 #include "dspShipmentsByDate.h"
 
-#include "rptBacklogByItem.h"
-#include "rptBacklogByCustomer.h"
-#include "rptBacklogByParameterList.h"
 #include "rptSummarizedBacklogByWarehouse.h"
 #include "rptShipmentsBySalesOrder.h"
 #include "rptShipmentsByDate.h"
@@ -200,10 +197,6 @@ moduleSR::moduleSR(OpenMFGGUIClient *Pparent) :
 
     //  S/R | Reports
     { "menu",	tr("Reports"),	(char*)reportsMenu,	srMenu,	true, NULL, NULL, true},
-    { "sr.rptBacklogByItem", tr("Backlog by Item..."), SLOT(sRptBacklogByItem()), reportsMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
-    { "sr.rptBacklogByCustomer", tr("Backlog by Customer..."), SLOT(sRptBacklogByCustomer()), reportsMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
-    { "sr.rptBacklogByProductCategory", tr("Backlog by Product Category..."), SLOT(sRptBacklogByProductCategory()), reportsMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
-    { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true},
     { "sr.rptSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."), SLOT(sRptSummarizedBacklogByWarehouse()), reportsMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
     { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true},
     { "sr.rptShipmentsBySalesOrder", tr("Shipments by Sales Order..."), SLOT(sRptShipmentsBySalesOrder()), reportsMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
@@ -401,27 +394,6 @@ void moduleSR::sDspShipmentsBySalesOrder()
 void moduleSR::sDspShipmentsByDate()
 {
   omfgThis->handleNewWindow(new dspShipmentsByDate());
-}
-
-
-void moduleSR::sRptBacklogByItem()
-{
-  rptBacklogByItem(parent, "", TRUE).exec();
-}
-
-void moduleSR::sRptBacklogByCustomer()
-{
-  rptBacklogByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSR::sRptBacklogByProductCategory()
-{
-  ParameterList params;
-  params.append("prodcat");
-
-  rptBacklogByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 
 void moduleSR::sRptSummarizedBacklogByWarehouse()

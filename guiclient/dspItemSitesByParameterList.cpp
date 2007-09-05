@@ -60,10 +60,12 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
-#include "rptItemSitesByParameterList.h"
 
 /*
  *  Constructs a dspItemSitesByParameterList as a child of 'parent', with the
@@ -73,41 +75,15 @@
 dspItemSitesByParameterList::dspItemSitesByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemSitesByParameterList::~dspItemSitesByParameterList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemSitesByParameterList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemSitesByParameterList::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _parameter->setType(ClassCode);
 
@@ -123,7 +99,24 @@ void dspItemSitesByParameterList::init()
   _itemsite->addColumn(tr("Last Used"),     _dateColumn,  Qt::AlignCenter );
 }
 
-enum SetResponse dspItemSitesByParameterList::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemSitesByParameterList::~dspItemSitesByParameterList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemSitesByParameterList::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspItemSitesByParameterList::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -240,24 +233,17 @@ enum SetResponse dspItemSitesByParameterList::set(ParameterList &pParams)
 void dspItemSitesByParameterList::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
   _parameter->appendValue(params);
-  params.append("print");
+  _warehouse->appendValue(params);
 
-  if (_parameter->type() == ItemGroup)
-    params.append("itemgrp");
-  else if(_parameter->type() == PlannerCode)
-    params.append("plancode");
-  else if (_parameter->type() == ClassCode)
-    params.append("classcode");
-  else if (_parameter->type() == CostCategory)
-    params.append("costcat");
-
-  if (_showInactive->isChecked())
+  if(_showInactive->isChecked())
     params.append("showInactive");
-  
-  rptItemSitesByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("ItemSitesByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemSitesByParameterList::sView()

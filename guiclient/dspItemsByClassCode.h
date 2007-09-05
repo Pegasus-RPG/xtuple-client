@@ -58,7 +58,7 @@
 #ifndef DSPITEMSBYCLASSCODE_H
 #define DSPITEMSBYCLASSCODE_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspItemsByClassCode.h"
 
@@ -69,8 +69,6 @@ class dspItemsByClassCode : public QMainWindow, public Ui::dspItemsByClassCode
 public:
     dspItemsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemsByClassCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

@@ -59,7 +59,7 @@
 #define DSPINDENTEDWHEREUSED_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspIndentedWhereUsed.h"
@@ -72,10 +72,8 @@ public:
     dspIndentedWhereUsed(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspIndentedWhereUsed();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sViewInventoryHistory();
     virtual void sPopulateMenu( QMenu * menu );

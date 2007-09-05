@@ -59,7 +59,7 @@
 #define DSPITEMCOSTSBYCLASSCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspItemCostsByClassCode.h"
@@ -73,7 +73,7 @@ public:
     ~dspItemCostsByClassCode();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sMaintainItemCosts();
@@ -84,9 +84,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 };
 

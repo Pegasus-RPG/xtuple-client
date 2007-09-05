@@ -89,9 +89,7 @@
 #include "dspGLSeries.h"
 #include "dspTrialBalances.h"
 
-#include "rptGLTransactions.h"
 #include "rptSummarizedGLTransactions.h"
-#include "rptGLSeries.h"
 #include "rptTrialBalances.h"
 
 #include "companies.h"
@@ -113,7 +111,6 @@
 #include "bankAdjustmentEditList.h"
 #include "bankAdjustmentTypes.h"
 #include "dspBankrecHistory.h"
-#include "rptBankrecHistory.h"
 #include "dspSummarizedBankrecHistory.h"
 #include "rptSummarizedBankrecHistory.h"
 
@@ -207,11 +204,8 @@ moduleGL::moduleGL(OpenMFGGUIClient *Pparent) :
 
 
     { "menu",				tr("Reports"),				(char*)reportsMenu,			mainMenu,    true,					NULL, NULL, true},
-    { "gl.rptGLTransactions",		tr("G/L Transactions..."),		SLOT(sRptGLTransactions()),		reportsMenu, _privleges->check("ViewGLTransactions"),	NULL, NULL, true},
     { "gl.rptSummarizedGLTransactions",	tr("Summarized G/L Transactions..."),	SLOT(sRptSummarizedGLTransactions()),	reportsMenu, _privleges->check("ViewGLTransactions"),	NULL, NULL, true},
-    { "gl.rptGLSeries",			tr("G/L Series..."),			SLOT(sRptGLSeries()),			reportsMenu, _privleges->check("ViewGLTransactions"),	NULL, NULL, true},
     { "gl.rptStandardJournalHistory",	tr("Standard Journal History..."),	SLOT(sRptStandardJournalHistory()),	reportsMenu, _privleges->check("ViewGLTransactions"),	NULL, NULL, true},
-    { "gl.rptBankrecHistory",		tr("Bank Rec. History"),		SLOT(sRptBankrecHistory()),		reportsMenu, _privleges->check("ViewBankRec"),		NULL, NULL, true},
     { "gl.rptSummarizedBankrecHistory",	tr("Summarized Bank Rec. History"),	SLOT(sRptSummarizedBankrecHistory()),	reportsMenu, _privleges->check("ViewBankRec"),		NULL, NULL, true},
 
     { "menu",			tr("Master Information"),	(char*)masterInfoMenu,		mainMenu,	true,						NULL, NULL, true},
@@ -401,19 +395,9 @@ void moduleGL::sDspTrialBalances()
 
 
 //  Reports
-void moduleGL::sRptGLTransactions()
-{
-  rptGLTransactions(parent, "", TRUE).exec();
-}
-
 void moduleGL::sRptSummarizedGLTransactions()
 {
   rptSummarizedGLTransactions(parent, "", TRUE).exec();
-}
-
-void moduleGL::sRptGLSeries()
-{
-  rptGLSeries(parent, "", TRUE).exec();
 }
 
 void moduleGL::sRptStandardJournalHistory()
@@ -541,11 +525,6 @@ void moduleGL::sDspSummarizedBankrecHistory()
 void moduleGL::sRptSummarizedBankrecHistory()
 {
   rptSummarizedBankrecHistory(parent, "", TRUE).exec();
-}
-
-void moduleGL::sRptBankrecHistory()
-{
-  rptBankrecHistory(parent, "", TRUE).exec();
 }
 
 void moduleGL::sBudgets()

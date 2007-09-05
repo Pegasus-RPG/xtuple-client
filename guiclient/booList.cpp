@@ -59,12 +59,12 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QMessageBox>
 #include <QWorkspace>
+#include <parameter.h>
+#include <openreports.h>
 #include "boo.h"
 #include "copyBOO.h"
-#include "rptBillOfOperations.h"
 
 /*
  *  Constructs a booList as a child of 'parent', with the
@@ -228,10 +228,12 @@ void booList::sPrint()
 {
   ParameterList params;
   params.append("item_id", _boo->id());
-  params.append("print");
 
-  rptBillOfOperations newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BillOfOperations", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void booList::sSearch( const QString & pTarget )

@@ -117,15 +117,6 @@ class moduleSA : public QObject
     void sRptSalesHistoryByProductCategory();
     void sRptSalesHistoryByCustomerType();
     void sRptSalesHistoryByCustomerGroup();
-    void sRptBriefSalesHistoryByCustomer();
-    void sRptBriefSalesHistoryByCustomerType();
-    void sRptBriefSalesHistoryBySalesRep();
-    void sRptBookingsByCustomer();
-    void sRptBookingsByCustomerGroup();
-    void sRptBookingsByShipTo();
-    void sRptBookingsByItem();
-    void sRptBookingsByProductCategory();
-    void sRptBookingsBySalesRep();
     void sRptSummarizedSalesByCustomer();
     void sRptSummarizedSalesByCustomerType();
     void sRptSummarizedSalesByCustomerByItem();

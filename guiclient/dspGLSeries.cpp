@@ -59,8 +59,10 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptGLSeries.h"
 #include "reverseGLSeries.h"
 
 /*
@@ -71,43 +73,17 @@
 dspGLSeries::dspGLSeries(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspGLSeries::~dspGLSeries()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspGLSeries::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspGLSeries::init()
-{
-  statusBar()->hide();
-  
   _gltrans->setRootIsDecorated(TRUE);
   _gltrans->addColumn(tr("Date"),      _dateColumn,     Qt::AlignCenter );
   _gltrans->addColumn(tr("Journal #"), _orderColumn,    Qt::AlignRight  );
@@ -118,6 +94,23 @@ void dspGLSeries::init()
   _gltrans->addColumn(tr("Debit"),     _bigMoneyColumn, Qt::AlignRight  );
   _gltrans->addColumn(tr("Credit"),    _bigMoneyColumn, Qt::AlignRight  );
   _gltrans->addColumn(tr("Posted"),    _ynColumn,       Qt::AlignCenter );
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspGLSeries::~dspGLSeries()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspGLSeries::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspGLSeries::sPopulateMenu(QMenu * pMenu)
@@ -145,20 +138,24 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 void dspGLSeries::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
-  params.append("print");
+  params.append("startDate", _dates->startDate());
+  params.append("endDate", _dates->endDate());
 
   if(_selectedSource->isChecked())
     params.append("source", _source->currentText());
 
   if(_jrnlGroup->isChecked())
   {
-    params.append("startJrnlnum", _startJrnlnum->text());
-    params.append("endJrnlnum", _endJrnlnum->text());
+    params.append("startJrnlnum", _startJrnlnum->text().toInt());
+    params.append("endJrnlnum", _endJrnlnum->text().toInt());
   }
 
-  rptGLSeries newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("GLSeries", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspGLSeries::sFillList()

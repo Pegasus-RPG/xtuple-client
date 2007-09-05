@@ -62,8 +62,8 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
-#include "rptCustomersByCharacteristic.h"
 #include "customer.h"
 #include "OpenMFGGUIClient.h"
 
@@ -115,11 +115,24 @@ void dspCustomersByCharacteristic::setParams(ParameterList &params)
 void dspCustomersByCharacteristic::sPrint()
 {
   ParameterList params;
-  setParams(params);
-  params.append("print");
 
-  rptCustomersByCharacteristic newdlg(this, "", TRUE);
-  newdlg.set(params);
+  params.append("char_id", _char->id());
+  params.append("value", _value->text());
+
+  if(_showInactive->isChecked())
+    params.append("showInactive");
+
+  if(_emptyValue->isChecked())
+    params.append("emptyValue");
+
+  if(_charIsSet->isChecked())
+    params.append("hasCharacteristic");
+
+  orReport report("CustomersByCharacteristic", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCustomersByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

@@ -61,9 +61,9 @@
 #include <QMessageBox>
 #include <QVariant>
 #include <QWorkspace>
+#include <openreports.h>
 
 #include "salesHistoryInformation.h"
-#include "rptBookingsByCustomerGroup.h"
 
 dspBookingsByCustomerGroup::dspBookingsByCustomerGroup(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -186,11 +186,26 @@ void dspBookingsByCustomerGroup::sView()
 
 void dspBookingsByCustomerGroup::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _customerGroup->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
   if (_showCosts->isChecked())
     params.append("showCosts");
@@ -198,8 +213,11 @@ void dspBookingsByCustomerGroup::sPrint()
   if (_showPrices->isChecked())
     params.append("showPrices");
 
-  rptBookingsByCustomerGroup newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BookingsByCustomerGroup", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBookingsByCustomerGroup::sHandlePrice(bool pShowPrice)

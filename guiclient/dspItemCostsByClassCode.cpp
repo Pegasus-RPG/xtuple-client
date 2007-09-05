@@ -60,11 +60,13 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 #include "updateActualCostsByItem.h"
 #include "postCostsByItem.h"
-#include "rptItemCostsByClassCode.h"
 
 /*
  *  Constructs a dspItemCostsByClassCode as a child of 'parent', with the
@@ -74,41 +76,15 @@
 dspItemCostsByClassCode::dspItemCostsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemCostsByClassCode::~dspItemCostsByClassCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemCostsByClassCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemCostsByClassCode::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_itemcost, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ClassCode);
 
@@ -119,7 +95,24 @@ void dspItemCostsByClassCode::init()
   _itemcost->addColumn(tr("Act. Cost"),   _costColumn,  Qt::AlignRight  );
 }
 
-enum SetResponse dspItemCostsByClassCode::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemCostsByClassCode::~dspItemCostsByClassCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemCostsByClassCode::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspItemCostsByClassCode::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -141,15 +134,18 @@ enum SetResponse dspItemCostsByClassCode::set(ParameterList &pParams)
 void dspItemCostsByClassCode::sPrint()
 {
   ParameterList params;
-  params.append("print");
 
   _classCode->appendValue(params);
 
-  if (_onlyShowZero->isChecked())
+  if(_onlyShowZero->isChecked())
     params.append("onlyShowZeroCosts");
 
-  rptItemCostsByClassCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ItemCostsByClassCode", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu)

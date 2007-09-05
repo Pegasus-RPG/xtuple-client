@@ -84,7 +84,6 @@
 #include "rptTimePhasedCapacityByWorkCenter.h"
 #include "rptTimePhasedLoadByWorkCenter.h"
 #include "rptTimePhasedAvailableCapacityByWorkCenter.h"
-#include "rptCapacityBufferStatusByWorkCenter.h"
 
 #include "workCenters.h"
 
@@ -201,12 +200,6 @@ moduleCP::moduleCP(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "cp.rptTimePhasedLoadByWorkCenter", tr("Time-Phased Load by Work Center..."),
                                       this, SLOT(sRptTimePhasedLoadByWorkCenter()),
                                       reportsMenu, _privleges->check("ViewWorkCenterLoad") && _metrics->boolean("Routings") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "cp.rptCapacityBufferStatusByWorkCenter", tr("Capacity Buffer Status by Work Center..."),
-                                      this, SLOT(sRptCapacityBufferStatusByWorkCenter()),
-                                      reportsMenu, _privleges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
 
 //  Master Information
   masterInfoMenu = new QMenu();
@@ -354,11 +347,6 @@ void moduleCP::sRptTimePhasedAvailableCapacityByWorkCenter()
 void moduleCP::sRptTimePhasedLoadByWorkCenter()
 {
   rptTimePhasedLoadByWorkCenter(parent, "", TRUE).exec();
-}
-
-void moduleCP::sRptCapacityBufferStatusByWorkCenter()
-{
-  rptCapacityBufferStatusByWorkCenter(parent, "", TRUE).exec();
 }
 
 void moduleCP::sWorkCenters()

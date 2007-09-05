@@ -57,10 +57,11 @@
 
 #include "dspItemCostHistory.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptItemCostHistory.h"
 
 /*
  *  Constructs a dspItemCostHistory as a child of 'parent', with the
@@ -70,40 +71,16 @@
 dspItemCostHistory::dspItemCostHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemCostHistory::~dspItemCostHistory()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemCostHistory::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspItemCostHistory::init()
-{
-  statusBar()->hide();
-  
   _itemcost->addColumn(tr("Element"), -1,                 Qt::AlignLeft   );
   _itemcost->addColumn(tr("Lower"),   _costColumn,        Qt::AlignCenter );
   _itemcost->addColumn(tr("Type"),    _costColumn,        Qt::AlignCenter );
@@ -121,14 +98,33 @@ void dspItemCostHistory::init()
   }
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemCostHistory::~dspItemCostHistory()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemCostHistory::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspItemCostHistory::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
-  rptItemCostHistory newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ItemCostHistory", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemCostHistory::sFillList()

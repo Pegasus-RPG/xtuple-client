@@ -59,7 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include "rptBreederDistributionVarianceByItem.h"
+#include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
 
 /*
  *  Constructs a dspBreederDistributionVarianceByItem as a child of 'parent', with the
@@ -69,43 +71,17 @@
 dspBreederDistributionVarianceByItem::dspBreederDistributionVarianceByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_brdvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBreederDistributionVarianceByItem::~dspBreederDistributionVarianceByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBreederDistributionVarianceByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspBreederDistributionVarianceByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_brdvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
 
   _item->setType(ItemLineEdit::cBreeder);
   _dates->setStartNull(tr("Earliest"),omfgThis->startOfTime(), TRUE);
@@ -121,16 +97,35 @@ void dspBreederDistributionVarianceByItem::init()
   _brdvar->addColumn(tr("% Var."),         _prcntColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBreederDistributionVarianceByItem::~dspBreederDistributionVarianceByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBreederDistributionVarianceByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBreederDistributionVarianceByItem::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
-  params.append("print");
 
-  rptBreederDistributionVarianceByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BreederDistributionVarianceByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBreederDistributionVarianceByItem::sPopulateMenu(QMenu *)

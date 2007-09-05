@@ -61,7 +61,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <parameter.h>
-#include "rptBriefSalesHistoryByCustomer.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspBriefSalesHistoryByCustomer as a child of 'parent', with the
@@ -71,38 +71,14 @@
 dspBriefSalesHistoryByCustomer::dspBriefSalesHistoryByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBriefSalesHistoryByCustomer::~dspBriefSalesHistoryByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBriefSalesHistoryByCustomer::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspBriefSalesHistoryByCustomer::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _productCategory->setType(ProductCategory);
 
@@ -114,17 +90,52 @@ void dspBriefSalesHistoryByCustomer::init()
   _sohist->addColumn(tr("Total"),      _moneyColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBriefSalesHistoryByCustomer::~dspBriefSalesHistoryByCustomer()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBriefSalesHistoryByCustomer::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBriefSalesHistoryByCustomer::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
+  _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
 
-  rptBriefSalesHistoryByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BriefSalesHistoryByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBriefSalesHistoryByCustomer::sFillList()

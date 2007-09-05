@@ -60,9 +60,10 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "countTag.h"
-#include "rptCountTagsByClassCode.h"
 
 /*
  *  Constructs a dspCountTagsByClassCode as a child of 'parent', with the
@@ -72,41 +73,15 @@
 dspCountTagsByClassCode::dspCountTagsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCountTagsByClassCode::~dspCountTagsByClassCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCountTagsByClassCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCountTagsByClassCode::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ClassCode);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -126,19 +101,38 @@ void dspCountTagsByClassCode::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCountTagsByClassCode::~dspCountTagsByClassCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCountTagsByClassCode::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspCountTagsByClassCode::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
   _classCode->appendValue(params);
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
   if (_showUnposted->isChecked())
     params.append("showUnposted");
 
-  rptCountTagsByClassCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CountTagsByClassCode", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCountTagsByClassCode::sPopulateMenu(QMenu *pMenu)

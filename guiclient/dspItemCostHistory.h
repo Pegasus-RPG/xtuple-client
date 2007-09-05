@@ -59,7 +59,7 @@
 #define DSPITEMCOSTHISTORY_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspItemCostHistory.h"
 
@@ -70,8 +70,6 @@ class dspItemCostHistory : public QMainWindow, public Ui::dspItemCostHistory
 public:
     dspItemCostHistory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemCostHistory();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

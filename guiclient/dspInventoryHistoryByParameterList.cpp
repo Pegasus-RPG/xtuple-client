@@ -63,13 +63,13 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "adjustmentTrans.h"
 #include "countTag.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "mqlutil.h"
-#include "rptInventoryHistoryByParameterList.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
@@ -251,12 +251,43 @@ void dspInventoryHistoryByParameterList::setParams(ParameterList & params)
 
 void dspInventoryHistoryByParameterList::sPrint()
 {
-  ParameterList params;
-  setParams(params);
-  params.append("print");
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
 
-  rptInventoryHistoryByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  ParameterList params;
+  _warehouse->appendValue(params);
+  _parameter->appendValue(params);
+  _dates->appendValue(params);
+  params.append("transType", _transType->id());
+
+  if (_parameter->isAll())
+  {
+    switch(_parameter->type())
+    {
+    case ItemGroup:
+      params.append("itemgrp");
+      break;
+    case ClassCode:
+      params.append("classcode");
+      break;
+    case PlannerCode:
+      params.append("plancode");
+      break;
+    default:
+      break;
+    }
+  }
+
+  orReport report("InventoryHistoryByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryHistoryByParameterList::sViewTransInfo()

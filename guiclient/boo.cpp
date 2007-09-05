@@ -62,8 +62,8 @@
 #include <QWorkspace>
 #include <QStatusBar>
 #include <QMenu>
+#include <openreports.h>
 #include "booItem.h"
-#include "rptBillOfOperations.h"
 
 /*
  *  Constructs a boo as a child of 'parent', with the
@@ -230,10 +230,12 @@ void boo::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
-  rptBillOfOperations newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BillOfOperations", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void boo::sPopulateMenu(QMenu *pMenu)

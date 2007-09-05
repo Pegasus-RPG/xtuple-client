@@ -59,7 +59,7 @@
 #define DSPBACKLOGBYITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspBacklogByItem.h"
 
@@ -70,8 +70,6 @@ class dspBacklogByItem : public QMainWindow, public Ui::dspBacklogByItem
 public:
     dspBacklogByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBacklogByItem();
-
-    virtual void init();
 
 public slots:
     virtual void sHandlePrices( bool pShowPrices );

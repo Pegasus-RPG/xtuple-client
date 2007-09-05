@@ -62,12 +62,13 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <openreports.h>
+
 #include "adjustmentTrans.h"
 #include "countTag.h"
 #include "expenseTrans.h"
 #include "materialReceiptTrans.h"
 #include "mqlutil.h"
-#include "rptInventoryHistoryByOrderNumber.h"
 #include "scrapTrans.h"
 #include "transactionInformation.h"
 #include "transferTrans.h"
@@ -124,12 +125,25 @@ void dspInventoryHistoryByOrderNumber::setParams(ParameterList & params)
 
 void dspInventoryHistoryByOrderNumber::sPrint()
 {
-  ParameterList params;
-  setParams(params);
-  params.append("print");
+  if ( (!_dates->allValid()) || (_orderNumber->text().stripWhiteSpace().length() == 0) )
+  {
+    QMessageBox::warning( this, tr("Invalid Data"),
+                          tr("You must enter an Order Number along with a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
 
-  rptInventoryHistoryByOrderNumber newdlg(this, "", TRUE);
-  newdlg.set(params);
+  ParameterList params;
+  params.append("orderNumber", _orderNumber->text().stripWhiteSpace());
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+  params.append("transType", _transType->id());
+
+  orReport report("InventoryHistoryByOrderNumber", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryHistoryByOrderNumber::sViewTransInfo()

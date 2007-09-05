@@ -59,7 +59,7 @@
 #define DSPDETAILEDINVENTORYHISTORYBYLOTSERIAL_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspDetailedInventoryHistoryByLotSerial.h"
@@ -71,8 +71,6 @@ class dspDetailedInventoryHistoryByLotSerial : public QMainWindow, public Ui::ds
 public:
     dspDetailedInventoryHistoryByLotSerial(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspDetailedInventoryHistoryByLotSerial();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

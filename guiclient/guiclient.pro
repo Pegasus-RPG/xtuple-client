@@ -267,43 +267,6 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                resetQOHBalances.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui                   \
                reverseGLSeries.ui                                                                     \
-               rptAPOpenItemsByVendor.ui rptAROpenItemsByCustomer.ui rptARApplications.ui             \
-               rptAROpenItems.ui                                                                      \
-               rptBacklogByCustomer.ui rptBacklogByParameterList.ui rptBacklogByItem.ui               \
-               rptBacklogBySalesOrder.ui rptBankrecHistory.ui                  \
-               rptBillOfOperations.ui                                                                 \
-               rptBookingsByCustomer.ui rptBookingsByCustomerGroup.ui rptBookingsByItem.ui            \
-               rptBookingsByProductCategory.ui rptBookingsBySalesRep.ui rptBookingsByShipTo.ui        \
-               rptBOOItemsByWorkCenter.ui                                                             \
-               rptBreederDistributionVarianceByItem.ui rptBreederDistributionVarianceByWarehouse.ui   \
-               rptBriefEarnedCommissions.ui                                                           \
-               rptBriefSalesHistoryByCustomer.ui rptBriefSalesHistoryByCustomerType.ui                \
-               rptBriefSalesHistoryBySalesRep.ui                                                      \
-               rptBuyCard.ui rptCapacityUOMsByClassCode.ui rptCapacityUOMsByProductCategory.ui        \
-               rptCapacityBufferStatusByWorkCenter.ui                                                 \
-               rptCheckRegister.ui rptCashReceipts.ui                                                 \
-               rptCostedIndentedBOM.ui rptCostedSingleLevelBOM.ui rptCostedSummarizedBOM.ui           \
-               rptCountSlipEditList.ui rptCountSlipsByWarehouse.ui rptCountTagEditList.ui             \
-               rptCountTagsByClassCode.ui rptCountTagsByItem.ui rptCountTagsByWarehouse.ui            \
-               rptCustomersByCharacteristic.ui rptCustomersByCustomerType.ui rptCustomerARHistory.ui  \
-               rptCustomerInformation.ui rptInvoiceRegister.ui                                        \
-               rptDetailedInventoryHistoryByLocation.ui rptDetailedInventoryHistoryByLotSerial.ui     \
-               rptDepositsRegister.ui                                                                 \
-               rptEarnedCommissions.ui rptExpediteExceptionsByPlannerCode.ui rptFrozenItemSites.ui    \
-               rptExpiredInventoryByClassCode.ui                                                      \
-               rptGLSeries.ui rptGLTransactions.ui                                                    \
-               rptIndentedBOM.ui rptIndentedWhereUsed.ui                                              \
-               rptInventoryAvailabilityByItem.ui rptInventoryAvailabilityByParameterList.ui           \
-               rptInventoryAvailabilityBySalesOrder.ui rptInventoryAvailabilityBySourceVendor.ui      \
-               rptInventoryAvailabilityByWorkOrder.ui                                                 \
-               rptInventoryBufferStatusByParameterList.ui                                             \
-               rptInventoryHistoryByItem.ui rptInventoryHistoryByOrderNumber.ui                       \
-               rptInventoryHistoryByParameterList.ui                                                  \
-               rptInventoryLocator.ui                                                                 \
-               rptItemCostsByClassCode.ui rptItemCostHistory.ui rptItemCostSummary.ui                 \
-               rptItemsByCharacteristic.ui rptItemsByClassCode.ui rptItemsByProductCategory.ui        \
-               rptItemSitesByItem.ui rptItemSitesByParameterList.ui                                   \
-               rptItemSourcesByItem.ui rptItemSourcesByVendor.ui                                      \
                rptLaborVarianceByBOOItem.ui rptLaborVarianceByItem.ui                                 \
                rptLaborVarianceByWorkCenter.ui rptLaborVarianceByWorkOrder.ui                         \
                rptMaterialUsageVarianceByBOMItem.ui rptMaterialUsageVarianceByComponentItem.ui        \
@@ -656,42 +619,6 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                resetQOHBalances.h returnWoMaterialBatch.h returnWoMaterialItem.h                      \
                reverseGLSeries.h                                                                      \
-               rptAPOpenItemsByVendor.h rptAROpenItemsByCustomer.h rptARApplications.h                \
-               rptAROpenItems.h                                                                       \
-               rptBacklogByCustomer.h rptBacklogByParameterList.h rptBacklogByItem.h                  \
-               rptBacklogBySalesOrder.h rptBankrecHistory.h                    \
-               rptBillOfOperations.h                                                                  \
-               rptBookingsByCustomer.h rptBookingsByCustomerGroup.h rptBookingsByItem.h               \
-               rptBookingsByProductCategory.h rptBookingsBySalesRep.h rptBookingsByShipTo.h           \
-               rptBOOItemsByWorkCenter.h                                                              \
-               rptBreederDistributionVarianceByItem.h rptBreederDistributionVarianceByWarehouse.h     \
-               rptBriefEarnedCommissions.h                                                            \
-               rptBriefSalesHistoryByCustomer.h rptBriefSalesHistoryByCustomerType.h                  \
-               rptBriefSalesHistoryBySalesRep.h                                                       \
-               rptBuyCard.h rptCapacityBufferStatusByWorkCenter.h                                     \
-               rptCapacityUOMsByClassCode.h rptCapacityUOMsByProductCategory.h                        \
-               rptCheckRegister.h rptCashReceipts.h                                                   \
-               rptCostedIndentedBOM.h rptCostedSingleLevelBOM.h rptCostedSummarizedBOM.h              \
-               rptCountSlipEditList.h rptCountSlipsByWarehouse.h rptCountTagEditList.h                \
-               rptCountTagsByClassCode.h rptCountTagsByItem.h rptCountTagsByWarehouse.h               \
-               rptCustomersByCharacteristic.h rptCustomersByCustomerType.h rptCustomerARHistory.h     \
-               rptCustomerInformation.h rptInvoiceRegister.h                                          \
-               rptDetailedInventoryHistoryByLocation.h rptDetailedInventoryHistoryByLotSerial.h       \
-               rptDepositsRegister.h                                                                  \
-               rptEarnedCommissions.h rptExpediteExceptionsByPlannerCode.h rptFrozenItemSites.h       \
-               rptExpiredInventoryByClassCode.h                                                       \
-               rptGLSeries.h rptGLTransactions.h                                                      \
-               rptIndentedBOM.h rptIndentedWhereUsed.h                                                \
-               rptInventoryAvailabilityByItem.h rptInventoryAvailabilityByParameterList.h             \
-               rptInventoryAvailabilityBySalesOrder.h rptInventoryAvailabilityBySourceVendor.h        \
-               rptInventoryAvailabilityByWorkOrder.h rptInventoryBufferStatusByParameterList.h        \
-               rptInventoryHistoryByItem.h rptInventoryHistoryByOrderNumber.h                         \
-               rptInventoryHistoryByParameterList.h                                                   \
-               rptInventoryLocator.h                                                                  \
-               rptItemCostsByClassCode.h rptItemCostHistory.h rptItemCostSummary.h                    \
-               rptItemsByCharacteristic.h rptItemsByClassCode.h rptItemsByProductCategory.h           \
-               rptItemSitesByItem.h rptItemSitesByParameterList.h                                     \
-               rptItemSourcesByItem.h rptItemSourcesByVendor.h                                        \
                rptLaborVarianceByBOOItem.h rptLaborVarianceByItem.h                                   \
                rptLaborVarianceByWorkCenter.h rptLaborVarianceByWorkOrder.h                           \
                rptMaterialUsageVarianceByBOMItem.h rptMaterialUsageVarianceByComponentItem.h          \
@@ -1046,41 +973,6 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                resetQOHBalances.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp                \
                reverseGLSeries.cpp                                                                    \
-               rptAPOpenItemsByVendor.cpp rptAROpenItemsByCustomer.cpp rptARApplications.cpp          \
-               rptAROpenItems.cpp                                                                     \
-               rptBacklogByCustomer.cpp rptBacklogByParameterList.cpp rptBacklogByItem.cpp            \
-               rptBacklogBySalesOrder.cpp rptBankrecHistory.cpp                \
-               rptBillOfOperations.cpp                                                                \
-               rptBookingsByCustomer.cpp rptBookingsByCustomerGroup.cpp rptBookingsByItem.cpp         \
-               rptBookingsByProductCategory.cpp rptBookingsBySalesRep.cpp rptBookingsByShipTo.cpp     \
-               rptBOOItemsByWorkCenter.cpp                                                            \
-               rptBreederDistributionVarianceByItem.cpp rptBreederDistributionVarianceByWarehouse.cpp \
-               rptBriefEarnedCommissions.cpp                                                          \
-               rptBriefSalesHistoryByCustomer.cpp rptBriefSalesHistoryByCustomerType.cpp              \
-               rptBriefSalesHistoryBySalesRep.cpp                                                     \
-               rptBuyCard.cpp rptCapacityUOMsByClassCode.cpp rptCapacityUOMsByProductCategory.cpp     \
-               rptCheckRegister.cpp rptCashReceipts.cpp                                               \
-               rptCostedIndentedBOM.cpp rptCostedSingleLevelBOM.cpp rptCostedSummarizedBOM.cpp        \
-               rptCountSlipEditList.cpp rptCountSlipsByWarehouse.cpp rptCountTagEditList.cpp          \
-               rptCountTagsByClassCode.cpp rptCountTagsByItem.cpp rptCountTagsByWarehouse.cpp         \
-               rptCustomersByCharacteristic.cpp rptCustomersByCustomerType.cpp rptCustomerARHistory.cpp \
-               rptCustomerInformation.cpp rptInvoiceRegister.cpp                                      \
-               rptDetailedInventoryHistoryByLocation.cpp rptDetailedInventoryHistoryByLotSerial.cpp   \
-               rptDepositsRegister.cpp                                                                \
-               rptEarnedCommissions.cpp rptExpediteExceptionsByPlannerCode.cpp rptFrozenItemSites.cpp \
-               rptExpiredInventoryByClassCode.cpp                                                     \
-               rptGLSeries.cpp rptGLTransactions.cpp                                                  \
-               rptIndentedBOM.cpp rptIndentedWhereUsed.cpp                                            \
-               rptInventoryAvailabilityByItem.cpp rptInventoryAvailabilityByParameterList.cpp         \
-               rptInventoryAvailabilityBySalesOrder.cpp rptInventoryAvailabilityBySourceVendor.cpp    \
-               rptInventoryAvailabilityByWorkOrder.cpp                                                \
-               rptInventoryHistoryByItem.cpp rptInventoryHistoryByOrderNumber.cpp                     \
-               rptInventoryHistoryByParameterList.cpp                                                 \
-               rptInventoryLocator.cpp                                                                \
-               rptItemCostsByClassCode.cpp rptItemCostHistory.cpp rptItemCostSummary.cpp              \
-               rptItemsByCharacteristic.cpp rptItemsByClassCode.cpp rptItemsByProductCategory.cpp     \
-               rptItemSitesByItem.cpp rptItemSitesByParameterList.cpp                                 \
-               rptItemSourcesByItem.cpp rptItemSourcesByVendor.cpp                                    \
                rptLaborVarianceByBOOItem.cpp rptLaborVarianceByItem.cpp                               \
                rptLaborVarianceByWorkCenter.cpp rptLaborVarianceByWorkOrder.cpp                       \
                rptMaterialUsageVarianceByBOMItem.cpp rptMaterialUsageVarianceByComponentItem.cpp      \
@@ -1130,7 +1022,6 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptWoOperationsByWorkCenter.cpp rptWoOperationsByWorkOrder.cpp                         \
                rptWoScheduleByItem.cpp rptWoScheduleByParameterList.cpp                               \
                rptWoSoStatusMismatch.cpp rptWoSoStatus.cpp                                            \
-               rptCapacityBufferStatusByWorkCenter.cpp rptInventoryBufferStatusByParameterList.cpp    \
                rptPoItemsByBufferStatus.cpp rptWoOperationBufrStsByWorkCenter.cpp                     \
                runMPSByPlannerCode.cpp                                                                \
                sales.cpp sale.cpp salesAccount.cpp salesAccounts.cpp salesCategories.cpp salesCategory.cpp \

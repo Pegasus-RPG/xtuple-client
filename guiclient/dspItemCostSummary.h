@@ -59,7 +59,7 @@
 #define DSPITEMCOSTSUMMARY_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspItemCostSummary.h"
@@ -72,10 +72,8 @@ public:
     dspItemCostSummary(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemCostSummary();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sViewDetail();

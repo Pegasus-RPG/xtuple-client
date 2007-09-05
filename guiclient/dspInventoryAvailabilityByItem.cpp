@@ -60,6 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include "inputManager.h"
 #include "dspInventoryHistoryByItem.h"
 #include "dspAllocations.h"
@@ -71,7 +72,6 @@
 #include "dspSubstituteAvailabilityByItem.h"
 #include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
-#include "rptInventoryAvailabilityByItem.h"
 
 /*
  *  Constructs a dspInventoryAvailabilityByItem as a child of 'parent', with the
@@ -192,24 +192,22 @@ enum SetResponse dspInventoryAvailabilityByItem::set(const ParameterList &pParam
 
 void dspInventoryAvailabilityByItem::sPrint()
 {
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Invalid Data"),
+                      tr("You must enter a valid Item Number for this report.") );
+    _item->setFocus();
+    return;
+  }
+
   ParameterList params;
-  _warehouse->appendValue(params);
   params.append("item_id", _item->id());
-  params.append("print");
-
-  if (_showReorder->isChecked())
-    params.append("showReorder");
-
-  if (_ignoreReorderAtZero->isChecked())
-    params.append("ignoreReorderAtZero");
-
-  if (_showShortages->isChecked())
-    params.append("showShortages");
+  _warehouse->appendValue(params);
 
   if (_leadTime->isChecked())
     params.append("byLeadTime");
   else if (_byDays->isChecked())
-    params.append("byDays", _days->value());
+    params.append("byDays", _days->text().toInt());
   else if (_byDate->isChecked())
     params.append("byDate", _date->date());
   else if (_byDates->isChecked())
@@ -219,8 +217,21 @@ void dspInventoryAvailabilityByItem::sPrint()
     params.append("endDate", _endDate->date());
   }
 
-  rptInventoryAvailabilityByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  if(_showReorder->isChecked())
+    params.append("showReorder");
+
+  if(_ignoreReorderAtZero->isChecked())
+    params.append("ignoreReorderAtZero");
+
+  if(_showShortages->isChecked())
+    params.append("showShortages");
+
+  orReport report("InventoryAvailabilityByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)

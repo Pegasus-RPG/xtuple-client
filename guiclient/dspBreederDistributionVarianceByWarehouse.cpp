@@ -59,7 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include "rptBreederDistributionVarianceByWarehouse.h"
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 
 /*
  *  Constructs a dspBreederDistributionVarianceByWarehouse as a child of 'parent', with the
@@ -69,41 +71,15 @@
 dspBreederDistributionVarianceByWarehouse::dspBreederDistributionVarianceByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_brdvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBreederDistributionVarianceByWarehouse::~dspBreederDistributionVarianceByWarehouse()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBreederDistributionVarianceByWarehouse::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspBreederDistributionVarianceByWarehouse::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_brdvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -119,15 +95,34 @@ void dspBreederDistributionVarianceByWarehouse::init()
   _brdvar->addColumn(tr("% Var."),         _prcntColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBreederDistributionVarianceByWarehouse::~dspBreederDistributionVarianceByWarehouse()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBreederDistributionVarianceByWarehouse::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBreederDistributionVarianceByWarehouse::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
-  rptBreederDistributionVarianceByWarehouse newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BreederDistributionVarianceByWarehouse", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBreederDistributionVarianceByWarehouse::sPopulateMenu(QMenu *)

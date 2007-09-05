@@ -58,7 +58,7 @@
 #ifndef DSPCAPACITYUOMSBYPRODUCTCATEGORY_H
 #define DSPCAPACITYUOMSBYPRODUCTCATEGORY_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspCapacityUOMsByProductCategory.h"
 
@@ -69,8 +69,6 @@ class dspCapacityUOMsByProductCategory : public QMainWindow, public Ui::dspCapac
 public:
     dspCapacityUOMsByProductCategory(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCapacityUOMsByProductCategory();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

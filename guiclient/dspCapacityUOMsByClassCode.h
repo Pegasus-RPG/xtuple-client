@@ -58,7 +58,7 @@
 #ifndef DSPCAPACITYUOMSBYCLASSCODE_H
 #define DSPCAPACITYUOMSBYCLASSCODE_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspCapacityUOMsByClassCode.h"
 
@@ -69,8 +69,6 @@ class dspCapacityUOMsByClassCode : public QMainWindow, public Ui::dspCapacityUOM
 public:
     dspCapacityUOMsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspCapacityUOMsByClassCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

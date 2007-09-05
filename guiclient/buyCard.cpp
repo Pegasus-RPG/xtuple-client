@@ -59,7 +59,8 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include "rptBuyCard.h"
+#include <QMessageBox>
+#include <openreports.h>
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -139,11 +140,14 @@ enum SetResponse buyCard::set(const ParameterList &pParams)
 void buyCard::sPrint()
 {
   ParameterList params;
+  params.append("vend_id", _vendor->id());
   params.append("itemsrc_id", _itemSource->id());
-  params.append("print");
 
-  rptBuyCard newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BuyCard", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void buyCard::sHandleVendor(int pVendorid)

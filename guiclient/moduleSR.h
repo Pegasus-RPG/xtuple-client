@@ -108,9 +108,6 @@ class moduleSR : public QObject
     void sDspShipmentsBySalesOrder();
     void sDspShipmentsByDate();
 
-    void sRptBacklogByItem();
-    void sRptBacklogByCustomer();
-    void sRptBacklogByProductCategory();
     void sRptSummarizedBacklogByWarehouse();
     void sRptShipmentsBySalesOrder();
     void sRptShipmentsByDate();

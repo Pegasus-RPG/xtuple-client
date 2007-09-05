@@ -60,9 +60,10 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "countTag.h"
-#include "rptCountTagsByItem.h"
 
 /*
  *  Constructs a dspCountTagsByItem as a child of 'parent', with the
@@ -72,43 +73,17 @@
 dspCountTagsByItem::dspCountTagsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCountTagsByItem::~dspCountTagsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCountTagsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCountTagsByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -126,19 +101,39 @@ void dspCountTagsByItem::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCountTagsByItem::~dspCountTagsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCountTagsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspCountTagsByItem::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
-  params.append("print");
+
+  _warehouse->appendValue(params);
 
   if (_showUnposted->isChecked())
     params.append("showUnposted");
 
-  rptCountTagsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CountTagsByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCountTagsByItem::sPopulateMenu(QMenu *pMenu)

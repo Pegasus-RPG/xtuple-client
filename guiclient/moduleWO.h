@@ -158,7 +158,6 @@ class moduleWO : public QObject
     void sRptWoHistoryByClassCode();
     void sRptWoMaterialsByComponentItem();
     void sRptWoMaterialsByWo();
-    void sRptInventoryAvailabilityByWorkOrder();
     void sRptPendingAvailability();
     void sRptWoOperationsByWorkCenter();
     void sRptWoOperationsByWo();
@@ -174,8 +173,6 @@ class moduleWO : public QObject
     void sRptLaborVarianceByItem();
     void sRptLaborVarianceByWorkCenter();
     void sRptLaborVarianceByWorkOrder();
-    void sRptBreederDistributionVarianceByItem();
-    void sRptBreederDistributionVarianceByWarehouse();
     void sRptWoSoStatus();
     void sRptWoSoStatusMismatch();
 

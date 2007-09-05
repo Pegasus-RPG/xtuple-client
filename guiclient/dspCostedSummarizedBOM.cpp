@@ -59,8 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptCostedSummarizedBOM.h"
 
 /*
  *  Constructs a dspCostedSummarizedBOM as a child of 'parent', with the
@@ -87,8 +88,6 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  statusBar()->hide();
-
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
   _bomitem->setRootIsDecorated(TRUE);
@@ -108,7 +107,7 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
  */
 dspCostedSummarizedBOM::~dspCostedSummarizedBOM()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -117,7 +116,7 @@ dspCostedSummarizedBOM::~dspCostedSummarizedBOM()
  */
 void dspCostedSummarizedBOM::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
@@ -140,24 +139,43 @@ enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
 
 void dspCostedSummarizedBOM::sPrint()
 {
-  ParameterList params;
-  params.append( "item_id", _item->id() );
-  params.append( "print",   TRUE        );
+  q.prepare("SELECT summarizedBOM(:item_id) AS workset_id;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    int worksetid = q.value("workset_id").toInt();
 
-  if (_showExpired->isChecked())
-    params.append("expiredDays", _expiredDays->value());
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("bomworkset_id", worksetid);
 
-  if (_showFuture->isChecked())
-    params.append("futureDays", _effectiveDays->value());
+    if(_showExpired->isChecked())
+      params.append("expiredDays", _expiredDays->value());
 
-  if (_useStandardCosts->isChecked())
-    params.append("useStandardCosts");
+    if(_showFuture->isChecked())
+      params.append("futureDays", _effectiveDays->value());
 
-  if (_useActualCosts->isChecked())
-    params.append("useActualCosts");
+    if (_useStandardCosts->isChecked())
+      params.append("useStandardCosts");
 
-  rptCostedSummarizedBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+    if (_useActualCosts->isChecked())
+      params.append("useActualCosts");
+
+    orReport report("CostedSummarizedBOM", params);
+
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+
+    q.prepare("SELECT deleteBOMWorkset(:workset_id) AS result;");
+    q.bindValue(":workset_id", worksetid);
+    q.exec();
+  }
+  else
+    QMessageBox::critical( this, tr("Error Executing Report"),
+                           tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void dspCostedSummarizedBOM::sFillList()

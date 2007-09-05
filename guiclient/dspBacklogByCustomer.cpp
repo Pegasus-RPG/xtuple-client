@@ -61,53 +61,55 @@
 #include <QSqlError>
 #include <QStatusBar>
 #include <QVariant>
+#include <QMessageBox>
+
+#include <openreports.h>
 
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
-#include "rptBacklogByCustomer.h"
 
 dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
 
-    statusBar()->hide();
-    _cust->setFocus();
+  statusBar()->hide();
+  _cust->setFocus();
 
-    _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-    _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    _soitem->setRootIsDecorated(TRUE);
-    _soitem->addColumn(tr("S/O #/Line #"),              _itemColumn, Qt::AlignRight  );
-    _soitem->addColumn(tr("Cust. P/O #/Item Number"),   -1,  Qt::AlignLeft   );
-    _soitem->addColumn(tr("Order"),                     _dateColumn,  Qt::AlignCenter );
-    _soitem->addColumn(tr("Ship/Sched."),               _dateColumn,  Qt::AlignCenter );
-    _soitem->addColumn(tr("Ordered"),                   _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Shipped"),                   _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Balance"),                   _qtyColumn,   Qt::AlignRight  );
+  _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  _soitem->setRootIsDecorated(TRUE);
+  _soitem->addColumn(tr("S/O #/Line #"),              _itemColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("Cust. P/O #/Item Number"),   -1,  Qt::AlignLeft   );
+  _soitem->addColumn(tr("Order"),                     _dateColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("Ship/Sched."),               _dateColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("Ordered"),                   _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Shipped"),                   _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Balance"),                   _qtyColumn,   Qt::AlignRight  );
 
-    _showPrices->setEnabled((_privleges->check("ViewCustomerPrices")) || (_privleges->check("MaintainCustomerPrices")));
+  _showPrices->setEnabled((_privleges->check("ViewCustomerPrices")) || (_privleges->check("MaintainCustomerPrices")));
 
-    _cust->setFocus();
+  _cust->setFocus();
 }
 
 dspBacklogByCustomer::~dspBacklogByCustomer()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspBacklogByCustomer::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspBacklogByCustomer::sHandlePrices(bool pShowPrices)
@@ -122,17 +124,27 @@ void dspBacklogByCustomer::sHandlePrices(bool pShowPrices)
 
 void dspBacklogByCustomer::sPrint()
 {
+  if (!_cust->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Customer Number"),
+                          tr("You must enter a valid Customer Number for this report.") );
+    _cust->setFocus();
+    return;
+  }
+
   ParameterList params;
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
-  _warehouse->appendValue(params);
 
   if (_showPrices->isChecked())
     params.append("showPrices");
 
-  rptBacklogByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BacklogByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBacklogByCustomer::sEditOrder()

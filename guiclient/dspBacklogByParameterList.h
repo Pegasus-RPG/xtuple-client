@@ -59,7 +59,7 @@
 #define DSPBACKLOGBYPARAMETERLIST_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspBacklogByParameterList.h"

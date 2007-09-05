@@ -103,15 +103,6 @@
 #include "rptSalesHistoryByItem.h"
 #include "rptSalesHistoryByParameterList.h"
 #include "rptSalesHistoryBySalesRep.h"
-#include "rptBriefSalesHistoryByCustomer.h"
-#include "rptBriefSalesHistoryByCustomerType.h"
-#include "rptBriefSalesHistoryBySalesRep.h"
-#include "rptBookingsByCustomer.h"
-#include "rptBookingsByCustomerGroup.h"
-#include "rptBookingsByShipTo.h"
-#include "rptBookingsByProductCategory.h"
-#include "rptBookingsByItem.h"
-#include "rptBookingsBySalesRep.h"
 #include "rptSummarizedSalesByCustomer.h"
 #include "rptSummarizedSalesByCustomerType.h"
 #include "rptSummarizedSalesByCustomerByItem.h"
@@ -304,46 +295,6 @@ moduleSA::moduleSA(OpenMFGGUIClient *pParent) :
   parent->actions.append( new Action( parent, "sa.rptSalesHistoryByCustomerGroup", tr("Sales History by Customer Group..."),
                                       this, SLOT(sRptSalesHistoryByCustomerGroup()),
                                       reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "sa.rptBriefSalesHistoryByCustomer", tr("Brief Sales History by Customer..."),
-                                      this, SLOT(sRptBriefSalesHistoryByCustomer()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBriefSalesHistoryByCustomerType", tr("Brief Sales History by Customer Type..."),
-                                      this, SLOT(sRptBriefSalesHistoryByCustomerType()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBriefSalesHistoryBySalesRep", tr("Brief Sales History by Sales Rep..."),
-                                      this, SLOT(sRptBriefSalesHistoryBySalesRep()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "sa.rptBookingsByCustomer", tr("Bookings by Customer..."),
-                                      this, SLOT(sRptBookingsByCustomer()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBookingsByCustomerGroup", tr("Bookings by Customer Group..."),
-                                      this, SLOT(sRptBookingsByCustomerGroup()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBookingsByShipTo", tr("Bookings by Ship-To..."),
-                                      this, SLOT(sRptBookingsByShipTo()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBookingsByItem", tr("Bookings by Item..."),
-                                      this, SLOT(sRptBookingsByItem()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBookingsByProductCategory", tr("Bookings by Product Category..."),
-                                      this, SLOT(sRptBookingsByProductCategory()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptBookingsBySalesRep", tr("Bookings by Sales Rep..."),
-                                      this, SLOT(sRptBookingsBySalesRep()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
 
   reportsMenu->insertSeparator();
 
@@ -637,51 +588,6 @@ void moduleSA::sRptSalesHistoryByCustomerGroup()
   rptSalesHistoryByParameterList newdlg(parent, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
-}
-
-void moduleSA::sRptBriefSalesHistoryByCustomer()
-{
-  rptBriefSalesHistoryByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBriefSalesHistoryByCustomerType()
-{
-  rptBriefSalesHistoryByCustomerType(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBriefSalesHistoryBySalesRep()
-{
-  rptBriefSalesHistoryBySalesRep(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBookingsByCustomer()
-{
-  rptBookingsByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBookingsByCustomerGroup()
-{
-  rptBookingsByCustomerGroup(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBookingsByShipTo()
-{
-  rptBookingsByShipTo(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBookingsByItem()
-{
-  rptBookingsByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBookingsByProductCategory()
-{
-  rptBookingsByProductCategory(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptBookingsBySalesRep()
-{
-  rptBookingsBySalesRep(parent, "", TRUE).exec();
 }
 
 void moduleSA::sRptSummarizedSalesByCustomer()

@@ -62,10 +62,11 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <openreports.h>
+
 #include "arOpenItem.h"
 #include "creditMemo.h"
 #include "dspInvoiceInformation.h"
-#include "rptInvoiceRegister.h"
 
 dspInvoiceRegister::dspInvoiceRegister(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -249,13 +250,16 @@ void dspInvoiceRegister::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
   if (_selectedAccount->isChecked())
     params.append("accnt_id", _account->id());
 
-  rptInvoiceRegister newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("InvoiceRegister", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInvoiceRegister::sFillList()

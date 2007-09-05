@@ -60,11 +60,12 @@
 #include <QVariant>
 #include <QWorkspace>
 #include <QStatusBar>
+#include <QMenu>
 #include <parameter.h>
+#include <openreports.h>
 #include "inputManager.h"
 #include "salesOrderList.h"
 #include "dspRunningAvailability.h"
-#include "rptBacklogBySalesOrder.h"
 
 /*
  *  Constructs a dspBacklogBySalesOrder as a child of 'parent', with the
@@ -74,43 +75,17 @@
 dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBacklogBySalesOrder::~dspBacklogBySalesOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBacklogBySalesOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspBacklogBySalesOrder::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_salesOrder, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
 #ifdef Q_WS_MAC
   _salesOrderList->setMaximumWidth(50);
@@ -131,6 +106,23 @@ void dspBacklogBySalesOrder::init()
   _soitem->addColumn(tr("Available"),   _qtyColumn,  Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBacklogBySalesOrder::~dspBacklogBySalesOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBacklogBySalesOrder::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBacklogBySalesOrder::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
@@ -142,10 +134,12 @@ void dspBacklogBySalesOrder::sPrint()
 {
   ParameterList params;
   params.append("sohead_id", _salesOrder->id());
-  params.append("print");
 
-  rptBacklogBySalesOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BacklogBySalesOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBacklogBySalesOrder::sSalesOrderList()

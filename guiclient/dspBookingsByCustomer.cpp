@@ -57,10 +57,10 @@
 
 #include "dspBookingsByCustomer.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
-#include "rptBookingsByCustomer.h"
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <openreports.h>
 
 /*
  *  Constructs a dspBookingsByCustomer as a child of 'parent', with the
@@ -70,39 +70,15 @@
 dspBookingsByCustomer::dspBookingsByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBookingsByCustomer::~dspBookingsByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBookingsByCustomer::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspBookingsByCustomer::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _productCategory->setType(ProductCategory);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -119,7 +95,24 @@ void dspBookingsByCustomer::init()
   _cust->setFocus();
 }
 
-enum SetResponse dspBookingsByCustomer::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBookingsByCustomer::~dspBookingsByCustomer()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBookingsByCustomer::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspBookingsByCustomer::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -159,15 +152,33 @@ enum SetResponse dspBookingsByCustomer::set(ParameterList &pParams)
 
 void dspBookingsByCustomer::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
 
-  rptBookingsByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BookingsByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBookingsByCustomer::sFillList()

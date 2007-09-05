@@ -59,9 +59,11 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QWorkspace>
-#include "rptExpiredInventoryByClassCode.h"
+#include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
+#include <parameter.h>
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
@@ -79,53 +81,27 @@
 dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    _costsGroupInt = new QButtonGroup(this);
-    _costsGroupInt->addButton(_useStandardCosts);
-    _costsGroupInt->addButton(_useActualCosts);
+  _costsGroupInt = new QButtonGroup(this);
+  _costsGroupInt->addButton(_useStandardCosts);
+  _costsGroupInt->addButton(_useActualCosts);
 
-    _orderByGroupInt = new QButtonGroup(this);
-    _orderByGroupInt->addButton(_itemNumber);
-    _orderByGroupInt->addButton(_expirationDate);
-    _orderByGroupInt->addButton(_inventoryValue);
+  _orderByGroupInt = new QButtonGroup(this);
+  _orderByGroupInt->addButton(_itemNumber);
+  _orderByGroupInt->addButton(_expirationDate);
+  _orderByGroupInt->addButton(_inventoryValue);
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_expired, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_showValue, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
-    connect(_showValue, SIGNAL(toggled(bool)), _inventoryValue, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspExpiredInventoryByClassCode::~dspExpiredInventoryByClassCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspExpiredInventoryByClassCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspExpiredInventoryByClassCode::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_expired, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showValue, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
+  connect(_showValue, SIGNAL(toggled(bool)), _inventoryValue, SLOT(setEnabled(bool)));
 
   _classCode->setType(ClassCode);
 
@@ -146,34 +122,51 @@ void dspExpiredInventoryByClassCode::init()
   }
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspExpiredInventoryByClassCode::~dspExpiredInventoryByClassCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspExpiredInventoryByClassCode::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspExpiredInventoryByClassCode::sPrint()
 {
   ParameterList params;
   params.append("thresholdDays", _thresholdDays->value());
-  params.append("print");
+
   _warehouse->appendValue(params);
   _classCode->appendValue(params);
-
-  if (_itemNumber->isChecked())
-    params.append("orderByItemNumber");
-
-  if (_expirationDate->isChecked())
-    params.append("orderByExpirationDate");
-
-  if (_inventoryValue->isChecked())
-    params.append("orderByInventoryValue");
 
   if(_showValue->isChecked())
     params.append("showValue");
 
-  if (_useStandardCosts->isChecked())
-    params.append("useStandardCosts");
-
   if (_useActualCosts->isChecked())
-    params.append("useActualCosts");
+    params.append("useActualCost");
+  else
+    params.append("useStandardCost");
 
-  rptExpiredInventoryByClassCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (_inventoryValue->isChecked())
+    params.append("orderByInventoryValue");
+  else if(_expirationDate->isChecked())
+    params.append("orderByExpirationDate");
+  else
+    params.append("orderByItemNumber");
+
+  orReport report("ExpiredInventoryByClassCode", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspExpiredInventoryByClassCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)

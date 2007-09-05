@@ -59,12 +59,14 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
+#include <parameter.h>
 #include "itemSource.h"
 #include "buyCard.h"
 #include "dspPoItemsByVendor.h"
-#include "rptItemSourcesByVendor.h"
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -75,42 +77,16 @@
 dspItemSourcesByVendor::dspItemSourcesByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_vendor, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_vendor, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspItemSourcesByVendor::~dspItemSourcesByVendor()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspItemSourcesByVendor::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspItemSourcesByVendor::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_itemsrc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_vendor, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_vendor, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   _itemsrc->addColumn(tr("Item Number"),        _itemColumn, Qt::AlignLeft   );
   _itemsrc->addColumn(tr("Description"),        -1,          Qt::AlignLeft   );
@@ -120,14 +96,41 @@ void dspItemSourcesByVendor::init()
   _itemsrc->addColumn(tr("UOM Ratio"),          _qtyColumn,  Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspItemSourcesByVendor::~dspItemSourcesByVendor()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspItemSourcesByVendor::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspItemSourcesByVendor::sPrint()
 {
+  if (!_vendor->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Vendor"),
+                        tr("Please enter a valid Vendor.") );
+    _vendor->setFocus();
+    return;
+  }
+
   ParameterList params;
   params.append("vend_id", _vendor->id());
-  params.append("print");
 
-  rptItemSourcesByVendor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ItemSourcesByVendor", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspItemSourcesByVendor::sPopulateMenu(QMenu *menuThis)

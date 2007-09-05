@@ -58,7 +58,7 @@
 #ifndef DSPEXPIREDINVENTORYBYCLASSCODE_H
 #define DSPEXPIREDINVENTORYBYCLASSCODE_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspExpiredInventoryByClassCode.h"
 
@@ -69,8 +69,6 @@ class dspExpiredInventoryByClassCode : public QMainWindow, public Ui::dspExpired
 public:
     dspExpiredInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspExpiredInventoryByClassCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

@@ -60,8 +60,10 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "dspInventoryHistoryByItem.h"
-#include "rptIndentedWhereUsed.h"
 
 /*
  *  Constructs a dspIndentedWhereUsed as a child of 'parent', with the
@@ -71,41 +73,15 @@
 dspIndentedWhereUsed::dspIndentedWhereUsed(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspIndentedWhereUsed::~dspIndentedWhereUsed()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspIndentedWhereUsed::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspIndentedWhereUsed::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   if (_metrics->boolean("AllowInactiveBomItems"))
     _item->setType(ItemLineEdit::cGeneralComponents);
@@ -126,7 +102,24 @@ void dspIndentedWhereUsed::init()
   _item->setFocus();
 }
 
-enum SetResponse dspIndentedWhereUsed::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspIndentedWhereUsed::~dspIndentedWhereUsed()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspIndentedWhereUsed::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspIndentedWhereUsed::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -146,18 +139,44 @@ enum SetResponse dspIndentedWhereUsed::set(ParameterList &pParams)
 
 void dspIndentedWhereUsed::sPrint()
 {
-  ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("print");
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
+                          tr("You must enter a valid Item Number for this report.") );
+    _item->setFocus();
+    return;
+  }
 
-  if (_showExpired->isChecked())
-    params.append("showExpired");
+  q.prepare("SELECT indentedWhereUsed(:item_id) AS result;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    int worksetid = q.value("result").toInt();
 
-  if (_showFuture->isChecked())
-    params.append("showFuture");
-  
-  rptIndentedWhereUsed newdlg(this, "", TRUE);
-  newdlg.set(params);
+    ParameterList params;
+    params.append("item_id", _item->id());
+    params.append("bomworkset_id", worksetid);
+
+    if(_showExpired->isChecked())
+      params.append("showExpired");
+
+    if(_showFuture->isChecked())
+      params.append("showFuture");
+
+    orReport report("IndentedWhereUsed", params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+
+    q.prepare("SELECT deleteBOMWorkset(:bomworkset_id) AS result;");
+    q.bindValue(":bomworkset_id", worksetid);
+    q.exec();
+  }
+  else
+      QMessageBox::critical( this, tr("Error Executing Report"),
+                             tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void dspIndentedWhereUsed::sViewInventoryHistory()

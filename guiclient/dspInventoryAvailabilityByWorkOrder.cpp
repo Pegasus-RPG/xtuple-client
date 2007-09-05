@@ -59,6 +59,8 @@
 
 #include <QVariant>
 #include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
 #include "inputManager.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -66,7 +68,6 @@
 #include "workOrder.h"
 #include "purchaseOrder.h"
 #include "createCountTagsByItem.h"
-#include "rptInventoryAvailabilityByWorkOrder.h"
 #include "dspSubstituteAvailabilityByItem.h"
 
 /*
@@ -146,14 +147,17 @@ enum SetResponse dspInventoryAvailabilityByWorkOrder::set(const ParameterList &p
 void dspInventoryAvailabilityByWorkOrder::sPrint()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
-  params.append("print");
 
-  if (_onlyShowShortages->isChecked())
+  params.append("wo_id", _wo->id());
+
+  if(_onlyShowShortages->isChecked())
     params.append("onlyShowShortages");
 
-  rptInventoryAvailabilityByWorkOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOMaterialAvailabilityByWorkOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)

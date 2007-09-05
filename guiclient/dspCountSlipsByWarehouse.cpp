@@ -60,8 +60,9 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptCountSlipsByWarehouse.h"
 
 /*
  *  Constructs a dspCountSlipsByWarehouse as a child of 'parent', with the
@@ -71,44 +72,18 @@
 dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_showUnposted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_numericSlips, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCountSlipsByWarehouse::~dspCountSlipsByWarehouse()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCountSlipsByWarehouse::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCountSlipsByWarehouse::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_showUnposted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_numericSlips, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -125,22 +100,40 @@ void dspCountSlipsByWarehouse::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCountSlipsByWarehouse::~dspCountSlipsByWarehouse()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCountSlipsByWarehouse::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspCountSlipsByWarehouse::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
-  params.append("print");
-
   _warehouse->appendValue(params);
+  _dates->appendValue(params);
 
-  if (_showUnposted->isChecked())
+  if(_showUnposted->isChecked())
     params.append("showUnposted");
 
-  if (_numericSlips->isChecked())
+  if(_numericSlips->isChecked())
     params.append("asNumeric");
 
-  rptCountSlipsByWarehouse newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CountSlipsByWarehouse", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCountSlipsByWarehouse::sPopulateMenu(QMenu *, QTreeWidgetItem *)

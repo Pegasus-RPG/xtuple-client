@@ -60,9 +60,11 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
-#include "rptCostedSingleLevelBOM.h"
 
 /*
  *  Constructs a dspCostedSingleLevelBOM as a child of 'parent', with the
@@ -72,47 +74,21 @@
 dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    QButtonGroup* _costsGroupInt = new QButtonGroup(this);
-    _costsGroupInt->addButton(_useStandardCosts);
-    _costsGroupInt->addButton(_useActualCosts);
+  QButtonGroup* _costsGroupInt = new QButtonGroup(this);
+  _costsGroupInt->addButton(_useStandardCosts);
+  _costsGroupInt->addButton(_useActualCosts);
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCostedSingleLevelBOM::~dspCostedSingleLevelBOM()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCostedSingleLevelBOM::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCostedSingleLevelBOM::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
@@ -130,7 +106,24 @@ void dspCostedSingleLevelBOM::init()
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 
-enum SetResponse dspCostedSingleLevelBOM::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCostedSingleLevelBOM::~dspCostedSingleLevelBOM()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCostedSingleLevelBOM::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspCostedSingleLevelBOM::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -154,17 +147,21 @@ enum SetResponse dspCostedSingleLevelBOM::set(ParameterList &pParams)
 void dspCostedSingleLevelBOM::sPrint()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("print");
 
-  if (_useStandardCosts->isChecked())
+  params.append("item_id", _item->id());
+
+  if(_useStandardCosts->isChecked())
     params.append("useStandardCosts");
 
-  if (_useActualCosts->isChecked())
+  if(_useActualCosts->isChecked())
     params.append("useActualCosts");
 
-  rptCostedSingleLevelBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CostedSingleLevelBOM", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCostedSingleLevelBOM::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

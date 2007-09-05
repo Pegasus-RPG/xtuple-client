@@ -57,10 +57,10 @@
 
 #include "dspBookingsByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
-#include <qmessagebox.h>
-#include "rptBookingsByItem.h"
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 
 /*
  *  Constructs a dspBookingsByItem as a child of 'parent', with the
@@ -70,38 +70,14 @@
 dspBookingsByItem::dspBookingsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBookingsByItem::~dspBookingsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBookingsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspBookingsByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cSold);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -116,7 +92,24 @@ void dspBookingsByItem::init()
   _soitem->addColumn(tr("Ext'd Price"), _moneyColumn, Qt::AlignRight  );
 }
 
-enum SetResponse dspBookingsByItem::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBookingsByItem::~dspBookingsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBookingsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspBookingsByItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -144,14 +137,32 @@ enum SetResponse dspBookingsByItem::set(ParameterList &pParams)
 
 void dspBookingsByItem::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
+  params.append("item_id", _item->id());
   _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("item_id", _item->id());
-  params.append("print");
 
-  rptBookingsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BookingsByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBookingsByItem::sFillList()

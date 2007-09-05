@@ -64,12 +64,12 @@
 #include <QStatusBar>
 #include <QVariant>
 
+#include <openreports.h>
 #include <parameter.h>
 #include <xdateinputdialog.h>
 #include "mqlutil.h"
 
 #include "OpenMFGGUIClient.h"
-#include "rptCheckRegister.h"
 #include "storedProcErrorLookup.h"
 
 /*
@@ -90,8 +90,6 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_apchk, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-  statusBar()->hide();
-  
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
   _apchk->addColumn(tr("Void"),        _ynColumn,    Qt::AlignCenter );
@@ -131,17 +129,22 @@ void dspCheckRegister::languageChange()
 
 void dspCheckRegister::sPrint()
 {
-  if(!checkParams())
+  if(!_dates->allValid())
+  {
+    QMessageBox::information( this, tr("Invalid Dates"), tr("Invalid date range specified. Please specify a valid date range.") );
+    _dates->setFocus();
     return;
-  
+  }
+
   ParameterList params;
-  
   params.append("bankaccnt_id", _bankaccnt->id());
   _dates->appendValue(params);
-  params.append("print");
-  
-  rptCheckRegister newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("CheckRegister", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCheckRegister::sFillList()

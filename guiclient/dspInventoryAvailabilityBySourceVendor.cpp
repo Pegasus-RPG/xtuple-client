@@ -60,6 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include "dspInventoryHistoryByItem.h"
 #include "dspAllocations.h"
 #include "dspOrders.h"
@@ -69,7 +70,6 @@
 #include "dspSubstituteAvailabilityByItem.h"
 #include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
-#include "rptInventoryAvailabilityBySourceVendor.h"
 
 /*
  *  Constructs a dspInventoryAvailabilityBySourceVendor as a child of 'parent', with the
@@ -165,16 +165,6 @@ void dspInventoryAvailabilityBySourceVendor::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
-  params.append("print");
-
-  if (_showReorder->isChecked())
-    params.append("showReorder");
-
-  if (_ignoreReorderAtZero->isChecked())
-    params.append("ignoreReorderAtZero");
-
-  if (_showShortages->isChecked())
-    params.append("showShortages");
 
   if (_selectedVendor->isChecked())
     params.append("vend_id", _vend->id());
@@ -186,7 +176,7 @@ void dspInventoryAvailabilityBySourceVendor::sPrint()
   if (_leadTime->isChecked())
     params.append("byLeadTime");
   else if (_byDays->isChecked())
-    params.append("byDays", _days->value());
+    params.append("byDays", _days->text().toInt());
   else if (_byDate->isChecked())
     params.append("byDate", _date->date());
   else if (_byDates->isChecked())
@@ -196,8 +186,20 @@ void dspInventoryAvailabilityBySourceVendor::sPrint()
     params.append("endDate", _endDate->date());
   }
 
-  rptInventoryAvailabilityBySourceVendor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if(_showReorder->isChecked())
+    params.append("showReorder");
+
+  if(_ignoreReorderAtZero->isChecked())
+    params.append("ignoreReorderAtZero");
+
+  if(_showShortages->isChecked())
+    params.append("showShortages");
+
+  orReport report("InventoryAvailabilityBySourceVendor", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWidgetItem *selected)

@@ -63,53 +63,51 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
-#include "rptBacklogByParameterList.h"
 
 dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-    statusBar()->hide();
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-    _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  _soitem->setRootIsDecorated(TRUE);
+  _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,  Qt::AlignRight  );
+  _soitem->addColumn(tr("Customer/Item Number"), -1,           Qt::AlignLeft   );
+  _soitem->addColumn(tr("Order"),                _dateColumn,  Qt::AlignRight  );
+  _soitem->addColumn(tr("Ship/Sched."),          _dateColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("UOM"),                  _uomColumn,   Qt::AlignCenter );
+  _soitem->addColumn(tr("Ordered"),              _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Shipped"),              _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Balance"),              _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Amount $"),             _moneyColumn, Qt::AlignRight  );
 
-    _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
-    _soitem->setRootIsDecorated(TRUE);
-    _soitem->addColumn(tr("S/O #/Line #"),         _itemColumn,  Qt::AlignRight  );
-    _soitem->addColumn(tr("Customer/Item Number"), -1,           Qt::AlignLeft   );
-    _soitem->addColumn(tr("Order"),                _dateColumn,  Qt::AlignRight  );
-    _soitem->addColumn(tr("Ship/Sched."),          _dateColumn,  Qt::AlignCenter );
-    _soitem->addColumn(tr("UOM"),                  _uomColumn,   Qt::AlignCenter );
-    _soitem->addColumn(tr("Ordered"),              _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Shipped"),              _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Balance"),              _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Amount $"),             _moneyColumn, Qt::AlignRight  );
-
-    if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
-      _showPrices->setEnabled(FALSE);
+  if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
+    _showPrices->setEnabled(FALSE);
 }
 
 dspBacklogByParameterList::~dspBacklogByParameterList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspBacklogByParameterList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
@@ -212,7 +210,6 @@ void dspBacklogByParameterList::sPrint()
   _warehouse->appendValue(params);
   _parameter->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
   if (_showPrices->isChecked())
     params.append("showPrices");
@@ -238,8 +235,11 @@ void dspBacklogByParameterList::sPrint()
     }
   }
 
-  rptBacklogByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BacklogByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBacklogByParameterList::sEditOrder()

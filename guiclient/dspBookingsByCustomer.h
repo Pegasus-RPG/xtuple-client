@@ -59,7 +59,7 @@
 #define DSPBOOKINGSBYCUSTOMER_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspBookingsByCustomer.h"
@@ -75,12 +75,11 @@ public:
     virtual bool checkParameters();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
 
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
     virtual void sPrint();
     virtual void sFillList();
 

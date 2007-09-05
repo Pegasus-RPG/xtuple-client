@@ -59,8 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptBriefEarnedCommissions.h"
 
 /*
  *  Constructs a dspBriefEarnedCommissions as a child of 'parent', with the
@@ -70,39 +71,15 @@
 dspBriefEarnedCommissions::dspBriefEarnedCommissions(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_selectedSalesrep, SIGNAL(toggled(bool)), _salesrep, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBriefEarnedCommissions::~dspBriefEarnedCommissions()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBriefEarnedCommissions::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspBriefEarnedCommissions::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_selectedSalesrep, SIGNAL(toggled(bool)), _salesrep, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _salesrep->setType(XComboBox::SalesReps);
 
@@ -117,17 +94,44 @@ void dspBriefEarnedCommissions::init()
   _commission->addColumn(tr("Commission"),  _bigMoneyColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBriefEarnedCommissions::~dspBriefEarnedCommissions()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBriefEarnedCommissions::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBriefEarnedCommissions::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Start and End Dates"),
+                          tr("You must enter a valid Start and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
-  
+
   if (_selectedSalesrep->isChecked())
     params.append("salesrep_id", _salesrep->id());
-  
-  rptBriefEarnedCommissions newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("BriefEarnedCommissions", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBriefEarnedCommissions::sFillList()

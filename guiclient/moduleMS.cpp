@@ -110,7 +110,6 @@
 #include "rptPlannedRevenueExpensesByPlannerCode.h"
 #include "rptTimePhasedPlannedREByPlannerCode.h"
 #include "rptRunningAvailability.h"
-#include "rptExpediteExceptionsByPlannerCode.h"
 #include "rptReorderExceptionsByPlannerCode.h"
 
 #include "plannerCodes.h"
@@ -345,10 +344,6 @@ moduleMS::moduleMS(OpenMFGGUIClient *Pparent) :
                                       reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
 
   reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ms.rptExpediteExceptionsByPlannerCode", tr("Expedite Exceptions by Planner Code..."),
-                                      this, SLOT(sRptExpediteExceptionsByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
 
   parent->actions.append( new Action( parent, "ms.rptReorderExceptionsByPlannerCode", tr("Reorder Exceptions by Planner Code..."),
                                       this, SLOT(sRptReorderExceptionsByPlannerCode()),
@@ -615,11 +610,6 @@ void moduleMS::sRptRunningAvailability()
 void moduleMS::sRptMRPDetail()
 {
   rptMRPDetail(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptExpediteExceptionsByPlannerCode()
-{
-  rptExpediteExceptionsByPlannerCode(parent, "", TRUE).exec();
 }
 
 void moduleMS::sRptReorderExceptionsByPlannerCode()

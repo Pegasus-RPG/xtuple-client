@@ -60,9 +60,9 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QVariant>
+#include <openreports.h>
 
 #include "salesHistoryInformation.h"
-#include "rptBriefSalesHistoryBySalesRep.h"
 
 dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -161,22 +161,32 @@ void dspBriefSalesHistoryBySalesRep::sPopulateMenu(QMenu *)
 
 void dspBriefSalesHistoryBySalesRep::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  _dates->appendValue(params);
-  params.append("salesrep_id", _salesrep->id());
-  params.append("print");
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr("Please enter a valid Start and End Date.") );
+    _dates->setFocus();
+    return;
+  }
 
-  if (_showPrices->isChecked())
-    params.append("showPrices");
-  
+  ParameterList params;
+  params.append("salesrep_id", _salesrep->id());
+
+  _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
   if (_showCosts->isChecked())
     params.append("showCosts");
 
-  rptBriefSalesHistoryBySalesRep newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.show();
+  if (_showPrices->isChecked())
+    params.append("showPrices");
+
+  orReport report("SalesHistoryBySalesRep", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBriefSalesHistoryBySalesRep::sFillList()

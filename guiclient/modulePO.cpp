@@ -117,15 +117,11 @@
 
 #include "rptPurchaseReqsByItem.h"
 #include "rptPurchaseReqsByPlannerCode.h"
-#include "rptItemSitesByParameterList.h"
 #include "rptPoItemsByVendor.h"
 #include "rptPoItemsByItem.h"
 #include "rptPoItemsByDate.h"
 #include "rptPoItemsByBufferStatus.h"
 #include "rptPoHistory.h"
-#include "rptItemSourcesByVendor.h"
-#include "rptItemSourcesByItem.h"
-#include "rptBuyCard.h"
 #include "rptPoItemReceivingsByVendor.h"
 #include "rptPoItemReceivingsByItem.h"
 #include "rptPoItemReceivingsByDate.h"
@@ -384,12 +380,6 @@ modulePO::modulePO(OpenMFGGUIClient *Pparent) :
 
   reportsMenu->insertSeparator();
 
-  parent->actions.append( new Action( parent, "po.rptItemSitesByPlannerCode", tr("Item Sites by Planner Code..."),
-                                      this, SLOT(sRptItemSitesByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewItemSites") ) );
-
-  reportsMenu->insertSeparator();
-
   parent->actions.append( new Action( parent, "po.rptPoLineItemsByVendor", tr("P/O Items by Vendor..."),
                                       this, SLOT(sRptPoItemsByVendor()),
                                       reportsMenu, _privleges->check("ViewPurchaseOrders") ) );
@@ -410,20 +400,6 @@ modulePO::modulePO(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "po.rptPoHistory", tr("P/O History..."),
                                       this, SLOT(sRptPoHistory()),
                                       reportsMenu, _privleges->check("ViewPurchaseOrders") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "po.rptItemSourcesByVendor", tr("Item Sources by Vendor..."),
-                                      this, SLOT(sRptItemSourcesByVendor()),
-                                      reportsMenu, _privleges->check("ViewItemSources") ) );
-
-  parent->actions.append( new Action( parent, "po.rptItemSourcesByItem", tr("Item Sources by Item..."),
-                                      this, SLOT(sRptItemSourcesByItem()),
-                                      reportsMenu, _privleges->check("ViewItemSources") ) );
-
-  parent->actions.append( new Action( parent, "po.rptBuyCard", tr("Buy Card..."),
-                                      this, SLOT(sRptBuyCard()),
-                                      reportsMenu, _privleges->check("ViewItemSources") ) );
 
   reportsMenu->insertSeparator();
 
@@ -449,11 +425,11 @@ modulePO::modulePO(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sRptPriceVariancesByItem()),
                                       reportsMenu, _privleges->check("ViewVendorPerformance") ) );
 
-  parent->actions.append( new Action( parent, "po.rptDeliveryDateVariancesByVendor", tr("Delivery Date Variances by Vendor..."),
+  parent->actions.append( new Action( parent, "po.rptPoDeliveryDateVariancesByVendor", tr("Delivery Date Variances by Vendor..."),
                                       this, SLOT(sRptPoDeliveryDateVariancesByVendor()),
                                       reportsMenu, _privleges->check("ViewVendorPerformance") ) );
 
-  parent->actions.append( new Action( parent, "po.rptDeliveryDateVariancesByItem", tr("Delivery Date Variances by Item..."),
+  parent->actions.append( new Action( parent, "po.rptPoDeliveryDateVariancesByItem", tr("Delivery Date Variances by Item..."),
                                       this, SLOT(sRptPoDeliveryDateVariancesByItem()),
                                       reportsMenu, _privleges->check("ViewVendorPerformance") ) );
 
@@ -787,16 +763,6 @@ void modulePO::sRptPurchaseReqsByPlannerCode()
   rptPurchaseReqsByPlannerCode(parent, "", TRUE).exec();
 }
 
-void modulePO::sRptItemSitesByPlannerCode()
-{
-  ParameterList params;
-  params.append("plancode");
-
-  rptItemSitesByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
 void modulePO::sRptPoItemsByVendor()
 {
   rptPoItemsByVendor(parent, "", TRUE).exec();
@@ -820,21 +786,6 @@ void modulePO::sRptPoItemsByBufferStatus()
 void modulePO::sRptPoHistory()
 {
   rptPoHistory(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptItemSourcesByVendor()
-{
-  rptItemSourcesByVendor(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptItemSourcesByItem()
-{
-  rptItemSourcesByItem(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptBuyCard()
-{
-  rptBuyCard(parent, "", TRUE).exec();
 }
 
 void modulePO::sRptReceiptsReturnsByVendor()

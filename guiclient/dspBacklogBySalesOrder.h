@@ -59,7 +59,7 @@
 #define DSPBACKLOGBYSALESORDER_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspBacklogBySalesOrder.h"
 
@@ -70,8 +70,6 @@ class dspBacklogBySalesOrder : public QMainWindow, public Ui::dspBacklogBySalesO
 public:
     dspBacklogBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspBacklogBySalesOrder();
-
-    virtual void init();
 
 public slots:
     virtual void sPopulateMenu( QMenu * pMenu );

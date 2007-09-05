@@ -60,9 +60,10 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMenu>
+#include <openreports.h>
 #include "customer.h"
 #include "customerTypeList.h"
-#include "rptCustomersByCustomerType.h"
 
 /*
  *  Constructs a dspCustomersByCustomerType as a child of 'parent', with the
@@ -72,42 +73,16 @@
 dspCustomersByCustomerType::dspCustomersByCustomerType(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_cust, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_autoRefresh, SIGNAL(toggled(bool)), this, SLOT(sHandleRefreshButton(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCustomersByCustomerType::~dspCustomersByCustomerType()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCustomersByCustomerType::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCustomersByCustomerType::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_cust, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_autoRefresh, SIGNAL(toggled(bool)), this, SLOT(sHandleRefreshButton(bool)));
 
   _customerType->setType(CustomerType);
 
@@ -120,17 +95,37 @@ void dspCustomersByCustomerType::init()
   connect(omfgThis, SIGNAL(customersUpdated(int, bool)), SLOT(sFillList()));
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCustomersByCustomerType::~dspCustomersByCustomerType()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCustomersByCustomerType::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspCustomersByCustomerType::sPrint()
 {
   ParameterList params;
-  params.append("print");
+
   _customerType->appendValue(params);
 
   if(_showInactive->isChecked())
     params.append("showInactive");
 
-  rptCustomersByCustomerType newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CustomersByCustomerType", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCustomersByCustomerType::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

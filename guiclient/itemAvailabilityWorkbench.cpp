@@ -63,10 +63,6 @@
 #include <QWorkspace>
 #include <openreports.h>
 #include "rptRunningAvailability.h"
-#include "rptInventoryAvailabilityByItem.h"
-#include "rptCostedIndentedBOM.h"
-#include "rptInventoryHistoryByItem.h"
-#include "rptInventoryLocator.h"
 #include "rptSingleLevelWhereUsed.h"
 #include "item.h"
 #include "bom.h"
@@ -1194,24 +1190,22 @@ void itemAvailabilityWorkbench::sPrintRunning()
 
 void itemAvailabilityWorkbench::sPrintAvail()
 {
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Invalid Data"),
+                      tr("You must enter a valid Item Number for this report.") );
+    _item->setFocus();
+    return;
+  }
+
   ParameterList params;
-  _invWarehouse->appendValue(params);
   params.append("item_id", _item->id());
-  params.append("print");
-
-  if (_showReorder->isChecked())
-    params.append("showReorder");
-
-  if (_ignoreReorderAtZero->isChecked())
-    params.append("ignoreReorderAtZero");
-
-  if (_showShortages->isChecked())
-    params.append("showShortages");
+  _invWarehouse->appendValue(params);
 
   if (_leadTime->isChecked())
     params.append("byLeadTime");
   else if (_byDays->isChecked())
-    params.append("byDays", _days->value());
+    params.append("byDays", _days->text().toInt());
   else if (_byDate->isChecked())
     params.append("byDate", _date->date());
   else if (_byDates->isChecked())
@@ -1221,50 +1215,96 @@ void itemAvailabilityWorkbench::sPrintAvail()
     params.append("endDate", _endDate->date());
   }
 
-  rptInventoryAvailabilityByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  if(_showReorder->isChecked())
+    params.append("showReorder");
+
+  if(_ignoreReorderAtZero->isChecked())
+    params.append("ignoreReorderAtZero");
+
+  if(_showShortages->isChecked())
+    params.append("showShortages");
+
+  orReport report("InventoryAvailabilityByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void itemAvailabilityWorkbench::sPrintCosted()
 {
-  ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("print");
+  q.prepare("SELECT indentedBOM(:item_id) AS result;");
+  q.bindValue(":item_id", _item->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
 
-  if (_useStandardCosts->isChecked())
-    params.append("useStandardCosts");
+    params.append("item_id", _item->id());
+    params.append("bomworkset_id", q.value("result").toInt());
 
-  if (_useActualCosts->isChecked())
-    params.append("useActualCosts");
+    if(_useStandardCosts->isChecked())
+      params.append("useStandardCosts");
 
-  rptCostedIndentedBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+    if(_useActualCosts->isChecked())
+      params.append("useActualCosts");
+
+    orReport report("CostedIndentedBOM", params);
+
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+  else
+    QMessageBox::critical( this, tr("Error Executing Report"),
+                           tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void itemAvailabilityWorkbench::sPrintHistory()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Invalid Data"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _invhistWarehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
   params.append("transType", _transType->id());
-  params.append("print");
 
-  rptInventoryHistoryByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
-
+  orReport report("InventoryHistoryByItem", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void itemAvailabilityWorkbench::sPrintLocation()
 {
+  if(_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
+                      tr("You must enter a valid Item Number for this report.") );
+    return;
+  }
+
   ParameterList params;
 
   params.append("item_id", _item->id());
   _itemlocWarehouse->appendValue(params);
-  params.append("print");
 
-  rptInventoryLocator newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("LocationLotSerialNumberDetail", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void itemAvailabilityWorkbench::sPrintWhereUsed()

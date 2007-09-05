@@ -58,7 +58,7 @@
 #ifndef DSPITEMSITESBYITEM_H
 #define DSPITEMSITESBYITEM_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspItemSitesByItem.h"
 
@@ -69,8 +69,6 @@ class dspItemSitesByItem : public QMainWindow, public Ui::dspItemSitesByItem
 public:
     dspItemSitesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspItemSitesByItem();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

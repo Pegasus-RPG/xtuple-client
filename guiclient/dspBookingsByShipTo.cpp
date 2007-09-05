@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
-#include "rptBookingsByShipTo.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspBookingsByShipTo as a child of 'parent', with the
@@ -101,7 +101,7 @@ dspBookingsByShipTo::dspBookingsByShipTo(QWidget* parent, const char* name, Qt::
  */
 dspBookingsByShipTo::~dspBookingsByShipTo()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -110,7 +110,7 @@ dspBookingsByShipTo::~dspBookingsByShipTo()
  */
 void dspBookingsByShipTo::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspBookingsByShipTo::set(const ParameterList &pParams)
@@ -149,15 +149,34 @@ enum SetResponse dspBookingsByShipTo::set(const ParameterList &pParams)
 
 void dspBookingsByShipTo::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
   _dates->appendValue(params);
+  params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
-  params.append("print");
 
-  rptBookingsByShipTo newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BookingsByShipTo", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBookingsByShipTo::sFillList()

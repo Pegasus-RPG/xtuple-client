@@ -62,7 +62,7 @@
 #include <QMessageBox>
 #include <QWorkspace>
 #include <datecluster.h>
-#include "rptCashReceipts.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspCashReceipts as a child of 'parent', with the
@@ -117,9 +117,32 @@ void dspCashReceipts::languageChange()
 
 void dspCashReceipts::sPrint()
 {
+  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
+  {
+    QMessageBox::warning( this, tr("Select Customer"),
+                          tr("You must select a Customer whose A/R Applications you wish to view.") );
+    _cust->setFocus();
+    return;
+  }
+
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("You must enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("You must enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
   if (_selectedCustomer->isChecked())
     params.append("cust_id", _cust->id());
@@ -128,8 +151,11 @@ void dspCashReceipts::sPrint()
   else if (_customerTypePattern->isChecked())
     params.append("custtype_pattern", _customerType->text());
 
-  rptCashReceipts newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CashReceipts", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCashReceipts::sFillList()

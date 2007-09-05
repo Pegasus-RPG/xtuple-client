@@ -61,8 +61,8 @@
 #include <parameter.h>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <openreports.h>
 #include "OpenMFGGUIClient.h"
-#include "rptBankrecHistory.h"
 
 /*
  *  Constructs a dspBankrecHistory as a child of 'parent', with the
@@ -72,40 +72,16 @@
 dspBankrecHistory::dspBankrecHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankaccntChanged()));
-    connect(_bankrec, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sBankaccntChanged()));
+  connect(_bankrec, SIGNAL(newID(int)), this, SLOT(sFillList()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBankrecHistory::~dspBankrecHistory()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBankrecHistory::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspBankrecHistory::init()
-{
-  statusBar()->hide();
-  
   _details->addColumn(tr("Date"), _dateColumn, Qt::AlignCenter );
   _details->addColumn(tr("Doc Number/Notes"), -1, Qt::AlignLeft );
   _details->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight );
@@ -118,15 +94,34 @@ void dspBankrecHistory::init()
   sBankaccntChanged();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBankrecHistory::~dspBankrecHistory()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBankrecHistory::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBankrecHistory::sPrint()
 {
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id());
   params.append("bankrec_id", _bankrec->id());
-  params.append("print");
-  
-  rptBankrecHistory newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("BankrecHistory", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBankrecHistory::sBankaccntChanged()

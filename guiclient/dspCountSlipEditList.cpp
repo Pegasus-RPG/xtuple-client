@@ -60,9 +60,10 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include "countTagList.h"
 #include "countSlip.h"
-#include "rptCountSlipEditList.h"
 
 /*
  *  Constructs a dspCountSlipEditList as a child of 'parent', with the
@@ -72,53 +73,22 @@
 dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_countTagList, SIGNAL(clicked()), this, SLOT(sCountTagList()));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_postAll, SIGNAL(clicked()), this, SLOT(sPostAll()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    init();
-    
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
-}
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_countTagList, SIGNAL(clicked()), this, SLOT(sCountTagList()));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_postAll, SIGNAL(clicked()), this, SLOT(sPostAll()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspCountSlipEditList::~dspCountSlipEditList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspCountSlipEditList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspCountSlipEditList::init()
-{
 #ifdef Q_WS_MAC
   _countTagList->setMaximumWidth(50);
 #else
@@ -150,9 +120,33 @@ void dspCountSlipEditList::init()
     connect(_cntslip, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
     _postAll->setEnabled(TRUE);
   }
+    
+  //If not multi-warehouse hide whs control
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
 }
 
-enum SetResponse dspCountSlipEditList::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspCountSlipEditList::~dspCountSlipEditList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspCountSlipEditList::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspCountSlipEditList::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -171,10 +165,12 @@ void dspCountSlipEditList::sPrint()
 {
   ParameterList params;
   params.append("cnttag_id", _cnttagid);
-  params.append("print");
 
-  rptCountSlipEditList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("CountSlipEditList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspCountSlipEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

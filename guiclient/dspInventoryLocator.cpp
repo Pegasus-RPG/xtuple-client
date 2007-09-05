@@ -60,9 +60,10 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "relocateInventory.h"
 #include "reassignLotSerial.h"
-#include "rptInventoryLocator.h"
 
 /*
  *  Constructs a dspInventoryLocator as a child of 'parent', with the
@@ -72,44 +73,18 @@
 dspInventoryLocator::dspInventoryLocator(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspInventoryLocator::~dspInventoryLocator()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspInventoryLocator::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspInventoryLocator::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _itemloc->addColumn(tr("Whs."),         _whsColumn,   Qt::AlignCenter );
   _itemloc->addColumn(tr("Location"),     200,          Qt::AlignLeft   );
@@ -121,7 +96,24 @@ void dspInventoryLocator::init()
   _item->setFocus();
 }
 
-enum SetResponse dspInventoryLocator::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspInventoryLocator::~dspInventoryLocator()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspInventoryLocator::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspInventoryLocator::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -143,14 +135,27 @@ enum SetResponse dspInventoryLocator::set(ParameterList &pParams)
 
 void dspInventoryLocator::sPrint()
 {
+  if(_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
+                      tr("You must enter a valid Item Number for this report.") );
+    return;
+  }
+
   ParameterList params;
 
   params.append("item_id", _item->id());
   _warehouse->appendValue(params);
-  params.append("print");
 
-  rptInventoryLocator newdlg(this, "", TRUE);
-  newdlg.set(params);
+  //if (_showZeroLevel->isChecked())
+  //  params.append("showZeroLevel");
+
+  orReport report("LocationLotSerialNumberDetail", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspInventoryLocator::sRelocateInventory()

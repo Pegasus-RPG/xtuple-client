@@ -65,57 +65,88 @@
 #include <datecluster.h>
 #include <metasql.h>
 #include <parameter.h>
+#include <openreports.h>
 
 #include "arOpenItem.h"
 #include "creditMemo.h"
 #include "dspInvoiceInformation.h"
-#include "rptARApplications.h"
 
 dspARApplications::dspARApplications(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_arapply,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
-				           this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_print,	SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query,	SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_arapply,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)),
+                  this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_print,	SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query,	SIGNAL(clicked()), this, SLOT(sFillList()));
 
-    _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
     
-    _arapply->addColumn(tr("Cust. #"),   _orderColumn, Qt::AlignCenter );
-    _arapply->addColumn(tr("Customer"),            -1, Qt::AlignLeft   );
-    _arapply->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter );
-    _arapply->addColumn("hidden source type",      10, Qt::AlignCenter );
-    _arapply->addColumn(tr("Source"),	  _itemColumn, Qt::AlignCenter );
-    _arapply->addColumn(tr("Doc #"),     _orderColumn, Qt::AlignCenter );
-    _arapply->addColumn("hidden target type",      10, Qt::AlignCenter );
-    _arapply->addColumn(tr("Apply-To"),   _itemColumn, Qt::AlignCenter );
-    _arapply->addColumn(tr("Doc #"),     _orderColumn, Qt::AlignCenter );
-    _arapply->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight  );
+  _arapply->addColumn(tr("Cust. #"),   _orderColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Customer"),            -1, Qt::AlignLeft   );
+  _arapply->addColumn(tr("Date"),       _dateColumn, Qt::AlignCenter );
+  _arapply->addColumn("hidden source type",      10, Qt::AlignCenter );
+  _arapply->addColumn(tr("Source"),	  _itemColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Doc #"),     _orderColumn, Qt::AlignCenter );
+  _arapply->addColumn("hidden target type",      10, Qt::AlignCenter );
+  _arapply->addColumn(tr("Apply-To"),   _itemColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Doc #"),     _orderColumn, Qt::AlignCenter );
+  _arapply->addColumn(tr("Amount"), _bigMoneyColumn, Qt::AlignRight  );
 
-    _arapply->hideColumn(3);
-    _arapply->hideColumn(6);
+  _arapply->hideColumn(3);
+  _arapply->hideColumn(6);
 
-    _allCustomers->setFocus();
+  _allCustomers->setFocus();
 }
 
 dspARApplications::~dspARApplications()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspARApplications::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspARApplications::sPrint()
 {
+  if ( (_selectedCustomer->isChecked()) && (!_cust->isValid()) )
+  {
+    QMessageBox::warning( this, tr("Select Customer"),
+                          tr("You must select a Customer whose A/R Applications you wish to view.") );
+    _cust->setFocus();
+    return;
+  }
+
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter Start Date"),
+                           tr("You must enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::critical( this, tr("Enter End Date"),
+                           tr("You must enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if ( (!_cashReceipts->isChecked()) && (!_creditMemos->isChecked()) )
+  {
+    QMessageBox::critical( this, tr("Select Document Type"),
+                           tr("You must indicate which Document Type(s) you wish to view.") );
+    _cashReceipts->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
   if (_selectedCustomer->isChecked())
     params.append("cust_id", _cust->id());
@@ -130,8 +161,11 @@ void dspARApplications::sPrint()
   if (_creditMemos->isChecked())
     params.append("showCreditMemos");
 
-  rptARApplications newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ARApplications", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspARApplications::sViewCreditMemo()

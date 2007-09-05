@@ -59,12 +59,14 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QWorkspace>
+#include <QMenu>
+#include <QMessageBox>
+#include <parameter.h>
+#include <openreports.h>
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
-#include "rptBacklogByItem.h"
 
 /*
  *  Constructs a dspBacklogByItem as a child of 'parent', with the
@@ -74,45 +76,19 @@
 dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBacklogByItem::~dspBacklogByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBacklogByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspBacklogByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cSold);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -134,6 +110,23 @@ void dspBacklogByItem::init()
   _item->setFocus();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBacklogByItem::~dspBacklogByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBacklogByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBacklogByItem::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
@@ -146,18 +139,27 @@ void dspBacklogByItem::sHandlePrices(bool pShowPrices)
 
 void dspBacklogByItem::sPrint()
 {
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Item Number"),
+                          tr("You must enter a valid Item Number for this report.") );
+    _item->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("item_id", _item->id());
-  params.append("print");
-
   _warehouse->appendValue(params);
+  params.append("item_id", _item->id());
 
   if (_showPrices->isChecked())
     params.append("showPrices");
 
-  rptBacklogByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BacklogByItemNumber", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBacklogByItem::sEditOrder()

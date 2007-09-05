@@ -141,7 +141,6 @@
 #include "rptWoHistoryByClassCode.h"
 #include "rptWoMaterialsByWorkOrder.h"
 #include "rptWoMaterialsByItem.h"
-#include "rptInventoryAvailabilityByWorkOrder.h"
 #include "rptPendingAvailability.h"
 #include "rptWoOperationsByWorkCenter.h"
 #include "rptWoOperationsByWorkOrder.h"
@@ -157,8 +156,6 @@
 #include "rptLaborVarianceByWorkOrder.h"
 #include "rptWoSoStatusMismatch.h"
 #include "rptWoSoStatus.h"
-#include "rptBreederDistributionVarianceByItem.h"
-#include "rptBreederDistributionVarianceByWarehouse.h"
 #include "rptWoEffortByUser.h"
 #include "rptWoEffortByWorkOrder.h"
 
@@ -574,10 +571,6 @@ moduleWO::moduleWO(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sRptWoMaterialsByWo()),
                                       reportsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
 
-  parent->actions.append( new Action( parent, "wo.rptInventoryAvailabilityByWorkOrder", tr("Inventory Availability by Work Order..."),
-                                      this, SLOT(sRptInventoryAvailabilityByWorkOrder()),
-                                      reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
-
   parent->actions.append( new Action( parent, "wo.rptPendingWoMaterialAvailability", tr("Pending W/O Material Availability..."),
                                       this, SLOT(sRptPendingAvailability()),
                                       reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
@@ -651,19 +644,6 @@ moduleWO::moduleWO(OpenMFGGUIClient *Pparent) :
       parent->actions.append( new Action( parent, "wo.rptLaborVarianceByWorkOrder", tr("Labor Variance by Work Order..."),
                                           this, SLOT(sRptLaborVarianceByWorkOrder()),
                                           reportsMenu, _privleges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
-  }
-
-  if (_metrics->boolean("BBOM"))
-  {
-      reportsMenu->insertSeparator();
-
-      parent->actions.append( new Action( parent, "wo.rptBreederDistributionVarianceByItem", tr("Breeder Distribution Variance by Item..."),
-                                          this, SLOT(sRptBreederDistributionVarianceByItem()),
-                                          reportsMenu, _privleges->check("ViewBreederVariances") ) );
-
-      parent->actions.append( new Action( parent, "wo.rptBreederDistributionVarianceByWarehouse", tr("Breeder Distribution Variance by Warehouse..."),
-                                          this, SLOT(sRptBreederDistributionVarianceByWarehouse()),
-                                          reportsMenu, _privleges->check("ViewBreederVariances") ) );
   }
 
   reportsMenu->insertSeparator();
@@ -1163,11 +1143,6 @@ void moduleWO::sRptWoMaterialsByComponentItem()
   rptWoMaterialsByItem(parent, "", TRUE).exec();
 }
 
-void moduleWO::sRptInventoryAvailabilityByWorkOrder()
-{
-  rptInventoryAvailabilityByWorkOrder(parent, "", TRUE).exec();
-}
-
 void moduleWO::sRptPendingAvailability()
 {
   rptPendingAvailability(parent, "", TRUE).exec();
@@ -1241,16 +1216,6 @@ void moduleWO::sRptLaborVarianceByWorkCenter()
 void moduleWO::sRptLaborVarianceByWorkOrder()
 {
   rptLaborVarianceByWorkOrder(parent, "", TRUE).exec();
-}
-
-void moduleWO::sRptBreederDistributionVarianceByItem()
-{
-  rptBreederDistributionVarianceByItem(parent, "", TRUE).exec();
-}
-
-void moduleWO::sRptBreederDistributionVarianceByWarehouse()
-{
-  rptBreederDistributionVarianceByWarehouse(parent, "", TRUE).exec();
 }
 
 void moduleWO::sRptWoSoStatusMismatch()

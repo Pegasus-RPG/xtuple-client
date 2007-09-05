@@ -57,10 +57,10 @@
 
 #include "dspBookingsBySalesRep.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
-#include "rptBookingsBySalesRep.h"
+#include <QVariant>
+#include <QMessageBox>
+#include <QStatusBar>
+#include <openreports.h>
 
 /*
  *  Constructs a dspBookingsBySalesRep as a child of 'parent', with the
@@ -70,38 +70,14 @@
 dspBookingsBySalesRep::dspBookingsBySalesRep(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspBookingsBySalesRep::~dspBookingsBySalesRep()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspBookingsBySalesRep::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspBookingsBySalesRep::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _salesrep->setType(XComboBox::SalesRepsActive);
   _productCategory->setType(ProductCategory);
@@ -118,17 +94,52 @@ void dspBookingsBySalesRep::init()
   _soitem->addColumn(tr("Ext'd Price"), _moneyColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspBookingsBySalesRep::~dspBookingsBySalesRep()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspBookingsBySalesRep::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspBookingsBySalesRep::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _productCategory->appendValue(params);
   _dates->appendValue(params);
   params.append("salesrep_id", _salesrep->id());
-  params.append("print");
 
-  rptBookingsBySalesRep newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("BookingsBySalesRep", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspBookingsBySalesRep::sFillList()

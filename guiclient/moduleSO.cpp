@@ -138,20 +138,9 @@
 #include "dspBriefEarnedCommissions.h"
 #include "dspSummarizedTaxableSales.h"
 
-#include "rptCustomersByCustomerType.h"
-#include "rptCustomersByCharacteristic.h"
-#include "rptCustomerInformation.h"
-#include "rptInventoryAvailabilityByItem.h"
-#include "rptInventoryAvailabilityBySalesOrder.h"
 #include "rptSalesOrderStatus.h"
-#include "rptBacklogByItem.h"
-#include "rptBacklogBySalesOrder.h"
-#include "rptBacklogByCustomer.h"
-#include "rptBacklogByParameterList.h"
 #include "rptSummarizedBacklogByWarehouse.h"
 #include "rptPartiallyShippedOrders.h"
-#include "rptEarnedCommissions.h"
-#include "rptBriefEarnedCommissions.h"
 #include "rptSummarizedTaxableSales.h"
 #include "printSoForm.h"
 #include "deliverSalesOrder.h"
@@ -331,27 +320,11 @@ moduleSO::moduleSO(OpenMFGGUIClient *pParent) :
     { "so.dspSummarizedTaxableSales", tr("Summarized Taxable Sales..."),	SLOT(sDspSummarizedTaxableSales()), displaysMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true},
 
     { "menu",	tr("Reports"),            (char*)reportsMenu,	mainMenu,	true,	NULL, NULL, true},
-    { "so.rptCustomersByCustomerType", tr("Customers by Customer Type..."),	SLOT(sRptCustomersByCusttype()), reportsMenu, (_privleges->check("MaintainCustomerMasters") || _privleges->check("ViewCustomerMasters")),	NULL, NULL, true},
-    { "so.rptCustomersByCharacteristic", tr("Customers by Characteristic..."),	SLOT(sRptCustomersByCharacteristic()), reportsMenu, (_privleges->check("MaintainCustomerMasters") || _privleges->check("ViewCustomerMasters")),	NULL, NULL, true},
-//  { "so.rptCustomerInformation", tr("Customer Information..."),                                  	SLOT(sRptCustomerInformation()),                  reportsMenu, (_privleges->check("MaintainCustomerMasters") || _privleges->check("ViewCustomerMasters")),	NULL, NULL, true},
-    { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
-    { "so.rptInventoryAvailabilityByItem", tr("Inventory Availability by Item..."),	SLOT(sRptInventoryAvailabilityByItem()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true},
-    { "so.rptInventoryAvailabilityBySalesOrder", tr("Inventory Availability by Sales Order..."),	SLOT(sRptInventoryAvailabilityBySalesOrder()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true},
-    { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
     { "so.rptSalesOrderStatus", tr("Sales Order Status..."),	SLOT(sRptSalesOrderStatus()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
-    { "so.rptBacklogByItem", tr("Backlog by Item..."),	SLOT(sRptBacklogByItem()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "so.rptBacklogBySalesOrder", tr("Backlog by Sales Order..."),	SLOT(sRptBacklogBySalesOrder()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "so.rptBacklogByCustomer", tr("Backlog by Customer..."),	SLOT(sRptBacklogByCustomer()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "so.rptBacklogByCustomerType", tr("Backlog by Customer Type..."),	SLOT(sRptBacklogByCustomerType()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "so.rptBacklogByCustomerGroup", tr("Backlog by Customer Group..."),	SLOT(sRptBacklogByCustomerGroup()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "so.rptBacklogByProductCategory", tr("Backlog by Product Category..."),	SLOT(sRptBacklogByProductCategory()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
     { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
     { "so.rptSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."),	SLOT(sRptSummarizedBacklogByWarehouse()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
     { "so.rptPartiallyShippedOrders", tr("Partially Shipped Orders..."),	SLOT(sRptPartiallyShippedOrders()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
     { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
-    { "so.rptEarnedCommissions", tr("Earned Commissions..."),	SLOT(sRptEarnedCommissions()), reportsMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true},
-    { "so.rptBriefEarnedCommissions", tr("Brief Earned Commissions..."),	SLOT(sRptBriefEarnedCommissions()), reportsMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true},
     { "so.rptSummarizedTaxableSales", tr("Summarized Taxable Sales..."),	SLOT(sRptSummarizedTaxableSales()), reportsMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true},
     { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
     { "so.printSalesOrderForm", tr("Print Sales Order Form..."),	SLOT(sPrintSalesOrderForm()), reportsMenu, (_privleges->check("MaintainSalesOrders") || _privleges->check("ViewSalesOrders")),	NULL, NULL, true},
@@ -797,79 +770,9 @@ void moduleSO::sDspSummarizedTaxableSales()
   omfgThis->handleNewWindow(new dspSummarizedTaxableSales());
 }
 
-void moduleSO::sRptCustomersByCusttype()
-{
-  rptCustomersByCustomerType(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptCustomersByCharacteristic()
-{
-  rptCustomersByCharacteristic(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptCustomerInformation()
-{
-  rptCustomerInformation(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptInventoryAvailabilityByItem()
-{
-  rptInventoryAvailabilityByItem(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptInventoryAvailabilityBySalesOrder()
-{
-  rptInventoryAvailabilityBySalesOrder(parent, "", TRUE).exec();
-}
-
 void moduleSO::sRptSalesOrderStatus()
 {
   rptSalesOrderStatus(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptBacklogByItem()
-{
-  rptBacklogByItem(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptBacklogBySalesOrder()
-{
-  rptBacklogBySalesOrder(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptBacklogByCustomer()
-{
-  rptBacklogByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptBacklogByCustomerType()
-{
-  ParameterList params;
-  params.append("custtype");
-
-  rptBacklogByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleSO::sRptBacklogByCustomerGroup()
-{
-  ParameterList params;
-  params.append("custgrp");
-
-  rptBacklogByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleSO::sRptBacklogByProductCategory()
-{
-  ParameterList params;
-  params.append("prodcat");
-
-  rptBacklogByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
 }
 
 void moduleSO::sRptSummarizedBacklogByWarehouse()
@@ -880,16 +783,6 @@ void moduleSO::sRptSummarizedBacklogByWarehouse()
 void moduleSO::sRptPartiallyShippedOrders()
 {
   rptPartiallyShippedOrders(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptEarnedCommissions()
-{
-  rptEarnedCommissions(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptBriefEarnedCommissions()
-{
-  rptBriefEarnedCommissions(parent, "", TRUE).exec();
 }
 
 void moduleSO::sRptSummarizedTaxableSales()
