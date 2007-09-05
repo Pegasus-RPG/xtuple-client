@@ -80,9 +80,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-private:
-    virtual void init();
-
 };
 
 #endif // DSPORDERACTIVITYBYPROJECT_H

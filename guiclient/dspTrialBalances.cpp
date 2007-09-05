@@ -65,42 +65,42 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "dspGLTransactions.h"
-#include "rptTrialBalances.h"
 #include "storedProcErrorLookup.h"
 
 dspTrialBalances::dspTrialBalances(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_trialbal, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_trialbal, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-    _trialbal->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter );
-    _trialbal->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter );
-    _trialbal->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter );
-    _trialbal->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
-    _trialbal->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight  );
-    _trialbal->addColumn("",                25,              Qt::AlignLeft   );
-    _trialbal->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight  );
-    _trialbal->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight  );
-    _trialbal->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight  );
-    _trialbal->addColumn("",                25,              Qt::AlignLeft   );
-    _trialbal->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight  );
-    _trialbal->addColumn("",                25,              Qt::AlignLeft   );
+  _trialbal->addColumn(tr("Start"),       _dateColumn,     Qt::AlignCenter );
+  _trialbal->addColumn(tr("End"),         _dateColumn,     Qt::AlignCenter );
+  _trialbal->addColumn(tr("Account #"),   _itemColumn,     Qt::AlignCenter );
+  _trialbal->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
+  _trialbal->addColumn(tr("Beg. Bal."),   _bigMoneyColumn, Qt::AlignRight  );
+  _trialbal->addColumn("",                25,              Qt::AlignLeft   );
+  _trialbal->addColumn(tr("Debits"),      _bigMoneyColumn, Qt::AlignRight  );
+  _trialbal->addColumn(tr("Credits"),     _bigMoneyColumn, Qt::AlignRight  );
+  _trialbal->addColumn(tr("Difference"),  _bigMoneyColumn, Qt::AlignRight  );
+  _trialbal->addColumn("",                25,              Qt::AlignLeft   );
+  _trialbal->addColumn(tr("End Bal."),    _bigMoneyColumn, Qt::AlignRight  );
+  _trialbal->addColumn("",                25,              Qt::AlignLeft   );
 }
 
 dspTrialBalances::~dspTrialBalances()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspTrialBalances::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspTrialBalances::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
@@ -166,10 +166,12 @@ void dspTrialBalances::sPrint()
 {
   ParameterList params;
   setParams(params);
-  params.append("print");
 
-  rptTrialBalances newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("TrialBalances", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspTrialBalances::sFillList()

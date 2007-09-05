@@ -63,8 +63,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QMenu>
+#include <openreports.h>
 #include "apOpenItem.h"
-#include "rptVendorAPHistory.h"
 
 /*
  *  Constructs a dspVendorAPHistory as a child of 'parent', with the
@@ -84,8 +84,6 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WF
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_vendhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_searchInvoiceNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchInvoiceNum()));
-
-  statusBar()->hide();
 
   _vendhist->setRootIsDecorated(TRUE);
   _vendhist->addColumn(tr("Open"),      _dateColumn,  Qt::AlignCenter );
@@ -191,13 +189,18 @@ void dspVendorAPHistory::sView()
 
 void dspVendorAPHistory::sPrint()
 {
-  ParameterList params;
-  _dates->appendValue(params);
-  params.append("vend_id", _vend->id());
-  params.append("print");
+  if (checkParameters())
+  {
+    ParameterList params;
+    params.append("vend_id", _vend->id());
+    _dates->appendValue(params);
 
-  rptVendorAPHistory newdlg(this, "", TRUE);
-  newdlg.set(params);
+    orReport report("VendorAPHistory", params);
+    if(report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
 }
 
 void dspVendorAPHistory::sFillList()

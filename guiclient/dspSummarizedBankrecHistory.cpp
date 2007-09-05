@@ -57,10 +57,11 @@
 
 #include "dspSummarizedBankrecHistory.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <openreports.h>
+#include <parameter.h>
 #include "OpenMFGGUIClient.h"
-#include "rptSummarizedBankrecHistory.h"
 
 /*
  *  Constructs a dspSummarizedBankrecHistory as a child of 'parent', with the
@@ -70,39 +71,15 @@
 dspSummarizedBankrecHistory::dspSummarizedBankrecHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSummarizedBankrecHistory::~dspSummarizedBankrecHistory()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSummarizedBankrecHistory::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspSummarizedBankrecHistory::init()
-{
-  statusBar()->hide();
- 
   _bankrec->addColumn(tr("Posted"),             _ynColumn, Qt::AlignLeft   );
   _bankrec->addColumn(tr("Post Date"),        _dateColumn, Qt::AlignCenter );
   _bankrec->addColumn(tr("User"),                      -1, Qt::AlignLeft   );
@@ -119,14 +96,33 @@ void dspSummarizedBankrecHistory::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSummarizedBankrecHistory::~dspSummarizedBankrecHistory()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSummarizedBankrecHistory::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspSummarizedBankrecHistory::sPrint()
 {
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id());
-  params.append("print");
-  
-  rptSummarizedBankrecHistory newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("SummarizedBankrecHistory", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSummarizedBankrecHistory::sFillList()

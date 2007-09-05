@@ -61,12 +61,13 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
 #include "glTransactionDetail.h"
 #include "voucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
-#include "rptSummarizedGLTransactions.h"
 
 /*
  *  Constructs a dspSummarizedGLTransactions as a child of 'parent', with the
@@ -87,8 +88,6 @@ dspSummarizedGLTransactions::dspSummarizedGLTransactions(QWidget* parent, const 
   connect(_selectedSource, SIGNAL(toggled(bool)), _source, SLOT(setEnabled(bool)));
   connect(_showUsername, SIGNAL(toggled(bool)), this, SLOT(sShowUsername(bool)));
   connect(_gltrans, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-
-  statusBar()->hide();
 
   _gltrans->setRootIsDecorated(TRUE);
   _gltrans->addColumn(tr("Account #/Date"),    150,               Qt::AlignCenter );
@@ -144,12 +143,10 @@ void dspSummarizedGLTransactions::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
   if (_unpostedTransactions->isChecked())
     params.append("unpostedTransactions");
-
-  if (_postedTransactions->isChecked())
+  else if (_postedTransactions->isChecked())
     params.append("postedTransactions");
 
   if (_selectedSource->isChecked())
@@ -158,8 +155,11 @@ void dspSummarizedGLTransactions::sPrint()
   if (_showUsername->isChecked())
     params.append("showUsernames");
 
-  rptSummarizedGLTransactions newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SummarizedGLTransactions", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSummarizedGLTransactions::sFillList()

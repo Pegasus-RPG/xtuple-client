@@ -75,8 +75,6 @@
 
 #include "dspOrderActivityByProject.h"
 
-#include "rptOrderActivityByProject.h"
-
 #include "modulePM.h"
 
 modulePM::modulePM(OpenMFGGUIClient *Pparent) :
@@ -115,17 +113,9 @@ modulePM::modulePM(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sDspOrderActivityByProject()),
                                       displaysMenu, _privleges->check("ViewProjects") ) );
 
-//  Reports
-  reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "pm.rptOrderActivityByProject", tr("Order Activity by Project..."),
-                                      this, SLOT(sRptOrderActivityByProject()),
-                                      reportsMenu, _privleges->check("ViewProjects") ) );
-
   mainMenu = new QMenu();
   mainMenu->insertItem(tr("Projects"), projectsMenu);
   mainMenu->insertItem(tr("Displays"), displaysMenu);
-  mainMenu->insertItem(tr("Reports"), reportsMenu);
   parent->populateCustomMenu(mainMenu, "P/M");
   parent->menuBar()->insertItem(tr("P/M"), mainMenu);
 }
@@ -154,10 +144,5 @@ void modulePM::sPostLaborToProject()
 void modulePM::sDspOrderActivityByProject()
 {
   omfgThis->handleNewWindow(new dspOrderActivityByProject());
-}
-
-void modulePM::sRptOrderActivityByProject()
-{
-  rptOrderActivityByProject(parent, "", true).exec();
 }
 

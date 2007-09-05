@@ -58,7 +58,7 @@
 #ifndef DSPSUMMARIZEDBANKRECHISTORY_H
 #define DSPSUMMARIZEDBANKRECHISTORY_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspSummarizedBankrecHistory.h"
 
@@ -73,9 +73,6 @@ public:
 public slots:
     virtual void sPrint();
     virtual void sFillList();
-
-protected:
-    virtual void init();
 
 protected slots:
     virtual void languageChange();

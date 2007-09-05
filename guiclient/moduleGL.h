@@ -97,10 +97,6 @@ class moduleGL : public QObject
     void sDspStandardJournalHistory();
     void sDspTrialBalances();
 
-    void sRptSummarizedGLTransactions();
-    void sRptStandardJournalHistory();
-    void sRptTrialBalances();
-
     void sCompanies();
     void sProfitCenters();
     void sSubaccounts();
@@ -122,7 +118,6 @@ class moduleGL : public QObject
     void sAdjustmentTypes();
     void sDspBankrecHistory();
     void sDspSummarizedBankrecHistory();
-    void sRptSummarizedBankrecHistory();
 
     void sBudgets();
     void sMaintainBudget();
@@ -145,11 +140,9 @@ class moduleGL : public QObject
     QMenu    *financialReportsDisplaysMenu;
     QMenu    *financialReportsReportsMenu;
     QMenu    *displaysMenu;
-    QMenu    *reportsMenu;
     QMenu    *masterInfoMenu;
     QMenu    *bankrecMenu;
     QMenu    *bankrecDisplaysMenu;
-    QMenu    *bankrecReportsMenu;
     QMenu    *budgetMenu;
     QMenu    *utilitiesMenu;
 };

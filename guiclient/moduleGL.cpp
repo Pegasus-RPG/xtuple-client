@@ -78,7 +78,6 @@
 #include "postStandardJournal.h"
 #include "postStandardJournalGroup.h"
 #include "dspStandardJournalHistory.h"
-#include "rptStandardJournalHistory.h"
 
 #include "financialLayouts.h"
 #include "financialLayout.h"
@@ -88,9 +87,6 @@
 #include "dspSummarizedGLTransactions.h"
 #include "dspGLSeries.h"
 #include "dspTrialBalances.h"
-
-#include "rptSummarizedGLTransactions.h"
-#include "rptTrialBalances.h"
 
 #include "companies.h"
 #include "profitCenters.h"
@@ -112,7 +108,6 @@
 #include "bankAdjustmentTypes.h"
 #include "dspBankrecHistory.h"
 #include "dspSummarizedBankrecHistory.h"
-#include "rptSummarizedBankrecHistory.h"
 
 #include "budgets.h"
 #include "maintainBudget.h"
@@ -147,7 +142,6 @@ moduleGL::moduleGL(OpenMFGGUIClient *Pparent) :
   financialReportsReportsMenu	= new QMenu();
   budgetMenu		= new QMenu();
   displaysMenu		= new QMenu();
-  reportsMenu		= new QMenu();
   masterInfoMenu	= new QMenu();
   utilitiesMenu		= new QMenu();
 
@@ -202,11 +196,6 @@ moduleGL::moduleGL(OpenMFGGUIClient *Pparent) :
     { "gl.dspBankrecHistory",		tr("Bank Rec. History"),		SLOT(sDspBankrecHistory()),		displaysMenu, _privleges->check("ViewBankRec"),		NULL, NULL, true},
     { "gl.dspSummarizedBankrecHistory",	tr("Summarized Bank Rec. History"),	SLOT(sDspSummarizedBankrecHistory()),	displaysMenu, _privleges->check("ViewBankRec"),		NULL, NULL, true},
 
-
-    { "menu",				tr("Reports"),				(char*)reportsMenu,			mainMenu,    true,					NULL, NULL, true},
-    { "gl.rptSummarizedGLTransactions",	tr("Summarized G/L Transactions..."),	SLOT(sRptSummarizedGLTransactions()),	reportsMenu, _privleges->check("ViewGLTransactions"),	NULL, NULL, true},
-    { "gl.rptStandardJournalHistory",	tr("Standard Journal History..."),	SLOT(sRptStandardJournalHistory()),	reportsMenu, _privleges->check("ViewGLTransactions"),	NULL, NULL, true},
-    { "gl.rptSummarizedBankrecHistory",	tr("Summarized Bank Rec. History"),	SLOT(sRptSummarizedBankrecHistory()),	reportsMenu, _privleges->check("ViewBankRec"),		NULL, NULL, true},
 
     { "menu",			tr("Master Information"),	(char*)masterInfoMenu,		mainMenu,	true,						NULL, NULL, true},
     { "gl.companies",		tr("Companies..."),		SLOT(sCompanies()),		masterInfoMenu,	(_privleges->check("MaintainChartOfAccounts") && (_metrics->value("GLCompanySize").toInt() > 0)),
@@ -394,23 +383,6 @@ void moduleGL::sDspTrialBalances()
 }
 
 
-//  Reports
-void moduleGL::sRptSummarizedGLTransactions()
-{
-  rptSummarizedGLTransactions(parent, "", TRUE).exec();
-}
-
-void moduleGL::sRptStandardJournalHistory()
-{
-  rptStandardJournalHistory(parent, "", TRUE).exec();
-}
-
-void moduleGL::sRptTrialBalances()
-{
-  rptTrialBalances(parent, "", TRUE).exec();
-}
-
-
 //  Master Information
 void moduleGL::sCompanies()
 {
@@ -520,11 +492,6 @@ void moduleGL::sDspBankrecHistory()
 void moduleGL::sDspSummarizedBankrecHistory()
 {
   omfgThis->handleNewWindow(new dspSummarizedBankrecHistory());
-}
-
-void moduleGL::sRptSummarizedBankrecHistory()
-{
-  rptSummarizedBankrecHistory(parent, "", TRUE).exec();
 }
 
 void moduleGL::sBudgets()

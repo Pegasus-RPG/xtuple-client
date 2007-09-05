@@ -263,6 +263,7 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "ar.printStatementsByCustomerType", tr("Print Statements by Customer Type..."),
                                       this, SLOT(sPrintStatementsByCustomerType()),
                                       reportsMenu, _privleges->check("ViewAROpenItems") ) );
+
   reportsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.rptSalesJournal", tr("Sales Journal..."),

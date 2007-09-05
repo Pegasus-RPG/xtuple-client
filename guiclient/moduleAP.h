@@ -110,8 +110,6 @@ class moduleAP : public QObject
     void sDspAPOpenItemsByVendor();
     void sDspTimePhasedOpenAPItems();
 
-    void sRptVendorHistory();
-    void sRptVoucherRegister();
     void sRptPayablesJournal();
     void sRptCheckJournal();
 

@@ -101,8 +101,6 @@
 #include "dspTimePhasedOpenAPItems.h"
 //#include "dspAPAging.h"
 
-#include "rptVoucherRegister.h"
-#include "rptVendorAPHistory.h"
 #include "printJournal.h"
 
 #include "vendors.h"
@@ -288,16 +286,6 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
 
 //  Reports
   reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "ap.rptVendorHistory", tr("Vendor History..."),
-                                      this, SLOT(sRptVendorHistory()),
-                                      reportsMenu, _privleges->check("ViewAPOpenItems") ) );
-
-  parent->actions.append( new Action( parent, "ap.rptVoucherRegister", tr("Voucher Register..."),
-                                      this, SLOT(sRptVoucherRegister()),
-                                      reportsMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")) ) );
-
-  reportsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.rptPayablesJournal", tr("Payables Journal..."),
                                       this, SLOT(sRptPayablesJournal()),
@@ -542,16 +530,6 @@ void moduleAP::sDspAPAging()
 */
 
 //  Reports
-void moduleAP::sRptVendorHistory()
-{
-  rptVendorAPHistory(parent, "", TRUE).exec();
-}
-
-void moduleAP::sRptVoucherRegister()
-{
-  rptVoucherRegister(parent, "", TRUE).exec();
-}
-
 void moduleAP::sRptPayablesJournal()
 {
   ParameterList params;

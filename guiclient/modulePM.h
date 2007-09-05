@@ -84,8 +84,6 @@ class modulePM : public QObject
 
     void sDspOrderActivityByProject();
 
-    void sRptOrderActivityByProject();
-
   private:
     OpenMFGGUIClient *parent;
 
@@ -93,7 +91,6 @@ class modulePM : public QObject
     QMenu *mainMenu;
     QMenu *projectsMenu;
     QMenu *displaysMenu;
-    QMenu *reportsMenu;
 };
 
 #endif

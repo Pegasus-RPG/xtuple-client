@@ -61,12 +61,12 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
-#include "OpenMFGGUIClient.h"
+#include <openreports.h>
 #include <parameter.h>
+#include "OpenMFGGUIClient.h"
 #include "salesOrder.h"
 #include "invoice.h"
 #include "purchaseOrderItem.h"
-#include "rptOrderActivityByProject.h"
 
 /*
  *  Constructs a dspOrderActivityByProject as a child of 'parent', with the
@@ -76,20 +76,24 @@
 dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_cancel, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_project, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_project, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    init();
+  // signals and slots connections
+  connect(_cancel, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_project, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_project, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_showPo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showSo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showWo, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_orders, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  _orders->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft   );
+  _orders->addColumn(tr("Order #"),     _itemColumn,  Qt::AlignLeft   );
+  _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter );
+  _orders->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
+  _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignLeft   );
 }
 
 /*
@@ -97,7 +101,7 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
  */
 dspOrderActivityByProject::~dspOrderActivityByProject()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -106,19 +110,7 @@ dspOrderActivityByProject::~dspOrderActivityByProject()
  */
 void dspOrderActivityByProject::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspOrderActivityByProject::init()
-{
-  _orders->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft   );
-  _orders->addColumn(tr("Order #"),     _itemColumn,  Qt::AlignLeft   );
-  _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter );
-  _orders->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
-  _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignLeft   );
+  retranslateUi(this);
 }
 
 void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
@@ -336,9 +328,10 @@ void dspOrderActivityByProject::sPrint()
   if (_showPo->isChecked())
     params.append("showPo");
 
-  params.append("print");
-
-  rptOrderActivityByProject newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("OrderActivityByProject", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 

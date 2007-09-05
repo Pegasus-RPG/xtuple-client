@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMenu>
-#include "rptVoucherRegister.h"
+#include <openreports.h>
 #include "voucher.h"
 #include "invoice.h"
 #include "purchaseOrder.h"
@@ -104,7 +104,7 @@ dspVoucherRegister::dspVoucherRegister(QWidget* parent, const char* name, Qt::WF
  */
 dspVoucherRegister::~dspVoucherRegister()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -113,7 +113,7 @@ dspVoucherRegister::~dspVoucherRegister()
  */
 void dspVoucherRegister::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspVoucherRegister::set(const ParameterList &pParams)
@@ -180,7 +180,6 @@ void dspVoucherRegister::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
 
   if (_selectedAccount->isChecked())
     params.append("accnt_id", _account->id());
@@ -188,8 +187,12 @@ void dspVoucherRegister::sPrint()
   if (_showUsername->isChecked())
     params.append("showUsernames");
 
-  rptVoucherRegister newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("VoucherRegister", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspVoucherRegister::sFillList()
