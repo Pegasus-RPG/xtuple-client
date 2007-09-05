@@ -97,20 +97,6 @@
 #include "dspTimePhasedSalesByCustomerGroup.h"
 #include "dspTimePhasedSalesByCustomerByItem.h"
 
-#include "rptSalesHistoryByCustomer.h"
-#include "rptSalesHistoryByBilltoName.h"
-#include "rptSalesHistoryByShipTo.h"
-#include "rptSalesHistoryByItem.h"
-#include "rptSalesHistoryByParameterList.h"
-#include "rptSalesHistoryBySalesRep.h"
-#include "rptSummarizedSalesByCustomer.h"
-#include "rptSummarizedSalesByCustomerType.h"
-#include "rptSummarizedSalesByCustomerByItem.h"
-#include "rptSummarizedSalesByCustomerTypeByItem.h"
-#include "rptSummarizedSalesByItem.h"
-#include "rptSummarizedSalesBySalesRep.h"
-#include "rptSummarizedSalesByShippingZone.h"
-#include "rptTimePhasedSalesByCustomerGroup.h"
 #include "printSASpecialCalendarForm.h"
 
 #include "archRestoreSalesHistory.h"
@@ -263,76 +249,6 @@ moduleSA::moduleSA(OpenMFGGUIClient *pParent) :
 
 //  Reports
   reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByCustomer", tr("Sales History by Customer..."),
-                                      this, SLOT(sRptSalesHistoryByCustomer()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByBillToName", tr("Sales History by Bill-To Name..."),
-                                      this, SLOT(sRptSalesHistoryByBilltoName()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByShipTo", tr("Sales History by Ship-To..."),
-                                      this, SLOT(sRptSalesHistoryByShipTo()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByItem", tr("Sales History by Item..."),
-                                      this, SLOT(sRptSalesHistoryByItem()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryBySalesRep", tr("Sales History by Sales Rep..."),
-                                      this, SLOT(sRptSalesHistoryBySalesRep()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByProductCategory", tr("Sales History by Product Category..."),
-                                      this, SLOT(sRptSalesHistoryByProductCategory()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByCustomerType", tr("Sales History by Customer Type..."),
-                                      this, SLOT(sRptSalesHistoryByCustomerType()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSalesHistoryByCustomerGroup", tr("Sales History by Customer Group..."),
-                                      this, SLOT(sRptSalesHistoryByCustomerGroup()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryByCustomer", tr("Summarized Sales History by Customer..."),
-                                      this, SLOT(sRptSummarizedSalesByCustomer()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryByCustomerType", tr("Summarized Sales History by Customer Type..."),
-                                      this, SLOT(sRptSummarizedSalesByCustomerType()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryByCustomerByItem", tr("Summarized Sales History by Customer by Item..."),
-                                      this, SLOT(sRptSummarizedSalesByCustomerByItem()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryByCustomerTypeByItem", tr("Summarized Sales History by Customer Type by Item..."),
-                                      this, SLOT(sRptSummarizedSalesByCustomerTypeByItem()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryByItem", tr("Summarized Sales History by Item..."),
-                                      this, SLOT(sRptSummarizedSalesByItem()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryBySalesRep", tr("Summarized Sales History by Sales Rep..."),
-                                      this, SLOT(sRptSummarizedSalesBySalesRep()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  parent->actions.append( new Action( parent, "sa.rptSummarizedSalesHistoryByShippingZoneByItem", tr("Summarized Sales History by Shipping Zone by Item..."),
-                                      this, SLOT(sRptSummarizedSalesHistoryByShippingZone()),
-                                      reportsMenu, _privleges->check("ViewSalesOrders") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "sa.rptTimePhasedSalesHistoryByCustomerGroup", tr("Time-Phased Sales History by Customer Group..."),
-                                      this, SLOT(sRptTimePhasedSalesByCustomerGroup()),
-                                      reportsMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
-
-  reportsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "sa.rptPrintSASpecialCalendarForm", tr("Print S/A Special Calendar Form..."),
                                       this, SLOT(sPrintSASpecialCalendarForm()),
@@ -535,100 +451,6 @@ void moduleSA::sDspTimePhasedSalesByCustomerByItem()
 
 
 //  Reports
-void moduleSA::sRptSalesHistoryByCustomer()
-{
-  rptSalesHistoryByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSalesHistoryByBilltoName()
-{
-  rptSalesHistoryByBilltoName(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSalesHistoryByShipTo()
-{
-  rptSalesHistoryByShipTo(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSalesHistoryByItem()
-{
-  rptSalesHistoryByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSalesHistoryBySalesRep()
-{
-  rptSalesHistoryBySalesRep(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSalesHistoryByProductCategory()
-{
-  ParameterList params;
-  params.append("prodcat");
-
-  rptSalesHistoryByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleSA::sRptSalesHistoryByCustomerType()
-{
-  ParameterList params;
-  params.append("custtype");
-
-  rptSalesHistoryByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleSA::sRptSalesHistoryByCustomerGroup()
-{
-  ParameterList params;
-  params.append("custgrp");
-
-  rptSalesHistoryByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleSA::sRptSummarizedSalesByCustomer()
-{
-  rptSummarizedSalesByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSummarizedSalesByCustomerType()
-{
-  rptSummarizedSalesByCustomerType(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSummarizedSalesByCustomerByItem()
-{
-  rptSummarizedSalesByCustomerByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSummarizedSalesByCustomerTypeByItem()
-{
-  rptSummarizedSalesByCustomerTypeByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSummarizedSalesByItem()
-{
-  rptSummarizedSalesByItem(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSummarizedSalesBySalesRep()
-{
-  rptSummarizedSalesBySalesRep(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptSummarizedSalesHistoryByShippingZone()
-{
-  rptSummarizedSalesByShippingZone(parent, "", TRUE).exec();
-}
-
-void moduleSA::sRptTimePhasedSalesByCustomerGroup()
-{
-  rptTimePhasedSalesByCustomerGroup(parent, "", TRUE).exec();
-}
 
 void moduleSA::sPrintSASpecialCalendarForm()
 {

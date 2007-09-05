@@ -61,9 +61,9 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "salesHistoryInformation.h"
-#include "rptSalesHistoryByShipTo.h"
 
 #define UNITPRICE_COL	7
 #define EXTPRICE_COL	8
@@ -90,8 +90,6 @@ dspSalesHistoryByShipTo::dspSalesHistoryByShipTo(QWidget* parent, const char* na
   connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-
-  statusBar()->hide();
 
   _productCategory->setType(ProductCategory);
 
@@ -126,7 +124,7 @@ dspSalesHistoryByShipTo::dspSalesHistoryByShipTo(QWidget* parent, const char* na
  */
 dspSalesHistoryByShipTo::~dspSalesHistoryByShipTo()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -135,7 +133,7 @@ dspSalesHistoryByShipTo::~dspSalesHistoryByShipTo()
  */
 void dspSalesHistoryByShipTo::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspSalesHistoryByShipTo::sHandleParams()
@@ -200,22 +198,33 @@ void dspSalesHistoryByShipTo::sView()
 
 void dspSalesHistoryByShipTo::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr("Please enter a valid Start and End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  _dates->appendValue(params);
+
+  params.append("cust_id", _cust->id());
   params.append("shipto_id", _shipTo->id());
-  params.append("print");
 
-  if (_showCosts->isChecked())
+  _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
+  if(_showCosts->isChecked())
     params.append("showCosts");
-
-  if (_showPrices->isChecked())
+  if(_showPrices->isChecked())
     params.append("showPrices");
 
-  rptSalesHistoryByShipTo newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.show();
+  orReport report("SalesHistoryByShipTo", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSalesHistoryByShipTo::sFillList()

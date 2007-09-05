@@ -59,7 +59,7 @@
 #define DSPSUMMARIZEDSALESBYITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspSummarizedSalesByItem.h"
 
@@ -71,7 +71,6 @@ public:
     dspSummarizedSalesByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSummarizedSalesByItem();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:

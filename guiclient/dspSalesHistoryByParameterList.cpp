@@ -60,8 +60,9 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "salesHistoryInformation.h"
-#include "rptSalesHistoryByParameterList.h"
 
 #define UNITPRICE_COL	7
 #define EXTPRICE_COL	8
@@ -76,43 +77,17 @@
 dspSalesHistoryByParameterList::dspSalesHistoryByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-    connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSalesHistoryByParameterList::~dspSalesHistoryByParameterList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSalesHistoryByParameterList::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspSalesHistoryByParameterList::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
+  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
   _parameter->setType(ProductCategory);
 
@@ -140,7 +115,24 @@ void dspSalesHistoryByParameterList::init()
   sHandleParams();
 }
 
-enum SetResponse dspSalesHistoryByParameterList::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSalesHistoryByParameterList::~dspSalesHistoryByParameterList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSalesHistoryByParameterList::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspSalesHistoryByParameterList::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -289,31 +281,33 @@ void dspSalesHistoryByParameterList::sView()
 
 void dspSalesHistoryByParameterList::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _parameter->appendValue(params);
-  _dates->appendValue(params);
-  params.append("print");
-
-  if (_parameter->isAll())
+  if (!_dates->allValid())
   {
-    if (_parameter->type() == ProductCategory)
-      params.append("prodcat");
-    else if (_parameter->type() == CustomerType)
-      params.append("custtype");
-    else if (_parameter->type() == CustomerGroup)
-      params.append("custgrp");
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr("Please enter a valid Start and End Date.") );
+    _dates->setFocus();
+    return;
   }
 
-  if (_showCosts->isChecked())
-    params.append("showCosts");
+  ParameterList params;
 
-  if (_showPrices->isChecked())
+  _parameter->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
+  if ( (_parameter->isAll()) && (_parameter->type() == CustomerGroup) )
+    params.append("custgrp");
+
+  if(_showCosts->isChecked())
+    params.append("showCosts");
+  if(_showPrices->isChecked())
     params.append("showPrices");
 
-  rptSalesHistoryByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.show();
+  orReport report("SalesHistoryByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSalesHistoryByParameterList::sFillList()

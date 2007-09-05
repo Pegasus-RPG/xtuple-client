@@ -59,7 +59,7 @@
 #define DSPSUMMARIZEDSALESBYSALESREP_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspSummarizedSalesBySalesRep.h"
 
@@ -71,7 +71,6 @@ public:
     dspSummarizedSalesBySalesRep(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSummarizedSalesBySalesRep();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:

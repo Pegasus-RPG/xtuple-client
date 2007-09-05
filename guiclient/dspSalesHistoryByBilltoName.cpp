@@ -62,8 +62,8 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+#include <openreports.h>
 #include "salesHistoryInformation.h"
-#include "rptSalesHistoryByBilltoName.h"
 
 #define UNITPRICE_COL	7
 #define EXTPRICE_COL	8
@@ -233,21 +233,26 @@ void dspSalesHistoryByBilltoName::sView()
 
 void dspSalesHistoryByBilltoName::sPrint()
 {
+  if(!checkParameters())
+    return;
+
   ParameterList params;
-  _warehouse->appendValue(params);
+  params.append("billToName", _billtoName->text().upper().stripWhiteSpace());
+
   _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("billto_name", _billtoName->text());
-  params.append("print");
 
-  if (_showCosts->isChecked())
-    params.append("showCosts");
+  if(_showCosts->isChecked())
+      params.append("showCosts");
+  if(_showPrices->isChecked())
+      params.append("showPrices");
 
-  if (_showPrices->isChecked())
-    params.append("showPrices");
-
-  rptSalesHistoryByBilltoName newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SalesHistoryByBilltoName", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSalesHistoryByBilltoName::sFillList()

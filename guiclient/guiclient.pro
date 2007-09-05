@@ -287,25 +287,18 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptQOHByParameterList.ui rptQOHByItem.ui rptQOHByLocation.ui                           \
                rptReorderExceptionsByPlannerCode.ui rptRoughCutByWorkCenter.ui                        \
                rptRunningAvailability.ui                                                              \
-               rptSalesHistoryByBilltoName.ui rptSalesHistoryByCustomer.ui                            \
-               rptSalesHistoryByItem.ui rptSalesHistoryByParameterList.ui                             \
-               rptSalesHistoryBySalesRep.ui rptSalesHistoryByShipTo.ui                                \
                rptSalesOrderStatus.ui rptSequencedBOM.ui rptSingleLevelBOM.ui                         \
                rptSingleLevelWhereUsed.ui rptShipmentsByDate.ui rptShipmentsBySalesOrder.ui           \
                rptSlowMovingInventoryByClassCode.ui                                                   \
                                             rptStandardOperationsByWorkCenter.ui                      \
                rptSubstituteAvailabilityByRootItem.ui                                                 \
                rptSummarizedBacklogByWarehouse.ui rptSummarizedBOM.ui                                 \
-               rptSummarizedSalesByCustomer.ui rptSummarizedSalesByCustomerType.ui                    \
-               rptSummarizedSalesByCustomerTypeByItem.ui rptSummarizedSalesByCustomerByItem.ui        \
-               rptSummarizedSalesByItem.ui rptSummarizedSalesBySalesRep.ui                            \
-               rptSummarizedSalesByShippingZone.ui rptSummarizedTaxableSales.ui                       \
+                                                   rptSummarizedTaxableSales.ui                       \
                                             rptTimePhasedAvailableCapacityByWorkCenter.ui             \
                rptTimePhasedCapacityByWorkCenter.ui                                                   \
                rptTimePhasedLoadByWorkCenter.ui                                                       \
                rptTimePhasedPlannedREByPlannerCode.ui                                                 \
                rptTimePhasedRoughCutByWorkCenter.ui                                                   \
-                                               rptTimePhasedSalesByCustomerGroup.ui                   \
                rptUsageStatisticsByItem.ui rptUsageStatisticsByClassCode.ui                           \
                rptUsageStatisticsByItemGroup.ui rptUsageStatisticsByWarehouse.ui                      \
                rptUninvoicedReceivings.ui rptValidLocationsByItem.ui                                  \
@@ -637,25 +630,18 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptQOHByParameterList.h rptQOHByItem.h rptQOHByLocation.h                              \
                rptReorderExceptionsByPlannerCode.h rptRoughCutByWorkCenter.h                          \
                rptRunningAvailability.h                                                               \
-               rptSalesHistoryByBilltoName.h rptSalesHistoryByCustomer.h                              \
-               rptSalesHistoryByItem.h rptSalesHistoryByParameterList.h                               \
-               rptSalesHistoryBySalesRep.h rptSalesHistoryByShipTo.h                                  \
                rptSalesOrderStatus.h rptSequencedBOM.h rptSingleLevelBOM.h                            \
                rptSingleLevelWhereUsed.h rptShipmentsByDate.h rptShipmentsBySalesOrder.h              \
                rptSlowMovingInventoryByClassCode.h                                                    \
                                            rptStandardOperationsByWorkCenter.h                        \
                rptSubstituteAvailabilityByRootItem.h                                                  \
                rptSummarizedBacklogByWarehouse.h rptSummarizedBOM.h                                   \
-               rptSummarizedSalesByCustomer.h rptSummarizedSalesByCustomerType.h                      \
-               rptSummarizedSalesByCustomerTypeByItem.h rptSummarizedSalesByCustomerByItem.h          \
-               rptSummarizedSalesByItem.h rptSummarizedSalesBySalesRep.h                              \
-               rptSummarizedSalesByShippingZone.h rptSummarizedTaxableSales.h                         \
+                                                  rptSummarizedTaxableSales.h                         \
                                            rptTimePhasedAvailableCapacityByWorkCenter.h               \
                rptTimePhasedCapacityByWorkCenter.h                                                    \
                rptTimePhasedLoadByWorkCenter.h                                                        \
                rptTimePhasedPlannedREByPlannerCode.h                                                  \
                rptTimePhasedRoughCutByWorkCenter.h                                                    \
-                                              rptTimePhasedSalesByCustomerGroup.h                     \
                rptUsageStatisticsByItem.h rptUsageStatisticsByClassCode.h                             \
                rptUsageStatisticsByItemGroup.h rptUsageStatisticsByWarehouse.h                        \
                rptUninvoicedReceivings.h rptValidLocationsByItem.h                                    \
@@ -988,25 +974,18 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptQOHByParameterList.cpp rptQOHByItem.cpp rptQOHByLocation.cpp                        \
                rptReorderExceptionsByPlannerCode.cpp rptRoughCutByWorkCenter.cpp                      \
                rptRunningAvailability.cpp                                                             \
-               rptSalesHistoryByBilltoName.cpp rptSalesHistoryByCustomer.cpp                          \
-               rptSalesHistoryByItem.cpp rptSalesHistoryByParameterList.cpp                           \
-               rptSalesHistoryBySalesRep.cpp rptSalesHistoryByShipTo.cpp                              \
                rptSalesOrderStatus.cpp rptSequencedBOM.cpp rptSingleLevelBOM.cpp                      \
                rptSingleLevelWhereUsed.cpp rptShipmentsByDate.cpp rptShipmentsBySalesOrder.cpp        \
                rptSlowMovingInventoryByClassCode.cpp                                                  \
                                              rptStandardOperationsByWorkCenter.cpp                    \
                rptSubstituteAvailabilityByRootItem.cpp                                                \
                rptSummarizedBacklogByWarehouse.cpp rptSummarizedBOM.cpp                                 \
-               rptSummarizedSalesByCustomer.cpp rptSummarizedSalesByCustomerType.cpp                  \
-               rptSummarizedSalesByCustomerTypeByItem.cpp rptSummarizedSalesByCustomerByItem.cpp      \
-               rptSummarizedSalesByItem.cpp rptSummarizedSalesBySalesRep.cpp                          \
-               rptSummarizedSalesByShippingZone.cpp rptSummarizedTaxableSales.cpp                     \
+                                                    rptSummarizedTaxableSales.cpp                     \
                                              rptTimePhasedAvailableCapacityByWorkCenter.cpp           \
                rptTimePhasedCapacityByWorkCenter.cpp                                                  \
                rptTimePhasedLoadByWorkCenter.cpp                                                      \
                rptTimePhasedPlannedREByPlannerCode.cpp                                                \
                rptTimePhasedRoughCutByWorkCenter.cpp                                                  \
-                                                rptTimePhasedSalesByCustomerGroup.cpp                 \
                rptUsageStatisticsByItem.cpp rptUsageStatisticsByClassCode.cpp                         \
                rptUsageStatisticsByItemGroup.cpp rptUsageStatisticsByWarehouse.cpp                    \
                rptUninvoicedReceivings.cpp rptValidLocationsByItem.cpp                                \

@@ -61,7 +61,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <parameter.h>
-#include "rptSummarizedSalesByCustomerByItem.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspSummarizedSalesByCustomerByItem as a child of 'parent', with the
@@ -71,38 +71,14 @@
 dspSummarizedSalesByCustomerByItem::dspSummarizedSalesByCustomerByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSummarizedSalesByCustomerByItem::~dspSummarizedSalesByCustomerByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSummarizedSalesByCustomerByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspSummarizedSalesByCustomerByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _sohist->addColumn(tr("Description"), -1 ,          Qt::AlignLeft   );
@@ -118,26 +94,58 @@ void dspSummarizedSalesByCustomerByItem::init()
   _cust->setFocus();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSummarizedSalesByCustomerByItem::~dspSummarizedSalesByCustomerByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSummarizedSalesByCustomerByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspSummarizedSalesByCustomerByItem::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
-
-  _warehouse->appendValue(params);
 
   if (_orderByItemNumber->isChecked())
     params.append("orderByItemNumber");
-
-  if (_orderByQtyVolume->isChecked())
+  else if (_orderByQtyVolume->isChecked())
     params.append("orderByQtyVolume");
-
-  if (_orderBySalesVolume->isChecked())
+  else if (_orderBySalesVolume->isChecked())
     params.append("orderBySalesVolume");
 
-  rptSummarizedSalesByCustomerByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SummarizedSalesHistoryByCustomerByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSummarizedSalesByCustomerByItem::sFillList()

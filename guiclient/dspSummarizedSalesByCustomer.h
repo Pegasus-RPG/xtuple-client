@@ -71,7 +71,6 @@ public:
     dspSummarizedSalesByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSummarizedSalesByCustomer();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:

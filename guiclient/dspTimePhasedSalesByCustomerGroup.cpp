@@ -60,14 +60,14 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QWorkspace>
+#include <QMenu>
+#include <parameter.h>
 #include <q3valuevector.h>
 #include <dbtools.h>
 #include <datecluster.h>
 #include <openreports.h>
 #include "dspSalesHistoryByCustomer.h"
-#include "rptTimePhasedSalesByCustomerGroup.h"
 #include "OpenMFGGUIClient.h"
 #include "submitReport.h"
 
@@ -79,23 +79,27 @@
 dspTimePhasedSalesByCustomerGroup::dspTimePhasedSalesByCustomerGroup(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
+  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
     
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-    
-    init();
+  _customerGroup->setType(CustomerGroup);
+  _productCategory->setType(ProductCategory);
+  
+  _sohist->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
+  _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
 }
 
 /*
@@ -103,7 +107,7 @@ dspTimePhasedSalesByCustomerGroup::dspTimePhasedSalesByCustomerGroup(QWidget* pa
  */
 dspTimePhasedSalesByCustomerGroup::~dspTimePhasedSalesByCustomerGroup()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -112,38 +116,32 @@ dspTimePhasedSalesByCustomerGroup::~dspTimePhasedSalesByCustomerGroup()
  */
 void dspTimePhasedSalesByCustomerGroup::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedSalesByCustomerGroup::init()
-{
-  statusBar()->hide();
-  
-  _customerGroup->setType(CustomerGroup);
-  _productCategory->setType(ProductCategory);
-  
-  _sohist->addColumn(tr("Cust. #"),  _orderColumn, Qt::AlignLeft );
-  _sohist->addColumn(tr("Customer"), 180,          Qt::AlignLeft );
+  retranslateUi(this);
 }
 
 void dspTimePhasedSalesByCustomerGroup::sPrint()
 {
   ParameterList params;
-  params.append("print");
+
   _customerGroup->appendValue(params);
   _productCategory->appendValue(params);
-  _periods->getSelected(params);
+
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<QVariant> periodList;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
 
   if (_byCustomer->isChecked())
     params.append("orderByCustomer");
   else if (_bySales->isChecked())
     params.append("orderBySales");
 
-  rptTimePhasedSalesByCustomerGroup newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("TimePhasedSalesHistoryByCustomerGroup", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspTimePhasedSalesByCustomerGroup::sViewShipments()

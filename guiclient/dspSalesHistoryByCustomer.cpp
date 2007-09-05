@@ -61,8 +61,9 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
 #include "salesHistoryInformation.h"
-#include "rptSalesHistoryByCustomer.h"
 #include "dspInvoiceInformation.h"
 
 #define UNITPRICE_COL	7
@@ -78,43 +79,17 @@
 dspSalesHistoryByCustomer::dspSalesHistoryByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-    connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSalesHistoryByCustomer::~dspSalesHistoryByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSalesHistoryByCustomer::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspSalesHistoryByCustomer::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_sohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
+  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleParams()));
 
   _productCategory->setType(ProductCategory);
 
@@ -144,7 +119,24 @@ void dspSalesHistoryByCustomer::init()
   _cust->setFocus();
 }
 
-enum SetResponse dspSalesHistoryByCustomer::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSalesHistoryByCustomer::~dspSalesHistoryByCustomer()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSalesHistoryByCustomer::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspSalesHistoryByCustomer::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -263,12 +255,20 @@ void dspSalesHistoryByCustomer::sInvoiceInformation()
 
 void dspSalesHistoryByCustomer::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr("Please enter a valid Start and End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  _dates->appendValue(params);
   params.append("cust_id", _cust->id());
-  params.append("print");
+
+  _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
 
   if (_showCosts->isChecked())
     params.append("showCosts");
@@ -276,8 +276,11 @@ void dspSalesHistoryByCustomer::sPrint()
   if (_showPrices->isChecked())
     params.append("showPrices");
 
-  rptSalesHistoryByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SalesHistoryByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSalesHistoryByCustomer::sFillList()

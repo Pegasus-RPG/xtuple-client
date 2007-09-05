@@ -57,10 +57,11 @@
 
 #include "dspSummarizedSalesHistoryByShippingZone.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptSummarizedSalesByShippingZone.h"
 
 /*
  *  Constructs a dspSummarizedSalesHistoryByShippingZone as a child of 'parent', with the
@@ -70,39 +71,15 @@
 dspSummarizedSalesHistoryByShippingZone::dspSummarizedSalesHistoryByShippingZone(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_selectedShippingZone, SIGNAL(toggled(bool)), _shipZone, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSummarizedSalesHistoryByShippingZone::~dspSummarizedSalesHistoryByShippingZone()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSummarizedSalesHistoryByShippingZone::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspSummarizedSalesHistoryByShippingZone::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_selectedShippingZone, SIGNAL(toggled(bool)), _shipZone, SLOT(setEnabled(bool)));
 
   _productCategory->setType(ProductCategory);
 
@@ -116,6 +93,23 @@ void dspSummarizedSalesHistoryByShippingZone::init()
   _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
   _sohist->addColumn(tr("Ext. Price"),  _moneyColumn, Qt::AlignRight  );
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSummarizedSalesHistoryByShippingZone::~dspSummarizedSalesHistoryByShippingZone()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSummarizedSalesHistoryByShippingZone::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspSummarizedSalesHistoryByShippingZone::sFillList()
@@ -158,27 +152,34 @@ void dspSummarizedSalesHistoryByShippingZone::sFillList()
 
 void dspSummarizedSalesHistoryByShippingZone::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  _dates->appendValue(params);
-  params.append("print");
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
 
-  if (_selectedShippingZone->isChecked())
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+  ParameterList params;
+  _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
+  if(_selectedShippingZone->isChecked())
     params.append("shipzone_id", _shipZone->id());
 
-#if 0
-  if (_orderByItemNumber->isChecked())
-    params.append("orderByItemNumber");
-
-  if (_orderByQtyVolume->isChecked())
-    params.append("orderByQtyVolume");
-
-  if (_orderBySalesVolume->isChecked())
-    params.append("orderBySalesVolume");
-#endif
-
-  rptSummarizedSalesByShippingZone newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SummarizedSalesHistoryByShippingZone", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 

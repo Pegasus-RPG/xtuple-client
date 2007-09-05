@@ -72,11 +72,10 @@ public:
     dspSalesHistoryByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSalesHistoryByParameterList();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sHandleParams();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sEdit();

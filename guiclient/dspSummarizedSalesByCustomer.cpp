@@ -60,10 +60,11 @@
 #include <QVariant>
 #include <QWorkspace>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QMessageBox>
+#include <QMenu>
+#include <openreports.h>
+#include <parameter.h>
 #include "dspSalesHistoryByCustomer.h"
-#include "rptSummarizedSalesByCustomer.h"
 
 /*
  *  Constructs a dspSummarizedSalesByCustomer as a child of 'parent', with the
@@ -73,41 +74,15 @@
 dspSummarizedSalesByCustomer::dspSummarizedSalesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_cohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSummarizedSalesByCustomer::~dspSummarizedSalesByCustomer()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSummarizedSalesByCustomer::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspSummarizedSalesByCustomer::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_cohist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _productCategory->setType(ProductCategory);
   _currency->setType(Currency);
@@ -120,7 +95,24 @@ void dspSummarizedSalesByCustomer::init()
   _cohist->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft );
 
   if (omfgThis->singleCurrency())
-      _cohist->hideColumn(5);
+    _cohist->hideColumn(5);
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspSummarizedSalesByCustomer::~dspSummarizedSalesByCustomer()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspSummarizedSalesByCustomer::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspSummarizedSalesByCustomer::sPopulateMenu(QMenu *menuThis)
@@ -144,14 +136,33 @@ void dspSummarizedSalesByCustomer::sViewDetail()
 
 void dspSummarizedSalesByCustomer::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _productCategory->appendValue(params);
-  _dates->appendValue(params);
-  params.append("print");
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr("Please enter a valid Start Date.") );
+    _dates->setFocus();
+    return;
+  }
 
-  rptSummarizedSalesByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr("Please enter a valid End Date.") );
+    _dates->setFocus();
+    return;
+  }
+
+
+  ParameterList params;
+  _productCategory->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
+  orReport report("SummarizedSalesHistoryByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSummarizedSalesByCustomer::sFillList()

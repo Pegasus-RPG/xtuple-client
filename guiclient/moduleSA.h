@@ -109,22 +109,6 @@ class moduleSA : public QObject
     void sDspTimePhasedSalesByCustomerGroup();
     void sDspTimePhasedSalesByCustomerByItem();
 
-    void sRptSalesHistoryByCustomer();
-    void sRptSalesHistoryByBilltoName();
-    void sRptSalesHistoryByShipTo();
-    void sRptSalesHistoryByItem();
-    void sRptSalesHistoryBySalesRep();
-    void sRptSalesHistoryByProductCategory();
-    void sRptSalesHistoryByCustomerType();
-    void sRptSalesHistoryByCustomerGroup();
-    void sRptSummarizedSalesByCustomer();
-    void sRptSummarizedSalesByCustomerType();
-    void sRptSummarizedSalesByCustomerByItem();
-    void sRptSummarizedSalesByCustomerTypeByItem();
-    void sRptSummarizedSalesByItem();
-    void sRptSummarizedSalesBySalesRep();
-    void sRptSummarizedSalesHistoryByShippingZone();
-    void sRptTimePhasedSalesByCustomerGroup();
     void sPrintSASpecialCalendarForm();
 
     void sArchiveSalesHistory();

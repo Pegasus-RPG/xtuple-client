@@ -72,11 +72,10 @@ public:
     dspSalesHistoryByCustomer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSalesHistoryByCustomer();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sHandleParams();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sEdit();
