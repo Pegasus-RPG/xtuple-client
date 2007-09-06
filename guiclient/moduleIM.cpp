@@ -125,7 +125,6 @@
 #include "dspInventoryAvailabilityByParameterList.h"
 #include "dspInventoryAvailabilityBySourceVendor.h"
 #include "dspSubstituteAvailabilityByItem.h"
-//#include "dspInventoryBufferStatusByItem.h"
 #include "dspInventoryBufferStatusByParameterList.h"
 #include "dspInventoryHistoryByItem.h"
 #include "dspInventoryHistoryByOrderNumber.h"
@@ -138,16 +137,6 @@
 #include "dspUsageStatisticsByWarehouse.h"
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
-#include "rptValidLocationsByItem.h"
-#include "rptQOHByItem.h"
-#include "rptQOHByParameterList.h"
-#include "rptQOHByLocation.h"
-#include "rptSlowMovingInventoryByClassCode.h"
-#include "rptSubstituteAvailabilityByRootItem.h"
-#include "rptUsageStatisticsByItem.h"
-#include "rptUsageStatisticsByClassCode.h"
-#include "rptUsageStatisticsByItemGroup.h"
-#include "rptUsageStatisticsByWarehouse.h"
 #include "printItemLabelsByClassCode.h"
 
 #include "warehouses.h"
@@ -300,7 +289,6 @@ moduleIM::moduleIM(OpenMFGGUIClient *Pparent) :
     { "im.dspInventoryAvailabilityBySourceVendor",	tr("Inventory Availability by Source Vendor..."),SLOT(sDspInventoryAvailabilityBySourceVendor()), displaysMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
     { "im.dspSubstituteAvailabilityByRootItem",		tr("Substitute Availability by Root Item..."),	 SLOT(sDspSubstituteAvailabilityByRootItem()), displaysMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
     {  "separator",					NULL,						 NULL,	displaysMenu,	true, NULL, NULL, _metrics->boolean("BufferMgt") },
- // { "im.dspInventoryBufferStatusByItem",		tr("Inventory Buffer Status by Item..."),	 SLOT(sDspInventoryBufferStatusByItem()), displaysMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt")}, 
     { "im.dspInventoryBufferStatusByItemGroup",		tr("Inventory Buffer Status by Item Group..."),	 SLOT(sDspInventoryBufferStatusByItemGroup()), displaysMenu, _privleges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt")}, 
     { "im.dspInventoryBufferStatusByClassCode",		tr("Inventory Buffer Status by Class Code..."),	 SLOT(sDspInventoryBufferStatusByClassCode()), displaysMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt")}, 
     { "im.dspInventoryBufferStatusByPlannerCode",	tr("Inventory Buffer Status by Planner Code..."),SLOT(sDspInventoryBufferStatusByPlannerCode()), displaysMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt")}, 
@@ -322,17 +310,6 @@ moduleIM::moduleIM(OpenMFGGUIClient *Pparent) :
 
     //  I/M | Reports
     { "menu",				tr("&Reports"),				(char*)reportsMenu,		    mainMenu,	 true,					NULL, NULL, true },
-    { "im.rptValidLocationsByItem",	tr("Valid Locations by Item..."),	SLOT(sRptValidLocationsByItem()),   reportsMenu, _privleges->check("ViewLocations"),	NULL, NULL, true}, 
-    { "separator",			NULL,					NULL,				    reportsMenu, true,					NULL, NULL, true },
-
-    { "im.rptQOHByItem",		tr("Quantities On Hand by Item..."),	  SLOT(sRptQOHByItem()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
-    { "im.rptQOHByClassCode",		tr("Quantities On Hand by Class Code..."),SLOT(sRptQOHByClassCode()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
-    { "im.rptQOHByItemGroup",		tr("Quantities On Hand by Item Group..."),SLOT(sRptQOHByItemGroup()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
-    { "im.rptQOHByLocation",		tr("Quantities On Hand by Location..."),  SLOT(sRptQOHByLocation()),		     reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true}, 
-    { "im.rptSlowMovingInventory",	tr("Slow Moving Inventory..."),		  SLOT(sRptSlowMovingInventoryByClassCode()),reportsMenu, _privleges->check("ViewQOH"), NULL, NULL, true}, 
-    { "separator",			NULL,					  NULL,					     reportsMenu, true,				NULL, NULL, true },
-    { "im.rptSubstituteAvailabilityByRootItem",		tr("Substitute Availability by Root Item..."),	 SLOT(sRptSubstituteAvailabilityByRootItem()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true}, 
-    { "separator",					NULL,	NULL,	reportsMenu,	true, NULL, NULL, _metrics->boolean("BufferMgt") },
     { "im.printItemLabelsByClassCode",			tr("Print Item Labels by Class Code..."),		SLOT(sPrintItemLabelsByClassCode()),		reportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true}, 
 
     { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,	     mainMenu,	     true,												NULL, NULL, true },
@@ -800,11 +777,6 @@ void moduleIM::sDspSubstituteAvailabilityByRootItem()
   omfgThis->handleNewWindow(new dspSubstituteAvailabilityByItem());
 }
 
-void moduleIM::sDspInventoryBufferStatusByItem()
-{
-  //omfgThis->handleNewWindow(new dspInventoryBufferStatusByItem());
-}
-
 void moduleIM::sDspInventoryBufferStatusByItemGroup()
 {
   ParameterList params;
@@ -908,51 +880,6 @@ void moduleIM::sDspItemUsageStatisticsByWarehouse()
 void moduleIM::sDspTimePhasedUsageStatisticsByItem()
 {
   omfgThis->handleNewWindow(new dspTimePhasedUsageStatisticsByItem());
-}
-
-void moduleIM::sRptValidLocationsByItem()
-{
-  rptValidLocationsByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptQOHByItem()
-{
-  rptQOHByItem(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptQOHByClassCode()
-{
-  ParameterList params;
-  params.append("classcode");
-
-  rptQOHByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptQOHByItemGroup()
-{
-  ParameterList params;
-  params.append("itemgrp");
-
-  rptQOHByParameterList newdlg(parent, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void moduleIM::sRptQOHByLocation()
-{
-  rptQOHByLocation(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptSlowMovingInventoryByClassCode()
-{
-  rptSlowMovingInventoryByClassCode(parent, "", TRUE).exec();
-}
-
-void moduleIM::sRptSubstituteAvailabilityByRootItem()
-{
-  rptSubstituteAvailabilityByRootItem(parent, "", TRUE).exec();
 }
 
 void moduleIM::sPrintItemLabelsByClassCode()

@@ -69,6 +69,7 @@ class dspSlowMovingInventoryByClassCode : public QMainWindow, public Ui::dspSlow
 public:
     dspSlowMovingInventoryByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSlowMovingInventoryByClassCode();
+    bool	setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

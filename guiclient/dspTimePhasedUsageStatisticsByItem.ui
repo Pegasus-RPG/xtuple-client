@@ -151,6 +151,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -191,6 +196,16 @@
               <string>Selected Periods</string>
              </property>
             </column>
+            <column>
+             <property name="text" >
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Selected Periods</string>
+             </property>
+            </column>
            </widget>
           </item>
          </layout>
@@ -203,7 +218,7 @@
          <number>0</number>
         </property>
         <property name="spacing" >
-         <number>6</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QPushButton" name="_close" >
@@ -230,6 +245,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="_print" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
           <property name="text" >
            <string>&amp;Print</string>
           </property>
@@ -237,6 +255,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="_submit" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
           <property name="text" >
            <string>&amp;Submit</string>
           </property>
@@ -322,8 +343,13 @@
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
    <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
+   <extends>XListView</extends>
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
@@ -335,11 +361,6 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -436,6 +457,38 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>154</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>614</x>
+     <y>102</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_submit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>154</x>
+     <y>53</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>614</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>

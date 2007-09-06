@@ -59,7 +59,7 @@
 #define DSPUSAGESTATISTICSBYWAREHOUSE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspUsageStatisticsByWarehouse.h"
 
@@ -70,8 +70,6 @@ class dspUsageStatisticsByWarehouse : public QMainWindow, public Ui::dspUsageSta
 public:
     dspUsageStatisticsByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspUsageStatisticsByWarehouse();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

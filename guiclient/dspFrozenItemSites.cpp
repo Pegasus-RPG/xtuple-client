@@ -57,17 +57,10 @@
 
 #include "dspFrozenItemSites.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QMessageBox>
 #include <QMenu>
+
 #include <openreports.h>
 
-/*
- *  Constructs a dspFrozenItemSites as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -75,10 +68,8 @@ dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WF
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _itemsite->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
@@ -89,18 +80,11 @@ dspFrozenItemSites::dspFrozenItemSites(QWidget* parent, const char* name, Qt::WF
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspFrozenItemSites::~dspFrozenItemSites()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspFrozenItemSites::languageChange()
 {
   retranslateUi(this);
@@ -158,4 +142,3 @@ void dspFrozenItemSites::sFillList()
   q.exec();
   _itemsite->populate(q);
 }
-

@@ -58,21 +58,16 @@
 #include "dspQOHByParameterList.h"
 
 #include <QVariant>
-#include <QWorkspace>
-#include <QStatusBar>
 #include <QMenu>
+
+#include <openreports.h>
+
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
-#include "rptQOHByParameterList.h"
 
-/*
- *  Constructs a dspQOHByParameterList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -91,16 +86,10 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _orderByGroupInt->addButton(_byItemNumber);
   _orderByGroupInt->addButton(_byValue);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_qoh, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_showValue, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
-  statusBar()->hide();
   
   _qoh->addColumn(tr("Whs."),             _whsColumn,  Qt::AlignCenter );
   _qoh->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft   );
@@ -119,18 +108,11 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspQOHByParameterList::~dspQOHByParameterList()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspQOHByParameterList::languageChange()
 {
   retranslateUi(this);
@@ -162,10 +144,12 @@ void dspQOHByParameterList::sPrint()
   if (_useActualCosts->isChecked())
     params.append("useActualCosts");
 
-  params.append("print");
+  orReport report("QOHByParameterList", params);
 
-  rptQOHByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 SetResponse dspQOHByParameterList::set(const ParameterList &pParams)

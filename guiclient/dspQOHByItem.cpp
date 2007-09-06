@@ -57,47 +57,32 @@
 
 #include "dspQOHByItem.h"
 
-#include <QVariant>
-#include <QWorkspace>
-#include <QStatusBar>
 #include <QMenu>
+#include <QVariant>
+
+#include <openreports.h>
 #include <parameter.h>
+
 #include "inputManager.h"
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
-#include "rptQOHByItem.h"
 
-/*
- *  Constructs a dspQOHByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
-  connect(_showValue, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
   connect(_qoh, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-
-  statusBar()->hide();
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
@@ -117,18 +102,11 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspQOHByItem::~dspQOHByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspQOHByItem::languageChange()
 {
   retranslateUi(this);
@@ -139,7 +117,6 @@ void dspQOHByItem::sPrint()
   ParameterList params;
   params.append("item_id", _item->id());
   _warehouse->appendValue(params);
-  params.append("print");
 
   if (_showValue->isChecked())
     params.append("showValue");
@@ -150,8 +127,12 @@ void dspQOHByItem::sPrint()
   if (_useActualCosts->isChecked())
     params.append("useActualCosts");
 
-  rptQOHByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("QOHByItem", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

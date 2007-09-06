@@ -59,7 +59,7 @@
 #define DSPUSAGESTATISTICSBYCLASSCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspUsageStatisticsByClassCode.h"
 
@@ -71,7 +71,6 @@ public:
     dspUsageStatisticsByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspUsageStatisticsByClassCode();
 
-    virtual void init();
     virtual void viewTransactions(QString);
 
 public slots:

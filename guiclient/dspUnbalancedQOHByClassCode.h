@@ -59,7 +59,7 @@
 #define DSPUNBALANCEDQOHBYCLASSCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspUnbalancedQOHByClassCode.h"
@@ -71,8 +71,6 @@ class dspUnbalancedQOHByClassCode : public QMainWindow, public Ui::dspUnbalanced
 public:
     dspUnbalancedQOHByClassCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspUnbalancedQOHByClassCode();
-
-    virtual void init();
 
 public slots:
     virtual void sBalance();

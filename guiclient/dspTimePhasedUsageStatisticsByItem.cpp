@@ -57,23 +57,18 @@
 
 #include "dspTimePhasedUsageStatisticsByItem.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <datecluster.h>
 #include <parameter.h>
+
 #include "dspInventoryHistoryByItem.h"
 #include "OpenMFGGUIClient.h"
 #include "submitReport.h"
 
-/*
- *  Constructs a dspTimePhasedUsageStatisticsByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -86,11 +81,6 @@ dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
 
   _usage->addColumn(tr("Transaction Type"), 120,        Qt::AlignLeft   );
   _usage->addColumn(tr("Whs."),             _whsColumn, Qt::AlignCenter );
@@ -99,18 +89,11 @@ dspTimePhasedUsageStatisticsByItem::dspTimePhasedUsageStatisticsByItem(QWidget* 
     _submit->hide();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedUsageStatisticsByItem::~dspTimePhasedUsageStatisticsByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedUsageStatisticsByItem::languageChange()
 {
   retranslateUi(this);

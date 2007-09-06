@@ -59,7 +59,8 @@
 #define DSPSUBSTITUTEAVAILABILITYBYITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
+
 #include "parameter.h"
 
 #include "ui_dspSubstituteAvailabilityByItem.h"
@@ -72,10 +73,8 @@ public:
     dspSubstituteAvailabilityByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSubstituteAvailabilityByItem();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sPrint();
     virtual void sViewAllocations();
     virtual void sViewOrders();

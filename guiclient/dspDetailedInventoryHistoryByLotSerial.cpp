@@ -57,12 +57,11 @@
 
 #include "dspDetailedInventoryHistoryByLotSerial.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+
 #include <openreports.h>
+
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
 #include "scrapTrans.h"
@@ -70,11 +69,6 @@
 #include "materialReceiptTrans.h"
 #include "countTag.h"
 
-/*
- *  Constructs a dspDetailedInventoryHistoryByLotSerial as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -82,11 +76,9 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -109,18 +101,11 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   _invhist->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight  );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspDetailedInventoryHistoryByLotSerial::~dspDetailedInventoryHistoryByLotSerial()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspDetailedInventoryHistoryByLotSerial::languageChange()
 {
   retranslateUi(this);

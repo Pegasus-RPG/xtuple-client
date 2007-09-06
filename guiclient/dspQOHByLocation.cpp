@@ -57,34 +57,24 @@
 
 #include "dspQOHByLocation.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMenu>
+#include <QVariant>
+
+#include <openreports.h>
 #include <parameter.h>
+
 #include "inputManager.h"
 #include "relocateInventory.h"
-#include "rptQOHByLocation.h"
 
-/*
- *  Constructs a dspQOHByLocation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sPopulateLocations()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   omfgThis->inputManager()->notify(cBCLocation, this, this, SLOT(set(int)));
 
@@ -100,18 +90,11 @@ dspQOHByLocation::dspQOHByLocation(QWidget* parent, const char* name, Qt::WFlags
   sPopulateLocations();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspQOHByLocation::~dspQOHByLocation()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspQOHByLocation::languageChange()
 {
   retranslateUi(this);
@@ -151,10 +134,14 @@ void dspQOHByLocation::sPrint()
   ParameterList params;
   params.append("location_id", _location->id());
   _warehouse->appendValue(params);
-  params.append("print");
 
-  rptQOHByLocation newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("QOHByLocation", params);
+  if (report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(this);
+  }
 }
 
 void dspQOHByLocation::sPopulateLocations()
@@ -180,8 +167,6 @@ void dspQOHByLocation::sPopulateLocations()
     q.exec();
     _location->populate(q);
   }
-
-  _print->setEnabled(_location->count() != 0);
 }
 
 void dspQOHByLocation::sRelocate()

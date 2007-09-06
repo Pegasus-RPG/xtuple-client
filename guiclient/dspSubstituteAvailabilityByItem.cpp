@@ -57,66 +57,27 @@
 
 #include "dspSubstituteAvailabilityByItem.h"
 
+#include <QMenu>
 #include <QVariant>
-#include <QWorkspace>
-#include <QStatusBar>
+
+#include <openreports.h>
+
 #include "dspAllocations.h"
 #include "dspOrders.h"
-#include "rptSubstituteAvailabilityByRootItem.h"
 
-/*
- *  Constructs a dspSubstituteAvailabilityByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSubstituteAvailabilityByItem::dspSubstituteAvailabilityByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  _showByGroupInt = new QButtonGroup(this);
+  _showByGroupInt->addButton(_leadTime);
+  _showByGroupInt->addButton(_byDays);
+  _showByGroupInt->addButton(_byDate);
 
-    _showByGroupInt = new QButtonGroup(this);
-    _showByGroupInt->addButton(_leadTime);
-    _showByGroupInt->addButton(_byDays);
-    _showByGroupInt->addButton(_byDate);
-
-    // signals and slots connections
-    connect(_byDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
-    connect(_byDate, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSubstituteAvailabilityByItem::~dspSubstituteAvailabilityByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSubstituteAvailabilityByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspSubstituteAvailabilityByItem::init()
-{
-  statusBar()->hide();
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _availability->addColumn(tr("Whs."),          _whsColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("Item Number"),   _itemColumn, Qt::AlignLeft   );
@@ -129,7 +90,17 @@ void dspSubstituteAvailabilityByItem::init()
   _availability->addColumn(tr("Available"),     _qtyColumn,  Qt::AlignRight  );
 }
 
-enum SetResponse dspSubstituteAvailabilityByItem::set(ParameterList &pParams)
+dspSubstituteAvailabilityByItem::~dspSubstituteAvailabilityByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspSubstituteAvailabilityByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspSubstituteAvailabilityByItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -185,19 +156,21 @@ void dspSubstituteAvailabilityByItem::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
   
   _warehouse->appendValue(params);
 
   if (_leadTime->isChecked())
-    params.append("byLeadTime", "");
+    params.append("byLeadTime");
   else if (_byDays->isChecked())
     params.append("byDays", _days->value());
   else if (_byDate->isChecked())
     params.append("byDate", _date->date());
 
-  rptSubstituteAvailabilityByRootItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SubstituteAvailabilityByRootItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSubstituteAvailabilityByItem::sViewAllocations()

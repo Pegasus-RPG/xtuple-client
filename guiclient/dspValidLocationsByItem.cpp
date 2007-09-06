@@ -57,58 +57,21 @@
 
 #include "dspValidLocationsByItem.h"
 
-#include <QVariant>
-#include <parameter.h>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
-#include "rptValidLocationsByItem.h"
+#include <QVariant>
 
-/*
- *  Constructs a dspValidLocationsByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+#include <parameter.h>
+
 dspValidLocationsByItem::dspValidLocationsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_location, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspValidLocationsByItem::~dspValidLocationsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspValidLocationsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspValidLocationsByItem::init()
-{
-  statusBar()->hide();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_location, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _location->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
   _location->addColumn(tr("Location"),    _itemColumn,  Qt::AlignLeft   );
@@ -119,16 +82,28 @@ void dspValidLocationsByItem::init()
   _item->setFocus();
 }
 
+dspValidLocationsByItem::~dspValidLocationsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspValidLocationsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspValidLocationsByItem::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
   _warehouse->appendValue(params);
 
-  rptValidLocationsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ValidLocationsByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspValidLocationsByItem::sPopulateMenu(QMenu *)

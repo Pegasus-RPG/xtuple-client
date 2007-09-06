@@ -57,64 +57,22 @@
 
 #include "dspUsageStatisticsByWarehouse.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <parameter.h>
-#include <QWorkspace>
-#include "dspInventoryHistoryByItem.h"
-#include "rptUsageStatisticsByWarehouse.h"
 
-/*
- *  Constructs a dspUsageStatisticsByWarehouse as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+#include <parameter.h>
+
+#include "dspInventoryHistoryByItem.h"
+
 dspUsageStatisticsByWarehouse::dspUsageStatisticsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspUsageStatisticsByWarehouse::~dspUsageStatisticsByWarehouse()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspUsageStatisticsByWarehouse::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspUsageStatisticsByWarehouse::init()
-{
-  statusBar()->hide();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _usage->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
   _usage->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
@@ -123,17 +81,43 @@ void dspUsageStatisticsByWarehouse::init()
   _usage->addColumn(tr("Sold"),        _qtyColumn,  Qt::AlignRight );
   _usage->addColumn(tr("Scrap"),       _qtyColumn,  Qt::AlignRight );
   _usage->addColumn(tr("Adjustments"), _qtyColumn,  Qt::AlignRight );
+
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
+}
+
+dspUsageStatisticsByWarehouse::~dspUsageStatisticsByWarehouse()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspUsageStatisticsByWarehouse::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspUsageStatisticsByWarehouse::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
   params.append("warehous_id", _warehouse->id());
-  params.append("print");
 
-  rptUsageStatisticsByWarehouse newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("UsageStatisticsByWarehouse", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspUsageStatisticsByWarehouse::sViewTransactions()

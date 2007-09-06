@@ -225,7 +225,7 @@
              <number>0</number>
             </property>
             <property name="spacing" >
-             <number>5</number>
+             <number>0</number>
             </property>
             <item>
              <widget class="QPushButton" name="_close" >
@@ -258,6 +258,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_print" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>&amp;Print</string>
               </property>
@@ -348,14 +351,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -455,6 +458,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>234</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>542</x>
+     <y>102</y>
     </hint>
    </hints>
   </connection>

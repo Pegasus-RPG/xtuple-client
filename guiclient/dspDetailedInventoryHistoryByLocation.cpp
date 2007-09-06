@@ -57,13 +57,12 @@
 
 #include "dspDetailedInventoryHistoryByLocation.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMessageBox>
 #include <QMenu>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "adjustmentTrans.h"
 #include "transferTrans.h"
 #include "scrapTrans.h"
@@ -83,7 +82,6 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
@@ -108,22 +106,18 @@ dspDetailedInventoryHistoryByLocation::dspDetailedInventoryHistoryByLocation(QWi
   _invhist->addColumn(tr("Trans-Qty"),    _qtyColumn,          Qt::AlignRight  );
   _invhist->addColumn(tr("Qty. Before"),  _qtyColumn,          Qt::AlignRight  );
   _invhist->addColumn(tr("Qty. After"),   _qtyColumn,          Qt::AlignRight  );
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
   
   sPopulateLocations();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspDetailedInventoryHistoryByLocation::~dspDetailedInventoryHistoryByLocation()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspDetailedInventoryHistoryByLocation::languageChange()
 {
   retranslateUi(this);

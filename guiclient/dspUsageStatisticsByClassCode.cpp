@@ -57,57 +57,22 @@
 
 #include "dspUsageStatisticsByClassCode.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <parameter.h>
-#include <QWorkspace>
-#include "dspInventoryHistoryByItem.h"
-#include "rptUsageStatisticsByClassCode.h"
 
-/*
- *  Constructs a dspUsageStatisticsByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+#include <parameter.h>
+
+#include "dspInventoryHistoryByItem.h"
+
 dspUsageStatisticsByClassCode::dspUsageStatisticsByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspUsageStatisticsByClassCode::~dspUsageStatisticsByClassCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspUsageStatisticsByClassCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspUsageStatisticsByClassCode::init()
-{
-  statusBar()->hide();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
 
   _classCode->setType(ClassCode);
 
@@ -119,6 +84,20 @@ void dspUsageStatisticsByClassCode::init()
   _usage->addColumn(tr("Sold"),        _qtyColumn,  Qt::AlignRight  );
   _usage->addColumn(tr("Scrap"),       _qtyColumn,  Qt::AlignRight  );
   _usage->addColumn(tr("Adjustments"), _qtyColumn,  Qt::AlignRight  );
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+
+}
+
+dspUsageStatisticsByClassCode::~dspUsageStatisticsByClassCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspUsageStatisticsByClassCode::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspUsageStatisticsByClassCode::sPrint()
@@ -129,8 +108,11 @@ void dspUsageStatisticsByClassCode::sPrint()
   _warehouse->appendValue(params);
   _classCode->appendValue(params);
 
-  rptUsageStatisticsByClassCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("UsageStatisticsByClassCode", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspUsageStatisticsByClassCode::sViewAll()

@@ -160,18 +160,10 @@ class moduleIM : public QObject
     void sDspItemUsageStatisticsByItemGroup();
     void sDspItemUsageStatisticsByWarehouse();
     void sDspTimePhasedUsageStatisticsByItem();
-    void sDspInventoryBufferStatusByItem();
     void sDspInventoryBufferStatusByItemGroup();
     void sDspInventoryBufferStatusByClassCode();
     void sDspInventoryBufferStatusByPlannerCode();
 
-    void sRptValidLocationsByItem();
-    void sRptQOHByItem();
-    void sRptQOHByClassCode();
-    void sRptQOHByItemGroup();
-    void sRptQOHByLocation();
-    void sRptSlowMovingInventoryByClassCode();
-    void sRptSubstituteAvailabilityByRootItem();
     void sPrintItemLabelsByClassCode();
 
     void sWarehouses();

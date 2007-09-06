@@ -59,7 +59,7 @@
 #define DSPUSAGESTATISTICSBYITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspUsageStatisticsByItem.h"
 
@@ -71,7 +71,6 @@ public:
     dspUsageStatisticsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspUsageStatisticsByItem();
 
-    virtual void init();
     virtual void viewTransactions(QString);
 
 public slots:

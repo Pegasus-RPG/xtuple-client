@@ -273,6 +273,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="_query" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
           <property name="text" >
            <string>&amp;Query</string>
           </property>
@@ -289,6 +292,9 @@
         </item>
         <item>
          <widget class="QPushButton" name="_print" >
+          <property name="enabled" >
+           <bool>false</bool>
+          </property>
           <property name="text" >
            <string>&amp;Print</string>
           </property>
@@ -375,14 +381,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -417,6 +423,38 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_location</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_query</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>371</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>673</x>
+     <y>58</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_location</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>371</x>
+     <y>24</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>673</x>
+     <y>90</y>
     </hint>
    </hints>
   </connection>

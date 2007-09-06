@@ -57,58 +57,23 @@
 
 #include "dspUsageStatisticsByItemGroup.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <parameter.h>
-#include <QWorkspace>
-#include <dbtools.h>
-#include "dspInventoryHistoryByItem.h"
-#include "rptUsageStatisticsByItemGroup.h"
 
-/*
- *  Constructs a dspUsageStatisticsByItemGroup as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <dbtools.h>
+#include <openreports.h>
+#include <parameter.h>
+
+#include "dspInventoryHistoryByItem.h"
+
 dspUsageStatisticsByItemGroup::dspUsageStatisticsByItemGroup(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspUsageStatisticsByItemGroup::~dspUsageStatisticsByItemGroup()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspUsageStatisticsByItemGroup::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspUsageStatisticsByItemGroup::init()
-{
-  statusBar()->hide();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_usage, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
 
   _itemGroup->setType(ItemGroup);
 
@@ -122,16 +87,36 @@ void dspUsageStatisticsByItemGroup::init()
   _usage->addColumn(tr("Adjustments"), _qtyColumn,  Qt::AlignRight  );
 }
 
+dspUsageStatisticsByItemGroup::~dspUsageStatisticsByItemGroup()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspUsageStatisticsByItemGroup::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspUsageStatisticsByItemGroup::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
   _warehouse->appendValue(params);
   _itemGroup->appendValue(params);
 
-  rptUsageStatisticsByItemGroup newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("UsageStatisticsByItemGroup", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspUsageStatisticsByItemGroup::sViewAll()

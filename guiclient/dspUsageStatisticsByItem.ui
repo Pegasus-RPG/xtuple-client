@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspUsageStatisticsByItem</class>
  <widget class="QMainWindow" name="dspUsageStatisticsByItem" >
   <property name="geometry" >
@@ -141,7 +138,7 @@
              <number>0</number>
             </property>
             <property name="spacing" >
-             <number>5</number>
+             <number>0</number>
             </property>
             <item>
              <widget class="QPushButton" name="_close" >
@@ -162,6 +159,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_print" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>&amp;Print</string>
               </property>
@@ -221,32 +221,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ItemCluster</class>
-   <extends>QWidget</extends>
-   <header>itemcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -292,6 +284,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>172</x>
+     <y>63</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>581</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>

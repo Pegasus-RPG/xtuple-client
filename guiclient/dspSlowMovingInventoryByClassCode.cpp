@@ -57,30 +57,25 @@
 
 #include "dspSlowMovingInventoryByClassCode.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
+#include <openreports.h>
 #include <parameter.h>
+
 #include "OpenMFGGUIClient.h"
-#include "rptSlowMovingInventoryByClassCode.h"
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
 #include "createCountTagsByItem.h"
 
-/*
- *  Constructs a dspSlowMovingInventoryByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
-
-  (void)statusBar();
 
   _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
@@ -91,16 +86,10 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
   _orderByGroupInt->addButton(_dateLastUsed);
   _orderByGroupInt->addButton(_inventoryValue);
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_showValue, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
-  connect(_showValue, SIGNAL(toggled(bool)), _inventoryValue, SLOT(setEnabled(bool)));
-
-  statusBar()->hide();
 
   _classCode->setType(ClassCode);
 
@@ -117,28 +106,27 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
   _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspSlowMovingInventoryByClassCode::~dspSlowMovingInventoryByClassCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspSlowMovingInventoryByClassCode::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspSlowMovingInventoryByClassCode::sPrint()
+bool dspSlowMovingInventoryByClassCode::setParams(ParameterList & params)
 {
-  ParameterList params;
+  if(!_cutoffDate->isValid())
+  {
+    QMessageBox::warning(this, tr("No Cutoff Date"),
+        tr("You must specify a cutoff date."));
+    _cutoffDate->setFocus();
+    return false;
+  }
+
   params.append("cutoffDate", _cutoffDate->date());
-  params.append("print");
   _warehouse->appendValue(params);
   _classCode->appendValue(params);
 
@@ -160,8 +148,29 @@ void dspSlowMovingInventoryByClassCode::sPrint()
   if (_useActualCosts->isChecked())
     params.append("useActualCosts");
 
-  rptSlowMovingInventoryByClassCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (_itemNumber->isChecked())
+    params.append("sortByItem");
+  else if (_dateLastUsed->isChecked())
+    params.append("sortByDate");
+
+
+  return true;
+}
+
+void dspSlowMovingInventoryByClassCode::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  orReport report("SlowMovingInventoryByClassCode", params);
+
+  if (report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(this);
+  }
 }
 
 void dspSlowMovingInventoryByClassCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
@@ -259,13 +268,9 @@ void dspSlowMovingInventoryByClassCode::sHandleValue(bool pShowValue)
 
 void dspSlowMovingInventoryByClassCode::sFillList()
 {
-  if(!_cutoffDate->isValid())
-  {
-    QMessageBox::warning(this, tr("No Cutoff Date"),
-        tr("You must specify a cutoff date."));
-    _cutoffDate->setFocus();
+  ParameterList params;
+  if (! setParams(params))
     return;
-  }
 
   _itemsite->clear();
 
@@ -279,62 +284,60 @@ void dspSlowMovingInventoryByClassCode::sFillList()
                "       cost "
                "FROM ( SELECT itemsite_id, warehous_code, item_number,"
                "              item_descrip1, item_descrip2, item_invuom,"
-               "              itemsite_qtyonhand, itemsite_datelastused," );
+               "              itemsite_qtyonhand, itemsite_datelastused,"
+	       "<? if exists(\"useActualCosts\") ?>"
+	       "              actcost(itemsite_item_id) "
+	       "<? else ?>"
+	       "              stdcost(itemsite_item_id) "
+	       "<? endif ?> AS cost "
+	       "FROM itemsite, item, warehous "
+	       "WHERE ((itemsite_item_id=item_id)"
+	       " AND (itemsite_warehous_id=warehous_id)"
+	       " AND (itemsite_active)"
+	       " AND (itemsite_datelastused < <? value(\"cutoffDate\") ?>)"
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       "<? if exists(\"classcode_id\") ?>"
+	       " AND (item_classcode_id=<? value(\"classcode_id\") ?>)"
+	       "<? elseif exists(\"classcode_pattern\") ?>"
+	       " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE classcode_code ~ <? value(\"classcode_pattern\") ?>))"
+	       "<? endif ?>"
+	       ") ) AS data "
+	       "ORDER BY warehous_code, "
+	       "<? if exists(\"sortByItem\") ?>"
+	       "         item_number"
+	       "<? elseif exists(\"sortByDate\") ?>"
+	       "         itemsite_datelastused"
+	       "<? else ?>"
+	       "         noNeg(cost * itemsite_qtyonhand) DESC"
+	       "<? endif ?>"
+	       ";");
 
-  if (_useStandardCosts->isChecked())
-    sql += " stdcost(itemsite_item_id) AS cost ";
-  else if (_useActualCosts->isChecked())
-    sql += " actcost(itemsite_item_id) AS cost ";
-
-  sql += "FROM itemsite, item, warehous "
-         "WHERE ((itemsite_item_id=item_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (itemsite_active)"
-         " AND (itemsite_datelastused < :cutOffDate)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_classCode->isSelected())
-    sql += " AND (item_classcode_id=:classcode_id)";
-  else if (_classCode->isPattern())
-    sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE classcode_code ~ :classcode_pattern))";
-
-  sql += ") ) AS data ";
-
-  if (_itemNumber->isChecked())
-    sql += "ORDER BY warehous_code, item_number;";
-  else if (_dateLastUsed->isChecked())
-    sql += "ORDER BY warehous_code, itemsite_datelastused;";
-  else
-    sql += "ORDER BY warehous_code, noNeg(cost * itemsite_qtyonhand) DESC;";
-
-  q.prepare(sql);
-  q.bindValue(":cutOffDate", _cutoffDate->date());
-  _warehouse->bindValue(q);
-  _classCode->bindValue(q);
-  q.exec();
-  if (q.first())
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  double qty   = 0.0;
+  double value = 0.0;
+  XTreeWidgetItem *last = 0;
+  while (q.next())
   {
-    double qty   = 0.0;
-    double value = 0.0;
-    XTreeWidgetItem *last = 0;
-    do
+    last = new XTreeWidgetItem( _itemsite, last, q.value("itemsite_id").toInt(),
+				q.value("warehous_code"), q.value("item_number"),
+				q.value("itemdescrip"), q.value("item_invuom"),
+				q.value("f_datelastused"), q.value("f_qoh") );
+
+    last->setText(6, q.value("f_unitcost").toString());
+    last->setText(7, q.value("f_value").toString());
+
+    if (q.value("itemsite_qtyonhand").toDouble() > 0.0)
     {
-      last = new XTreeWidgetItem( _itemsite, last, q.value("itemsite_id").toInt(),
-                                  q.value("warehous_code"), q.value("item_number"),
-                                  q.value("itemdescrip"), q.value("item_invuom"),
-                                  q.value("f_datelastused"), q.value("f_qoh") );
-
-      last->setText(6, q.value("f_unitcost").toString());
-      last->setText(7, q.value("f_value").toString());
-
-      if (q.value("itemsite_qtyonhand").toDouble() > 0.0)
-      {
-        qty += q.value("itemsite_qtyonhand").toDouble();
-        value += q.value("value").toDouble();
-      }
+      qty += q.value("itemsite_qtyonhand").toDouble();
+      value += q.value("value").toDouble();
     }
-    while (q.next());
+  }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

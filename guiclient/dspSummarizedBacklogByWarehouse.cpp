@@ -60,15 +60,14 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
-#include <QVariant>
+
+#include <openreports.h>
 
 #include "dspInventoryAvailabilityBySalesOrder.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "rescheduleSoLineItems.h"
 #include "printPackingList.h"
-#include "rptSummarizedBacklogByWarehouse.h"
 #include "storedProcErrorLookup.h"
 
 dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -76,14 +75,10 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
 {
     setupUi(this);
 
-    (void)statusBar();
-
     connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
     connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
     connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-    statusBar()->hide();
 
     _customerType->setType(CustomerType);
     _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -149,7 +144,6 @@ void dspSummarizedBacklogByWarehouse::sPrint()
   _warehouse->appendValue(params);
   _customerType->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
   if (_showPrices->isChecked())
     params.append("showPrices");
@@ -161,8 +155,11 @@ void dspSummarizedBacklogByWarehouse::sPrint()
   else if (_orderNumber->isChecked())
     params.append("orderByOrderNumber");
 
-  rptSummarizedBacklogByWarehouse newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SummarizedBacklogByWarehouse", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSummarizedBacklogByWarehouse::sInventoryAvailabilityBySalesOrder()

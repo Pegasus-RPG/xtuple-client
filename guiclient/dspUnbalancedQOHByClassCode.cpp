@@ -57,55 +57,19 @@
 
 #include "dspUnbalancedQOHByClassCode.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
+#include <QMenu>
+
 #include "createCountTagsByItem.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "itemSite.h"
 
-/*
- *  Constructs a dspUnbalancedQOHByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspUnbalancedQOHByClassCode::dspUnbalancedQOHByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspUnbalancedQOHByClassCode::~dspUnbalancedQOHByClassCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspUnbalancedQOHByClassCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspUnbalancedQOHByClassCode::init()
-{
-  statusBar()->hide();
+  connect(_itemsite, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ClassCode);
 
@@ -117,6 +81,16 @@ void dspUnbalancedQOHByClassCode::init()
   _itemsite->addColumn(tr("QOH Detail."), _qtyColumn,   Qt::AlignRight  );
   _itemsite->addColumn(tr("NN QOH"),      _qtyColumn,   Qt::AlignRight  );
   _itemsite->addColumn(tr("NN Detail."),  _qtyColumn,   Qt::AlignRight  );
+}
+
+dspUnbalancedQOHByClassCode::~dspUnbalancedQOHByClassCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspUnbalancedQOHByClassCode::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspUnbalancedQOHByClassCode::sBalance()
