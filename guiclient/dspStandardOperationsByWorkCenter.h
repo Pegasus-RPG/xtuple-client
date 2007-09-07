@@ -59,7 +59,7 @@
 #define DSPSTANDARDOPERATIONSBYWORKCENTER_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspStandardOperationsByWorkCenter.h"
 
@@ -70,8 +70,6 @@ class dspStandardOperationsByWorkCenter : public QMainWindow, public Ui::dspStan
 public:
     dspStandardOperationsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspStandardOperationsByWorkCenter();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

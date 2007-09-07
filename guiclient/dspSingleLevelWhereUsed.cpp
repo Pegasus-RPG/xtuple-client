@@ -57,60 +57,26 @@
 
 #include "dspSingleLevelWhereUsed.h"
 
+#include <QMenu>
 #include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include "item.h"
+
+#include <openreports.h>
+
 #include "bom.h"
 #include "boo.h"
 #include "dspInventoryHistoryByItem.h"
-#include "rptSingleLevelWhereUsed.h"
+#include "item.h"
 
-/*
- *  Constructs a dspSingleLevelWhereUsed as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSingleLevelWhereUsed::dspSingleLevelWhereUsed(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_effective, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSingleLevelWhereUsed::~dspSingleLevelWhereUsed()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSingleLevelWhereUsed::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspSingleLevelWhereUsed::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_effective, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   if (_metrics->boolean("AllowInactiveBomItems"))
     _item->setType(ItemLineEdit::cGeneralComponents);
@@ -136,7 +102,17 @@ void dspSingleLevelWhereUsed::init()
   _item->setFocus();
 }
 
-enum SetResponse dspSingleLevelWhereUsed::set(ParameterList &pParams)
+dspSingleLevelWhereUsed::~dspSingleLevelWhereUsed()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspSingleLevelWhereUsed::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspSingleLevelWhereUsed::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -144,6 +120,10 @@ enum SetResponse dspSingleLevelWhereUsed::set(ParameterList &pParams)
   param = pParams.value("item_id", &valid);
   if (valid)
     _item->setId(param.toInt());
+
+  param = pParams.value("effective", &valid);
+  if (valid)
+    _effective->setDate(param.toDate());
 
   if (pParams.inList("run"))
   {
@@ -158,13 +138,15 @@ void dspSingleLevelWhereUsed::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
   if(!_effective->isNull())
     params.append("effective", _effective->date());
 
-  rptSingleLevelWhereUsed newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SingleLevelWhereUsed", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu)

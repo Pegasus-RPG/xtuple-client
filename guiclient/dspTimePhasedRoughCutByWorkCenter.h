@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDROUGHCUTBYWORKCENTER_H
 #define DSPTIMEPHASEDROUGHCUTBYWORKCENTER_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 
 #include "ui_dspTimePhasedRoughCutByWorkCenter.h"
@@ -70,8 +70,6 @@ class dspTimePhasedRoughCutByWorkCenter : public QMainWindow, public Ui::dspTime
 public:
     dspTimePhasedRoughCutByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedRoughCutByWorkCenter();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

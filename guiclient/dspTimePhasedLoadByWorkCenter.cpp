@@ -57,73 +57,66 @@
 
 #include "dspTimePhasedLoadByWorkCenter.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <datecluster.h>
-#include <QWorkspace>
-#include <parameter.h>
-#include "dspWoOperationsByWorkCenter.h"
-#include "rptTimePhasedLoadByWorkCenter.h"
-#include "OpenMFGGUIClient.h"
+#include <QMenu>
+#include <QMessageBox>
 
-/*
- *  Constructs a dspTimePhasedLoadByWorkCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <datecluster.h>
+#include <openreports.h>
+#include <parameter.h>
+
+#include "OpenMFGGUIClient.h"
+#include "dspWoOperationsByWorkCenter.h"
+
 dspTimePhasedLoadByWorkCenter::dspTimePhasedLoadByWorkCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_load, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspTimePhasedLoadByWorkCenter::~dspTimePhasedLoadByWorkCenter()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspTimePhasedLoadByWorkCenter::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspTimePhasedLoadByWorkCenter::init()
-{
-  statusBar()->hide();
+  connect(_load, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _load->addColumn(tr("Work Center"), _itemColumn, Qt::AlignLeft);
 }
 
+dspTimePhasedLoadByWorkCenter::~dspTimePhasedLoadByWorkCenter()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspTimePhasedLoadByWorkCenter::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspTimePhasedLoadByWorkCenter::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _periods->getSelected(params);
-  params.append("print");
+  if (_periods->isPeriodSelected())
+  {
+    ParameterList params;
 
-  rptTimePhasedLoadByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+    _warehouse->appendValue(params);
+
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<QVariant> periodList;
+    for (int i = 0; i < selected.size(); i++)
+      periodList.append(((XTreeWidgetItem*)selected[i])->id());
+    params.append("period_id_list", periodList);
+
+    orReport report("TimePhasedLoadByWorkCenter", params);
+    if (report.isValid())
+      report.print();
+    else
+    {
+      report.reportError(this);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical(this, tr("Incomplete criteria"),
+                          tr("<p>The criteria you specified are not complete. "
+			     "Please make sure all fields are correctly filled "
+			     "out before running the report." ) );
 }
 
 void dspTimePhasedLoadByWorkCenter::sViewLoad()

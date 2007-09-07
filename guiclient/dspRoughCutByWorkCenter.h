@@ -59,7 +59,9 @@
 #define DSPROUGHCUTBYWORKCENTER_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
+
+#include <parameter.h>
 
 #include "ui_dspRoughCutByWorkCenter.h"
 
@@ -71,7 +73,7 @@ public:
     dspRoughCutByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspRoughCutByWorkCenter();
 
-    virtual void init();
+    bool	setParams(ParameterList&);
 
 public slots:
     virtual void sPrint();

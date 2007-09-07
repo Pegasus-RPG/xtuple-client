@@ -57,57 +57,22 @@
 
 #include "dspPendingBOMChanges.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
-#include "bomItem.h"
-#include "rptPendingBOMChanges.h"
+#include <QMenu>
 
-/*
- *  Constructs a dspPendingBOMChanges as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+#include <parameter.h>
+
+#include "bomItem.h"
+
 dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_cutoff, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPendingBOMChanges::~dspPendingBOMChanges()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPendingBOMChanges::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspPendingBOMChanges::init()
-{
-  statusBar()->hide();
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_cutoff, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
@@ -128,15 +93,27 @@ void dspPendingBOMChanges::init()
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 }
 
+dspPendingBOMChanges::~dspPendingBOMChanges()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspPendingBOMChanges::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPendingBOMChanges::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("effectiveDate", _cutoff->date());
-  params.append("print");
+  params.append("cutOffDate", _cutoff->date());
 
-  rptPendingBOMChanges newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PendingBOMChanges", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu)

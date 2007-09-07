@@ -101,17 +101,6 @@
 #include "dspExpediteExceptionsByPlannerCode.h"
 #include "dspReorderExceptionsByPlannerCode.h"
 
-#include "rptPlannedOrdersByItem.h"
-#include "rptPlannedOrdersByPlannerCode.h"
-#include "rptMRPDetail.h"
-#include "rptMPSDetail.h"
-#include "rptRoughCutByWorkCenter.h"
-#include "rptTimePhasedRoughCutByWorkCenter.h"
-#include "rptPlannedRevenueExpensesByPlannerCode.h"
-#include "rptTimePhasedPlannedREByPlannerCode.h"
-#include "rptRunningAvailability.h"
-#include "rptReorderExceptionsByPlannerCode.h"
-
 #include "plannerCodes.h"
 #include "whseWeek.h"
 #include "whseCalendars.h"
@@ -298,58 +287,6 @@ moduleMS::moduleMS(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sDspReorderExceptionsByPlannerCode()),
                                       displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
 
-//  Reports
-  reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "ms.rptPlannedOrdersByItem", tr("Planned Orders by Item..."),
-                                      this, SLOT(sRptPlannedOrdersByItem()),
-                                      reportsMenu, _privleges->check("ViewPlannedOrders") ) );
-
-  parent->actions.append( new Action( parent, "ms.rptPlannedOrdersByPlannerCode", tr("Planned Orders by Planner Code..."),
-                                      this, SLOT(sRptPlannedOrdersByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewPlannedOrders") ) );
-
-  parent->actions.append( new Action( parent, "ms.rptMPSDetail", tr("MPS Detail..."),
-                                      this, SLOT(sRptMPSDetail()),
-                                      reportsMenu, _privleges->check("ViewMPS") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ms.rptRoughCutByWorkCenter", tr("Rough Cut Capacity Plan by Work Center..."),
-                                      this, SLOT(sRptRoughCutByWorkCenter()),
-                                      reportsMenu, _privleges->check("ViewRoughCut") && _metrics->boolean("Routings") ) );
-
-  parent->actions.append( new Action( parent, "ms.rptTimePhasedRoughCutByWorkCenter", tr("Time-Phased Rough Cut Capacity Plan by Work Center..."),
-                                      this, SLOT(sRptTimePhasedRoughCutByWorkCenter()),
-                                      reportsMenu, _privleges->check("ViewRoughCut") && _metrics->boolean("Routings") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ms.rptPlannedRevenue/ExpensesByPlannerCode", tr("Planned Revenue/Expenses by Planner Code..."),
-                                      this, SLOT(sRptPlannedRevenueExpensesByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewPlannedOrders") ) );
-
-  parent->actions.append( new Action( parent, "ms.rptTimePhasedPlannedRevenue/ExpensesByPlannerCode", tr("Time-Phased Planned Revenue/Expenses by Planner Code..."),
-                                      this, SLOT(sRptTimePhasedPlannedREByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewPlannedOrders") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ms.rptRunningAvailability", tr("Running Availability..."),
-                                      this, SLOT(sRptRunningAvailability()),
-                                      reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
-
-  parent->actions.append( new Action( parent, "ms.rptMRPDetail", tr("MRP Detail..."),
-                                      this, SLOT(sRptMRPDetail()),
-                                      reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "ms.rptReorderExceptionsByPlannerCode", tr("Reorder Exceptions by Planner Code..."),
-                                      this, SLOT(sRptReorderExceptionsByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewInventoryAvailability") ) );
-
-
 //  Master Information
   masterInfoMenu = new QMenu();
 
@@ -371,7 +308,6 @@ moduleMS::moduleMS(OpenMFGGUIClient *Pparent) :
   if (_metrics->boolean("BufferMgt"))
     mainMenu->insertItem(tr("Buffer Management"), bufferManagementMenu);
   mainMenu->insertItem(tr("Displays"), displaysMenu);
-  mainMenu->insertItem(tr("Reports"), reportsMenu);
   mainMenu->insertItem(tr("Master Information"), masterInfoMenu);
   parent->populateCustomMenu(mainMenu, "M/S");
   parent->menuBar()->insertItem(tr("&M/S"), mainMenu);
@@ -566,57 +502,6 @@ void moduleMS::sDspReorderExceptionsByPlannerCode()
 {
   omfgThis->handleNewWindow(new dspReorderExceptionsByPlannerCode());
 }
-
-void moduleMS::sRptPlannedOrdersByItem()
-{
-  rptPlannedOrdersByItem(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptPlannedOrdersByPlannerCode()
-{
-  rptPlannedOrdersByPlannerCode(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptMPSDetail()
-{
-  rptMPSDetail(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptRoughCutByWorkCenter()
-{
-  rptRoughCutByWorkCenter(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptTimePhasedRoughCutByWorkCenter()
-{
-  rptTimePhasedRoughCutByWorkCenter(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptPlannedRevenueExpensesByPlannerCode()
-{
-  rptPlannedRevenueExpensesByPlannerCode(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptTimePhasedPlannedREByPlannerCode()
-{
-  rptTimePhasedPlannedREByPlannerCode(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptRunningAvailability()
-{
-  rptRunningAvailability(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptMRPDetail()
-{
-  rptMRPDetail(parent, "", TRUE).exec();
-}
-
-void moduleMS::sRptReorderExceptionsByPlannerCode()
-{
-  rptReorderExceptionsByPlannerCode(parent, "", TRUE).exec();
-}
-
 
 void moduleMS::sPlannerCodes()
 {

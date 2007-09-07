@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspTimePhasedRoughCutByWorkCenter</class>
  <widget class="QMainWindow" name="dspTimePhasedRoughCutByWorkCenter" >
   <property name="geometry" >
@@ -9,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>688</width>
-    <height>359</height>
+    <height>361</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -99,6 +96,9 @@
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="type" >
+                <enum>XComboBox::WorkCenters</enum>
+               </property>
               </widget>
              </item>
             </layout>
@@ -157,7 +157,7 @@
          <number>0</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>0</number>
         </property>
         <item>
          <widget class="QPushButton" name="_close" >
@@ -272,6 +272,11 @@
               <string/>
              </property>
             </item>
+            <item>
+             <property name="text" >
+              <string/>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -310,6 +315,16 @@
           <height>120</height>
          </size>
         </property>
+        <column>
+         <property name="text" >
+          <string>Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Selected Periods</string>
+         </property>
+        </column>
         <column>
          <property name="text" >
           <string>Name</string>
@@ -391,36 +406,26 @@
    <class>CalendarComboBox</class>
    <extends>XComboBox</extends>
    <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
-   <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>PeriodsListView</class>
+   <extends>XListView</extends>
+   <header>calendarTools.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

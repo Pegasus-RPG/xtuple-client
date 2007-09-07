@@ -59,7 +59,10 @@
 #define DSPPLANNEDREVENUEEXPENSESBYPLANNERCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+
+#include <QMainWindow>
+
+#include <parameter.h>
 
 #include "ui_dspPlannedRevenueExpensesByPlannerCode.h"
 
@@ -70,8 +73,7 @@ class dspPlannedRevenueExpensesByPlannerCode : public QMainWindow, public Ui::ds
 public:
     dspPlannedRevenueExpensesByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPlannedRevenueExpensesByPlannerCode();
-
-    virtual void init();
+    bool	setParams(ParameterList&);
 
 public slots:
     virtual void sPrint();

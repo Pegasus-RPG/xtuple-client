@@ -57,20 +57,14 @@
 
 #include "dspCostedSingleLevelBOM.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include "dspItemCostSummary.h"
 #include "maintainItemCosts.h"
 
-/*
- *  Constructs a dspCostedSingleLevelBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -83,12 +77,10 @@ dspCostedSingleLevelBOM::dspCostedSingleLevelBOM(QWidget* parent, const char* na
   _costsGroupInt->addButton(_useActualCosts);
 
   // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
@@ -157,7 +149,6 @@ void dspCostedSingleLevelBOM::sPrint()
     params.append("useActualCosts");
 
   orReport report("CostedSingleLevelBOM", params);
-
   if (report.isValid())
     report.print();
   else

@@ -57,17 +57,12 @@
 
 #include "dspCostedSummarizedBOM.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 
-/*
- *  Constructs a dspCostedSummarizedBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -79,13 +74,7 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDaysLit, SLOT(setEnabled(bool)));
-  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDays, SLOT(setEnabled(bool)));
-  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDaysLit, SLOT(setEnabled(bool)));
-  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
@@ -102,18 +91,11 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCostedSummarizedBOM::~dspCostedSummarizedBOM()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCostedSummarizedBOM::languageChange()
 {
   retranslateUi(this);

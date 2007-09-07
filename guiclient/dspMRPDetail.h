@@ -59,7 +59,7 @@
 #define DSPMRPDETAIL_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspMRPDetail.h"
@@ -71,8 +71,6 @@ class dspMRPDetail : public QMainWindow, public Ui::dspMRPDetail
 public:
     dspMRPDetail(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspMRPDetail();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

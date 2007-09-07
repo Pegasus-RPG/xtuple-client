@@ -57,29 +57,21 @@
 
 #include "bom.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
-#include <QWorkspace>
-#include <QValidator>
-#include <QMenu>
 #include <QKeyEvent>
-#include "bomItem.h"
-#include "rptSingleLevelBOM.h"
+#include <QMenu>
+#include <QMessageBox>
+#include <QValidator>
+#include <QVariant>
 
-/*
- *  Constructs a BOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+
+#include "bomItem.h"
+
 BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -91,12 +83,9 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_bomitem, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
-  connect(_doRequireQtyPer, SIGNAL(toggled(bool)), _requiredQtyPer, SLOT(setEnabled(bool)));
 
-  statusBar()->hide();
   _totalQtyPerCache = 0.0;
   
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning);
@@ -127,21 +116,14 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 BOM::~BOM()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void BOM::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse BOM::set(const ParameterList &pParams)
@@ -253,7 +235,6 @@ void BOM::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
   
   if (_showExpired->isChecked())
     params.append("expiredDays", 999);
@@ -261,8 +242,11 @@ void BOM::sPrint()
   if (_showFuture->isChecked())
     params.append("futureDays", 999);
   
-  rptSingleLevelBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SingleLevelBOM", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void BOM::sPopulateMenu(QMenu *menuThis)

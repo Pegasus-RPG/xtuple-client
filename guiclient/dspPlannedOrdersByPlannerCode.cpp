@@ -57,60 +57,25 @@
 
 #include "dspPlannedOrdersByPlannerCode.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
+#include <QMenu>
+
+#include <openreports.h>
 #include <parameter.h>
+
 #include "dspRunningAvailability.h"
 #include "firmPlannedOrder.h"
 #include "workOrder.h"
 #include "purchaseRequest.h"
 #include "deletePlannedOrder.h"
-#include "rptPlannedOrdersByPlannerCode.h"
 
-/*
- *  Constructs a dspPlannedOrdersByPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPlannedOrdersByPlannerCode::~dspPlannedOrdersByPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPlannedOrdersByPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspPlannedOrdersByPlannerCode::init()
-{
-  statusBar()->hide();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _plannerCode->setType(PlannerCode);
 
@@ -127,15 +92,27 @@ void dspPlannedOrdersByPlannerCode::init()
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
+dspPlannedOrdersByPlannerCode::~dspPlannedOrdersByPlannerCode()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+void dspPlannedOrdersByPlannerCode::languageChange()
+{
+    retranslateUi(this);
+}
+
 void dspPlannedOrdersByPlannerCode::sPrint()
 {
   ParameterList params;
-  params.append("print");
   _warehouse->appendValue(params);
   _plannerCode->appendValue(params);
 
-  rptPlannedOrdersByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PlannedOrdersByPlannerCode", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

@@ -58,51 +58,18 @@
 #include "dspSequencedBOM.h"
 
 #include <QVariant>
-#include <QStatusBar>
-#include "rptSequencedBOM.h"
 
-/*
- *  Constructs a dspSequencedBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+
 dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSequencedBOM::~dspSequencedBOM()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSequencedBOM::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspSequencedBOM::init()
-{
-  statusBar()->hide();
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured  | ItemLineEdit::cGeneralPurchased);
 
@@ -120,7 +87,17 @@ void dspSequencedBOM::init()
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
 }
 
-enum SetResponse dspSequencedBOM::set(ParameterList &pParams)
+dspSequencedBOM::~dspSequencedBOM()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspSequencedBOM::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspSequencedBOM::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -142,7 +119,6 @@ void dspSequencedBOM::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
   if (_showExpired->isChecked())
     params.append("showExpired");
@@ -150,14 +126,19 @@ void dspSequencedBOM::sPrint()
   if (_showFuture->isChecked())
     params.append("showFuture");
 
-  rptSequencedBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SequencedBOM", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSequencedBOM::sFillList()
 {
   if (_item->isValid())
     sFillList(_item->id(), FALSE);
+  else
+    _bomitem->clear();
 }
 
 void dspSequencedBOM::sFillList(int pItemid, bool)

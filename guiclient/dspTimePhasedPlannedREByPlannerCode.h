@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDPLANNEDREBYPLANNERCODE_H
 #define DSPTIMEPHASEDPLANNEDREBYPLANNERCODE_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 
 #include "ui_dspTimePhasedPlannedREByPlannerCode.h"
@@ -70,8 +70,6 @@ class dspTimePhasedPlannedREByPlannerCode : public QMainWindow, public Ui::dspTi
 public:
     dspTimePhasedPlannedREByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedPlannedREByPlannerCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

@@ -57,67 +57,29 @@
 
 #include "dspPlannedRevenueExpensesByPlannerCode.h"
 
-#include <QVariant>
-#include <QStatusBar>
+#include <QMenu>
 #include <QMessageBox>
-#include <parameter.h>
-#include "rptPlannedRevenueExpensesByPlannerCode.h"
+#include <QSqlError>
 
-/*
- *  Constructs a dspPlannedRevenueExpensesByPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+
 dspPlannedRevenueExpensesByPlannerCode::dspPlannedRevenueExpensesByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  QButtonGroup* _costGroupInt = new QButtonGroup(this);
+  _costGroupInt->addButton(_useStandardCost);
+  _costGroupInt->addButton(_useActualCost);
 
-    QButtonGroup* _costGroupInt = new QButtonGroup(this);
-    _costGroupInt->addButton(_useStandardCost);
-    _costGroupInt->addButton(_useActualCost);
+  QButtonGroup* _salesPriceGroupInt = new QButtonGroup(this);
+  _salesPriceGroupInt->addButton(_useListPrice);
+  _salesPriceGroupInt->addButton(_useAveragePrice);
 
-    QButtonGroup* _salesPriceGroupInt = new QButtonGroup(this);
-    _salesPriceGroupInt->addButton(_useListPrice);
-    _salesPriceGroupInt->addButton(_useAveragePrice);
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _startEvalDateLit, SLOT(setEnabled(bool)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _startEvalDate, SLOT(setEnabled(bool)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _endEvalDateLit, SLOT(setEnabled(bool)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _endEvalDate, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPlannedRevenueExpensesByPlannerCode::~dspPlannedRevenueExpensesByPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPlannedRevenueExpensesByPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspPlannedRevenueExpensesByPlannerCode::init()
-{
-  statusBar()->hide();
+  connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _plannerCode->setType(PlannerCode);
 
@@ -131,14 +93,36 @@ void dspPlannedRevenueExpensesByPlannerCode::init()
   _planord->addColumn(tr("Cost"),        _moneyColumn, Qt::AlignRight  );
   _planord->addColumn(tr("Revenue"),     _moneyColumn, Qt::AlignRight  );
   _planord->addColumn(tr("Gr. Profit"),  _moneyColumn, Qt::AlignRight  );
+
+  _startDate->setAllowNullDate(true);
+  _startDate->setNullString(tr("Earliest"));
+  _startDate->setNullDate(omfgThis->startOfTime());
+  _endDate->setAllowNullDate(true);
+  _endDate->setNullString(tr("Latest"));
+  _endDate->setNullDate(omfgThis->endOfTime());
+
+  _startEvalDate->setAllowNullDate(true);
+  _startEvalDate->setNullString(tr("Earliest"));
+  _startEvalDate->setNullDate(omfgThis->startOfTime());
+  _endEvalDate->setAllowNullDate(true);
+  _endEvalDate->setNullString(tr("Latest"));
+  _endEvalDate->setNullDate(omfgThis->endOfTime());
 }
 
-void dspPlannedRevenueExpensesByPlannerCode::sPrint()
+dspPlannedRevenueExpensesByPlannerCode::~dspPlannedRevenueExpensesByPlannerCode()
 {
-  ParameterList params;
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspPlannedRevenueExpensesByPlannerCode::languageChange()
+{
+  retranslateUi(this);
+}
+
+bool dspPlannedRevenueExpensesByPlannerCode::setParams(ParameterList &params)
+{
   params.append("startDate", _startDate->date());
   params.append("endDate", _endDate->date());
-  params.append("print");
   _warehouse->appendValue(params);
   _plannerCode->appendValue(params);
 
@@ -158,8 +142,19 @@ void dspPlannedRevenueExpensesByPlannerCode::sPrint()
     params.append("endEvalDate", _endEvalDate->date());
   }
 
-  rptPlannedRevenueExpensesByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  return true;
+}
+
+void dspPlannedRevenueExpensesByPlannerCode::sPrint()
+{
+  ParameterList params;
+  setParams(params);
+
+  orReport report("PlannedRevenueExpensesByPlannerCode", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPlannedRevenueExpensesByPlannerCode::sPopulateMenu(QMenu *, QTreeWidgetItem *)
@@ -170,21 +165,16 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
 {
   _planord->clear();
 
-  if (_useAveragePrice->isChecked())
-  {
-    if ( (!_startEvalDate->isValid()) || (!_endEvalDate->isValid()) )
-    {
-      QMessageBox::critical( this, tr("Enter Start and End Evaluation Dates"),
-                             tr("You must enter both a start and end date for Average Sales Price calculation") );
-      return;
-    }
-  }
+  ParameterList params;
+  setParams(params);
 
   QString sql( "SELECT planord_id, planord_itemsite_id,"
                "       plonumber, plotype, item_number, itemdescrip,"
-               "       formatDate(planord_duedate) AS duedate, formatQty(planord_qty) AS qty,"
+               "       formatDate(planord_duedate) AS duedate,"
+	       "       formatQty(planord_qty) AS qty,"
                "       plofirm,"
-               "       formatMoney(plocost) AS cost, formatMoney(plorevenue) AS revenue,"
+               "       formatMoney(plocost) AS cost,"
+	       "       formatMoney(plorevenue) AS revenue,"
                "       formatMoney(plorevenue - plocost) AS profit,"
                "       plocost, plorevenue "
                "FROM ( SELECT planord_id, planord_itemsite_id, planord_duedate,"
@@ -193,45 +183,48 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
                "            WHEN (planord_type='W') THEN 'W/O'"
                "            ELSE '?'"
                "       END AS plotype,"
-               "       item_number, (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
+               "       item_number,"
+	       "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       formatDate(planord_duedate),"
-               "       planord_qty, formatBoolYN(planord_firm) AS plofirm," );
+               "       planord_qty, formatBoolYN(planord_firm) AS plofirm,"
+	       "<? if exists(\"useActualCost\") ?>"
+	       "       (actcost(item_id) * planord_qty)"
+	       "<? elseif exists(\"useStandardCost\") ?>"
+	       "       (stdcost(item_id) * planord_qty)"
+	       "<? endif ?> AS plocost,"
+	       "<? if exists(\"useListPrice\") ?>"
+	       "       (item_listprice * planord_qty) "
+	       "<? elseif exists(\"useAveragePrice\") ?>"
+	       "       (CASE WHEN(averageSalesPrice(itemsite_id,"
+	       "                               <? value(\"startEvalDate\") ?>,"
+	       "                               <? value(\"endEvalDate\") ?>)=0)"
+	       "                               THEN item_listprice"
+	       "             ELSE averageSalesPrice(itemsite_id,"
+	       "                               <? value(\"startEvalDate\") ?>,"
+	       "                               <? value(\"endEvalDate\") ?>)"
+	       "             END * planord_qty)"
+	       "<? endif ?> AS plorevenue "
+	       "FROM planord, itemsite, item "
+	       "WHERE ((planord_itemsite_id=itemsite_id)"
+	       " AND (itemsite_item_id=item_id)"
+	       " AND (item_sold)"
+	       " AND (planord_duedate BETWEEN <? value(\"startDate\") ?>"
+	       "			  AND <? value(\"endDate\") ?>)"
+	       "<? if exists(\"plancode_id\") ?>"
+	       " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
+	       "<? elseif exists(\"plancode_pattern\") ?>"
+	       " AND (itemsite_plancode_id IN (SELECT plancode_id"
+	       "      FROM plancode"
+	       "      WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
+	       "<? endif ?>"
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       ") ) AS data "
+	       "ORDER BY planord_duedate, item_number;" );
 
-  if (_useActualCost->isChecked())
-    sql += " (actcost(item_id) * planord_qty) AS plocost,";
-  else if (_useStandardCost->isChecked())
-    sql += " (stdcost(item_id) * planord_qty) AS plocost,";
-
-  if (_useListPrice->isChecked())
-    sql += " (item_listprice * planord_qty) AS plorevenue ";
-  else if (_useAveragePrice->isChecked())
-    sql += " (CASE WHEN(averageSalesPrice(itemsite_id, :startEvalDate, :endEvalDate)=0) THEN item_listprice ELSE averageSalesPrice(itemsite_id, :startEvalDate, :endEvalDate) END * planord_qty) AS plorevenue ";
-
-  sql += "FROM planord, itemsite, item "
-         "WHERE ((planord_itemsite_id=itemsite_id)"
-         " AND (itemsite_item_id=item_id)"
-         " AND (item_sold)"
-         " AND (planord_duedate BETWEEN :startDate AND :endDate)";
-
-  if (_plannerCode->isSelected())
-    sql += " AND (itemsite_plancode_id=:plancode_id)";
-  else if (_plannerCode->isPattern())
-    sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += ") ) AS data "
-         "ORDER BY planord_duedate, item_number";
-
-  q.prepare(sql);
-  q.bindValue(":startEvalDate", _startEvalDate->date());
-  q.bindValue(":endEvalDate", _endEvalDate->date());
-  q.bindValue(":startDate", _startDate->date());
-  q.bindValue(":endDate", _endDate->date());
-  _warehouse->bindValue(q);
-  _plannerCode->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
 
   XTreeWidgetItem *last = NULL;
   double        cost = 0;
@@ -252,6 +245,11 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
     if (q.value("plocost").toDouble() > q.value("plorevenue").toDouble())
       last->setTextColor(9, "red");
   }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   last = new XTreeWidgetItem(_planord, last, -1, -1, tr("Totals:"));
   last->setText(7, formatMoney(cost));
@@ -261,4 +259,3 @@ void dspPlannedRevenueExpensesByPlannerCode::sFillList()
   if (cost > revenue)
     last->setTextColor(9, "red");
 }
-

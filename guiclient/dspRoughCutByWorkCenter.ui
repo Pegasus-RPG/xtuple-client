@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspRoughCutByWorkCenter</class>
  <widget class="QMainWindow" name="dspRoughCutByWorkCenter" >
   <property name="geometry" >
@@ -97,6 +94,9 @@
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="type" >
+                  <enum>XComboBox::WorkCenters</enum>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -181,7 +181,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>5</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QPushButton" name="_close" >
@@ -192,6 +192,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="_query" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
             <property name="text" >
              <string>&amp;Query</string>
             </property>
@@ -205,6 +208,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="_print" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
             <property name="text" >
              <string>&amp;Print</string>
             </property>
@@ -259,32 +265,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

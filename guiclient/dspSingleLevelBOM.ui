@@ -487,6 +487,18 @@
       <slot>close()</slot>
     </connection>
     <connection>
+      <sender>_item</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_print</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
+      <sender>_item</sender>
+      <signal>valid(bool)</signal>
+      <receiver>_query</receiver>
+      <slot>setEnabled(bool)</slot>
+    </connection>
+    <connection>
       <sender>_showExpired</sender>
       <signal>toggled(bool)</signal>
       <receiver>_expiredDays</receiver>

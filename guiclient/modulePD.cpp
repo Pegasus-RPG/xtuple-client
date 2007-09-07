@@ -121,13 +121,6 @@
 
 #include "itemAvailabilityWorkbench.h"
 
-#include "rptSingleLevelBOM.h"
-#include "rptSummarizedBOM.h"
-#include "rptSequencedBOM.h"
-#include "rptSingleLevelWhereUsed.h"
-#include "rptPendingBOMChanges.h"
-#include "rptStandardOperationsByWorkCenter.h"
-
 #include "uoms.h"
 #include "classCodes.h"
 #include "productCategories.h"
@@ -278,8 +271,6 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sDspItemCostHistory()),
                                       costingDisplaysMenu, _privleges->check("ViewCosts") ) );
 
-  costingReportsMenu = new QMenu();
-
   costingMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "pd.maintainItemCosts", tr("Maintain Item Costs..."),
@@ -320,7 +311,6 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
   costingMenu->insertSeparator();
 
   costingMenu->insertItem(tr("&Displays"), costingDisplaysMenu );
-  costingMenu->insertItem(tr("&Reports"),  costingReportsMenu  );
 
   costingMenu->insertSeparator();
 
@@ -398,40 +388,6 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
                                           this, SLOT(sDspCapacityUOMsByProductCategory()),
                                           displaysMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
   }
-
-//  P/D | Reports
-  reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "pd.rptSingleLevelBOM", tr("Single Level Bill of Materials..."),
-                                      this, SLOT(sRptSingleLevelBOM()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptSummarizedBOM", tr("Summarized Bill of Materials..."),
-                                      this, SLOT(sRptSummarizedBOM()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptSequencedBOM", tr("Sequenced Bill of Materials..."),
-                                      this, SLOT(sRptSequencedBOM()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "pd.rptSingleLevelWhereUsed", tr("Single Level Where Used..."),
-                                      this, SLOT(sRptSingleLevelWhereUsed()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
-  parent->actions.append( new Action( parent, "pd.rptPendingBOMChanges", tr("Pending BOM Changes..."),
-                                      this, SLOT(sRptPendingBOMChanges()),
-                                      reportsMenu, _privleges->check("ViewBOMs") ) );
-
- if (_metrics->boolean("Routings") )
- {
-      reportsMenu->insertSeparator();
-
-      parent->actions.append( new Action( parent, "pd.rptStandardOperationsByWorkCenter", tr("Standard Operations by Work Center..."),
-                                          this, SLOT(sRptStandardOperByWorkCenter()),
-                                          reportsMenu, ((_privleges->check("ViewStandardOperations")) && (_metrics->boolean("Routings"))) ) );
-  }
   
 //  P/D | Master Information
   masterInfoMenu = new QMenu();
@@ -504,7 +460,6 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
     mainMenu->insertItem(tr("Br&eeder Bills of Materials"), breederBOMMenu );
   mainMenu->insertItem(tr("&Costing"),                    costingMenu    );
   mainMenu->insertItem(tr("&Displays"),                   displaysMenu   );
-  mainMenu->insertItem(tr("&Reports"),                    reportsMenu    );
   mainMenu->insertItem(tr("&Master Information"),         masterInfoMenu );
   mainMenu->insertItem(tr("&Utilities"),                  utilitiesMenu  );
   parent->populateCustomMenu(mainMenu, "P/D");	
@@ -773,38 +728,6 @@ void modulePD::sDspItemAvailabilityWorkbench()
 {
   omfgThis->handleNewWindow(new itemAvailabilityWorkbench());
 }
-
-//  Reports
-void modulePD::sRptSingleLevelBOM()
-{
-  rptSingleLevelBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptSummarizedBOM()
-{
-  rptSummarizedBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptSequencedBOM()
-{
-  rptSequencedBOM(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptSingleLevelWhereUsed()
-{
-  rptSingleLevelWhereUsed(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptPendingBOMChanges()
-{
-  rptPendingBOMChanges(parent, "", TRUE).exec();
-}
-
-void modulePD::sRptStandardOperByWorkCenter()
-{
-  rptStandardOperationsByWorkCenter(parent, "", TRUE).exec();
-}
-
 
 //  Master Information
 void modulePD::sUnitsOfMeasure()

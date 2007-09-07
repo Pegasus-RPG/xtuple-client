@@ -114,17 +114,6 @@ class moduleMS : public QObject
     void sDspExpediteExceptionsByPlannerCode();
     void sDspReorderExceptionsByPlannerCode();
 
-    void sRptPlannedOrdersByItem();
-    void sRptPlannedOrdersByPlannerCode();
-    void sRptMPSDetail();
-    void sRptRoughCutByWorkCenter();
-    void sRptTimePhasedRoughCutByWorkCenter();
-    void sRptPlannedRevenueExpensesByPlannerCode();
-    void sRptTimePhasedPlannedREByPlannerCode();
-    void sRptRunningAvailability();
-    void sRptMRPDetail();
-    void sRptReorderExceptionsByPlannerCode();
-
     void sPlannerCodes();
     void sWarehouseWeek();
     void sWarehouseCalendarExceptions();
@@ -138,7 +127,6 @@ class moduleMS : public QObject
     QMenu *plannedOrdersMenu;
     QMenu *bufferManagementMenu;
     QMenu *displaysMenu;
-    QMenu *reportsMenu;
     QMenu *masterInfoMenu;
 };
 

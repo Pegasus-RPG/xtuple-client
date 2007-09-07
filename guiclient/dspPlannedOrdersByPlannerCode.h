@@ -59,7 +59,7 @@
 #define DSPPLANNEDORDERSBYPLANNERCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspPlannedOrdersByPlannerCode.h"
 
@@ -70,8 +70,6 @@ class dspPlannedOrdersByPlannerCode : public QMainWindow, public Ui::dspPlannedO
 public:
     dspPlannedOrdersByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPlannedOrdersByPlannerCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

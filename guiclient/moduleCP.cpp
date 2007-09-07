@@ -81,10 +81,6 @@
 #include "dspTimePhasedProductionByPlannerCode.h"
 #include "dspCapacityBufferStatusByWorkCenter.h"
 
-#include "rptTimePhasedCapacityByWorkCenter.h"
-#include "rptTimePhasedLoadByWorkCenter.h"
-#include "rptTimePhasedAvailableCapacityByWorkCenter.h"
-
 #include "workCenters.h"
 
 #include "moduleCP.h"
@@ -186,21 +182,6 @@ moduleCP::moduleCP(OpenMFGGUIClient *Pparent) :
                                       displaysMenu, _privleges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
 
 
-//  Reports Menu
-  reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "cp.rptTimePhasedCapacityByWorkCenter", tr("Time-Phased Capacity by Work Center..."),
-                                      this, SLOT(sRptTimePhasedCapacityByWorkCenter()),
-                                      reportsMenu, _privleges->check("ViewWorkCenterCapacity") && _metrics->boolean("Routings") ) );
-
-  parent->actions.append( new Action( parent, "cp.rptTimePhasedAvailableCapacityByWorkCenter", tr("Time-Phased Available Capacity by Work Center..."),
-                                      this, SLOT(sRptTimePhasedAvailableCapacityByWorkCenter()),
-                                      reportsMenu, _privleges->check("ViewWorkCenterCapacity") && _metrics->boolean("Routings") ) );
-
-  parent->actions.append( new Action( parent, "cp.rptTimePhasedLoadByWorkCenter", tr("Time-Phased Load by Work Center..."),
-                                      this, SLOT(sRptTimePhasedLoadByWorkCenter()),
-                                      reportsMenu, _privleges->check("ViewWorkCenterLoad") && _metrics->boolean("Routings") ) );
-
 //  Master Information
   masterInfoMenu = new QMenu();
 
@@ -213,7 +194,6 @@ moduleCP::moduleCP(OpenMFGGUIClient *Pparent) :
   if (_metrics->boolean("BufferMgt"))
     mainMenu->insertItem(tr("Buffer Management"), bufferManagementMenu);
   mainMenu->insertItem(tr("&Displays"), displaysMenu);
-  mainMenu->insertItem(tr("&Reports"), reportsMenu);
   mainMenu->insertItem(tr("&Master Information"), masterInfoMenu);
   parent->populateCustomMenu(mainMenu, "C/P");
   parent->menuBar()->insertItem(tr("&C/P"), mainMenu);
@@ -332,21 +312,6 @@ void moduleCP::sDspWoOperationBufrStsByWorkCenter()
 void moduleCP::sDspPoItemsByBufferStatus()
 {
   omfgThis->handleNewWindow(new dspPoItemsByBufferStatus());
-}
-
-void moduleCP::sRptTimePhasedCapacityByWorkCenter()
-{
-  rptTimePhasedCapacityByWorkCenter(parent, "", TRUE).exec();
-}
-
-void moduleCP::sRptTimePhasedAvailableCapacityByWorkCenter()
-{
-  rptTimePhasedAvailableCapacityByWorkCenter(parent, "", TRUE).exec();
-}
-
-void moduleCP::sRptTimePhasedLoadByWorkCenter()
-{
-  rptTimePhasedLoadByWorkCenter(parent, "", TRUE).exec();
 }
 
 void moduleCP::sWorkCenters()

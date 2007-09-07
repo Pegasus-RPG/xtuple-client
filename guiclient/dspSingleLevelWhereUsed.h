@@ -59,7 +59,7 @@
 #define DSPSINGLELEVELWHEREUSED_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspSingleLevelWhereUsed.h"
@@ -73,7 +73,7 @@ public:
     ~dspSingleLevelWhereUsed();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * menu );
     virtual void sEditBOM();
@@ -85,9 +85,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 };
 

@@ -57,36 +57,25 @@
 
 #include "dspPlannedOrdersByItem.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
+
+#include <openreports.h>
 #include <parameter.h>
+
 #include "dspRunningAvailability.h"
 #include "firmPlannedOrder.h"
 #include "workOrder.h"
 #include "purchaseRequest.h"
 #include "deletePlannedOrder.h"
-#include "rptPlannedOrdersByItem.h"
 
-/*
- *  Constructs a dspPlannedOrdersByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPlannedOrdersByItem::dspPlannedOrdersByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_planord, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _planord->addColumn(tr("Order #"),    _orderColumn, Qt::AlignCenter );
   _planord->addColumn(tr("Type"),       _uomColumn,   Qt::AlignCenter );
@@ -100,32 +89,27 @@ dspPlannedOrdersByItem::dspPlannedOrdersByItem(QWidget* parent, const char* name
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPlannedOrdersByItem::~dspPlannedOrdersByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPlannedOrdersByItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspPlannedOrdersByItem::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
   _warehouse->appendValue(params);
 
-  rptPlannedOrdersByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PlannedOrdersByItem", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPlannedOrdersByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

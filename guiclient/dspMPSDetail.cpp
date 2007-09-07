@@ -58,44 +58,33 @@
 #include "dspMPSDetail.h"
 
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
 #include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include <parameter.h>
+
 #include <datecluster.h>
+#include <openreports.h>
+#include <parameter.h>
+
 #include "dspAllocations.h"
 #include "dspOrders.h"
-#include "workOrder.h"
-#include "purchaseRequest.h"
 #include "purchaseOrder.h"
-#include "rptMPSDetail.h"
+#include "purchaseRequest.h"
+#include "workOrder.h"
 
 #define noNeg(x) ((x < 0.0) ? 0.0 : x)
 
-/*
- *  Constructs a dspMPSDetail as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspMPSDetail::dspMPSDetail(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
+  connect(_itemsite, SIGNAL(itemSelected(int)), this, SLOT(sFillMPSDetail()));
   connect(_itemsite, SIGNAL(itemSelectionChanged()), this, SLOT(sFillMPSDetail()));
   connect(_mps, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*,int)));
-  connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillItemsites()));
   connect(_plannerCode, SIGNAL(updated()), this, SLOT(sFillItemsites()));
-  connect(_itemsite, SIGNAL(itemSelected(int)), this, SLOT(sFillMPSDetail()));
-
-  statusBar()->hide();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillItemsites()));
 
   _plannerCode->setType(PlannerCode);
 
@@ -114,21 +103,14 @@ dspMPSDetail::dspMPSDetail(QWidget* parent, const char* name, Qt::WFlags fl)
   sFillItemsites();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspMPSDetail::~dspMPSDetail()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspMPSDetail::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspMPSDetail::set(const ParameterList & pParams)
@@ -149,15 +131,49 @@ enum SetResponse dspMPSDetail::set(const ParameterList & pParams)
 
 void dspMPSDetail::sPrint()
 {
-  ParameterList params;
-  params.append("print");
-  params.append("itemsite_id", _itemsite->id());
-  _periods->getSelected(params);
-  _warehouse->appendValue(params);
-  _plannerCode->appendValue(params);
+  // TODO: why is this so different from sFillList?
 
-  rptMPSDetail newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if ( (_periods->isPeriodSelected()) && (_itemsite->id() != -1))
+  {
+    XSqlQuery wsq ( QString( "SELECT mpsReport(%1, '%2') as worksetid;")
+                    .arg(_itemsite->id())
+                    .arg(_periods->periodString()) );
+    if (wsq.first())
+    {
+      ParameterList params;
+      params.append("itemsite_id", _itemsite->id());
+      _warehouse->appendValue(params);
+      _plannerCode->appendValue(params);
+
+      QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+      QList<QVariant> periodList;
+      for (int i = 0; i < selected.size(); i++)
+	periodList.append(((XTreeWidgetItem*)selected[i])->id());
+
+      params.append("period_id_list", periodList);
+      params.append("workset_id", wsq.value("worksetid").toInt());
+
+      orReport report("MPSDetail", params);
+      if (report.isValid())
+        report.print();
+      else
+        report.reportError(this);
+
+      XSqlQuery dwsq( QString( "SELECT deleteMPSMRPWorkset(%1) as result")
+                      .arg(wsq.value("worksetid").toInt()) );
+
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else
+    QMessageBox::critical(this, tr("Incomplete criteria"),
+			 tr("<p>The criteria you specified are not complete. "
+			    "Please make sure all fields are correctly filled "
+			    "out before running the report." ) );
 }
 
 void dspMPSDetail::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)

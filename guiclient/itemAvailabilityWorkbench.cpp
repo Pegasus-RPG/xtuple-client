@@ -61,9 +61,11 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
+
 #include <openreports.h>
-#include "rptRunningAvailability.h"
-#include "rptSingleLevelWhereUsed.h"
+
+#include "dspRunningAvailability.h"
+#include "dspSingleLevelWhereUsed.h"
 #include "item.h"
 #include "bom.h"
 #include "boo.h"
@@ -1179,13 +1181,15 @@ void itemAvailabilityWorkbench::sPrintRunning()
   ParameterList params;
   params.append("item_id", _item->id());
   params.append("warehous_id", _warehouse->id());
-  params.append("print");
 
   if (_showPlanned->isChecked())
     params.append("showPlanned");
 
-  rptRunningAvailability newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("RunningAvailability", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void itemAvailabilityWorkbench::sPrintAvail()
@@ -1311,13 +1315,15 @@ void itemAvailabilityWorkbench::sPrintWhereUsed()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
   if(!_effective->isNull())
     params.append("effective", _effective->date());
 
-  rptSingleLevelWhereUsed newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SingleLevelWhereUsed", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void itemAvailabilityWorkbench::sPopulateMenuRunning( QMenu * pMenu, QTreeWidgetItem * pSelected )

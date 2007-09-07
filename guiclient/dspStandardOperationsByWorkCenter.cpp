@@ -57,74 +57,49 @@
 
 #include "dspStandardOperationsByWorkCenter.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
-#include "standardOperation.h"
-#include "rptStandardOperationsByWorkCenter.h"
+#include <QMenu>
 
-/*
- *  Constructs a dspStandardOperationsByWorkCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+#include <parameter.h>
+
+#include "standardOperation.h"
+
 dspStandardOperationsByWorkCenter::dspStandardOperationsByWorkCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_stdopn, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_stdopn, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspStandardOperationsByWorkCenter::~dspStandardOperationsByWorkCenter()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspStandardOperationsByWorkCenter::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspStandardOperationsByWorkCenter::init()
-{
-  statusBar()->hide();
-
-  _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
-                     "FROM wrkcnt "
-                     "ORDER BY wrkcnt_code;" );
-	
   _stdopn->addColumn(tr("Std. Oper. #"), _itemColumn, Qt::AlignLeft  );
   _stdopn->addColumn(tr("Description"),  -1,          Qt::AlignLeft  );
 
   sFillList();
 }
 
+dspStandardOperationsByWorkCenter::~dspStandardOperationsByWorkCenter()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspStandardOperationsByWorkCenter::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspStandardOperationsByWorkCenter::sPrint()
 {
   ParameterList params;
   params.append("wrkcnt_id", _wrkcnt->id());
-  params.append("print");
 
-  rptStandardOperationsByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("StandardOperationsByWorkCenter", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspStandardOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)

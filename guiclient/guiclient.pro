@@ -272,11 +272,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptMaterialUsageVarianceByBOMItem.ui rptMaterialUsageVarianceByComponentItem.ui        \
                rptMaterialUsageVarianceByItem.ui rptMaterialUsageVarianceByWarehouse.ui               \
                rptMaterialUsageVarianceByWorkOrder.ui                                                 \
-               rptMPSDetail.ui rptMRPDetail.ui                                                        \
-               rptPartiallyShippedOrders.ui rptPendingBOMChanges.ui rptPendingAvailability.ui         \
+               rptPartiallyShippedOrders.ui rptPendingAvailability.ui         \
                rptPurchaseReqsByItem.ui rptPurchaseReqsByPlannerCode.ui                               \
-               rptPoHistory.ui rptPlannedOrdersByItem.ui rptPlannedOrdersByPlannerCode.ui             \
-               rptPlannedRevenueExpensesByPlannerCode.ui                                              \
+               rptPoHistory.ui \
                rptPoDeliveryDateVariancesByItem.ui rptPoDeliveryDateVariancesByVendor.ui              \
                rptPoItemsByBufferStatus.ui                                                            \
                rptPoItemsByDate.ui rptPoItemsByItem.ui rptPoItemsByVendor.ui                          \
@@ -284,19 +282,10 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rptPoItemReceivingsByVendor.ui                                                         \
                rptPoPriceVariancesByItem.ui rptPoPriceVariancesByVendor.ui rptPoReturnsByVendor.ui    \
                rptPricesByItem.ui rptPricesByCustomer.ui rptPricesByCustomerType.ui                   \
-               rptReorderExceptionsByPlannerCode.ui rptRoughCutByWorkCenter.ui                        \
-               rptRunningAvailability.ui                                                              \
-               rptSalesOrderStatus.ui rptSequencedBOM.ui rptSingleLevelBOM.ui                         \
-               rptSingleLevelWhereUsed.ui rptShipmentsByDate.ui rptShipmentsBySalesOrder.ui           \
-                                            rptStandardOperationsByWorkCenter.ui                      \
-               rptSummarizedBacklogByWarehouse.ui rptSummarizedBOM.ui                                 \
+               rptSalesOrderStatus.ui \
+               rptShipmentsByDate.ui rptShipmentsBySalesOrder.ui           \
+               rptSummarizedBacklogByWarehouse.ui \
                                                    rptSummarizedTaxableSales.ui                       \
-                                            rptTimePhasedAvailableCapacityByWorkCenter.ui             \
-               rptTimePhasedCapacityByWorkCenter.ui                                                   \
-               rptTimePhasedLoadByWorkCenter.ui                                                       \
-               rptTimePhasedPlannedREByPlannerCode.ui                            \
-               rptTimePhasedRoughCutByWorkCenter.ui                            \
-               rptUninvoicedReceivings.ui \
                rptUninvoicedReceivings.ui \
 	       rptWoEffortByUser.ui rptWoEffortByWorkOrder.ui                   \
                rptWoHistoryByClassCode.ui rptWoHistoryByItem.ui rptWoHistoryByNumber.ui               \
@@ -611,30 +600,19 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rptMaterialUsageVarianceByBOMItem.h rptMaterialUsageVarianceByComponentItem.h          \
                rptMaterialUsageVarianceByItem.h rptMaterialUsageVarianceByWarehouse.h                 \
                rptMaterialUsageVarianceByWorkOrder.h                                                  \
-               rptMPSDetail.h rptMRPDetail.h                                                          \
-               rptPartiallyShippedOrders.h rptPendingBOMChanges.h rptPendingAvailability.h            \
+               rptPartiallyShippedOrders.h rptPendingAvailability.h            \
                rptPurchaseReqsByItem.h rptPurchaseReqsByPlannerCode.h                                 \
                rptPoHistory.h rptPoItemsByBufferStatus.h                                              \
-               rptPlannedOrdersByItem.h rptPlannedOrdersByPlannerCode.h                               \
-               rptPlannedRevenueExpensesByPlannerCode.h                                               \
                rptPoDeliveryDateVariancesByItem.h rptPoDeliveryDateVariancesByVendor.h                \
                rptPoItemsByDate.h rptPoItemsByItem.h rptPoItemsByVendor.h                             \
                rptPoItemReceivingsByDate.h rptPoItemReceivingsByItem.h                                \
                rptPoItemReceivingsByVendor.h                                                          \
                rptPoPriceVariancesByItem.h rptPoPriceVariancesByVendor.h rptPoReturnsByVendor.h       \
                rptPricesByItem.h rptPricesByCustomer.h rptPricesByCustomerType.h                      \
-               rptReorderExceptionsByPlannerCode.h rptRoughCutByWorkCenter.h                          \
-               rptRunningAvailability.h                                                               \
-               rptSalesOrderStatus.h rptSequencedBOM.h rptSingleLevelBOM.h                            \
-               rptSingleLevelWhereUsed.h rptShipmentsByDate.h rptShipmentsBySalesOrder.h              \
-                                           rptStandardOperationsByWorkCenter.h                        \
-               rptSummarizedBacklogByWarehouse.h rptSummarizedBOM.h                                   \
+               rptSalesOrderStatus.h \
+               rptShipmentsByDate.h rptShipmentsBySalesOrder.h              \
+               rptSummarizedBacklogByWarehouse.h \
                                                   rptSummarizedTaxableSales.h                         \
-                                           rptTimePhasedAvailableCapacityByWorkCenter.h               \
-               rptTimePhasedCapacityByWorkCenter.h                                                    \
-               rptTimePhasedLoadByWorkCenter.h                                                        \
-               rptTimePhasedPlannedREByPlannerCode.h                                                  \
-               rptTimePhasedRoughCutByWorkCenter.h                                                    \
 	       rptUninvoicedReceivings.h \
                rptWoEffortByUser.h rptWoEffortByWorkOrder.h                      \
                rptWoHistoryByClassCode.h rptWoHistoryByItem.h rptWoHistoryByNumber.h                  \
@@ -951,29 +929,19 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rptMaterialUsageVarianceByBOMItem.cpp rptMaterialUsageVarianceByComponentItem.cpp      \
                rptMaterialUsageVarianceByItem.cpp rptMaterialUsageVarianceByWarehouse.cpp             \
                rptMaterialUsageVarianceByWorkOrder.cpp                                                \
-               rptMPSDetail.cpp rptMRPDetail.cpp                                                      \
-               rptPartiallyShippedOrders.cpp rptPendingBOMChanges.cpp rptPendingAvailability.cpp      \
+               rptPartiallyShippedOrders.cpp rptPendingAvailability.cpp      \
                rptPurchaseReqsByItem.cpp rptPurchaseReqsByPlannerCode.cpp                             \
-               rptPoHistory.cpp rptPlannedOrdersByItem.cpp rptPlannedOrdersByPlannerCode.cpp          \
-               rptPlannedRevenueExpensesByPlannerCode.cpp                                             \
+               rptPoHistory.cpp \
                rptPoDeliveryDateVariancesByItem.cpp rptPoDeliveryDateVariancesByVendor.cpp            \
                rptPoItemsByDate.cpp rptPoItemsByItem.cpp rptPoItemsByVendor.cpp                       \
                rptPoItemReceivingsByDate.cpp rptPoItemReceivingsByItem.cpp                            \
                rptPoItemReceivingsByVendor.cpp                                                        \
                rptPoPriceVariancesByItem.cpp rptPoPriceVariancesByVendor.cpp rptPoReturnsByVendor.cpp \
                rptPricesByItem.cpp rptPricesByCustomer.cpp rptPricesByCustomerType.cpp                \
-               rptReorderExceptionsByPlannerCode.cpp rptRoughCutByWorkCenter.cpp                      \
-               rptRunningAvailability.cpp                                                             \
-               rptSalesOrderStatus.cpp rptSequencedBOM.cpp rptSingleLevelBOM.cpp                      \
-               rptSingleLevelWhereUsed.cpp rptShipmentsByDate.cpp rptShipmentsBySalesOrder.cpp        \
-                                             rptStandardOperationsByWorkCenter.cpp                    \
-               rptSummarizedBacklogByWarehouse.cpp rptSummarizedBOM.cpp                                 \
+               rptSalesOrderStatus.cpp \
+               rptShipmentsByDate.cpp rptShipmentsBySalesOrder.cpp        \
+               rptSummarizedBacklogByWarehouse.cpp \
                                                     rptSummarizedTaxableSales.cpp                     \
-                                             rptTimePhasedAvailableCapacityByWorkCenter.cpp           \
-               rptTimePhasedCapacityByWorkCenter.cpp                                                  \
-               rptTimePhasedLoadByWorkCenter.cpp                                                      \
-               rptTimePhasedPlannedREByPlannerCode.cpp                                                \
-               rptTimePhasedRoughCutByWorkCenter.cpp                                                  \
                rptUninvoicedReceivings.cpp \
                rptWoEffortByUser.cpp rptWoEffortByWorkOrder.cpp                \
                rptWoHistoryByClassCode.cpp rptWoHistoryByItem.cpp rptWoHistoryByNumber.cpp            \

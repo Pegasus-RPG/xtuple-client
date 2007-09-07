@@ -96,10 +96,6 @@ class moduleCP : public QObject
     void sDspTimePhasedProductionByPlannerCode();
     void sDspCapacityBufferStatusByWorkCenter();
 
-    void sRptTimePhasedCapacityByWorkCenter();
-    void sRptTimePhasedLoadByWorkCenter();
-    void sRptTimePhasedAvailableCapacityByWorkCenter();
-
     void sWorkCenters();
 
   private:
@@ -109,7 +105,6 @@ class moduleCP : public QObject
     QMenu *mainMenu;
     QMenu *bufferManagementMenu;
     QMenu *displaysMenu;
-    QMenu *reportsMenu;
     QMenu *masterInfoMenu;
 };
 

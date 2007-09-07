@@ -1,14 +1,11 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspPlannedOrdersByItem</class>
  <widget class="QMainWindow" name="dspPlannedOrdersByItem" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>636</width>
+    <width>637</width>
     <height>300</height>
    </rect>
   </property>
@@ -120,7 +117,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>5</number>
+           <number>0</number>
           </property>
           <item>
            <widget class="QPushButton" name="_close" >
@@ -153,6 +150,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="_print" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>&amp;Print</string>
             </property>
@@ -242,22 +242,16 @@
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -334,6 +328,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>142</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>573</x>
+     <y>101</y>
     </hint>
    </hints>
   </connection>

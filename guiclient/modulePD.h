@@ -128,13 +128,6 @@ class modulePD : public QObject
     void sDspCapacityUOMsByProductCategory();
     void sDspItemAvailabilityWorkbench();
 
-    void sRptSingleLevelBOM();
-    void sRptSummarizedBOM();
-    void sRptSequencedBOM();
-    void sRptSingleLevelWhereUsed();
-    void sRptPendingBOMChanges();
-    void sRptStandardOperByWorkCenter();
-
     void sUnitsOfMeasure();
     void sClassCodes();
     void sProductCategories();
@@ -160,9 +153,7 @@ class modulePD : public QObject
     QMenu *breederBOMMenu;
     QMenu *costingMenu;
     QMenu *costingDisplaysMenu;
-    QMenu *costingReportsMenu;
     QMenu *displaysMenu;
-    QMenu *reportsMenu;
     QMenu *masterInfoMenu;
     QMenu *utilitiesMenu;
 };

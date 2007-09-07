@@ -57,76 +57,65 @@
 
 #include "dspTimePhasedRoughCutByWorkCenter.h"
 
+#include <QMessageBox>
 #include <QVariant>
-#include <QStatusBar>
+
 #include <datecluster.h>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptTimePhasedRoughCutByWorkCenter.h"
+
 #include "OpenMFGGUIClient.h"
 
-/*
- *  Constructs a dspTimePhasedRoughCutByWorkCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedRoughCutByWorkCenter::dspTimePhasedRoughCutByWorkCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_selectedWorkCenter, SIGNAL(toggled(bool)), _workCenters, SLOT(setEnabled(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    init();
+  _roughCut->addColumn("", 80, Qt::AlignRight);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTimePhasedRoughCutByWorkCenter::~dspTimePhasedRoughCutByWorkCenter()
 {
     // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTimePhasedRoughCutByWorkCenter::languageChange()
 {
     retranslateUi(this);
 }
 
-
-void dspTimePhasedRoughCutByWorkCenter::init()
-{
-  statusBar()->hide();
-
-  _workCenters->populate( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip) "
-                          "FROM wrkcnt "
-                          "ORDER BY wrkcnt_code;" );
-
-  _roughCut->addColumn("", 80, Qt::AlignRight);
-}
-
 void dspTimePhasedRoughCutByWorkCenter::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _periods->getSelected(params);
-  params.append("print");
+  // TODO: why is this so different from sFillList()?
+  if (_periods->isPeriodSelected())
+  {
+    ParameterList params;
+    _warehouse->appendValue(params);
 
-  if(_selectedWorkCenter->isChecked())
-    params.append("wrkcnt_id", _workCenters->id());
+    if(_selectedWorkCenter->isChecked())
+      params.append("wrkcnt_id", _workCenters->id());
 
-  rptTimePhasedRoughCutByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+    QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+    QList<QVariant> periodList;
+    for (int i = 0; i < selected.size(); i++)
+      periodList.append(((XTreeWidgetItem*)selected[i])->id());
+    params.append("period_id_list", periodList);
+      
+    orReport report("TimePhasedRoughCutByWorkCenter", params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+  else
+    QMessageBox::critical(this, tr("Incomplete criteria"),
+			  tr("<p>The criteria you specified are not complete. "
+			     "Please make sure all fields are correctly filled out "
+			     "before running the report." ) );
+
 }
 
 void dspTimePhasedRoughCutByWorkCenter::sFillList()
@@ -190,14 +179,13 @@ void dspTimePhasedRoughCutByWorkCenter::sFillList()
       XTreeWidgetItem *run       = new XTreeWidgetItem(_roughCut, setupCost,  0, QVariant(tr("Run Time")), q.value("run1"));
       XTreeWidgetItem *runCost   = new XTreeWidgetItem(_roughCut, run, 0, QVariant(tr("Run Cost")), q.value("runcost1"));
                        
-      for (int column = 1; column < columns; column++)
+      for (int column = 2; column < columns; column++)
       {
-        setup->setText((column + 1), q.value(QString("setup%1").arg(column)).toString());
-        setupCost->setText((column + 1), q.value(QString("setupcost%1").arg(column)).toString());
-        run->setText((column + 1), q.value(QString("run%1").arg(column)).toString());
-        runCost->setText((column + 1), q.value(QString("runcost%1").arg(column)).toString());
+        setup->setText(column, q.value(QString("setup%1").arg(column)).toString());
+        setupCost->setText(column, q.value(QString("setupcost%1").arg(column)).toString());
+        run->setText(column, q.value(QString("run%1").arg(column)).toString());
+        runCost->setText(column, q.value(QString("runcost%1").arg(column)).toString());
       }
     }
   }
 }
-

@@ -71,8 +71,6 @@ public:
     bomList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~bomList();
 
-    virtual void init();
-
 public slots:
     virtual void sCopy();
     virtual void sDelete();

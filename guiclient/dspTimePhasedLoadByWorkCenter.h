@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDLOADBYWORKCENTER_H
 #define DSPTIMEPHASEDLOADBYWORKCENTER_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 
 #include "ui_dspTimePhasedLoadByWorkCenter.h"
@@ -70,8 +70,6 @@ class dspTimePhasedLoadByWorkCenter : public QMainWindow, public Ui::dspTimePhas
 public:
     dspTimePhasedLoadByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedLoadByWorkCenter();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

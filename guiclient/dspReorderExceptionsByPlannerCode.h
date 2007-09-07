@@ -59,7 +59,7 @@
 #define DSPREORDEREXCEPTIONSBYPLANNERCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspReorderExceptionsByPlannerCode.h"
 
@@ -71,7 +71,7 @@ public:
     dspReorderExceptionsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspReorderExceptionsByPlannerCode();
 
-    virtual void init();
+    bool	setParams(ParameterList&);
 
 public slots:
     virtual void sFillList();

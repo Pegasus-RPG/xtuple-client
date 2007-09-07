@@ -57,64 +57,28 @@
 
 #include "bomList.h"
 
-#include <QVariant>
-#include <parameter.h>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <QWorkspace>
+
+#include <openreports.h>
+#include <parameter.h>
+
 #include "bom.h"
 #include "copyBOM.h"
-#include "rptSingleLevelBOM.h"
 
-/*
- *  Constructs a bomList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 bomList::bomList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
+  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_searchFor, SIGNAL(textChanged(const QString&)), this, SLOT(sSearch(const QString&)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_bom, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_bom, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bomList::~bomList()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bomList::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void bomList::init()
-{
-  statusBar()->hide();
-  
   _bom->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft );
   _bom->addColumn(tr("Description"), -1,          Qt::AlignLeft );
   
@@ -137,6 +101,16 @@ void bomList::init()
   sFillList(-1, FALSE);
 
   _searchFor->setFocus();
+}
+
+bomList::~bomList()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bomList::languageChange()
+{
+  retranslateUi(this);
 }
 
 void bomList::sCopy()
@@ -209,10 +183,12 @@ void bomList::sPrint()
 {
   ParameterList params;
   params.append( "item_id", _bom->id() );
-  params.append( "print",   TRUE       );
 
-  rptSingleLevelBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SingleLevelBOM", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void bomList::sSearch( const QString &pTarget )

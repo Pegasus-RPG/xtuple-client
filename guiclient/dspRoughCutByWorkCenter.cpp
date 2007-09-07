@@ -57,63 +57,24 @@
 
 #include "dspRoughCutByWorkCenter.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
-#include "rptRoughCutByWorkCenter.h"
+#include <QMenu>
+#include <QSqlError>
 
-/*
- *  Constructs a dspRoughCutByWorkCenter as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+
 dspRoughCutByWorkCenter::dspRoughCutByWorkCenter(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  QButtonGroup* _workCenterGroupInt = new QButtonGroup(this);
+  _workCenterGroupInt->addButton(_allWorkCenters);
+  _workCenterGroupInt->addButton(_selectedWorkCenter);
 
-    QButtonGroup* _workCenterGroupInt = new QButtonGroup(this);
-    _workCenterGroupInt->addButton(_allWorkCenters);
-    _workCenterGroupInt->addButton(_selectedWorkCenter);
-
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_roughCut, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_selectedWorkCenter, SIGNAL(toggled(bool)), _wrkcnt, SLOT(setEnabled(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspRoughCutByWorkCenter::~dspRoughCutByWorkCenter()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspRoughCutByWorkCenter::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspRoughCutByWorkCenter::init()
-{
-  statusBar()->hide();
-
-  _wrkcnt->populate( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip) "
-                     "FROM wrkcnt "
-                     "ORDER BY wrkcnt_code;" );
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sQuery()));
+  connect(_roughCut, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _roughCut->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
   _roughCut->addColumn(tr("Work Center"),  -1,          Qt::AlignLeft   );
@@ -121,20 +82,42 @@ void dspRoughCutByWorkCenter::init()
   _roughCut->addColumn(tr("Setup $"),      _costColumn, Qt::AlignRight  );
   _roughCut->addColumn(tr("Total Run"),    _timeColumn, Qt::AlignRight  );
   _roughCut->addColumn(tr("Run $"),        _costColumn, Qt::AlignRight  );
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+}
+
+dspRoughCutByWorkCenter::~dspRoughCutByWorkCenter()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspRoughCutByWorkCenter::languageChange()
+{
+  retranslateUi(this);
+}
+
+bool dspRoughCutByWorkCenter::setParams(ParameterList &params)
+{
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
+  if (_selectedWorkCenter->isChecked())
+    params.append("wrkcnt_id", _wrkcnt->id());
+
+  return true;
 }
 
 void dspRoughCutByWorkCenter::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("print");
+  setParams(params);
 
-  if (_selectedWorkCenter->isChecked())
-    params.append("wrkcnt_id", _wrkcnt->id());
-
-  rptRoughCutByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("RoughCutCapacityPlanByWorkCenter", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspRoughCutByWorkCenter::sPopulateMenu(QMenu *, QTreeWidgetItem *)
@@ -143,6 +126,9 @@ void dspRoughCutByWorkCenter::sPopulateMenu(QMenu *, QTreeWidgetItem *)
 
 void dspRoughCutByWorkCenter::sQuery()
 {
+  ParameterList params;
+  setParams(params);
+
   QString sql( "SELECT wrkcnt_id, warehous_code, wrkcnt_code,"
                "       formatTime(SUM(planoper_sutime)),"
                "       formatCost(SUM(planoper_sutime) * wrkcnt_setuprate / 60.0),"
@@ -152,24 +138,24 @@ void dspRoughCutByWorkCenter::sQuery()
                "WHERE ( (planoper_planord_id=planord_id)"
                " AND (planoper_wrkcnt_id=wrkcnt_id)"
                " AND (wrkcnt_warehous_id=warehous_id)"
-               " AND (planord_startdate BETWEEN :startDate AND :endDate)" );
+               " AND (planord_startdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
+	       "<? if exists(\"wrkcnt_id\") ?>"
+	       " AND (wrkcnt_id=<? value(\"wrkcnt_id\") ?>)"
+	       "<? endif ?>"
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       ") "
+	       "GROUP BY wrkcnt_id, warehous_code, wrkcnt_code,"
+	       "         wrkcnt_setuprate, wrkcnt_runrate "
+	       "ORDER BY warehous_code, wrkcnt_code;" );
 
-  if (_selectedWorkCenter->isChecked())
-    sql += " AND (wrkcnt_id=:wrkcnt_id)";
-
-  if (_warehouse->isSelected())
-    sql += " AND (warehous_id=:warehous_id)";
-
-  sql += ") "
-         "GROUP BY wrkcnt_id, warehous_code, wrkcnt_code,"
-         "         wrkcnt_setuprate, wrkcnt_runrate "
-         "ORDER BY warehous_code, wrkcnt_code;";
-
-  q.prepare(sql);
-  _dates->bindValue(q);
-  _warehouse->bindValue(q);
-  q.bindValue(":wrkcnt_id", _wrkcnt->id());
-  q.exec();
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
   _roughCut->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

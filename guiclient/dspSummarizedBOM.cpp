@@ -57,33 +57,22 @@
 
 #include "dspSummarizedBOM.h"
 
+#include <QSqlError>
 #include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
-#include "rptSummarizedBOM.h"
 
-/*
- *  Constructs a dspSummarizedBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <metasql.h>
+#include <openreports.h>
+#include <parameter.h>
+
+#include "storedProcErrorLookup.h"
+
 dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDaysLit, SLOT(setEnabled(bool)));
-  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDays, SLOT(setEnabled(bool)));
-  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDaysLit, SLOT(setEnabled(bool)));
-  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
 
@@ -97,18 +86,11 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList()));
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspSummarizedBOM::~dspSummarizedBOM()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspSummarizedBOM::languageChange()
 {
   retranslateUi(this);
@@ -132,11 +114,12 @@ enum SetResponse dspSummarizedBOM::set(const ParameterList &pParams)
   return NoError;
 }
 
-void dspSummarizedBOM::sPrint()
+bool dspSummarizedBOM::setParams(ParameterList &params)
 {
-  ParameterList params;
-  params.append( "item_id", _item->id() );
-  params.append( "print",   TRUE        );
+  if (_item->isValid())
+    params.append("item_id", _item->id());
+  else
+    return false;
 
   if (_showExpired->isChecked())
     params.append("expiredDays", _expiredDays->value());
@@ -144,73 +127,102 @@ void dspSummarizedBOM::sPrint()
   if (_showFuture->isChecked())
     params.append("futureDays", _effectiveDays->value());
 
-  rptSummarizedBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+  QString wss("SELECT summarizedBOM(<? value(\"item_id\") ?>,"
+	      "                     COALESCE(<? value(\"expiredDays\") ?>, 0),"
+	      "                     COALESCE(<? value(\"futureDays\") ?>, 0)"
+	      "                    ) AS result;");
+  MetaSQLQuery wsm(wss);
+  q = wsm.toQuery(params);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("summarizedBOM", result) +
+			 tr("<p>Was unable to create/collect the required "
+			    "information to create this report." ),
+		  __FILE__, __LINE__);
+      return false;
+    }
+
+    params.append("bomworkset_id", result);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
+
+  return true;
+}
+
+void dspSummarizedBOM::sPrint()
+{
+  ParameterList params;
+  if (!setParams(params))
+    return;
+
+  orReport report("SummarizedBOM", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
+
+  QString dels("SELECT deleteBOMWorkset(<? value(\"workset_id\") ?>) AS result;");
+  MetaSQLQuery delm(dels);
+  q = delm.toQuery(params);
+  // ignore errors since this is just cleanup of temp records
 }
 
 void dspSummarizedBOM::sFillList()
 {
   _bomitem->clear();
 
-  if (_item->isValid())
+  ParameterList params;
+  if (!setParams(params))
+    return;
+
+  QString sql( "SELECT -1, item_number,"
+	       "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
+	       "       item_invuom,"
+	       "       formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_qtyper,"
+	       "       CASE WHEN(bomwork_expires <= CURRENT_DATE) THEN TRUE"
+	       "            ELSE FALSE"
+	       "       END AS expired,"
+	       "       CASE WHEN(bomwork_effective > CURRENT_DATE) THEN TRUE"
+	       "            ELSE FALSE"
+	       "       END AS future "
+	       "FROM bomwork, item "
+	       "WHERE ( (bomwork_item_id=item_id)"
+	       " AND (bomwork_set_id=<? value(\"bomworkset_id\") ?>) ) "
+	       "GROUP BY item_number, item_invuom,"
+	       "         item_descrip1, item_descrip2,"
+	       "         bomwork_expires, bomwork_effective "
+	       "ORDER BY item_number;" );
+
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  XTreeWidgetItem *last = 0;
+  while (q.next())
   {
-    q.prepare("SELECT summarizedBOM(:item_id, :expired, :effective) AS workset_id;");
-    q.bindValue(":item_id", _item->id());
+    last = new XTreeWidgetItem(_bomitem, last, -1, q.value("item_number"),
+			       q.value("itemdescription"), q.value("item_invuom"),
+			       q.value("f_qtyper") );
 
-    if (_showExpired->isChecked())
-      q.bindValue(":expired", _expiredDays->value());
-    else
-      q.bindValue(":expired", 0);
-
-    if (_showFuture->isChecked())
-      q.bindValue(":effective", _effectiveDays->value());
-    else
-      q.bindValue(":effective", 0);
-
-    q.exec();
-    if (q.first())
-    {
-      int worksetid = q.value("workset_id").toInt();
-
-      QString sql( "SELECT -1, item_number,"
-                   "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       item_invuom,"
-                   "       formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_qtyper,"
-                   "       CASE WHEN(bomwork_expires <= CURRENT_DATE) THEN TRUE"
-                   "            ELSE FALSE"
-                   "       END AS expired,"
-                   "       CASE WHEN(bomwork_effective > CURRENT_DATE) THEN TRUE"
-                   "            ELSE FALSE"
-                   "       END AS future "
-                   "FROM bomwork, item "
-                   "WHERE ( (bomwork_item_id=item_id)"
-                   " AND (bomwork_set_id=:bomwork_set_id) ) "
-                   "GROUP BY item_number, item_invuom,"
-                   "         item_descrip1, item_descrip2,"
-                   "         bomwork_expires, bomwork_effective "
-                   "ORDER BY item_number;" );
-
-      q.prepare(sql);
-      q.bindValue(":bomwork_set_id", worksetid);
-      q.exec();
-      XTreeWidgetItem *last = 0;
-      while (q.next())
-      {
-        last = new XTreeWidgetItem(_bomitem, last, -1, q.value("item_number"),
-                                   q.value("itemdescription"), q.value("item_invuom"),
-                                   q.value("f_qtyper") );
- 
-        if (q.value("expired").toBool())
-          last->setTextColor("red");
-        else if (q.value("future").toBool())
-          last->setTextColor("blue");
-      }
-      //_bomitem->closeAll();
-
-      q.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
-      q.bindValue(":bomwork_set_id", worksetid);
-      q.exec();
-    }
+    if (q.value("expired").toBool())
+      last->setTextColor("red");
+    else if (q.value("future").toBool())
+      last->setTextColor("blue");
   }
-}
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  //_bomitem->closeAll();
 
+  q.prepare("SELECT deleteBOMWorkset(:bomworkset_id) AS result;");
+  q.bindValue(":bomworkset_id", params.value("bomworkset_id").toInt());
+  q.exec();
+  // ignore errors since this is just cleanup of temp records
+}

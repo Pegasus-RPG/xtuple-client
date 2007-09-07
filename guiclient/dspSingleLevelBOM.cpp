@@ -58,55 +58,17 @@
 #include "dspSingleLevelBOM.h"
 
 #include <QVariant>
-#include <QStatusBar>
-#include "rptSingleLevelBOM.h"
 
-/*
- *  Constructs a dspSingleLevelBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+
 dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    // connect(_expiredDays, SIGNAL(valueChanged(int)), _effectiveDays, SLOT(setValue(int)));
-    connect(_showExpired, SIGNAL(toggled(bool)), _expiredDays, SLOT(setEnabled(bool)));
-    connect(_showExpired, SIGNAL(toggled(bool)), _expiredDaysLit, SLOT(setEnabled(bool)));
-    connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
-    connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDaysLit, SLOT(setEnabled(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSingleLevelBOM::~dspSingleLevelBOM()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSingleLevelBOM::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspSingleLevelBOM::init()
-{
-  statusBar()->hide();
-  
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
 
   _bomitem->addColumn(tr("#"),           30,           Qt::AlignCenter );
@@ -122,7 +84,17 @@ void dspSingleLevelBOM::init()
   _item->setFocus();
 }
 
-enum SetResponse dspSingleLevelBOM::set(ParameterList &pParams)
+dspSingleLevelBOM::~dspSingleLevelBOM()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspSingleLevelBOM::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspSingleLevelBOM::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -144,16 +116,18 @@ void dspSingleLevelBOM::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  params.append("print");
 
   if (_showExpired->isChecked())
     params.append("expiredDays", _expiredDays->value());
 
   if (_showFuture->isChecked())
-    params.append("futureDays", _effectiveDays->value());
+    params.append("effectiveDays", _effectiveDays->value());
 
-  rptSingleLevelBOM newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SingleLevelBOM", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSingleLevelBOM::sFillList()

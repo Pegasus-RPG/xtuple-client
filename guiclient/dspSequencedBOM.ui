@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspSequencedBOM</class>
  <widget class="QMainWindow" name="dspSequencedBOM" >
   <property name="geometry" >
@@ -139,6 +136,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_print" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>&amp;Print</string>
               </property>
@@ -210,25 +210,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ItemCluster</class>
-   <extends>QWidget</extends>
-   <header>itemcluster.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>QTreeWidget</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -258,6 +247,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>190</x>
+     <y>45</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>698</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>

@@ -63,11 +63,11 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "firmPlannedOrder.h"
 #include "mqlutil.h"
 #include "purchaseRequest.h"
-#include "rptRunningAvailability.h"
 #include "salesOrder.h"
 #include "transferOrder.h"
 #include "workOrder.h"
@@ -159,10 +159,12 @@ void dspRunningAvailability::sPrint()
 {
   ParameterList params;
   setParams(params);
-  params.append("print");
 
-  rptRunningAvailability newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("RunningAvailability", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
@@ -272,8 +274,8 @@ void dspRunningAvailability::sDeleteOrder()
   q.exec();
   if (q.first())
   {
-    int result = q.value("result").toInt();
     /* TODO: uncomment when deletePlannedOrder returns INTEGER instead of BOOLEAN
+    int result = q.value("result").toInt();
     if (result < 0)
     {
       systemError(this, storedProcErrorLookup("deletePlannedOrder", result), __FILE__, __LINE__);

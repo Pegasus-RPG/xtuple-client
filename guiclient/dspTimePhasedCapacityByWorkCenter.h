@@ -58,7 +58,7 @@
 #ifndef DSPTIMEPHASEDCAPACITYBYWORKCENTER_H
 #define DSPTIMEPHASEDCAPACITYBYWORKCENTER_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <QList>
 
 #include "ui_dspTimePhasedCapacityByWorkCenter.h"
@@ -70,8 +70,6 @@ class dspTimePhasedCapacityByWorkCenter : public QMainWindow, public Ui::dspTime
 public:
     dspTimePhasedCapacityByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspTimePhasedCapacityByWorkCenter();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

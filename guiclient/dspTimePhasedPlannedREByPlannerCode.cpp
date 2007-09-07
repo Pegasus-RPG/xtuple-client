@@ -57,78 +57,50 @@
 
 #include "dspTimePhasedPlannedREByPlannerCode.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QVariant>
+
+#include <openreports.h>
 #include <parameter.h>
-#include "rptTimePhasedPlannedREByPlannerCode.h"
+
 #include "OpenMFGGUIClient.h"
 
-/*
- *  Constructs a dspTimePhasedPlannedREByPlannerCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTimePhasedPlannedREByPlannerCode::dspTimePhasedPlannedREByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  QButtonGroup* _costsGroupInt = new QButtonGroup(this);
+  _costsGroupInt->addButton(_useStandardCost);
+  _costsGroupInt->addButton(_useActualCost);
 
-    QButtonGroup* _costsGroupInt = new QButtonGroup(this);
-    _costsGroupInt->addButton(_useStandardCost);
-    _costsGroupInt->addButton(_useActualCost);
+  QButtonGroup* _salesPriceGroupInt = new QButtonGroup(this);
+  _salesPriceGroupInt->addButton(_useListPrice);
+  _salesPriceGroupInt->addButton(_useAveragePrice);
 
-    QButtonGroup* _salesPriceGroupInt = new QButtonGroup(this);
-    _salesPriceGroupInt->addButton(_useListPrice);
-    _salesPriceGroupInt->addButton(_useAveragePrice);
-
-    // signals and slots connections
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_calendar, SIGNAL(newCalendarId(int)), _periods, SLOT(populate(int)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _startEvalDateLit, SLOT(setEnabled(bool)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _startEvalDate, SLOT(setEnabled(bool)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _endEvalDateLit, SLOT(setEnabled(bool)));
-    connect(_useAveragePrice, SIGNAL(toggled(bool)), _endEvalDate, SLOT(setEnabled(bool)));
-    connect(_calendar, SIGNAL(select(ParameterList&)), _periods, SLOT(load(ParameterList&)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspTimePhasedPlannedREByPlannerCode::~dspTimePhasedPlannedREByPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspTimePhasedPlannedREByPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspTimePhasedPlannedREByPlannerCode::init()
-{
-  statusBar()->hide();
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _plannerCode->setType(PlannerCode);
 
   _plannedRE->addColumn("", 80, Qt::AlignRight);
 }
 
+dspTimePhasedPlannedREByPlannerCode::~dspTimePhasedPlannedREByPlannerCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspTimePhasedPlannedREByPlannerCode::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspTimePhasedPlannedREByPlannerCode::sPrint()
 {
+  // TODO: Why is this so different from sFillList()?
   ParameterList params;
-  params.append("print");
-  _periods->getSelected(params);
+
   _warehouse->appendValue(params);
   _plannerCode->appendValue(params);
 
@@ -142,12 +114,21 @@ void dspTimePhasedPlannedREByPlannerCode::sPrint()
   else if (_useAveragePrice->isChecked())
   {
     params.append("averagePrice");
-    params.append("startDate", _startEvalDate->date());
-    params.append("endDate", _endEvalDate->date());
+    params.append("startEvalDate", _startEvalDate->date());
+    params.append("endEvalDate", _endEvalDate->date());
   }
 
-  rptTimePhasedPlannedREByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
+  QList<QVariant> periodList;
+  for (int i = 0; i < selected.size(); i++)
+    periodList.append(((XTreeWidgetItem*)selected[i])->id());
+  params.append("period_id_list", periodList);
+
+  orReport report("TimePhasedPlannedRevenueExpensesByPlannerCode", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspTimePhasedPlannedREByPlannerCode::sFillList()
@@ -250,4 +231,3 @@ void dspTimePhasedPlannedREByPlannerCode::sFillList()
     }
   }
 }
-
