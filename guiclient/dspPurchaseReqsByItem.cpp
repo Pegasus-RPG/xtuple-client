@@ -60,10 +60,11 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
-#include "rptPurchaseReqsByItem.h"
 
 /*
  *  Constructs a dspPurchaseReqsByItem as a child of 'parent', with the
@@ -73,45 +74,19 @@
 dspPurchaseReqsByItem::dspPurchaseReqsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPurchaseReqsByItem::~dspPurchaseReqsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPurchaseReqsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspPurchaseReqsByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
 
   _pr->addColumn(tr("Status"),       _statusColumn, Qt::AlignCenter );
   _pr->addColumn(tr("Parent Order"), -1,            Qt::AlignLeft   );
@@ -121,15 +96,35 @@ void dspPurchaseReqsByItem::init()
   connect(omfgThis, SIGNAL(purchaseRequestsUpdated()), this, SLOT(sFillList()));
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPurchaseReqsByItem::~dspPurchaseReqsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPurchaseReqsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPurchaseReqsByItem::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
   params.append("item_id", _item->id());
-  params.append("print");
 
-  rptPurchaseReqsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  _warehouse->appendValue(params);
+
+  orReport report("PurchaseRequestsByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPurchaseReqsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

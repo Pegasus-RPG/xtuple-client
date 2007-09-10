@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspPricesByCustomer</class>
  <widget class="QMainWindow" name="dspPricesByCustomer" >
   <property name="geometry" >
@@ -239,6 +236,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_print" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>&amp;Print</string>
               </property>
@@ -332,15 +332,11 @@
    <class>CustCluster</class>
    <extends>QWidget</extends>
    <header>custcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -365,8 +361,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>665</x>
+     <y>29</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -385,8 +381,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>665</x>
+     <y>93</y>
     </hint>
    </hints>
   </connection>
@@ -397,12 +393,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>397</x>
+     <y>27</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>398</x>
+     <y>50</y>
     </hint>
    </hints>
   </connection>
@@ -417,8 +413,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>665</x>
+     <y>61</y>
     </hint>
    </hints>
   </connection>

@@ -62,6 +62,7 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMessageBox>
+#include <openreports.h>
 #include "postProduction.h"
 #include "correctProductionPosting.h"
 #include "postOperations.h"
@@ -78,8 +79,6 @@
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspWoOperationsByWorkOrder.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
-#include "rptWoScheduleByParameterList.h"
-#include "rptWoBufferStatusByParameterList.h"
 
 /*
  *  Constructs a dspWoBufferStatusByParameterList as a child of 'parent', with the
@@ -99,8 +98,6 @@ dspWoBufferStatusByParameterList::dspWoBufferStatusByParameterList(QWidget* pare
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _showOnlyRI->setChecked(_preferences->boolean("ShowRIWorkOrdersByDefault"));
 
@@ -123,7 +120,7 @@ dspWoBufferStatusByParameterList::dspWoBufferStatusByParameterList(QWidget* pare
  */
 dspWoBufferStatusByParameterList::~dspWoBufferStatusByParameterList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -132,7 +129,7 @@ dspWoBufferStatusByParameterList::~dspWoBufferStatusByParameterList()
  */
 void dspWoBufferStatusByParameterList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspWoBufferStatusByParameterList::set(const ParameterList &pParams)
@@ -183,16 +180,15 @@ void dspWoBufferStatusByParameterList::sPrint()
   ParameterList params;
   _warehouse->appendValue(params);
   _parameter->appendValue(params);
-  params.append("print");
 
   if (_parameter->isAll())
   {
-    if (_parameter->type() == ClassCode)
-      params.append("classcode");
-    else if (_parameter->type() == ItemGroup)
+    if (_parameter->type() == ItemGroup)
       params.append("itemgrp");
-    else if (_parameter->type() == PlannerCode)
+    else if(_parameter->type() == PlannerCode)
       params.append("plancode");
+    else if (_parameter->type() == ClassCode)
+      params.append("classcode");
   }
 
   if (_showOnlyRI->isChecked())
@@ -201,8 +197,14 @@ void dspWoBufferStatusByParameterList::sPrint()
   if (_showOnlyTopLevel->isChecked())
     params.append("showOnlyTopLevel");
 
-  rptWoBufferStatusByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+//  if(_sortByItemNumber->isChecked())
+//    params.append("sortByItemNumber");
+
+  orReport report("WOBufferStatusByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoBufferStatusByParameterList::sView()

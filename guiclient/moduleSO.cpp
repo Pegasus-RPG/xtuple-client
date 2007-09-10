@@ -112,9 +112,6 @@
 #include "dspPricesByItem.h"
 #include "dspPricesByCustomer.h"
 #include "dspPricesByCustomerType.h"
-#include "rptPricesByItem.h"
-#include "rptPricesByCustomer.h"
-#include "rptPricesByCustomerType.h"
 
 #include "dspSalesOrdersByCustomer.h"
 #include "dspSalesOrdersByItem.h"
@@ -138,10 +135,6 @@
 #include "dspBriefEarnedCommissions.h"
 #include "dspSummarizedTaxableSales.h"
 
-#include "rptSalesOrderStatus.h"
-#include "rptSummarizedBacklogByWarehouse.h"
-#include "rptPartiallyShippedOrders.h"
-#include "rptSummarizedTaxableSales.h"
 #include "printSoForm.h"
 #include "deliverSalesOrder.h"
 
@@ -193,7 +186,6 @@ moduleSO::moduleSO(OpenMFGGUIClient *pParent) :
   billingInvoicesMenu	= new QMenu();
   billingCreditMemosMenu= new QMenu();
   pricingDisplaysMenu	= new QMenu();
-  pricingReportsMenu	= new QMenu();
   pricingMenu		= new QMenu();
   displaysMenu		= new QMenu();
   reportsMenu		= new QMenu();
@@ -283,11 +275,6 @@ moduleSO::moduleSO(OpenMFGGUIClient *pParent) :
     { "so.dspPricesByCustomer", tr("Prices by Customer..."),	SLOT(sDspPricesByCustomer()), pricingDisplaysMenu, _privleges->check("ViewCustomerPrices"), NULL, NULL,	 true},
     { "so.dspPricesByCustomerType", tr("Prices by Customer Type..."),	SLOT(sDspPricesByCustomerType()), pricingDisplaysMenu, _privleges->check("ViewCustomerPrices"), NULL, NULL,	 true},
 
-    { "menu",	tr("&Reports"),	(char*)pricingReportsMenu,	pricingMenu,	true,	NULL, NULL, true},
-    { "so.rptPricesByItem", tr("Prices by Item..."),	SLOT(sRptPricesByItem()), pricingReportsMenu, _privleges->check("ViewCustomerPrices"),	NULL, NULL, true},
-    { "so.rptPricesByCustomer", tr("Prices by Customer..."),	SLOT(sRptPricesByCustomer()), pricingReportsMenu, _privleges->check("ViewCustomerPrices"),	NULL, NULL, true},
-    { "so.rptPricesByCustomerType", tr("Prices by Customer Type..."),	SLOT(sRptPricesByCustomerType()), pricingReportsMenu, _privleges->check("ViewCustomerPrices"),	NULL, NULL, true},
-
     { "menu",	tr("Displays"),           (char*)displaysMenu,	mainMenu,	true,	NULL, NULL, true},
     { "so.dspSalesOrderLookupByCustomer", tr("Sales Order Lookup by Customer..."),	SLOT(sDspOrderLookupByCustomer()), displaysMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
     { "so.dspSalesOrderLookupByCustomerType", tr("Sales Order Lookup by Customer Type..."),	SLOT(sDspOrderLookupByCustomerType()), displaysMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
@@ -320,13 +307,6 @@ moduleSO::moduleSO(OpenMFGGUIClient *pParent) :
     { "so.dspSummarizedTaxableSales", tr("Summarized Taxable Sales..."),	SLOT(sDspSummarizedTaxableSales()), displaysMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true},
 
     { "menu",	tr("Reports"),            (char*)reportsMenu,	mainMenu,	true,	NULL, NULL, true},
-    { "so.rptSalesOrderStatus", tr("Sales Order Status..."),	SLOT(sRptSalesOrderStatus()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
-    { "so.rptSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."),	SLOT(sRptSummarizedBacklogByWarehouse()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "so.rptPartiallyShippedOrders", tr("Partially Shipped Orders..."),	SLOT(sRptPartiallyShippedOrders()), reportsMenu, _privleges->check("ViewSalesOrders"),	NULL, NULL, true},
-    { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
-    { "so.rptSummarizedTaxableSales", tr("Summarized Taxable Sales..."),	SLOT(sRptSummarizedTaxableSales()), reportsMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true},
-    { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true},
     { "so.printSalesOrderForm", tr("Print Sales Order Form..."),	SLOT(sPrintSalesOrderForm()), reportsMenu, (_privleges->check("MaintainSalesOrders") || _privleges->check("ViewSalesOrders")),	NULL, NULL, true},
 
     { "menu",	tr("Master Information"), (char*)masterInfoMenu,	mainMenu,	true,	NULL, NULL, true},
@@ -619,21 +599,6 @@ void moduleSO::sDspPricesByCustomerType()
   omfgThis->handleNewWindow(new dspPricesByCustomerType());
 }
 
-void moduleSO::sRptPricesByItem()
-{
-  rptPricesByItem(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptPricesByCustomer()
-{
-  rptPricesByCustomer(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptPricesByCustomerType()
-{
-  rptPricesByCustomerType(parent, "", TRUE).exec();
-}
-
 void moduleSO::sDspCustomersByCusttype()
 {
   omfgThis->handleNewWindow(new dspCustomersByCustomerType());
@@ -768,26 +733,6 @@ void moduleSO::sDspBriefEarnedCommissions()
 void moduleSO::sDspSummarizedTaxableSales()
 {
   omfgThis->handleNewWindow(new dspSummarizedTaxableSales());
-}
-
-void moduleSO::sRptSalesOrderStatus()
-{
-  rptSalesOrderStatus(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptSummarizedBacklogByWarehouse()
-{
-  rptSummarizedBacklogByWarehouse(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptPartiallyShippedOrders()
-{
-  rptPartiallyShippedOrders(parent, "", TRUE).exec();
-}
-
-void moduleSO::sRptSummarizedTaxableSales()
-{
-  rptSummarizedTaxableSales(parent, "", TRUE).exec();
 }
 
 void moduleSO::sPrintSalesOrderForm()

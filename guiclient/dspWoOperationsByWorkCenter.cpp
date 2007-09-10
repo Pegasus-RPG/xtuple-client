@@ -67,7 +67,6 @@
 #include "woOperation.h"
 #include "postOperations.h"
 #include "postProduction.h"
-#include "rptWoOperationsByWorkCenter.h"
 #include "dspRunningAvailability.h"
 #include "dspMPSDetail.h"
 
@@ -87,8 +86,6 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -117,7 +114,7 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
  */
 dspWoOperationsByWorkCenter::~dspWoOperationsByWorkCenter()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -126,7 +123,7 @@ dspWoOperationsByWorkCenter::~dspWoOperationsByWorkCenter()
  */
 void dspWoOperationsByWorkCenter::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspWoOperationsByWorkCenter::set(const ParameterList &pParams)
@@ -162,13 +159,15 @@ void dspWoOperationsByWorkCenter::sPrint()
   ParameterList params;
   _dates->appendValue(params);
   params.append("wrkcnt_id", _wrkcnt->id());
-  params.append("print");
 
-  if (_loadOnly->isChecked())
+  if(_loadOnly->isChecked())
     params.append("loadOnly");
 
-  rptWoOperationsByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOOperationsByWorkCenter", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)

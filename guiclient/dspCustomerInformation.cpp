@@ -553,6 +553,12 @@ void dspCustomerInformation::sEdit()
 
 void dspCustomerInformation::sPrint()
 {
+  if(!_cust->isValid())
+  {
+    QMessageBox::warning(this, tr("No Customer Selected"),
+      tr("You must select a valid customer before printing.") );
+    return;
+  }
   ParameterList params;
   params.append("cust_id", _cust->id());
 

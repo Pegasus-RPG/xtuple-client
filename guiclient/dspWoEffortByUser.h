@@ -92,9 +92,6 @@ protected:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
-
-
 };
 
 #endif // DSPWOEFFORTBYUSER_H

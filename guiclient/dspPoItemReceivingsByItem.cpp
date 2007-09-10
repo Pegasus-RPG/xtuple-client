@@ -57,11 +57,12 @@
 
 #include "dspPoItemReceivingsByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
 #include "OpenMFGGUIClient.h"
-#include "rptPoItemReceivingsByItem.h"
 
 /*
  *  Constructs a dspPoItemReceivingsByItem as a child of 'parent', with the
@@ -71,41 +72,17 @@
 dspPoItemReceivingsByItem::dspPoItemReceivingsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    connect(_showVariances, SIGNAL(toggled(bool)), this, SLOT(sHandleVariance(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPoItemReceivingsByItem::~dspPoItemReceivingsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPoItemReceivingsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspPoItemReceivingsByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
+  connect(_showVariances, SIGNAL(toggled(bool)), this, SLOT(sHandleVariance(bool)));
 
   _item->setType(ItemLineEdit::cGeneralPurchased);
 
@@ -131,13 +108,45 @@ void dspPoItemReceivingsByItem::init()
   sHandleVariance(_showVariances->isChecked());
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPoItemReceivingsByItem::~dspPoItemReceivingsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPoItemReceivingsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPoItemReceivingsByItem::sPrint()
 {
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Item Number"),
+                          tr( "Please enter a valid Item Number." ) );
+    _item->setFocus();
+    return;
+  }
+
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr( "Please enter a valid Start and End Date." ) );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id() );
-  params.append("print");
 
   if (_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
@@ -145,8 +154,11 @@ void dspPoItemReceivingsByItem::sPrint()
   if (_showVariances->isChecked())
     params.append("showVariances");
 
-  rptPoItemReceivingsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ReceiptsReturnsByItem", params);
+  if (report.isValid())
+      report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoItemReceivingsByItem::sHandleVariance(bool pShowVariances)

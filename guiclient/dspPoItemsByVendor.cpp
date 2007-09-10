@@ -61,14 +61,15 @@
 #include <QSqlError>
 #include <QStatusBar>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
 #include "reschedulePoitem.h"
 #include "changePoitemQty.h"
-#include "rptPoItemsByVendor.h"
 #include "dspRunningAvailability.h"
 
 #define POITEM_STATUS_COL 10
@@ -139,12 +140,23 @@ void dspPoItemsByVendor::setParams(ParameterList & params)
 
 void dspPoItemsByVendor::sPrint()
 {
+  if (!_vendor->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Vendor Number"),
+                          tr( "Please enter a valid Vendor Number." ) );
+    _vendor->setFocus();
+    return;
+  }
+
   ParameterList params;
   setParams(params);
-  params.append("print");
 
-  rptPoItemsByVendor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("POLineItemsByVendor", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
+
 }
 
 void dspPoItemsByVendor::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

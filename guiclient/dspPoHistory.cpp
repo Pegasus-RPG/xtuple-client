@@ -62,44 +62,42 @@
 #include <QVariant>
 
 #include <parameter.h>
+#include <openreports.h>
 
 #include "copyPurchaseOrder.h"
-#include "rptPoHistory.h"
 
 dspPoHistory::dspPoHistory(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    connect(_copy,	SIGNAL(clicked()), this, SLOT(sCopy()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_po, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_copy,	SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_po, SIGNAL(newId(int)), this, SLOT(sFillList()));
 
-    statusBar()->hide();
+  _po->setType((cPOOpen | cPOClosed));
 
-    _po->setType((cPOOpen | cPOClosed));
-
-    _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
-    _poitem->addColumn(tr("Item/Doc. #"),  _itemColumn, Qt::AlignLeft   );
-    _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-    _poitem->addColumn(tr("Due/Recvd."),   _dateColumn, Qt::AlignCenter );
-    _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
-    _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
-    _poitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight  );
-    _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight  );
-    _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("Item/Doc. #"),  _itemColumn, Qt::AlignLeft   );
+  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("Due/Recvd."),   _dateColumn, Qt::AlignCenter );
+  _poitem->addColumn(tr("Vend. Item #"), -1,          Qt::AlignLeft   );
+  _poitem->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
+  _poitem->addColumn(tr("Ordered"),      _qtyColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight  );
+  _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  );
 }
 
 dspPoHistory::~dspPoHistory()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspPoHistory::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspPoHistory::sFillList()
@@ -139,10 +137,12 @@ void dspPoHistory::sPrint()
 {
   ParameterList params;
   params.append("pohead_id", _po->id());
-  params.append("print");
 
-  rptPoHistory newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("POHistory", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoHistory::sCopy()

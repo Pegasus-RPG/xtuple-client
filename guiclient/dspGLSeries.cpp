@@ -137,9 +137,15 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
 
 void dspGLSeries::sPrint()
 {
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"),
+      tr("You must first specify a valid date range.") );
+    return;
+  }
+
   ParameterList params;
-  params.append("startDate", _dates->startDate());
-  params.append("endDate", _dates->endDate());
+  _dates->appendValue(params);
 
   if(_selectedSource->isChecked())
     params.append("source", _source->currentText());

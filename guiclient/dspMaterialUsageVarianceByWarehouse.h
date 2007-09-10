@@ -70,8 +70,6 @@ public:
     dspMaterialUsageVarianceByWarehouse(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspMaterialUsageVarianceByWarehouse();
 
-    virtual void init();
-
 public slots:
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * );

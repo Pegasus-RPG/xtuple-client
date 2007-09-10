@@ -62,9 +62,9 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "workOrder.h"
-#include "rptWoHistoryByItem.h"
 
 /*
  *  Constructs a dspWoHistoryByItem as a child of 'parent', with the
@@ -86,8 +86,6 @@ dspWoHistoryByItem::dspWoHistoryByItem(QWidget* parent, const char* name, Qt::WF
   connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -129,19 +127,21 @@ void dspWoHistoryByItem::languageChange()
 void dspWoHistoryByItem::sPrint()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
   _warehouse->appendValue(params);
+  _dates->appendValue(params);
+  params.append("item_id", _item->id());
 
-  if (_showOnlyTopLevel->isChecked())
+  if(_showOnlyTopLevel->isChecked())
     params.append("showOnlyTopLevel");
 
-  if (_showCost->isChecked())
+  if(_showCost->isChecked())
     params.append("showCosts");
 
-  params.append("print");
-
-  rptWoHistoryByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOHistoryByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoHistoryByItem::sView()

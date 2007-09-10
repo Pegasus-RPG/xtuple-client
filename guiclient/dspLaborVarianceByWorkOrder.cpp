@@ -59,9 +59,10 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "inputManager.h"
-#include "rptLaborVarianceByWorkOrder.h"
 
 /*
  *  Constructs a dspLaborVarianceByWorkOrder as a child of 'parent', with the
@@ -71,41 +72,15 @@
 dspLaborVarianceByWorkOrder::dspLaborVarianceByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspLaborVarianceByWorkOrder::~dspLaborVarianceByWorkOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspLaborVarianceByWorkOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspLaborVarianceByWorkOrder::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
 
   _wo->setType(cWoClosed);
 
@@ -122,14 +97,34 @@ void dspLaborVarianceByWorkOrder::init()
   _woopervar->addColumn(tr("Run Var."),       _timeColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspLaborVarianceByWorkOrder::~dspLaborVarianceByWorkOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspLaborVarianceByWorkOrder::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspLaborVarianceByWorkOrder::sPrint()
 {
   ParameterList params;
-  params.append("wo_id", _wo->id());
-  params.append("print");
 
-  rptLaborVarianceByWorkOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  params.append("wo_id", _wo->id());
+
+  orReport report("LaborVarianceByWorkOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspLaborVarianceByWorkOrder::sPopulateMenu(QMenu *)

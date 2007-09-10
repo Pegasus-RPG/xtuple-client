@@ -179,6 +179,13 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
 
 void dspGLTransactions::sPrint()
 {
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"),
+      tr("You must specify a valid date range."));
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
 

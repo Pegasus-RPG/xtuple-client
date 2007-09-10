@@ -273,11 +273,7 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "ap.dspOpenAPItemsByVendor", tr("Open Items by Vendor..."),
                                       this, SLOT(sDspAPOpenItemsByVendor()),
                                       displaysMenu, _privleges->check("ViewAPOpenItems") ) );
-/*
-  parent->actions.append( new Action( parent, "ap.dspTimePhasedOpenAPItems", tr("Time-Phased Open Items..."),
-                                      this, SLOT(sDspTimePhasedOpenAPItems()),
-                                      displaysMenu, _privleges->check("ViewAPOpenItems") ) );
-*/
+
   parent->actions.append( new Action( parent, "ap.dspAPAging", tr("A/P Aging..."),
                                       this, SLOT(sDspTimePhasedOpenAPItems()),
                                       displaysMenu, _privleges->check("ViewAPOpenItems"),
@@ -521,13 +517,6 @@ void moduleAP::sDspTimePhasedOpenAPItems()
 {
   omfgThis->handleNewWindow(new dspTimePhasedOpenAPItems());
 }
-
-/*
-void moduleAP::sDspAPAging()
-{
-  omfgThis->handleNewWindow(new dspAPAging());
-}
-*/
 
 //  Reports
 void moduleAP::sRptPayablesJournal()

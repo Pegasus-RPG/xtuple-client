@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <parameter.h>
-#include "rptPricesByCustomer.h"
+#include <openreports.h>
 
 #define CURR_COL	7
 #define COST_COL	8
@@ -87,8 +87,6 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
-  statusBar()->hide();
-
   _price->addColumn(tr("Schedule"),    _itemColumn,  Qt::AlignLeft  );
   _price->addColumn(tr("Source"),      _itemColumn,  Qt::AlignLeft  );
   _price->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft  );
@@ -101,7 +99,7 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::
   _price->addColumn(tr("Mar. %"),      _prcntColumn, Qt::AlignRight );
 
   if (omfgThis->singleCurrency())
-      _price->hideColumn(CURR_COL);
+    _price->hideColumn(CURR_COL);
   sHandleCosts(_showCosts->isChecked());
 }
 
@@ -110,7 +108,7 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::
  */
 dspPricesByCustomer::~dspPricesByCustomer()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -119,31 +117,33 @@ dspPricesByCustomer::~dspPricesByCustomer()
  */
 void dspPricesByCustomer::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspPricesByCustomer::sPrint()
 {
   ParameterList params;
+
   params.append("cust_id", _cust->id());
-  params.append("print");
 
-  if (_showExpired->isChecked())
+  if(_showExpired->isChecked())
     params.append("showExpired");
-
-  if (_showFuture->isChecked())
+  if(_showFuture->isChecked())
     params.append("showFuture");
 
-  if (_showCosts->isChecked())
+  if(_showCosts->isChecked())
     params.append("showCosts");
 
-  if (_useStandardCosts->isChecked())
-    params.append("standardCosts");
-  else if (_useActualCosts->isChecked())
-    params.append("actualCosts");
+  if(_useActualCosts->isChecked())
+      params.append("actualCosts");
+  else /*if(_useStandardCosts->isChecked())*/
+      params.append("standardCosts");
 
-  rptPricesByCustomer newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PricesByCustomer", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPricesByCustomer::sHandleCosts(bool pShowCosts)

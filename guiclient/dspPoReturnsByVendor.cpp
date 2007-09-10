@@ -57,10 +57,11 @@
 
 #include "dspPoReturnsByVendor.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptPoReturnsByVendor.h"
 
 /*
  *  Constructs a dspPoReturnsByVendor as a child of 'parent', with the
@@ -70,40 +71,16 @@
 dspPoReturnsByVendor::dspPoReturnsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_vendor, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPoReturnsByVendor::~dspPoReturnsByVendor()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPoReturnsByVendor::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspPoReturnsByVendor::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_vendor, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
@@ -117,19 +94,46 @@ void dspPoReturnsByVendor::init()
   _poreject->addColumn(tr("Reject Code"),        _itemColumn,  Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPoReturnsByVendor::~dspPoReturnsByVendor()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPoReturnsByVendor::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPoReturnsByVendor::sPrint()
 {
+  if(!_dates->allValid()) {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                      tr( "Please enter a valid Start and End Date." ) );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+
   params.append("vend_id", _vendor->id());
-  params.append("print");
 
   if (_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
 
-  rptPoReturnsByVendor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("RejectedMaterialByVendor", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoReturnsByVendor::sFillList()

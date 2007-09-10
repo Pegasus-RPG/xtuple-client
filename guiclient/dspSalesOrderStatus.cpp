@@ -61,9 +61,10 @@
 #include <QStatusBar>
 #include <QVariant>
 
+#include <openreports.h>
+
 #include "inputManager.h"
 #include "salesOrderList.h"
-#include "rptSalesOrderStatus.h"
 
 dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -76,8 +77,6 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::
   connect(_so, SIGNAL(newId(int)), this, SLOT(sFillList(int)));
   connect(_soList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
   connect(_so, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
-
-  statusBar()->hide();
 
 #ifdef Q_WS_MAC
   _soList->setMaximumWidth(50);
@@ -103,12 +102,12 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::
 
 dspSalesOrderStatus::~dspSalesOrderStatus()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspSalesOrderStatus::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspSalesOrderStatus::set(const ParameterList &pParams)
@@ -127,10 +126,12 @@ void dspSalesOrderStatus::sPrint()
 {
   ParameterList params;
   params.append("sohead_id", _so->id());
-  params.append("print");
 
-  rptSalesOrderStatus newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("SalesOrderStatus", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSalesOrderStatus::sSalesOrderList()

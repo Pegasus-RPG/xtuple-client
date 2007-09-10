@@ -65,45 +65,45 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "inputManager.h"
 #include "mqlutil.h"
 #include "salesOrderList.h"
 #include "printShippingForm.h"
-#include "rptShipmentsByDate.h"
 
 dspShipmentsByDate::dspShipmentsByDate(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_ship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_ship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
-    _ship->setRootIsDecorated(TRUE);
-    _ship->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft  );
-    _ship->addColumn(tr("Order Type"),	                 80, Qt::AlignLeft  );
-    _ship->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter);
-    _ship->addColumn(tr("#"),                    _seqColumn, Qt::AlignCenter);
-    _ship->addColumn(tr("S/O #/Item"),          _itemColumn, Qt::AlignLeft  );
-    _ship->addColumn(tr("Customer/Description"),         -1, Qt::AlignLeft  );
-    _ship->addColumn(tr("Whs."),                 _whsColumn, Qt::AlignCenter);
-    _ship->addColumn(tr("Ordered"),              _qtyColumn, Qt::AlignRight );
-    _ship->addColumn(tr("Shipped"),              _qtyColumn, Qt::AlignRight );
-    _ship->addColumn(tr("Tracking #"),           _qtyColumn, Qt::AlignRight );
-    _ship->addColumn(tr("Freight at Shipping"),  _qtyColumn, Qt::AlignRight );
-    _ship->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignRight );
+  _ship->setRootIsDecorated(TRUE);
+  _ship->addColumn(tr("Shipment #"),         _orderColumn, Qt::AlignLeft  );
+  _ship->addColumn(tr("Order Type"),	                 80, Qt::AlignLeft  );
+  _ship->addColumn(tr("Ship Date"),           _itemColumn, Qt::AlignCenter);
+  _ship->addColumn(tr("#"),                    _seqColumn, Qt::AlignCenter);
+  _ship->addColumn(tr("S/O #/Item"),          _itemColumn, Qt::AlignLeft  );
+  _ship->addColumn(tr("Customer/Description"),         -1, Qt::AlignLeft  );
+  _ship->addColumn(tr("Whs."),                 _whsColumn, Qt::AlignCenter);
+  _ship->addColumn(tr("Ordered"),              _qtyColumn, Qt::AlignRight );
+  _ship->addColumn(tr("Shipped"),              _qtyColumn, Qt::AlignRight );
+  _ship->addColumn(tr("Tracking #"),           _qtyColumn, Qt::AlignRight );
+  _ship->addColumn(tr("Freight at Shipping"),  _qtyColumn, Qt::AlignRight );
+  _ship->addColumn(tr("Currency"),        _currencyColumn, Qt::AlignRight );
 }
 
 dspShipmentsByDate::~dspShipmentsByDate()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspShipmentsByDate::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspShipmentsByDate::set(const ParameterList &pParams)
@@ -146,12 +146,22 @@ void dspShipmentsByDate::setParams(ParameterList & params)
 
 void dspShipmentsByDate::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   setParams(params);
-  params.append("print");
 
-  rptShipmentsByDate newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ShipmentsByDate", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspShipmentsByDate::sPrintShippingForm()

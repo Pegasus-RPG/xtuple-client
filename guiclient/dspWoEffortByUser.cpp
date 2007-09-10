@@ -61,6 +61,9 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
+#include <QMenu>
+#include <QSqlError>
+#include <openreports.h>
 #include "implodeWo.h"
 #include "explodeWo.h"
 #include "closeWo.h"
@@ -72,7 +75,6 @@
 #include "dspInventoryAvailabilityByWorkOrder.h"
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspWoOperationsByWorkOrder.h"
-#include "rptWoEffortByUser.h"
 #include "dspWoEffortByUser.h"
 #include "wotc.h"
 
@@ -84,44 +86,17 @@
 dspWoEffortByUser::dspWoEffortByUser(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_wotc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_user, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspWoEffortByUser::~dspWoEffortByUser()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspWoEffortByUser::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-#include <QSqlError>
-
-void dspWoEffortByUser::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_wotc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_user, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
+  connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
   _dates->setStartCaption(tr("Start W/O Start Date:"));
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -142,15 +117,34 @@ void dspWoEffortByUser::init()
   _user->setFocus();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspWoEffortByUser::~dspWoEffortByUser()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspWoEffortByUser::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspWoEffortByUser::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
   params.append("usr_id", _user->id());
-  params.append("print");
+  _dates->appendValue(params);
 
-  rptWoEffortByUser newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOEffortByUser", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 int dspWoEffortByUser::getWoId()

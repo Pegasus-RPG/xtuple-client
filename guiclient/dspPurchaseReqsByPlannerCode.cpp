@@ -61,10 +61,11 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "dspRunningAvailability.h"
 #include "purchaseOrder.h"
-#include "rptPurchaseReqsByPlannerCode.h"
 
 /*
  *  Constructs a dspPurchaseReqsByPlannerCode as a child of 'parent', with the
@@ -74,41 +75,15 @@
 dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPurchaseReqsByPlannerCode::~dspPurchaseReqsByPlannerCode()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPurchaseReqsByPlannerCode::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspPurchaseReqsByPlannerCode::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
   _plannerCode->setType(PlannerCode);
 
@@ -120,16 +95,43 @@ void dspPurchaseReqsByPlannerCode::init()
   _pr->addColumn(tr("Qty."),         _qtyColumn,    Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPurchaseReqsByPlannerCode::~dspPurchaseReqsByPlannerCode()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPurchaseReqsByPlannerCode::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPurchaseReqsByPlannerCode::sPrint()
 {
-  ParameterList params;
-  _warehouse->appendValue(params);
-  _plannerCode->appendValue(params);
-  _dates->appendValue(params);
-  params.append("print");
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
+                          tr("You must enter a valid Start Date and End Date for this report.") );
+    _dates->setFocus();
+    return;
+  }
 
-  rptPurchaseReqsByPlannerCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  ParameterList params;
+  _plannerCode->appendValue(params);
+  _warehouse->appendValue(params);
+  _dates->appendValue(params);
+
+  orReport report("PurchaseReqsByPlannerCode", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPurchaseReqsByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

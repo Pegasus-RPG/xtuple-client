@@ -61,7 +61,7 @@
 #include <QValidator>
 #include <QStatusBar>
 #include <parameter.h>
-#include "rptPendingAvailability.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspPendingAvailability as a child of 'parent', with the
@@ -81,8 +81,6 @@ dspPendingAvailability::dspPendingAvailability(QWidget* parent, const char* name
   connect(_item, SIGNAL(privateIdChanged(int)), _warehouse, SLOT(findItemsites(int)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-
-  statusBar()->hide();
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
 
@@ -121,7 +119,7 @@ dspPendingAvailability::dspPendingAvailability(QWidget* parent, const char* name
  */
 dspPendingAvailability::~dspPendingAvailability()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -130,7 +128,7 @@ dspPendingAvailability::~dspPendingAvailability()
  */
 void dspPendingAvailability::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspPendingAvailability::sPrint()
@@ -138,16 +136,18 @@ void dspPendingAvailability::sPrint()
   ParameterList params;
   params.append("item_id", _item->id());
   params.append("warehous_id", _warehouse->id());
-  params.append("buildDate", _buildDate->date());
+  params.append("buildQty", _qtyToBuild->toDouble());
   params.append("effectiveDate", _effective->date());
-  params.append("qtyToBuild", _qtyToBuild->toDouble());
-  params.append("print");
+  params.append("buildDate", _buildDate->date());
 
-  if (_showShortages->isChecked())
+  if(_showShortages->isChecked())
     params.append("showShortages");
 
-  rptPendingAvailability newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PendingWOMaterialAvailability", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPendingAvailability::sFillList()

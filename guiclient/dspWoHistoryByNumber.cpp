@@ -62,9 +62,10 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
 #include "workOrder.h"
-#include "rptWoHistoryByNumber.h"
 
 /*
  *  Constructs a dspWoHistoryByNumber as a child of 'parent', with the
@@ -84,8 +85,6 @@ dspWoHistoryByNumber::dspWoHistoryByNumber(QWidget* parent, const char* name, Qt
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _woNumber->setValidator(omfgThis->orderVal());
 
@@ -124,19 +123,29 @@ void dspWoHistoryByNumber::languageChange()
 
 void dspWoHistoryByNumber::sPrint()
 {
-  ParameterList params;
-  params.append("woNumber", _woNumber->text());
+  if(_woNumber->text().length() > 0)
+  {
+    ParameterList params;
 
-  if (_showOnlyTopLevel->isChecked())
-    params.append("showOnlyTopLevel");
+    params.append("woNumber", _woNumber->text());
 
-  if (_showCost->isChecked())
-    params.append("showCosts");
+    if(_showOnlyTopLevel->isChecked())
+      params.append("showOnlyTopLevel");
+    if(_showCost->isChecked())
+      params.append("showCosts");
 
-  params.append("print");
-
-  rptWoHistoryByNumber newdlg(this, "", TRUE);
-  newdlg.set(params);
+    orReport report("WOHistoryByNumber", params);
+    if(report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
+  else
+  {
+    QMessageBox::warning( this, tr("Invalid Work Order Number"),
+                      tr( "You must enter a work order number for this report." ) );
+    _woNumber->setFocus();
+  }
 }
 
 void dspWoHistoryByNumber::sView()

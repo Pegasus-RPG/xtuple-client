@@ -108,10 +108,6 @@ class moduleSR : public QObject
     void sDspShipmentsBySalesOrder();
     void sDspShipmentsByDate();
 
-    void sRptSummarizedBacklogByWarehouse();
-    void sRptShipmentsBySalesOrder();
-    void sRptShipmentsByDate();
-
   private:
     OpenMFGGUIClient *parent;
 
@@ -124,7 +120,6 @@ class moduleSR : public QObject
     QMenu *ratesMenu;
     QMenu *ratesDisplaysMenu;
     QMenu *displaysMenu;
-    QMenu *reportsMenu;
 };
 
 #endif

@@ -59,7 +59,7 @@
 #define DSPWOEFFORTBYWORKORDER_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include <parameter.h>
 
 #include "ui_dspWoEffortByWorkOrder.h"
@@ -73,7 +73,7 @@ public:
     ~dspWoEffortByWorkOrder();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sNew();
     virtual void sEdit();
@@ -85,9 +85,6 @@ public slots:
 
 protected slots:
     virtual void languageChange();
-
-    virtual void init();
-
 
 };
 

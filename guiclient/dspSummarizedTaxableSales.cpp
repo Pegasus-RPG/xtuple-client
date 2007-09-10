@@ -59,8 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMessageBox>
 #include <parameter.h>
-#include "rptSummarizedTaxableSales.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspSummarizedTaxableSales as a child of 'parent', with the
@@ -79,8 +80,6 @@ dspSummarizedTaxableSales::dspSummarizedTaxableSales(QWidget* parent, const char
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-
-  statusBar()->hide();
 
   _dates->setStartCaption(tr("Start Ship Date:"));
   _dates->setEndCaption(tr("End Ship Date:"));
@@ -116,15 +115,33 @@ void dspSummarizedTaxableSales::languageChange()
 
 void dspSummarizedTaxableSales::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Start Date"),
+                          tr("You must enter a valid Start Date to print this report.") );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid End Date"),
+                          tr("You must enter a valid End Date to print this report.") );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("print");
-  
+
   if (_selectedTaxCode->isChecked())
     params.append("tax_id", _taxCode->id());
-  
-  rptSummarizedTaxableSales newdlg(this, "", TRUE);
-  newdlg.set(params);
+
+  orReport report("SummarizedTaxableSales", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspSummarizedTaxableSales::sFillList()

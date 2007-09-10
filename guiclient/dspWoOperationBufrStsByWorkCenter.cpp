@@ -61,8 +61,8 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <openreports.h>
 #include "woOperation.h"
-#include "rptWoOperationBufrStsByWorkCenter.h"
 
 /*
  *  Constructs a dspWoOperationBufrStsByWorkCenter as a child of 'parent', with the
@@ -83,8 +83,6 @@ dspWoOperationBufrStsByWorkCenter::dspWoOperationBufrStsByWorkCenter(QWidget* pa
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_wrkcnt, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-
-  statusBar()->hide();
 
   _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
                      "FROM wrkcnt "
@@ -110,7 +108,7 @@ dspWoOperationBufrStsByWorkCenter::dspWoOperationBufrStsByWorkCenter(QWidget* pa
  */
 dspWoOperationBufrStsByWorkCenter::~dspWoOperationBufrStsByWorkCenter()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -119,10 +117,10 @@ dspWoOperationBufrStsByWorkCenter::~dspWoOperationBufrStsByWorkCenter()
  */
 void dspWoOperationBufrStsByWorkCenter::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-enum SetResponse dspWoOperationBufrStsByWorkCenter::set(ParameterList &pParams)
+enum SetResponse dspWoOperationBufrStsByWorkCenter::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -144,13 +142,15 @@ void dspWoOperationBufrStsByWorkCenter::sPrint()
 {
   ParameterList params;
   params.append("wrkcnt_id", _wrkcnt->id());
-  params.append("print");
 
-  if (_QtyAvailOnly->isChecked())
+  if(_QtyAvailOnly->isChecked())
     params.append("QtyAvailOnly");
 
-  rptWoOperationBufrStsByWorkCenter newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOOperationBufrStsByWorkCenter", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoOperationBufrStsByWorkCenter::sPopulateMenu(QMenu *pMenu)

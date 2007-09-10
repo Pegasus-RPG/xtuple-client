@@ -65,10 +65,11 @@
 #include <QStatusBar>
 #include <QVariant>
 
+#include <openreports.h>
+
 #include "inputManager.h"
 #include "salesOrderList.h"
 #include "printShippingForm.h"
-#include "rptShipmentsBySalesOrder.h"
 
 dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -82,8 +83,6 @@ dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* 
   connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
   connect(_soship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
-
-  statusBar()->hide();
 
 #ifdef Q_WS_MAC
   _salesOrderList->setMaximumWidth(50);
@@ -108,12 +107,12 @@ dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* 
 
 dspShipmentsBySalesOrder::~dspShipmentsBySalesOrder()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspShipmentsBySalesOrder::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse dspShipmentsBySalesOrder::set(const ParameterList &pParams)
@@ -146,11 +145,12 @@ void dspShipmentsBySalesOrder::sPrint()
 {
   ParameterList params;
   params.append("sohead_id", _salesOrder->id());
-  params.append("cosmisc_id", _soship->id());
-  params.append("print");
 
-  rptShipmentsBySalesOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("ShipmentsBySalesOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspShipmentsBySalesOrder::sPrintShippingForm()

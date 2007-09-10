@@ -61,9 +61,9 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "enterPoitemReceipt.h"
-#include "rptUninvoicedReceivings.h"
 #include "poLiabilityDistrib.h"
 #include "postPoReturnCreditMemo.h"
 
@@ -88,8 +88,6 @@ dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* na
   connect(_porecv, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  statusBar()->hide();
-  
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
 
@@ -199,13 +197,15 @@ void dspUninvoicedReceivings::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
-  params.append("print");
 
-  if (_selectedPurchasingAgent->isChecked())
+  if(_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
 
-  rptUninvoicedReceivings newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("UninvoicedReceipts", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspUninvoicedReceivings::sFillList()

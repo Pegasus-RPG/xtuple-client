@@ -61,12 +61,13 @@
 #include <QSqlError>
 #include <QStatusBar>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
-#include "rptPoItemsByItem.h"
 #include "reschedulePoitem.h"
 #include "changePoitemQty.h"
 #include "dspRunningAvailability.h"
@@ -169,12 +170,22 @@ void dspPoItemsByItem::setParams(ParameterList &params)
 
 void dspPoItemsByItem::sPrint()
 {
+  if (!_item->isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Item Number"),
+                      tr( "Please enter a valid Item Number." ) );
+    _item->setFocus();
+    return;
+  }
+
   ParameterList params;
   setParams(params);
-  params.append("print");
 
-  rptPoItemsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("POLineItemsByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

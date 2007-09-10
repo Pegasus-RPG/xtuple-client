@@ -73,51 +73,51 @@
 dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-    _customerType->setType(CustomerType);
-    _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _customerType->setType(CustomerType);
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-    _so->addColumn(tr("S/O #/Shipped"),       _itemColumn, Qt::AlignRight  );
-    _so->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft   );
-    _so->addColumn(tr("Hold Type/Ship #"), _orderColumn*2, Qt::AlignRight  );
-    _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight  );
-    _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight  );
-    _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight  );
-    if (_privleges->check("ViewCustomerPrices") ||
-	_privleges->check("MaintainCustomerPrices"))
-    {
-      _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight);
-      _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight);
-      _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight);
-    }
+  _so->addColumn(tr("S/O #/Shipped"),       _itemColumn, Qt::AlignRight  );
+  _so->addColumn(tr("Customer/Ship Via"),            -1, Qt::AlignLeft   );
+  _so->addColumn(tr("Hold Type/Ship #"), _orderColumn*2, Qt::AlignRight  );
+  _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight  );
+  _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight  );
+  _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight  );
+  if (_privleges->check("ViewCustomerPrices") ||
+      _privleges->check("MaintainCustomerPrices"))
+  {
+    _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight);
+    _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight);
+    _so->addColumn(tr("Margin"), _moneyColumn, Qt::AlignRight);
+  }
 
-    _so->setRootIsDecorated(TRUE);
-    _so->setDragString("soheadid=");
+  _so->setRootIsDecorated(TRUE);
+  _so->setDragString("soheadid=");
 
-    if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
-      _showPrices->setEnabled(FALSE);
-    sHandlePrices(_showPrices->isChecked());
+  if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
+    _showPrices->setEnabled(FALSE);
+  sHandlePrices(_showPrices->isChecked());
 
-    connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-    sFillList();
+  sFillList();
 }
 
 dspSummarizedBacklogByWarehouse::~dspSummarizedBacklogByWarehouse()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void dspSummarizedBacklogByWarehouse::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspSummarizedBacklogByWarehouse::sHandlePrices(bool pShowPrices)

@@ -135,7 +135,7 @@ enum SetResponse dspInventoryLocator::set(const ParameterList &pParams)
 
 void dspInventoryLocator::sPrint()
 {
-  if(_item->isValid())
+  if(!_item->isValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Item Number"),
                       tr("You must enter a valid Item Number for this report.") );

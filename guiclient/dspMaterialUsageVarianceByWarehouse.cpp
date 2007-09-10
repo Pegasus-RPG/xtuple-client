@@ -59,8 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMenu>
 #include <parameter.h>
-#include "rptMaterialUsageVarianceByWarehouse.h"
+#include <openreports.h>
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -71,41 +72,15 @@
 dspMaterialUsageVarianceByWarehouse::dspMaterialUsageVarianceByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_womatlvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspMaterialUsageVarianceByWarehouse::~dspMaterialUsageVarianceByWarehouse()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspMaterialUsageVarianceByWarehouse::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspMaterialUsageVarianceByWarehouse::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_womatlvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), 0);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), 0);
@@ -123,15 +98,34 @@ void dspMaterialUsageVarianceByWarehouse::init()
   _womatlvar->addColumn(tr("%"),               _prcntColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspMaterialUsageVarianceByWarehouse::~dspMaterialUsageVarianceByWarehouse()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspMaterialUsageVarianceByWarehouse::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspMaterialUsageVarianceByWarehouse::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
-  rptMaterialUsageVarianceByWarehouse newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("MaterialUsageVarianceByWarehouse", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspMaterialUsageVarianceByWarehouse::sPopulateMenu(QMenu *)

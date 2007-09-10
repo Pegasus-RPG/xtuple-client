@@ -59,9 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <openreports.h>
 #include <parameter.h>
 #include "inputManager.h"
-#include "rptWoMaterialsByItem.h"
 
 /*
  *  Constructs a dspWoMaterialsByItem as a child of 'parent', with the
@@ -71,40 +71,16 @@
 dspWoMaterialsByItem::dspWoMaterialsByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspWoMaterialsByItem::~dspWoMaterialsByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspWoMaterialsByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspWoMaterialsByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
+  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
@@ -122,15 +98,35 @@ void dspWoMaterialsByItem::init()
   _womatl->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspWoMaterialsByItem::~dspWoMaterialsByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspWoMaterialsByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspWoMaterialsByItem::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  params.append("item_id", _item->id());
-  params.append("print");
 
-  rptWoMaterialsByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  params.append("item_id", _item->id());
+  _warehouse->appendValue(params);
+
+  orReport report("WOMaterialRequirementsByComponentItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoMaterialsByItem::sFillList()

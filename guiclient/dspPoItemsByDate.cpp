@@ -61,12 +61,13 @@
 #include <QSqlError>
 #include <QStatusBar>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
-#include "rptPoItemsByDate.h"
 #include "reschedulePoitem.h"
 #include "changePoitemQty.h"
 #include "dspRunningAvailability.h"
@@ -141,12 +142,30 @@ void dspPoItemsByDate::setParams(ParameterList &params)
 
 void dspPoItemsByDate::sPrint()
 {
+  if (!_dates->startDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter Start Date"),
+                          tr( "Please enter a valid Start Date." ) );
+    _dates->setFocus();
+    return;
+  }
+
+  if (!_dates->endDate().isValid())
+  {
+    QMessageBox::warning( this, tr("Enter End Date"),
+                          tr( "Please eneter a valid End Date." ) );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   setParams(params);
-  params.append("print");
 
-  rptPoItemsByDate newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("POLineItemsByDate", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoItemsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

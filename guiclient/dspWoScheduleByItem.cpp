@@ -63,6 +63,7 @@
 #include <QWorkspace>
 #include <QMenu>
 #include <QSqlError>
+#include <openreports.h>
 #include "postProduction.h"
 #include "correctProductionPosting.h"
 #include "postOperations.h"
@@ -78,7 +79,6 @@
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspWoOperationsByWorkOrder.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
-#include "rptWoScheduleByItem.h"
 
 /*
  *  Constructs a dspWoScheduleByItem as a child of 'parent', with the
@@ -99,8 +99,6 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-
-  statusBar()->hide();
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
   _dates->setStartCaption(tr("Start W/O Start Date:"));
@@ -147,7 +145,7 @@ void dspWoScheduleByItem::sPrint()
   _warehouse->appendValue(params);
   _dates->appendValue(params);
   params.append("item_id", _item->id());
-  params.append("print");
+
 
   if (_showOnlyRI->isChecked())
     params.append("showOnlyRI");
@@ -155,8 +153,16 @@ void dspWoScheduleByItem::sPrint()
   if (_showOnlyTopLevel->isChecked())
     params.append("showOnlyTopLevel");
 
-  rptWoScheduleByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+//  if (_sortByStartDate->isChecked())
+    params.append("sortByStartDate");
+//  else
+//    params.append("sortByDueDate");
+
+  orReport report("WOScheduleByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoScheduleByItem::sView()

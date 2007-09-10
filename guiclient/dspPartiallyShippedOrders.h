@@ -58,7 +58,7 @@
 #ifndef DSPPARTIALLYSHIPPEDORDERS_H
 #define DSPPARTIALLYSHIPPEDORDERS_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspPartiallyShippedOrders.h"
 
@@ -69,8 +69,6 @@ class dspPartiallyShippedOrders : public QMainWindow, public Ui::dspPartiallyShi
 public:
     dspPartiallyShippedOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPartiallyShippedOrders();
-
-    virtual void init();
 
 public slots:
     virtual void sHandlePrices( bool pShowPrices );

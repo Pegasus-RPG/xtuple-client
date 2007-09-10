@@ -57,10 +57,11 @@
 
 #include "dspPoDeliveryDateVariancesByVendor.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
+#include <openreports.h>
 #include <parameter.h>
-#include "rptPoDeliveryDateVariancesByVendor.h"
 
 /*
  *  Constructs a dspPoDeliveryDateVariancesByVendor as a child of 'parent', with the
@@ -70,40 +71,16 @@
 dspPoDeliveryDateVariancesByVendor::dspPoDeliveryDateVariancesByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_vendor, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPoDeliveryDateVariancesByVendor::~dspPoDeliveryDateVariancesByVendor()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPoDeliveryDateVariancesByVendor::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspPoDeliveryDateVariancesByVendor::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_vendor, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
@@ -118,19 +95,39 @@ void dspPoDeliveryDateVariancesByVendor::init()
   _porecv->addColumn(tr("Recv. Date"),         _dateColumn,  Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPoDeliveryDateVariancesByVendor::~dspPoDeliveryDateVariancesByVendor()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPoDeliveryDateVariancesByVendor::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPoDeliveryDateVariancesByVendor::sPrint()
 {
   ParameterList params;
+  params.append("vend_id", _vendor->id());
+
   _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("vend_id", _vendor->id() );
-  params.append("print");
 
   if (_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
 
-  rptPoDeliveryDateVariancesByVendor newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("DeliveryDateVariancesByVendor", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoDeliveryDateVariancesByVendor::sFillList()

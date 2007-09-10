@@ -59,9 +59,10 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "closeWo.h"
-#include "rptWoSoStatusMismatch.h"
 
 /*
  *  Constructs a dspWoSoStatusMismatch as a child of 'parent', with the
@@ -71,40 +72,14 @@
 dspWoSoStatusMismatch::dspWoSoStatusMismatch(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspWoSoStatusMismatch::~dspWoSoStatusMismatch()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspWoSoStatusMismatch::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspWoSoStatusMismatch::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
@@ -120,14 +95,34 @@ void dspWoSoStatusMismatch::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspWoSoStatusMismatch::~dspWoSoStatusMismatch()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspWoSoStatusMismatch::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspWoSoStatusMismatch::sPrint()
 {
   ParameterList params;
-  params.append("print");
+
   _warehouse->appendValue(params);
 
-  rptWoSoStatusMismatch newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("OpenWorkOrdersWithClosedParentSalesOrders", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoSoStatusMismatch::sCloseWo()

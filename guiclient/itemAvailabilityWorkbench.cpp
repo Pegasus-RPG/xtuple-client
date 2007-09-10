@@ -1291,7 +1291,7 @@ void itemAvailabilityWorkbench::sPrintHistory()
 
 void itemAvailabilityWorkbench::sPrintLocation()
 {
-  if(_item->isValid())
+  if(!_item->isValid())
   {
     QMessageBox::warning( this, tr("Enter a Valid Item Number"),
                       tr("You must enter a valid Item Number for this report.") );

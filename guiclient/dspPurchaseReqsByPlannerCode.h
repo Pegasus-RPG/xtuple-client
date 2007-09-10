@@ -59,7 +59,7 @@
 #define DSPPURCHASEREQSBYPLANNERCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspPurchaseReqsByPlannerCode.h"
 
@@ -70,8 +70,6 @@ class dspPurchaseReqsByPlannerCode : public QMainWindow, public Ui::dspPurchaseR
 public:
     dspPurchaseReqsByPlannerCode(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPurchaseReqsByPlannerCode();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

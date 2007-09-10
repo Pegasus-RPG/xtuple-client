@@ -57,10 +57,11 @@
 
 #include "dspPoPriceVariancesByItem.h"
 
-#include <qvariant.h>
-#include <qstatusbar.h>
+#include <QVariant>
+#include <QStatusBar>
+#include <QMessageBox>
 #include <parameter.h>
-#include "rptPoPriceVariancesByItem.h"
+#include <openreports.h>
 
 /*
  *  Constructs a dspPoPriceVariancesByItem as a child of 'parent', with the
@@ -70,40 +71,16 @@
 dspPoPriceVariancesByItem::dspPoPriceVariancesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPoPriceVariancesByItem::~dspPoPriceVariancesByItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPoPriceVariancesByItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void dspPoPriceVariancesByItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cGeneralPurchased);
 
@@ -125,19 +102,47 @@ void dspPoPriceVariancesByItem::init()
       _porecv->hideColumn(9);
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPoPriceVariancesByItem::~dspPoPriceVariancesByItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPoPriceVariancesByItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspPoPriceVariancesByItem::sPrint()
 {
+  if (!_dates->allValid())
+  {
+    QMessageBox::warning( this, tr("Enter Valid Dates"),
+                          tr( "Please enter a valid Start and End Date." ) );
+    _dates->setFocus();
+    return;
+  }
+
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
+
   params.append("item_id", _item->id());
-  params.append("print");
 
   if (_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
 
-  rptPoPriceVariancesByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PurchasePriceVariancesByItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoPriceVariancesByItem::sFillList()

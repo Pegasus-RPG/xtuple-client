@@ -115,22 +115,6 @@
 #include "dspPOsByDate.h"
 #include "dspPOsByVendor.h"
 
-#include "rptPurchaseReqsByItem.h"
-#include "rptPurchaseReqsByPlannerCode.h"
-#include "rptPoItemsByVendor.h"
-#include "rptPoItemsByItem.h"
-#include "rptPoItemsByDate.h"
-#include "rptPoItemsByBufferStatus.h"
-#include "rptPoHistory.h"
-#include "rptPoItemReceivingsByVendor.h"
-#include "rptPoItemReceivingsByItem.h"
-#include "rptPoItemReceivingsByDate.h"
-#include "rptUninvoicedReceivings.h"
-#include "rptPoPriceVariancesByVendor.h"
-#include "rptPoPriceVariancesByItem.h"
-#include "rptPoDeliveryDateVariancesByItem.h"
-#include "rptPoDeliveryDateVariancesByVendor.h"
-#include "rptPoReturnsByVendor.h"
 #include "printPoForm.h"
 #include "printVendorForm.h"
 #include "printAnnodizingPurchaseRequests.h"
@@ -369,75 +353,6 @@ modulePO::modulePO(OpenMFGGUIClient *Pparent) :
 
 //  P/O | Reports
   reportsMenu = new QMenu();
-
-  parent->actions.append( new Action( parent, "po.rptPurchaseRequestsByItem", tr("Purchase Requests by Item..."),
-                                      this, SLOT(sRptPurchaseReqsByItem()),
-                                      reportsMenu, _privleges->check("ViewPurchaseRequests") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPurchaseRequestsByPlannerCode", tr("Purchase Requests by Planner Code..."),
-                                      this, SLOT(sRptPurchaseReqsByPlannerCode()),
-                                      reportsMenu, _privleges->check("ViewPurchaseRequests") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "po.rptPoLineItemsByVendor", tr("P/O Items by Vendor..."),
-                                      this, SLOT(sRptPoItemsByVendor()),
-                                      reportsMenu, _privleges->check("ViewPurchaseOrders") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPoLineItemsByItem", tr("P/O Items by Item..."),
-                                      this, SLOT(sRptPoItemsByItem()),
-                                      reportsMenu, _privleges->check("ViewPurchaseOrders") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPoLineItemsByDate", tr("P/O Items by Date..."),
-                                      this, SLOT(sRptPoItemsByDate()),
-                                      reportsMenu, _privleges->check("ViewPurchaseOrders") ) );
-
-  if (_metrics->boolean("BufferMgt"))
-      parent->actions.append( new Action( parent, "po.rptPoLineItemsByBufferStatus", tr("P/O Items by Buffer Status..."),
-                                          this, SLOT(sRptPoItemsByBufferStatus()),
-                                          reportsMenu, _privleges->check("ViewPurchaseOrders")  && _metrics->boolean("BufferMgt") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPoHistory", tr("P/O History..."),
-                                      this, SLOT(sRptPoHistory()),
-                                      reportsMenu, _privleges->check("ViewPurchaseOrders") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "po.rptReceiptsAndReturnsByVendor", tr("Receipts and Returns by Vendor..."),
-                                      this, SLOT(sRptReceiptsReturnsByVendor()),
-                                      reportsMenu, _privleges->check("ViewReceiptsReturns") ) );
-
-  parent->actions.append( new Action( parent, "po.rptReceiptsAndReturnsByItem", tr("Receipts and Returns by Item..."),
-                                      this, SLOT(sRptReceiptsReturnsByItem()),
-                                      reportsMenu, _privleges->check("ViewReceiptsReturns") ) );
-
-  parent->actions.append( new Action( parent, "po.rptReceiptsAndReturnsByDate", tr("Receipts and Returns by Date..."),
-                                      this, SLOT(sRptReceiptsReturnsByDate()),
-                                      reportsMenu, _privleges->check("ViewReceiptsReturns") ) );
-
-  reportsMenu->insertSeparator();
-
-  parent->actions.append( new Action( parent, "po.rptPriceVariancesByVendor", tr("Price Variances by Vendor..."),
-                                      this, SLOT(sRptPriceVariancesByVendor()),
-                                      reportsMenu, _privleges->check("ViewVendorPerformance") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPriceVariancesByItem", tr("Price Variances by Item..."),
-                                      this, SLOT(sRptPriceVariancesByItem()),
-                                      reportsMenu, _privleges->check("ViewVendorPerformance") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPoDeliveryDateVariancesByVendor", tr("Delivery Date Variances by Vendor..."),
-                                      this, SLOT(sRptPoDeliveryDateVariancesByVendor()),
-                                      reportsMenu, _privleges->check("ViewVendorPerformance") ) );
-
-  parent->actions.append( new Action( parent, "po.rptPoDeliveryDateVariancesByItem", tr("Delivery Date Variances by Item..."),
-                                      this, SLOT(sRptPoDeliveryDateVariancesByItem()),
-                                      reportsMenu, _privleges->check("ViewVendorPerformance") ) );
-
-  parent->actions.append( new Action( parent, "po.rptRejectedMaterialByVendor", tr("Rejected Material by Vendor..."),
-                                      this, SLOT(sRptRejectedMaterialByVendor()),
-                                      reportsMenu, _privleges->check("ViewVendorPerformance") ) );
-
-  reportsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.printPoForm", tr("Print P/O Form..."),
                                       this, SLOT(sPrintPOForm()),
@@ -751,81 +666,6 @@ void modulePO::sDspPoDeliveryDateVariancesByVendor()
 void modulePO::sDspRejectedMaterialByVendor()
 {
   omfgThis->handleNewWindow(new dspPoReturnsByVendor());
-}
-
-void modulePO::sRptPurchaseReqsByItem()
-{
-  rptPurchaseReqsByItem(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPurchaseReqsByPlannerCode()
-{
-  rptPurchaseReqsByPlannerCode(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoItemsByVendor()
-{
-  rptPoItemsByVendor(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoItemsByItem()
-{
-  rptPoItemsByItem(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoItemsByDate()
-{
-  rptPoItemsByDate(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoItemsByBufferStatus()
-{
-  rptPoItemsByBufferStatus(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoHistory()
-{
-  rptPoHistory(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptReceiptsReturnsByVendor()
-{
-  rptPoItemReceivingsByVendor(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptReceiptsReturnsByItem()
-{
-  rptPoItemReceivingsByItem(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptReceiptsReturnsByDate()
-{
-  rptPoItemReceivingsByDate(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPriceVariancesByVendor()
-{
-  rptPoPriceVariancesByVendor(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPriceVariancesByItem()
-{
-  rptPoPriceVariancesByItem(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptRejectedMaterialByVendor()
-{
-  rptPoReturnsByVendor(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoDeliveryDateVariancesByItem()
-{
-  rptPoDeliveryDateVariancesByItem(parent, "", TRUE).exec();
-}
-
-void modulePO::sRptPoDeliveryDateVariancesByVendor()
-{
-  rptPoDeliveryDateVariancesByVendor(parent, "", TRUE).exec();
 }
 
 void modulePO::sPrintPOForm()

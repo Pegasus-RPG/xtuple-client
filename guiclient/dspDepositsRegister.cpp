@@ -152,6 +152,13 @@ void dspDepositsRegister::sPopulateMenu(QMenu *)
 
 void dspDepositsRegister::sPrint()
 {
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date(s)"),
+      tr("You must specify a valid date range.") );
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
 
@@ -165,6 +172,13 @@ void dspDepositsRegister::sPrint()
 
 void dspDepositsRegister::sFillList()
 {
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date(s)"),
+      tr("You must specify a valid date range.") );
+    return;
+  }
+
   _gltrans->clear();
 
   QString sql( "SELECT gltrans_id, formatDate(gltrans_date) AS f_date, gltrans_source,"

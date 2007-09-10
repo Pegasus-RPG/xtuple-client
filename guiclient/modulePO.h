@@ -120,21 +120,6 @@ class modulePO : public QObject
     void sDspPoDeliveryDateVariancesByItem();
     void sDspRejectedMaterialByVendor();
 
-    void sRptPurchaseReqsByItem();
-    void sRptPurchaseReqsByPlannerCode();
-    void sRptPoItemsByVendor();
-    void sRptPoItemsByItem();
-    void sRptPoItemsByDate();
-    void sRptPoItemsByBufferStatus();
-    void sRptPoHistory();
-    void sRptReceiptsReturnsByVendor();
-    void sRptReceiptsReturnsByItem();
-    void sRptReceiptsReturnsByDate();
-    void sRptPriceVariancesByVendor();
-    void sRptPriceVariancesByItem();
-    void sRptRejectedMaterialByVendor();
-    void sRptPoDeliveryDateVariancesByVendor();
-    void sRptPoDeliveryDateVariancesByItem();
     void sPrintPOForm();
     void sPrintVendorForm();
     void sPrintAnnodizingPurchaseRequests();

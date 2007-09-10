@@ -73,7 +73,7 @@ public:
     ~dspWoOperationBufrStsByWorkCenter();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu );
     virtual void sViewOperation();

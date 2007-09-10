@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspLaborVarianceByWorkOrder</class>
  <widget class="QMainWindow" name="dspLaborVarianceByWorkOrder" >
   <property name="geometry" >
@@ -90,6 +87,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="_print" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>&amp;Print</string>
             </property>
@@ -162,15 +162,11 @@
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>WoCluster</class>
    <extends>QWidget</extends>
    <header>wocluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -191,12 +187,28 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>690</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_wo</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>163</x>
+     <y>31</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>722</x>
+     <y>50</y>
     </hint>
    </hints>
   </connection>

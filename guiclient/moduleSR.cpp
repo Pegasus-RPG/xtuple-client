@@ -99,10 +99,6 @@
 #include "dspShipmentsBySalesOrder.h"
 #include "dspShipmentsByDate.h"
 
-#include "rptSummarizedBacklogByWarehouse.h"
-#include "rptShipmentsBySalesOrder.h"
-#include "rptShipmentsByDate.h"
-
 #include "moduleSR.h"
 
 moduleSR::moduleSR(OpenMFGGUIClient *Pparent) :
@@ -122,7 +118,6 @@ moduleSR::moduleSR(OpenMFGGUIClient *Pparent) :
   //ratesDisplaysMenu	= new QMenu();
   ratesMenu		= new QMenu();
   displaysMenu		= new QMenu();
-  reportsMenu		= new QMenu();
 
   struct actionProperties {
     const char*		actionName;
@@ -193,14 +188,7 @@ moduleSR::moduleSR(OpenMFGGUIClient *Pparent) :
     { "sr.dspSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."), SLOT(sDspSummarizedBacklogByWarehouse()), displaysMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
     { "separator", NULL, NULL, displaysMenu, true, NULL, NULL, true},
     { "sr.dspShipmentsBySalesOrder", tr("Shipments by Sales Order..."), SLOT(sDspShipmentsBySalesOrder()), displaysMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
-    { "sr.dspShipmentsByDate", tr("Shipments by Date..."), SLOT(sDspShipmentsByDate()), displaysMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
-
-    //  S/R | Reports
-    { "menu",	tr("Reports"),	(char*)reportsMenu,	srMenu,	true, NULL, NULL, true},
-    { "sr.rptSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."), SLOT(sRptSummarizedBacklogByWarehouse()), reportsMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
-    { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true},
-    { "sr.rptShipmentsBySalesOrder", tr("Shipments by Sales Order..."), SLOT(sRptShipmentsBySalesOrder()), reportsMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
-    { "sr.rptShipmentsByDate", tr("Shipments by Date..."), SLOT(sRptShipmentsByDate()), reportsMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
+    { "sr.dspShipmentsByDate", tr("Shipments by Date..."), SLOT(sDspShipmentsByDate()), displaysMenu, _privleges->check("ViewShipping"), NULL, NULL, true}
   };
 
   for (unsigned int i = 0; i < sizeof(acts) / sizeof(acts[0]); i++)
@@ -394,20 +382,5 @@ void moduleSR::sDspShipmentsBySalesOrder()
 void moduleSR::sDspShipmentsByDate()
 {
   omfgThis->handleNewWindow(new dspShipmentsByDate());
-}
-
-void moduleSR::sRptSummarizedBacklogByWarehouse()
-{
-  rptSummarizedBacklogByWarehouse(parent, "", TRUE).exec();
-}
-
-void moduleSR::sRptShipmentsBySalesOrder()
-{
-  rptShipmentsBySalesOrder(parent, "", TRUE).exec();
-}
-
-void moduleSR::sRptShipmentsByDate()
-{
-  rptShipmentsByDate(parent, "", TRUE).exec();
 }
 

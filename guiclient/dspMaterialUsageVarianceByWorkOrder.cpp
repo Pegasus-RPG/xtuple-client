@@ -59,9 +59,10 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "inputManager.h"
-#include "rptMaterialUsageVarianceByWorkOrder.h"
 
 /*
  *  Constructs a dspMaterialUsageVarianceByWorkOrder as a child of 'parent', with the
@@ -71,42 +72,16 @@
 dspMaterialUsageVarianceByWorkOrder::dspMaterialUsageVarianceByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_womatlvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspMaterialUsageVarianceByWorkOrder::~dspMaterialUsageVarianceByWorkOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspMaterialUsageVarianceByWorkOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspMaterialUsageVarianceByWorkOrder::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_womatlvar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   _wo->setType(cWoClosed);
 
@@ -124,14 +99,33 @@ void dspMaterialUsageVarianceByWorkOrder::init()
   _womatlvar->addColumn(tr("%"),              _prcntColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspMaterialUsageVarianceByWorkOrder::~dspMaterialUsageVarianceByWorkOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspMaterialUsageVarianceByWorkOrder::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspMaterialUsageVarianceByWorkOrder::sPrint()
 {
   ParameterList params;
   params.append("wo_id", _wo->id());
-  params.append("print");
 
-  rptMaterialUsageVarianceByWorkOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("MaterialUsageVarianceByWorkOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspMaterialUsageVarianceByWorkOrder::sPopulateMenu(QMenu *)

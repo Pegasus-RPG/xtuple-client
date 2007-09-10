@@ -916,23 +916,30 @@ void dspFinancialReport::sPrint()
   QString reportdef;
   
   if (_month->isChecked())
-  interval = "M";
+    interval = "M";
   else if (_quarter->isChecked())
     interval = "Q";
   else
     interval = "Y";
      
- if(_shownumbers->isChecked())
-  params.append("shownumbers");
+  if(_shownumbers->isChecked())
+    params.append("shownumbers");
   if(_showzeros->isChecked())
-  params.append("showzeros");
+    params.append("showzeros");
   
 
   QList<QVariant> periodList;
-  QList<QTreeWidgetItem*> selected;
+  QList<QTreeWidgetItem*> selected = _periods->selectedItems();
   for (int i = 0; i < selected.size(); i++)
     periodList.prepend(((XTreeWidgetItem*)(selected[i]))->id());
   
+  if(periodList.isEmpty())
+  {
+    QMessageBox::warning(this, tr("No Period(s) Selected"),
+      tr("You must select at least one period to report on.") );
+    return;
+  }
+
   if (_trend->isChecked())
   {
     if (_type->text() == "Ad Hoc")
@@ -940,15 +947,15 @@ void dspFinancialReport::sPrint()
     else
       reportdef = "FinancialTrend";
 
-  params.append("flhead_id", _flhead->id());
-  params.append("period_id_list", periodList);
-  params.append("interval", interval);  
+    params.append("flhead_id", _flhead->id());
+    params.append("period_id_list", periodList);
+    params.append("interval", interval);  
 
-  orReport report(reportdef, params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+    orReport report(reportdef, params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
   }
   else
   {
@@ -956,19 +963,19 @@ void dspFinancialReport::sPrint()
         " FROM flcol,report "
         " WHERE ((flcol_report_id=report_id)"
         " AND (flcol_id=:flcol_id))");
-  q.bindValue(":flcol_id",_flcol->id());
-  q.exec();
-  if (q.first())
-  {  
-    params.append("flcol_id", _flcol->id());
-    params.append("period_id", periodList.at(0));
-
-    orReport report(q.value("report_name").toString(), params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }    
+    q.bindValue(":flcol_id",_flcol->id());
+    q.exec();
+    if (q.first())
+    {  
+      params.append("flcol_id", _flcol->id());
+      params.append("period_id", periodList.at(0));
+  
+      orReport report(q.value("report_name").toString(), params);
+      if (report.isValid())
+        report.print();
+      else
+        report.reportError(this);
+    }    
   }
 }
 

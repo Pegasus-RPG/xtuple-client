@@ -59,9 +59,10 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include <parameter.h>
 #include "closeWo.h"
-#include "rptWoSoStatus.h"
 
 /*
  *  Constructs a dspWoSoStatus as a child of 'parent', with the
@@ -71,42 +72,16 @@
 dspWoSoStatus::dspWoSoStatus(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspWoSoStatus::~dspWoSoStatus()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspWoSoStatus::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspWoSoStatus::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
   _wo->addColumn(tr("W/O #"),       _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Status"),      _statusColumn, Qt::AlignCenter );
@@ -122,14 +97,33 @@ void dspWoSoStatus::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspWoSoStatus::~dspWoSoStatus()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspWoSoStatus::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspWoSoStatus::sPrint()
 {
   ParameterList params;
-  params.append("print");
   _warehouse->appendValue(params);
 
-  rptWoSoStatus newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("OpenWorkOrdersWithParentSalesOrders", params);
+  if(report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoSoStatus::sCloseWo()

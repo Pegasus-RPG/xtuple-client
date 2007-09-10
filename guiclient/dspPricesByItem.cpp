@@ -60,7 +60,7 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <parameter.h>
-#include "rptPricesByItem.h"
+#include <openreports.h>
 
 #define CURR_COL	5
 #define COST_COL	6
@@ -87,8 +87,6 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags f
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
-  statusBar()->hide();
-
   _item->setType(ItemLineEdit::cSold);
 
   _price->addColumn(tr("Schedule"),      _itemColumn, Qt::AlignLeft  );
@@ -101,7 +99,7 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags f
   _price->addColumn(tr("Margin"),       _prcntColumn, Qt::AlignRight );
 
   if (omfgThis->singleCurrency())
-      _price->hideColumn(CURR_COL);
+    _price->hideColumn(CURR_COL);
   sHandleCosts(_showCosts->isChecked());
 
   _item->setFocus();
@@ -112,7 +110,7 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags f
  */
 dspPricesByItem::~dspPricesByItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -121,31 +119,34 @@ dspPricesByItem::~dspPricesByItem()
  */
 void dspPricesByItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspPricesByItem::sPrint()
 {
   ParameterList params;
+
   params.append("item_id", _item->id());
-  params.append("print");
 
-  if (_showExpired->isChecked())
+  if(_showExpired->isChecked())
     params.append("showExpired");
-
-  if (_showFuture->isChecked())
+  if(_showFuture->isChecked())
     params.append("showFuture");
 
   if (_showCosts->isChecked())
     params.append("showCosts");
 
-  if (_useStandardCosts->isChecked())
-    params.append("standardCosts");
-  else if (_useActualCosts->isChecked())
+  if (_useActualCosts->isChecked())
     params.append("actualCosts");
+  else /*if(_useStandardCosts->isChecked())*/
+    params.append("standardCosts");
 
-  rptPricesByItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PricesByItem", params);
+
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPricesByItem::sHandleCosts(bool pShowCosts)

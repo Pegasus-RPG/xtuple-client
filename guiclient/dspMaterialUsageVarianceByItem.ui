@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspMaterialUsageVarianceByItem</class>
  <widget class="QMainWindow" name="dspMaterialUsageVarianceByItem" >
   <property name="geometry" >
@@ -176,6 +173,9 @@
           </item>
           <item>
            <widget class="QPushButton" name="_print" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>&amp;Print</string>
             </property>
@@ -217,32 +217,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -267,8 +259,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>689</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -287,8 +279,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>318</x>
+     <y>27</y>
     </hint>
    </hints>
   </connection>
@@ -303,8 +295,24 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>318</x>
+     <y>27</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>194</x>
+     <y>62</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>720</x>
+     <y>79</y>
     </hint>
    </hints>
   </connection>

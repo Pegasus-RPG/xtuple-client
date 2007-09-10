@@ -72,11 +72,10 @@ public:
     dspWoMaterialsByWorkOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspWoMaterialsByWorkOrder();
 
-    virtual void init();
     virtual bool checkParameters();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * );
     virtual void sView();

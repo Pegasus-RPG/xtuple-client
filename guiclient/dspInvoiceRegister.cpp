@@ -248,6 +248,13 @@ void dspInvoiceRegister::sViewInvoice()
 
 void dspInvoiceRegister::sPrint()
 {
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"),
+      tr("You must specify a valid date range.") );
+    return;
+  }
+
   ParameterList params;
   _dates->appendValue(params);
 

@@ -61,7 +61,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <parameter.h>
-#include "rptPricesByCustomerType.h"
+#include <openreports.h>
 
 #define CURR_COL	7
 #define COST_COL	8
@@ -87,8 +87,6 @@ dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* na
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
-  statusBar()->hide();
-
   _custtype->setType(XComboBox::CustomerTypes);
 
   _price->addColumn(tr("Schedule"),    _itemColumn,  Qt::AlignLeft  );
@@ -103,7 +101,7 @@ dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* na
   _price->addColumn(tr("Mar. %"),      _prcntColumn, Qt::AlignRight );
 
   if (omfgThis->singleCurrency())
-      _price->hideColumn(CURR_COL);
+    _price->hideColumn(CURR_COL);
   sHandleCosts(_showCosts->isChecked());
 }
 
@@ -112,7 +110,7 @@ dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* na
  */
 dspPricesByCustomerType::~dspPricesByCustomerType()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -121,31 +119,33 @@ dspPricesByCustomerType::~dspPricesByCustomerType()
  */
 void dspPricesByCustomerType::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspPricesByCustomerType::sPrint()
 {
   ParameterList params;
+
   params.append("custtype_id", _custtype->id());
-  params.append("print");
 
-  if (_showExpired->isChecked())
+  if(_showExpired->isChecked())
     params.append("showExpired");
-
-  if (_showFuture->isChecked())
+  if(_showFuture->isChecked())
     params.append("showFuture");
 
-  if (_showCosts->isChecked())
+  if(_showCosts->isChecked())
     params.append("showCosts");
 
-  if (_useStandardCosts->isChecked())
-    params.append("standardCosts");
-  else if (_useActualCosts->isChecked())
+  if(_useActualCosts->isChecked())
     params.append("actualCosts");
+  else /*if(_useStandardCosts->isChecked())*/
+    params.append("standardCosts");
 
-  rptPricesByCustomerType newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PricesByCustomerType", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPricesByCustomerType::sHandleCosts(bool pShowCosts)

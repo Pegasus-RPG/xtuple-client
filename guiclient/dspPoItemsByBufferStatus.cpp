@@ -61,14 +61,13 @@
 #include <QSqlError>
 
 #include <metasql.h>
+#include <openreports.h>
 
 #include "purchaseOrder.h"
 #include "purchaseOrderItem.h"
-#include "rptPoItemsByDate.h"
 #include "reschedulePoitem.h"
 #include "changePoitemQty.h"
 #include "dspRunningAvailability.h"
-#include "rptPoItemsByBufferStatus.h"
 
 #define POITEM_STATUS_COL 13
 
@@ -115,13 +114,15 @@ void dspPoItemsByBufferStatus::sPrint()
 {
   ParameterList params;
   _warehouse->appendValue(params);
-  params.append("print");
 
   if (_selectedPurchasingAgent->isChecked())
     params.append("agentUsername", _agent->currentText());
 
-  rptPoItemsByBufferStatus newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("POLineItemsByBufferStatus", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPoItemsByBufferStatus::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)

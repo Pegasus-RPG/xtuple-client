@@ -62,6 +62,7 @@
 #include <QWorkspace>
 #include <QMessageBox>
 #include <QSqlError>
+#include <openreports.h>
 #include "postProduction.h"
 #include "correctProductionPosting.h"
 #include "postOperations.h"
@@ -78,7 +79,6 @@
 #include "dspWoMaterialsByWorkOrder.h"
 #include "dspWoOperationsByWorkOrder.h"
 #include "dspInventoryAvailabilityByWorkOrder.h"
-#include "rptWoScheduleByParameterList.h"
 
 /*
  *  Constructs a dspWoScheduleByParameterList as a child of 'parent', with the
@@ -102,8 +102,6 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
   connect(_postOperations, SIGNAL(clicked()), this, SLOT(sPostOperations()));
   connect(_printTraveler, SIGNAL(clicked()), this, SLOT(sPrintTraveler()));
   connect(_wo, SIGNAL(itemSelectionChanged()), this, SLOT(sHandleButtons()));
-
-  statusBar()->hide();
 
   _dates->setStartCaption(tr("Start W/O Start Date:"));
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -210,22 +208,9 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
 void dspWoScheduleByParameterList::sPrint()
 {
   ParameterList params;
-  _dates->appendValue(params);
   _warehouse->appendValue(params);
   _parameter->appendValue(params);
-  params.append("print");
-
-  if (_parameter->isAll())
-  {
-    if (_parameter->type() == ClassCode)
-      params.append("classcode");
-    else if (_parameter->type() == ItemGroup)
-      params.append("itemgrp");
-    else if (_parameter->type() == PlannerCode)
-      params.append("plancode");
-    else if (_parameter->type() == WorkCenter)
-      params.append("wrkcnt");
-  }
+  _dates->appendValue(params);
 
   if (_showOnlyRI->isChecked())
     params.append("showOnlyRI");
@@ -233,8 +218,18 @@ void dspWoScheduleByParameterList::sPrint()
   if (_showOnlyTopLevel->isChecked())
     params.append("showOnlyTopLevel");
 
-  rptWoScheduleByParameterList newdlg(this, "", TRUE);
-  newdlg.set(params);
+  //if(_sortByStartDate->isChecked())
+    params.append("sortByStartDate");
+  //else if(_sortByDueDate->isChecked())
+  //  params.append("sortByDueDate");
+  //else
+  //  params.append("sortByItemNumber");
+
+  orReport report("WOScheduleByParameterList", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoScheduleByParameterList::sView()

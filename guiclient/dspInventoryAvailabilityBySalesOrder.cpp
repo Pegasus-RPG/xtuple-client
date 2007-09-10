@@ -168,6 +168,13 @@ void dspInventoryAvailabilityBySalesOrder::sSoList()
 
 void dspInventoryAvailabilityBySalesOrder::sPrint()
 {
+  if(!_so->isValid())
+  {
+    QMessageBox::warning(this, tr("No Sales Order Selected"),
+      tr("You must select a valid Sales Order.") );
+    return;
+  }
+
   ParameterList params;
 
   params.append("sohead_id", _so->id());

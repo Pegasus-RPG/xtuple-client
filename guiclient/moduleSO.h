@@ -118,9 +118,6 @@ class moduleSO : public QObject
     void sDspPricesByItem();
     void sDspPricesByCustomer();
     void sDspPricesByCustomerType();
-    void sRptPricesByItem();
-    void sRptPricesByCustomer();
-    void sRptPricesByCustomerType();
 
     void sDspOrderLookupByCustomer();
     void sDspOrderLookupByCustomerType();
@@ -146,10 +143,6 @@ class moduleSO : public QObject
     void sDspBriefEarnedCommissions();
     void sDspSummarizedTaxableSales();
 
-    void sRptSalesOrderStatus();
-    void sRptSummarizedBacklogByWarehouse();
-    void sRptPartiallyShippedOrders();
-    void sRptSummarizedTaxableSales();
     void sPrintSalesOrderForm();
 
     void sNewCustomer();
@@ -194,7 +187,6 @@ class moduleSO : public QObject
     QMenu *billingCreditMemosMenu;
     QMenu *pricingMenu;
     QMenu *pricingDisplaysMenu;
-    QMenu *pricingReportsMenu;
     QMenu *displaysMenu;
     QMenu *reportsMenu;
     QMenu *masterInfoMenu;

@@ -136,6 +136,13 @@ enum SetResponse dspIndentedBOM::set(const ParameterList &pParams)
 
 void dspIndentedBOM::sPrint()
 {
+  if(!_item->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Item"),
+      tr("You must specify a valid item.") );
+    return;
+  }
+
   q.prepare("SELECT indentedBOM(:item_id) AS result;");
   q.bindValue(":item_id", _item->id());
   q.exec();

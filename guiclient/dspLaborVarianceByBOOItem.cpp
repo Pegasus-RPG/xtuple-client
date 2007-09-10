@@ -59,8 +59,9 @@
 
 #include <QVariant>
 #include <QStatusBar>
+#include <QMenu>
 #include <parameter.h>
-#include "rptLaborVarianceByBOOItem.h"
+#include <openreports.h>
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -71,45 +72,19 @@
 dspLaborVarianceByBOOItem::dspLaborVarianceByBOOItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_booitem, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateComponentItems(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspLaborVarianceByBOOItem::~dspLaborVarianceByBOOItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspLaborVarianceByBOOItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspLaborVarianceByBOOItem::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_woopervar, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_booitem, SIGNAL(newID(int)), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateComponentItems(int)));
+  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured);
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -126,18 +101,36 @@ void dspLaborVarianceByBOOItem::init()
   _woopervar->addColumn(tr("Run Var."),   _timeColumn, Qt::AlignRight  );
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspLaborVarianceByBOOItem::~dspLaborVarianceByBOOItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspLaborVarianceByBOOItem::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspLaborVarianceByBOOItem::sPrint()
 {
   ParameterList params;
+  _warehouse->appendValue(params);
   _dates->appendValue(params);
+  params.append("item_id", _item->id());
   params.append("booitem_id", _booitem->id());
-  params.append("print");
 
-  if (_warehouse->isSelected())
-    params.append("warehous_id", _warehouse->id());
-
-  rptLaborVarianceByBOOItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("LaborVarianceByBOOItem", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspLaborVarianceByBOOItem::sPopulateMenu(QMenu *)

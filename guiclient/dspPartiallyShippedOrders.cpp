@@ -59,12 +59,14 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <parameter.h>
 #include <QWorkspace>
+#include <QMenu>
+#include <QSqlError>
+#include <openreports.h>
+#include <parameter.h>
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
-#include "rptPartiallyShippedOrders.h"
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -75,43 +77,16 @@
 dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspPartiallyShippedOrders::~dspPartiallyShippedOrders()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspPartiallyShippedOrders::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-#include <QSqlError>
-
-void dspPartiallyShippedOrders::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -133,6 +108,23 @@ void dspPartiallyShippedOrders::init()
     _showPrices->setEnabled(FALSE);
 
   sFillList();
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspPartiallyShippedOrders::~dspPartiallyShippedOrders()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspPartiallyShippedOrders::languageChange()
+{
+  retranslateUi(this);
 }
 
 void dspPartiallyShippedOrders::sHandlePrices(bool pShowPrices)
@@ -157,13 +149,15 @@ void dspPartiallyShippedOrders::sPrint()
   ParameterList params;
   _warehouse->appendValue(params);
   _dates->appendValue(params);
-  params.append("print");
 
-  if (_showPrices->isChecked())
+  if(_showPrices->isChecked())
     params.append("showPrices");
 
-  rptPartiallyShippedOrders newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("PartiallyShippedOrders", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspPartiallyShippedOrders::sEditOrder()

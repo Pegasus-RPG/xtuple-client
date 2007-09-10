@@ -60,8 +60,9 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include "inputManager.h"
-#include "rptWoMaterialsByWorkOrder.h"
 #include "woMaterialItem.h"
 
 /*
@@ -72,41 +73,15 @@
 dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_womatl, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspWoMaterialsByWorkOrder::~dspWoMaterialsByWorkOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspWoMaterialsByWorkOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspWoMaterialsByWorkOrder::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_womatl, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
 
@@ -124,7 +99,24 @@ void dspWoMaterialsByWorkOrder::init()
   _womatl->addColumn(tr("Due Date"),        _dateColumn,  Qt::AlignCenter );
 }
 
-enum SetResponse dspWoMaterialsByWorkOrder::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspWoMaterialsByWorkOrder::~dspWoMaterialsByWorkOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspWoMaterialsByWorkOrder::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspWoMaterialsByWorkOrder::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -146,10 +138,12 @@ void dspWoMaterialsByWorkOrder::sPrint()
 {
   ParameterList params;
   params.append("wo_id", _wo->id());
-  params.append("print");
 
-  rptWoMaterialsByWorkOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOMaterialRequirementsByWorkOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoMaterialsByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)

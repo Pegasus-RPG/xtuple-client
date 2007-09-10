@@ -59,7 +59,7 @@
 #define DSPPURCHASEREQSBYITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
+#include <QMainWindow>
 
 #include "ui_dspPurchaseReqsByItem.h"
 
@@ -70,8 +70,6 @@ class dspPurchaseReqsByItem : public QMainWindow, public Ui::dspPurchaseReqsByIt
 public:
     dspPurchaseReqsByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspPurchaseReqsByItem();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();

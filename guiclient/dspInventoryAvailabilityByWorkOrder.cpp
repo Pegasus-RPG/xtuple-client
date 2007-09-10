@@ -146,6 +146,13 @@ enum SetResponse dspInventoryAvailabilityByWorkOrder::set(const ParameterList &p
 
 void dspInventoryAvailabilityByWorkOrder::sPrint()
 {
+  if(!_wo->isValid())
+  {
+    QMessageBox::warning(this, tr("Invalid W/O Selected"),
+      tr("You must specify a valid Work Order Number.") );
+    return;
+  }
+
   ParameterList params;
 
   params.append("wo_id", _wo->id());

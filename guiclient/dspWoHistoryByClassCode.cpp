@@ -61,8 +61,8 @@
 #include <QStatusBar>
 #include <QWorkspace>
 #include <QMenu>
+#include <openreports.h>
 #include "workOrder.h"
-#include "rptWoHistoryByClassCode.h"
 
 /*
  *  Constructs a dspWoHistoryByClassCode as a child of 'parent', with the
@@ -82,8 +82,6 @@ dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char* na
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showCost, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-
-  statusBar()->hide();
 
   _classCode->setType(ClassCode);
 
@@ -106,7 +104,7 @@ dspWoHistoryByClassCode::dspWoHistoryByClassCode(QWidget* parent, const char* na
  */
 dspWoHistoryByClassCode::~dspWoHistoryByClassCode()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -115,25 +113,28 @@ dspWoHistoryByClassCode::~dspWoHistoryByClassCode()
  */
 void dspWoHistoryByClassCode::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspWoHistoryByClassCode::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  _classCode->appendValue(params);
 
-  if (_topLevel->isChecked())
+  _classCode->appendValue(params);
+  _warehouse->appendValue(params);
+
+  if(_topLevel->isChecked())
     params.append("showOnlyTopLevel");
 
-  if (_showCost->isChecked())
+  if(_showCost->isChecked())
     params.append("showCosts");
 
-  params.append("print");
+  orReport report("WOHistoryByClassCode", params);
 
-  rptWoHistoryByClassCode newdlg(this, "", TRUE);
-  newdlg.set(params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoHistoryByClassCode::sView()

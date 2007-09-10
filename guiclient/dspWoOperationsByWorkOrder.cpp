@@ -60,9 +60,10 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
+#include <openreports.h>
 #include "inputManager.h"
 #include "woOperation.h"
-#include "rptWoOperationsByWorkOrder.h"
 
 /*
  *  Constructs a dspWoOperationsByWorkOrder as a child of 'parent', with the
@@ -72,42 +73,16 @@
 dspWoOperationsByWorkOrder::dspWoOperationsByWorkOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspWoOperationsByWorkOrder::~dspWoOperationsByWorkOrder()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspWoOperationsByWorkOrder::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspWoOperationsByWorkOrder::init()
-{
-  statusBar()->hide();
+  // signals and slots connections
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_wooper, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_wo, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
   _wo->setType(cWoExploded | cWoIssued | cWoReleased);
 
@@ -123,7 +98,24 @@ void dspWoOperationsByWorkOrder::init()
   _wooper->addColumn( tr("Qty. Complete"), _qtyColumn,  Qt::AlignRight  );
 }
 
-enum SetResponse dspWoOperationsByWorkOrder::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+dspWoOperationsByWorkOrder::~dspWoOperationsByWorkOrder()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void dspWoOperationsByWorkOrder::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse dspWoOperationsByWorkOrder::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -145,10 +137,12 @@ void dspWoOperationsByWorkOrder::sPrint()
 {
   ParameterList params;
   params.append("wo_id", _wo->id());
-  params.append("print");
 
-  rptWoOperationsByWorkOrder newdlg(this, "", TRUE);
-  newdlg.set(params);
+  orReport report("WOOperationsByWorkOrder", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspWoOperationsByWorkOrder::sPopulateMenu(QMenu *pMenu)

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspPoDeliveryDateVariancesByVendor</class>
  <widget class="QMainWindow" name="dspPoDeliveryDateVariancesByVendor" >
   <property name="geometry" >
@@ -265,7 +262,7 @@
           <item>
            <widget class="QPushButton" name="_print" >
             <property name="enabled" >
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="sizePolicy" >
              <sizepolicy>
@@ -359,39 +356,29 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>VendorCluster</class>
-   <extends>QWidget</extends>
-   <header>vendorcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>VendorCluster</class>
+   <extends>QWidget</extends>
+   <header>vendorcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -417,12 +404,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>515</x>
+     <y>58</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>621</x>
+     <y>82</y>
     </hint>
    </hints>
   </connection>
@@ -433,8 +420,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>747</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -453,8 +440,24 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>747</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_vendor</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>201</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>758</x>
+     <y>89</y>
     </hint>
    </hints>
   </connection>

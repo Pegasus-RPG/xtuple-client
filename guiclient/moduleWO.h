@@ -144,38 +144,6 @@ class moduleWO : public QObject
     void sDspWoSoStatus();
     void sDspWoSoStatusMismatch();
 
-    void sRptWoScheduleByItem();
-    void sRptWoScheduleByItemGroup();
-    void sRptWoScheduleByClassCode();
-    void sRptWoScheduleByPlannerCode();
-    void sRptWoScheduleByWorkCenter();
-    void sRptWoBufferStatusByItem();
-    void sRptWoBufferStatusByItemGroup();
-    void sRptWoBufferStatusByClassCode();
-    void sRptWoBufferStatusByPlannerCode();
-    void sRptWoHistoryByItem();
-    void sRptWoHistoryByNumber();
-    void sRptWoHistoryByClassCode();
-    void sRptWoMaterialsByComponentItem();
-    void sRptWoMaterialsByWo();
-    void sRptPendingAvailability();
-    void sRptWoOperationsByWorkCenter();
-    void sRptWoOperationsByWo();
-    void sRptWoOperationBufrStsByWorkCenter();
-    void sRptWoEffortByUser();
-    void sRptWoEffortByWorkOrder();
-    void sRptMaterialUsageVarianceByBOMItem();
-    void sRptMaterialUsageVarianceByItem();
-    void sRptMaterialUsageVarianceByComponentItem();
-    void sRptMaterialUsageVarianceByWorkOrder();
-    void sRptMaterialUsageVarianceByWarehouse();
-    void sRptLaborVarianceByBOOItem();
-    void sRptLaborVarianceByItem();
-    void sRptLaborVarianceByWorkCenter();
-    void sRptLaborVarianceByWorkOrder();
-    void sRptWoSoStatus();
-    void sRptWoSoStatusMismatch();
-
     void sPrintWorkOrderForm();
     void sPrintProductionEntrySheet();
 

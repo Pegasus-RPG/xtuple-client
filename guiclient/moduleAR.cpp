@@ -243,11 +243,7 @@ moduleAR::moduleAR(OpenMFGGUIClient *Pparent) :
   parent->actions.append( new Action( parent, "ar.dspOpenItemsByCustomer", tr("Open Items by Customer..."),
                                       this, SLOT(sDspAROpenItemsByCustomer()),
                                       displaysMenu, _privleges->check("ViewAROpenItems") ) );
-/*
-  parent->actions.append( new Action( parent, "ar.dspTimePhasedOpenItems", tr("Time-Phased Open Items..."),
-                                      this, SLOT(sDspTimePhasedOpenItems()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
-*/
+
   parent->actions.append( new Action( parent, "ar.dspARAging", tr("A/R Aging..."),
                                       this, SLOT(sDspTimePhasedOpenItems()),
                                       displaysMenu, _privleges->check("ViewAROpenItems"),
@@ -459,13 +455,6 @@ void moduleAR::sDspTimePhasedOpenItems()
 {
   omfgThis->handleNewWindow(new dspTimePhasedOpenARItems());
 }
-
-/*
-void moduleAR::sDspARAging()
-{
-  omfgThis->handleNewWindow(new dspARAging());
-}
-*/
 
 //  Reports
 void moduleAR::sRptSalesJournal()
