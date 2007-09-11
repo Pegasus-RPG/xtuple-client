@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>792</width>
-    <height>511</height>
+    <height>524</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -532,6 +532,13 @@
           <widget class="QCheckBox" name="_printSO" >
            <property name="text" >
             <string>Check Print S/O on Save by Default</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_enablePromiseDate" >
+           <property name="text" >
+            <string>Enable Promise Dates</string>
            </property>
           </widget>
          </item>
@@ -1331,14 +1338,14 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

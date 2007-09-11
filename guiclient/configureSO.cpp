@@ -165,6 +165,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   _hideSOMiscChrg->setChecked(_metrics->boolean("HideSOMiscCharge"));
   _enableSOShipping->setChecked(_metrics->boolean("EnableSOShipping"));
   _printSO->setChecked(_metrics->boolean("DefaultPrintSOOnSave"));
+  _enablePromiseDate->setChecked(_metrics->boolean("UsePromiseDate"));
 
   _invoiceNumOfCopies->setValue(_metrics->value("InvoiceCopies").toInt());
   if (_invoiceNumOfCopies->value())
@@ -253,6 +254,7 @@ void configureSO::sSave()
   _metrics->set("DefaultBackOrders", _backorders->isChecked());
   _metrics->set("DefaultFreeFormShiptos", _freeFormShiptos->isChecked());
   _metrics->set("DefaultPrintSOOnSave", _printSO->isChecked());
+  _metrics->set("UsePromiseDate", _enablePromiseDate->isChecked());
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
 

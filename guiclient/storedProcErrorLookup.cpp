@@ -400,7 +400,35 @@ void initErrorLookupHash()
 			       "there are still Quotes for it. You must delete "
 			       "all of this Prospect's Quotes before you may "
 			       "delete the Prospect."),		 0, "" },
-
+  { "deleteShipto",	-1, TR("The selected Shipto cannot be deleted as there "
+			       "is still Archived Sales History assigned to it. You must "
+			       "delete all of the selected Customer's Ship-Tos "
+			       "before you may delete it."),	 0, "" },
+  { "deleteShipto",	-2, TR("The selected Shipto cannot be deleted "
+			       "as there has been Sales History recorded "
+			       "for this Shipto. You may Edit the "
+			       "selected Shipto and set its status to "
+			       "inactive."),			 0, "" },
+  { "deleteShipto",	-3, QString("The selected Shipto cannot be deleted "
+			       "as there has been Credit Memos recorded "
+			       "for this Shipto. You may Edit the "
+			       "selected Shipto and set its status to "
+			       "inactive."),		-2, "" },
+  { "deleteShipto",	-4, QString("The selected Shipto cannot be deleted "
+			       "as there has been Sales History recorded "
+			       "for this Shipto. You may Edit the "
+			       "selected Shipto and set its status to "
+			       "inactive."),		-2, "" },
+  { "deleteShipto",	-5, QString("The selected Shipto cannot be deleted "
+			       "as there has been Quote History recorded "
+			       "for this Shipto. You may Edit the "
+			       "selected Shipto and set its status to "
+			       "inactive."),		-2, "" },
+  { "deleteShipto",	-6, QString("The selected Shipto cannot be deleted "
+			       "as there has been Invoice History recorded "
+			       "for this Shipto. You may Edit the "
+			       "selected Shipto and set its status to "
+			       "inactive."),			 0, "" },
   { "deleteSO",		-1, TR("This Sales Order cannot be deleted as some of "
 			       "its line items have already been shipped."),
 								 0, "" },

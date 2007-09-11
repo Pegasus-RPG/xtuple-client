@@ -1,5 +1,5 @@
 /*
- * Common Public Attribution License Version 1.0. 
+ * Common Public Attribution License Version q1.0. 
  * 
  * The contents of this file are subject to the Common Public Attribution 
  * License Version 1.0 (the "License"); you may not use this file except 
@@ -210,6 +210,8 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
     _supplyWarehouseLit->hide();
     _supplyWarehouse->hide();
   }
+  
+  //TO DO **** Fix tab order issues and offer alternate means for "Express Tab Order"  ****
 }
 
 salesOrderItem::~salesOrderItem()
@@ -336,7 +338,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _comments->setEnabled(FALSE);
       _orderStatusLit->hide();
       _orderStatus->hide();
-      _orderGroup->hide();
+      _createOrder->hide();
       _cancel->hide();
       _sub->hide();
       _subItem->hide();
@@ -394,7 +396,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _listPrices->setEnabled(TRUE);
       _comments->setType(Comments::QuoteItem);
-      _orderGroup->hide();
+      _createOrder->hide();
       _cancel->hide();
       _sub->hide();
       _subItem->hide();
@@ -423,7 +425,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
 
       setCaption(tr("Quote Item"));
 
-      _orderGroup->hide();
+      _createOrder->hide();
       _cancel->hide();
       _sub->hide();
       _subItem->hide();
@@ -594,8 +596,9 @@ void salesOrderItem::clear()
   _extendedPrice->clear();
   _scheduledDate->clear();
   _promisedDate->clear();
-  _pricingUOM->clear();
-  _ratio->clear();
+  //TO DO ***This needs to be replaced by new UOM logic****
+  //_pricingUOM->clear();
+  //_ratio->clear();
   _unitCost->clear();
   _listPrice->clear();
   _customerPrice->clear();
@@ -667,7 +670,6 @@ void salesOrderItem::sSave()
 
   QDate promiseDate;
 
-  // How do you enable this?
   if (_metrics->boolean("UsePromiseDate"))
   {
     if (_promisedDate->isValid())
@@ -1277,10 +1279,11 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         sDeterminePrice();
 
       _priceRatio = q.value("item_invpricerat").toDouble();
-
-      _pricingUOM->setText(q.value("item_priceuom").toString());
-      _ratio->setText(q.value("f_invpricerat").toString());
-      _listPrice->setBaseValue(q.value("item_listprice").toDouble());
+      
+      //TO DO ***This needs to be replaced by new UOM logic****
+      //_pricingUOM->setText(q.value("item_priceuom").toString());
+      //_ratio->setText(q.value("f_invpricerat").toString());
+      //_listPrice->setBaseValue(q.value("item_listprice").toDouble());
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
       _taxtype->setId(q.value("taxtype_id").toInt());
 
@@ -1291,7 +1294,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         if ( (_mode == cNew) || (_mode == cEdit) )
           _createOrder->setEnabled(TRUE);
 
-        _createOrder->setText(tr("C&reate Work Order"));
+        _createOrder->setTitle(tr("C&reate Work Order"));
         _orderQtyLit->setText(tr("W/O Q&ty.:"));
         _orderDueDateLit->setText(tr("W/O Due Date:"));
         _orderStatusLit->setText(tr("W/O Status:"));
@@ -1308,7 +1311,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         if ( (_mode == cNew) || (_mode == cEdit) )
           _createOrder->setEnabled(TRUE);
 
-        _createOrder->setText(tr("C&reate Purchase Request"));
+        _createOrder->setTitle(tr("C&reate Purchase Request"));
         _orderQtyLit->setText(tr("P/R Q&ty.:"));
         _orderDueDateLit->setText(tr("P/R Due Date:"));
         _orderStatusLit->setText(tr("P/R Status:"));
@@ -1322,7 +1325,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
         if ( (_mode == cNew) || (_mode == cEdit) )
           _createOrder->setEnabled(TRUE);
 
-        _createOrder->setText(tr("C&reate Order"));
+        _createOrder->setTitle(tr("C&reate Order"));
         _orderQtyLit->setText(tr("Order Q&ty.:"));
         _orderDueDateLit->setText(tr("Order Due Date:"));
         _orderStatusLit->setText(tr("Order Status:"));
@@ -1894,8 +1897,9 @@ void salesOrderItem::populate()
     _comments->setId(_soitemid);
     _lineNumber->setText(item.value("coitem_linenumber").toString());
     _priceRatio = item.value("item_invpricerat").toDouble();
-    _ratio->setText(formatUOMRatio(_priceRatio));
-    _pricingUOM->setText(item.value("item_priceuom").toString());
+    //TO DO ***This needs to be replaced by new UOM logic****
+    //_ratio->setText(formatUOMRatio(_priceRatio));
+    //_pricingUOM->setText(item.value("item_priceuom").toString());
     _unitCost->setBaseValue(item.value("stdcost").toDouble());
     _shippedToDate->setText(formatQty(item.value("qtyshipped").toDouble()));
 
