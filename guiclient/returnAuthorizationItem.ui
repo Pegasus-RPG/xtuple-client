@@ -286,7 +286,7 @@
        </widget>
       </item>
       <item row="5" column="2" >
-       <widget class="XComboBox" name="authuom" />
+       <widget class="XComboBox" name="_authuom" />
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="_rsnCodeLit" >
@@ -1123,10 +1123,33 @@
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_qtyAuth</tabstop>
-  <tabstop>_comments</tabstop>
+  <tabstop>_dispostion</tabstop>
+  <tabstop>_rsnCode</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_clearAuthorization</tabstop>
+  <tabstop>_authorizeLine</tabstop>
+  <tabstop>_authorizeAll</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_delete</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_authls</tabstop>
+  <tabstop>_altSalescatid</tabstop>
+  <tabstop>_altSalescatidSelected</tabstop>
+  <tabstop>_altAccntidSelected</tabstop>
+  <tabstop>_tax</tabstop>
+  <tabstop>_taxCode</tabstop>
+  <tabstop>_taxType</tabstop>
+  <tabstop>_discountFromSale</tabstop>
+  <tabstop>_extendedPrice</tabstop>
+  <tabstop>_netUnitPrice</tabstop>
+  <tabstop>_authuom</tabstop>
+  <tabstop>_qtyAuth</tabstop>
+  <tabstop>_comments</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_warranty</tabstop>
+  <tabstop>_solduom</tabstop>
  </tabstops>
  <includes>
   <include location="global" >parameter.h</include>
