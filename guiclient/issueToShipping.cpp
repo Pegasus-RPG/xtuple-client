@@ -194,7 +194,10 @@ void issueToShipping::sHandleSalesOrder(const int pSoheadid)
         _so->setFocus();
       }
       else
+      {
+        _to->setId(-1);
         sFillList();
+      }
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -211,6 +214,7 @@ void issueToShipping::sHandleTransferOrder(const int porderid)
   if (porderid != -1)
   {
     _ordertype = "TO";
+    _so->setId(-1);
     sFillList();
   }
   else
