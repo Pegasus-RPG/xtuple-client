@@ -62,7 +62,6 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include <parameter.h>
-#include "rptRoughCutByWorkCenter.h"
 
 
 /*
