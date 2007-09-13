@@ -1935,6 +1935,7 @@ void salesOrderItem::populate()
 
     _overridePoPrice->setLocalValue(item.value("coitem_prcost").toDouble());
 
+    sCalculateDiscountPrcnt();
     sLookupTax();
     sDetermineAvailability();
   }
