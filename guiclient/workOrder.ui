@@ -114,7 +114,7 @@
            <number>6</number>
           </property>
           <item row="0" column="0" >
-           <widget class="QLabel" name="_revisionLit_2" >
+           <widget class="QLabel" name="_boorevLit" >
             <property name="text" >
              <string>Revision:</string>
             </property>
@@ -127,7 +127,7 @@
            </widget>
           </item>
           <item row="0" column="2" >
-           <widget class="QPushButton" name="_save_2" >
+           <widget class="QPushButton" name="_boorevlist" >
             <property name="maximumSize" >
              <size>
               <width>50</width>
@@ -146,13 +146,13 @@
            </widget>
           </item>
           <item row="0" column="1" >
-           <widget class="XLineEdit" name="_documentNum_2" />
+           <widget class="XLineEdit" name="_boorev" />
           </item>
          </layout>
         </widget>
        </item>
        <item row="1" column="0" >
-        <widget class="QGroupBox" name="groupBox_5" >
+        <widget class="QGroupBox" name="_bomGroup" >
          <property name="title" >
           <string>Bill of Materials</string>
          </property>
@@ -164,7 +164,7 @@
            <number>6</number>
           </property>
           <item row="0" column="0" >
-           <widget class="QLabel" name="_revisionLit" >
+           <widget class="QLabel" name="_bomrevLit" >
             <property name="text" >
              <string>Revision:</string>
             </property>
@@ -177,7 +177,7 @@
            </widget>
           </item>
           <item row="0" column="2" >
-           <widget class="QPushButton" name="_save" >
+           <widget class="QPushButton" name="_bomrevlist" >
             <property name="maximumSize" >
              <size>
               <width>50</width>
@@ -196,7 +196,7 @@
            </widget>
           </item>
           <item row="0" column="1" >
-           <widget class="XLineEdit" name="_documentNum" />
+           <widget class="XLineEdit" name="_bomrev" />
           </item>
          </layout>
         </widget>
@@ -727,10 +727,10 @@
   <tabstop>_woNumber</tabstop>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
-  <tabstop>_documentNum</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_documentNum_2</tabstop>
-  <tabstop>_save_2</tabstop>
+  <tabstop>_bomrev</tabstop>
+  <tabstop>_bomrevlist</tabstop>
+  <tabstop>_boorev</tabstop>
+  <tabstop>_boorevlist</tabstop>
   <tabstop>_qty</tabstop>
   <tabstop>_leadTime</tabstop>
   <tabstop>_dueDate</tabstop>
