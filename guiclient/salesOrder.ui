@@ -1845,74 +1845,65 @@
  </customwidgets>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
-  <tabstop>_warehouse</tabstop>
   <tabstop>_orderDate</tabstop>
   <tabstop>_shipDate</tabstop>
   <tabstop>_packDate</tabstop>
+  <tabstop>_warehouse</tabstop>
   <tabstop>_origin</tabstop>
+  <tabstop>_shipComplete</tabstop>
+  <tabstop>_printSO</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxAuth</tabstop>
   <tabstop>_terms</tabstop>
-  <tabstop>_project</tabstop>
-  <tabstop>_cust</tabstop>
+  <tabstop>_copyToShipto</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToPhone</tabstop>
   <tabstop>_billToAddr</tabstop>
-  <tabstop>_copyToShipto</tabstop>
   <tabstop>_shipToNumber</tabstop>
   <tabstop>_shipToName</tabstop>
   <tabstop>_shipToPhone</tabstop>
   <tabstop>_shipToAddr</tabstop>
-  <tabstop>_custPONumber</tabstop>
   <tabstop>_fob</tabstop>
   <tabstop>_shipVia</tabstop>
-  <tabstop>_holdType</tabstop>
   <tabstop>_shippingCharges</tabstop>
+  <tabstop>_custPONumber</tabstop>
+  <tabstop>_holdType</tabstop>
   <tabstop>_shippingForm</tabstop>
-  <tabstop>_shipComplete</tabstop>
+  <tabstop>_saveAndAdd</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_clear</tabstop>
   <tabstop>_salesOrderInformation</tabstop>
-  <tabstop>_soitem</tabstop>
-  <tabstop>_orderCurrency</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
+  <tabstop>_action</tabstop>
   <tabstop>_delete</tabstop>
+  <tabstop>_issueStock</tabstop>
+  <tabstop>_issueLineBalance</tabstop>
+  <tabstop>_requireInventory</tabstop>
+  <tabstop>_orderCurrency</tabstop>
   <tabstop>_showCanceled</tabstop>
-  <tabstop>_subtotal</tabstop>
   <tabstop>_miscChargeDescription</tabstop>
-  <tabstop>_miscChargeAccount</tabstop>
-  <tabstop>_miscCharge</tabstop>
-  <tabstop>_allocatedCM</tabstop>
-  <tabstop>_outstandingCM</tabstop>
-  <tabstop>_authCC</tabstop>
   <tabstop>_weight</tabstop>
+  <tabstop>_miscCharge</tabstop>
   <tabstop>_freight</tabstop>
-  <tabstop>_tax</tabstop>
   <tabstop>_total</tabstop>
   <tabstop>_balance</tabstop>
-  <tabstop>_action</tabstop>
-  <tabstop>_orderComments</tabstop>
-  <tabstop>_comments</tabstop>
-  <tabstop>_shippingComments</tabstop>
-  <tabstop>_cc</tabstop>
-  <tabstop>_newCC</tabstop>
-  <tabstop>_editCC</tabstop>
-  <tabstop>_viewCC</tabstop>
-  <tabstop>_upCC</tabstop>
   <tabstop>_downCC</tabstop>
   <tabstop>_authorize</tabstop>
   <tabstop>_charge</tabstop>
   <tabstop>_CCAmount</tabstop>
   <tabstop>_CCCVV</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_saveAndAdd</tabstop>
-  <tabstop>_clear</tabstop>
+  <tabstop>_newCC</tabstop>
+  <tabstop>_orderComments</tabstop>
+  <tabstop>_soitem</tabstop>
   <tabstop>_shippingComments</tabstop>
-  <tabstop>_shipToList</tabstop>
-  <tabstop>_issueStock</tabstop>
-  <tabstop>_issueLineBalance</tabstop>
-  <tabstop>_requireInventory</tabstop>
+  <tabstop>_shippingComments</tabstop>
+  <tabstop>_editCC</tabstop>
+  <tabstop>_viewCC</tabstop>
+  <tabstop>_upCC</tabstop>
+  <tabstop>_cc</tabstop>
  </tabstops>
  <includes>
   <include location="global" >parameter.h</include>
