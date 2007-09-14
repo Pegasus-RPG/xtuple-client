@@ -5,9 +5,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>922</width>
-    <height>629</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>800</width>
+    <height>600</height>
+   </size>
   </property>
   <property name="windowTitle" >
    <string>Return Authorization</string>
@@ -80,11 +86,34 @@
              <property name="spacing" >
               <number>6</number>
              </property>
-             <item row="2" column="1" >
-              <widget class="DLineEdit" name="_expireDate" />
-             </item>
              <item row="1" column="1" >
               <widget class="DLineEdit" name="_authDat" />
+             </item>
+             <item row="0" column="0" >
+              <widget class="QLabel" name="_authNumberLit" >
+               <property name="text" >
+                <string>Auth. #:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="XLineEdit" name="_authNumber" />
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="_authDatLit" >
+               <property name="text" >
+                <string>Auth. Date:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="DLineEdit" name="_expireDate" />
              </item>
              <item row="2" column="0" >
               <widget class="QLabel" name="_expireDateLit" >
@@ -116,28 +145,18 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="0" >
-              <widget class="QLabel" name="_authDatLit" >
-               <property name="text" >
-                <string>Auth. Date:</string>
+             <item row="4" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
                </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>5</height>
+                </size>
                </property>
-              </widget>
-             </item>
-             <item row="0" column="0" >
-              <widget class="QLabel" name="_authNumberLit" >
-               <property name="text" >
-                <string>Auth. #:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" >
-              <widget class="XLineEdit" name="_authNumber" />
+              </spacer>
              </item>
             </layout>
            </widget>
@@ -172,72 +191,6 @@
              <property name="spacing" >
               <number>6</number>
              </property>
-             <item row="1" column="0" >
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item row="3" column="0" >
-              <widget class="QLabel" name="_creditByLit" >
-               <property name="text" >
-                <string>Credit by:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-             <item row="3" column="1" >
-              <widget class="XComboBox" name="_creditBy" >
-               <item>
-                <property name="text" >
-                 <string>Credit Memo</string>
-                </property>
-               </item>
-               <item>
-                <property name="text" >
-                 <string>Credit Card</string>
-                </property>
-               </item>
-               <item>
-                <property name="text" >
-                 <string>Check</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item row="2" column="1" >
-              <widget class="QRadioButton" name="_uponReceipt" >
-               <property name="text" >
-                <string>Upon Receipt</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="QRadioButton" name="_immediately" >
-               <property name="text" >
-                <string>Immediately</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0" >
-              <widget class="QLabel" name="_dispositionLit" >
-               <property name="text" >
-                <string>Disposition:</string>
-               </property>
-              </widget>
-             </item>
              <item row="0" column="1" >
               <widget class="XComboBox" name="_disposition" >
                <item>
@@ -267,6 +220,35 @@
                </item>
               </widget>
              </item>
+             <item row="3" column="1" >
+              <widget class="XComboBox" name="_creditBy" >
+               <item>
+                <property name="text" >
+                 <string>Credit Memo</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Credit Card</string>
+                </property>
+               </item>
+               <item>
+                <property name="text" >
+                 <string>Check</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="0" >
+              <widget class="QLabel" name="_creditByLit" >
+               <property name="text" >
+                <string>Credit by:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
              <item row="2" column="0" >
               <spacer>
                <property name="orientation" >
@@ -280,6 +262,13 @@
                </property>
               </spacer>
              </item>
+             <item row="0" column="0" >
+              <widget class="QLabel" name="_dispositionLit" >
+               <property name="text" >
+                <string>Disposition:</string>
+               </property>
+              </widget>
+             </item>
              <item row="1" column="2" >
               <spacer>
                <property name="orientation" >
@@ -289,6 +278,49 @@
                 <size>
                  <width>40</width>
                  <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="1" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>40</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QRadioButton" name="_uponReceipt" >
+               <property name="text" >
+                <string>Upon Receipt</string>
+               </property>
+               <property name="checked" >
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" >
+              <widget class="QRadioButton" name="_immediately" >
+               <property name="text" >
+                <string>Immediately</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
                 </size>
                </property>
               </spacer>
@@ -325,7 +357,7 @@
                <property name="sizeHint" >
                 <size>
                  <width>231</width>
-                 <height>20</height>
+                 <height>5</height>
                 </size>
                </property>
               </spacer>
@@ -481,7 +513,7 @@
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
-           <number>3</number>
+           <number>9</number>
           </property>
           <property name="spacing" >
            <number>6</number>
@@ -1428,19 +1460,49 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CustInfo</class>
-   <extends>QWidget</extends>
-   <header>custcluster.h</header>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>AddressCluster</class>
-   <extends>QWidget</extends>
-   <header>addresscluster.h</header>
+   <class>XURLLabel</class>
+   <extends>QLabel</extends>
+   <header>xurllabel.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
    <extends>QWidget</extends>
    <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SoCluster</class>
+   <extends>QWidget</extends>
+   <header>socluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
   </customwidget>
   <customwidget>
    <class>IncidentCluster</class>
@@ -1453,49 +1515,19 @@
    <header>projectcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrDisplay</class>
-   <extends>QWidget</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XURLLabel</class>
-   <extends>QLabel</extends>
-   <header>xurllabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SoCluster</class>
-   <extends>QWidget</extends>
-   <header>socluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>GLCluster</class>
    <extends>QWidget</extends>
    <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>AddressCluster</class>
+   <extends>QWidget</extends>
+   <header>addresscluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustInfo</class>
+   <extends>QWidget</extends>
+   <header>custcluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

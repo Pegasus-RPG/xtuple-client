@@ -1,0 +1,576 @@
+<ui version="4.0" >
+ <class>returnAuthorizationWorkbench</class>
+ <widget class="QMainWindow" name="returnAuthorizationWorkbench" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="minimumSize" >
+   <size>
+    <width>600</width>
+    <height>400</height>
+   </size>
+  </property>
+  <property name="windowTitle" >
+   <string>Return Authorization Workbench</string>
+  </property>
+  <widget class="QWidget" name="widget" >
+   <layout class="QGridLayout" >
+    <property name="margin" >
+     <number>9</number>
+    </property>
+    <property name="spacing" >
+     <number>6</number>
+    </property>
+    <item row="0" column="0" >
+     <widget class="QFrame" name="frame" >
+      <property name="minimumSize" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize" >
+       <size>
+        <width>16777215</width>
+        <height>100</height>
+       </size>
+      </property>
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow" >
+       <enum>QFrame::Raised</enum>
+      </property>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>9</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>16</width>
+           <height>152</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QGroupBox" name="_type" >
+         <property name="title" >
+          <string/>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item rowspan="2" row="0" column="1" >
+           <widget class="ParameterGroup" name="_parameter" >
+            <property name="title" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QRadioButton" name="_custtype" >
+            <property name="text" >
+             <string>Customer Type</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" >
+           <widget class="QRadioButton" name="_cust" >
+            <property name="text" >
+             <string>Customer</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="2" >
+        <layout class="QVBoxLayout" >
+         <property name="margin" >
+          <number>5</number>
+         </property>
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Close</string>
+           </property>
+           <property name="autoDefault" >
+            <bool>false</bool>
+           </property>
+           <property name="default" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_query" >
+           <property name="text" >
+            <string>Query</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>16</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="1" column="0" >
+     <widget class="QTabWidget" name="_tab" >
+      <property name="currentIndex" >
+       <number>1</number>
+      </property>
+      <widget class="QWidget" name="_open" >
+       <attribute name="title" >
+        <string>Open</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>5</number>
+        </property>
+        <item row="0" column="1" >
+         <widget class="QGroupBox" name="_show" >
+          <property name="title" >
+           <string>Show</string>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
+           <property name="spacing" >
+            <number>5</number>
+           </property>
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="_expired" >
+             <property name="text" >
+              <string>Show Expired</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="0" >
+         <widget class="QGroupBox" name="_showpending" >
+          <property name="title" >
+           <string>Show Pending</string>
+          </property>
+          <layout class="QGridLayout" >
+           <property name="margin" >
+            <number>5</number>
+           </property>
+           <property name="spacing" >
+            <number>5</number>
+           </property>
+           <item row="0" column="1" >
+            <widget class="QCheckBox" name="_shipments" >
+             <property name="text" >
+              <string>Shipments</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" >
+            <widget class="QCheckBox" name="_credits" >
+             <property name="text" >
+              <string>Credits</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="3" >
+            <widget class="QCheckBox" name="_refunds" >
+             <property name="text" >
+              <string>Refunds</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="_receipts" >
+             <property name="text" >
+              <string>Receipts</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="4" >
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="1" column="0" colspan="2" >
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item row="1" column="1" >
+           <layout class="QVBoxLayout" >
+            <property name="margin" >
+             <number>5</number>
+            </property>
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="_printopn" >
+              <property name="text" >
+               <string>&amp;Print</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_editopn" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="text" >
+               <string>Edit</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_viewopn" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="text" >
+               <string>View</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>false</bool>
+              </property>
+              <property name="default" >
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeType" >
+               <enum>QSizePolicy::Expanding</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>16</width>
+                <height>46</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </item>
+          <item row="1" column="0" >
+           <widget class="XTreeWidget" name="_raopen" />
+          </item>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QLabel" name="_raopenLit" >
+            <property name="text" >
+             <string>Open Returns:</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="_dueCredit" >
+       <attribute name="title" >
+        <string>Due Credit</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>5</number>
+        </property>
+        <item row="3" column="0" colspan="2" >
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_printonpost" >
+            <property name="text" >
+             <string>Print Credit Memo after Post</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" colspan="2" >
+         <widget class="QLabel" name="_radueLit" >
+          <property name="text" >
+           <string>Returns Eligible for Credit:</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0" >
+         <widget class="XTreeWidget" name="_radue" />
+        </item>
+        <item row="2" column="1" >
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="_printdue" >
+            <property name="text" >
+             <string>&amp;Print</string>
+            </property>
+            <property name="autoDefault" >
+             <bool>false</bool>
+            </property>
+            <property name="default" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_editdue" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>Edit</string>
+            </property>
+            <property name="autoDefault" >
+             <bool>false</bool>
+            </property>
+            <property name="default" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_viewdue" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>View</string>
+            </property>
+            <property name="autoDefault" >
+             <bool>false</bool>
+            </property>
+            <property name="default" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_post" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>Post</string>
+            </property>
+            <property name="autoDefault" >
+             <bool>false</bool>
+            </property>
+            <property name="default" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>16</width>
+              <height>46</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item row="0" column="0" colspan="2" >
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>5</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QCheckBox" name="_creditmemo" >
+            <property name="text" >
+             <string>Credit Memo</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_check" >
+            <property name="text" >
+             <string>Check</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_creditcard" >
+            <property name="text" >
+             <string>Credit Card</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ParameterGroup</class>
+   <extends>QGroupBox</extends>
+   <header>parametergroup.h</header>
+  </customwidget>
+ </customwidgets>
+ <includes>
+  <include location="local" >OpenMFGGUIClient.h</include>
+ </includes>
+ <resources/>
+ <connections/>
+</ui>

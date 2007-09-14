@@ -76,7 +76,6 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_supply, SIGNAL(toggled(bool)), this, SLOT(sHandleSupplied(bool)));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sCacheItemType(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sCheckItemsite()));
-  connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sHandleMLC(bool)));
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillRestricted()));
   connect(_toggleRestricted, SIGNAL(clicked()), this, SLOT(sToggleRestricted()));
@@ -667,27 +666,16 @@ void itemSite::sHandleSupplied(bool pSupplied)
   }
 } 
 
-void itemSite::sHandleMLC(bool pMLC)
-{
-  if (pMLC)
-  {
-    _location->setChecked(TRUE);
-    _miscLocation->setEnabled(FALSE);
-    _miscLocationName->setEnabled(FALSE);
-  }
-  else
-    _miscLocation->setEnabled(TRUE);
-}
 
 void itemSite::sHandleControlMethod()
 {
   if ( (_controlMethod->currentItem() == 2) ||
        (_controlMethod->currentItem() == 3) )
-    _perishable->setEnabled(TRUE);
+    _expire->setEnabled(TRUE);
   else
   {
-    _perishable->setChecked(FALSE);
-    _perishable->setEnabled(FALSE);
+    _expire->setChecked(FALSE);
+    _expire->setEnabled(FALSE);
   }
 }
 
@@ -948,7 +936,6 @@ void itemSite::populate()
         if (itemsite.value("itemsite_location").toString().length())
         {
           _useDefaultLocation->setChecked(TRUE);
-          _locationGroup->setEnabled(TRUE);
           _miscLocation->setChecked(TRUE);
           _miscLocationName->setEnabled(TRUE);
           _miscLocationName->setText(itemsite.value("itemsite_location").toString());
@@ -956,14 +943,12 @@ void itemSite::populate()
         else
         {
           _useDefaultLocation->setChecked(FALSE);
-          _locationGroup->setEnabled(FALSE);
         }
       }
     }
     else
     {
       _useDefaultLocation->setChecked(TRUE);
-      _locationGroup->setEnabled(TRUE);
       _location->setChecked(TRUE);
       _locations->setEnabled(TRUE);
       _locations->setId(itemsite.value("itemsite_location_id").toInt());

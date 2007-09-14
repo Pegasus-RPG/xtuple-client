@@ -78,7 +78,6 @@ public slots:
     virtual void sSave();
     virtual void sCheckItemsite();
     virtual void sHandleSupplied( bool pSupplied );
-    virtual void sHandleMLC( bool pMLC );
     virtual void sHandleControlMethod();
     virtual void sCacheItemType( const QString & pItemType );
     virtual void sCacheItemType( char pItemType );
