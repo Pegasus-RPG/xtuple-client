@@ -235,8 +235,8 @@ void dspRunningAvailability::sSoftenOrder()
 void dspRunningAvailability::sReleaseOrder()
 {
   // TODO
-  if (_availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
-      _availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned W/O"))
+  if (_availability->currentItem()->text(ORDERNUM_COL) == tr("Planned W/O (firmed)") ||
+      _availability->currentItem()->text(ORDERNUM_COL) == tr("Planned W/O"))
   {
     ParameterList params;
     params.append("mode", "release");
@@ -253,8 +253,8 @@ void dspRunningAvailability::sReleaseOrder()
     }
 #endif
   }
-  else if (_availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") ||
-	  _availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned P/O"))
+  else if (_availability->currentItem()->text(ORDERNUM_COL) == tr("Planned P/O (firmed)") ||
+	  _availability->currentItem()->text(ORDERNUM_COL) == tr("Planned P/O"))
   {
     ParameterList params;
     params.append("mode", "release");
