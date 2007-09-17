@@ -5,14 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
-    <height>500</height>
+    <width>800</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>600</width>
-    <height>500</height>
+    <width>800</width>
+    <height>600</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -264,7 +264,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>4</number>
+       <number>0</number>
       </property>
       <widget class="QWidget" name="general" >
        <attribute name="title" >
@@ -789,6 +789,11 @@
                 <property name="allowNull" >
                  <bool>true</bool>
                 </property>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                 <item>
                  <property name="text" >
                   <string/>
@@ -2487,6 +2492,16 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ContactCluster</class>
    <extends>QWidget</extends>
    <header>contactcluster.h</header>
@@ -2497,19 +2512,9 @@
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
   </customwidget>
   <customwidget>
    <class>CurrCluster</class>
@@ -2517,9 +2522,9 @@
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>Comments</class>
-   <extends>QWidget</extends>
-   <header>comments.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

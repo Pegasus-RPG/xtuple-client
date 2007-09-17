@@ -139,7 +139,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     key = omfgThis->_key;
     if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
     {
-      _tab->removePage(_tab->page(9));
+      _tab->removePage(_tab->page(10));
     }
     
     if (_metrics->boolean("EnableBatchManager"))
@@ -164,8 +164,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     }
     else
     {
+      _tab->removePage(_tab->page(9));
       _tab->removePage(_tab->page(8));
-      _tab->removePage(_tab->page(7));
     }
     
     //If not multi-warehouse hide whs control
