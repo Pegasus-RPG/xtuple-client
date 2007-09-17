@@ -671,11 +671,14 @@ void itemSite::sHandleControlMethod()
 {
   if ( (_controlMethod->currentItem() == 2) ||
        (_controlMethod->currentItem() == 3) )
-    _expire->setEnabled(TRUE);
+  {     
+    _perishable->setEnabled(TRUE);
+    _warranty->setEnabled(TRUE);
+  }
   else
   {
-    _expire->setChecked(FALSE);
-    _expire->setEnabled(FALSE);
+    _perishable->setEnabled(FALSE);
+    _warranty->setEnabled(FALSE);
   }
 }
 
