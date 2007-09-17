@@ -80,7 +80,7 @@
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -142,6 +142,19 @@
           <bool>true</bool>
          </property>
         </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </item>
@@ -239,7 +252,7 @@
        </property>
        <layout class="QGridLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -265,7 +278,7 @@
           </property>
           <layout class="QGridLayout" >
            <property name="margin" >
-            <number>9</number>
+            <number>6</number>
            </property>
            <property name="spacing" >
             <number>6</number>
@@ -365,7 +378,7 @@
        </property>
        <layout class="QGridLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -393,7 +406,7 @@
           </property>
           <layout class="QGridLayout" >
            <property name="margin" >
-            <number>10</number>
+            <number>6</number>
            </property>
            <property name="spacing" >
             <number>6</number>
@@ -588,7 +601,7 @@
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -606,7 +619,7 @@
        </property>
        <layout class="QGridLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -638,7 +651,7 @@
        </property>
        <layout class="QGridLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -671,7 +684,7 @@
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>1</height>
            </size>
           </property>
          </spacer>
@@ -883,7 +896,7 @@
        </property>
        <layout class="QGridLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -987,7 +1000,7 @@
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -999,6 +1012,14 @@
    </item>
    <item row="2" column="0" colspan="2" >
     <widget class="QTabWidget" name="_tab" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>7</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex" >
       <number>0</number>
      </property>
@@ -1101,9 +1122,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
@@ -1116,19 +1142,14 @@
    <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

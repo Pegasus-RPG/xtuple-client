@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>693</width>
-    <height>600</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -264,7 +264,7 @@
        <enum>QTabWidget::Rounded</enum>
       </property>
       <property name="currentIndex" >
-       <number>0</number>
+       <number>4</number>
       </property>
       <widget class="QWidget" name="general" >
        <attribute name="title" >
@@ -789,6 +789,11 @@
                 <property name="allowNull" >
                  <bool>true</bool>
                 </property>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -1604,6 +1609,19 @@
           </layout>
          </widget>
         </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabShipto" >
+       <attribute name="title" >
+        <string>Ship-To</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>9</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
         <item>
          <layout class="QVBoxLayout" >
           <property name="margin" >
@@ -2469,19 +2487,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ContactCluster</class>
-   <extends>QWidget</extends>
-   <header>contactcluster.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -2492,11 +2515,6 @@
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
@@ -2537,12 +2555,6 @@
   <tabstop>_blanketPos</tabstop>
   <tabstop>_autoUpdateStatus</tabstop>
   <tabstop>_autoHoldOrders</tabstop>
-  <tabstop>_shipto</tabstop>
-  <tabstop>_newShipto</tabstop>
-  <tabstop>_editShipto</tabstop>
-  <tabstop>_viewShipto</tabstop>
-  <tabstop>_deleteShipto</tabstop>
-  <tabstop>_printShipto</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newCharacteristic</tabstop>
@@ -2577,8 +2589,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>626</x>
+     <y>32</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -2593,28 +2605,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>31</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_shipto</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_viewShipto</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>31</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
@@ -2625,12 +2621,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>31</x>
+     <y>127</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>31</x>
+     <y>127</y>
     </hint>
    </hints>
   </connection>
@@ -2641,12 +2637,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
    </hints>
   </connection>
@@ -2657,12 +2653,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
    </hints>
   </connection>
@@ -2673,12 +2669,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
    </hints>
   </connection>
@@ -2689,12 +2685,28 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>429</y>
+     <x>110</x>
+     <y>136</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_shipto</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_viewShipto</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>378</x>
+     <y>226</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>645</x>
+     <y>243</y>
     </hint>
    </hints>
   </connection>
