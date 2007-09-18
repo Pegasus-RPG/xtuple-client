@@ -76,6 +76,7 @@ public slots:
     virtual void sCloseWo();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
     virtual void sFillList();
+    virtual void sViewWomatlreq();
 
 protected slots:
     virtual void languageChange();
