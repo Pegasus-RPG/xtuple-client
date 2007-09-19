@@ -28,7 +28,7 @@
    <item row="2" column="1" >
     <widget class="QGroupBox" name="_reporting" >
      <property name="title" >
-      <string>Reporting</string>
+      <string/>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
@@ -115,10 +115,10 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="1" >
+   <item row="2" column="0" >
     <widget class="QGroupBox" name="_control" >
      <property name="title" >
-      <string>Control Method</string>
+      <string/>
      </property>
      <layout class="QGridLayout" >
       <property name="margin" >
@@ -127,13 +127,6 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="2" column="0" >
-       <widget class="QRadioButton" name="_warranty" >
-        <property name="text" >
-         <string>Warranty</string>
-        </property>
-       </widget>
-      </item>
       <item row="1" column="0" >
        <widget class="QRadioButton" name="_perishable" >
         <property name="text" >
@@ -144,11 +137,25 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="1" >
+       <widget class="QRadioButton" name="_warranty" >
+        <property name="text" >
+         <string>Warranty</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="0" >
+       <widget class="QLabel" name="_controlMethodLit" >
+        <property name="text" >
+         <string>Control Method:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
        <widget class="XComboBox" name="_controlMethod" >
         <property name="sizePolicy" >
          <sizepolicy>
-          <hsizetype>7</hsizetype>
+          <hsizetype>5</hsizetype>
           <vsizetype>0</vsizetype>
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
@@ -176,145 +183,10 @@
         </item>
        </widget>
       </item>
-      <item row="0" column="1" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
      </layout>
     </widget>
    </item>
-   <item row="0" column="0" colspan="2" >
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="ItemCluster" name="_item" >
-         <property name="focusPolicy" >
-          <enum>Qt::TabFocus</enum>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item row="0" column="0" >
-          <widget class="QLabel" name="_warehouseLit" >
-           <property name="text" >
-            <string>&amp;Warehouse:  </string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_warehouse</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="WComboBox" name="_warehouse" />
-         </item>
-         <item row="1" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="2" >
-          <widget class="QCheckBox" name="_active" >
-           <property name="text" >
-            <string>&amp;Active</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+A</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="QPushButton" name="_close" >
-         <property name="text" >
-          <string>&amp;Cancel</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="_save" >
-         <property name="enabled" >
-          <bool>false</bool>
-         </property>
-         <property name="text" >
-          <string>&amp;Save</string>
-         </property>
-         <property name="default" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-    </layout>
-   </item>
-   <item row="2" column="0" >
+   <item row="1" column="1" >
     <widget class="QGroupBox" name="_sold" >
      <property name="focusPolicy" >
       <enum>Qt::TabFocus</enum>
@@ -332,15 +204,18 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="_soldRankingLit" >
-        <property name="text" >
-         <string>Ranking:</string>
+      <item row="1" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>0</height>
+         </size>
         </property>
-       </widget>
+       </spacer>
       </item>
       <item row="0" column="1" >
        <widget class="QSpinBox" name="_soldRanking" >
@@ -352,15 +227,25 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="0" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="_soldRankingLit" >
+        <property name="text" >
+         <string>Ranking:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" >
        <spacer>
         <property name="orientation" >
-         <enum>Qt::Vertical</enum>
+         <enum>Qt::Horizontal</enum>
         </property>
         <property name="sizeHint" >
          <size>
-          <width>20</width>
-          <height>0</height>
+          <width>40</width>
+          <height>20</height>
          </size>
         </property>
        </spacer>
@@ -386,13 +271,6 @@
       <property name="spacing" >
        <number>6</number>
       </property>
-      <item row="1" column="0" >
-       <widget class="QCheckBox" name="_createWo" >
-        <property name="text" >
-         <string>Create W/Os to Meet Sales Demand</string>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="0" >
        <widget class="QCheckBox" name="_createPr" >
         <property name="text" >
@@ -400,18 +278,12 @@
         </property>
        </widget>
       </item>
-      <item row="2" column="0" >
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="_createWo" >
+        <property name="text" >
+         <string>Create W/Os to Meet Sales Demand</string>
         </property>
-        <property name="sizeHint" >
-         <size>
-          <width>20</width>
-          <height>0</height>
-         </size>
-        </property>
-       </spacer>
+       </widget>
       </item>
      </layout>
     </widget>
@@ -444,6 +316,134 @@
         <number>6</number>
        </property>
        <item row="0" column="1" >
+        <widget class="QGroupBox" name="_inventory" >
+         <property name="title" >
+          <string/>
+         </property>
+         <layout class="QGridLayout" >
+          <property name="margin" >
+           <number>9</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item row="4" column="1" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_abcClassLit" >
+            <property name="text" >
+             <string>ABC Class:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QCheckBox" name="_autoUpdateABCClass" >
+            <property name="text" >
+             <string>Allow Automatic Updates</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QSpinBox" name="_eventFence" >
+            <property name="maximum" >
+             <number>999</number>
+            </property>
+            <property name="minimum" >
+             <number>1</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" >
+           <widget class="QLabel" name="_days1Lit" >
+            <property name="text" >
+             <string>Days</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="_eventFenceLit" >
+            <property name="text" >
+             <string>Event &amp;Fence:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_eventFence</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="2" >
+           <widget class="QLabel" name="_days3Lit" >
+            <property name="text" >
+             <string>Days</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="XComboBox" name="_abcClass" >
+            <item>
+             <property name="text" >
+              <string>A</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>B</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>C</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_cycleCountFreqLit" >
+            <property name="text" >
+             <string>Cycl. Cnt. Fre&amp;q.:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_cycleCountFreq</cstring>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0" colspan="3" >
+           <widget class="QCheckBox" name="_stocked" >
+            <property name="text" >
+             <string>Stocked</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QSpinBox" name="_cycleCountFreq" >
+            <property name="maximum" >
+             <number>999</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="0" column="0" >
         <widget class="QGroupBox" name="_location" >
          <property name="title" >
           <string/>
@@ -455,6 +455,26 @@
           <property name="spacing" >
            <number>6</number>
           </property>
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="_locationControl" >
+            <property name="enabled" >
+             <bool>true</bool>
+            </property>
+            <property name="text" >
+             <string>Multiple Location Control</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QCheckBox" name="_disallowBlankWIP" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Disallow Blank WIP Locations</string>
+            </property>
+           </widget>
+          </item>
           <item row="1" column="0" >
            <widget class="QGroupBox" name="_useDefaultLocation" >
             <property name="enabled" >
@@ -526,16 +546,6 @@
             </layout>
            </widget>
           </item>
-          <item row="0" column="0" >
-           <widget class="QCheckBox" name="_locationControl" >
-            <property name="enabled" >
-             <bool>true</bool>
-            </property>
-            <property name="text" >
-             <string>Multiple Location Control</string>
-            </property>
-           </widget>
-          </item>
           <item row="2" column="0" >
            <layout class="QHBoxLayout" >
             <property name="margin" >
@@ -559,162 +569,7 @@
             </item>
            </layout>
           </item>
-          <item row="3" column="0" >
-           <widget class="QCheckBox" name="_disallowBlankWIP" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>Disallow Blank WIP Locations</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="_inventory" >
-         <property name="title" >
-          <string/>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item row="2" column="1" >
-           <widget class="QSpinBox" name="_cycleCountFreq" >
-            <property name="maximum" >
-             <number>999</number>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="3" >
-           <widget class="QCheckBox" name="_stocked" >
-            <property name="text" >
-             <string>Stocked</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="_cycleCountFreqLit" >
-            <property name="text" >
-             <string>Cycl. Cnt. Fre&amp;q.:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_cycleCountFreq</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="XComboBox" name="_abcClass" >
-            <item>
-             <property name="text" >
-              <string>A</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>B</string>
-             </property>
-            </item>
-            <item>
-             <property name="text" >
-              <string>C</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="4" column="2" >
-           <widget class="QLabel" name="_days3Lit" >
-            <property name="text" >
-             <string>Days</string>
-            </property>
-           </widget>
-          </item>
           <item row="4" column="0" >
-           <widget class="QLabel" name="_eventFenceLit" >
-            <property name="text" >
-             <string>Event &amp;Fence:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_eventFence</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="2" >
-           <widget class="QLabel" name="_days1Lit" >
-            <property name="text" >
-             <string>Days</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="_leadTimeLit" >
-            <property name="text" >
-             <string>&amp;Lead Time:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-            <property name="buddy" >
-             <cstring>_leadTime</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" >
-           <widget class="QSpinBox" name="_leadTime" >
-            <property name="maximum" >
-             <number>999</number>
-            </property>
-            <property name="minimum" >
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" >
-           <widget class="QSpinBox" name="_eventFence" >
-            <property name="maximum" >
-             <number>999</number>
-            </property>
-            <property name="minimum" >
-             <number>1</number>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="2" >
-           <widget class="QCheckBox" name="_autoUpdateABCClass" >
-            <property name="text" >
-             <string>Allow Automatic Updates</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="_abcClassLit" >
-            <property name="text" >
-             <string>ABC Class:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2" >
-           <widget class="QLabel" name="_days2Lit" >
-            <property name="text" >
-             <string>Days</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1" >
            <spacer>
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
@@ -958,50 +813,6 @@
           <property name="spacing" >
            <number>6</number>
           </property>
-          <item row="1" column="1" >
-           <widget class="QSpinBox" name="_mpsTimeFence" >
-            <property name="maximum" >
-             <number>999</number>
-            </property>
-            <property name="minimum" >
-             <number>0</number>
-            </property>
-            <property name="value" >
-             <number>0</number>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="XLineEdit" name="_safetyStock" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>80</width>
-              <height>32767</height>
-             </size>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QLabel" name="_mpsTimeFenceLit" >
-            <property name="text" >
-             <string>MPS Time Fence:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1" >
            <widget class="QSpinBox" name="_orderGroup" >
             <property name="maximum" >
@@ -1022,13 +833,94 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
+          <item row="2" column="1" >
+           <widget class="QSpinBox" name="_leadTime" >
+            <property name="maximum" >
+             <number>999</number>
+            </property>
+            <property name="minimum" >
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" >
+           <widget class="QLabel" name="_days2Lit" >
+            <property name="text" >
+             <string>Days</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QSpinBox" name="_mpsTimeFence" >
+            <property name="maximum" >
+             <number>999</number>
+            </property>
+            <property name="minimum" >
+             <number>0</number>
+            </property>
+            <property name="value" >
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="XLineEdit" name="_safetyStock" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>80</width>
+              <height>32767</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2" >
+           <widget class="QLabel" name="_orderGroupDaysLit" >
+            <property name="text" >
+             <string>Days</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_mpsTimeFenceLit" >
+            <property name="text" >
+             <string>MPS Time Fence:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
            <widget class="QLabel" name="_safetyStockLit" >
             <property name="text" >
              <string>Safety Stock:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_leadTimeLit" >
+            <property name="text" >
+             <string>&amp;Lead Time:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_leadTime</cstring>
             </property>
            </widget>
           </item>
@@ -1042,14 +934,7 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="2" >
-           <widget class="QLabel" name="_orderGroupDaysLit" >
-            <property name="text" >
-             <string>Days</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
+          <item row="4" column="0" >
            <spacer>
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
@@ -1058,6 +943,19 @@
              <size>
               <width>20</width>
               <height>0</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+          <item row="2" column="3" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
@@ -1160,11 +1058,138 @@
      </widget>
     </widget>
    </item>
+   <item row="0" column="0" colspan="2" >
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>6</number>
+     </property>
+     <item>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="ItemCluster" name="_item" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <layout class="QGridLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>6</number>
+         </property>
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_warehouseLit" >
+           <property name="text" >
+            <string>&amp;Warehouse:  </string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_warehouse</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="WComboBox" name="_warehouse" />
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="2" >
+          <widget class="QCheckBox" name="_active" >
+           <property name="text" >
+            <string>&amp;Active</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+A</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="QPushButton" name="_close" >
+         <property name="text" >
+          <string>&amp;Cancel</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_save" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>&amp;Save</string>
+         </property>
+         <property name="default" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
@@ -1181,19 +1206,14 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>Comments</class>
    <extends>QWidget</extends>
    <header>comments.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1214,7 +1234,6 @@
   <tabstop>_abcClass</tabstop>
   <tabstop>_autoUpdateABCClass</tabstop>
   <tabstop>_cycleCountFreq</tabstop>
-  <tabstop>_leadTime</tabstop>
   <tabstop>_eventFence</tabstop>
   <tabstop>_locationControl</tabstop>
   <tabstop>_location</tabstop>
