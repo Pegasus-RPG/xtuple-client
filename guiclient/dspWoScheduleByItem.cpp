@@ -153,10 +153,10 @@ void dspWoScheduleByItem::sPrint()
   if (_showOnlyTopLevel->isChecked())
     params.append("showOnlyTopLevel");
 
-//  if (_sortByStartDate->isChecked())
+  if (_sortByStartDate->isChecked())
     params.append("sortByStartDate");
-//  else
-//    params.append("sortByDueDate");
+  else
+    params.append("sortByDueDate");
 
   orReport report("WOScheduleByParameterList", params);
   if (report.isValid())
@@ -582,8 +582,12 @@ void dspWoScheduleByItem::sFillList()
     if (_warehouse->isSelected())
       sql += " AND (itemsite_warehous_id=:warehous_id)";
 
-    sql += ") "
-           "ORDER BY wo_startdate, wo_number, wo_subnumber";
+    sql += ") ";
+
+    if (_sortByStartDate->isChecked())
+      sql += "ORDER BY wo_startdate, wo_number, wo_subnumber";
+    else
+      sql += "ORDER BY wo_duedate, wo_number, wo_subnumber";
 
     q.prepare(sql);
     _warehouse->bindValue(q);
