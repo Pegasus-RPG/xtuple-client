@@ -4,6 +4,16 @@ SUBDIRS = common \
           widgets \
           guiclient
 
-! exists(../openrpt) {
-  error("The ../openrpt directory does not exist. Please get the sources for OpenRPT and build those before building OpenMFG.")
+exists(../../../openrpt) {
+    OPENRPT_DIR = ../../../openrpt
+}
+exists(../../openrpt) {
+    OPENRPT_DIR = ../../openrpt
+}
+exists(../openrpt) {
+    OPENRPT_DIR = ../openrpt
+}
+
+! exists($${OPENRPT_DIR}) {
+    error("Could not set the OPENRPT_DIR qmake variable.")
 }
