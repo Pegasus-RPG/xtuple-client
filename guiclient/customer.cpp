@@ -86,7 +86,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
 
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-	connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
+    connect(_number, SIGNAL(textEdited(const QString&)), this, SLOT(sNumberEdited()));
     connect(_salesrep, SIGNAL(newID(int)), this, SLOT(sPopulateCommission()));
     connect(_newShipto, SIGNAL(clicked()), this, SLOT(sNewShipto()));
     connect(_editShipto, SIGNAL(clicked()), this, SLOT(sEditShipto()));
@@ -151,10 +151,10 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
       _soEdiProfile->append(0, tr("Custom Email"));
     
       q.prepare("SELECT ediprofile_id, ediprofile_name"
-	      "  FROM ediprofile, ediform"
-	      " WHERE ((ediform_ediprofile_id=ediprofile_id)"
-	      "   AND  (ediform_type='invoice')) "
-	      "ORDER BY ediprofile_name; ");
+                "  FROM ediprofile, ediform"
+                " WHERE ((ediform_ediprofile_id=ediprofile_id)"
+                "   AND  (ediform_type='invoice')) "
+                "ORDER BY ediprofile_name; ");
       q.exec();
       while(q.next()) 
       {
@@ -212,19 +212,19 @@ enum SetResponse customer::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-        if (_custid <= 0 )
-		{
-	      q.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
-	      if (q.first())
-            _custid = q.value("cust_id").toInt();
-          else
-          {
-            systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
-            return UndefinedError;
-          }
-	    }
+      if (_custid <= 0 )
+      {
+        q.exec("SELECT NEXTVAL('cust_cust_id_seq') AS cust_id");
+        if (q.first())
+          _custid = q.value("cust_id").toInt();
+        else
+        {
+          systemError(this, tr("A System Error occurred at %1::%2.")
+                        .arg(__FILE__)
+                        .arg(__LINE__) );
+          return UndefinedError;
+        }
+      }
 
       _comments->setId(_custid);
 
@@ -342,11 +342,11 @@ enum SetResponse customer::set(const ParameterList &pParams)
   param = pParams.value("crmacct_id", &valid);
   if (valid)
     sLoadCrmAcct(param.toInt());
-	
+
   param = pParams.value("prospect_id", &valid);
   if (valid)
     sLoadProspect(param.toInt());
-	
+
   return NoError;
 }
 
@@ -355,33 +355,33 @@ int customer::saveContact(ContactCluster* pContact)
 {
   pContact->setAccount(_crmacctid);
 
-  int answer = 2;	// Cancel
+  int answer = 2;    // Cancel
   int saveResult = pContact->save(AddressCluster::CHECK);
 
   if (-1 == saveResult)
     systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-			 "Check the database server log for errors.")
-		      .arg(pContact->label()).arg(saveResult),
-		__FILE__, __LINE__);
+                         "Check the database server log for errors.")
+                      .arg(pContact->label()).arg(saveResult),
+                __FILE__, __LINE__);
   else if (-2 == saveResult)
     answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("There are multiple Contacts sharing this address (%1).\n"
-		       "What would you like to do?")
-		    .arg(pContact->label()),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
+                    tr("Question Saving Address"),
+                    tr("There are multiple Contacts sharing this address (%1).\n"
+                       "What would you like to do?")
+                    .arg(pContact->label()),
+                    tr("Change This One"),
+                    tr("Change Address for All"),
+                    tr("Cancel"),
+                    2, 2);
   else if (-10 == saveResult)
     answer = QMessageBox::question(this,
-		    tr("Question Saving %1").arg(pContact->label()),
-		    tr("Would you like to update the existing Contact or "
-		       "create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
+                    tr("Question Saving %1").arg(pContact->label()),
+                    tr("Would you like to update the existing Contact or "
+                       "create a new one?"),
+                    tr("Create New"),
+                    tr("Change Existing"),
+                    tr("Cancel"),
+                    2, 2);
   if (0 == answer)
     return pContact->save(AddressCluster::CHANGEONE);
   else if (1 == answer)
@@ -443,40 +443,40 @@ void customer::sSave()
   if (_number->text().stripWhiteSpace() != _cachedNumber)
   {
     q.prepare( "SELECT cust_name "
-	       "FROM custinfo "
-	       "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
-	       "  AND (cust_id<>:cust_id);" );
+               "FROM custinfo "
+               "WHERE (UPPER(cust_number)=UPPER(:cust_number)) "
+               "  AND (cust_id<>:cust_id);" );
     q.bindValue(":cust_name", _number->text().stripWhiteSpace());
     q.bindValue(":cust_id", _custid);
     q.exec();
     if (q.first())
     {
       QMessageBox::critical( this, tr("Customer Number Used"),
-			     tr( "The newly entered Customer Number cannot be used as it is currently\n"
-				 "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
-			     .arg(q.value("cust_name").toString()) );
+                             tr( "The newly entered Customer Number cannot be used as it is currently\n"
+                                 "in use by the Customer '%1'.  Please correct or enter a new Customer Number." )
+                                .arg(q.value("cust_name").toString()) );
       _number->setFocus();
       return;
     }
   }
  
   //Check to see if this is a prospect with quotes
-  bool	  convertQuotes = false;
+  bool convertQuotes = false;
   
   q.prepare("SELECT * FROM prospect, quhead "
             " WHERE ((prospect_id=quhead_cust_id) "
-			" AND (prospect_id=:prospect_id)); ");
+            " AND (prospect_id=:prospect_id)); ");
   q.bindValue(":prospect_id", _custid);
   q.exec();
   if (q.first())
-    	if (_privleges->check("ConvertQuotes") &&
-	  QMessageBox::question(this, tr("Convert"),
-			      tr("<p>Do you want to convert all of the Quotes "
-				 "for the Prospect to Sales Orders?"),
-			      QMessageBox::Yes | QMessageBox::Default,
-			      QMessageBox::No) == QMessageBox::Yes)
+    if (_privleges->check("ConvertQuotes") &&
+        QMessageBox::question(this, tr("Convert"),
+                              tr("<p>Do you want to convert all of the Quotes "
+                                 "for the Prospect to Sales Orders?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No) == QMessageBox::Yes)
       convertQuotes = true;
-	  
+
   if (! q.exec("BEGIN"))
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -508,7 +508,7 @@ void customer::sSave()
                "       cust_corrcntct_id=:cust_corrcntct_id, cust_cntct_id=:cust_cntct_id,"
                "       cust_custtype_id=:cust_custtype_id, cust_balmethod=:cust_balmethod,"
                "       cust_creditlmt=:cust_creditlmt, cust_creditlmt_curr_id=:cust_creditlmt_curr_id,"
-	       "       cust_creditrating=:cust_creditrating,"
+               "       cust_creditrating=:cust_creditrating,"
                "       cust_autoupdatestatus=:cust_autoupdatestatus, cust_autoholdorders=:cust_autoholdorders,"
                "       cust_creditstatus=:cust_creditstatus,"
                "       cust_backorder=:cust_backorder, cust_ffshipto=:cust_ffshipto, cust_ffbillto=:cust_ffbillto,"
@@ -528,8 +528,8 @@ void customer::sSave()
                "       cust_soedisubject=:cust_soedisubject, cust_soedifilename=:cust_soedifilename,"
                "       cust_soediemailbody=:cust_soediemailbody, cust_soedicc=:cust_soedicc,"
                "       cust_soediprofile_id=:cust_soediprofile_id, "
-	       "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
-	       "       cust_curr_id=:cust_curr_id "
+               "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
+               "       cust_curr_id=:cust_curr_id "
                "WHERE (cust_id=:cust_id);" );
   }
   else
@@ -539,7 +539,7 @@ void customer::sSave()
                "  cust_corrcntct_id, cust_cntct_id,"
                "  cust_custtype_id, cust_balmethod,"
                "  cust_creditlmt, cust_creditlmt_curr_id,"
-	       "  cust_creditrating, cust_creditstatus,"
+               "  cust_creditrating, cust_creditstatus,"
                "  cust_autoupdatestatus, cust_autoholdorders,"
                "  cust_backorder, cust_ffshipto, cust_ffbillto,"
                "  cust_commprcnt, cust_partialship,"
@@ -549,18 +549,18 @@ void customer::sSave()
                "  cust_active, cust_usespos, cust_blanketpos, cust_comments,"
                "  cust_emaildelivery, cust_ediemail, cust_edisubject,"
                "  cust_edifilename, cust_ediemailbody, cust_edicc, "
-	       "  cust_ediprofile_id,"
+               "  cust_ediprofile_id,"
                "  cust_soemaildelivery, cust_soediemail, cust_soedisubject,"
                "  cust_soedifilename, cust_soediemailbody, cust_soedicc, "
-	       "  cust_soediprofile_id, cust_preferred_warehous_id, "
-	       "  cust_curr_id ) "
+               "  cust_soediprofile_id, cust_preferred_warehous_id, "
+               "  cust_curr_id ) "
                "VALUES "
                "( :cust_id, :cust_number,"
                "  :cust_salesrep_id, :cust_name,"
                "  :cust_corrcntct_id, :cust_cntct_id,"
                "  :cust_custtype_id, :cust_balmethod,"
                "  :cust_creditlmt, :cust_creditlmt_curr_id,"
-	       "  :cust_creditrating, :cust_creditstatus,"
+               "  :cust_creditrating, :cust_creditstatus,"
                "  :cust_autoupdatestatus, :cust_autoholdorders,"
                "  :cust_backorder, :cust_ffshipto, :cust_ffbillto,"
                "  :cust_commprcnt, :cust_partialship,"
@@ -575,16 +575,16 @@ void customer::sSave()
                "  :cust_soedifilename, :cust_soediemailbody, :cust_soedicc,"
 
                "  :cust_soediprofile_id, :cust_preferred_warehous_id, "
-	       "  :cust_curr_id ) " );
+               "  :cust_curr_id ) " );
 
   q.bindValue(":cust_id", _custid);
   q.bindValue(":cust_number", _number->text().stripWhiteSpace());
   q.bindValue(":cust_name", _name->text().stripWhiteSpace());
   q.bindValue(":cust_salesrep_id", _salesrep->id());
   if (_corrCntct->id() > 0)
-    q.bindValue(":cust_corrcntct_id", _corrCntct->id());	// else NULL
+    q.bindValue(":cust_corrcntct_id", _corrCntct->id());        // else NULL
   if (_billCntct->id() > 0)
-    q.bindValue(":cust_cntct_id", _billCntct->id());		// else NULL
+    q.bindValue(":cust_cntct_id", _billCntct->id());            // else NULL
   q.bindValue(":cust_custtype_id", _custtype->id());
 
   if (_balanceMethod->currentItem() == 0)
@@ -660,92 +660,29 @@ void customer::sSave()
 
   if (convertQuotes)
   {
-	q.prepare("SELECT MIN(convertQuote(quhead_id)) AS result "
-		  "FROM quhead "
-		  "WHERE (quhead_cust_id=:id);");
+    q.prepare("SELECT MIN(convertQuote(quhead_id)) AS result "
+              "FROM quhead "
+              "WHERE (quhead_cust_id=:id);");
     q.bindValue(":id", _custid);
-	q.exec();
-	if (q.first())
-	{
-	  int result = q.value("result").toInt();
-	  if (result < 0)
-	  {
-	  systemError(this, storedProcErrorLookup("convertQuote", result),
-		__FILE__, __LINE__);
-	// not fatal
-	  }
-	  omfgThis->sQuotesUpdated(-1);
-	}
-	else if (q.lastError().type() != QSqlError::None)
-	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	  // not fatal
-	}
-  }
-/*  -- CRM handled at database level now.
-  if (_crmacctid > 0)  
-  {
-    q.prepare("UPDATE crmacct SET crmacct_cust_id = :cust_id "
-	      "WHERE (crmacct_id=:crmacct_id);");
-    q.bindValue(":cust_id",	_custid);
-    q.bindValue(":crmacct_id",	_crmacctid);
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
-    {
-	rollback.exec();
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-    }
-  }
-  else
-  {
-    q.prepare( "SELECT createCrmAcct(:number, :name, :active, :type, :cust_id, "
-	       "      NULL, NULL, NULL, NULL, NULL, :billCntct, :corrCntct) AS crmacctid;");
-    q.bindValue(":number",	_number->text().stripWhiteSpace());
-    q.bindValue(":name",	_name->text().stripWhiteSpace());
-    q.bindValue(":active",	QVariant(_active->isChecked(), 0));
-    q.bindValue(":type",	"O");	// TODO - when will this be "I"?
-    q.bindValue(":cust_id",	_custid);
-    if (_billCntct->id() > 0)
-      q.bindValue(":billCntct",	_billCntct->id());
-    if (_corrCntct->id() > 0)
-      q.bindValue(":corrCntct",	_corrCntct->id());
     q.exec();
     if (q.first())
     {
-      _crmacctid = q.value("crmacctid").toInt();
-      if (_crmacctid <= 0)
+      int result = q.value("result").toInt();
+      if (result < 0)
       {
-	rollback.exec();
-	QMessageBox::critical(this, tr("Error Creating a CRM Account"),
-			    storedProcErrorLookup("createCrmAcct", _crmacctid));
-	return;
+        systemError(this, storedProcErrorLookup("convertQuote", result),
+                    __FILE__, __LINE__);
+        // not fatal
       }
+      omfgThis->sQuotesUpdated(-1);
     }
     else if (q.lastError().type() != QSqlError::None)
     {
-	rollback.exec();
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-    }
-
-    // need to save contacts again with updated CRM Account
-    if (saveContact(_billCntct) < 0)
-    {
-      rollback.exec();
-      _billCntct->setFocus();
-      return;
-    }
-
-    if (saveContact(_corrCntct) < 0)
-    {
-      rollback.exec();
-      _corrCntct->setFocus();
-      return;
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      // not fatal
     }
   }
- */
- 
+
   q.exec("COMMIT;");
   omfgThis->sCustomersUpdated(_custid, TRUE);
   close();
@@ -756,75 +693,77 @@ void customer::sCheck()
   _number->setText(_number->text().stripWhiteSpace().upper());
 
   q.prepare( "SELECT cust_id, 1 AS type "
-               "FROM custinfo "
-               "WHERE (cust_number=:cust_number) "
-			   "UNION "
-			   "SELECT prospect_id, 2 AS type "
-			   "FROM prospect "
-			   "WHERE (prospect_number=:cust_number) "
-			   "UNION "
-			   "SELECT crmacct_id, 3 AS type "
-			   "FROM crmacct "
-			   "WHERE (crmacct_number=:cust_number) "
-			   "ORDER BY type; ");
+             "FROM custinfo "
+             "WHERE (cust_number=:cust_number) "
+             "UNION "
+             "SELECT prospect_id, 2 AS type "
+             "FROM prospect "
+             "WHERE (prospect_number=:cust_number) "
+             "UNION "
+             "SELECT crmacct_id, 3 AS type "
+             "FROM crmacct "
+             "WHERE (crmacct_number=:cust_number) "
+             "ORDER BY type; ");
   q.bindValue(":cust_number", _number->text());
   q.exec();
   if (q.first())
   {
     if ((q.value("type").toInt() == 1) && (_notice))
-	{
-	  if (QMessageBox::question(this, tr("Customer Exists"),
-		  tr("<p>This number is currently "
-		       "used by an existing Customer. "
-		       "Do you want to edit "
-		       "that Customer?"),
-		  QMessageBox::Yes,
-		  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-	  {
-                _number->clear();
-		_number->setFocus();
-		return;
-	  }
-	  else
-	  {
-		_custid = q.value("cust_id").toInt();
-		_mode = cEdit;
-		populate();
-		_name->setFocus();
-	  }
-	}
-	else if ((q.value("type").toInt() == 2) && (_notice))
-	{
-	  if (QMessageBox::question(this, tr("Convert"),
-		  tr("<p>This number is currently "
-		       "assigned to a Prospect. "
-		       "Do you want to convert the "
-		       "Prospect to a Customer?"),
-		  QMessageBox::Yes,
-		  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-	  {
-	    _number->setFocus();
-		return;
-	  }
-	  else
-		sLoadProspect(q.value("cust_id").toInt());
-	}
-	else if ((q.value("type").toInt() == 3) && (_notice))
-	{
-	  if (QMessageBox::question(this, tr("Convert"),
-		  tr("<p>This number is currently "
-			 "assigned to CRM Account. "
-		     "Do you want to convert the "
-		       "CRM Account to a Customer?"),
-		  QMessageBox::Yes,
-		  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-	  {
-		_number->setFocus();
-		return;
-	  }
-	  else
-	    sLoadCrmAcct(q.value("cust_id").toInt());
-	}
+    {
+      if (QMessageBox::question(this, tr("Customer Exists"),
+              tr("<p>This number is currently "
+                   "used by an existing Customer. "
+                   "Do you want to edit "
+                   "that Customer?"),
+              QMessageBox::Yes,
+              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      {
+        _number->clear();
+        _number->setFocus();
+        return;
+      }
+      else
+      {
+        _custid = q.value("cust_id").toInt();
+        _mode = cEdit;
+        populate();
+        _name->setFocus();
+      }
+    }
+    else if ((q.value("type").toInt() == 2) && (_notice))
+    {
+      if (QMessageBox::question(this, tr("Convert"),
+              tr("<p>This number is currently "
+                   "assigned to a Prospect. "
+                   "Do you want to convert the "
+                   "Prospect to a Customer?"),
+              QMessageBox::Yes,
+              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      {
+        _number->clear();
+        _number->setFocus();
+        return;
+      }
+      else
+        sLoadProspect(q.value("cust_id").toInt());
+    }
+    else if ((q.value("type").toInt() == 3) && (_notice))
+    {
+      if (QMessageBox::question(this, tr("Convert"),
+              tr("<p>This number is currently "
+                     "assigned to CRM Account. "
+                 "Do you want to convert the "
+                   "CRM Account to a Customer?"),
+              QMessageBox::Yes,
+              QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      {
+        _number->clear();
+        _number->setFocus();
+        return;
+      }
+      else
+        sLoadCrmAcct(q.value("cust_id").toInt());
+    }
   }
 }
 
@@ -1024,7 +963,7 @@ void customer::sViewTaxreg()
 void customer::sDeleteTaxreg()
 {
   q.prepare("DELETE FROM taxreg "
-	    "WHERE (taxreg_id=:taxreg_id);");
+            "WHERE (taxreg_id=:taxreg_id);");
   q.bindValue(":taxreg_id", _taxreg->id());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -1039,11 +978,11 @@ void customer::sFillTaxregList()
 {
   XSqlQuery taxreg;
   taxreg.prepare("SELECT taxreg_id, taxreg_taxauth_id, "
-		 "       taxauth_code, taxreg_number "
-		 "FROM taxreg, taxauth "
-		 "WHERE ((taxreg_rel_type='C') "
-		 "  AND  (taxreg_rel_id=:cust_id) "
-		 "  AND  (taxreg_taxauth_id=taxauth_id));");
+                 "       taxauth_code, taxreg_number "
+                 "FROM taxreg, taxauth "
+                 "WHERE ((taxreg_rel_type='C') "
+                 "  AND  (taxreg_rel_id=:cust_id) "
+                 "  AND  (taxreg_taxauth_id=taxauth_id));");
   taxreg.bindValue(":cust_id", _custid);
   taxreg.exec();
   _taxreg->clear();
@@ -1076,10 +1015,10 @@ void customer::populate()
   cust.prepare( "SELECT custinfo.*, "
                 "       formatScrap(cust_commprcnt) AS commprcnt,"
                 "       formatScrap(cust_discntprcnt) AS discountpercent,"
-		"       crmacct_id "
+                "       crmacct_id "
                 "FROM custinfo, crmacct "
                 "WHERE ((cust_id=:cust_id) "
-		"  AND  (cust_id=crmacct_cust_id));" );
+                "  AND  (cust_id=crmacct_cust_id));" );
   cust.bindValue(":cust_id", _custid);
   cust.exec();
   if (cust.first())
@@ -1092,8 +1031,8 @@ void customer::populate()
     _corrCntct->setId(cust.value("cust_corrcntct_id").toInt());
     _billCntct->setId(cust.value("cust_cntct_id").toInt());
     _creditLimit->set(cust.value("cust_creditlmt").toDouble(),
-		      cust.value("cust_creditlmt_curr_id").toInt(),
-		      QDate::currentDate());
+                      cust.value("cust_creditlmt_curr_id").toInt(),
+                      QDate::currentDate());
     _creditRating->setText(cust.value("cust_creditrating"));
     _autoUpdateStatus->setChecked(cust.value("cust_autoupdatestatus").toBool());
     _autoHoldOrders->setChecked(cust.value("cust_autoholdorders").toBool());
@@ -1258,15 +1197,15 @@ void customer::sFillCcardList()
   
   q.prepare( "SELECT ccard_id,"
              "       ccard_seq,"
-                 "       CASE WHEN (ccard_type='M') THEN :masterCard"
-                 "            WHEN (ccard_type='V') THEN :visa"
-                 "            WHEN (ccard_type='A') THEN :americanExpress"
-                 "            WHEN (ccard_type='D') THEN :discover"
-                 "            ELSE :other"
-                 "       END AS creditcard," 
-//	    "       formatCCnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS CreditCard,"
-                 "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
-	    "       formatBoolYN(ccard_active) "
+             "       CASE WHEN (ccard_type='M') THEN :masterCard"
+             "            WHEN (ccard_type='V') THEN :visa"
+             "            WHEN (ccard_type='A') THEN :americanExpress"
+             "            WHEN (ccard_type='D') THEN :discover"
+             "            ELSE :other"
+             "       END AS creditcard," 
+//             "       formatCCnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS CreditCard,"
+             "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
+             "       formatBoolYN(ccard_active) "
              "FROM ccard "
              "WHERE (ccard_cust_id=:cust_id) "
              "ORDER BY ccard_seq;" );
@@ -1284,37 +1223,37 @@ void customer::sFillCcardList()
 
 void customer::sLoadProspect(int prospectId)
 {
-	_notice = FALSE;
-    _custid = prospectId;
-    q.prepare("SELECT * FROM prospect WHERE (prospect_id=:prospect_id);");
-	q.bindValue(":prospect_id", prospectId);
-	q.exec();
-	if (q.first())
-	{
-	  _number->setText(q.value("prospect_number").toString());
-	  _name->setText(q.value("prospect_name").toString());
-	  _active->setChecked(q.value("prospect_active").toBool());
-	  _taxauth->setId(q.value("prospect_taxauth_id").toInt());
-	  _notes->setText(q.value("prospect_comments").toString());
-	  _billCntct->setId(q.value("prospect_cntct_id").toInt());
-    }
-	_name->setFocus();
+  _notice = FALSE;
+  _custid = prospectId;
+  q.prepare("SELECT * FROM prospect WHERE (prospect_id=:prospect_id);");
+  q.bindValue(":prospect_id", prospectId);
+  q.exec();
+  if (q.first())
+  {
+    _number->setText(q.value("prospect_number").toString());
+    _name->setText(q.value("prospect_name").toString());
+    _active->setChecked(q.value("prospect_active").toBool());
+    _taxauth->setId(q.value("prospect_taxauth_id").toInt());
+    _notes->setText(q.value("prospect_comments").toString());
+    _billCntct->setId(q.value("prospect_cntct_id").toInt());
+  }
+  _name->setFocus();
 }
 
 void customer::sLoadCrmAcct(int crmacctId )
 {
-	_notice = FALSE;
-	_crmacctid = crmacctId;
-    q.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
-	q.bindValue(":crmacct_id", crmacctId);
-	q.exec();
-	if (q.first())
-	{
-	  _number->setText(q.value("crmacct_number").toString());
-	  _name->setText(q.value("crmacct_name").toString());
-	  _active->setChecked(q.value("crmacct_active").toBool());
-	}
-	_name->setFocus();
+  _notice = FALSE;
+  _crmacctid = crmacctId;
+  q.prepare("SELECT * FROM crmacct WHERE (crmacct_id=:crmacct_id);");
+  q.bindValue(":crmacct_id", crmacctId);
+  q.exec();
+  if (q.first())
+  {
+    _number->setText(q.value("crmacct_number").toString());
+    _name->setText(q.value("crmacct_name").toString());
+    _active->setChecked(q.value("crmacct_active").toBool());
+  }
+  _name->setFocus();
 }
 
 void customer::sNumberEdited()
