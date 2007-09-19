@@ -989,9 +989,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ProjectCluster</class>
-   <extends>QWidget</extends>
-   <header>projectcluster.h</header>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>ExpenseCluster</class>
@@ -999,14 +999,19 @@
    <header>expensecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <class>ProjectCluster</class>
+   <extends>QWidget</extends>
+   <header>projectcluster.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
@@ -1014,19 +1019,14 @@
    <header>comments.h</header>
   </customwidget>
   <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1062,6 +1062,86 @@
  </includes>
  <resources/>
  <connections>
+  <connection>
+   <sender>_item</sender>
+   <signal>privateIdChanged(int)</signal>
+   <receiver>_warehouse</receiver>
+   <slot>findItemsites(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>51</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>466</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_inventoryItem</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_warehouse</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>39</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>466</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_inventoryItem</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_warehouseLit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>39</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>369</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_inventoryItem</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_item</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>39</x>
+     <y>70</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>51</x>
+     <y>95</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>warehouseIdChanged(int)</signal>
+   <receiver>_warehouse</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>51</x>
+     <y>95</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>466</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
   <connection>
    <sender>_unitPrice</sender>
    <signal>effectiveChanged(QDate)</signal>
