@@ -373,7 +373,7 @@ Posible Causa: No ha sido seleccionado ningun To-Do Item.</translation>
     </message>
     <message>
         <source>The selected Customer cannot be deleted as there are still Ship-Tos assigned to it. You must delete all of the selected Customer&apos;s Ship-Tos before you may delete it.</source>
-        <translation type="unfinished">El Cliente seleccionado no puede ser eliminado porque </translation>
+        <translation>El Cliente seleccionado no puede ser eliminado porque hay Envíos asignados a éste.  Debe eliminar todos los Envíos del Cliente antes de eliminarlos.</translation>
     </message>
     <message>
         <source>The selected Customer cannot be deleted as there has been Sales History recorded for this Customer. You may Edit the selected Customer and set its status to inactive.</source>
@@ -865,7 +865,7 @@ Posible Causa: No ha sido seleccionado ningun To-Do Item.</translation>
     </message>
     <message>
         <source>Work Order %1 is closed.</source>
-        <translation type="unfinished">No se pudo dar un ejemplo </translation>
+        <translation>Orden de Trabajo %1 está cerrada.</translation>
     </message>
 </context>
 <context>
@@ -2033,7 +2033,7 @@ mostrar bases de datos en servidor sin antes conectarse a la base de datos.</tra
     </message>
     <message>
         <source>Scanned Count Tag %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>Etiqueta de Conteo escaneada %1.</translation>
     </message>
     <message>
         <source>Scanned Warehouse %1, Location %2.</source>
@@ -2336,7 +2336,7 @@ Contacte inmediatamente al Administrador del Sistema.</translation>
     </message>
     <message>
         <source>Initializing the G/L Module</source>
-        <translation type="unfinished">Inicializando </translation>
+        <translation>Inicializando el Módulo de C/G </translation>
     </message>
     <message>
         <source>Initializing the System Module</source>
@@ -2611,19 +2611,19 @@ Seleccionado:</translation>
     <name>QObject</name>
     <message>
         <source>Batch Manager for Windows</source>
-        <translation type="unfinished"></translation>
+        <translation>Manejador de lotes para Windows</translation>
     </message>
     <message>
         <source>Batch Manager for Linux</source>
-        <translation type="unfinished"></translation>
+        <translation>Manejador de lotes para Linux</translation>
     </message>
     <message>
         <source>Batch Manager for OS X</source>
-        <translation type="unfinished"></translation>
+        <translation>Manejador de lotes para OS X</translation>
     </message>
     <message>
         <source>Batch Manger</source>
-        <translation type="unfinished"></translation>
+        <translation>Manejador de lotes</translation>
     </message>
     <message>
         <source>Copyright (c) 1999-2006, OpenMFG, LLC.</source>
@@ -2645,20 +2645,21 @@ Usuario = %3
     </message>
     <message>
         <source>Cannot Load Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede Cargar el Diccionario</translation>
     </message>
     <message>
         <source>The specified Translation Dictionary, &quot;../dict/</source>
-        <translation type="unfinished"></translation>
+        <translation>El Diccionario de Traducción especificado, &quot;../dict/</translation>
     </message>
     <message>
         <source>.qm&quot; cannot be loaded.
 Reverting to the default dictionary instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>.qm&quot; no puede cargarse.
+Revirtiendo al diccionario por omisión.</translation>
     </message>
     <message>
         <source>Version Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Versión Incorrecta</translation>
     </message>
     <message>
         <source>The version of the database you are connecting to is not the version
@@ -2669,36 +2670,43 @@ If you continue some or all functionality may not work properly
 or at all. You may also cause other problems on the database.
 
 Do you want to continue anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>La versíon de la base de datos a que se está conectando no es la versión
+que el cliente fue diseñado para trabajar con ella.
+
+Este cliente fue deseñado para trabajar con la versión de base de datros %1.
+Si continúa, alguna o ninguna funcionalidad podrá trabajar apropiadamente
+o no trabajará.  También podrá causar otros problemas en la base de datos.
+</translation>
     </message>
     <message>
         <source>Loading Database Metrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando los Métricos de la Base de Datos</translation>
     </message>
     <message>
         <source>Loading User Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando Preferencias de Usuarios</translation>
     </message>
     <message>
         <source>Loading User Privileges</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando Privilegios de Usuario</translation>
     </message>
     <message>
         <source>Loading Translation Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando Diccionario de Traducción</translation>
     </message>
     <message>
         <source>The specified Translation Dictionary, &quot;dict/%1.qm&quot; cannot be loaded.
 Reverting to the default dictionary instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>El Diccionario de Traducción especificado, &quot;dict/%1.qm&quot; no puede cargarse.
+Revirtiendo al diccionario por omisión.</translation>
     </message>
     <message>
         <source>Loading Database Encryption Metrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Cargando los Métricos de Encriptación de la Base de Datos</translation>
     </message>
     <message>
         <source>Additional Configuration Required</source>
-        <translation type="unfinished">Configuracion Adicional Requerida</translation>
+        <translation>Se requiere Configuración adicional</translation>
     </message>
     <message>
         <source>Your system is configured to use multiple Currencies, but the
@@ -2706,27 +2714,27 @@ Currency Gain/Loss Account and/or the G/L Series Discrepancy Account
 does not appear to be configured correctly. You should define these
 Accounts in &apos;System | Configure Modules | Configure G/L...&apos; before
 posting any transactions in the system.</source>
-        <translation type="unfinished">Su sistema esta configurado para manejar multiples monedas, pero la
-Cuenta de Ganancia/Perdida correspondiente del L/M parece
+        <translation type="unfinished">Su sistema está configurado para manejar monedas múltiples, pero la
+Cuenta de Ganancia/Pérdida correspondiente del L/M parece
 no estar configurada correctamente. Debe de definir estas Cuentas
 antes de registrar esta transcaccion.</translation>
     </message>
     <message>
         <source>System Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Mensaje del Sistema</translation>
     </message>
     <message>
         <source>
 Report this to your Systems Administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Informe esto a su Administrador de Sistemas.</translation>
     </message>
     <message>
         <source>System Message (%1 at %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Mensaje del Sistema (%1 al %2)</translation>
     </message>
     <message>
         <source>Ready...</source>
-        <translation type="unfinished"></translation>
+        <translation>Listo...</translation>
     </message>
     <message>
         <source>Cannot ARDIST File</source>
@@ -2751,7 +2759,7 @@ sure to export all new Customers from OpenMFG to RealWorld.
     </message>
     <message>
         <source>Cannot Open AROPEN File</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede Abrir el fichero AROPEN</translation>
     </message>
     <message>
         <source>The AROPEN Export file cannot be opened.  Please contact your Systems Adminstrator
@@ -2772,7 +2780,7 @@ sure to export all new Vendors from OpenMFG to RealWorld.
     </message>
     <message>
         <source>Cannot Open APOPEN File</source>
-        <translation type="unfinished"></translation>
+        <translation>No se puede Abrir el fichero APOPEN</translation>
     </message>
     <message>
         <source>The APOPEN Export file cannot be opened.  Please contact your Systems Adminstrator
@@ -2782,79 +2790,82 @@ A/P Open Items were NOT exported.</source>
     </message>
     <message>
         <source>Snooze</source>
-        <translation type="unfinished"></translation>
+        <translation>Siestecita</translation>
     </message>
     <message>
         <source>No Currency Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>No hay tasa de intercambio de moneda</translation>
     </message>
     <message>
         <source>This document uses a currency which has no valid Exchange Rate.
 Please review your Exchange Rates to correct the problem.
 (%1 on %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>Este documento utiliza una moneda que no tiene una Tasa de Intercambio válida.
+Por favor, revise sus Tasas de Intercambio para corregir el problema.
+(%1 en %2)</translation>
     </message>
     <message>
         <source>No Base Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguna Moneda Base</translation>
     </message>
     <message>
         <source>No base currency has been defined.
 Call your system administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ninguna moneda base se ha definido.
+Llame a su administrador de sistema.</translation>
     </message>
     <message>
         <source>All</source>
-        <translation type="unfinished">Todas</translation>
+        <translation>Todo</translation>
     </message>
     <message>
         <source>All Class Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Códigos e Clase</translation>
     </message>
     <message>
         <source>All Planner Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Códigos de Planificación</translation>
     </message>
     <message>
         <source>All Product Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas las Categorías de Producto</translation>
     </message>
     <message>
         <source>All Item Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Grupos de artículos</translation>
     </message>
     <message>
         <source>All Cost Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas las Categorías de Costos</translation>
     </message>
     <message>
         <source>All Customer Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Tipos de Clientes</translation>
     </message>
     <message>
         <source>All Customer Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Grupos de Clientes</translation>
     </message>
     <message>
         <source>All Foreign Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas las Monedas Extrangeras</translation>
     </message>
     <message>
         <source>All Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Todas las Monedas</translation>
     </message>
     <message>
         <source>All Work Centers</source>
-        <translation type="unfinished"></translation>
+        <translation>Todos los Centros de Trabajo</translation>
     </message>
     <message>
         <source>All Users</source>
-        <translation type="unfinished">Todos los Ususarios</translation>
+        <translation>Todos los Usuarios</translation>
     </message>
     <message>
         <source>Copyright (c) 1999-2007, OpenMFG, LLC.</source>
-        <translation type="unfinished">
-Copyright (c) 1999-2006, OpenMFG, LLC. {1999-2007,?}</translation>
+        <translation>
+Derechos de autor (c) 1999-2007, OpenMFG, LLC. </translation>
     </message>
 </context>
 <context>
@@ -2872,11 +2883,11 @@ Copyright (c) 1999-2006, OpenMFG, LLC. {1999-2007,?}</translation>
     <name>SandboxWindow</name>
     <message>
         <source>Sandbox Window</source>
-        <translation type="unfinished"></translation>
+        <translation>Ventana de Caja de Arena</translation>
     </message>
     <message>
         <source>XLineEdit</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <source>DLineEdit</source>
