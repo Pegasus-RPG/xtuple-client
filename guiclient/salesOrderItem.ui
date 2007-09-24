@@ -388,7 +388,7 @@
            </size>
           </property>
           <property name="text" >
-           <string>Qty. Ordered:</string>
+           <string>&amp;Qty. Ordered:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -429,7 +429,7 @@
         <item row="1" column="0" >
          <widget class="QLabel" name="_warehouseLit" >
           <property name="text" >
-           <string>Sold from Whs.:</string>
+           <string>Sold from &amp;Whs.:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -586,7 +586,7 @@
         <item row="0" column="0" >
          <widget class="QLabel" name="_scheduledDateLit" >
           <property name="text" >
-           <string>Scheduled Date:</string>
+           <string>Sc&amp;heduled Date:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -599,7 +599,7 @@
         <item row="1" column="0" >
          <widget class="QLabel" name="_promisedDateLit" >
           <property name="text" >
-           <string>Promised Date:</string>
+           <string>&amp;Promised Date:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1377,6 +1377,41 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>ItemLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>itemlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>GLCluster</class>
+   <extends>QWidget</extends>
+   <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
+  </customwidget>
+  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
@@ -1397,44 +1432,9 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>ItemLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>itemlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>CurrDisplay</class>
    <extends>QWidget</extends>
    <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Comments</class>
-   <extends>QWidget</extends>
-   <header>comments.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>GLCluster</class>
-   <extends>QWidget</extends>
-   <header>glcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -1718,6 +1718,70 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_overridePoPrice</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>534</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>609</x>
+     <y>529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>idChanged(int)</signal>
+   <receiver>_overridePoPrice</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>534</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>609</x>
+     <y>529</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_warehouse</sender>
+   <signal>newID(int)</signal>
+   <receiver>_supplyWarehouse</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>229</x>
+     <y>145</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>609</x>
+     <y>500</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_netUnitPrice</sender>
+   <signal>effectiveChanged(QDate)</signal>
+   <receiver>_tax</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>534</x>
+     <y>141</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>497</x>
+     <y>313</y>
     </hint>
    </hints>
   </connection>
