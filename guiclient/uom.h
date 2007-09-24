@@ -59,7 +59,7 @@
 #define UOM_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_uom.h"
 
@@ -72,8 +72,13 @@ public:
     ~uom();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void populate();
+    virtual void sNew();
+    virtual void sEdit();
+    virtual void sDelete();
+    virtual void sSelected();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
@@ -85,8 +90,6 @@ protected slots:
 private:
     int _mode;
     int _uomid;
-
-    void init();
 
 };
 

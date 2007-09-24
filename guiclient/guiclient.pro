@@ -300,7 +300,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                unpostedCreditMemos.ui                                                                 \
 	       unpostedGLTransactions.ui unpostedInvoices.ui                                          \
 	       unpostedPoReceipts.ui unpostedGlSeries.ui                                              \
-               uom.ui uoms.ui                                                                         \
+               uom.ui uoms.ui uomConv.ui                                                              \
                updateABCClass.ui updateActualCostsByClassCode.ui updateActualCostsByItem.ui           \
                updateCreditStatusByCustomer.ui updateCycleCountFrequency.ui                           \
                updateItemSiteLeadTimes.ui updateListPricesByProductCategory.ui                        \
@@ -602,7 +602,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                unpostedCreditMemos.h                                                                  \
 	       unpostedGLTransactions.h unpostedInvoices.h                                            \
 	       unpostedPoReceipts.h unpostedGlSeries.h                                                \
-               uom.h uoms.h                                                                           \
+               uom.h uoms.h uomConv.h                                                                 \
                updateABCClass.h updateActualCostsByClassCode.h updateActualCostsByItem.h              \
                updateCreditStatusByCustomer.h updateCycleCountFrequency.h                             \
                updateItemSiteLeadTimes.h updateListPricesByProductCategory.h                          \
@@ -905,7 +905,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                unpostedCreditMemos.cpp                                                                \
 	       unpostedGLTransactions.cpp unpostedInvoices.cpp                                        \
 	       unpostedPoReceipts.cpp unpostedGlSeries.cpp                                            \
-               uom.cpp uoms.cpp                                                                       \
+               uom.cpp uoms.cpp uomConv.cpp                                                           \
                updateABCClass.cpp updateActualCostsByClassCode.cpp updateActualCostsByItem.cpp        \
                updateCreditStatusByCustomer.cpp updateCycleCountFrequency.cpp                         \
                updateItemSiteLeadTimes.cpp updateListPricesByProductCategory.cpp                      \

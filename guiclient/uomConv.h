@@ -55,32 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef UOMS_H
-#define UOMS_H
+#ifndef UOMCONV_H
+#define UOMCONV_H
 
 #include "OpenMFGGUIClient.h"
-#include <qmainwindow.h>
-#include "ui_uoms.h"
+#include <QDialog>
+#include <parameter.h>
 
-class uoms : public QMainWindow, public Ui::uoms
+#include "ui_uomConv.h"
+
+class uomConv : public QDialog, public Ui::uomConv
 {
     Q_OBJECT
 
 public:
-    uoms(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~uoms();
+    uomConv(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~uomConv();
 
 public slots:
-    virtual void sFillList();
-    virtual void sNew();
-    virtual void sEdit();
-    virtual void sView();
-    virtual void sDelete();
-    virtual void sPrint();
+    virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void populate();
 
 protected slots:
     virtual void languageChange();
 
+    virtual void sSave();
+    virtual void sCheck();
+
+private:
+    int _uomconvid;
+    int _mode;
+
 };
 
-#endif // UOMS_H
+#endif // UOMCONV_H

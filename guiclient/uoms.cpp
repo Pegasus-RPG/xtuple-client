@@ -60,8 +60,10 @@
 #include <QVariant>
 #include <QStatusBar>
 #include <QMessageBox>
+#include <QSqlError>
 #include <parameter.h>
 #include <openreports.h>
+#include "storedProcErrorLookup.h"
 #include "uom.h"
 
 /*
@@ -72,46 +74,19 @@
 uoms::uoms(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  (void)statusBar();
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_uoms, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_uoms, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_uoms, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-uoms::~uoms()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void uoms::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void uoms::init()
-{
-  statusBar()->hide();
-  
   if (_privleges->check("MaintainUOMs"))
   {
     connect(_uoms, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -130,11 +105,28 @@ void uoms::init()
   sFillList();
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+uoms::~uoms()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void uoms::languageChange()
+{
+  retranslateUi(this);
+}
+
 void uoms::sFillList()
 {
   _uoms->populate( "SELECT uom_id, uom_name, uom_descrip "
-                   "FROM uom "
-                   "ORDER BY uom_name;"  );
+                   "  FROM uom "
+                   " ORDER BY uom_name;"  );
 }
 
 void uoms::sNew()
@@ -153,7 +145,7 @@ void uoms::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("classcode_id", _uoms->id());
+  params.append("uom_id", _uoms->id());
 
   uom newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -166,7 +158,7 @@ void uoms::sView()
 {
   ParameterList params;
   params.append("mode", "view");
-  params.append("classcode_id", _uoms->id());
+  params.append("uom_id", _uoms->id());
 
   uom newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -175,16 +167,25 @@ void uoms::sView()
 
 void uoms::sDelete()
 {
-  q.prepare( "DELETE FROM uom "
-             "WHERE (uom_id=:uom_id);" );
+  q.prepare( "SELECT deleteUOM(:uom_id) AS result;" );
   q.bindValue(":uom_id", _uoms->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteUOM", result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
-}
-
-void uoms::sPopulateMenu(QMenu *)
-{
 }
 
 void uoms::sPrint()

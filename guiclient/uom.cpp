@@ -57,8 +57,12 @@
 
 #include "uom.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
+#include <parameter.h>
+#include "storedProcErrorLookup.h"
+#include "uomConv.h"
 
 /*
  *  Constructs a uom as a child of 'parent', with the
@@ -70,14 +74,21 @@
 uom::uom(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_uomconv, SIGNAL(itemSelectionChanged()), this, SLOT(sSelected()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_name, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  _uomconv->addColumn(tr("UOM To"), _itemColumn, Qt::AlignLeft);
+  _uomconv->addColumn(tr("Ratio"),  -1,         Qt::AlignRight);
+  _uomconv->addColumn(tr("Fractional"), _ynColumn, Qt::AlignCenter);
+  _uomconv->addColumn(tr("Inverse"), _ynColumn, Qt::AlignCenter);
 }
 
 /*
@@ -85,7 +96,7 @@ uom::uom(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
  */
 uom::~uom()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -94,20 +105,15 @@ uom::~uom()
  */
 void uom::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void uom::init()
-{
-}
-
-enum SetResponse uom::set(ParameterList &pParams)
+enum SetResponse uom::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
 
-  param = pParams.value("classcode_id", &valid);
+  param = pParams.value("uom_id", &valid);
   if (valid)
   {
     _uomid = param.toInt();
@@ -124,6 +130,7 @@ enum SetResponse uom::set(ParameterList &pParams)
       _mode = cEdit;
 
       _save->setFocus();
+      _new->setEnabled(true);
     }
     else if (param.toString() == "view")
     {
@@ -132,6 +139,7 @@ enum SetResponse uom::set(ParameterList &pParams)
       _name->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _close->setText(tr("&Close"));
+      _edit->setText(tr("&View"));
       _save->hide();
 
       _close->setFocus();
@@ -184,7 +192,7 @@ void uom::sSave()
 
 void uom::sCheck()
 {
-  _name->setText(_name->text().stripWhiteSpace());
+  _name->setText(_name->text().stripWhiteSpace().toUpper());
   if ( (_mode == cNew) && (_name->text().length()) )
   {
     q.prepare( "SELECT uom_id "
@@ -206,14 +214,103 @@ void uom::sCheck()
 void uom::populate()
 {
   q.prepare( "SELECT uom_name, uom_descrip "
-             "FROM uom "
-             "WHERE (uom_id=:uom_id);" );
+             "  FROM uom "
+             " WHERE(uom_id=:uom_id);" );
   q.bindValue(":uom_id", _uomid);
   q.exec();
   if (q.first())
   {
     _name->setText(q.value("uom_name").toString());
     _description->setText(q.value("uom_descrip").toString());
+
+    sFillList();
   }
+}
+
+void uom::sFillList()
+{
+  q.prepare("SELECT uomconv_id, 0 AS uomconv_inverse,"
+            "       uomconv_to, uomconv_ratio,"
+            "       formatBoolYN(uomconv_fractional) AS f_fractional,"
+            "       formatBoolYN(false) AS f_inverse"
+            "  FROM uomconv"
+            " WHERE(uomconv_from=:uom_name)"
+            " UNION "
+            "SELECT uomconv_id, 1 AS uomconv_inverse,"
+            "       uomconv_from AS uomconv_to,"
+            "       CAST((1.0/uomconv_ratio) AS numeric(20,10)) AS uomconv_ratio,"
+            "       formatBoolYN(uomconv_fractional) AS f_fractional,"
+            "       formatBoolYN(true) AS f_inverse"
+            "  FROM uomconv"
+            " WHERE(uomconv_to=:uom_name)"
+            " ORDER BY uomconv_to;");
+  q.bindValue(":uom_name", _name->text());
+  q.exec();
+  _uomconv->populate(q, TRUE);
+}
+
+void uom::sSelected()
+{
+  if(_uomconv->id() != -1)
+  {
+    _edit->setEnabled(true);
+    _edit->setText((_mode==cView?tr("&View"):tr("&Edit")));
+    _delete->setEnabled(!(_mode==cView));
+  }
+  else
+  {
+    _edit->setEnabled(false);
+    _delete->setEnabled(false);
+  }
+}
+
+void uom::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("uom_from", _name->text());
+
+  uomConv newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if(newdlg.exec() == QDialog::Accepted)
+    sFillList();
+}
+
+void uom::sEdit()
+{
+  ParameterList params;
+  if(_mode == cView)
+    params.append("mode", "view");
+  else
+    params.append("mode", "edit");
+  params.append("uomconv_id", _uomconv->id());
+
+  uomConv newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if(newdlg.exec() == QDialog::Accepted)
+    sFillList();
+}
+
+void uom::sDelete()
+{
+  q.prepare( "SELECT deleteUOMConv(:uom_id) AS result;" );
+  q.bindValue(":uomconv_id", _uomconv->id());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteUOMConv", result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
 }
 
