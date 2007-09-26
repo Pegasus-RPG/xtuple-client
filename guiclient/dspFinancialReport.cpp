@@ -452,7 +452,7 @@ void dspFinancialReport::sFillListStatement()
       }
       qc += " FROM financialreport(:flcolid,:periodid,:shownumbers,false)";
       if (!_showzeros->isChecked())
-        qc += " WHERE (" + qw + " OR (flstmtitem_type <> 'I'))";
+        qc += " WHERE (" + qw + " OR (flstmtitem_type <> '1'))";
       q.prepare(qc);
       q.bindValue(":flcolid", _flcol->id());
       q.bindValue(":periodid", periodsRef.at(0));
