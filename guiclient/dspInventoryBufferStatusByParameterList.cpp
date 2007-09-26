@@ -307,9 +307,9 @@ void dspInventoryBufferStatusByParameterList::sViewHistory()
   ParameterList params;
   params.append("itemsite_id", _availability->id());
 
-  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspInventoryHistoryByItem *newdlg = new dspInventoryHistoryByItem();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sViewAllocations()
@@ -319,9 +319,9 @@ void dspInventoryBufferStatusByParameterList::sViewAllocations()
   params.append("byLeadTime");
   params.append("run");
 
-  dspAllocations *newdlg = new dspAllocations(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspAllocations *newdlg = new dspAllocations();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sViewOrders()
@@ -332,9 +332,9 @@ void dspInventoryBufferStatusByParameterList::sViewOrders()
   params.append("run");
 
 
-  dspOrders *newdlg = new dspOrders(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspOrders *newdlg = new dspOrders();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sRunningAvailability()
@@ -343,9 +343,9 @@ void dspInventoryBufferStatusByParameterList::sRunningAvailability()
   params.append("itemsite_id", _availability->id());
   params.append("run");
 
-  dspRunningAvailability *newdlg = new dspRunningAvailability(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspRunningAvailability *newdlg = new dspRunningAvailability();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sCreateWO()
@@ -354,9 +354,9 @@ void dspInventoryBufferStatusByParameterList::sCreateWO()
   params.append("mode", "new");
   params.append("itemsite_id", _availability->id());
 
-  workOrder *newdlg = new workOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  workOrder *newdlg = new workOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sPostMiscProduction()
@@ -386,9 +386,9 @@ void dspInventoryBufferStatusByParameterList::sCreatePO()
   params.append("mode", "new");
   params.append("itemsite_id", _availability->id());
 
-  purchaseOrder *newdlg = new purchaseOrder(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  purchaseOrder *newdlg = new purchaseOrder();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sViewSubstituteAvailability()
@@ -398,9 +398,9 @@ void dspInventoryBufferStatusByParameterList::sViewSubstituteAvailability()
   params.append("run");
   params.append("byLeadTime", TRUE);
 
-  dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem(omfgThis->workspace(), "", Qt::WDestructiveClose);
+  dspSubstituteAvailabilityByItem *newdlg = new dspSubstituteAvailabilityByItem();
   newdlg->set(params);
-  newdlg->show();
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspInventoryBufferStatusByParameterList::sIssueCountTag()
