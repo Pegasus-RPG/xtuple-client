@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>771</width>
-    <height>711</height>
+    <width>720</width>
+    <height>600</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -34,7 +34,7 @@
          <number>0</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <item>
          <layout class="QGridLayout" >
@@ -420,11 +420,7 @@
                <number>2</number>
               </property>
               <item>
-               <widget class="XComboBox" name="_inventoryUOM" >
-                <property name="editable" >
-                 <bool>true</bool>
-                </property>
-               </widget>
+               <widget class="XComboBox" name="_inventoryUOM" />
               </item>
               <item>
                <widget class="QCheckBox" name="_pickListItem" >
@@ -474,248 +470,166 @@
            <number>0</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+           <widget class="QGroupBox" name="_sold" >
+            <property name="title" >
+             <string>Item is Sold</string>
             </property>
-            <property name="spacing" >
-             <number>5</number>
+            <property name="checkable" >
+             <bool>true</bool>
             </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_capacityUOMLit" >
-                  <property name="text" >
-                   <string>Capacity &amp;UOM:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy" >
-                   <cstring>_capacityUOM</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_altCapacityUOMLit" >
-                  <property name="text" >
-                   <string>Alt. Capacity UOM:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_shippingUOMLit" >
-                  <property name="text" >
-                   <string>Shipping UOM:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="XComboBox" name="_capacityUOM" >
-                  <property name="minimumSize" >
-                   <size>
-                    <width>120</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="editable" >
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XComboBox" name="_altCapacityUOM" >
-                  <property name="minimumSize" >
-                   <size>
-                    <width>120</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="editable" >
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XComboBox" name="_shippingUOM" >
-                  <property name="enabled" >
-                   <bool>true</bool>
-                  </property>
-                  <property name="minimumSize" >
-                   <size>
-                    <width>120</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="editable" >
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QLabel" name="_uomRatioLit" >
-                  <property name="text" >
-                   <string>Capacity/Inventory UOM Ratio:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                  <property name="buddy" >
-                   <cstring>_capacityUOMRatio</cstring>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_altUOMRatioLit" >
-                  <property name="text" >
-                   <string>Alt. Capacity/Inventory UOM Ratio:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="_shippingRatioLit" >
-                  <property name="text" >
-                   <string>Shipping/Inventory UOM Ratio:</string>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="XLineEdit" name="_capacityUOMRatio" >
-                  <property name="sizePolicy" >
-                   <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize" >
-                   <size>
-                    <width>80</width>
-                    <height>32767</height>
-                   </size>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XLineEdit" name="_altCapacityUOMRatio" >
-                  <property name="sizePolicy" >
-                   <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize" >
-                   <size>
-                    <width>80</width>
-                    <height>32767</height>
-                   </size>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight</set>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="XLineEdit" name="_shippingUOMRatio" >
-                  <property name="enabled" >
-                   <bool>true</bool>
-                  </property>
-                  <property name="sizePolicy" >
-                   <sizepolicy>
-                    <hsizetype>5</hsizetype>
-                    <vsizetype>0</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
-                  </property>
-                  <property name="maximumSize" >
-                   <size>
-                    <width>80</width>
-                    <height>32767</height>
-                   </size>
-                  </property>
-                  <property name="alignment" >
-                   <set>Qt::AlignRight</set>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </item>
-           </layout>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+            <layout class="QVBoxLayout" >
+             <property name="margin" >
+              <number>6</number>
+             </property>
+             <property name="spacing" >
+              <number>6</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="_prodcatLit" >
+                 <property name="text" >
+                  <string>Product C&amp;ategory:</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                 <property name="buddy" >
+                  <cstring>_prodcat</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="XComboBox" name="_prodcat" >
+                 <property name="sizePolicy" >
+                  <sizepolicy>
+                   <hsizetype>7</hsizetype>
+                   <vsizetype>0</vsizetype>
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="_exclusive" >
+                 <property name="text" >
+                  <string>Exclusive</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <layout class="QHBoxLayout" >
+               <property name="margin" >
+                <number>0</number>
+               </property>
+               <property name="spacing" >
+                <number>6</number>
+               </property>
+               <item>
+                <widget class="QLabel" name="_listPriceLit" >
+                 <property name="text" >
+                  <string>List Price:</string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="XLineEdit" name="_listprice" >
+                 <property name="sizePolicy" >
+                  <sizepolicy>
+                   <hsizetype>5</hsizetype>
+                   <vsizetype>0</vsizetype>
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>80</width>
+                   <height>32767</height>
+                  </size>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QLabel" name="_priceUOMLit" >
+                 <property name="text" >
+                  <string> Per </string>
+                 </property>
+                 <property name="alignment" >
+                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="XComboBox" name="_priceUOM" >
+                 <property name="minimumSize" >
+                  <size>
+                   <width>120</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QLabel" name="_upcCodeLit" >
+                 <property name="text" >
+                  <string>UPC Code:</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="XLineEdit" name="_upcCode" >
+                 <property name="sizePolicy" >
+                  <sizepolicy>
+                   <hsizetype>5</hsizetype>
+                   <vsizetype>0</vsizetype>
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="maximumSize" >
+                  <size>
+                   <width>120</width>
+                   <height>32767</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
+           </widget>
           </item>
           <item>
            <spacer>
@@ -727,502 +641,11 @@
             </property>
             <property name="sizeHint" >
              <size>
-              <width>0</width>
-              <height>16</height>
+              <width>20</width>
+              <height>20</height>
              </size>
             </property>
            </spacer>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QCheckBox" name="_sold" >
-              <property name="text" >
-               <string>Item is Sold</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QGroupBox" name="_soldGroup" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="title" >
-               <string/>
-              </property>
-              <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>5</number>
-               </property>
-               <property name="spacing" >
-                <number>2</number>
-               </property>
-               <item>
-                <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
-                 <property name="spacing" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
-                   <property name="spacing" >
-                    <number>5</number>
-                   </property>
-                   <item>
-                    <layout class="QHBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="_priceUOMLit" >
-                       <property name="text" >
-                        <string>Price UOM:</string>
-                       </property>
-                       <property name="alignment" >
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="XComboBox" name="_priceUOM" >
-                       <property name="minimumSize" >
-                        <size>
-                         <width>120</width>
-                         <height>0</height>
-                        </size>
-                       </property>
-                       <property name="editable" >
-                        <bool>true</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <layout class="QHBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="_priceRatioLit" >
-                       <property name="text" >
-                        <string>Inventory/Price UOM Ratio:</string>
-                       </property>
-                       <property name="alignment" >
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="XLineEdit" name="_priceUOMRatio" />
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <spacer>
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Expanding</enum>
-                   </property>
-                   <property name="sizeHint" >
-                    <size>
-                     <width>20</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                </layout>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
-                 <property name="spacing" >
-                  <number>5</number>
-                 </property>
-                 <item>
-                  <layout class="QVBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
-                   <property name="spacing" >
-                    <number>2</number>
-                   </property>
-                   <item>
-                    <layout class="QHBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="_prodcatLit" >
-                       <property name="text" >
-                        <string>Product C&amp;ategory:</string>
-                       </property>
-                       <property name="alignment" >
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                       </property>
-                       <property name="buddy" >
-                        <cstring>_prodcat</cstring>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="XComboBox" name="_prodcat" >
-                       <property name="sizePolicy" >
-                        <sizepolicy>
-                         <hsizetype>7</hsizetype>
-                         <vsizetype>0</vsizetype>
-                         <horstretch>0</horstretch>
-                         <verstretch>0</verstretch>
-                        </sizepolicy>
-                       </property>
-                       <property name="allowNull" >
-                        <bool>true</bool>
-                       </property>
-                       <property name="type" >
-                        <enum>XComboBox::ProductCategories</enum>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <layout class="QHBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>5</number>
-                     </property>
-                     <item>
-                      <layout class="QVBoxLayout" >
-                       <property name="margin" >
-                        <number>0</number>
-                       </property>
-                       <property name="spacing" >
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <layout class="QHBoxLayout" >
-                         <property name="margin" >
-                          <number>0</number>
-                         </property>
-                         <property name="spacing" >
-                          <number>5</number>
-                         </property>
-                         <item>
-                          <widget class="QLabel" name="_listPriceLit" >
-                           <property name="text" >
-                            <string>List Price:</string>
-                           </property>
-                           <property name="alignment" >
-                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="XLineEdit" name="_listprice" >
-                           <property name="sizePolicy" >
-                            <sizepolicy>
-                             <hsizetype>5</hsizetype>
-                             <vsizetype>0</vsizetype>
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="maximumSize" >
-                            <size>
-                             <width>80</width>
-                             <height>32767</height>
-                            </size>
-                           </property>
-                           <property name="alignment" >
-                            <set>Qt::AlignRight</set>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <layout class="QHBoxLayout" >
-                         <property name="margin" >
-                          <number>0</number>
-                         </property>
-                         <property name="spacing" >
-                          <number>5</number>
-                         </property>
-                         <item>
-                          <widget class="QLabel" name="_extPriceLit" >
-                           <property name="sizePolicy" >
-                            <sizepolicy>
-                             <hsizetype>0</hsizetype>
-                             <vsizetype>5</vsizetype>
-                             <horstretch>0</horstretch>
-                             <verstretch>0</verstretch>
-                            </sizepolicy>
-                           </property>
-                           <property name="text" >
-                            <string>Ext. Price:</string>
-                           </property>
-                           <property name="alignment" >
-                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <widget class="QLabel" name="_extPrice" >
-                           <property name="minimumSize" >
-                            <size>
-                             <width>80</width>
-                             <height>0</height>
-                            </size>
-                           </property>
-                           <property name="text" >
-                            <string/>
-                           </property>
-                           <property name="alignment" >
-                            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                           </property>
-                          </widget>
-                         </item>
-                        </layout>
-                       </item>
-                      </layout>
-                     </item>
-                     <item>
-                      <layout class="QVBoxLayout" >
-                       <property name="margin" >
-                        <number>0</number>
-                       </property>
-                       <property name="spacing" >
-                        <number>0</number>
-                       </property>
-                       <item>
-                        <layout class="QHBoxLayout" >
-                         <property name="margin" >
-                          <number>0</number>
-                         </property>
-                         <property name="spacing" >
-                          <number>5</number>
-                         </property>
-                         <item>
-                          <widget class="QLabel" name="_upcCodeLit" >
-                           <property name="text" >
-                            <string>UPC Code:</string>
-                           </property>
-                          </widget>
-                         </item>
-                         <item>
-                          <layout class="QHBoxLayout" >
-                           <property name="margin" >
-                            <number>0</number>
-                           </property>
-                           <property name="spacing" >
-                            <number>0</number>
-                           </property>
-                           <item>
-                            <widget class="XLineEdit" name="_upcCode" >
-                             <property name="sizePolicy" >
-                              <sizepolicy>
-                               <hsizetype>5</hsizetype>
-                               <vsizetype>0</vsizetype>
-                               <horstretch>0</horstretch>
-                               <verstretch>0</verstretch>
-                              </sizepolicy>
-                             </property>
-                             <property name="maximumSize" >
-                              <size>
-                               <width>120</width>
-                               <height>32767</height>
-                              </size>
-                             </property>
-                            </widget>
-                           </item>
-                           <item>
-                            <spacer>
-                             <property name="orientation" >
-                              <enum>Qt::Horizontal</enum>
-                             </property>
-                             <property name="sizeType" >
-                              <enum>QSizePolicy::MinimumExpanding</enum>
-                             </property>
-                             <property name="sizeHint" >
-                              <size>
-                               <width>0</width>
-                               <height>10</height>
-                              </size>
-                             </property>
-                            </spacer>
-                           </item>
-                          </layout>
-                         </item>
-                        </layout>
-                       </item>
-                       <item>
-                        <spacer>
-                         <property name="orientation" >
-                          <enum>Qt::Vertical</enum>
-                         </property>
-                         <property name="sizeType" >
-                          <enum>QSizePolicy::Expanding</enum>
-                         </property>
-                         <property name="sizeHint" >
-                          <size>
-                           <width>20</width>
-                           <height>0</height>
-                          </size>
-                         </property>
-                        </spacer>
-                       </item>
-                      </layout>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </item>
-                 <item>
-                  <layout class="QVBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
-                   <property name="spacing" >
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <layout class="QHBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QCheckBox" name="_exclusive" >
-                       <property name="text" >
-                        <string>Exclusive</string>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer>
-                       <property name="orientation" >
-                        <enum>Qt::Horizontal</enum>
-                       </property>
-                       <property name="sizeType" >
-                        <enum>QSizePolicy::Preferred</enum>
-                       </property>
-                       <property name="sizeHint" >
-                        <size>
-                         <width>20</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <spacer>
-                     <property name="orientation" >
-                      <enum>Qt::Vertical</enum>
-                     </property>
-                     <property name="sizeType" >
-                      <enum>QSizePolicy::Expanding</enum>
-                     </property>
-                     <property name="sizeHint" >
-                      <size>
-                       <width>20</width>
-                       <height>0</height>
-                      </size>
-                     </property>
-                    </spacer>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>0</width>
-                <height>16</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
           </item>
          </layout>
         </item>
@@ -1232,105 +655,75 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+           <widget class="QLabel" name="_prodWeightLit" >
+            <property name="text" >
+             <string>Product &amp;Weight:</string>
             </property>
-            <property name="spacing" >
-             <number>5</number>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_prodWeightLit" >
-                <property name="text" >
-                 <string>Product &amp;Weight:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="buddy" >
-                 <cstring>_prodWeight</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLineEdit" name="_prodWeight" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>0</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item>
-               <widget class="QLabel" name="_packWeightLit" >
-                <property name="text" >
-                 <string>Pac&amp;kaging Weight:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-                <property name="buddy" >
-                 <cstring>_packWeight</cstring>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="XLineEdit" name="_packWeight" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>0</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="maximumSize" >
-                 <size>
-                  <width>80</width>
-                  <height>32767</height>
-                 </size>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-           </layout>
+            <property name="buddy" >
+             <cstring>_prodWeight</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_prodWeight" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>80</width>
+              <height>32767</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight</set>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="_packWeightLit" >
+            <property name="text" >
+             <string>Pac&amp;kaging Weight:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+            <property name="buddy" >
+             <cstring>_packWeight</cstring>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XLineEdit" name="_packWeight" >
+            <property name="sizePolicy" >
+             <sizepolicy>
+              <hsizetype>5</hsizetype>
+              <vsizetype>0</vsizetype>
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>80</width>
+              <height>32767</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight</set>
+            </property>
+           </widget>
           </item>
           <item>
            <spacer>
@@ -1474,6 +867,14 @@
     </item>
     <item>
      <widget class="QTabWidget" name="_tab" >
+      <property name="sizePolicy" >
+       <sizepolicy>
+        <hsizetype>7</hsizetype>
+        <vsizetype>7</vsizetype>
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
       <property name="currentIndex" >
        <number>0</number>
       </property>
@@ -1483,10 +884,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="QTextEdit" name="_notes" />
@@ -1499,13 +900,83 @@
        </attribute>
        <layout class="QVBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="QTextEdit" name="_extDescription" />
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tabUOM" >
+       <attribute name="title" >
+        <string>UOM</string>
+       </attribute>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>6</number>
+        </property>
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="XTreeWidget" name="_uomconv" >
+          <property name="rootIsDecorated" >
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>6</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="_newUOM" >
+            <property name="text" >
+             <string>New</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_editUOM" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Edit</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_deleteUOM" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Delete</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
        </layout>
       </widget>
@@ -1515,7 +986,7 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -1529,7 +1000,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newCharacteristic" >
@@ -1593,10 +1064,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>0</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="XTreeWidget" name="_itemSite" />
@@ -1607,7 +1078,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newItemSite" >
@@ -1696,7 +1167,7 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>9</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
          <number>6</number>
@@ -1762,10 +1233,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>0</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="Comments" name="_comments" >
@@ -1785,10 +1256,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>7</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="XTreeWidget" name="_itemalias" />
@@ -1799,7 +1270,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newAlias" >
@@ -1854,10 +1325,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>7</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="XTreeWidget" name="_itemsub" />
@@ -1868,7 +1339,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newSubstitute" >
@@ -1923,10 +1394,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="XTreeWidget" name="_itemtrans" />
@@ -1937,7 +1408,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newTransform" >
@@ -1982,10 +1453,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>7</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="XTreeWidget" name="_itemimage" >
@@ -2017,7 +1488,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newImage" >
@@ -2092,10 +1563,10 @@
        </attribute>
        <layout class="QHBoxLayout" >
         <property name="margin" >
-         <number>0</number>
+         <number>6</number>
         </property>
         <property name="spacing" >
-         <number>5</number>
+         <number>6</number>
         </property>
         <item>
          <widget class="XTreeWidget" name="_file" />
@@ -2106,7 +1577,7 @@
            <number>0</number>
           </property>
           <property name="spacing" >
-           <number>0</number>
+           <number>6</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newFile" >
@@ -2211,11 +1682,6 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
@@ -2229,6 +1695,11 @@
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -2248,24 +1719,20 @@
   <tabstop>_fractional</tabstop>
   <tabstop>_maximumDesiredCost</tabstop>
   <tabstop>_planningType</tabstop>
-  <tabstop>_capacityUOM</tabstop>
-  <tabstop>_capacityUOMRatio</tabstop>
-  <tabstop>_altCapacityUOM</tabstop>
-  <tabstop>_altCapacityUOMRatio</tabstop>
-  <tabstop>_shippingUOM</tabstop>
-  <tabstop>_shippingUOMRatio</tabstop>
-  <tabstop>_sold</tabstop>
-  <tabstop>_priceUOM</tabstop>
-  <tabstop>_priceUOMRatio</tabstop>
   <tabstop>_prodcat</tabstop>
-  <tabstop>_listprice</tabstop>
-  <tabstop>_upcCode</tabstop>
   <tabstop>_exclusive</tabstop>
+  <tabstop>_listprice</tabstop>
+  <tabstop>_priceUOM</tabstop>
+  <tabstop>_upcCode</tabstop>
   <tabstop>_prodWeight</tabstop>
   <tabstop>_packWeight</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_extDescription</tabstop>
+  <tabstop>_uomconv</tabstop>
+  <tabstop>_newUOM</tabstop>
+  <tabstop>_editUOM</tabstop>
+  <tabstop>_deleteUOM</tabstop>
   <tabstop>_charass</tabstop>
   <tabstop>_newCharacteristic</tabstop>
   <tabstop>_editCharacteristic</tabstop>
@@ -2314,22 +1781,6 @@
  <resources/>
  <connections>
   <connection>
-   <sender>_sold</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_soldGroup</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>46</x>
-     <y>300</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>33</x>
-     <y>326</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_itemalias</sender>
    <signal>itemSelected(int)</signal>
    <receiver>_editAlias</receiver>
@@ -2337,11 +1788,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>42</x>
-     <y>528</y>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>42</x>
-     <y>528</y>
+     <x>110</x>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2352,28 +1803,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>42</x>
-     <y>528</y>
+     <x>53</x>
+     <y>384</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>42</x>
-     <y>528</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_sold</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_soldGroup</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>46</x>
-     <y>300</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>33</x>
-     <y>326</y>
+     <x>110</x>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2384,8 +1819,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>683</x>
-     <y>31</y>
+     <x>708</x>
+     <y>37</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -2401,11 +1836,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>42</x>
-     <y>528</y>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel" >
      <x>110</x>
-     <y>528</y>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2417,11 +1852,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>42</x>
-     <y>528</y>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel" >
      <x>110</x>
-     <y>528</y>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2433,11 +1868,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>42</x>
-     <y>528</y>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel" >
      <x>110</x>
-     <y>528</y>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2449,11 +1884,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>110</x>
-     <y>538</y>
+     <y>384</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>731</x>
-     <y>585</y>
+     <x>110</x>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2465,11 +1900,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>110</x>
-     <y>528</y>
+     <y>380</y>
     </hint>
     <hint type="destinationlabel" >
      <x>110</x>
-     <y>528</y>
+     <y>384</y>
     </hint>
    </hints>
   </connection>
@@ -2480,12 +1915,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>603</x>
-     <y>579</y>
+     <x>110</x>
+     <y>384</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>696</x>
-     <y>599</y>
+     <x>110</x>
+     <y>384</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_uomconv</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_editUOM</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>237</x>
+     <y>415</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>663</x>
+     <y>411</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_charass</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_editCharacteristic</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>521</x>
+     <y>459</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>670</x>
+     <y>399</y>
     </hint>
    </hints>
   </connection>

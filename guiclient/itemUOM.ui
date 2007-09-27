@@ -1,12 +1,12 @@
 <ui version="4.0" >
- <class>uom</class>
- <widget class="QDialog" name="uom" >
+ <class>itemUOM</class>
+ <widget class="QDialog" name="itemUOM" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
     <width>430</width>
-    <height>233</height>
+    <height>216</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,7 +14,7 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>9</number>
+    <number>6</number>
    </property>
    <property name="spacing" >
     <number>6</number>
@@ -33,7 +33,7 @@
         <number>0</number>
        </property>
        <property name="spacing" >
-        <number>0</number>
+        <number>6</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
@@ -41,95 +41,57 @@
           <number>0</number>
          </property>
          <property name="spacing" >
-          <number>5</number>
+          <number>6</number>
          </property>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_nameLit" >
-             <property name="text" >
-              <string>&amp;Name:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_name</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_descriptionLit" >
-             <property name="text" >
-              <string>&amp;Description:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_description</cstring>
-             </property>
-            </widget>
-           </item>
-          </layout>
+          <widget class="XLineEdit" name="_ratio" />
          </item>
          <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
+          <widget class="QLabel" name="_uomFrom" >
+           <property name="text" >
+            <string>UOM</string>
            </property>
-           <property name="spacing" >
-            <number>5</number>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="_perLit" >
+           <property name="text" >
+            <string> Per </string>
            </property>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLineEdit" name="_name" />
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>20</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="XLineEdit" name="_description" />
-           </item>
-          </layout>
+          </widget>
+         </item>
+         <item>
+          <widget class="XComboBox" name="_uomTo" />
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_fractional" >
+         <property name="text" >
+          <string>Fractional</string>
+         </property>
+        </widget>
        </item>
        <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" >
           <size>
@@ -200,7 +162,10 @@
     </layout>
    </item>
    <item>
-    <widget class="QFrame" name="frame" >
+    <widget class="QFrame" name="_typeFrame" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
      <property name="sizePolicy" >
       <sizepolicy>
        <hsizetype>5</hsizetype>
@@ -215,83 +180,94 @@
      <property name="frameShadow" >
       <enum>QFrame::Plain</enum>
      </property>
-     <layout class="QVBoxLayout" >
+     <layout class="QHBoxLayout" >
       <property name="margin" >
        <number>0</number>
       </property>
       <property name="spacing" >
-       <number>0</number>
+       <number>6</number>
       </property>
       <item>
-       <widget class="QLabel" name="_uomconvLit" >
-        <property name="text" >
-         <string>Global Conversion Ratios:</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" >
+       <layout class="QVBoxLayout" >
         <property name="margin" >
          <number>0</number>
         </property>
         <property name="spacing" >
-         <number>6</number>
+         <number>0</number>
         </property>
         <item>
-         <widget class="XTreeWidget" name="_uomconv" />
+         <widget class="QLabel" name="label" >
+          <property name="text" >
+           <string>Available Types</string>
+          </property>
+         </widget>
         </item>
         <item>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
+         <widget class="QListWidget" name="_available" />
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="_filler" >
+          <property name="text" >
+           <string/>
           </property>
-          <property name="spacing" >
-           <number>6</number>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_add" >
+          <property name="text" >
+           <string>Add ></string>
           </property>
-          <item>
-           <widget class="QPushButton" name="_new" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;New</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_edit" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;Edit</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QPushButton" name="_delete" >
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-            <property name="text" >
-             <string>&amp;Delete</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Vertical</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>20</width>
-              <height>40</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="QPushButton" name="_remove" >
+          <property name="text" >
+           <string>&lt; Remove</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_2" >
+          <property name="text" >
+           <string>Selected Types</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QListWidget" name="_selected" />
         </item>
        </layout>
       </item>
@@ -304,23 +280,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_name</tabstop>
-  <tabstop>_description</tabstop>
-  <tabstop>_uomconv</tabstop>
-  <tabstop>_new</tabstop>
-  <tabstop>_edit</tabstop>
-  <tabstop>_delete</tabstop>
+  <tabstop>_ratio</tabstop>
+  <tabstop>_uomTo</tabstop>
+  <tabstop>_fractional</tabstop>
+  <tabstop>_available</tabstop>
+  <tabstop>_add</tabstop>
+  <tabstop>_remove</tabstop>
+  <tabstop>_selected</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -333,7 +310,7 @@
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>uom</receiver>
+   <receiver>itemUOM</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -347,18 +324,50 @@
    </hints>
   </connection>
   <connection>
-   <sender>_uomconv</sender>
+   <sender>_available</sender>
    <signal>doubleClicked(QModelIndex)</signal>
-   <receiver>_edit</receiver>
+   <receiver>_add</receiver>
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>259</x>
-     <y>143</y>
+     <x>101</x>
+     <y>115</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>370</x>
-     <y>147</y>
+     <x>181</x>
+     <y>107</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selected</sender>
+   <signal>doubleClicked(QModelIndex)</signal>
+   <receiver>_remove</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>316</x>
+     <y>186</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>219</x>
+     <y>183</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_uomTo</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_typeFrame</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>218</x>
+     <y>21</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>172</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>

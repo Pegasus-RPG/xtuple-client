@@ -230,21 +230,21 @@ void uom::populate()
 void uom::sFillList()
 {
   q.prepare("SELECT uomconv_id, 0 AS uomconv_inverse,"
-            "       uomconv_to, uomconv_ratio,"
+            "       uom_name, uomconv_ratio,"
             "       formatBoolYN(uomconv_fractional) AS f_fractional,"
             "       formatBoolYN(false) AS f_inverse"
-            "  FROM uomconv"
-            " WHERE(uomconv_from=:uom_name)"
+            "  FROM uomconv JOIN uom ON (uomconv_to_uom_id=uom_id)"
+            " WHERE(uomconv_from_uom_id=:uom_id)"
             " UNION "
             "SELECT uomconv_id, 1 AS uomconv_inverse,"
-            "       uomconv_from AS uomconv_to,"
+            "       uom_name,"
             "       CAST((1.0/uomconv_ratio) AS numeric(20,10)) AS uomconv_ratio,"
             "       formatBoolYN(uomconv_fractional) AS f_fractional,"
             "       formatBoolYN(true) AS f_inverse"
-            "  FROM uomconv"
-            " WHERE(uomconv_to=:uom_name)"
-            " ORDER BY uomconv_to;");
-  q.bindValue(":uom_name", _name->text());
+            "  FROM uomconv JOIN uom ON (uomconv_from_uom_id=uom_id)"
+            " WHERE(uomconv_to_uom_id=:uom_id)"
+            " ORDER BY uom_name;");
+  q.bindValue(":uom_id", _uomid);
   q.exec();
   _uomconv->populate(q, TRUE);
 }
@@ -268,7 +268,7 @@ void uom::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
-  params.append("uom_from", _name->text());
+  params.append("from_uom_id", _uomid);
 
   uomConv newdlg(this, "", TRUE);
   newdlg.set(params);

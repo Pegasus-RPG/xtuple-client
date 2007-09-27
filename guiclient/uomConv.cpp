@@ -72,6 +72,8 @@ uomConv::uomConv(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
+  _uomidFrom = -1;
+  _uomconvid = -1;
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
@@ -103,9 +105,16 @@ enum SetResponse uomConv::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("uom_from", &valid);
+  param = pParams.value("from_uom_id", &valid);
   if (valid)
-    _uomFrom->setText(param.toString());
+  {
+    _uomidFrom = param.toInt();
+    q.prepare("SELECT uom_name FROM uom WHERE (uom_id=:uom_id);");
+    q.bindValue(":uom_id", _uomidFrom);
+    q.exec();
+    if(q.first())
+      _uomFrom->setText(q.value("uom_name").toString());
+  }
 
   param = pParams.value("uomconv_id", &valid);
   if (valid)
@@ -176,14 +185,14 @@ void uomConv::sSave()
     }
  
     q.prepare( "INSERT INTO uomconv "
-               "( uomconv_id, uomconv_from, uomconv_to, uomconv_ratio, uomconv_fractional ) "
+               "( uomconv_id, uomconv_from_uom_id, uomconv_to_uom_id, uomconv_ratio, uomconv_fractional ) "
                "VALUES "
-               "( :uomconv_id, :uomconv_from, :uomconv_to, :uomconv_ratio, :uomconv_fractional );" );
+               "( :uomconv_id, :uomconv_from_uom_id, :uomconv_to_uom_id, :uomconv_ratio, :uomconv_fractional );" );
   }
 
   q.bindValue(":uomconv_id", _uomconvid);
-  q.bindValue(":uomconv_from", _uomFrom->text());
-  q.bindValue(":uomconv_to", _uomTo->currentText());
+  q.bindValue(":uomconv_from_uom_id", _uomidFrom);
+  q.bindValue(":uomconv_to_uom_id", _uomTo->id());
   q.bindValue(":uomconv_ratio", _ratio->toDouble());
   q.bindValue(":uomconv_fractional", QVariant(_fractional->isChecked(), 0));
   q.exec();
@@ -195,47 +204,36 @@ void uomConv::sCheck()
 {
   if ( (_mode == cNew) )
   {
-    q.prepare( "SELECT uomconv_id, uomconv_from "
-               "  FROM uomconv "
-               " WHERE((uomconv_from=:from AND uomconv_to=:to)"
-               "    OR (uomconv_from=:to AND uomconv_to=:from));" );
-    q.bindValue(":from", _uomFrom->text());
-    q.bindValue(":to", _uomTo->currentText());
+    q.prepare( "SELECT uomconv_id"
+               "  FROM uomconv"
+               " WHERE((uomconv_from_uom_id=:from AND uomconv_to_uom_id=:to)"
+               "    OR (uomconv_from_uom_id=:to AND uomconv_to_uom_id=:from));" );
+    q.bindValue(":from", _uomidFrom);
+    q.bindValue(":to", _uomTo->id());
     q.exec();
     if (q.first())
     {
-      if(q.value("uomconv_from").toString() == _uomTo->currentText())
-      {
-        QMessageBox::warning(this, tr("Already Defined"),
-          tr("This conversion is already defined From %1 to %2.\n"
-             "If you want to edit it you should change the source.")
-            .arg(_uomTo->currentText()).arg(_uomFrom->text()));
-        _save->setEnabled(false);
-        return;
-      }
-
       _uomconvid = q.value("uomconv_id").toInt();
       _mode = cEdit;
-      populate();
-
       _uomTo->setEnabled(FALSE);
+      populate();
     }
   }
-  _save->setEnabled(true);
 }
 
 void uomConv::populate()
 {
-  q.prepare( "SELECT uomconv_from, uom_id,"
+  q.prepare( "SELECT uomconv_to_uom_id, uom_id, uom_name,"
              "       uomconv_ratio, uomconv_fractional "
-             "  FROM uomconv JOIN uom ON (uomconv_to=uom_name)"
+             "  FROM uomconv JOIN uom ON (uomconv_from_uom_id=uom_id)"
              " WHERE(uomconv_id=:uomconv_id);" );
   q.bindValue(":uomconv_id", _uomconvid);
   q.exec();
   if (q.first())
   {
-    _uomFrom->setText(q.value("uomconv_from").toString());
-    _uomTo->setId(q.value("uom_id").toInt());
+    _uomidFrom = q.value("uom_id").toInt();
+    _uomFrom->setText(q.value("uom_name").toString());
+    _uomTo->setId(q.value("uomconv_to_uom_id").toInt());
     _ratio->setText(q.value("uomconv_ratio").toString());
     _fractional->setChecked(q.value("uomconv_fractional").toBool());
   }

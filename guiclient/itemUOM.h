@@ -55,93 +55,41 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef ITEM_2_H
-#define ITEM_2_H
+#ifndef ITEMUOM_H
+#define ITEMUOM_H
 
 #include "OpenMFGGUIClient.h"
-#include <QMainWindow>
+#include <QDialog>
 #include <parameter.h>
+#include "ui_itemUOM.h"
 
-#include "ui_item.h"
-
-class item : public QMainWindow, public Ui::item
+class itemUOM : public QDialog, public Ui::itemUOM
 {
     Q_OBJECT
 
 public:
-    item(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~item();
-
-    virtual void populate();
-    virtual void clear();
-    static void newItem();
-    static void editItem( int pId );
-    static void viewItem( int pId );
+    itemUOM(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~itemUOM();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSave();
-    virtual void sNew();
-    virtual void sEdit();
-    virtual void sDelete();
+    virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void populate();
     virtual void sFillList();
-    virtual void sNewImage();
-    virtual void sEditImage();
-    virtual void sViewImage();
-    virtual void sPrintImage();
-    virtual void sDeleteImage();
-    virtual void sFillImageList();
-    virtual void sPrint();
-    virtual void sFormatItemNumber();
-    virtual void sPopulateUOMs();
-    virtual void sHandleItemtype();
-    virtual void sNewAlias();
-    virtual void sEditAlias();
-    virtual void sDeleteAlias();
-    virtual void sFillAliasList();
-    virtual void sNewSubstitute();
-    virtual void sEditSubstitute();
-    virtual void sDeleteSubstitute();
-    virtual void sFillSubstituteList();
-    virtual void sNewTransformation();
-    virtual void sDeleteTransformation();
-    virtual void sFillTransformationList();
-    virtual void sEditBOO();
-    virtual void sEditBOM();
-    virtual void sWorkbench();
-    virtual void sNewItemSite();
-    virtual void sEditItemSite();
-    virtual void sViewItemSite();
-    virtual void sDeleteItemSite();
-    virtual void sFillListItemSites();
-    virtual void sNewFile();
-    virtual void sEditFile();
-    virtual void sViewFile();
-    virtual void sDeleteFile();
-    virtual void sFillListFiles();
-    virtual void sOpenFile();
-    virtual void sNewItemtax();
-    virtual void sEditItemtax();
-    virtual void sDeleteItemtax();
-    virtual void sFillListItemtax();
-    virtual void sNewUOM();
-    virtual void sEditUOM();
-    virtual void sDeleteUOM();
-    virtual void sFillUOMList();
-    virtual void sPopulatePriceUOMs();
-
-protected:
-    virtual void keyPressEvent( QKeyEvent * e );
+    virtual void reject();
+    virtual void sAdd();
+    virtual void sRemove();
 
 protected slots:
     virtual void languageChange();
 
+    virtual void sSave();
+    virtual void sCheck();
+
 private:
     int _mode;
     int _itemid;
-    bool _disallowPlanningType;
-    QString _originalItemType;
+    int _itemuomconvid;
 
 };
 
-#endif // ITEM_2_H
+#endif // ITEMUOM_H

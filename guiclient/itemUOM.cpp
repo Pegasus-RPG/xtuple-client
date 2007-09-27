@@ -1,0 +1,376 @@
+/*
+ * Common Public Attribution License Version 1.0. 
+ * 
+ * The contents of this file are subject to the Common Public Attribution 
+ * License Version 1.0 (the "License"); you may not use this file except 
+ * in compliance with the License. You may obtain a copy of the License 
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+ * Public License Version 1.1 but Sections 14 and 15 have been added to 
+ * cover use of software over a computer network and provide for limited 
+ * attribution for the Original Developer. In addition, Exhibit A has 
+ * been modified to be consistent with Exhibit B.
+ * 
+ * Software distributed under the License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
+ * the License for the specific language governing rights and limitations 
+ * under the License. 
+ * 
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
+ * 
+ * The Original Developer is not the Initial Developer and is __________. 
+ * If left blank, the Original Developer is the Initial Developer. 
+ * The Initial Developer of the Original Code is OpenMFG, LLC, 
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * 
+ * Contributor(s): ______________________.
+ * 
+ * Alternatively, the contents of this file may be used under the terms 
+ * of the xTuple End-User License Agreeement (the xTuple License), in which 
+ * case the provisions of the xTuple License are applicable instead of 
+ * those above.  If you wish to allow use of your version of this file only 
+ * under the terms of the xTuple License and not to allow others to use 
+ * your version of this file under the CPAL, indicate your decision by 
+ * deleting the provisions above and replace them with the notice and other 
+ * provisions required by the xTuple License. If you do not delete the 
+ * provisions above, a recipient may use your version of this file under 
+ * either the CPAL or the xTuple License.
+ * 
+ * EXHIBIT B.  Attribution Information
+ * 
+ * Attribution Copyright Notice: 
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * 
+ * Attribution Phrase: 
+ * Powered by PostBooks, an open source solution from xTuple
+ * 
+ * Attribution URL: www.xtuple.org 
+ * (to be included in the "Community" menu of the application if possible)
+ * 
+ * Graphic Image as provided in the Covered Code, if any. 
+ * (online at www.xtuple.com/poweredby)
+ * 
+ * Display of Attribution Information is required in Larger Works which 
+ * are defined in the CPAL as a work which combines Covered Code or 
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+#include "itemUOM.h"
+
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
+#include <parameter.h>
+#include "storedProcErrorLookup.h"
+
+/*
+ *  Constructs a itemUOM as a child of 'parent', with the
+ *  name 'name' and widget flags set to 'f'.
+ *
+ *  The dialog will by default be modeless, unless you set 'modal' to
+ *  true to construct a modal dialog.
+ */
+itemUOM::itemUOM(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : QDialog(parent, name, modal, fl)
+{
+  setupUi(this);
+
+  _itemid = _itemuomconvid = -1;
+
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_uomTo, SIGNAL(currentIndexChanged(int)), this, SLOT(sCheck()));
+  connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
+  connect(_remove, SIGNAL(clicked()), this, SLOT(sRemove()));
+
+  _uomTo->setType(XComboBox::UOMs);
+}
+
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+itemUOM::~itemUOM()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void itemUOM::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse itemUOM::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("item_id", &valid);
+  if (valid)
+  {
+    _itemid = param.toInt();
+    q.prepare("SELECT uom_name"
+              "  FROM item"
+              "  JOIN uom ON (item_inv_uom_id=uom_id)"
+              " WHERE(item_id=:item_id);");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if(q.first())
+      _uomFrom->setText(q.value("uom_name").toString());
+  }
+
+  param = pParams.value("itemuomconv_id", &valid);
+  if (valid)
+  {
+    _itemuomconvid = param.toInt();
+    populate();
+  }
+
+  param = pParams.value("mode", &valid);
+  if (valid)
+  {
+    if (param.toString() == "new")
+      _mode = cNew;
+    else if (param.toString() == "edit")
+    {
+      _mode = cEdit;
+
+      _save->setFocus();
+      _uomTo->setEnabled(false);
+    }
+    else if (param.toString() == "view")
+    {
+      _mode = cView;
+
+      _ratio->setEnabled(false);
+      _uomTo->setEnabled(false);
+      _add->setEnabled(false);
+      _remove->setEnabled(false);
+      _close->setText(tr("&Close"));
+      _save->hide();
+
+      _close->setFocus();
+    }
+  }
+
+  return NoError;
+}
+
+void itemUOM::sSave()
+{
+  if(_ratio->toDouble() <= 0.0)
+  {
+    QMessageBox::warning(this, tr("Invalid Ratio"),
+      tr("You must specify a ration value greater than 0.0"));
+    _ratio->setFocus();
+    return;
+  }
+
+  if(_selected->count() == 0)
+  {
+    QMessageBox::warning(this, tr("No Types Selected"),
+      tr("You must select at least one UOM Type for this conversion."));
+    return;
+  }
+
+  q.prepare("UPDATE itemuomconv"
+            "   SET itemuomconv_ratio=:ratio,"
+            "       itemuomconv_fractional=:fractional "
+            " WHERE(itemuomconv_id=:itemuomconv_id);");
+  q.bindValue(":itemuomconv_id", _itemuomconvid);
+  q.bindValue(":ratio", _ratio->toDouble());
+  q.bindValue(":fractional", QVariant(_fractional->isChecked(), 0));
+  if(q.exec());
+    accept();
+}
+
+void itemUOM::populate()
+{
+  q.prepare("SELECT itemuomconv_item_id, itemuomconv_to_uom_id,"
+            "       itemuomconv_ratio, itemuomconv_fractional,"
+            "       uom_id, uom_name, (uomconv_id IS NOT NULL) AS global"
+            "  FROM itemuomconv"
+            "  JOIN item ON (itemuomconv_item_id=item_id)"
+            "  JOIN uom ON (item_inv_uom_id=uom_id)"
+            "  LEFT OUTER JOIN uomconv"
+            "    ON ((uomconv_from_uom_id=uom_id AND uomconv_to_uom_id=itemuomconv_to_uom_id)"
+            "     OR (uomconv_to_uom_id=uom_id AND uomconv_from_uom_id=itemuomconv_to_uom_id))"
+            " WHERE((itemuomconv_id=:itemuomconv_id));");
+  q.bindValue(":itemuomconv_id", _itemuomconvid);
+  q.exec();
+  if(q.first())
+  {
+    _itemid = q.value("itemuomconv_item_id").toInt();
+    _uomFrom->setText(q.value("uom_name").toString());
+    _uomTo->setId(q.value("itemuomconv_to_uom_id").toInt());
+    _ratio->setText(q.value("itemuomconv_ratio").toString());
+    _fractional->setChecked(q.value("itemuomconv_fractional").toBool());
+    _ratio->setEnabled(!q.value("global").toBool());
+
+    sFillList();
+  }
+}
+
+void itemUOM::sFillList()
+{
+  _available->clear();
+  _selected->clear();
+  q.prepare("SELECT uomtype_id, uomtype_name,"
+            "       uomtype_descrip, (itemuom_id IS NOT NULL) AS selected"
+            "  FROM uomtype"
+            "  LEFT OUTER JOIN itemuom ON ((itemuom_uomtype_id=uomtype_id)"
+            "                          AND (itemuom_itemuomconv_id=:itemuomconv_id))"
+            " WHERE (uomtype_id NOT IN"
+            "        (SELECT uomtype_id"
+            "           FROM itemuomconv"
+            "           JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
+            "           JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
+            "          WHERE((itemuomconv_item_id=:item_id)"
+            "            AND (itemuomconv_id!=:itemuomconv_id)"
+            "            AND (uomtype_multiple=false))))"
+            " ORDER BY uomtype_name;");
+  q.bindValue(":item_id", _itemid);
+  q.bindValue(":itemuomconv_id", _itemuomconvid);
+  q.exec();
+  while(q.next())
+  {
+    QListWidgetItem *item = new QListWidgetItem(q.value("uomtype_name").toString());
+    item->setToolTip(q.value("uomtype_descrip").toString());
+    item->setData(Qt::UserRole, q.value("uomtype_id").toInt());
+
+    if(q.value("selected").toBool())
+      _selected->addItem(item);
+    else
+      _available->addItem(item);
+  }
+}
+
+void itemUOM::sAdd()
+{
+  QList<QListWidgetItem*> items = _available->selectedItems();
+  QListWidgetItem * item;
+  for(int i = 0; i < items.size(); i++)
+  {
+    item = items.at(i);
+    q.prepare("INSERT INTO itemuom"
+              "      (itemuom_itemuomconv_id, itemuom_uomtype_id) "
+              "VALUES(:itemuomconv_id, :uomtype_id);");
+    q.bindValue(":itemuomconv_id", _itemuomconvid);
+    q.bindValue(":uomtype_id", item->data(Qt::UserRole));
+    q.exec();
+  }
+  sFillList();
+}
+
+void itemUOM::sRemove()
+{
+  QList<QListWidgetItem*> items = _selected->selectedItems();
+  QListWidgetItem * item;
+  for(int i = 0; i < items.size(); i++)
+  {
+    item = items.at(i);
+    q.prepare("SELECT deleteItemuom(itemuom_id) AS result"
+              "  FROM itemuom"
+              " WHERE((itemuom_itemuomconv_id=:itemuomconv_id)"
+              "   AND (itemuom_uomtype_id=:uomtype_id));");
+    q.bindValue(":itemuomconv_id", _itemuomconvid);
+    q.bindValue(":uomtype_id", item->data(Qt::UserRole));
+    q.exec();
+    // TODO: add in some addtional error checking
+  }
+  sFillList();
+}
+
+void itemUOM::sCheck()
+{
+  if(_uomTo->id() == -1)
+    return;
+
+  if(cNew == _mode)
+  {
+    q.prepare("SELECT item_inv_uom_id FROM item WHERE(item_id=:item_id);");
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if(q.first() && (q.value("item_inv_uom_id").toInt() == _uomTo->id()))
+    {
+      QMessageBox::warning(this, tr("UOM is Inventory UOM"),
+        tr("The UOM you selected is already the Inventory UOM. No Conversions are required."));
+      _uomTo->setId(-1);
+      return;
+    }
+
+    _uomTo->setEnabled(false);
+
+    q.prepare("SELECT itemuomconv_id"
+              "  FROM itemuomconv"
+              " WHERE((itemuomconv_item_id=:item_id)"
+              "   AND (itemuomconv_to_uom_id=:uom_id));");
+    q.bindValue(":item_id", _itemid);
+    q.bindValue(":uom_id", _uomTo->id());
+    q.exec();
+    if(q.first())
+    {
+      _itemuomconvid = q.value("itemuomconv_id").toInt();
+      _mode = cEdit;
+      populate();
+      return;
+    }
+
+    q.prepare("SELECT uomconv_ratio, uomconv_fractional"
+              "  FROM uomconv, item"
+              " WHERE((item_id=:item_id)"
+              "   AND (uomconv_from_uom_id=item_inv_uom_id)"
+              "   AND (uomconv_to_uom_id=:uom_id))"
+              " UNION "
+              "SELECT CAST((1.0/uomconv_ratio) AS NUMERIC(20,10)) AS uomconv_ratio, uomconv_fractional"
+              "  FROM uomconv, item"
+              " WHERE((item_id=:item_id)"
+              "   AND (uomconv_to_uom_id=item_inv_uom_id)"
+              "   AND (uomconv_from_uom_id=:uom_id));");
+    q.bindValue(":item_id", _itemid);
+    q.bindValue(":uom_id", _uomTo->id());
+    q.exec();
+    if(q.first())
+    {
+      _ratio->setText(q.value("uomconv_ratio").toString());
+      _ratio->setEnabled(false);
+      _fractional->setChecked(q.value("uomconv_fractional").toBool());
+    }
+    else
+      _ratio->setEnabled(true);
+
+    q.exec("SELECT nextval('itemuomconv_itemuomconv_id_seq') AS result;");
+    q.first();
+    _itemuomconvid = q.value("result").toInt();
+
+    q.prepare("INSERT INTO itemuomconv"
+              "      (itemuomconv_id, itemuomconv_item_id, itemuomconv_to_uom_id,"
+              "       itemuomconv_ratio, itemuomconv_fractional) "
+              "VALUES(:id, :item_id, :uom_id, :ratio, :fractional);");
+    q.bindValue(":id", _itemuomconvid);
+    q.bindValue(":item_id", _itemid);
+    q.bindValue(":uom_id", _uomTo->id());
+    q.bindValue(":ratio", _ratio->toDouble());
+    q.bindValue(":fractional", QVariant(_fractional->isChecked(), 0));
+    q.exec();
+
+    sFillList();
+  }
+}
+
+void itemUOM::reject()
+{
+  if(cNew == _mode)
+  {
+    q.prepare("DELETE FROM itemuom WHERE itemuom_itemuomconv_id=:itemuomconv_id;"
+              "DELETE FROM itemuomconv WHERE itemuomconv_id=:itemuomconv_id;");
+    q.bindValue(":itemuomconv_id", _itemuomconvid);
+    q.exec();
+  }
+
+  QDialog::reject();
+}

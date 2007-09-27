@@ -83,6 +83,7 @@ protected slots:
     virtual void sCheck();
 
 private:
+    int _uomidFrom;
     int _uomconvid;
     int _mode;
 

@@ -213,7 +213,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                itemPricingSchedule.ui itemPricingScheduleItem.ui itemPricingSchedules.ui              \
                itemSite.ui itemSites.ui itemSourceSearch.ui                                           \
                itemSource.ui itemSources.ui itemSourceList.ui itemSourcePrice.ui itemSubstitute.ui    \
-               itemtax.ui                                                                             \
+               itemtax.ui itemUOM.ui                                                                  \
                forms.ui form.ui labelForm.ui labelForms.ui laborRate.ui laborRates.ui                 \
                forwardUpdateAccounts.ui                                                               \
                sysLocale.ui locales.ui location.ui locations.ui                                       \
@@ -512,7 +512,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                itemPricingSchedule.h itemPricingScheduleItem.h itemPricingSchedules.h                 \
                itemSite.h itemSites.h itemSourceSearch.h                                              \
                itemSource.h itemSources.h itemSourceList.h itemSourcePrice.h itemSubstitute.h         \
-               itemtax.h                                                                              \
+               itemtax.h itemUOM.h                                                                    \
                forms.h form.h labelForm.h labelForms.h laborRate.h laborRates.h                       \
                forwardUpdateAccounts.h                                                                \
                sysLocale.h locales.h location.h locations.h                                           \
@@ -815,7 +815,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                itemPricingSchedule.cpp itemPricingScheduleItem.cpp itemPricingSchedules.cpp           \
                itemSite.cpp itemSites.cpp itemSourceSearch.cpp                                        \
                itemSource.cpp itemSources.cpp itemSourceList.cpp itemSourcePrice.cpp itemSubstitute.cpp \
-               itemtax.cpp                                                                            \
+               itemtax.cpp itemUOM.cpp                                                                \
                forms.cpp form.cpp labelForm.cpp labelForms.cpp laborRate.cpp laborRates.cpp           \
                forwardUpdateAccounts.cpp                                                              \
                sysLocale.cpp locales.cpp location.cpp locations.cpp                                   \

@@ -127,7 +127,6 @@ void XComboBox::setType(XComboBoxTypes pType)
 
     case UOMs:
       setAllowNull(TRUE);
-      setEditable(TRUE);
       query.exec( "SELECT uom_id, uom_name "
                   "FROM uom "
                   "ORDER BY uom_name;" );

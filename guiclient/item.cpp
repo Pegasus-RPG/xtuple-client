@@ -79,6 +79,7 @@
 #include "itemFile.h"
 #include "itemtax.h"
 #include "image.h"
+#include "itemUOM.h"
 
 const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "B", "C", "Y" };
 //const int _itemTypeCount = 8;
@@ -101,8 +102,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_itemNumber, SIGNAL(lostFocus()), this, SLOT(sFormatItemNumber()));
   connect(_inventoryUOM, SIGNAL(newID(int)), this, SLOT(sPopulateUOMs()));
-  connect(_sold, SIGNAL(toggled(bool)), _soldGroup, SLOT(setEnabled(bool)));
-  connect(_charass, SIGNAL(itemSelected(int)), _editCharacteristic, SLOT(animateClick()));
   connect(_newCharacteristic, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
   connect(_editCharacteristic, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -111,8 +110,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_printImage, SIGNAL(clicked()), this, SLOT(sPrintImage()));
   connect(_deleteCharacteristic, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
-  connect(_priceUOMRatio, SIGNAL(lostFocus()), this, SLOT(sCalculateExtPrice()));
-  connect(_listprice, SIGNAL(lostFocus()), this, SLOT(sCalculateExtPrice()));
   connect(_itemtype, SIGNAL(activated(int)), this, SLOT(sHandleItemtype()));
   connect(_newAlias, SIGNAL(clicked()), this, SLOT(sNewAlias()));
   connect(_editAlias, SIGNAL(clicked()), this, SLOT(sEditAlias()));
@@ -124,7 +121,6 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_itemsub, SIGNAL(itemSelected(int)), _editSubstitute, SLOT(animateClick()));
   connect(_newTransform, SIGNAL(clicked()), this, SLOT(sNewTransformation()));
   connect(_deleteTransform, SIGNAL(clicked()), this, SLOT(sDeleteTransformation()));
-  connect(_sold, SIGNAL(toggled(bool)), _soldGroup, SLOT(setEnabled(bool)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_boo, SIGNAL(clicked()), this, SLOT(sEditBOO()));
   connect(_bom, SIGNAL(clicked()), this, SLOT(sEditBOM()));
@@ -145,13 +141,13 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_itemtaxNew, SIGNAL(clicked()), this, SLOT(sNewItemtax()));
   connect(_itemtaxEdit, SIGNAL(clicked()), this, SLOT(sEditItemtax()));
   connect(_itemtaxDelete, SIGNAL(clicked()), this, SLOT(sDeleteItemtax()));
+  connect(_newUOM, SIGNAL(clicked()), this, SLOT(sNewUOM()));
+  connect(_editUOM, SIGNAL(clicked()), this, SLOT(sEditUOM()));
+  connect(_deleteUOM, SIGNAL(clicked()), this, SLOT(sDeleteUOM()));
 
   statusBar()->hide();
   _disallowPlanningType = false;
 
-  _capacityUOMRatio->setValidator(omfgThis->ratioVal());
-  _altCapacityUOMRatio->setValidator(omfgThis->ratioVal());
-  _priceUOMRatio->setValidator(omfgThis->ratioVal());
   _listprice->setValidator(omfgThis->moneyVal());
   _prodWeight->setValidator(omfgThis->weightVal());
   _packWeight->setValidator(omfgThis->weightVal());
@@ -159,15 +155,19 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _classcode->setAllowNull(TRUE);
   _classcode->setType(XComboBox::ClassCodes);
 
+  _prodcat->setAllowNull(TRUE);
+  _prodcat->setType(XComboBox::ProductCategories);
+
   _inventoryUOM->setType(XComboBox::UOMs);
-  _capacityUOM->setType(XComboBox::UOMs);
-  _altCapacityUOM->setType(XComboBox::UOMs);
-  _shippingUOM->setType(XComboBox::UOMs);
-  _priceUOM->setType(XComboBox::UOMs);
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
   _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
+
+  _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft);
+  _uomconv->addColumn(tr("Ratio"),      _qtyColumn*2, Qt::AlignRight  );
+  _uomconv->addColumn(tr("Global"),     _ynColumn,    Qt::AlignCenter );
+  _uomconv->addColumn(tr("Fractional"), _qtyColumn,   Qt::AlignCenter );
 
   _itemimage->addColumn(tr("Image Name"),  _itemColumn, Qt::AlignLeft );
   _itemimage->addColumn(tr("Description"), -1,          Qt::AlignLeft );
@@ -277,6 +277,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       _boo->hide();
       _workbench->hide();
       _site->hide();
+      _newUOM->setEnabled(false);
 
       q.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
       if (q.first())
@@ -288,6 +289,8 @@ enum SetResponse item::set(const ParameterList &pParams)
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+      connect(_uomconv, SIGNAL(valid(bool)), _editUOM, SLOT(setEnabled(bool)));
+      connect(_uomconv, SIGNAL(valid(bool)), _deleteUOM, SLOT(setEnabled(bool)));
       connect(_itemalias, SIGNAL(valid(bool)), _editAlias, SLOT(setEnabled(bool)));
       connect(_itemalias, SIGNAL(valid(bool)), _deleteAlias, SLOT(setEnabled(bool)));
       connect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
@@ -305,6 +308,8 @@ enum SetResponse item::set(const ParameterList &pParams)
 
       connect(_charass, SIGNAL(valid(bool)), _editCharacteristic, SLOT(setEnabled(bool)));
       connect(_charass, SIGNAL(valid(bool)), _deleteCharacteristic, SLOT(setEnabled(bool)));
+      connect(_uomconv, SIGNAL(valid(bool)), _editUOM, SLOT(setEnabled(bool)));
+      connect(_uomconv, SIGNAL(valid(bool)), _deleteUOM, SLOT(setEnabled(bool)));
       connect(_itemalias, SIGNAL(valid(bool)), _editAlias, SLOT(setEnabled(bool)));
       connect(_itemalias, SIGNAL(valid(bool)), _deleteAlias, SLOT(setEnabled(bool)));
       connect(_itemsub, SIGNAL(valid(bool)), _editSubstitute, SLOT(setEnabled(bool)));
@@ -346,17 +351,10 @@ enum SetResponse item::set(const ParameterList &pParams)
       _maximumDesiredCost->setEnabled(FALSE);
       _itemtype->setEnabled(FALSE);
       _sold->setEnabled(FALSE);
-      _soldGroup->setEnabled(false);
       _pickListItem->setEnabled(FALSE);
       _fractional->setEnabled(FALSE);
       _classcode->setEnabled(FALSE);
       _inventoryUOM->setEnabled(FALSE);
-      _capacityUOM->setEnabled(FALSE);
-      _capacityUOMRatio->setEnabled(FALSE);
-      _altCapacityUOM->setEnabled(FALSE);
-      _altCapacityUOMRatio->setEnabled(FALSE);
-      _shippingUOM->setEnabled(FALSE);
-      _shippingUOMRatio->setEnabled(FALSE);
       _prodWeight->setEnabled(FALSE);
       _packWeight->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
@@ -445,7 +443,7 @@ void item::sSave()
     return;
   }
 
-  if (_inventoryUOM->currentText().stripWhiteSpace().length() == 0)
+  if (_inventoryUOM->id() == -1)
   {
     QMessageBox::information( this, tr("Cannot Save Item"),
                               tr("You must select an Inventory Unit of Measure for this Item before continuing.")  );
@@ -514,44 +512,35 @@ void item::sSave()
     q.prepare( "INSERT INTO item "
                "( item_id, item_number, item_active,"
                "  item_descrip1, item_descrip2,"
-               "  item_type, item_invuom, item_classcode_id,"
+               "  item_type, item_inv_uom_id, item_classcode_id,"
                "  item_planning_type,"
                "  item_picklist, item_sold, item_fractional,"
-               "  item_capuom, item_capinvrat,"
-               "  item_altcapuom, item_altcapinvrat,"
-               "  item_shipuom, item_shipinvrat,"
                "  item_maxcost, item_prodweight, item_packweight,"
-               "  item_prodcat_id, item_priceuom, item_invpricerat,"
+               "  item_prodcat_id, item_price_uom_id,"
                "  item_exclusive,"
                "  item_listprice, item_upccode, item_config,"
                "  item_comments, item_extdescrip ) "
                "VALUES "
                "( :item_id, :item_number, :item_active,"
                "  :item_descrip1, :item_descrip2,"
-               "  :item_type, :item_invuom, :item_classcode_id,"
+               "  :item_type, :item_inv_uom_id, :item_classcode_id,"
                "  :item_planning_type,"
                "  :item_picklist, :item_sold, :item_fractional,"
-               "  :item_capuom, :item_capinvrat,"
-               "  :item_altcapuom, :item_altcapinvrat,"
-               "  :item_shipuom, :item_shipinvrat,"
                "  :item_maxcost, :item_prodweight, :item_packweight,"
-               "  :item_prodcat_id, :item_priceuom, :item_invpricerat,"
+               "  :item_prodcat_id, :item_price_uom_id,"
                "  :item_exclusive,"
                "  :item_listprice, :item_upccode, :item_config,"
                "  :item_comments, :item_extdescrip );" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
-               "    item_type=:item_type, item_invuom=:item_invuom, item_classcode_id=:item_classcode_id,"
+               "    item_type=:item_type, item_inv_uom_id=:item_inv_uom_id, item_classcode_id=:item_classcode_id,"
                "    item_planning_type=:item_planning_type,"
                "    item_picklist=:item_picklist, item_sold=:item_sold, item_fractional=:item_fractional,"
                "    item_active=:item_active,"
-               "    item_capuom=:item_capuom, item_capinvrat=:item_capinvrat,"
-               "    item_altcapuom=:item_altcapuom, item_altcapinvrat=:item_altcapinvrat,"
-               "    item_shipuom=:item_shipuom, item_shipinvrat=:item_shipinvrat,"
                "    item_maxcost=:item_maxcost, item_prodweight=:item_prodweight, item_packweight=:item_packweight,"
                "    item_prodcat_id=:item_prodcat_id,"
-               "    item_priceuom=:item_priceuom, item_invpricerat=:item_invpricerat,"
+               "    item_price_uom_id=:item_price_uom_id,"
                "    item_exclusive=:item_exclusive,"
                "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
                "    item_comments=:item_comments, item_extdescrip=:item_extdescrip "
@@ -567,21 +556,14 @@ void item::sSave()
   q.bindValue(":item_sold", QVariant(_sold->isChecked(), 0));
   q.bindValue(":item_prodcat_id", _prodcat->id());
   q.bindValue(":item_exclusive", QVariant(_exclusive->isChecked(), 0));
-  q.bindValue(":item_priceuom", _priceUOM->currentText());
-  q.bindValue(":item_invpricerat", (_priceUOMRatio->toDouble()==0.0?1.0:_priceUOMRatio->toDouble()));
+  q.bindValue(":item_price_uom_id", _priceUOM->id());
   q.bindValue(":item_listprice", _listprice->toDouble());
   q.bindValue(":item_upccode", _upcCode->text());
   q.bindValue(":item_active", QVariant(_active->isChecked(), 0));
   q.bindValue(":item_picklist", QVariant(_pickListItem->isChecked(), 0));
   q.bindValue(":item_fractional", QVariant(_fractional->isChecked(), 0));
   q.bindValue(":item_config", QVariant(FALSE, 0));
-  q.bindValue(":item_invuom", _inventoryUOM->currentText());
-  q.bindValue(":item_capuom", _capacityUOM->currentText());
-  q.bindValue(":item_capinvrat", _capacityUOMRatio->toDouble());
-  q.bindValue(":item_altcapuom", _altCapacityUOM->currentText());
-  q.bindValue(":item_altcapinvrat", _altCapacityUOMRatio->toDouble());
-  q.bindValue(":item_shipuom", _shippingUOM->currentText());
-  q.bindValue(":item_shipinvrat", _shippingUOMRatio->toDouble());
+  q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
   q.bindValue(":item_maxcost", _maximumDesiredCost->localValue());
   q.bindValue(":item_prodweight", _prodWeight->toDouble());
   q.bindValue(":item_packweight", _packWeight->toDouble());
@@ -852,15 +834,9 @@ void item::populate()
     _description1->setText(item.value("item_descrip1"));
     _description2->setText(item.value("item_descrip2"));
     _classcode->setId(item.value("item_classcode_id").toInt());
-    _inventoryUOM->setText(item.value("item_invuom"));
+    _inventoryUOM->setId(item.value("item_inv_uom_id").toInt());
     _pickListItem->setChecked(item.value("item_picklist").toBool());
     _fractional->setChecked(item.value("item_fractional").toBool());
-    _capacityUOM->setText(item.value("item_capuom").toString());
-    _capacityUOMRatio->setText(formatUOMRatio(item.value("item_capinvrat").toDouble()));
-    _altCapacityUOM->setText(item.value("item_altcapuom"));
-    _altCapacityUOMRatio->setText(formatUOMRatio(item.value("item_altcapinvrat").toDouble()));
-    _shippingUOM->setText(item.value("item_shipuom"));
-    _shippingUOMRatio->setText(formatUOMRatio(item.value("item_shipinvrat").toDouble()));
     _prodWeight->setText(formatWeight(item.value("item_prodweight").toDouble()));
     _packWeight->setText(formatWeight(item.value("item_packweight").toDouble()));
     _maximumDesiredCost->setLocalValue(item.value("f_maxcost").toDouble());
@@ -871,8 +847,7 @@ void item::populate()
     _upcCode->setText(item.value("item_upccode"));
     _exclusive->setChecked(item.value("item_exclusive").toBool());
     _listprice->setText(formatSalesPrice(item.value("item_listprice").toDouble()));
-    _priceUOM->setText(item.value("item_priceuom"));
-    _priceUOMRatio->setText(formatUOMRatio(item.value("item_invpricerat").toDouble()));
+    _priceUOM->setId(item.value("item_price_uom_id").toInt());
 
     for (int pcounter = 0; pcounter < _planningType->count(); pcounter++)
       if (QString(item.value("item_planning_type").toString()[0]) == _planningTypes[pcounter])
@@ -880,12 +855,12 @@ void item::populate()
 
     sFillList();
     sFillImageList();
+    sFillUOMList();
     sFillAliasList();
     sFillSubstituteList();
     sFillTransformationList();
     _comments->setId(_itemid);
 
-    sCalculateExtPrice();
     sFillListItemSites();
     sFillListFiles();
     sFillListItemtax();
@@ -905,14 +880,7 @@ void item::clear()
   _description1->clear();
   _description2->clear();
   _inventoryUOM->clear();
-  _capacityUOM->setCurrentItem(0);
-  _capacityUOMRatio->clear();
-  _altCapacityUOM->setCurrentItem(0);
-  _altCapacityUOMRatio->clear();
-  _shippingUOM->setCurrentItem(0);
-  _shippingUOMRatio->clear();
   _priceUOM->clear();
-  _priceUOMRatio->clear();
   _listprice->clear();
 
   _active->setChecked(TRUE);
@@ -928,6 +896,7 @@ void item::clear()
   _notes->clear();
   _extDescription->clear();
   _charass->clear();
+  _uomconv->clear();
   _itemimage->clear();
   _comments->setId(_itemid);
   _itemalias->clear();
@@ -937,33 +906,11 @@ void item::clear()
 
 void item::sPopulateUOMs()
 {
-  if (_inventoryUOM->currentText().length())
+  if (_inventoryUOM->id()!=-1)
   {
-    _inventoryUOM->setText(_inventoryUOM->currentText().stripWhiteSpace());
-
-    if (!_capacityUOM->currentText().length())
-    {
-      _capacityUOM->setText(_inventoryUOM->currentText());
-      _capacityUOMRatio->setText("1.0");
-    }
-
-    if (!_altCapacityUOM->currentText().length())
-    {
-      _altCapacityUOM->setText(_inventoryUOM->currentText());
-      _altCapacityUOMRatio->setText("1.0");
-    }
-
-    if (!_shippingUOM->currentText().length())
-    {
-      _shippingUOM->setText(_inventoryUOM->currentText());
-      _shippingUOMRatio->setText("1.0");
-    }
-
-    if (!_priceUOM->currentText().length())
-    {
-      _priceUOM->setText(_inventoryUOM->currentText());
-      _priceUOMRatio->setText("1.0");
-    }
+    sPopulatePriceUOMs();
+    if (_priceUOM->id()==-1)
+      _priceUOM->setId(_inventoryUOM->id());
   }
 }
 
@@ -1056,38 +1003,8 @@ void item::sHandleItemtype()
   _prodWeight->setEnabled(weight);
   _packWeight->setEnabled(weight);
 
-  if (!capUOM)
-  {
-    _capacityUOM->setCurrentText(tr("N/A"));
-    _capacityUOMRatio->setText("1.0");
-    _altCapacityUOM->setCurrentText(tr("N/A"));
-    _altCapacityUOMRatio->setText("1.0");
-  }
-  _capacityUOM->setEnabled(capUOM);
-  _capacityUOMRatio->setEnabled(capUOM);
-  _altCapacityUOM->setEnabled(capUOM);
-  _altCapacityUOMRatio->setEnabled(capUOM);
-
-  if (!shipUOM)
-  {
-    _shippingUOM->setCurrentText(tr("N/A"));
-    _shippingUOMRatio->setText("1.0");
-  }
-  _shippingUOM->setEnabled(capUOM);
-  _shippingUOMRatio->setEnabled(capUOM);
 }
 
-
-void item::sCalculateExtPrice()
-{
-  if (_priceUOMRatio->toDouble() == 0.0)
-    _priceUOMRatio->setText("1.0");
-
-  if (_listprice->toDouble() == 0.0)
-    _listprice->setText("0.0");
-
-  _extPrice->setText(formatSalesPrice(_listprice->toDouble() / _priceUOMRatio->toDouble()));
-}
 
 void item::sNewAlias()
 {
@@ -1618,5 +1535,109 @@ void item::sFillListItemtax()
   q.bindValue(":any", tr("Any"));
   q.exec();
   _itemtax->populate(q, _itemtax->id());
+}
+
+void item::sNewUOM()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("item_id", _itemid);
+
+  itemUOM newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sFillUOMList();
+}
+
+void item::sEditUOM()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("itemuomconv_id", _uomconv->id());
+
+  itemUOM newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sFillUOMList();
+}
+
+void item::sDeleteUOM()
+{
+  q.prepare("SELECT deleteItemUOMConv(:itemuomconv_id) AS result;");
+  q.bindValue(":itemuomconv_id", _uomconv->id());
+  q.exec();
+
+  sFillUOMList();
+}
+
+void item::sFillUOMList()
+{
+  _uomconv->clear();
+  q.prepare("SELECT itemuomconv_id, itemuom_id,"
+            "       uom_name, uomtype_name,"
+            "       itemuomconv_ratio,"
+            "       formatBoolYN(uomconv_id IS NOT NULL) AS global,"
+            "       formatBoolYN(itemuomconv_fractional) AS fractional"
+            "  FROM item"
+            "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+            "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+            "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
+            "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
+            "  LEFT OUTER JOIN uomconv ON ((uomconv_from_uom_id=item_inv_uom_id AND uomconv_to_uom_id=uom_id)"
+            "                           OR (uomconv_to_uom_id=item_inv_uom_id AND uomconv_from_uom_id=uom_id))"
+            " WHERE((item_id=:item_id))"
+            " ORDER BY uom_name, uomtype_name;");
+  q.bindValue(":item_id", _itemid);
+  q.exec();
+  XTreeWidgetItem * last = 0;
+  XTreeWidgetItem * parent = 0;
+  QString uomname;
+  while(q.next())
+  {
+    if(q.value("uom_name").toString() != uomname)
+    {
+      uomname = q.value("uom_name").toString();
+      parent = new XTreeWidgetItem(_uomconv, parent,
+                                   q.value("itemuomconv_id").toInt(), -1,
+                                   q.value("uom_name"),
+                                   q.value("itemuomconv_ratio"),
+                                   q.value("global"), q.value("fractional"));
+      last = 0;
+    }
+    last = new XTreeWidgetItem(parent, last,
+                               q.value("itemuomconv_id").toInt(),
+                               q.value("itemuom_id").toInt(),
+                               q.value("uomtype_name"));
+  }
+  _uomconv->expandAll();
+
+  q.prepare("SELECT itemInventoryUOMInUse(:item_id) AS result;");
+  q.bindValue(":item_id", _itemid);
+  q.exec();
+  if(q.first())
+    _inventoryUOM->setEnabled(!q.value("result").toBool());
+  sPopulatePriceUOMs();
+}
+
+void item::sPopulatePriceUOMs()
+{
+  int pid = _priceUOM->id();
+  q.prepare("SELECT uom_id, uom_name"
+            "  FROM uom JOIN item ON (item_inv_uom_id=uom_id)"
+            " WHERE(item_id=:item_id)"
+            " UNION "
+            "SELECT uom_id, uom_name"
+            "  FROM uom"
+            "  JOIN itemuomconv ON (itemuomconv_to_uom_id=uom_id)"
+            "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
+            "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
+            " WHERE((itemuomconv_item_id=:item_id)"
+            "   AND (uomtype_name='Selling'))"
+            " ORDER BY uom_name;");
+  q.bindValue(":item_id", _itemid);
+  q.exec();
+  _priceUOM->populate(q, pid);
 }
 
