@@ -207,7 +207,11 @@ void dspFinancialReport::sFillListStatement()
 
       //Build report query
       qc = ("SELECT flstmtitem_order AS orderby, flstmtitem_level AS level,"
-          " flstmtitem_type AS type, flstmtitem_type_id AS id,"
+          " CASE  "
+		  "   WHEN flstmtitem_type = 'G' THEN 2 "
+		  "   WHEN flstmtitem_type = 'I' THEN 1 "
+		  "   ELSE -1 "
+		  " END AS type, flstmtitem_type_id AS id,"
           " flstmtitem_name AS name");
 
       if (q.value("flcol_month").toBool())
@@ -452,7 +456,7 @@ void dspFinancialReport::sFillListStatement()
       }
       qc += " FROM financialreport(:flcolid,:periodid,:shownumbers,false)";
       if (!_showzeros->isChecked())
-        qc += " WHERE (" + qw + " OR (flstmtitem_type <> '1'))";
+        qc += " WHERE (" + qw + "  OR (flstmtitem_type <> 'I'))";
       q.prepare(qc);
       q.bindValue(":flcolid", _flcol->id());
       q.bindValue(":periodid", periodsRef.at(0));
@@ -795,7 +799,7 @@ void dspFinancialReport::sFillListTrend()
   
   if (!_showzeros->isChecked())
   {
-  q2w += " AND (" + qz + ")";
+    q2w += " AND (" + qz + ")";
     q3w += " AND (" + qz + ")";
   }
   
@@ -812,7 +816,6 @@ void dspFinancialReport::sFillListTrend()
                   QString(" UNION ") +
                   q4c + q4f + q4w +
                   QString(" ORDER BY orderby;");
-  //_sql->setText(query);
   q.prepare(query);
   q.bindValue(":flhead_id", _flhead->id());
   q.bindValue(":item", cFlItem);
