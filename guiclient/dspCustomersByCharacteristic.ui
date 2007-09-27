@@ -49,7 +49,7 @@
          </widget>
         </item>
         <item row="3" column="1" >
-         <widget class="QCheckBox" name="_emptyValue" >
+         <widget class="XCheckBox" name="_emptyValue" >
           <property name="text" >
            <string>Value is empty</string>
           </property>
@@ -66,12 +66,9 @@
          </widget>
         </item>
         <item row="1" column="0" colspan="2" >
-         <widget class="QCheckBox" name="_charIsSet" >
+         <widget class="XCheckBox" name="_charIsSet" >
           <property name="text" >
            <string>Characteristic is set</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -119,7 +116,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_showInactive" >
+         <widget class="XCheckBox" name="_showInactive" >
           <property name="text" >
            <string>Show &amp;Inactive Customers</string>
           </property>
@@ -231,7 +228,7 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -240,14 +237,14 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>Q3ListView</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

@@ -1,15 +1,12 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>postProduction</class>
  <widget class="QDialog" name="postProduction" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>424</height>
+    <width>478</width>
+    <height>445</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -317,15 +314,12 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="_backflush" >
+              <widget class="XCheckBox" name="_backflush" >
                <property name="text" >
                 <string>Backflush &amp;Materials</string>
                </property>
                <property name="shortcut" >
                 <string>Alt+M</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -372,7 +366,7 @@
               </spacer>
              </item>
              <item>
-              <widget class="QCheckBox" name="_nonPickItems" >
+              <widget class="XCheckBox" name="_nonPickItems" >
                <property name="sizePolicy" >
                 <sizepolicy>
                  <hsizetype>1</hsizetype>
@@ -423,7 +417,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="_backflushOperations" >
+              <widget class="XCheckBox" name="_backflushOperations" >
                <property name="sizePolicy" >
                 <sizepolicy>
                  <hsizetype>1</hsizetype>
@@ -437,9 +431,6 @@
                </property>
                <property name="shortcut" >
                 <string>Alt+O</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -520,7 +511,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="_closeWo" >
+              <widget class="XCheckBox" name="_closeWo" >
                <property name="sizePolicy" >
                 <sizepolicy>
                  <hsizetype>1</hsizetype>
@@ -622,7 +613,7 @@
       <number>5</number>
      </property>
      <item>
-      <widget class="QCheckBox" name="_immediateTransfer" >
+      <widget class="XCheckBox" name="_immediateTransfer" >
        <property name="text" >
         <string>Immediate &amp;Transfer to Warehouse:</string>
        </property>
@@ -675,29 +666,26 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>
    <extends>QWidget</extends>
    <header>usernamecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>WoCluster</class>
    <extends>QWidget</extends>
    <header>wocluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -1,0 +1,5 @@
+<RCC version="1.0">
+  <qresource prefix="widgets">
+    <file>images/xcheckbox.png</file>
+  </qresource>
+</RCC>

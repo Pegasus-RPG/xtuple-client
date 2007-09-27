@@ -59,7 +59,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="_singleLot" >
+         <widget class="XCheckBox" name="_singleLot" >
           <property name="text" >
            <string>Assign all Lot-controlled Items to single Lot #</string>
           </property>
@@ -260,14 +260,19 @@
    <header>tocluster.h</header>
   </customwidget>
   <customwidget>
-   <class>PoCluster</class>
-   <extends>QWidget</extends>
-   <header>pocluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PoCluster</class>
+   <extends>QWidget</extends>
+   <header>pocluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

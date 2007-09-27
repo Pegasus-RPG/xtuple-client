@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspFinancialReport</class>
  <widget class="QWidget" name="dspFinancialReport" >
   <property name="geometry" >
@@ -129,98 +126,98 @@
              <number>0</number>
             </property>
             <item row="0" column="0" >
-             <widget class="QCheckBox" name="_showBegBal" >
+             <widget class="XCheckBox" name="_showBegBal" >
               <property name="text" >
                <string>Beg. Bal.</string>
               </property>
              </widget>
             </item>
             <item row="1" column="0" >
-             <widget class="QCheckBox" name="_showDebits" >
+             <widget class="XCheckBox" name="_showDebits" >
               <property name="text" >
                <string>Debits</string>
               </property>
              </widget>
             </item>
             <item row="2" column="0" >
-             <widget class="QCheckBox" name="_showCredits" >
+             <widget class="XCheckBox" name="_showCredits" >
               <property name="text" >
                <string>Credits</string>
               </property>
              </widget>
             </item>
             <item row="3" column="0" >
-             <widget class="QCheckBox" name="_showEndBal" >
+             <widget class="XCheckBox" name="_showEndBal" >
               <property name="text" >
                <string>End. Bal.</string>
               </property>
              </widget>
             </item>
             <item row="4" column="0" >
-             <widget class="QCheckBox" name="_showBudget" >
+             <widget class="XCheckBox" name="_showBudget" >
               <property name="text" >
                <string>Budget</string>
               </property>
              </widget>
             </item>
             <item row="5" column="0" >
-             <widget class="QCheckBox" name="_showDiff" >
+             <widget class="XCheckBox" name="_showDiff" >
               <property name="text" >
                <string>Difference</string>
               </property>
              </widget>
             </item>
             <item row="6" column="0" >
-             <widget class="QCheckBox" name="_showCustom" >
+             <widget class="XCheckBox" name="_showCustom" >
               <property name="text" >
                <string>Custom</string>
               </property>
              </widget>
             </item>
             <item row="0" column="1" >
-             <widget class="QCheckBox" name="_showBegBalPrcnt" >
+             <widget class="XCheckBox" name="_showBegBalPrcnt" >
               <property name="text" >
                <string>Beg. Bal. %</string>
               </property>
              </widget>
             </item>
             <item row="1" column="1" >
-             <widget class="QCheckBox" name="_showDebitsPrcnt" >
+             <widget class="XCheckBox" name="_showDebitsPrcnt" >
               <property name="text" >
                <string>Debits %</string>
               </property>
              </widget>
             </item>
             <item row="2" column="1" >
-             <widget class="QCheckBox" name="_showCreditsPrcnt" >
+             <widget class="XCheckBox" name="_showCreditsPrcnt" >
               <property name="text" >
                <string>Credits %</string>
               </property>
              </widget>
             </item>
             <item row="3" column="1" >
-             <widget class="QCheckBox" name="_showEndBalPrcnt" >
+             <widget class="XCheckBox" name="_showEndBalPrcnt" >
               <property name="text" >
                <string>End. Bal. %</string>
               </property>
              </widget>
             </item>
             <item row="4" column="1" >
-             <widget class="QCheckBox" name="_showBudgetPrcnt" >
+             <widget class="XCheckBox" name="_showBudgetPrcnt" >
               <property name="text" >
                <string>Budget %</string>
               </property>
              </widget>
             </item>
             <item row="5" column="1" >
-             <widget class="QCheckBox" name="_showDiffPrcnt" >
+             <widget class="XCheckBox" name="_showDiffPrcnt" >
               <property name="text" >
                <string>Difference %</string>
               </property>
              </widget>
             </item>
             <item row="6" column="1" >
-             <widget class="QCheckBox" name="_showCustomPrcnt" >
+             <widget class="XCheckBox" name="_showCustomPrcnt" >
               <property name="text" >
                <string>Custom %</string>
               </property>
@@ -350,17 +347,14 @@
                    <number>6</number>
                   </property>
                   <item>
-                   <widget class="QCheckBox" name="_shownumbers" >
+                   <widget class="XCheckBox" name="_shownumbers" >
                     <property name="text" >
                      <string>Show Account Numbers</string>
-                    </property>
-                    <property name="checked" >
-                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
                   <item>
-                   <widget class="QCheckBox" name="_showzeros" >
+                   <widget class="XCheckBox" name="_showzeros" >
                     <property name="enabled" >
                      <bool>true</bool>
                     </property>
@@ -368,9 +362,6 @@
                      <string>Show Accounts with Zero Amounts</string>
                     </property>
                     <property name="checkable" >
-                     <bool>true</bool>
-                    </property>
-                    <property name="checked" >
                      <bool>true</bool>
                     </property>
                    </widget>
@@ -644,18 +635,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>QTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

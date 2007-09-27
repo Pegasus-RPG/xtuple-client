@@ -57,16 +57,11 @@
 
 #include "dspIndentedBOM.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 
-/*
- *  Constructs a dspIndentedBOM as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -74,13 +69,7 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDaysLit, SLOT(setEnabled(bool)));
-  connect(_showExpired, SIGNAL(toggled(bool)), _expiredDays, SLOT(setEnabled(bool)));
-  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDaysLit, SLOT(setEnabled(bool)));
-  connect(_showFuture, SIGNAL(toggled(bool)), _effectiveDays, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
@@ -96,21 +85,19 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter );
   _bomitem->setIndentation(10);
 
+  _expiredDaysLit->setEnabled(_showExpired->isChecked());
+  _expiredDays->setEnabled(_showExpired->isChecked());
+  _effectiveDaysLit->setEnabled(_showFuture->isChecked());
+  _effectiveDays->setEnabled(_showFuture->isChecked());
+
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspIndentedBOM::~dspIndentedBOM()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspIndentedBOM::languageChange()
 {
   retranslateUi(this);

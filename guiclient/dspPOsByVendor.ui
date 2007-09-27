@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>691</width>
+    <width>736</width>
     <height>410</height>
    </rect>
   </property>
@@ -241,7 +241,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_showClosed" >
+         <widget class="XCheckBox" name="_showClosed" >
           <property name="text" >
            <string>Show Closed P/O's</string>
           </property>
@@ -256,14 +256,18 @@
            <number>6</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_searchDescrip" >
+           <widget class="XCheckBox" name="_searchDescrip" >
             <property name="text" >
              <string>Where Item Description contains</string>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QLineEdit" name="_descrip" />
+           <widget class="QLineEdit" name="_descrip" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -330,9 +334,19 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>VendorInfo</class>
+   <extends>QWidget</extends>
+   <header>vendorinfo.h</header>
+  </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
@@ -347,11 +361,6 @@
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>VendorInfo</class>
-   <extends>QWidget</extends>
-   <header>vendorinfo.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -406,6 +415,22 @@
     <hint type="destinationlabel" >
      <x>194</x>
      <y>57</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_searchDescrip</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_descrip</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>368</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>553</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>

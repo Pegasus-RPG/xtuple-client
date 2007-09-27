@@ -55,28 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef POSTVOUCHERS_H
-#define POSTVOUCHERS_H
+#ifndef __XCHECKBOBOXPLUGIN_H__
+#define __XCHECKBOBOXPLUGIN_H__
 
-#include "OpenMFGGUIClient.h"
-#include <QDialog>
-#include <parameter.h>
-#include "ui_postVouchers.h"
+#include "xcheckbox.h"
 
-class postVouchers : public QDialog, public Ui::postVouchers
+#include <QDesignerCustomWidgetInterface>
+#include <QtPlugin>
+
+class XCheckBoxPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
+    Q_INTERFACES(QDesignerCustomWidgetInterface)
 
-public:
-    postVouchers(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~postVouchers();
+  public:
+    XCheckBoxPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
-public slots:
-    virtual void sPost();
+    bool isContainer() const { return false; }
+    bool isInitialized() const { return initialized; }
+    QIcon icon() const { return QIcon(); }
+    QString domXml() const
+    {
+      return "<widget class=\"XCheckBox\" name=\"xCheckBox\">\n"
+             "</widget>\n";
+    }
+    QString group() const { return "OpenMFG Custom Widgets"; }
+    QString includeFile() const { return "xcheckbox.h"; }
+    QString name() const { return "XCheckBox"; }
+    QString toolTip() const { return ""; }
+    QString whatsThis() const { return ""; }
+    QWidget *createWidget(QWidget *parent) { return new XCheckBox(parent); }
+    void initialize(QDesignerFormEditorInterface *) { initialized = true; }
 
-protected slots:
-    virtual void languageChange();
-
+  private:
+    bool initialized;
 };
 
-#endif // POSTVOUCHERS_H
+#endif

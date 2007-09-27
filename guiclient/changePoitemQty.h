@@ -72,10 +72,8 @@ public:
     changePoitemQty(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~changePoitemQty();
 
-    virtual void init();
-
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set(const ParameterList & pParams );
     virtual void sPopulatePoitem( int pPoheadid );
     virtual void sPopulate( int pPoitemid );
     virtual void sChangeQty();

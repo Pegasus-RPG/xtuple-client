@@ -59,7 +59,7 @@
 #define POSTINVOICES_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include "ui_postInvoices.h"
 
 class postInvoices : public QDialog, public Ui::postInvoices
@@ -69,8 +69,6 @@ class postInvoices : public QDialog, public Ui::postInvoices
 public:
     postInvoices(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postInvoices();
-
-    virtual void init();
 
 public slots:
     virtual void sPost();

@@ -59,7 +59,7 @@
 #define POSTAPCHECKS_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_postAPChecks.h"
 
@@ -70,8 +70,6 @@ class postAPChecks : public QDialog, public Ui::postAPChecks
 public:
     postAPChecks(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postAPChecks();
-
-    virtual void init();
 
 public slots:
     virtual void sPost();

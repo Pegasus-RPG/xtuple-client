@@ -63,38 +63,25 @@
 #include "rwInterface.h"
 #include "distributeInventory.h"
 
-/*
- *  Constructs a postCreditMemos as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postCreditMemos::postCreditMemos(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _printJournal->setChecked(true);
 
   _post->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postCreditMemos::~postCreditMemos()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postCreditMemos::languageChange()
 {
   retranslateUi(this);

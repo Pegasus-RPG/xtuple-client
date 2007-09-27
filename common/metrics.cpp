@@ -110,16 +110,12 @@ bool Parameters::boolean(const QString &pName)
 
 void Parameters::set(const char *pName, bool pValue)
 {
-  set(QString(pName), pValue);
+  set(pName, QString(pValue ? "t" : "f"));
 }
 
 void Parameters::set(const QString &pName, bool pValue)
 {
-  MetricMap::iterator it = _values.find(pName);
-  if ( (it != _values.end()) && (it.data() == ((pValue) ? "t" : "f")) )
-    return;
-
-  _set(pName, ((pValue) ? QString("t") : QString("f")));
+  set(pName, QString(pValue ? "t" : "f"));
 }
 
 void Parameters::set(const char *pName, int pValue)
@@ -129,11 +125,7 @@ void Parameters::set(const char *pName, int pValue)
 
 void Parameters::set(const QString &pName, int pValue)
 {
-  MetricMap::iterator it = _values.find(pName);
-  if ( (it != _values.end()) && (it.data().toInt() == pValue) )
-    return;
-
-  _set(pName, pValue);
+  set(QString(pName), QString::number(pValue));
 }
 
 void Parameters::set(const char *pName, const QString &pValue)

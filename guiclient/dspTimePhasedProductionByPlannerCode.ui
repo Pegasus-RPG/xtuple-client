@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
+    <width>797</width>
     <height>481</height>
    </rect>
   </property>
@@ -208,6 +208,11 @@
                     <string/>
                    </property>
                   </item>
+                  <item>
+                   <property name="text" >
+                    <string/>
+                   </property>
+                  </item>
                  </widget>
                 </item>
                </layout>
@@ -221,7 +226,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QCheckBox" name="_showInactive" >
+                 <widget class="XCheckBox" name="_showInactive" >
                   <property name="text" >
                    <string>Show Inactive Item Sites</string>
                   </property>
@@ -267,6 +272,16 @@
           </item>
           <item>
            <widget class="PeriodsListView" name="_periods" >
+            <column>
+             <property name="text" >
+              <string>Name</string>
+             </property>
+            </column>
+            <column>
+             <property name="text" >
+              <string>Selected Periods</string>
+             </property>
+            </column>
             <column>
              <property name="text" >
               <string>Name</string>
@@ -393,13 +408,18 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
@@ -413,7 +433,7 @@
   </customwidget>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
+   <extends>XListView</extends>
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>

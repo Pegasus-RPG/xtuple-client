@@ -58,10 +58,8 @@
 #include "dspBacklogByCustomer.h"
 
 #include <QMenu>
-#include <QSqlError>
-#include <QStatusBar>
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
 
 #include <openreports.h>
 
@@ -69,19 +67,18 @@
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
+#define	AMOUNT_COL	7
+
 dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
-
-  (void)statusBar();
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
 
-  statusBar()->hide();
   _cust->setFocus();
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -90,14 +87,19 @@ dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char* name, Qt
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
   _soitem->setRootIsDecorated(TRUE);
   _soitem->addColumn(tr("S/O #/Line #"),              _itemColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("Cust. P/O #/Item Number"),   -1,  Qt::AlignLeft   );
-  _soitem->addColumn(tr("Order"),                     _dateColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Ship/Sched."),               _dateColumn,  Qt::AlignCenter );
-  _soitem->addColumn(tr("Ordered"),                   _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),                   _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),                   _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Cust. P/O #/Item Number"),   -1, Qt::AlignLeft   );
+  _soitem->addColumn(tr("Order"),            _dateColumn, Qt::AlignCenter );
+  _soitem->addColumn(tr("Ship/Sched."),      _dateColumn, Qt::AlignCenter );
+  _soitem->addColumn(tr("Ordered"),           _qtyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("Shipped"),           _qtyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("Balance"),           _qtyColumn, Qt::AlignRight  );
+  if (_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"))
+    _soitem->addColumn(tr("Amount $"),      _moneyColumn, Qt::AlignRight  );
 
-  _showPrices->setEnabled((_privleges->check("ViewCustomerPrices")) || (_privleges->check("MaintainCustomerPrices")));
+  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"));
+
+  if (! _showPrices->isChecked())
+    _soitem->hideColumn(AMOUNT_COL);
 
   _cust->setFocus();
 }
@@ -115,9 +117,9 @@ void dspBacklogByCustomer::languageChange()
 void dspBacklogByCustomer::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->addColumn(tr("Amount $"), _moneyColumn, Qt::AlignRight);
+    _soitem->showColumn(AMOUNT_COL);
   else
-    _soitem->hideColumn(7);
+    _soitem->hideColumn(AMOUNT_COL);
 
   sFillList();
 }
@@ -335,7 +337,7 @@ void dspBacklogByCustomer::sFillList()
     if (_showPrices->isChecked())
     {
       XTreeWidgetItem *totals = new XTreeWidgetItem(_soitem, head, -1, -1, tr("Total Backlog"));
-      totals->setText(7, formatMoney(totalBacklog));
+      totals->setText(AMOUNT_COL, formatMoney(totalBacklog));
     }
   }
   else if (q.lastError().type() != QSqlError::None)

@@ -60,7 +60,6 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QVariant>
 
 #include <metasql.h>
 #include <openreports.h>
@@ -101,6 +100,7 @@ dspSlowMovingInventoryByClassCode::dspSlowMovingInventoryByClassCode(QWidget* pa
   _itemsite->addColumn(tr("QOH"),           _qtyColumn,  Qt::AlignRight  );
   _itemsite->addColumn(tr("Unit Cost"),     _costColumn, Qt::AlignRight  );
   _itemsite->addColumn(tr("Value"),         _costColumn, Qt::AlignRight  );
+
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
@@ -264,6 +264,8 @@ void dspSlowMovingInventoryByClassCode::sHandleValue(bool pShowValue)
 {
   _itemsite->setColumnHidden(6, !pShowValue);
   _itemsite->setColumnHidden(7, !pShowValue);
+
+  _costsGroup->setEnabled(pShowValue);
 }
 
 void dspSlowMovingInventoryByClassCode::sFillList()

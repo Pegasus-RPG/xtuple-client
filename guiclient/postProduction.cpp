@@ -58,40 +58,23 @@
 #include "postProduction.h"
 
 #include <QMessageBox>
-#include <QValidator>
 #include <QVariant>
 
-#include "inputManager.h"
 #include "closeWo.h"
-#include "distributeInventory.h"
 #include "distributeBreederProduction.h"
+#include "distributeInventory.h"
+#include "inputManager.h"
 #include "scrapWoMaterialFromWIP.h"
 
-/*
- *  Constructs a postProduction as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
     setupUi(this);
 
-    // signals and slots connections
-    connect(_wo, SIGNAL(qtyOrderedChanged(const QString&)), _qtyOrdered, SLOT(setText(const QString&)));
-    connect(_wo, SIGNAL(qtyReceivedChanged(const QString&)), _qtyReceived, SLOT(setText(const QString&)));
-    connect(_wo, SIGNAL(qtyBalanceChanged(const QString&)), _qtyBalance, SLOT(setText(const QString&)));
-    connect(_wo, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
-    connect(_backflush, SIGNAL(toggled(bool)), _nonPickItems, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
-    connect(_wo, SIGNAL(newItemid(int)), _transferWarehouse, SLOT(findItemsites(int)));
-    connect(_immediateTransfer, SIGNAL(toggled(bool)), _transferWarehouse, SLOT(setEnabled(bool)));
     connect(_backflushOperations, SIGNAL(toggled(bool)), this, SLOT(sBackflushOperationsToggled(bool)));
+    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+    connect(_scrap, SIGNAL(clicked()), this, SLOT(sScrap()));
+    connect(_wo, SIGNAL(newId(int)), this, SLOT(sHandleWoid(int)));
 
     _captive = false;
 
@@ -100,7 +83,6 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
     omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
 
     _closeWo->setEnabled(_privleges->check("CloseWorkOrders"));
-    _nonPickItems->setEnabled(_privleges->check("ChangeNonPickItems"));
 
     _qty->setValidator(omfgThis->qtyVal());
     _fromWOTC = false;
@@ -119,20 +101,28 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
       _setupUser->hide();
       _runUser->hide();
     }
+  
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _backflush->setChecked(true);
+    _backflushOperations->setChecked(true);
+  }
+
+  _nonPickItems->setEnabled(_backflush->isChecked() &&
+			    _privleges->check("ChangeNonPickItems"));
+  // TODO: unhide as part of implementation of 5847
+  _nonPickItems->hide();
+
+  sBackflushOperationsToggled(_backflushOperations->isChecked());
+  _transferWarehouse->setEnabled(_immediateTransfer->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postProduction::~postProduction()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postProduction::languageChange()
 {
   retranslateUi(this);

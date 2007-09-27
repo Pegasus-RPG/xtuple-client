@@ -59,7 +59,6 @@
 
 #include <QMenu>
 #include <QSqlError>
-#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -68,6 +67,8 @@
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
+
+#define	AMOUNT_COL	8
 
 dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -94,10 +95,13 @@ dspBacklogByParameterList::dspBacklogByParameterList(QWidget* parent, const char
   _soitem->addColumn(tr("Ordered"),              _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),              _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),              _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Amount $"),             _moneyColumn, Qt::AlignRight  );
+  if (_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"))
+    _soitem->addColumn(tr("Amount $"),           _moneyColumn, Qt::AlignRight  );
 
-  if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
-    _showPrices->setEnabled(FALSE);
+  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"));
+
+  if (! _showPrices->isChecked())
+    _soitem->hideColumn(AMOUNT_COL);
 }
 
 dspBacklogByParameterList::~dspBacklogByParameterList()
@@ -199,9 +203,9 @@ enum SetResponse dspBacklogByParameterList::set(const ParameterList &pParams)
 void dspBacklogByParameterList::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->showColumn(8);
+    _soitem->showColumn(AMOUNT_COL);
   else
-    _soitem->hideColumn(8);
+    _soitem->hideColumn(AMOUNT_COL);
 }
 
 void dspBacklogByParameterList::sPrint()
@@ -476,7 +480,7 @@ void dspBacklogByParameterList::sFillList()
       if (_showPrices->isChecked())
       {
         XTreeWidgetItem *totals = new XTreeWidgetItem(_soitem, head, -1, -1, "", tr("Total Backlog") );
-        totals->setText(8, formatMoney(totalBacklog));
+        totals->setText(AMOUNT_COL, formatMoney(totalBacklog));
       }
     }
     else if (q.lastError().type() != QSqlError::None)

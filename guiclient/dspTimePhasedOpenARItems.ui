@@ -265,7 +265,7 @@
          <widget class="DLineEdit" name="_asOf" />
         </item>
         <item>
-         <widget class="QCheckBox" name="_custom" >
+         <widget class="XCheckBox" name="_custom" >
           <property name="text" >
            <string>Use Custom Calendar</string>
           </property>
@@ -337,6 +337,11 @@
               <string/>
              </property>
             </item>
+            <item>
+             <property name="text" >
+              <string/>
+             </property>
+            </item>
            </widget>
           </item>
          </layout>
@@ -375,6 +380,16 @@
           <height>120</height>
          </size>
         </property>
+        <column>
+         <property name="text" >
+          <string>Name</string>
+         </property>
+        </column>
+        <column>
+         <property name="text" >
+          <string>Selected Periods</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
@@ -442,6 +457,11 @@
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
@@ -452,19 +472,19 @@
    <header>custcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>CalendarComboBox</class>
    <extends>XComboBox</extends>
    <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
    <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
+   <extends>XListView</extends>
    <header>calendarTools.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

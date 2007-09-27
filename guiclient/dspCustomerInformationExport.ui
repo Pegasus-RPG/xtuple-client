@@ -1,14 +1,11 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspCustomerInformationExport</class>
  <widget class="QMainWindow" name="dspCustomerInformationExport" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>690</width>
+    <width>801</width>
     <height>503</height>
    </rect>
   </property>
@@ -75,14 +72,14 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="_number" >
+                <widget class="XCheckBox" name="_number" >
                  <property name="text" >
                   <string>Number</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_name" >
+                <widget class="XCheckBox" name="_name" >
                  <property name="text" >
                   <string>Name</string>
                  </property>
@@ -130,49 +127,49 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="_billAddress1" >
+                <widget class="XCheckBox" name="_billAddress1" >
                  <property name="text" >
                   <string>Address 1</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billAddress2" >
+                <widget class="XCheckBox" name="_billAddress2" >
                  <property name="text" >
                   <string>Address 2</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billAddress3" >
+                <widget class="XCheckBox" name="_billAddress3" >
                  <property name="text" >
                   <string>Address 3</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billCity" >
+                <widget class="XCheckBox" name="_billCity" >
                  <property name="text" >
                   <string>City</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billState" >
+                <widget class="XCheckBox" name="_billState" >
                  <property name="text" >
                   <string>State</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billZipCode" >
+                <widget class="XCheckBox" name="_billZipCode" >
                  <property name="text" >
                   <string>Zip Code</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billCountry" >
+                <widget class="XCheckBox" name="_billCountry" >
                  <property name="text" >
                   <string>Country</string>
                  </property>
@@ -189,28 +186,28 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="_billContact" >
+                <widget class="XCheckBox" name="_billContact" >
                  <property name="text" >
                   <string>Contact</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billPhone" >
+                <widget class="XCheckBox" name="_billPhone" >
                  <property name="text" >
                   <string>Phone</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billFAX" >
+                <widget class="XCheckBox" name="_billFAX" >
                  <property name="text" >
                   <string>FAX</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_billEmail" >
+                <widget class="XCheckBox" name="_billEmail" >
                  <property name="text" >
                   <string>Email</string>
                  </property>
@@ -258,49 +255,49 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="_corrAddress1" >
+                <widget class="XCheckBox" name="_corrAddress1" >
                  <property name="text" >
                   <string>Address 1</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrAddress2" >
+                <widget class="XCheckBox" name="_corrAddress2" >
                  <property name="text" >
                   <string>Address 2</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrAddress3" >
+                <widget class="XCheckBox" name="_corrAddress3" >
                  <property name="text" >
                   <string>Address 3</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrCity" >
+                <widget class="XCheckBox" name="_corrCity" >
                  <property name="text" >
                   <string>City</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrState" >
+                <widget class="XCheckBox" name="_corrState" >
                  <property name="text" >
                   <string>State</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrZipCode" >
+                <widget class="XCheckBox" name="_corrZipCode" >
                  <property name="text" >
                   <string>Zip Code</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrCountry" >
+                <widget class="XCheckBox" name="_corrCountry" >
                  <property name="text" >
                   <string>Country</string>
                  </property>
@@ -317,28 +314,28 @@
                 <number>0</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="_corrContact" >
+                <widget class="XCheckBox" name="_corrContact" >
                  <property name="text" >
                   <string>Contact</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrPhone" >
+                <widget class="XCheckBox" name="_corrPhone" >
                  <property name="text" >
                   <string>Phone</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrFAX" >
+                <widget class="XCheckBox" name="_corrFAX" >
                  <property name="text" >
                   <string>FAX</string>
                  </property>
                 </widget>
                </item>
                <item>
-                <widget class="QCheckBox" name="_corrEmail" >
+                <widget class="XCheckBox" name="_corrEmail" >
                  <property name="text" >
                   <string>Email</string>
                  </property>
@@ -382,7 +379,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_showInactive" >
+               <widget class="XCheckBox" name="_showInactive" >
                 <property name="text" >
                  <string>Show Inactive</string>
                 </property>
@@ -522,15 +519,16 @@
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

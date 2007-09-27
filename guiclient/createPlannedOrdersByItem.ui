@@ -225,7 +225,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="_deleteFirmed" >
+          <widget class="XCheckBox" name="_deleteFirmed" >
            <property name="text" >
             <string>&amp;Delete Existing Firmed MRP Orders</string>
            </property>
@@ -350,19 +350,24 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ItemCluster</class>
-   <extends>QWidget</extends>
-   <header>itemcluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

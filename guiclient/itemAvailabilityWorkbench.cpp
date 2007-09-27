@@ -57,46 +57,38 @@
 
 #include "itemAvailabilityWorkbench.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
-#include <QWorkspace>
+#include <QVariant>
 
 #include <openreports.h>
 
-#include "dspRunningAvailability.h"
-#include "dspSingleLevelWhereUsed.h"
-#include "item.h"
+#include "adjustmentTrans.h"
 #include "bom.h"
 #include "boo.h"
-#include "adjustmentTrans.h"
-#include "transferTrans.h"
-#include "scrapTrans.h"
-#include "expenseTrans.h"
-#include "materialReceiptTrans.h"
-#include "dspItemCostSummary.h"
-#include "maintainItemCosts.h"
-#include "dspSubstituteAvailabilityByItem.h"
-#include "workOrder.h"
-#include "purchaseOrder.h"
-#include "purchaseRequest.h"
-#include "dspRunningAvailability.h"
-#include "dspOrders.h"
+#include "countTag.h"
+#include "createCountTagsByItem.h"
 #include "dspAllocations.h"
 #include "dspInventoryHistoryByItem.h"
-#include "createCountTagsByItem.h"
+#include "dspItemCostSummary.h"
+#include "dspOrders.h"
+#include "dspRunningAvailability.h"
+//#include "dspSingleLevelWhereUsed.h"
+#include "dspSubstituteAvailabilityByItem.h"
 #include "enterMiscCount.h"
+#include "expenseTrans.h"
 #include "firmPlannedOrder.h"
-#include "countTag.h"
-#include "transactionInformation.h"
-#include "relocateInventory.h"
+#include "item.h"
+#include "maintainItemCosts.h"
+#include "materialReceiptTrans.h"
+#include "purchaseOrder.h"
+#include "purchaseRequest.h"
 #include "reassignLotSerial.h"
+#include "relocateInventory.h"
+#include "scrapTrans.h"
+#include "transactionInformation.h"
+#include "transferTrans.h"
+#include "workOrder.h"
 
-/*
- *  Constructs a itemAvailabilityWorkbench as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -108,49 +100,31 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-  connect(_item, SIGNAL(newId(int)), _invhistWarehouse, SLOT(findItemSites(int)));
-  connect(_item, SIGNAL(newId(int)), _invWarehouse, SLOT(findItemSites(int)));
-  connect(_item, SIGNAL(newId(int)), _itemlocWarehouse, SLOT(findItemSites(int)));
-  connect(_item, SIGNAL(valid(bool)), _availPrint, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _costedPrint, SLOT(setEnabled(bool)));
-  connect(_byDate, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-  connect(_byDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
-  connect(_byDates, SIGNAL(toggled(bool)), _endDate, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _histPrint, SLOT(setEnabled(bool)));
-  connect(_showReorder, SIGNAL(toggled(bool)), _ignoreReorderAtZero, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _invhistQuery, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _invQuery, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _itemlocQuery, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _locPrint, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _runPrint, SLOT(setEnabled(bool)));
-  connect(_byDates, SIGNAL(toggled(bool)), _startDate, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _wherePrint, SLOT(setEnabled(bool)));
-  connect(_invQuery, SIGNAL(clicked()), this, SLOT(sFillListAvail()));
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillListCosted()));
-  connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillListCosted()));
-  connect(_costsGroup, SIGNAL(toggled(bool)), this, SLOT(sFillListCosted()));
-  connect(_invhistQuery, SIGNAL(clicked()), this, SLOT(sFillListInvhist()));
-  connect(_itemlocQuery, SIGNAL(clicked()), this, SLOT(sFillListItemloc()));
-  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillListRunning()));
-  connect(_showPlanned, SIGNAL(toggled(bool)), this, SLOT(sFillListRunning()));
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillListWhereUsed()));
-  connect(_effective, SIGNAL(newDate(const QDate&)), this, SLOT(sFillListWhereUsed()));
-  connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
-  connect(_invAvailability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuAvail(QMenu*,QTreeWidgetItem*)));
-  connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCosted(QMenu*,QTreeWidgetItem*)));
-  connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuHistory(QMenu*,QTreeWidgetItem*)));
-  connect(_itemloc, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuLocation(QMenu*,QTreeWidgetItem*)));
-  connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuRunning(QMenu*,QTreeWidgetItem*)));
-  connect(_whereused, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuWhereUsed(QMenu*,QTreeWidgetItem*)));
-  connect(_availPrint, SIGNAL(clicked()), this, SLOT(sPrintAvail()));
-  connect(_costedPrint, SIGNAL(clicked()), this, SLOT(sPrintCosted()));
-  connect(_histPrint, SIGNAL(clicked()), this, SLOT(sPrintHistory()));
-  connect(_locPrint, SIGNAL(clicked()), this, SLOT(sPrintLocation()));
-  connect(_runPrint, SIGNAL(clicked()), this, SLOT(sPrintRunning()));
-  connect(_wherePrint, SIGNAL(clicked()), this, SLOT(sPrintWhereUsed()));
+  connect(_availPrint,	SIGNAL(clicked()), this, SLOT(sPrintAvail()));
+  connect(_availability,SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuRunning(QMenu*,QTreeWidgetItem*)));
+  connect(_bomitem,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCosted(QMenu*,QTreeWidgetItem*)));
+  connect(_byDates,	SIGNAL(toggled(bool)), _endDate, SLOT(setEnabled(bool)));
+  connect(_byDates,	SIGNAL(toggled(bool)), _startDate, SLOT(setEnabled(bool)));
+  connect(_costedPrint,	SIGNAL(clicked()), this, SLOT(sPrintCosted()));
+  connect(_costsGroup,	SIGNAL(toggled(bool)), this, SLOT(sFillListCosted()));
+  connect(_costsGroupInt,SIGNAL(buttonClicked(int)), this, SLOT(sFillListCosted()));
+  connect(_effective,	SIGNAL(newDate(const QDate&)), this, SLOT(sFillListWhereUsed()));
+  connect(_histPrint,	SIGNAL(clicked()), this, SLOT(sPrintHistory()));
+  connect(_invAvailability,SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuAvail(QMenu*,QTreeWidgetItem*)));
+  connect(_invQuery,	SIGNAL(clicked()), this, SLOT(sFillListAvail()));
+  connect(_invhist,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuHistory(QMenu*,QTreeWidgetItem*)));
+  connect(_invhistQuery,SIGNAL(clicked()), this, SLOT(sFillListInvhist()));
+  connect(_item,	SIGNAL(newId(int)), this, SLOT(sFillListCosted()));
+  connect(_item,	SIGNAL(newId(int)), this, SLOT(sFillListWhereUsed()));
+  connect(_itemloc,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuLocation(QMenu*,QTreeWidgetItem*)));
+  connect(_itemlocQuery,SIGNAL(clicked()), this, SLOT(sFillListItemloc()));
+  connect(_locPrint,	SIGNAL(clicked()), this, SLOT(sPrintLocation()));
+  connect(_runPrint,	SIGNAL(clicked()), this, SLOT(sPrintRunning()));
+  connect(_showPlanned,	SIGNAL(toggled(bool)), this, SLOT(sFillListRunning()));
+  connect(_showReorder,	SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
+  connect(_warehouse,	SIGNAL(newID(int)), this, SLOT(sFillListRunning()));
+  connect(_wherePrint,	SIGNAL(clicked()), this, SLOT(sPrintWhereUsed()));
+  connect(_whereused,	SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuWhereUsed(QMenu*,QTreeWidgetItem*)));
 
   //if (_metrics->boolean("AllowInactiveBomItems"))
   //  _item->setType(ItemLineEdit::cGeneralComponents);
@@ -282,20 +256,19 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   //If not Serial Control, hide lot control
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removePage(_tab->page(4));
+  
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _ignoreReorderAtZero->setChecked(true);
+
+  _ignoreReorderAtZero->setEnabled(_showReorder->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 itemAvailabilityWorkbench::~itemAvailabilityWorkbench()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void itemAvailabilityWorkbench::languageChange()
 {
   retranslateUi(this);
@@ -1066,7 +1039,8 @@ void itemAvailabilityWorkbench::sFillListRunning()
 
 void itemAvailabilityWorkbench::sHandleShowReorder( bool pValue )
 {
-  if (pValue)
+  _ignoreReorderAtZero->setEnabled(pValue);
+  if (pValue && Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
 }
 
@@ -1077,9 +1051,10 @@ void itemAvailabilityWorkbench::sFillListAvail()
 
   if ((_byDate->isChecked()) && (!_date->isValid()))
   {
-    QMessageBox::critical( this, tr("Enter Valid Date"),
-                           tr( "You have choosen to view Inventory Availabilty as of a given date but have not.\n"
-                               "indicated the date.  Please enter a valid date." ) );
+    QMessageBox::critical(this, tr("Enter Valid Date"),
+                          tr("<p>You have choosen to view Inventory Availability"
+			     " as of a given date but have not indicated the "
+			     "date.  Please enter a valid date." ) );
     _date->setFocus();
     return;
   }

@@ -159,7 +159,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_showSlips" >
+               <widget class="XCheckBox" name="_showSlips" >
                 <property name="text" >
                  <string>Show Count &amp;Slips</string>
                 </property>
@@ -627,7 +627,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="_autoUpdate" >
+         <widget class="XCheckBox" name="_autoUpdate" >
           <property name="minimumSize" >
            <size>
             <width>150</width>
@@ -660,14 +660,19 @@
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

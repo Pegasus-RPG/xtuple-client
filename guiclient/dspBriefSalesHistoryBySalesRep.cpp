@@ -80,6 +80,9 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
   _salesrep->setType(XComboBox::SalesRepsActive);
   _productCategory->setType(ProductCategory);
 
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+
   _sohist->addColumn(tr("Customer"),    -1,           Qt::AlignLeft  );
   _sohist->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignRight  );
   _sohist->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignRight  );
@@ -90,6 +93,8 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
 
   _showCosts->setEnabled(_privleges->check("ViewCosts"));
   _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
+
+  sHandleParams();
 
   _salesrep->setFocus();
 }

@@ -81,6 +81,11 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
   _bomitem->addColumn(tr("Expires"),     _dateColumn,  Qt::AlignCenter );
   _bomitem->addColumn(tr("ECN #"),       _itemColumn,  Qt::AlignLeft   );
 
+  _expiredDaysLit->setEnabled(_showExpired->isChecked());
+  _expiredDays->setEnabled(_showExpired->isChecked());
+  _effectiveDaysLit->setEnabled(_showFuture->isChecked());
+  _effectiveDays->setEnabled(_showFuture->isChecked());
+
   _item->setFocus();
 }
 

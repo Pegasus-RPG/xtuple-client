@@ -57,19 +57,14 @@
 
 #include "dspPOsByVendor.h"
 
-#include <QVariant>
-#include <QWorkspace>
 #include <QMessageBox>
 #include <QSqlError>
-#include <openreports.h>
-#include "purchaseOrder.h"
-#include "mqlutil.h"
 
-/*
- *  Constructs a dspPOsByVendor as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include <openreports.h>
+
+#include "mqlutil.h"
+#include "purchaseOrder.h"
+
 dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -77,7 +72,6 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_poitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
@@ -87,6 +81,11 @@ dspPOsByVendor::dspPOsByVendor(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Status"),      _dateColumn,  Qt::AlignCenter );
   _poitem->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
   _poitem->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter );
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   TRUE);
+
+  _descrip->setEnabled(_searchDescrip->isChecked());
 }
 
 /*
@@ -106,25 +105,8 @@ void dspPOsByVendor::languageChange()
   retranslateUi(this);
 }
 
-void dspPOsByVendor::sPrint()
+bool dspPOsByVendor::setParams(ParameterList &params)
 {
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Start Date"),
-                          tr( "Please enter a valid Start Date." ) );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter End Date"),
-                          tr( "Please eneter a valid End Date." ) );
-    _dates->setFocus();
-    return;
-  }
-
-  ParameterList params;
   _dates->appendValue(params);
   _warehouse->appendValue(params);
 
@@ -143,6 +125,20 @@ void dspPOsByVendor::sPrint()
 
   if(_searchDescrip->isChecked())
     params.append("descrip_pattern", _descrip->text());
+
+  params.append("closed",	tr("Closed"));
+  params.append("unposted",	tr("Unposted"));
+  params.append("partial",	tr("Partial"));
+  params.append("received",	tr("Received"));
+  params.append("open",		tr("Open"));
+
+  return true;
+}
+
+void dspPOsByVendor::sPrint()
+{
+  ParameterList params;
+  setParams(params);
 
   orReport report("POsByVendor", params);
   if (report.isValid())
@@ -191,49 +187,10 @@ void dspPOsByVendor::sViewOrder()
 
 void dspPOsByVendor::sFillList()
 {
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Start Date"),
-                          tr( "Please enter a valid Start Date." ) );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter End Date"),
-                          tr( "Please eneter a valid End Date." ) );
-    _dates->setFocus();
-    return;
-  }
-
   MetaSQLQuery mql = mqlLoad(":/po/displays/POsByVendor/FillListDetail.mql");
 
   ParameterList params;
-  _dates->appendValue(params);
-  _warehouse->appendValue(params);
-
-  if(_selectedVendor->isChecked())
-    params.append("vend_id", _vend->id());
-
-  if(_showClosed->isChecked())
-    params.append("showClosed");
-
-  if(_byReceiptDate->isChecked())
-    params.append("byReceiptDate");
-  else if(_byDueDate->isChecked())
-    params.append("byDueDate");
-  else //if(_byOrderDate->isChecked())
-    params.append("byOrderDate");
-
-  if(_searchDescrip->isChecked())
-    params.append("descrip_pattern", _descrip->text());
-
-  params.append("closed", tr("Closed"));
-  params.append("unposted", tr("Unposted"));
-  params.append("partial", tr("Partial"));
-  params.append("received", tr("Received"));
-  params.append("open", tr("Open"));
+  setParams(params);
 
   q = mql.toQuery(params);
   if (q.lastError().type() != QSqlError::None)

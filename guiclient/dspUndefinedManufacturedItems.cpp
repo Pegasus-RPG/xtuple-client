@@ -82,6 +82,13 @@ dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, co
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
+  
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _boo->setChecked(true);
+    _bom->setChecked(true);
+  }
 }
 
 /*

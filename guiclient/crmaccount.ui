@@ -736,39 +736,30 @@
           <number>0</number>
          </property>
          <item row="1" column="1" >
-          <widget class="QCheckBox" name="_completedTodoIncdt" >
+          <widget class="XCheckBox" name="_completedTodoIncdt" >
            <property name="text" >
             <string>Completed</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0" >
-          <widget class="QCheckBox" name="_showIncdt" >
+          <widget class="XCheckBox" name="_showIncdt" >
            <property name="text" >
             <string>Show Incidents</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item row="0" column="0" >
-          <widget class="QCheckBox" name="_showTodo" >
+          <widget class="XCheckBox" name="_showTodo" >
            <property name="text" >
             <string>Show To-Do List</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
            </property>
           </widget>
          </item>
          <item row="0" column="1" >
-          <widget class="QCheckBox" name="_activeTodoIncdt" >
+          <widget class="XCheckBox" name="_activeTodoIncdt" >
            <property name="text" >
             <string>Active Only</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -882,7 +873,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="_autoUpdateTodo" >
+          <widget class="XCheckBox" name="_autoUpdateTodo" >
            <property name="text" >
             <string>Automatically Update</string>
            </property>
@@ -899,11 +890,6 @@
  <layoutdefault spacing="5" margin="5" />
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
    <class>ContactCluster</class>
    <extends>QWidget</extends>
    <header>contactcluster.h</header>
@@ -914,14 +900,24 @@
    <header>crmacctcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>Comments</class>
    <extends>QWidget</extends>
    <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

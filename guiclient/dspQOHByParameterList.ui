@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>765</width>
+    <width>796</width>
     <height>395</height>
    </rect>
   </property>
@@ -230,7 +230,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="_showValue" >
+             <widget class="XCheckBox" name="_showValue" >
               <property name="text" >
                <string>Show Inventory &amp;Value</string>
               </property>
@@ -435,13 +435,18 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>

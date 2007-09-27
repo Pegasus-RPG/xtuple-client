@@ -129,7 +129,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="_showUsername" >
+           <widget class="XCheckBox" name="_showUsername" >
             <property name="text" >
              <string>Show Username</string>
             </property>
@@ -381,14 +381,19 @@
    <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
    <class>GLCluster</class>
    <extends>QWidget</extends>
    <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

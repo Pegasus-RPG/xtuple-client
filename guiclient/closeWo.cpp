@@ -77,6 +77,7 @@ closeWo::closeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
     _wo->setType(cWoOpen | cWoExploded | cWoReleased | cWoIssued);
     _cmnttype->setType(XComboBox::AllCommentTypes);
+    _commentGroup->setEnabled(_postComment->isChecked());
     
     if (!_metrics->boolean("Routings"))
     {

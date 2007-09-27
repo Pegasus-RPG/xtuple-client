@@ -239,7 +239,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_printJournal" >
+       <widget class="XCheckBox" name="_printJournal" >
         <property name="text" >
          <string>Print Journal after Post</string>
         </property>
@@ -253,6 +253,11 @@
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>

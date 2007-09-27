@@ -87,7 +87,12 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   _bomitem->addColumn(tr("Unit Cost"),      _costColumn,  Qt::AlignRight  );
   _bomitem->addColumn(tr("Ext'd Cost"),     _priceColumn, Qt::AlignRight  );
   _bomitem->setIndentation(10);
-  
+
+  _expiredDaysLit->setEnabled(_showExpired->isChecked());
+  _expiredDays->setEnabled(_showExpired->isChecked());
+  _effectiveDaysLit->setEnabled(_showFuture->isChecked());
+  _effectiveDays->setEnabled(_showFuture->isChecked());
+
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 }
 

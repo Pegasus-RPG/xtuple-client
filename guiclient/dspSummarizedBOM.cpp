@@ -82,6 +82,11 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
   _bomitem->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
   _bomitem->addColumn(tr("Ext. Qty. Per"), _qtyColumn,   Qt::AlignRight  );
   _bomitem->setIndentation(10);
+
+  _expiredDaysLit->setEnabled(_showExpired->isChecked());
+  _expiredDays->setEnabled(_showExpired->isChecked());
+  _effectiveDaysLit->setEnabled(_showFuture->isChecked());
+  _effectiveDays->setEnabled(_showFuture->isChecked());
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList()));
 }

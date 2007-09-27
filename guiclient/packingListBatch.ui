@@ -210,7 +210,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_autoUpdate" >
+       <widget class="XCheckBox" name="_autoUpdate" >
         <property name="text" >
          <string>Automatically Update</string>
         </property>
@@ -221,9 +221,14 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>

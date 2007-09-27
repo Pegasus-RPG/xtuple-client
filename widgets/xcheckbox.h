@@ -55,28 +55,32 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef POSTVOUCHERS_H
-#define POSTVOUCHERS_H
+#ifndef __XCHECKBOX_H__
+#define __XCHECKBOX_H__
 
-#include "OpenMFGGUIClient.h"
-#include <QDialog>
-#include <parameter.h>
-#include "ui_postVouchers.h"
+#include <QCheckBox>
+#include <QPixmap>
 
-class postVouchers : public QDialog, public Ui::postVouchers
+#include "OpenMFGWidgets.h"
+
+class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    postVouchers(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~postVouchers();
+  public:
+    XCheckBox(QWidget * = 0);
+    XCheckBox(const QString &, QWidget * = 0);
+    ~XCheckBox();
 
-public slots:
-    virtual void sPost();
+    virtual void	setObjectName(const QString &);
 
-protected slots:
-    virtual void languageChange();
+  private:
+    virtual void	constructor();
 
+    bool	_forgetful;
+    QString	_settingsName;
+
+    static	QPixmap	*_checkedIcon;
 };
 
-#endif // POSTVOUCHERS_H
+#endif

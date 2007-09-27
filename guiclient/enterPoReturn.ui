@@ -60,7 +60,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="_showClosed" >
+             <widget class="XCheckBox" name="_showClosed" >
               <property name="text" >
                <string>Show Closed P/Os</string>
               </property>
@@ -100,7 +100,7 @@
          </layout>
         </item>
         <item>
-         <widget class="QCheckBox" name="_printReport" >
+         <widget class="XCheckBox" name="_printReport" >
           <property name="text" >
            <string>Print Return Report</string>
           </property>
@@ -297,23 +297,28 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
   <customwidget>
-   <class>PoCluster</class>
-   <extends>QWidget</extends>
-   <header>pocluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>AddressCluster</class>
    <extends>QWidget</extends>
    <header>addresscluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PoCluster</class>
+   <extends>QWidget</extends>
+   <header>pocluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

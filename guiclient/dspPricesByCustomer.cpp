@@ -57,20 +57,13 @@
 
 #include "dspPricesByCustomer.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
 #include <openreports.h>
+#include <parameter.h>
 
 #define CURR_COL	7
 #define COST_COL	8
 #define MARGIN_COL	9
 
-/*
- *  Constructs a dspPricesByCustomer as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -78,14 +71,9 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_cust, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-  connect(_showCosts, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
-  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_cust, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
+  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
 
   _price->addColumn(tr("Schedule"),    _itemColumn,  Qt::AlignLeft  );
   _price->addColumn(tr("Source"),      _itemColumn,  Qt::AlignLeft  );
@@ -103,18 +91,11 @@ dspPricesByCustomer::dspPricesByCustomer(QWidget* parent, const char* name, Qt::
   sHandleCosts(_showCosts->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPricesByCustomer::~dspPricesByCustomer()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPricesByCustomer::languageChange()
 {
   retranslateUi(this);
@@ -158,6 +139,7 @@ void dspPricesByCustomer::sHandleCosts(bool pShowCosts)
     _price->hideColumn(COST_COL);
     _price->hideColumn(MARGIN_COL);
   }
+  _costsGroup->setEnabled(_showCosts->isChecked());
 }
 
 void dspPricesByCustomer::sFillList()

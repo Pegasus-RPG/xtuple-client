@@ -1,377 +1,419 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>createCountTagsByParameterList</class>
-  <widget class="QDialog" name="createCountTagsByParameterList" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>472</width>
-        <height>374</height>
-      </rect>
-    </property>
-    <property name="windowTitle" >
-      <string>Create Count Tags by Parameter List/Warehouse</string>
-    </property>
-    <layout class="QVBoxLayout" >
-      <item>
-        <layout class="QHBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <widget class="ParameterGroup" name="_parameter" >
-              <property name="title" >
-                <string/>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <layout class="QVBoxLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <layout class="QVBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QPushButton" name="_close" >
-                      <property name="text" >
-                        <string>&amp;Cancel</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string>Alt+C</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="QPushButton" name="_create" >
-                      <property name="enabled" >
-                        <bool>true</bool>
-                      </property>
-                      <property name="text" >
-                        <string>Create &amp;Tags</string>
-                      </property>
-                      <property name="autoDefault" >
-                        <bool>true</bool>
-                      </property>
-                      <property name="default" >
-                        <bool>true</bool>
-                      </property>
-                    </widget>
-                  </item>
-                </layout>
-              </item>
-              <item>
-                <spacer name="Spacer180" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>20</width>
-                      <height>16</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>Preferred</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Vertical</enum>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
-        </layout>
-      </item>
-      <item>
-        <layout class="QHBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <layout class="QVBoxLayout" >
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <item>
-                <layout class="QHBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QLabel" name="_warehouseLit" >
-                      <property name="text" >
-                        <string>Warehouse:</string>
-                      </property>
-                      <property name="alignment" >
-                        <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="WComboBox" name="_warehouse" />
-                  </item>
-                </layout>
-              </item>
-              <item>
-                <spacer name="Spacer74" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>20</width>
-                      <height>0</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>Preferred</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Vertical</enum>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <layout class="QVBoxLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <layout class="QHBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <property name="spacing" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QCheckBox" name="_priority" >
-                      <property name="text" >
-                        <string>Mark Created Count Tag as Priority</string>
-                      </property>
-                      <property name="checked" >
-                        <bool>true</bool>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <spacer name="Spacer54" >
-                      <property name="sizeHint" >
-                        <size>
-                          <width>20</width>
-                          <height>20</height>
-                        </size>
-                      </property>
-                      <property name="sizeType" >
-                        <enum>Expanding</enum>
-                      </property>
-                      <property name="orientation" >
-                        <enum>Horizontal</enum>
-                      </property>
-                    </spacer>
-                  </item>
-                </layout>
-              </item>
-              <item>
-                <layout class="QHBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <property name="spacing" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QCheckBox" name="_freeze" >
-                      <property name="text" >
-                        <string>Freeze Inventory</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <spacer name="Spacer53" >
-                      <property name="sizeHint" >
-                        <size>
-                          <width>20</width>
-                          <height>20</height>
-                        </size>
-                      </property>
-                      <property name="sizeType" >
-                        <enum>Expanding</enum>
-                      </property>
-                      <property name="orientation" >
-                        <enum>Horizontal</enum>
-                      </property>
-                    </spacer>
-                  </item>
-                </layout>
-              </item>
-              <item>
-                <layout class="QHBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <property name="spacing" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QCheckBox" name="_ignoreZeroBalance" >
-                      <property name="text" >
-                        <string>Ignore Zero Balance Item Sites</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string/>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <spacer name="Spacer13_2" >
-                      <property name="sizeHint" >
-                        <size>
-                          <width>20</width>
-                          <height>20</height>
-                        </size>
-                      </property>
-                      <property name="sizeType" >
-                        <enum>Expanding</enum>
-                      </property>
-                      <property name="orientation" >
-                        <enum>Horizontal</enum>
-                      </property>
-                    </spacer>
-                  </item>
-                </layout>
-              </item>
-            </layout>
-          </item>
-        </layout>
-      </item>
-      <item>
-        <layout class="QHBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <widget class="QCheckBox" name="_byLocation" >
-              <property name="text" >
-                <string>Only for Specified Location:</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <layout class="QHBoxLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <widget class="XComboBox" name="_location" >
-                  <property name="enabled" >
-                    <bool>false</bool>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <spacer name="spacer6" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>51</width>
-                      <height>20</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>MinimumExpanding</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Horizontal</enum>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
-        </layout>
-      </item>
-      <item>
+<ui version="4.0" >
+ <class>createCountTagsByParameterList</class>
+ <widget class="QDialog" name="createCountTagsByParameterList" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>472</width>
+    <height>374</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Create Count Tags by Parameter List/Warehouse</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>5</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>5</number>
+     </property>
+     <item>
+      <widget class="ParameterGroup" name="_parameter" >
+       <property name="title" >
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
         <layout class="QVBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <property name="spacing" >
-            <number>0</number>
-          </property>
-          <item>
-            <widget class="QLabel" name="_commentsLit" >
-              <property name="text" >
-                <string>Comments:</string>
-              </property>
-            </widget>
-          </item>
-          <item>
-            <widget class="QTextEdit" name="_comments" />
-          </item>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Cancel</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+C</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_create" >
+           <property name="enabled" >
+            <bool>true</bool>
+           </property>
+           <property name="text" >
+            <string>Create &amp;Tags</string>
+           </property>
+           <property name="autoDefault" >
+            <bool>true</bool>
+           </property>
+           <property name="default" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
-      </item>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
     </layout>
-  </widget>
-  <layoutdefault spacing="5" margin="5" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <customwidgets>
-    <customwidget>
-      <class>WComboBox</class>
-      <extends>QComboBox</extends>
-      <header>wcombobox.h</header>
-      <container>0</container>
-      <pixmap></pixmap>
-    </customwidget>
-    <customwidget>
-      <class>XComboBox</class>
-      <extends>QComboBox</extends>
-      <header>xcombobox.h</header>
-      <container>0</container>
-      <pixmap></pixmap>
-    </customwidget>
-  </customwidgets>
-  <tabstops>
-    <tabstop>_parameter</tabstop>
-    <tabstop>_warehouse</tabstop>
-    <tabstop>_priority</tabstop>
-    <tabstop>_freeze</tabstop>
-    <tabstop>_ignoreZeroBalance</tabstop>
-    <tabstop>_byLocation</tabstop>
-    <tabstop>_location</tabstop>
-    <tabstop>_comments</tabstop>
-    <tabstop>_create</tabstop>
-    <tabstop>_close</tabstop>
-  </tabstops>
-  <includes>
-    <include location="global" >parameter.h</include>
-    <include location="local" >OpenMFGGUIClient.h</include>
-  </includes>
-  <connections>
-    <connection>
-      <sender>_close</sender>
-      <signal>clicked()</signal>
-      <receiver>createCountTagsByParameterList</receiver>
-      <slot>reject()</slot>
-    </connection>
-    <connection>
-      <sender>_byLocation</sender>
-      <signal>toggled(bool)</signal>
-      <receiver>_location</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-  </connections>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>5</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="_warehouseLit" >
+           <property name="text" >
+            <string>Warehouse:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="WComboBox" name="_warehouse" />
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="XCheckBox" name="_priority" >
+           <property name="text" >
+            <string>Mark Created Count Tag as Priority</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="XCheckBox" name="_freeze" >
+           <property name="text" >
+            <string>Freeze Inventory</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="XCheckBox" name="_ignoreZeroBalance" >
+           <property name="text" >
+            <string>Ignore Zero Balance Item Sites</string>
+           </property>
+           <property name="shortcut" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>5</number>
+     </property>
+     <item>
+      <widget class="XCheckBox" name="_byLocation" >
+       <property name="text" >
+        <string>Only for Specified Location:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="XComboBox" name="_location" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::MinimumExpanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>51</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="_commentsLit" >
+       <property name="text" >
+        <string>Comments:</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QTextEdit" name="_comments" />
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>ParameterGroup</class>
+   <extends>QGroupBox</extends>
+   <header>parametergroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_parameter</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_priority</tabstop>
+  <tabstop>_freeze</tabstop>
+  <tabstop>_ignoreZeroBalance</tabstop>
+  <tabstop>_byLocation</tabstop>
+  <tabstop>_location</tabstop>
+  <tabstop>_comments</tabstop>
+  <tabstop>_create</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <includes>
+  <include location="global" >parameter.h</include>
+  <include location="local" >OpenMFGGUIClient.h</include>
+ </includes>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>createCountTagsByParameterList</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_byLocation</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_location</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

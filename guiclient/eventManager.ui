@@ -109,7 +109,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_showAcknowledged" >
+         <widget class="XCheckBox" name="_showAcknowledged" >
           <property name="text" >
            <string>Show &amp;Acknowledged Events</string>
           </property>
@@ -300,7 +300,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_autoUpdate" >
+       <widget class="XCheckBox" name="_autoUpdate" >
         <property name="text" >
          <string>Automatically Update</string>
         </property>
@@ -315,6 +315,16 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
@@ -323,11 +333,6 @@
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

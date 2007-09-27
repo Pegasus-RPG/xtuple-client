@@ -69,7 +69,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_requireInventory" >
+         <widget class="XCheckBox" name="_requireInventory" >
           <property name="text" >
            <string>Require sufficient Inventory</string>
           </property>
@@ -390,14 +390,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ToCluster</class>
    <extends>QWidget</extends>
    <header>tocluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -408,6 +408,11 @@
    <class>SoCluster</class>
    <extends>QWidget</extends>
    <header>socluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

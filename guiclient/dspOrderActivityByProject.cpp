@@ -94,6 +94,14 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   _orders->addColumn(tr("Status"),      _orderColumn, Qt::AlignCenter );
   _orders->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignLeft   );
+  
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _showPo->setChecked(true);
+    _showSo->setChecked(true);
+    _showWo->setChecked(true);
+  }
 }
 
 /*

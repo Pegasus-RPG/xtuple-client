@@ -59,7 +59,7 @@
 #define CORRECTPRODUCTIONPOSTING_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_correctProductionPosting.h"
@@ -73,7 +73,7 @@ public:
     ~correctProductionPosting();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
 
 protected slots:
     virtual void languageChange();
@@ -85,8 +85,6 @@ protected slots:
 private:
     double _qtyReceivedCache;
     bool _captive;
-
-    void init();
 
 };
 

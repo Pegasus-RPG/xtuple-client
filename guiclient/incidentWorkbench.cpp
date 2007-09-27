@@ -89,6 +89,15 @@ incidentWorkbench::incidentWorkbench(QWidget* parent, const char* name, Qt::WFla
   _createdDates->setStartCaption(tr("First Creation Date:"));
   _createdDates->setEndCaption(tr("Last Creation Date:"));
 
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _statusFeedback->setChecked(true);
+    _statusConfirmed->setChecked(true);
+    _statusNew->setChecked(true);
+    _statusAssigned->setChecked(true);
+  }
+
   _assignedTo->setType(User);
 }
 

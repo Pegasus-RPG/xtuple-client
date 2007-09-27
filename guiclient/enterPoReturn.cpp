@@ -75,7 +75,7 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   setupUi(this);
 
   connect(_enter,	SIGNAL(clicked()),	this,	SLOT(sEnter()));
-  connect(_po,	SIGNAL(newId(int)),	this,	SLOT(sFillList()));
+  connect(_po,		SIGNAL(newId(int)),	this,	SLOT(sFillList()));
   connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
   connect(_showClosed,SIGNAL(toggled(bool)),	this,	SLOT(sShowClosed()));
 
@@ -90,6 +90,8 @@ enterPoReturn::enterPoReturn(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Received"),     _qtyColumn,  Qt::AlignRight  );
   _poitem->addColumn(tr("Returned"),     _qtyColumn,  Qt::AlignRight  );
   _poitem->addColumn(tr("To Return"),    _qtyColumn,  Qt::AlignRight  );
+
+  _returnAddr->setEnabled(_printReport->isChecked());
 }
 
 enterPoReturn::~enterPoReturn()

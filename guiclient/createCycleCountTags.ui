@@ -112,15 +112,12 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="_priority" >
+              <widget class="XCheckBox" name="_priority" >
                <property name="text" >
                 <string>Mark Created Count Tag as &amp;Priority</string>
                </property>
                <property name="shortcut" >
                 <string>Alt+P</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
                </property>
               </widget>
              </item>
@@ -151,7 +148,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="_freeze" >
+              <widget class="XCheckBox" name="_freeze" >
                <property name="text" >
                 <string>&amp;Freeze Inventory</string>
                </property>
@@ -187,7 +184,7 @@
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="_ignoreZeroBalance" >
+              <widget class="XCheckBox" name="_ignoreZeroBalance" >
                <property name="text" >
                 <string>Ignore Zero Balance Item Sites</string>
                </property>
@@ -410,7 +407,7 @@
       <number>5</number>
      </property>
      <item>
-      <widget class="QCheckBox" name="_byLocation" >
+      <widget class="XCheckBox" name="_byLocation" >
        <property name="text" >
         <string>Only for Specified Location:</string>
        </property>
@@ -507,14 +504,19 @@
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

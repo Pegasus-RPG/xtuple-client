@@ -57,23 +57,21 @@
 
 #include "dspPartiallyShippedOrders.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
 #include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
+
+#include "OpenMFGGUIClient.h"
+#include "printPackingList.h"
 #include "salesOrder.h"
 #include "salesOrderItem.h"
-#include "printPackingList.h"
-#include "OpenMFGGUIClient.h"
 
-/*
- *  Constructs a dspPartiallyShippedOrders as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#define AMOUNT_COL	7
+#define AMOUNT_CURR_COL	8
+
 dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -81,12 +79,10 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
+  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
@@ -101,8 +97,7 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
   _so->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight  );
   _so->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft);
 
-  _so->hideColumn(7);
-  _so->hideColumn(8);
+  sHandlePrices(_showPrices->isChecked());
 
   if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
     _showPrices->setEnabled(FALSE);
@@ -110,18 +105,11 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPartiallyShippedOrders::~dspPartiallyShippedOrders()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPartiallyShippedOrders::languageChange()
 {
   retranslateUi(this);
@@ -131,17 +119,15 @@ void dspPartiallyShippedOrders::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
   {
-    _so->showColumn(7);
+    _so->showColumn(AMOUNT_COL);
     if (!omfgThis->singleCurrency())
-      _so->showColumn(8);
+      _so->showColumn(AMOUNT_CURR_COL);
   }
   else
   {
-    _so->hideColumn(7);
-    _so->hideColumn(8);
+    _so->hideColumn(AMOUNT_COL);
+    _so->hideColumn(AMOUNT_CURR_COL);
   }
-
-  sFillList();
 }
 
 void dspPartiallyShippedOrders::sPrint()

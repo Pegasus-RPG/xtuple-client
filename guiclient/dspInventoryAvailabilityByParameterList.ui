@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>742</width>
+    <width>880</width>
     <height>442</height>
    </rect>
   </property>
@@ -280,7 +280,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QCheckBox" name="_showReorder" >
+                   <widget class="XCheckBox" name="_showReorder" >
                     <property name="text" >
                      <string>Show Reorder Exceptions</string>
                     </property>
@@ -329,15 +329,12 @@
                    </spacer>
                   </item>
                   <item>
-                   <widget class="QCheckBox" name="_ignoreReorderAtZero" >
+                   <widget class="XCheckBox" name="_ignoreReorderAtZero" >
                     <property name="enabled" >
                      <bool>false</bool>
                     </property>
                     <property name="text" >
                      <string>Ignore Reorder at 0</string>
-                    </property>
-                    <property name="checked" >
-                     <bool>true</bool>
                     </property>
                    </widget>
                   </item>
@@ -370,7 +367,7 @@
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QCheckBox" name="_showShortages" >
+                 <widget class="XCheckBox" name="_showShortages" >
                   <property name="text" >
                    <string>Show Shortages</string>
                   </property>
@@ -561,19 +558,9 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
   <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
@@ -583,6 +570,21 @@
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
@@ -644,22 +646,6 @@
    <sender>_byDays</sender>
    <signal>toggled(bool)</signal>
    <receiver>_days</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_showReorder</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_ignoreReorderAtZero</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >

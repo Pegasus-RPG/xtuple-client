@@ -73,39 +73,22 @@ changeWoQty::changeWoQty(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_wo, SIGNAL(qtyOrderedChanged(const QString&)), _currentQtyOrdered, SLOT(setText(const QString&)));
-  connect(_wo, SIGNAL(qtyReceivedChanged(const QString&)), _currentQtyReceived, SLOT(setText(const QString&)));
   connect(_change, SIGNAL(clicked()), this, SLOT(sChangeQty()));
-  connect(_wo, SIGNAL(valid(bool)), _change, SLOT(setEnabled(bool)));
-  connect(_wo, SIGNAL(valid(bool)), _newQtyOrdered, SLOT(setEnabled(bool)));
-  connect(_wo, SIGNAL(qtyReceivedChanged(const QString&)), _newQtyReceived, SLOT(setText(const QString&)));
-  connect(_wo, SIGNAL(qtyBalanceChanged(const QString&)), _newQtyBalance, SLOT(setText(const QString&)));
-  connect(_wo, SIGNAL(qtyBalanceChanged(const QString&)), _currentQtyBalance, SLOT(setText(const QString&)));
   connect(_newQtyOrdered, SIGNAL(textChanged(const QString&)), this, SLOT(sQtyChanged(const QString&)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_postComment, SIGNAL(toggled(bool)), _commentGroup, SLOT(setEnabled(bool)));
 
   _captive = FALSE;
 
   _wo->setType(cWoOpen | cWoExploded);
   _newQtyOrdered->setValidator(omfgThis->qtyVal());
   _cmnttype->setType(XComboBox::AllCommentTypes);
+  _commentGroup->setEnabled(_postComment->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 changeWoQty::~changeWoQty()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void changeWoQty::languageChange()
 {
   retranslateUi(this);

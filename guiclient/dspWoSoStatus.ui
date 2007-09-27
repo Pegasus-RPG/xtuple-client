@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspWoSoStatus</class>
  <widget class="QMainWindow" name="dspWoSoStatus" >
   <property name="geometry" >
@@ -161,7 +158,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_autoUpdate" >
+       <widget class="XCheckBox" name="_autoUpdate" >
         <property name="text" >
          <string>Automatically Update</string>
         </property>
@@ -176,18 +173,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

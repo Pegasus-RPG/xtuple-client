@@ -57,61 +57,21 @@
 
 #include "correctProductionPosting.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+
 #include "inputManager.h"
 #include "distributeInventory.h"
 #include "closeWo.h"
 
-/*
- *  Constructs a correctProductionPosting as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 correctProductionPosting::correctProductionPosting(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_correct, SIGNAL(clicked()), this, SLOT(sCorrect()));
+  connect(_wo, SIGNAL(newId(int)), this, SLOT(populate()));
 
-    // signals and slots connections
-    connect(_backFlush, SIGNAL(toggled(bool)), _nonPickItems, SLOT(setEnabled(bool)));
-    connect(_wo, SIGNAL(valid(bool)), _correct, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_correct, SIGNAL(clicked()), this, SLOT(sCorrect()));
-    connect(_wo, SIGNAL(newId(int)), this, SLOT(populate()));
-    init();
-    
-   if (!_metrics->boolean("Routings"))
-   {
-     _backflushOperations->setChecked(FALSE);
-     _backflushOperations->hide();
-   }
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-correctProductionPosting::~correctProductionPosting()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void correctProductionPosting::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void correctProductionPosting::init()
-{
   _captive = FALSE;
   _qtyReceivedCache = 0.0;
 
@@ -119,9 +79,37 @@ void correctProductionPosting::init()
 
   _wo->setType(cWoIssued);
   _qty->setValidator(omfgThis->qtyVal());
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _backFlush->setChecked(true);
+    _backflushOperations->setChecked(true);
+  }
+  _nonPickItems->setEnabled(_backFlush->isChecked() &&
+			    _privleges->check("ChangeNonPickItems"));
+
+  // TODO: unhide as part of implementation of 5847
+  _nonPickItems->hide();
+
+  if (!_metrics->boolean("Routings"))
+  {
+    _backflushOperations->setChecked(FALSE);
+    _backflushOperations->hide();
+  }
 }
 
-enum SetResponse correctProductionPosting::set(ParameterList &pParams)
+correctProductionPosting::~correctProductionPosting()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void correctProductionPosting::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse correctProductionPosting::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;

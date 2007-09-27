@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspTodoByUserAndIncident</class>
  <widget class="QMainWindow" name="dspTodoByUserAndIncident" >
   <property name="geometry" >
@@ -189,14 +186,14 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="_showCompleted" >
+         <widget class="XCheckBox" name="_showCompleted" >
           <property name="text" >
            <string>Show Completed Items</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="_showInactive" >
+         <widget class="XCheckBox" name="_showInactive" >
           <property name="text" >
            <string>Show Inactive Items</string>
           </property>
@@ -279,35 +276,31 @@
   </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>IncidentCluster</class>
-   <extends>QWidget</extends>
-   <header>incidentcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>IncidentCluster</class>
+   <extends>QWidget</extends>
+   <header>incidentcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

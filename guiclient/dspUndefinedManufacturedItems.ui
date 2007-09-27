@@ -1,14 +1,11 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspUndefinedManufacturedItems</class>
  <widget class="QMainWindow" name="dspUndefinedManufacturedItems" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>616</width>
+    <width>686</width>
     <height>307</height>
    </rect>
   </property>
@@ -48,7 +45,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_boo" >
+           <widget class="XCheckBox" name="_boo" >
             <property name="sizePolicy" >
              <sizepolicy>
               <hsizetype>1</hsizetype>
@@ -60,13 +57,10 @@
             <property name="text" >
              <string>Show Manufactured Items without valid Bills of &amp;Operations</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_bom" >
+           <widget class="XCheckBox" name="_bom" >
             <property name="sizePolicy" >
              <sizepolicy>
               <hsizetype>1</hsizetype>
@@ -77,9 +71,6 @@
             </property>
             <property name="text" >
              <string>Show Manufactured Items without valid Bills of Materials</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
             </property>
             <property name="tristate" >
              <bool>false</bool>
@@ -123,7 +114,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_showInactive" >
+           <widget class="XCheckBox" name="_showInactive" >
             <property name="text" >
              <string>Show &amp;Inactive Items</string>
             </property>
@@ -229,15 +220,18 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

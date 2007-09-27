@@ -99,6 +99,10 @@ dspWoOperationBufrStsByWorkCenter::dspWoOperationBufrStsByWorkCenter(QWidget* pa
   _wooper->addColumn(tr("Run Remain."),   _itemColumn,   Qt::AlignRight  );
   _wooper->addColumn(tr("Qty. Remain."),  _qtyColumn,    Qt::AlignRight  );
   _wooper->addColumn(tr("UOM"),           _uomColumn,    Qt::AlignCenter );
+  
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _QtyAvailOnly->setChecked(true);
 
   sFillList();
 }

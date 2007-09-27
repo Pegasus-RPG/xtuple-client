@@ -178,7 +178,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="_showDetail" >
+           <widget class="XCheckBox" name="_showDetail" >
             <property name="text" >
              <string>Show Item Detail</string>
             </property>
@@ -359,7 +359,7 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
@@ -371,6 +371,11 @@
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

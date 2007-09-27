@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>776</width>
+    <width>861</width>
     <height>424</height>
    </rect>
   </property>
@@ -179,7 +179,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_showOnlyRI" >
+               <widget class="XCheckBox" name="_showOnlyRI" >
                 <property name="text" >
                  <string>&amp;Only Show Released and In-Process W/O's</string>
                 </property>
@@ -212,7 +212,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_showOnlyTopLevel" >
+               <widget class="XCheckBox" name="_showOnlyTopLevel" >
                 <property name="text" >
                  <string>Only Show Top Level Work Orders</string>
                 </property>
@@ -402,7 +402,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="_autoUpdate" >
+          <widget class="XCheckBox" name="_autoUpdate" >
            <property name="text" >
             <string>Automatically Update</string>
            </property>
@@ -416,19 +416,9 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>WarehouseGroup</class>
-   <extends>QGroupBox</extends>
-   <header>warehousegroup.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
@@ -438,6 +428,21 @@
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

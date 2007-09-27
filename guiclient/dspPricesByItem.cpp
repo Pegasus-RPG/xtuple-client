@@ -57,20 +57,13 @@
 
 #include "dspPricesByItem.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <parameter.h>
 #include <openreports.h>
+#include <parameter.h>
 
 #define CURR_COL	5
 #define COST_COL	6
 #define MARGIN_COL	7
 
-/*
- *  Constructs a dspPricesByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -78,14 +71,9 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags f
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-  connect(_showCosts, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
 
   _item->setType(ItemLineEdit::cSold);
 
@@ -105,18 +93,11 @@ dspPricesByItem::dspPricesByItem(QWidget* parent, const char* name, Qt::WFlags f
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPricesByItem::~dspPricesByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPricesByItem::languageChange()
 {
   retranslateUi(this);
@@ -162,7 +143,7 @@ void dspPricesByItem::sHandleCosts(bool pShowCosts)
     _price->hideColumn(MARGIN_COL);
   }
 
-  sFillList();
+  _costsGroup->setEnabled(pShowCosts);
 }
 
 void dspPricesByItem::sFillList()

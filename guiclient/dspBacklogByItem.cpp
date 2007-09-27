@@ -57,22 +57,18 @@
 
 #include "dspBacklogByItem.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
+
 #include <parameter.h>
 #include <openreports.h>
+
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "printPackingList.h"
 
-/*
- *  Constructs a dspBacklogByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#define AMOUNT_COL	8
+
 dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -80,14 +76,10 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_showPrices, SIGNAL(toggled(bool)), this, SLOT(sHandlePrices(bool)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
+  connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
   _item->setType(ItemLineEdit::cSold);
@@ -102,26 +94,22 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _soitem->addColumn(tr("Ordered"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),   _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Amount $"),  _moneyColumn, Qt::AlignRight  );
+  if (_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"))
+    _soitem->addColumn(tr("Amount $"),  _moneyColumn, Qt::AlignRight  );
 
-  if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
-    _showPrices->setEnabled(FALSE);
+  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"));
+
+  if (! _showPrices->isChecked())
+    _soitem->hideColumn(AMOUNT_COL);
 
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspBacklogByItem::~dspBacklogByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspBacklogByItem::languageChange()
 {
   retranslateUi(this);
@@ -130,9 +118,9 @@ void dspBacklogByItem::languageChange()
 void dspBacklogByItem::sHandlePrices(bool pShowPrices)
 {
   if (pShowPrices)
-    _soitem->showColumn(8);
+    _soitem->showColumn(AMOUNT_COL);
   else
-    _soitem->hideColumn(8);
+    _soitem->hideColumn(AMOUNT_COL);
 
   sFillList();
 }

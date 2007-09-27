@@ -55,28 +55,68 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef POSTVOUCHERS_H
-#define POSTVOUCHERS_H
+#include "xcheckbox.h"
 
-#include "OpenMFGGUIClient.h"
-#include <QDialog>
-#include <parameter.h>
-#include "ui_postVouchers.h"
-
-class postVouchers : public QDialog, public Ui::postVouchers
+XCheckBox::XCheckBox(QWidget *pParent) :
+  QCheckBox(pParent)
 {
-    Q_OBJECT
+  constructor();
+}
 
-public:
-    postVouchers(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~postVouchers();
+XCheckBox::XCheckBox(const QString &pText, QWidget *pParent) :
+  QCheckBox(pText, pParent)
+{
+  constructor();
+}
 
-public slots:
-    virtual void sPost();
+// can't make a static QPixmap 'cause Qt complains:
+//	Must construct a QApplication before a QPaintDevice
+QPixmap *XCheckBox::_checkedIcon = 0;
 
-protected slots:
-    virtual void languageChange();
+void XCheckBox::constructor()
+{
+  _forgetful = false;
+  if (_x_preferences)
+    _forgetful = _x_preferences->value("XCheckBox/forgetful").startsWith("t",
+							  Qt::CaseInsensitive);
+  if (! _forgetful)
+  {
+    Q_INIT_RESOURCE(widgets);
+    if (! _checkedIcon)
+      _checkedIcon = new QPixmap(":/widgets/images/xcheckbox.png");
+#if 0
+  // TODO: can we use the icon as the background for the XCheckBox::indicator?
+  setStyleSheet(styleSheet() + " XCheckBox::indicator { border-style: wave }");
+#else
+    setIcon(*_checkedIcon);
+    setIconSize(_checkedIcon->size());
+#endif
+  }
+}
 
-};
+void XCheckBox::setObjectName(const QString & pName)
+{
+  QCheckBox::setObjectName(pName);
 
-#endif // POSTVOUCHERS_H
+  QString pname;
+  if(window())
+    pname = window()->objectName() + "/";
+  _settingsName = pname + objectName();
+
+  if(_x_preferences)
+  {
+    if (!_forgetful)
+      setCheckState((Qt::CheckState)(_x_preferences->value(_settingsName + "/checked").toInt()));
+  }
+}
+
+XCheckBox::~XCheckBox()
+{
+  if (!_settingsName.isEmpty() && _x_preferences)
+  {
+    if (_forgetful)
+      _x_preferences->remove(_settingsName + "/checked");
+    else
+      _x_preferences->set(_settingsName + "/checked", (int)checkState());
+  }
+}

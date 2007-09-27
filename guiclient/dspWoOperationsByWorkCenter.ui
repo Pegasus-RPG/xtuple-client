@@ -1,14 +1,11 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspWoOperationsByWorkCenter</class>
  <widget class="QMainWindow" name="dspWoOperationsByWorkCenter" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>753</width>
+    <width>782</width>
     <height>348</height>
    </rect>
   </property>
@@ -56,7 +53,7 @@
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
             <property name="buddy" >
-             <cstring></cstring>
+             <cstring>_warehouse</cstring>
             </property>
            </widget>
           </item>
@@ -233,7 +230,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_loadOnly" >
+         <widget class="XCheckBox" name="_loadOnly" >
           <property name="sizePolicy" >
            <sizepolicy>
             <hsizetype>1</hsizetype>
@@ -244,9 +241,6 @@
           </property>
           <property name="text" >
            <string>Only Show W/O Operations with Load</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -400,22 +394,21 @@
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -57,52 +57,38 @@
 
 #include "postAPChecks.h"
 
-#include <qvariant.h>
-#include <openreports.h>
-#include <qmessagebox.h>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a postAPChecks as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include <openreports.h>
+
+#include "storedProcErrorLookup.h"
+
 postAPChecks::postAPChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-postAPChecks::~postAPChecks()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void postAPChecks::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void postAPChecks::init()
-{
   _bankaccnt->setAllowNull(TRUE);
   _bankaccnt->setType(XComboBox::APBankAccounts);
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _printJournal->setChecked(true);
+
+}
+
+postAPChecks::~postAPChecks()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void postAPChecks::languageChange()
+{
+  retranslateUi(this);
 }
 
 void postAPChecks::sPost()
@@ -113,12 +99,8 @@ void postAPChecks::sPost()
   if (q.first())
   {
     int result = q.value("result").toInt();
-
     if (result < 0)
-      systemError( this, tr("A System Error occurred at %1::%2, Error #%2.")
-                         .arg(__FILE__)
-                         .arg(__LINE__)
-                         .arg(q.value("result").toInt()) );
+      systemError(this, storedProcErrorLookup("postAPChecks", result), __FILE__, __LINE__);
 
     omfgThis->sAPChecksUpdated(_bankaccnt->id(), -1, TRUE);
 
@@ -136,10 +118,11 @@ void postAPChecks::sPost()
 
     accept();
   }
-  else
-    systemError( this, tr("A System Error occurred at %1::%2.")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void postAPChecks::sHandleBankAccount(int pBankaccntid)
@@ -154,6 +137,9 @@ void postAPChecks::sHandleBankAccount(int pBankaccntid)
   q.exec();
   if (q.first())
     _numberOfChecks->setText(q.value("numofchecks").toString());
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

@@ -57,19 +57,14 @@
 
 #include "dspCountTagsByWarehouse.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 #include "countTag.h"
 
-/*
- *  Constructs a dspCountTagsByWarehouse as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -77,10 +72,8 @@ dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* na
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_cnttag, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
@@ -96,22 +89,19 @@ dspCountTagsByWarehouse::dspCountTagsByWarehouse(QWidget* parent, const char* na
   _cnttag->addColumn(tr("Qty. Counted"), _qtyColumn,   Qt::AlignRight  );
   _cnttag->addColumn(tr("Variance"),     _qtyColumn,   Qt::AlignRight  );
   _cnttag->addColumn(tr("%"),            _prcntColumn, Qt::AlignRight  );
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _showUnposted->setChecked(true);
   
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCountTagsByWarehouse::~dspCountTagsByWarehouse()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCountTagsByWarehouse::languageChange()
 {
   retranslateUi(this);

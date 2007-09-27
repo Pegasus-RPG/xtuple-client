@@ -57,63 +57,43 @@
 
 #include "dspInvalidBillsOfMaterials.h"
 
+#include <QMenu>
 #include <QVariant>
-#include <QStatusBar>
+
 #include <parameter.h>
-#include <QWorkspace>
+
 #include "item.h"
 #include "itemSite.h"
 
-/*
- *  Constructs a dspInvalidBillsOfMaterials as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_exceptions, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_query,  SIGNAL(clicked()),     this, SLOT(sFillList()));
+  connect(_update, SIGNAL(toggled(bool)), this, SLOT(sHandleUpdate()));
 
-    // signals and slots connections
-    connect(_exceptions, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_update, SIGNAL(toggled(bool)), this, SLOT(sHandleUpdate()));
-    init();
+  _exceptions->addColumn("componentItemid",                 0, Qt::AlignCenter);
+  _exceptions->addColumn("componentWarehouseId",            0, Qt::AlignCenter);
+  _exceptions->addColumn(tr("Whs."),               _whsColumn, Qt::AlignCenter);
+  _exceptions->addColumn(tr("Parent Item #"),     _itemColumn, Qt::AlignLeft  );
+  _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft  );
+  _exceptions->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft  );
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _update->setChecked(true);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspInvalidBillsOfMaterials::~dspInvalidBillsOfMaterials()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspInvalidBillsOfMaterials::languageChange()
 {
     retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspInvalidBillsOfMaterials::init()
-{
-  statusBar()->hide();
-  
-  _exceptions->addColumn("componentItemid",                0,           Qt::AlignCenter );
-  _exceptions->addColumn("componentWarehouseId",           0,           Qt::AlignCenter );
-  _exceptions->addColumn(tr("Whs."),                       _whsColumn,  Qt::AlignCenter );
-  _exceptions->addColumn(tr("Parent Item #"),              _itemColumn, Qt::AlignLeft   );
-  _exceptions->addColumn(tr("Component Item #"),           _itemColumn, Qt::AlignLeft   );
-  _exceptions->addColumn(tr("Component Item Description"), -1,          Qt::AlignLeft   );
 }
 
 void dspInvalidBillsOfMaterials::sEditItem()

@@ -328,14 +328,14 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_onlyShowShortages" >
+         <widget class="XCheckBox" name="_onlyShowShortages" >
           <property name="text" >
            <string>Only Show Shortages</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="_showWoSupply" >
+         <widget class="XCheckBox" name="_showWoSupply" >
           <property name="text" >
            <string>Show W/O Supply</string>
           </property>
@@ -450,23 +450,28 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
   <customwidget>
    <class>SoLineEdit</class>
    <extends>XLineEdit</extends>
    <header>socluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

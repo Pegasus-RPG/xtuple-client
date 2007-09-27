@@ -57,14 +57,15 @@
 
 #include "dspFinancialReport.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStack>
+#include <QCloseEvent>
 #include <QInputDialog>
 #include <QList>
 #include <QMenu>
+#include <QMessageBox>
+#include <QStack>
+#include <QVariant>
+
 #include <openreports.h>
-#include <QCloseEvent>
 #include "dspFinancialReport.h"
 
 #define cFlRoot  0
@@ -79,10 +80,6 @@
 #define cBudget   4
 #define cDiff     5
 
-/*
- *  Constructs a dspFinancialReport as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- */
 dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WFlags fl)
     : QWidget(parent, name, fl)
 {
@@ -112,8 +109,13 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
   sFillPeriods();
 
   _layout->addColumn( tr("Group/Account Name"), -1,              Qt::AlignLeft  );
-  
-  
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _shownumbers->setChecked(true);
+    _showzeros->setChecked(true);
+  }
 }
 
 /*

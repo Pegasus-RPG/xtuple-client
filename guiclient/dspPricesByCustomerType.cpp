@@ -57,9 +57,6 @@
 
 #include "dspPricesByCustomerType.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <parameter.h>
 #include <openreports.h>
 
@@ -67,11 +64,6 @@
 #define COST_COL	8
 #define MARGIN_COL	9
 
-/*
- *  Constructs a dspPricesByCustomerType as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -79,13 +71,9 @@ dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* na
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_custtype, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_showCosts, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
-  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showCosts, SIGNAL(toggled(bool)), this, SLOT(sHandleCosts(bool)));
 
   _custtype->setType(XComboBox::CustomerTypes);
 
@@ -105,18 +93,11 @@ dspPricesByCustomerType::dspPricesByCustomerType(QWidget* parent, const char* na
   sHandleCosts(_showCosts->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspPricesByCustomerType::~dspPricesByCustomerType()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspPricesByCustomerType::languageChange()
 {
   retranslateUi(this);
@@ -160,6 +141,7 @@ void dspPricesByCustomerType::sHandleCosts(bool pShowCosts)
     _price->hideColumn(COST_COL);
     _price->hideColumn(MARGIN_COL);
   }
+  _costsGroup->setEnabled(pShowCosts);
 }
 
 void dspPricesByCustomerType::sFillList()

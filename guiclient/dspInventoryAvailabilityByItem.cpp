@@ -57,27 +57,24 @@
 
 #include "dspInventoryAvailabilityByItem.h"
 
-#include <QVariant>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
-#include "inputManager.h"
-#include "dspInventoryHistoryByItem.h"
+
+#include "createCountTagsByItem.h"
 #include "dspAllocations.h"
+#include "dspInventoryHistoryByItem.h"
 #include "dspOrders.h"
 #include "dspRunningAvailability.h"
-#include "workOrder.h"
-#include "purchaseRequest.h"
-#include "purchaseOrder.h"
 #include "dspSubstituteAvailabilityByItem.h"
-#include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
+#include "inputManager.h"
+#include "purchaseOrder.h"
+#include "purchaseRequest.h"
+#include "workOrder.h"
 
-/*
- *  Constructs a dspInventoryAvailabilityByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -91,21 +88,10 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
   _showByGroupInt->addButton(_byDate);
   _showByGroupInt->addButton(_byDates);
 
-  // signals and slots connections
-  connect(_byDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
-  connect(_byDate, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
-  connect(_item, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
-  connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
-  connect(_showReorder, SIGNAL(toggled(bool)), _ignoreReorderAtZero, SLOT(setEnabled(bool)));
   connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemSites(int)));
-  connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-  connect(_byDates, SIGNAL(toggled(bool)), _startDate, SLOT(setEnabled(bool)));
-  connect(_byDates, SIGNAL(toggled(bool)), _endDate, SLOT(setEnabled(bool)));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
@@ -123,20 +109,19 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
   _item->setFocus();
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _ignoreReorderAtZero->setChecked(true);
+
+  sHandleShowReorder(_showReorder->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspInventoryAvailabilityByItem::~dspInventoryAvailabilityByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspInventoryAvailabilityByItem::languageChange()
 {
   retranslateUi(this);
@@ -432,7 +417,8 @@ void dspInventoryAvailabilityByItem::sEnterMiscCount()
 
 void dspInventoryAvailabilityByItem::sHandleShowReorder(bool pValue)
 {
-  if (pValue)
+  _ignoreReorderAtZero->setEnabled(pValue);
+  if (pValue && Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
 }
 

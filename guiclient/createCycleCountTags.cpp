@@ -86,6 +86,10 @@ createCycleCountTags::createCycleCountTags(QWidget* parent, const char* name, bo
       _warehouse->hide();
     }
 
+    Preferences _pref = Preferences(omfgThis->username());
+    if (_pref.boolean("XCheckBox/forgetful"))
+      _priority->setChecked(true);
+
     sPopulateLocations();
 }
 

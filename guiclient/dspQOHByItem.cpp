@@ -58,17 +58,16 @@
 #include "dspQOHByItem.h"
 
 #include <QMenu>
-#include <QVariant>
 
 #include <openreports.h>
 #include <parameter.h>
 
-#include "inputManager.h"
 #include "adjustmentTrans.h"
-#include "enterMiscCount.h"
-#include "transferTrans.h"
 #include "createCountTagsByItem.h"
 #include "dspInventoryLocator.h"
+#include "enterMiscCount.h"
+#include "inputManager.h"
+#include "transferTrans.h"
 
 dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -80,9 +79,9 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
   _costsGroupInt->addButton(_useActualCosts);
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_qoh, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
 
   omfgThis->inputManager()->notify(cBCItem, this, _item, SLOT(setItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, _item, SLOT(setItemsiteid(int)));
@@ -98,6 +97,8 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
+
+  sHandleValue(_showValue->isChecked());
 
   _item->setFocus();
 }
@@ -243,6 +244,7 @@ void dspQOHByItem::sHandleValue(bool pShowValue)
   _qoh->setColumnHidden(5, !pShowValue);
   _qoh->setColumnHidden(6, !pShowValue);
   _qoh->setColumnHidden(7, !pShowValue);
+  _costsGroup->setEnabled(pShowValue);
 }
 
 void dspQOHByItem::sFillList()

@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>411</width>
+    <width>417</width>
     <height>351</height>
    </rect>
   </property>
@@ -249,15 +249,12 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QCheckBox" name="_backflush" >
+          <widget class="XCheckBox" name="_backflush" >
            <property name="text" >
             <string>&amp;Backflush</string>
            </property>
            <property name="shortcut" >
             <string>Alt+B</string>
-           </property>
-           <property name="checked" >
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -304,7 +301,7 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="_nonPickItems" >
+          <widget class="XCheckBox" name="_nonPickItems" >
            <property name="text" >
             <string>&amp;Issue Items not on Pick List</string>
            </property>
@@ -406,7 +403,7 @@
       <number>5</number>
      </property>
      <item>
-      <widget class="QCheckBox" name="_immediateTransfer" >
+      <widget class="XCheckBox" name="_immediateTransfer" >
        <property name="text" >
         <string>Immediate &amp;Transfer to Warehouse:</string>
        </property>
@@ -455,18 +452,23 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>

@@ -93,16 +93,19 @@ dspBookingsByCustomerGroup::dspBookingsByCustomerGroup(QWidget* parent, const ch
   {
     _sohist->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight  );
     _sohist->addColumn(tr("Total"),       _moneyColumn, Qt::AlignRight  );
-    _showPrices->setChecked(TRUE);
   }
-  else
-    _showPrices->setEnabled(FALSE);
 
-  if (_privleges->check("ViewCosts"))
-    _showCosts->setChecked(TRUE);
-  else
-    _showCosts->setEnabled(FALSE);
+  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
+  _showCosts->setEnabled(_privleges->check("ViewCosts"));
 
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _showPrices->setChecked(_privleges->check("ViewCustomerPrices"));
+    _showCosts->setChecked(_privleges->check("ViewCosts"));
+  }
+
+  sHandlePrice(_showPrices->isChecked());
 }
 
 dspBookingsByCustomerGroup::~dspBookingsByCustomerGroup()
@@ -186,22 +189,6 @@ void dspBookingsByCustomerGroup::sView()
 
 void dspBookingsByCustomerGroup::sPrint()
 {
-  if (!_dates->startDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter Start Date"),
-                          tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
-  }
-
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::warning( this, tr("Enter End Date"),
-                          tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
-
   ParameterList params;
   _warehouse->appendValue(params);
   _customerGroup->appendValue(params);
@@ -324,4 +311,3 @@ bool dspBookingsByCustomerGroup::checkParameters()
 
   return TRUE;
 }
-

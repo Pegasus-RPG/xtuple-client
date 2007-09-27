@@ -59,7 +59,7 @@
 #define POSTAPCHECK_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_postAPCheck.h"
 
@@ -71,10 +71,8 @@ public:
     postAPCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postAPCheck();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sPost();
     virtual void sHandleBankAccount( int pBankaccntid );
     virtual void populate( int pApchkid );

@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspIndentedWhereUsed</class>
  <widget class="QMainWindow" name="dspIndentedWhereUsed" >
   <property name="geometry" >
@@ -16,14 +13,6 @@
    <string>Indented Where Used</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>733</width>
-     <height>332</height>
-    </rect>
-   </property>
    <layout class="QVBoxLayout" >
     <property name="margin" >
      <number>5</number>
@@ -85,7 +74,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_showExpired" >
+           <widget class="XCheckBox" name="_showExpired" >
             <property name="text" >
              <string>Show &amp;Expired Components</string>
             </property>
@@ -100,7 +89,7 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="_showFuture" >
+             <widget class="XCheckBox" name="_showFuture" >
               <property name="text" >
                <string>Show &amp;Future Components</string>
               </property>
@@ -247,36 +236,23 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>QTreeWidget</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>QMainWindow</class>
-   <extends>QWidget</extends>
-   <header>qmainwindow.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

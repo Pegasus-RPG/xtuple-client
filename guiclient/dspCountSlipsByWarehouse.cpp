@@ -57,18 +57,13 @@
 
 #include "dspCountSlipsByWarehouse.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
 
-/*
- *  Constructs a dspCountSlipsByWarehouse as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -76,11 +71,9 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_cntslip, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_showUnposted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_numericSlips, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
@@ -96,6 +89,10 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
   _cntslip->addColumn(tr("Entered (By)"), _userColumn,  Qt::AlignCenter );
   _cntslip->addColumn(tr("Qty. Counted"), _qtyColumn,   Qt::AlignRight  );
   _cntslip->addColumn(tr("Posted"),       _dateColumn,  Qt::AlignCenter );
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _showUnposted->setChecked(true);
   
   sFillList();
 }

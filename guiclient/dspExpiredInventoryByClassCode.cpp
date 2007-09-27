@@ -57,13 +57,12 @@
 
 #include "dspExpiredInventoryByClassCode.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
 #include <QMessageBox>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "adjustmentTrans.h"
 #include "enterMiscCount.h"
 #include "transferTrans.h"
@@ -73,11 +72,6 @@
 #define COST_COL	6
 #define VALUE_COL	7
 
-/*
- *  Constructs a dspExpiredInventoryByClassCode as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -97,13 +91,12 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_expired, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_showValue, SIGNAL(toggled(bool)), _costsGroup, SLOT(setEnabled(bool)));
-  connect(_showValue, SIGNAL(toggled(bool)), _inventoryValue, SLOT(setEnabled(bool)));
 
   _classCode->setType(ClassCode);
+  _costsGroup->setEnabled(_showValue->isChecked());
+  _inventoryValue->setEnabled(_showValue->isChecked());
 
   _expired->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
   _expired->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
@@ -122,18 +115,11 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspExpiredInventoryByClassCode::~dspExpiredInventoryByClassCode()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspExpiredInventoryByClassCode::languageChange()
 {
   retranslateUi(this);

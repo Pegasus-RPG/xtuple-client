@@ -57,25 +57,22 @@
 
 #include "dspInventoryAvailabilityBySourceVendor.h"
 
-#include <QVariant>
-#include <QMessageBox>
 #include <QMenu>
+#include <QMessageBox>
+#include <QVariant>
+
 #include <openreports.h>
-#include "dspInventoryHistoryByItem.h"
+
+#include "createCountTagsByItem.h"
 #include "dspAllocations.h"
+#include "dspInventoryHistoryByItem.h"
 #include "dspOrders.h"
 #include "dspRunningAvailability.h"
-#include "purchaseRequest.h"
-#include "purchaseOrder.h"
 #include "dspSubstituteAvailabilityByItem.h"
-#include "createCountTagsByItem.h"
 #include "enterMiscCount.h"
+#include "purchaseOrder.h"
+#include "purchaseRequest.h"
 
-/*
- *  Constructs a dspInventoryAvailabilityBySourceVendor as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -95,20 +92,10 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   _showByGroupInt->addButton(_byDate);
   _showByGroupInt->addButton(_byDates);
 
-  // signals and slots connections
   connect(_availability, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_byDays, SIGNAL(toggled(bool)), _days, SLOT(setEnabled(bool)));
-  connect(_byDate, SIGNAL(toggled(bool)), _date, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showReorder, SIGNAL(toggled(bool)), this, SLOT(sHandleShowReorder(bool)));
-  connect(_showReorder, SIGNAL(toggled(bool)), _ignoreReorderAtZero, SLOT(setEnabled(bool)));
-  connect(_byDates, SIGNAL(toggled(bool)), _startDate, SLOT(setEnabled(bool)));
-  connect(_byDates, SIGNAL(toggled(bool)), _endDate, SLOT(setEnabled(bool)));
-  connect(_selectedVendor, SIGNAL(toggled(bool)), _vend, SLOT(setEnabled(bool)));
-  connect(_selectedVendorType, SIGNAL(toggled(bool)), _vendorTypes, SLOT(setEnabled(bool)));
-  connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
 
   _vendorTypes->setType(XComboBox::VendorTypes);
 
@@ -124,20 +111,19 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   _availability->addColumn(tr("Reorder Lvl."), _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight  );
+  
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _ignoreReorderAtZero->setChecked(true);
+
+  sHandleShowReorder(_showReorder->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspInventoryAvailabilityBySourceVendor::~dspInventoryAvailabilityBySourceVendor()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspInventoryAvailabilityBySourceVendor::languageChange()
 {
   retranslateUi(this);
@@ -374,7 +360,8 @@ void dspInventoryAvailabilityBySourceVendor::sEnterMiscCount()
 
 void dspInventoryAvailabilityBySourceVendor::sHandleShowReorder(bool pValue)
 {
-  if (pValue)
+  _ignoreReorderAtZero->setEnabled(pValue);
+  if (pValue && Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
 }
 
@@ -384,18 +371,21 @@ void dspInventoryAvailabilityBySourceVendor::sFillList()
 
   if ((_byDate->isChecked()) && (!_date->isValid()))
   {
-    QMessageBox::critical( this, tr("Enter Valid Date"),
-                           tr( "You have choosen to view Inventory Availabilty as of a given date but have not\n"
-                               "indicated the date.  Please enter a valid date." ) );
+    QMessageBox::critical(this, tr("Enter Valid Date"),
+                          tr("<p>You have choosen to view Inventory Availability"
+			     " as of a given date but have not indicated "
+			     "the date.  Please enter a valid date.") );
     _date->setFocus();
     return;
   }
 
   if ((_byDates->isChecked()) && ( (!_startDate->isValid()) || (!_endDate->isValid()) ) )
   {
-    QMessageBox::critical( this, tr("Enter Dates"),
-                           tr( "You have choosen to view Inventory Availabilty as of a given Start and End Date but have not\n"
-                               "indicated the dates.  Please enter valid dates." ) );
+    QMessageBox::critical(this, tr("Enter Dates"),
+                          tr("<p>You have choosen to view Inventory "
+			     "Availability as of a given Start and End Date but "
+			     "have not indicated the dates.  Please enter "
+			     "valid dates." ) );
     _startDate->setFocus();
     return;
   }

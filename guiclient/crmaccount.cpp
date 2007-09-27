@@ -145,6 +145,15 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _todo->addColumn(tr("Due Date"),  _dateColumn, Qt::AlignLeft );
   _todo->addColumn(tr("Incident"), _orderColumn, Qt::AlignLeft );
 
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _active->setChecked(true);
+    _activeTodoIncdt->setChecked(true);
+    _showIncdt->setChecked(true);
+    _showTodo->setChecked(true);
+  }
+
   _mode		= cNew;
   _crmacctId	= -1;
   _competitorId	= -1;

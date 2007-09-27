@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspIncidentsByCRMAccount</class>
  <widget class="QMainWindow" name="dspIncidentsByCRMAccount" >
   <property name="geometry" >
@@ -121,7 +118,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="_showAcctsWOIncdts" >
+         <widget class="XCheckBox" name="_showAcctsWOIncdts" >
           <property name="text" >
            <string>Show Accounts With No Incidents</string>
           </property>
@@ -173,7 +170,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="_showClosed" >
+         <widget class="XCheckBox" name="_showClosed" >
           <property name="text" >
            <string>Show Closed Incidents</string>
           </property>
@@ -269,28 +266,26 @@
   </widget>
  </widget>
  <layoutdefault spacing="5" margin="5" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>CRMAcctCluster</class>
-   <extends>QWidget</extends>
-   <header>crmacctcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>CRMAcctCluster</class>
+   <extends>QWidget</extends>
+   <header>crmacctcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

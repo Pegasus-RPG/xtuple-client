@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>705</width>
+    <width>731</width>
     <height>461</height>
    </rect>
   </property>
@@ -98,56 +98,44 @@
                 <number>5</number>
                </property>
                <item row="1" column="0" >
-                <widget class="QCheckBox" name="_statusFeedback" >
+                <widget class="XCheckBox" name="_statusFeedback" >
                  <property name="text" >
                   <string>&amp;Feedback</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item row="0" column="1" >
-                <widget class="QCheckBox" name="_statusConfirmed" >
+                <widget class="XCheckBox" name="_statusConfirmed" >
                  <property name="text" >
                   <string>C&amp;onfirmed</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item row="0" column="0" >
-                <widget class="QCheckBox" name="_statusNew" >
+                <widget class="XCheckBox" name="_statusNew" >
                  <property name="text" >
                   <string>&amp;New</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
                <item row="0" column="2" >
-                <widget class="QCheckBox" name="_statusResolved" >
+                <widget class="XCheckBox" name="_statusResolved" >
                  <property name="text" >
                   <string>&amp;Resolved</string>
                  </property>
                 </widget>
                </item>
                <item row="1" column="2" >
-                <widget class="QCheckBox" name="_statusClosed" >
+                <widget class="XCheckBox" name="_statusClosed" >
                  <property name="text" >
                   <string>&amp;Closed</string>
                  </property>
                 </widget>
                </item>
                <item row="1" column="1" >
-                <widget class="QCheckBox" name="_statusAssigned" >
+                <widget class="XCheckBox" name="_statusAssigned" >
                  <property name="text" >
                   <string>&amp;Assigned</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -402,7 +390,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_autoUpdate" >
+       <widget class="XCheckBox" name="_autoUpdate" >
         <property name="text" >
          <string>Automatically Update</string>
         </property>
@@ -416,19 +404,24 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -57,52 +57,18 @@
 
 #include "postAPCheck.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a postAPCheck as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postAPCheck::postAPCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
-    connect(_apchk, SIGNAL(notNull(bool)), _post, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-postAPCheck::~postAPCheck()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void postAPCheck::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void postAPCheck::init()
-{
   _captive = FALSE;
 
   _apchk->setAllowNull(TRUE);
@@ -110,7 +76,17 @@ void postAPCheck::init()
   _bankaccnt->setType(XComboBox::APBankAccounts);
 }
 
-enum SetResponse postAPCheck::set(ParameterList &pParams)
+postAPCheck::~postAPCheck()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void postAPCheck::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse postAPCheck::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -191,6 +167,9 @@ void postAPCheck::populate(int pApchkid)
     _bankaccnt->setId(q.value("apchk_bankaccnt_id").toInt());
     _apchk->setId(pApchkid);
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

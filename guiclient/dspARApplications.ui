@@ -206,7 +206,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_cashReceipts" >
+               <widget class="XCheckBox" name="_cashReceipts" >
                 <property name="text" >
                  <string>Show Cash Receipts</string>
                 </property>
@@ -239,7 +239,7 @@
                <number>0</number>
               </property>
               <item>
-               <widget class="QCheckBox" name="_creditMemos" >
+               <widget class="XCheckBox" name="_creditMemos" >
                 <property name="text" >
                  <string>Show Credit Memos</string>
                 </property>
@@ -401,6 +401,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -416,9 +421,9 @@
    <header>custcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

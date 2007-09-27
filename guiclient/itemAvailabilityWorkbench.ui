@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>688</width>
+    <width>721</width>
     <height>480</height>
    </rect>
   </property>
@@ -197,7 +197,7 @@
                  </layout>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="_showPlanned" >
+                 <widget class="XCheckBox" name="_showPlanned" >
                   <property name="text" >
                    <string>Show Planned Orders</string>
                   </property>
@@ -722,7 +722,7 @@
                      <number>0</number>
                     </property>
                     <item>
-                     <widget class="QCheckBox" name="_showReorder" >
+                     <widget class="XCheckBox" name="_showReorder" >
                       <property name="text" >
                        <string>Show Reorder Exceptions</string>
                       </property>
@@ -771,15 +771,12 @@
                      </spacer>
                     </item>
                     <item>
-                     <widget class="QCheckBox" name="_ignoreReorderAtZero" >
+                     <widget class="XCheckBox" name="_ignoreReorderAtZero" >
                       <property name="enabled" >
                        <bool>false</bool>
                       </property>
                       <property name="text" >
                        <string>Ignore Reorder at 0</string>
-                      </property>
-                      <property name="checked" >
-                       <bool>true</bool>
                       </property>
                      </widget>
                     </item>
@@ -812,7 +809,7 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QCheckBox" name="_showShortages" >
+                   <widget class="XCheckBox" name="_showShortages" >
                     <property name="text" >
                      <string>Show Shortages</string>
                     </property>
@@ -1753,14 +1750,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -1768,24 +1770,24 @@
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

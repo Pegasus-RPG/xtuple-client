@@ -57,60 +57,42 @@
 
 #include "postInvoices.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
+
 #include "rwInterface.h"
 #include "distributeInventory.h"
 #include "submitAction.h"
 
-/*
- *  Constructs a postInvoices as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 postInvoices::postInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
 
-    // signals and slots connections
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 
-    if (!_metrics->boolean("EnableBatchManager"))
-      _submit->hide();
-    
-    init();
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _printJournal->setChecked(true);
+
+  _post->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 postInvoices::~postInvoices()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void postInvoices::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void postInvoices::init()
-{
-  _post->setFocus();
+  retranslateUi(this);
 }
 
 void postInvoices::sPost()

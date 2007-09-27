@@ -58,11 +58,10 @@
 #include "postMiscProduction.h"
 
 #include <QMessageBox>
-#include <QValidator>
 #include <QVariant>
 
 #include "distributeInventory.h"
-#include "distributeBreederProduction.h"
+//#include "distributeBreederProduction.h"
 
 postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
@@ -86,6 +85,16 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
     _immediateTransfer->hide();
     _transferWarehouse->hide();
   }
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _backflush->setChecked(true);
+
+  _nonPickItems->setEnabled(_backflush->isChecked() &&
+			    _privleges->check("ChangeNonPickItems"));
+
+  // TODO: unhide as part of implementation of 5847
+  _nonPickItems->hide();
 }
 
 postMiscProduction::~postMiscProduction()

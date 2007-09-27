@@ -57,66 +57,40 @@
 
 #include "changePoitemQty.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
 
-/*
- *  Constructs a changePoitemQty as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 changePoitemQty::changePoitemQty(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_change, SIGNAL(clicked()), this, SLOT(sChangeQty()));
+  connect(_newQty, SIGNAL(lostFocus()), this, SLOT(sQtyChanged()));
+  connect(_po, SIGNAL(newId(int)), this, SLOT(sPopulatePoitem(int)));
+  connect(_poitem, SIGNAL(newID(int)), this, SLOT(sPopulate(int)));
 
-    // signals and slots connections
-    connect(_change, SIGNAL(clicked()), this, SLOT(sChangeQty()));
-    connect(_newQty, SIGNAL(lostFocus()), this, SLOT(sQtyChanged()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_po, SIGNAL(valid(bool)), _poitem, SLOT(setEnabled(bool)));
-    connect(_po, SIGNAL(newId(int)), this, SLOT(sPopulatePoitem(int)));
-    connect(_poitem, SIGNAL(newID(int)), this, SLOT(sPopulate(int)));
-    connect(_poitem, SIGNAL(valid(bool)), _change, SLOT(setEnabled(bool)));
-    connect(_postComment, SIGNAL(toggled(bool)), _commentGroup, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-changePoitemQty::~changePoitemQty()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void changePoitemQty::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void changePoitemQty::init()
-{
   _captive = FALSE;
   _cacheFreight = 0.0;
 
   _po->setType(cPOUnposted | cPOOpen);
+  _commentGroup->setEnabled(_postComment->isChecked());
   
   _newQty->setValidator(omfgThis->qtyVal());
 
   _cmnttype->setType(XComboBox::AllCommentTypes);
 }
 
-enum SetResponse changePoitemQty::set(ParameterList &pParams)
+changePoitemQty::~changePoitemQty()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void changePoitemQty::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse changePoitemQty::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 

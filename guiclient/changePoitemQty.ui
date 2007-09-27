@@ -1,506 +1,581 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>changePoitemQty</class>
-  <widget class="QDialog" name="changePoitemQty" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>412</width>
-        <height>325</height>
-      </rect>
-    </property>
-    <property name="windowTitle" >
-      <string>Change P/O Item Quantity</string>
-    </property>
-    <layout class="QVBoxLayout" >
-      <property name="spacing" >
+<ui version="4.0" >
+ <class>changePoitemQty</class>
+ <widget class="QDialog" name="changePoitemQty" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>412</width>
+    <height>336</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Change P/O Item Quantity</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="margin" >
+    <number>5</number>
+   </property>
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>5</number>
+     </property>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
         <number>0</number>
-      </property>
-      <item>
+       </property>
+       <property name="spacing" >
+        <number>5</number>
+       </property>
+       <item>
+        <widget class="PoCluster" name="_po" />
+       </item>
+       <item>
         <layout class="QHBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <layout class="QVBoxLayout" >
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <widget class="PoCluster" name="_po" />
-              </item>
-              <item>
-                <layout class="QHBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QLabel" name="_poitemLit" >
-                      <property name="text" >
-                        <string>Line Item:</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="XComboBox" name="_poitem" >
-                      <property name="enabled" >
-                        <bool>false</bool>
-                      </property>
-                      <property name="sizePolicy" >
-                        <sizepolicy>
-                          <hsizetype>7</hsizetype>
-                          <vsizetype>0</vsizetype>
-                          <horstretch>0</horstretch>
-                          <verstretch>0</verstretch>
-                        </sizepolicy>
-                      </property>
-                    </widget>
-                  </item>
-                </layout>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <layout class="QVBoxLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <layout class="QVBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QPushButton" name="_close" >
-                      <property name="text" >
-                        <string>&amp;Cancel</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string>Alt+C</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="QPushButton" name="_change" >
-                      <property name="enabled" >
-                        <bool>false</bool>
-                      </property>
-                      <property name="text" >
-                        <string>Change &amp;Qty.</string>
-                      </property>
-                      <property name="shortcut" >
-                        <string>Alt+Q</string>
-                      </property>
-                      <property name="default" >
-                        <bool>true</bool>
-                      </property>
-                    </widget>
-                  </item>
-                </layout>
-              </item>
-              <item>
-                <spacer name="Spacer343" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>20</width>
-                      <height>16</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>Preferred</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Vertical</enum>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="_poitemLit" >
+           <property name="text" >
+            <string>Line Item:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XComboBox" name="_poitem" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="sizePolicy" >
+            <sizepolicy>
+             <hsizetype>7</hsizetype>
+             <vsizetype>0</vsizetype>
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
         </layout>
-      </item>
-      <item>
-        <layout class="QHBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <layout class="QGridLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item row="1" column="0" >
-                <widget class="QLabel" name="_qtyOrderedLit" >
-                  <property name="text" >
-                    <string>Qty. Ordered:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="0" column="2" >
-                <widget class="QLabel" name="_newLit" >
-                  <property name="text" >
-                    <string>New</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignCenter</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="1" column="2" >
-                <widget class="XLineEdit" name="_newQty" >
-                  <property name="maximumSize" >
-                    <size>
-                      <width>80</width>
-                      <height>32767</height>
-                    </size>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="2" column="0" >
-                <widget class="QLabel" name="_qtyReceivedLit" >
-                  <property name="text" >
-                    <string>Qty. Received:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="3" column="2" >
-                <widget class="QLabel" name="_newQtyBalance" >
-                  <property name="minimumSize" >
-                    <size>
-                      <width>80</width>
-                      <height>0</height>
-                    </size>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="2" column="2" >
-                <widget class="QLabel" name="_newQtyReceived" >
-                  <property name="minimumSize" >
-                    <size>
-                      <width>80</width>
-                      <height>0</height>
-                    </size>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="0" column="0" >
-                <spacer name="Spacer341" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>20</width>
-                      <height>20</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>Preferred</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Vertical</enum>
-                  </property>
-                </spacer>
-              </item>
-              <item row="1" column="1" >
-                <widget class="QLabel" name="_currentQtyOrdered" >
-                  <property name="minimumSize" >
-                    <size>
-                      <width>80</width>
-                      <height>0</height>
-                    </size>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="0" column="1" >
-                <widget class="QLabel" name="_currentLit" >
-                  <property name="text" >
-                    <string>Current</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignCenter</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="3" column="0" >
-                <widget class="QLabel" name="_qtyBalanceLit" >
-                  <property name="text" >
-                    <string>Qty. Balance:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="3" column="1" >
-                <widget class="QLabel" name="_currentQtyBalance" >
-                  <property name="minimumSize" >
-                    <size>
-                      <width>80</width>
-                      <height>0</height>
-                    </size>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-              <item row="2" column="1" >
-                <widget class="QLabel" name="_currentQtyReceived" >
-                  <property name="minimumSize" >
-                    <size>
-                      <width>80</width>
-                      <height>0</height>
-                    </size>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                </widget>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <spacer name="Spacer340" >
-              <property name="sizeHint" >
-                <size>
-                  <width>16</width>
-                  <height>20</height>
-                </size>
-              </property>
-              <property name="sizeType" >
-                <enum>Expanding</enum>
-              </property>
-              <property name="orientation" >
-                <enum>Horizontal</enum>
-              </property>
-            </spacer>
-          </item>
-          <item>
-            <layout class="QVBoxLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <widget class="QLabel" name="textLabel1" >
-                  <property name="text" >
-                    <string>Line Item Freight:</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <widget class="XLineEdit" name="_freight" />
-              </item>
-              <item>
-                <spacer name="spacer6_2" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>20</width>
-                      <height>40</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>Expanding</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Vertical</enum>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
-        </layout>
-      </item>
-      <item>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
         <layout class="QVBoxLayout" >
-          <property name="spacing" >
-            <number>0</number>
-          </property>
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <layout class="QHBoxLayout" >
-              <property name="spacing" >
-                <number>0</number>
-              </property>
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <widget class="QCheckBox" name="_postComment" >
-                  <property name="text" >
-                    <string>Post Comment</string>
-                  </property>
-                </widget>
-              </item>
-              <item>
-                <spacer name="spacer7" >
-                  <property name="sizeHint" >
-                    <size>
-                      <width>46</width>
-                      <height>10</height>
-                    </size>
-                  </property>
-                  <property name="sizeType" >
-                    <enum>Expanding</enum>
-                  </property>
-                  <property name="orientation" >
-                    <enum>Horizontal</enum>
-                  </property>
-                </spacer>
-              </item>
-            </layout>
-          </item>
-          <item>
-            <widget class="QGroupBox" name="_commentGroup" >
-              <property name="enabled" >
-                <bool>false</bool>
-              </property>
-              <property name="sizePolicy" >
-                <sizepolicy>
-                  <hsizetype>5</hsizetype>
-                  <vsizetype>7</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                </sizepolicy>
-              </property>
-              <property name="title" >
-                <string/>
-              </property>
-              <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <layout class="QHBoxLayout" >
-                    <property name="spacing" >
-                      <number>0</number>
-                    </property>
-                    <property name="margin" >
-                      <number>0</number>
-                    </property>
-                    <item>
-                      <layout class="QHBoxLayout" >
-                        <property name="margin" >
-                          <number>0</number>
-                        </property>
-                        <item>
-                          <widget class="QLabel" name="_cmnttypeLit" >
-                            <property name="text" >
-                              <string>Comment Type:</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="XComboBox" name="_cmnttype" />
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <spacer name="spacer6" >
-                        <property name="sizeHint" >
-                          <size>
-                            <width>51</width>
-                            <height>10</height>
-                          </size>
-                        </property>
-                        <property name="sizeType" >
-                          <enum>Expanding</enum>
-                        </property>
-                        <property name="orientation" >
-                          <enum>Horizontal</enum>
-                        </property>
-                      </spacer>
-                    </item>
-                  </layout>
-                </item>
-                <item>
-                  <widget class="QTextEdit" name="_comment" />
-                </item>
-              </layout>
-            </widget>
-          </item>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Cancel</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+C</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_change" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Change &amp;Qty.</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+Q</string>
+           </property>
+           <property name="default" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
         </layout>
-      </item>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
     </layout>
-  </widget>
-  <layoutdefault spacing="5" margin="5" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <customwidgets>
-    <customwidget>
-      <class>XComboBox</class>
-      <extends>QComboBox</extends>
-      <header>xcombobox.h</header>
-      <container>0</container>
-      <pixmap></pixmap>
-    </customwidget>
-  </customwidgets>
-  <tabstops>
-    <tabstop>_newQty</tabstop>
-    <tabstop>_freight</tabstop>
-    <tabstop>_change</tabstop>
-    <tabstop>_close</tabstop>
-    <tabstop>_po</tabstop>
-    <tabstop>_poitem</tabstop>
-    <tabstop>_postComment</tabstop>
-    <tabstop>_cmnttype</tabstop>
-    <tabstop>_comment</tabstop>
-  </tabstops>
-  <includes>
-    <include location="local" >OpenMFGGUIClient.h</include>
-    <include location="global" >parameter.h</include>
-  </includes>
-  <connections>
-    <connection>
-      <sender>_close</sender>
-      <signal>clicked()</signal>
-      <receiver>changePoitemQty</receiver>
-      <slot>reject()</slot>
-    </connection>
-    <connection>
-      <sender>_po</sender>
-      <signal>valid(bool)</signal>
-      <receiver>_poitem</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-      <sender>_poitem</sender>
-      <signal>valid(bool)</signal>
-      <receiver>_change</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-    <connection>
-      <sender>_postComment</sender>
-      <signal>toggled(bool)</signal>
-      <receiver>_commentGroup</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-  </connections>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>5</number>
+     </property>
+     <item>
+      <layout class="QGridLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_qtyOrderedLit" >
+         <property name="text" >
+          <string>Qty. Ordered:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2" >
+        <widget class="QLabel" name="_newLit" >
+         <property name="text" >
+          <string>New</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" >
+        <widget class="XLineEdit" name="_newQty" >
+         <property name="maximumSize" >
+          <size>
+           <width>80</width>
+           <height>32767</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_qtyReceivedLit" >
+         <property name="text" >
+          <string>Qty. Received:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2" >
+        <widget class="QLabel" name="_newQtyBalance" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" >
+        <widget class="QLabel" name="_newQtyReceived" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLabel" name="_currentQtyOrdered" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="QLabel" name="_currentLit" >
+         <property name="text" >
+          <string>Current</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="_qtyBalanceLit" >
+         <property name="text" >
+          <string>Qty. Balance:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLabel" name="_currentQtyBalance" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLabel" name="_currentQtyReceived" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Expanding</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>16</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="textLabel1" >
+         <property name="text" >
+          <string>Line Item Freight:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XLineEdit" name="_freight" />
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" >
+     <property name="margin" >
+      <number>0</number>
+     </property>
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="XCheckBox" name="_postComment" >
+         <property name="text" >
+          <string>Post Comment</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>46</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="_commentGroup" >
+       <property name="enabled" >
+        <bool>false</bool>
+       </property>
+       <property name="sizePolicy" >
+        <sizepolicy>
+         <hsizetype>5</hsizetype>
+         <vsizetype>7</vsizetype>
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="title" >
+        <string/>
+       </property>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>5</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <layout class="QHBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" >
+            <property name="margin" >
+             <number>0</number>
+            </property>
+            <property name="spacing" >
+             <number>5</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="_cmnttypeLit" >
+              <property name="text" >
+               <string>Comment Type:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="XComboBox" name="_cmnttype" />
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>51</width>
+              <height>10</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <widget class="QTextEdit" name="_comment" />
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>PoCluster</class>
+   <extends>QWidget</extends>
+   <header>pocluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_newQty</tabstop>
+  <tabstop>_freight</tabstop>
+  <tabstop>_change</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_po</tabstop>
+  <tabstop>_poitem</tabstop>
+  <tabstop>_postComment</tabstop>
+  <tabstop>_cmnttype</tabstop>
+  <tabstop>_comment</tabstop>
+ </tabstops>
+ <includes>
+  <include location="local" >OpenMFGGUIClient.h</include>
+  <include location="global" >parameter.h</include>
+ </includes>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>changePoitemQty</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_po</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_poitem</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_poitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_change</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_postComment</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_commentGroup</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

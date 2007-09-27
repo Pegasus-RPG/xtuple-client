@@ -88,9 +88,9 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
 
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_qoh, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  
+  connect(_showValue, SIGNAL(toggled(bool)), this, SLOT(sHandleValue(bool)));
+
   _qoh->addColumn(tr("Whs."),             _whsColumn,  Qt::AlignCenter );
   _qoh->addColumn(tr("Class Code"),       _itemColumn, Qt::AlignLeft   );
   _qoh->addColumn(tr("Item Number"),      _itemColumn, Qt::AlignLeft   );
@@ -103,6 +103,7 @@ dspQOHByParameterList::dspQOHByParameterList(QWidget* parent, const char* name, 
   _qoh->addColumn(tr("Unit Cost"),        _costColumn, Qt::AlignRight  );
   _qoh->addColumn(tr("Value"),            _costColumn, Qt::AlignRight  );
   _qoh->addColumn(tr("NN Value"),         _costColumn, Qt::AlignRight  );
+
   sHandleValue(_showValue->isChecked());
 
   _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
@@ -326,6 +327,8 @@ void dspQOHByParameterList::sHandleValue(bool pShowValue)
   _qoh->setColumnHidden(9, !pShowValue);
   _qoh->setColumnHidden(10, !pShowValue);
   _qoh->setColumnHidden(11, !pShowValue);
+
+  _costsGroup->setEnabled(pShowValue);
 }
 
 void dspQOHByParameterList::sFillList()

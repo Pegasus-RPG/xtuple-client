@@ -57,47 +57,30 @@
 
 #include "copyItem.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
+
 #include "itemSite.h"
 
-/*
- *  Constructs a copyItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 copyItem::copyItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
-  connect(_source, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_source, SIGNAL(typeChanged(const QString&)), this, SLOT(sHandleItemType(const QString&)));
 
   _captive = FALSE;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 copyItem::~copyItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void copyItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse copyItem::set(const ParameterList &pParams)

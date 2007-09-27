@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspWoHistoryByNumber</class>
  <widget class="QMainWindow" name="dspWoHistoryByNumber" >
   <property name="geometry" >
@@ -115,7 +112,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_showOnlyTopLevel" >
+           <widget class="XCheckBox" name="_showOnlyTopLevel" >
             <property name="text" >
              <string>Only Show Top Level Work Orders</string>
             </property>
@@ -148,7 +145,7 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_showCost" >
+           <widget class="XCheckBox" name="_showCost" >
             <property name="text" >
              <string>Show W/O Cost</string>
             </property>
@@ -281,18 +278,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

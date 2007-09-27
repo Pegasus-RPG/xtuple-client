@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspPricesByCustomerType</class>
  <widget class="QMainWindow" name="dspPricesByCustomerType" >
   <property name="geometry" >
@@ -101,7 +98,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_showExpired" >
+         <widget class="XCheckBox" name="_showExpired" >
           <property name="text" >
            <string>Show E&amp;xpired Prices</string>
           </property>
@@ -111,7 +108,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QCheckBox" name="_showFuture" >
+         <widget class="XCheckBox" name="_showFuture" >
           <property name="text" >
            <string>Show &amp;Future Prices</string>
           </property>
@@ -147,7 +144,7 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_showCosts" >
+         <widget class="XCheckBox" name="_showCosts" >
           <property name="text" >
            <string>Show Costs and Margins</string>
           </property>
@@ -357,22 +354,23 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
   <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
