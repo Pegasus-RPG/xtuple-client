@@ -72,6 +72,7 @@ dynamic {
              plugins/womatlclusterplugin.h \
              plugins/workcenterclusterplugin.h \
              plugins/workcenterlineeditplugin.h \
+             plugins/xcheckboxplugin.h \
              plugins/xcomboboxplugin.h \
              plugins/xlineeditplugin.h \
              plugins/xtreewidgetplugin.h \
@@ -87,7 +88,7 @@ dynamic {
 
 SOURCES    += OpenMFGWidgets.cpp \
 	      addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
-              xlineedit.cpp xcombobox.cpp \
+              xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
               custCluster.cpp \
               itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
@@ -119,7 +120,7 @@ SOURCES    += OpenMFGWidgets.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
 	      addresscluster.h contactcluster.h crmacctcluster.h \
-              xlineedit.h xcombobox.h \
+              xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \
               custcluster.h \
               itemcluster.h itemList.h itemSearch.h itemAliasList.h \
@@ -150,6 +151,8 @@ HEADERS    += OpenMFGWidgets.h \
 	      shipmentcluster.h
 
 FORMS += accountSearch.ui
+
+RESOURCES += widgets.qrc
 
 #The following line was inserted by qt3to4
 QT +=  sql qt3support 
