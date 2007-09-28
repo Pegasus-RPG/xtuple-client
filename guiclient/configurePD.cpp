@@ -97,6 +97,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   if (_metrics->value("Application") != "OpenMFG")
   {
     _routings->hide();
+    _routings->setChecked(FALSE);
     _bbom->hide();
     _transforms->hide();
   }
