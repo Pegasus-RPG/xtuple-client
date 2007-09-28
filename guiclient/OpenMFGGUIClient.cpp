@@ -354,9 +354,9 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
   commands //<< "-hideSidebar"
            << "-profile"
 #ifdef Q_WS_MACX
-           << qApp->applicationDirPath() + QString("/../Resources/helpOpenMFGGUIClient/OpenMFGGUIClient.adp");
+           << qApp->applicationDirPath() + QString("/../Resources/helpXTupleGUIClient/XTupleGUIClient.adp");
 #else
-           << qApp->applicationDirPath() + QString("/helpOpenMFGGUIClient/OpenMFGGUIClient.adp");
+           << qApp->applicationDirPath() + QString("/helpXTupleGUIClient/XTupleGUIClient.adp");
 #endif
 
   _assClient->setArguments(commands);
