@@ -55,91 +55,36 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  menuCRM.cpp
-//  Created 09/05/2006 GJM
-//  Copyright (c) 2006-2007, OpenMFG, LLC
+#ifndef SEARCHFORCONTACT_H
+#define SEARCHFORCONCACT_H
 
-#ifndef menuCRM_h
-#define menuCRM_h
+#include "OpenMFGGUIClient.h"
+#include <QMainWindow>
 
-#include <QObject>
-#include <QPixmap>
+#include "ui_searchForContact.h"
 
-class QToolBar;
-class QMenu;
-class OpenMFGGUIClient;
-
-class menuCRM : public QObject
+class searchForContact : public QMainWindow, public Ui::searchForContact
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  struct actionProperties {
-    const char*		actionName;
-    const QString	actionTitle;
-    const char*		slot;
-    QMenu*		menu;
-    bool		priv;
-    QPixmap*		pixmap;
-    QToolBar*		toolBar;
-    bool		visible;
-    const QString   toolTip;
-  };
+public:
+    searchForContact(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~searchForContact();
 
-  public:
-    menuCRM(OpenMFGGUIClient *);
+public slots:
+    virtual void	sEdit();
+    virtual void	sFillList();
+    virtual void	sPopulateMenu(QMenu * pMenu);
+    virtual void	sView();
 
-  public slots:
+protected slots:
+    virtual void languageChange();
 
-    void sNewProject();
-    void sProjects();
-    void sDspOrderActivityByProject();
+protected:
+    bool				_editpriv;
+    bool				_viewpriv;
 
-    void sAddress();
-    void sAddresses();
-    void sCharacteristics();
-    void sCRMAccount();
-    void sCRMAccounts();
-    void sSearchForCRMAccount();
-    void sContact();
-    void sContacts();
-    void sSearchForContact();
-    void sDspIncidentsByCRMAccount();
-    void sDspTodoByUserAndIncident();
-    void sHonorifics();
-    void sIncident();
-    void sIncidentCategories();
-    void sIncidentPriorities();
-    void sIncidentResolutions();
-    void sIncidentSeverities();
-    void sIncidentWorkbench();
-    void sTodoItem();
-    void sTodoList();
-    void sNewOpportunity();
-    void sOpportunities();
-    void sOpportunitySources();
-    void sOpportunityStages();
-    void sOpportunityTypes();
 
-  private:
-    OpenMFGGUIClient *parent;
-
-    QToolBar   *toolBar;
-    QMenu *crmMenu;
-    QMenu *projectsMenu;
-    QMenu *incidentMenu;
-    QMenu *todoMenu;
-    QMenu *reportsMenu;
-    QMenu *accountsMenu;
-    QMenu *contactsMenu;
-    QMenu *addressMenu;
-    QMenu *utilitiesMenu;
-    QMenu *masterMenu;
-    QMenu *masterIncdMenu;
-    QMenu *opportunityMenu;
-    QMenu *masterOppMenu;
-    
-    void	addActionsToMenu(actionProperties [], unsigned int);
 };
 
-#endif
-
+#endif // SEARCHFORCONTACT_H

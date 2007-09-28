@@ -72,6 +72,7 @@
 
 #include "contact.h"
 #include "contacts.h"
+#include "searchForContact.h"
 #include "address.h"
 #include "addresses.h"
 #include "crmaccount.h"
@@ -168,6 +169,7 @@ menuCRM::menuCRM(OpenMFGGUIClient *Pparent) :
     { "menu",		tr("&Contact"),		(char*)contactsMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
     { "crm.contact",	tr("&New..."),		SLOT(sContact()),	contactsMenu,	_privleges->check("MaintainContacts"), NULL, NULL, true	, NULL },
     { "crm.contacts",	tr("&List..."),		SLOT(sContacts()),	contactsMenu,	_privleges->check("MaintainContacts") || _privleges->check("ViewContacts"),new QPixmap(":/images/contacts.png"), toolBar, true , "List Contacts" },
+    { "crm.contactsearch",	tr("&Search..."),		SLOT(sSearchForContact()),	contactsMenu,	_privleges->check("MaintainContacts") || _privleges->check("ViewContacts"), NULL, NULL, true	, NULL },
     
     // CRM | Address
     { "menu",		tr("A&ddress"),		(char*)addressMenu,	crmMenu,		true, NULL, NULL, true	, NULL },
@@ -307,6 +309,11 @@ void menuCRM::sContact()
 void menuCRM::sContacts()
 {
   omfgThis->handleNewWindow(new contacts());
+}
+
+void menuCRM::sSearchForContact()
+{
+  omfgThis->handleNewWindow(new searchForContact());
 }
 
 void menuCRM::sAddress()

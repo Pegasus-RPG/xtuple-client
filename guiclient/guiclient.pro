@@ -272,7 +272,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                salesOrder.ui salesOrderInformation.ui salesOrderItem.ui                               \
                salesReps.ui salesRep.ui                                                               \
                salesHistoryInformation.ui scrapTrans.ui scrapWoMaterialFromWIP.ui                     \
-	       searchForCRMAccount.ui searchForItem.ui                                                \
+	       searchForCRMAccount.ui searchForContact.ui searchForItem.ui                            \
                selectBankAccount.ui selectBillingQty.ui selectOrderForBilling.ui                      \
                selectedPayments.ui selectPayment.ui selectPayments.ui                                 \
                selectShippedOrders.ui shift.ui shifts.ui shipOrder.ui shippingInformation.ui          \
@@ -573,7 +573,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                salesOrder.h salesOrderInformation.h salesOrderItem.h                                  \
                salesReps.h salesRep.h                                                                 \
                salesHistoryInformation.h scrapTrans.h scrapWoMaterialFromWIP.h                        \
-	       searchForCRMAccount.h searchForItem.h                                                  \
+	       searchForCRMAccount.h searchForContact.h searchForItem.h                               \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
                selectedPayments.h selectPayment.h selectPayments.h                                    \
                selectShippedOrders.h shift.h shifts.h shipOrder.h shippingInformation.h               \
@@ -876,7 +876,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                salesOrder.cpp salesOrderInformation.cpp salesOrderItem.cpp                            \
                salesReps.cpp salesRep.cpp                                                             \
                salesHistoryInformation.cpp scrapTrans.cpp scrapWoMaterialFromWIP.cpp                  \
-	       searchForCRMAccount.cpp searchForItem.cpp                                              \
+	       searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp                         \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
                selectedPayments.cpp selectPayment.cpp selectPayments.cpp                              \
                selectShippedOrders.cpp shift.cpp shifts.cpp shipOrder.cpp shippingInformation.cpp     \
