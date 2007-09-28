@@ -56,6 +56,7 @@
  */
 
 #include "customerType.h"
+#include "characteristicAssignment.h"
 
 #include <qvariant.h>
 #include <qmessagebox.h>
@@ -76,7 +77,15 @@ customerType::customerType(QWidget* parent, const char* name, bool modal, Qt::WF
     // signals and slots connections
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
     connect(_code, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+    
+    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
+    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+    _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
+
     init();
 }
 
@@ -121,6 +130,16 @@ enum SetResponse customerType::set(ParameterList &pParams)
     {
       _mode = cNew;
       _code->setFocus();
+      
+      q.exec("SELECT NEXTVAL('custtype_custtype_id_seq') AS custtype_id;");
+      if (q.first())
+        _custtypeid = q.value("custtype_id").toInt();
+      else
+      {
+        systemError(this, tr("A System Error occurred at %1::%2.")
+                          .arg(__FILE__)
+                          .arg(__LINE__) );
+      }
     }
     else if (param.toString() == "edit")
     {
@@ -162,6 +181,55 @@ void customerType::sCheck()
   }
 }
 
+void customerType::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("custtype_id", _custtypeid);
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sFillList();
+}
+
+void customerType::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sFillList();
+}
+
+void customerType::sDelete()
+{
+  q.prepare( "DELETE FROM charass "
+             "WHERE (charass_id=:charass_id);" );
+  q.bindValue(":charass_id", _charass->id());
+  q.exec();
+
+  sFillList();
+}
+
+void customerType::sFillList()
+{
+  q.prepare( "SELECT charass_id, char_name, charass_value, formatBoolYN(charass_default) "
+             "FROM charass, char "
+             "WHERE ( (charass_target_type='CT')"
+             " AND (charass_char_id=char_id)"
+             " AND (charass_target_id=:custtype_id) ) "
+             "ORDER BY char_name;" );
+  q.bindValue(":custtype_id", _custtypeid);
+  q.exec();
+  _charass->populate(q);
+}
+
 void customerType::sSave()
 {
   if (_code->text().stripWhiteSpace().length() == 0)
@@ -174,17 +242,6 @@ void customerType::sSave()
 
   if (_mode == cNew)
   {
-    q.exec("SELECT NEXTVAL('custtype_custtype_id_seq') AS custtype_id;");
-    if (q.first())
-      _custtypeid = q.value("custtype_id").toInt();
-    else
-    {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
-      return;
-    }
-
     q.prepare( "INSERT INTO custtype "
                "(custtype_id, custtype_code, custtype_descrip) "
                "VALUES "
@@ -216,5 +273,6 @@ void customerType::populate()
     _code->setText(q.value("custtype_code").toString());
     _description->setText(q.value("custtype_descrip").toString());
   }
+  sFillList();
 }
 

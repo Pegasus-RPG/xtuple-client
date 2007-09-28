@@ -148,6 +148,14 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     _targetType = "OPP";
     handleTargetType();
   }
+  
+  param = pParams.value("custtype_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "CT";
+    handleTargetType();
+  }
 
   param = pParams.value("charass_id", &valid);
   if (valid)
@@ -285,11 +293,11 @@ void characteristicAssignment::populate()
 
 void characteristicAssignment::handleTargetType()
 {
-  if(_targetType != "I")
+  if((_targetType != "I") && (_targetType != "CT"))
     _default->hide();
 
   QString boolColumn;
-  if (_targetType == "C")
+  if ((_targetType == "C") || (_targetType == "CT"))
   {
     setCaption(tr("Customer Characteristic"));
     boolColumn = "char_customers";
