@@ -243,19 +243,20 @@ void customerType::sSave()
   if (_mode == cNew)
   {
     q.prepare( "INSERT INTO custtype "
-               "(custtype_id, custtype_code, custtype_descrip) "
+               "(custtype_id, custtype_code, custtype_descrip, custtype_char) "
                "VALUES "
-               "(:custtype_id, :custtype_code, :custtype_descrip);" );
+               "(:custtype_id, :custtype_code, :custtype_descrip, :custtype_char);" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE custtype "
                "SET custtype_code=:custtype_code,"
-               "    custtype_descrip=:custtype_descrip "
+               "    custtype_descrip=:custtype_descrip, custtype_char=:custtype_char "
                "WHERE (custtype_id=:custtype_id);" );
 
   q.bindValue(":custtype_id", _custtypeid);
   q.bindValue(":custtype_code", _code->text().stripWhiteSpace());
   q.bindValue(":custtype_descrip", _description->text().stripWhiteSpace());
+  q.bindValue(":custtype_char",  QVariant(_characteristicGroup->isChecked(), 0));
   q.exec();
 
   done(_custtypeid);
@@ -263,7 +264,7 @@ void customerType::sSave()
 
 void customerType::populate()
 {
-  q.prepare( "SELECT custtype_code, custtype_descrip "
+  q.prepare( "SELECT custtype_code, custtype_descrip, custtype_char "
               "FROM custtype "
               "WHERE (custtype_id=:custtype_id);" );
   q.bindValue(":custtype_id", _custtypeid);
@@ -272,6 +273,7 @@ void customerType::populate()
   {
     _code->setText(q.value("custtype_code").toString());
     _description->setText(q.value("custtype_descrip").toString());
+    _characteristicGroup->setChecked(q.value("custtype_char").toBool());
   }
   sFillList();
 }

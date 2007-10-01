@@ -71,6 +71,7 @@
 #include "addresscluster.h"
 #include "storedProcErrorLookup.h"
 #include "taxRegistration.h"
+#include "custCharacteristicDelegate.h"
 
 /*
  *  Constructs a customer as a child of 'parent', with the
@@ -108,7 +109,8 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_newTaxreg,    SIGNAL(clicked()), this, SLOT(sNewTaxreg()));
     connect(_viewTaxreg,   SIGNAL(clicked()), this, SLOT(sViewTaxreg()));
     connect(_soEdiProfile, SIGNAL(activated(int)), this, SLOT(sSoProfileSelected()));
-
+    connect(_custtype, SIGNAL(currentIndexChanged(int)), this, SLOT(sFillCharacteristicList()));
+    
     _custid = -1;
     _crmacctid = -1;
 
@@ -135,6 +137,13 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
     
     _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
     _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  
+    _custchar = new QStandardItemModel(0, 2, this);
+    _custchar->setHeaderData( 0, Qt::Horizontal, tr("Characteristc"), Qt::DisplayRole);
+    _custchar->setHeaderData( 1, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
+    _chartempl->setModel(_custchar);
+    CustCharacteristicDelegate * delegate = new CustCharacteristicDelegate(this);
+    _chartempl->setItemDelegate(delegate);
 
     key = omfgThis->_key;
     if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
@@ -657,7 +666,24 @@ void customer::sSave()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
+   
+  //Save characteristics
+  if (_widgetStack->currentIndex() == 1)
+  {
+    q.prepare("SELECT updateCharAssignment('C', :target_id, :char_id, :char_value);");
+  
+    QModelIndex idx1, idx2;
+    for(int i = 0; i < _custchar->rowCount(); i++)
+    {
+      idx1 = _custchar->index(i, 0);
+      idx2 = _custchar->index(i, 1);
+      q.bindValue(":target_id", _custid);
+      q.bindValue(":char_id", _custchar->data(idx1, Qt::UserRole));
+      q.bindValue(":char_value", _custchar->data(idx2, Qt::DisplayRole));
+      q.exec();
+    }
+  }
+  
   if (convertQuotes)
   {
     q.prepare("SELECT MIN(convertQuote(quhead_id)) AS result "
@@ -891,16 +917,62 @@ void customer::sDeleteCharacteristic()
 
 void customer::sFillCharacteristicList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value "
-             "FROM charass, char "
-             "WHERE ( (charass_target_type='C')"
-             " AND (charass_char_id=char_id)"
-             " AND (charass_target_id=:cust_id) ) "
-             "ORDER BY char_name;" );
-  q.bindValue(":cust_id", _custid);
+  
+  q.prepare( "SELECT custtype_char "
+             "FROM custtype "
+             "WHERE (custtype_id=:custtype_id);");
+  q.bindValue(":custtype_id",_custtype->id());
   q.exec();
-  _charass->clear();
-  _charass->populate(q);
+
+  q.first();
+  if (q.value("custtype_char").toBool())
+  {
+      _widgetStack->setCurrentIndex(1);
+      _custchar->removeRows(0, _custchar->rowCount());
+      q.prepare( "SELECT DISTINCT char_id, char_name,"
+               "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='CT') AND (c.charass_target_id=:custtype_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
+               "  FROM charass a, char "
+               "    LEFT OUTER JOIN charass b"
+               "      ON (b.charass_target_type='C'"
+               "      AND b.charass_target_id=:cust_id"
+               "      AND b.charass_char_id=char_id) "
+               " WHERE ( (a.charass_char_id=char_id)"
+               "   AND   (a.charass_target_type='CT')"
+               "   AND   (a.charass_target_id=:custtype_id) ) "
+               " ORDER BY char_name;" );
+    q.bindValue(":custtype_id", _custtype->id());
+    q.bindValue(":cust_id", _custid);
+    q.exec();
+    
+    int row = 0;
+    QModelIndex idx;
+    while(q.next())
+    {
+      _custchar->insertRow(_custchar->rowCount());
+      idx = _custchar->index(row, 0);
+      _custchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
+      _custchar->setData(idx, q.value("char_id"), Qt::UserRole);
+      idx = _custchar->index(row, 1);
+      _custchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
+      _custchar->setData(idx, _custtype->id(), Qt::UserRole);
+      row++;
+    }
+  }
+  else
+  {
+    _widgetStack->setCurrentIndex(0);
+    _charass->clear();
+    q.prepare( "SELECT charass_id, char_name, charass_value "
+               "FROM charass, char "
+               "WHERE ( (charass_target_type='C')"
+               " AND (charass_char_id=char_id)"
+               " AND (charass_target_id=:cust_id) ) "
+               "ORDER BY char_name;" );
+    q.bindValue(":custtype_id", _custtype->id());
+    q.bindValue(":cust_id", _custid);
+    q.exec();
+    _charass->populate(q);
+  }
 }
 
 void customer::sPopulateShiptoMenu(QMenu *menuThis)

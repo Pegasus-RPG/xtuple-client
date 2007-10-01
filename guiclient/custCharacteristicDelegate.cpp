@@ -55,72 +55,77 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef CUSTOMER_H
-#define CUSTOMER_H
+#include <QtGui>
+#include <QComboBox>
 
+#include "custCharacteristicDelegate.h"
 #include "OpenMFGGUIClient.h"
-#include <QMainWindow>
-#include <QStandardItemModel>
-#include <parameter.h>
 
-#include "ui_customer.h"
-
-class customer : public QMainWindow, public Ui::customer
+CustCharacteristicDelegate::CustCharacteristicDelegate(QObject *parent)
+  : QItemDelegate(parent)
 {
-    Q_OBJECT
+}
 
-public:
-    customer(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~customer();
+QWidget *CustCharacteristicDelegate::createEditor(QWidget *parent,
+    const QStyleOptionViewItem & /*style*/,
+    const QModelIndex & index) const
+{
+  if(index.column()!=1)
+    return 0;
 
-public slots:
-    virtual SetResponse set(const ParameterList & pParams );
-    virtual void populate();
-    virtual void sCheck();
-    virtual void sDeleteCharacteristic();
-    virtual void sDeleteShipto();
-    virtual void sDeleteTaxreg();
-    virtual void sEditCharacteristic();
-    virtual void sEditCreditCard();
-    virtual void sEditShipto();
-    virtual void sEditTaxreg();
-    virtual void sFillCcardList();
-    virtual void sFillCharacteristicList();
-    virtual void sFillShiptoList();
-    virtual void sFillTaxregList();
-    virtual void sMoveDown();
-    virtual void sMoveUp();
-    virtual void sNewCharacteristic();
-    virtual void sNewCreditCard();
-    virtual void sNewShipto();
-    virtual void sNewTaxreg();
-    virtual void sPopulateCommission();
-    virtual void sPopulateShiptoMenu( QMenu * menuThis );
-    virtual void sPrintShipto();
-    virtual void sSave();
-    virtual void sViewCreditCard();
-    virtual void sViewShipto();
-    virtual void sViewTaxreg();
-	virtual void sLoadProspect(int);
-	virtual void sLoadCrmAcct(int);
+  QModelIndex idx = index.sibling(index.row(), 0);
+  q.prepare("SELECT charass_value"
+            "  FROM charass, char"
+            " WHERE ((charass_char_id=char_id)"
+            "   AND  (charass_target_type='CT')"
+            "   AND  (charass_target_id=:custtype_id)"
+            "   AND  (char_id=:char_id) );");
+  q.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
+  q.bindValue(":custtype_id", index.model()->data(index, Qt::UserRole));
+  q.exec();
 
-protected slots:
-    virtual void languageChange();
-    virtual int  saveContact(ContactCluster*);
-    virtual void sProfileSelected();
-    virtual void sSoProfileSelected();
-	virtual void sNumberEdited();
+  QComboBox *editor = new QComboBox(parent);
+  editor->setEditable(true);
 
 
-private:
-    int _mode;
-    int _custid;
-    int	_crmacctid;
-    QString _cachedNumber;
-    QString key;
-	bool _notice;
-    QStandardItemModel * _custchar;
+#ifdef Q_WS_MAC
+  QFont boxfont = editor->font();
+  boxfont.setPointSize((boxfont.pointSize() == -1) ? boxfont.pixelSize() - 3 : boxfont.pointSize() - 3);
+  editor->setFont(boxfont);
+#endif
 
-};
+  while(q.next())
+    editor->addItem(q.value("charass_value").toString());
+  editor->installEventFilter(const_cast<CustCharacteristicDelegate*>(this));
 
-#endif // CUSTOMER_H
+  return editor;
+}
+
+void CustCharacteristicDelegate::setEditorData(QWidget *editor,
+                                    const QModelIndex &index) const
+{
+  QString value = index.model()->data(index, Qt::DisplayRole).toString();
+
+  QComboBox *comboBox = static_cast<QComboBox*>(editor);
+  int curIdx = comboBox->findText(value);
+
+  if(curIdx != -1)
+    comboBox->setCurrentIndex(curIdx);
+  else
+    comboBox->setEditText(value);
+}
+
+void CustCharacteristicDelegate::setModelData(QWidget *editor, QAbstractItemModel *model,
+                                   const QModelIndex &index) const
+{
+  QComboBox *comboBox = static_cast<QComboBox*>(editor);
+
+  model->setData(index, comboBox->currentText());
+}
+
+void CustCharacteristicDelegate::updateEditorGeometry(QWidget *editor,
+    const QStyleOptionViewItem &option, const QModelIndex &/* index */) const
+{
+  editor->setGeometry(option.rect);
+}
+

@@ -373,7 +373,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                currencies.h currency.h currencyConversion.h currencyConversions.h                     \
 	       currencySelect.h                                                                       \
                customCommands.h customCommand.h customCommandArgument.h                               \
-               customer.h customerGroups.h customerGroup.h creditCard.h                               \
+               customer.h custCharacteristicDelegate.h  customerGroups.h customerGroup.h creditCard.h \
                customerFormAssignment.h customerFormAssignments.h                                     \
                customers.h customerTypes.h customerType.h customerTypeList.h                          \
                databaseInformation.h deletePlannedOrder.h deletePlannedOrdersByPlannerCode.h          \
@@ -675,7 +675,8 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                currencies.cpp currency.cpp currencyConversion.cpp currencyConversions.cpp             \
 	       currencySelect.cpp                                                                     \
                customCommands.cpp customCommand.cpp customCommandArgument.cpp                         \
-               customer.cpp customerGroups.cpp customerGroup.cpp creditCard.cpp                       \
+               customer.cpp custCharacteristicDelegate.cpp  customerGroups.cpp customerGroup.cpp      \
+               creditCard.cpp                                                                         \
                customerFormAssignment.cpp customerFormAssignments.cpp                                 \
                customers.cpp customerTypes.cpp customerType.cpp customerTypeList.cpp                  \
                databaseInformation.cpp deletePlannedOrder.cpp deletePlannedOrdersByPlannerCode.cpp    \
