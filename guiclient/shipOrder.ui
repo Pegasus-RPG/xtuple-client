@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>605</width>
+    <width>617</width>
     <height>445</height>
    </rect>
   </property>
@@ -150,7 +150,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QCheckBox" name="_create" >
+            <widget class="XCheckBox" name="_create" >
              <property name="text" >
               <string>Create and Print Invoice</string>
              </property>
@@ -183,7 +183,7 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QCheckBox" name="_print" >
+            <widget class="XCheckBox" name="_print" >
              <property name="text" >
               <string>Print Packing List</string>
              </property>
@@ -216,7 +216,7 @@
             <number>5</number>
            </property>
            <item>
-            <widget class="QCheckBox" name="_receive" >
+            <widget class="XCheckBox" name="_receive" >
              <property name="enabled" >
               <bool>true</bool>
              </property>
@@ -651,9 +651,9 @@
    <header>socluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>ToCluster</class>
@@ -661,19 +661,24 @@
    <header>tocluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>ShipmentCluster</class>
    <extends>QWidget</extends>
    <header>shipmentcluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>572</width>
+    <width>581</width>
     <height>352</height>
    </rect>
   </property>
@@ -47,12 +47,9 @@
          <number>6</number>
         </property>
         <item>
-         <widget class="QCheckBox" name="_showProspects" >
+         <widget class="XCheckBox" name="_showProspects" >
           <property name="text" >
            <string>Show Quotes For Prospects</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -289,9 +286,14 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>

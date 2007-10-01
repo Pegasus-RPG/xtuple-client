@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>unpostedPurchaseOrders</class>
  <widget class="QMainWindow" name="unpostedPurchaseOrders" >
   <property name="geometry" >
@@ -60,7 +57,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="_allOpenOrders" >
+         <widget class="XCheckBox" name="_allOpenOrders" >
           <property name="text" >
            <string>Show All Unvouchered P/Os</string>
           </property>
@@ -189,15 +186,18 @@
    </layout>
   </widget>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
-   <extends>QWidget</extends>
+   <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

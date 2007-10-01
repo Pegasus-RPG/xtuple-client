@@ -57,20 +57,16 @@
 
 #include "userPreferences.h"
 
+#include <QSqlError>
 #include <QVariant>
+
 #include <parameter.h>
-#include "userEventNotification.h"
+
 #include "hotkeys.h"
 #include "imageList.h"
 #include "timeoutHandler.h"
+#include "userEventNotification.h"
 
-/*
- *  Constructs a userPreferences as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
@@ -79,18 +75,14 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   if(!_privleges->check("MaintainPreferencesOthers"))
     _selectedUser->setEnabled(false);
 
-  // signals and slots connections
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_events, SIGNAL(clicked()), this, SLOT(sEvents()));
-  connect(_selectedWarehouse, SIGNAL(toggled(bool)), _warehouse, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_selectedUser, SIGNAL(toggled(bool)), this, SLOT(sPopulate()));
-  connect(_user, SIGNAL(newID(int)), this, SLOT(sPopulate()));
-  connect(_selectedUser, SIGNAL(toggled(bool)), _user, SLOT(setEnabled(bool)));
-  connect(_backgroundList, SIGNAL(clicked()), this, SLOT(sBackgroundList()));
-  connect(_backgroundImage, SIGNAL(toggled(bool)), _backgroundList, SLOT(setEnabled(bool)));
-  connect(_hotkeys, SIGNAL(clicked()), this, SLOT(sHotkeys()));
-  connect(_neo, SIGNAL(toggled(bool)), this, SLOT(sStyleChanged()));
+  connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
+  connect(_close,         SIGNAL(clicked()),     this, SLOT(sClose()));
+  connect(_events,        SIGNAL(clicked()),     this, SLOT(sEvents()));
+  connect(_hotkeys,       SIGNAL(clicked()),     this, SLOT(sHotkeys()));
+  connect(_neo,           SIGNAL(toggled(bool)), this, SLOT(sStyleChanged()));
+  connect(_save,          SIGNAL(clicked()),     this, SLOT(sSave()));
+  connect(_selectedUser,  SIGNAL(toggled(bool)), this, SLOT(sPopulate()));
+  connect(_user,          SIGNAL(newID(int)),    this, SLOT(sPopulate()));
 
   _dirty = FALSE;
 
@@ -100,9 +92,7 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   _backgroundList->setMaximumWidth(25);
 #endif
 
-  _user->populate( "SELECT usr_id, usr_username "
-                   "FROM usr "
-                   "ORDER BY usr_username;" );
+  _user->setType(XComboBox::Users);
 
   _userGroup->setEnabled(_privleges->check("MaintainUsers"));
 
@@ -112,21 +102,14 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
   sPopulate();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 userPreferences::~userPreferences()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void userPreferences::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void userPreferences::setBackgroundImage(int pImageid)
@@ -140,6 +123,11 @@ void userPreferences::setBackgroundImage(int pImageid)
   {
     _backgroundImageid = q.value("image_id").toInt();
     _background->setText(q.value("description").toString());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -186,6 +174,8 @@ void userPreferences::sPopulate()
     _interfaceTopLevel->setChecked(true);
   else
     _interfaceWorkspace->setChecked(true);
+
+  _rememberCheckBoxes->setChecked(! _pref.boolean("XCheckBox/forgetful"));
 
   _itemCache->setChecked(_pref.boolean("UseItemCache"));
   _customerCache->setChecked(_pref.boolean("UseCustCache"));
@@ -334,6 +324,7 @@ void userPreferences::sSave()
   }
   
   _pref.set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
+  _pref.set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
   _pref.set("UseItemCache", _itemCache->isChecked());
   _pref.set("UseCustCache", _customerCache->isChecked());
 
@@ -412,4 +403,3 @@ void userPreferences::sStyleChanged()
     _widgetStack->setCurrentIndex(1);
   }
 }
-

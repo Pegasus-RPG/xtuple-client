@@ -88,6 +88,13 @@ printShippingForms::printShippingForms(QWidget* parent, const char* name, bool m
       _shipformWatermarks->topLevelItem(i)->setText(2, ((_metrics->boolean(QString("ShippingFormShowPrices%1").arg(i))) ? tr("Yes") : tr("No")));
     }
   }
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _printNew->setChecked(true);
+    _printDirty->setChecked(true);
+  }
 }
 
 printShippingForms::~printShippingForms()

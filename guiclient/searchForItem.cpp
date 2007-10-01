@@ -59,7 +59,6 @@
 
 #include <QVariant>
 #include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
 #include <parameter.h>
 #include "item.h"
@@ -77,22 +76,15 @@ searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_showInactive, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_searchNumber, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchDescrip1, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_searchDescrip2, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_search, SIGNAL(lostFocus()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_item, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *, int)), this, SLOT(sPopulateMenu(QMenu *, QTreeWidgetItem *)));
-  connect(_item, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
-  
   _item->addColumn(tr("Number"),      _itemColumn, Qt::AlignCenter );
   _item->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
   _item->addColumn(tr("Type"),        _itemColumn, Qt::AlignLeft   );
@@ -106,6 +98,14 @@ searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_item, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), SLOT(sFillList()));
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+  {
+    _searchNumber->setChecked(true);
+    _searchDescrip1->setChecked(true);
+    _searchDescrip2->setChecked(true);
+  }
 
   _search->setFocus();
 }

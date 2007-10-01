@@ -513,7 +513,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QCheckBox" name="_printTraveler" >
+       <widget class="XCheckBox" name="_printTraveler" >
         <property name="text" >
          <string>&amp;Print Traveler</string>
         </property>
@@ -693,6 +693,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>ProjectCluster</class>
    <extends>QWidget</extends>
    <header>projectcluster.h</header>
@@ -703,14 +708,9 @@
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Comments</class>
-   <extends>QWidget</extends>
-   <header>comments.h</header>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
@@ -718,9 +718,14 @@
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

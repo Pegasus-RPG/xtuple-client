@@ -1,210 +1,226 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>uninvoicedShipments</class>
-  <widget class="QMainWindow" name="uninvoicedShipments" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>612</width>
-        <height>393</height>
-      </rect>
+<ui version="4.0" >
+ <class>uninvoicedShipments</class>
+ <widget class="QMainWindow" name="uninvoicedShipments" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>614</width>
+    <height>393</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Uninvoiced Shipments</string>
+  </property>
+  <widget class="QWidget" name="widget" >
+   <layout class="QVBoxLayout" >
+    <property name="margin" >
+     <number>5</number>
     </property>
-    <property name="windowTitle" >
-      <string>Uninvoiced Shipments</string>
+    <property name="spacing" >
+     <number>5</number>
     </property>
-    <widget class="QWidget" >
-      <layout class="QVBoxLayout" >
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>7</number>
+      </property>
+      <item>
+       <layout class="QVBoxLayout" >
         <property name="margin" >
-          <number>5</number>
+         <number>0</number>
         </property>
         <property name="spacing" >
-          <number>5</number>
+         <number>0</number>
         </property>
         <item>
-          <layout class="QHBoxLayout" >
-            <property name="spacing" >
-              <number>7</number>
-            </property>
-            <property name="margin" >
-              <number>0</number>
-            </property>
-            <item>
-              <layout class="QVBoxLayout" >
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <property name="margin" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <widget class="WarehouseGroup" name="_warehouse" >
-                    <property name="title" >
-                      <string/>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <spacer name="Spacer228" >
-                    <property name="sizeHint" >
-                      <size>
-                        <width>20</width>
-                        <height>16</height>
-                      </size>
-                    </property>
-                    <property name="sizeType" >
-                      <enum>Preferred</enum>
-                    </property>
-                    <property name="orientation" >
-                      <enum>Vertical</enum>
-                    </property>
-                  </spacer>
-                </item>
-              </layout>
-            </item>
-            <item>
-              <layout class="QVBoxLayout" >
-                <property name="margin" >
-                  <number>0</number>
-                </property>
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <widget class="QCheckBox" name="_showUnselected" >
-                    <property name="text" >
-                      <string>Only Show Unselected Shipments</string>
-                    </property>
-                  </widget>
-                </item>
-                <item>
-                  <spacer name="Spacer84" >
-                    <property name="sizeHint" >
-                      <size>
-                        <width>20</width>
-                        <height>20</height>
-                      </size>
-                    </property>
-                    <property name="sizeType" >
-                      <enum>Preferred</enum>
-                    </property>
-                    <property name="orientation" >
-                      <enum>Vertical</enum>
-                    </property>
-                  </spacer>
-                </item>
-              </layout>
-            </item>
-            <item>
-              <layout class="QHBoxLayout" >
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <property name="margin" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <spacer name="Spacer229" >
-                    <property name="sizeHint" >
-                      <size>
-                        <width>106</width>
-                        <height>20</height>
-                      </size>
-                    </property>
-                    <property name="sizeType" >
-                      <enum>Expanding</enum>
-                    </property>
-                    <property name="orientation" >
-                      <enum>Horizontal</enum>
-                    </property>
-                  </spacer>
-                </item>
-                <item>
-                  <layout class="QVBoxLayout" >
-                    <property name="margin" >
-                      <number>0</number>
-                    </property>
-                    <property name="spacing" >
-                      <number>5</number>
-                    </property>
-                    <item>
-                      <widget class="QPushButton" name="_close" >
-                        <property name="text" >
-                          <string>&amp;Close</string>
-                        </property>
-                      </widget>
-                    </item>
-                    <item>
-                      <widget class="QPushButton" name="_print" >
-                        <property name="text" >
-                          <string>&amp;Print</string>
-                        </property>
-                      </widget>
-                    </item>
-                  </layout>
-                </item>
-              </layout>
-            </item>
-          </layout>
+         <widget class="WarehouseGroup" name="_warehouse" >
+          <property name="title" >
+           <string/>
+          </property>
+         </widget>
         </item>
         <item>
-          <layout class="QVBoxLayout" >
-            <property name="margin" >
-              <number>0</number>
-            </property>
-            <property name="spacing" >
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="QLabel" name="_uninvoicedShipmentsLit" >
-                <property name="text" >
-                  <string>Uninvoiced Shipments:</string>
-                </property>
-                <property name="alignment" >
-                  <set>Qt::AlignVCenter</set>
-                </property>
-                <property name="buddy" stdset="0" >
-                  <cstring></cstring>
-                </property>
-              </widget>
-            </item>
-            <item>
-              <widget class="XTreeWidget" name="_coship" />
-            </item>
-          </layout>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>16</height>
+           </size>
+          </property>
+         </spacer>
         </item>
-      </layout>
-    </widget>
+       </layout>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="XCheckBox" name="_showUnselected" >
+          <property name="text" >
+           <string>Only Show Unselected Shipments</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="margin" >
+         <number>0</number>
+        </property>
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>106</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="margin" >
+           <number>0</number>
+          </property>
+          <property name="spacing" >
+           <number>5</number>
+          </property>
+          <item>
+           <widget class="QPushButton" name="_close" >
+            <property name="text" >
+             <string>&amp;Close</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="_print" >
+            <property name="text" >
+             <string>&amp;Print</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" >
+      <property name="margin" >
+       <number>0</number>
+      </property>
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="_uninvoicedShipmentsLit" >
+        <property name="text" >
+         <string>Uninvoiced Shipments:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring></cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="XTreeWidget" name="_coship" />
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
-  <layoutdefault spacing="5" margin="5" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <customwidgets>
-    <customwidget>
-      <class>XTreeWidget</class>
-      <extends>QTreeWidget</extends>
-      <header>xtreewidget.h</header>
-      <container>0</container>
-      <pixmap></pixmap>
-    </customwidget>
-  </customwidgets>
-  <tabstops>
-    <tabstop>_warehouse</tabstop>
-    <tabstop>_showUnselected</tabstop>
-    <tabstop>_coship</tabstop>
-    <tabstop>_print</tabstop>
-    <tabstop>_close</tabstop>
-  </tabstops>
-  <includes>
-    <include location="local" >OpenMFGGUIClient.h</include>
-  </includes>
-  <connections>
-    <connection>
-      <sender>_close</sender>
-      <signal>clicked()</signal>
-      <receiver>uninvoicedShipments</receiver>
-      <slot>close()</slot>
-    </connection>
-  </connections>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_showUnselected</tabstop>
+  <tabstop>_coship</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <includes>
+  <include location="local" >OpenMFGGUIClient.h</include>
+ </includes>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>uninvoicedShipments</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

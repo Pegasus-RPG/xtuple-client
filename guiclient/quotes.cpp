@@ -79,8 +79,6 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
   connect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_convert, SIGNAL(clicked()), this, SLOT(sConvert()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
@@ -91,8 +89,6 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_showProspects, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-  statusBar()->hide();
-  
   _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight  );
   _quote->addColumn(tr("Customer"),   -1,           Qt::AlignLeft   );
   _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft   );
@@ -118,6 +114,10 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillList()));
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _showProspects->setChecked(true);
 
   sFillList();
 }

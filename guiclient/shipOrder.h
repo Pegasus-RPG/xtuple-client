@@ -80,6 +80,7 @@ public slots:
     virtual void sFillTracknum();
     virtual void sHandleSo();
     virtual void sHandleTo();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();

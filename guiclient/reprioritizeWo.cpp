@@ -57,45 +57,31 @@
 
 #include "reprioritizeWo.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
 
-/*
- *  Constructs a reprioritizeWo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 reprioritizeWo::reprioritizeWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(accept()));
   connect(_reprioritize, SIGNAL(clicked()), this, SLOT(sReprioritize()));
-  connect(_wo, SIGNAL(valid(bool)), _reprioritize, SLOT(setEnabled(bool)));
   connect(_wo, SIGNAL(newId(int)), this, SLOT(sPopulateWoInfo(int)));
 
   _captive = FALSE;
 
   _wo->setType(cWoOpen | cWoExploded);
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _changeChildren->setChecked(true);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 reprioritizeWo::~reprioritizeWo()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void reprioritizeWo::languageChange()
 {
   retranslateUi(this);

@@ -139,6 +139,12 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft );
   _todoList->addColumn(tr("Incident"), _orderColumn,	Qt::AlignLeft );
 
+  if (Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  {
+    _active->setChecked(true);
+    _incidents->setChecked(true);
+  }
+
   handlePrivs();
   sFillList();
 }

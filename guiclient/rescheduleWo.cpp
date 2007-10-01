@@ -57,48 +57,32 @@
 
 #include "rescheduleWo.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QVariant>
 
-/*
- *  Constructs a rescheduleWo as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 rescheduleWo::rescheduleWo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_wo, SIGNAL(valid(bool)), _reschedule, SLOT(setEnabled(bool)));
-  connect(_wo, SIGNAL(startDateChanged(const QString&)), _currentStartDate, SLOT(setText(const QString&)));
-  connect(_wo, SIGNAL(dueDateChanged(const QString&)), _currentDueDate, SLOT(setText(const QString&)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(accept()));
   connect(_reschedule, SIGNAL(clicked()), this, SLOT(sReschedule()));
-  connect(_postComment, SIGNAL(toggled(bool)), _commentGroup, SLOT(setEnabled(bool)));
 
   _captive = FALSE;
 
   _wo->setType(cWoOpen | cWoExploded);
   _cmnttype->setType(XComboBox::AllCommentTypes);
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _changeChildren->setChecked(true);
+  _commentGroup->setEnabled(_postComment->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 rescheduleWo::~rescheduleWo()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void rescheduleWo::languageChange()
 {
   retranslateUi(this);

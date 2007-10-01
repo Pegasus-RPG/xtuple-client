@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>todoList</class>
  <widget class="QMainWindow" name="todoList" >
   <property name="geometry" >
@@ -86,29 +83,23 @@
              <number>5</number>
             </property>
             <item>
-             <widget class="QCheckBox" name="_active" >
+             <widget class="XCheckBox" name="_active" >
               <property name="text" >
                <string>Active Only</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_completed" >
+             <widget class="XCheckBox" name="_completed" >
               <property name="text" >
                <string>Completed</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QCheckBox" name="_incidents" >
+             <widget class="XCheckBox" name="_incidents" >
               <property name="text" >
                <string>Show Incidents</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
               </property>
              </widget>
             </item>
@@ -303,7 +294,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_autoUpdate" >
+       <widget class="XCheckBox" name="_autoUpdate" >
         <property name="text" >
          <string>Automatically Update</string>
         </property>
@@ -316,28 +307,26 @@
   <widget class="QStatusBar" name="statusbar" />
  </widget>
  <layoutdefault spacing="5" margin="5" />
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

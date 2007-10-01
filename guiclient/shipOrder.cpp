@@ -108,6 +108,9 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _create->setEnabled(_privleges->check("SelectBilling"));
 
   _toNumber->setVisible(_metrics->boolean("MultiWhs"));
+
+  sCreateToggled(_create->isChecked());
+  sHandleButtons();
 }
 
 shipOrder::~shipOrder()
@@ -473,15 +476,11 @@ void shipOrder::sHandleSo()
   _shipment->setEnabled(false);
   _shipment->removeOrderLimit();
 
+  sHandleButtons();
+
   if (_soNumber->isValid())
   {
     _toNumber->setId(-1);
-
-    _select->setChecked(_privleges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
-    _select->setEnabled(_privleges->check("SelectBilling"));
-    _create->setEnabled(_privleges->check("SelectBilling"));
-    _receive->setEnabled(false);
-    _receive->setChecked(false);
 
     q.prepare( "SELECT cohead_holdtype, cust_name, cohead_shiptoname, "
 	       "       cohead_shiptoaddress1, cohead_curr_id, cohead_freight "
@@ -584,7 +583,9 @@ void shipOrder::sHandleSo()
     _soNumber->setEnabled(true);
   }
   else
+  {
     _shipment->clear();
+  }
 
   _toNumber->setEnabled(! _soNumber->isValid());
 }
@@ -595,15 +596,11 @@ void shipOrder::sHandleTo()
   _shipment->setEnabled(false);
   _shipment->removeOrderLimit();
 
+  sHandleButtons();
+
   if (_toNumber->isValid())
   {
     _soNumber->setId(-1);
-
-    _select->setChecked(false);
-    _select->setEnabled(false);
-    _create->setChecked(false);
-    _create->setEnabled(false);
-    _receive->setEnabled(_privleges->check("EnterReceipts"));
 
     q.prepare("SELECT tohead_freight_curr_id, tohead_destname,"
 	      "       tohead_destaddress1,"
@@ -696,9 +693,39 @@ void shipOrder::sHandleTo()
     _toNumber->setEnabled(true);
   }
   else
+  {
     _shipment->clear();
+  }
 
   _soNumber->setEnabled(! _toNumber->isValid());
+}
+
+void shipOrder::sHandleButtons()
+{
+  _select->setChecked(_privleges->check("SelectBilling") &&
+		     _metrics->boolean("AutoSelectForBilling"));
+
+  _select->setEnabled(_soNumber->isValid() &&
+		      _privleges->check("SelectBilling"));
+  _create->setEnabled(_soNumber->isValid() &&
+		      _privleges->check("SelectBilling"));
+  _print->setEnabled(_soNumber->isValid() || _toNumber->isValid());
+  _receive->setEnabled(_toNumber->isValid() &&
+		       _privleges->check("EnterReceipts"));
+
+  // logic here is reversed to ensure that by default all checkboxes are visible
+  if (Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  {
+    _select->setChecked(! _toNumber->isValid());
+    _create->setChecked(! _toNumber->isValid());
+    _receive->setChecked(! _soNumber->isValid());
+  }
+  else
+  {
+    _select->setVisible(! _toNumber->isValid());
+    _create->setVisible(! _toNumber->isValid());
+    _receive->setVisible(! _soNumber->isValid());
+  }
 }
 
 void shipOrder::sFillList()

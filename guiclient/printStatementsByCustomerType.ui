@@ -1,15 +1,12 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>printStatementsByCustomerType</class>
  <widget class="QDialog" name="printStatementsByCustomerType" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>579</width>
-    <height>148</height>
+    <width>645</width>
+    <height>154</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -95,12 +92,9 @@
             </spacer>
            </item>
            <item>
-            <widget class="QCheckBox" name="_dueonly" >
+            <widget class="XCheckBox" name="_dueonly" >
              <property name="text" >
               <string>&amp;Only Print Customers with Past Due Amounts</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -186,15 +180,18 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>

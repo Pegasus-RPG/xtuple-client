@@ -59,7 +59,7 @@
 #define USERPREFERENCES_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include "ui_userPreferences.h"
 
 class userPreferences : public QDialog, public Ui::userPreferences

@@ -1902,18 +1902,11 @@
          </property>
          <layout class="QGridLayout" >
           <property name="margin" >
-           <number>12</number>
+           <number>5</number>
           </property>
           <property name="spacing" >
-           <number>6</number>
+           <number>5</number>
           </property>
-          <item row="1" column="0" >
-           <widget class="QRadioButton" name="_interfaceTopLevel" >
-            <property name="text" >
-             <string>Show windows as free-floating</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" >
            <widget class="QRadioButton" name="_interfaceWorkspace" >
             <property name="text" >
@@ -1921,6 +1914,30 @@
             </property>
             <property name="checked" >
              <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QCheckBox" name="_rememberCheckBoxes" >
+            <property name="text" >
+             <string>Remember Check Box Settings</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QRadioButton" name="_interfaceTopLevel" >
+            <property name="text" >
+             <string>Show windows as free-floating</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="Line" name="line" >
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
             </property>
            </widget>
           </item>
