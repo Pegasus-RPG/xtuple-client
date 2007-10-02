@@ -168,11 +168,12 @@ void dspItemSourcesByVendor::sFillList()
   {
     q.prepare( "SELECT itemsrc_id, item_number,"
                "       (item_descrip1 || ' ' || item_descrip2),"
-               "       item_invuom,"
+               "       uom_name,"
                "       itemsrc_vend_item_number, itemsrc_vend_uom,"
                "       formatQty(itemsrc_invvendoruomratio) "
-               "FROM itemsrc, item "
+               "FROM itemsrc, item, uom "
                "WHERE ( (itemsrc_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsrc_vend_id=:vend_id) ) "
                "ORDER By item_number;" );
     q.bindValue(":vend_id", _vendor->id());

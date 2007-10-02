@@ -147,7 +147,7 @@ void dspSingleLevelBOM::sFillList(int, bool)
 
   if (_item->isValid())
   {
-    QString sql( "SELECT bomitem_id, bomitem_seqnumber, item_number, item_invuom,"
+    QString sql( "SELECT bomitem_id, bomitem_seqnumber, item_number, uom_name,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                  "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
                  "       formatScrap(bomitem_scrap) AS f_scrap,"
@@ -160,8 +160,9 @@ void dspSingleLevelBOM::sFillList(int, bool)
                  "       CASE WHEN (bomitem_effective > CURRENT_DATE) THEN TRUE"
                  "            ELSE FALSE"
                  "       END AS future "
-                 "FROM bomitem, item "
+                 "FROM bomitem, item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_parent_item_id=:item_id)" );
 
     if (_showExpired->isChecked())
@@ -189,7 +190,7 @@ void dspSingleLevelBOM::sFillList(int, bool)
 				 q.value("bomitem_seqnumber"),
 				 q.value("item_number"),
 				 q.value("itemdescription"),
-				 q.value("item_invuom"),
+				 q.value("uom_name"),
 				 q.value("f_qtyper"),
 				 q.value("f_scrap"),
 				 q.value("f_effective"),

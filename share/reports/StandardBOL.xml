@@ -25,16 +25,17 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT coitem_linenumber, formatQty(SUM(coship_qty)) AS invqty, item_invuom, roundUp(SUM(coship_qty) / item_shipinvrat)::integer AS shipqty,
+  <sql>SELECT coitem_linenumber, formatQty(SUM(coship_qty)) AS invqty, uom_name, roundUp(SUM(coship_qty) / item_shipinvrat)::integer AS shipqty,
                 item_shipuom, item_number, item_descrip1, item_descrip2,
                 formatQty(SUM(coship_qty) * item_prodweight) AS netweight,
                 formatQty(SUM(coship_qty) * (item_prodweight + item_packweight)) AS grossweight
-         FROM coship, coitem, itemsite, item
+         FROM coship, coitem, itemsite, item, uom
          WHERE ((coship_coitem_id=coitem_id)
           AND (coitem_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
+          AND (item_inv_uom_id=uom_id)
           AND (coship_cosmisc_id=%1))
-         GROUP BY coitem_linenumber, item_number, item_invuom, item_shipinvrat, item_shipuom,
+         GROUP BY coitem_linenumber, item_number, uom_name, item_shipinvrat, item_shipuom,
                   item_descrip1, item_descrip2, item_prodweight, item_packweight
          ORDER BY coitem_linenumber;
     </sql>
@@ -372,7 +373,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

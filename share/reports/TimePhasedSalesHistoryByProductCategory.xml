@@ -53,11 +53,11 @@
        (formatDate(findPeriodStart(rcalitem_id)) || '-' || formatDate(findPeriodEnd(rcalitem_id))) AS period,
        prodcat_code,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
-         item_invuom
+         uom_name
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         item_capuom
+         itemcapuom(item_id)
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         item_altcapuom
+         itemaltcapuom(item_id)
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -66,9 +66,9 @@
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, rcalitem_id)))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * item_capinvrat))
+         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * itemcapinvrat(item_id)))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * item_altcapinvrat))
+         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * itemaltcapinvrat(item_id)))
        &lt;? else ?>
          formatExtPrice(SUM(shipmentsByItemValue(itemsite_id, rcalitem_id)))
        &lt;? endif ?>
@@ -76,14 +76,14 @@
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          SUM(shipmentsByItemQty(itemsite_id, rcalitem_id))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * item_capinvrat)
+         SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * itemcapinvrat(item_id))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * item_altcapinvrat)
+         SUM(shipmentsByItemQty(itemsite_id, rcalitem_id) * itemaltcapinvrat(item_id))
        &lt;? else ?>
          SUM(shipmentsByItemValue(itemsite_id, rcalitem_id))
        &lt;? endif ?>
        AS unit
-  FROM rcalitem, itemsite, item, warehous, prodcat
+  FROM rcalitem, itemsite, item, uom, warehous, prodcat
  WHERE ((rcalitem_id in (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -94,6 +94,7 @@
                         ))
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (item_prodcat_id=prodcat_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
@@ -111,11 +112,11 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
        (formatDate(findPeriodStart(acalitem_id)) || '-' || formatDate(findPeriodEnd(acalitem_id))) AS period,
        prodcat_code,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
-         item_invuom
+         uom_name
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         item_capuom
+         itemcapuom(item_id)
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         item_altcapuom
+         itemaltcapuom(item_id)
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -124,9 +125,9 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, acalitem_id)))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * item_capinvrat))
+         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * itemcapinvrat(item_id)))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * item_altcapinvrat))
+         formatExtPrice(SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * itemaltcapinvrat(item_id)))
        &lt;? else ?>
          formatExtPrice(SUM(shipmentsByItemValue(itemsite_id, acalitem_id)))
        &lt;? endif ?>
@@ -134,14 +135,14 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          SUM(shipmentsByItemQty(itemsite_id, acalitem_id))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * item_capinvrat)
+         SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * itemcapinvrat(item_id))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * item_altcapinvrat)
+         SUM(shipmentsByItemQty(itemsite_id, acalitem_id) * itemaltcapinvrat(item_id))
        &lt;? else ?>
          SUM(shipmentsByItemValue(itemsite_id, acalitem_id))
        &lt;? endif ?>
        AS unit
-  FROM acalitem, itemsite, item, warehous, prodcat
+  FROM acalitem, itemsite, item, uom, warehous, prodcat
  WHERE ((acalitem_id IN (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -152,6 +153,7 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
                         ))
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (item_prodcat_id=prodcat_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)

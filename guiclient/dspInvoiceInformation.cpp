@@ -122,7 +122,7 @@ void dspInvoiceInformation::sParseInvoiceNumber()
 {
   q.prepare( "SELECT invchead_id, invchead_cust_id, invchead_ponumber,"
              "       invchead_shipdate, invchead_invcdate,"
-             "       formatMoney((invchead_misc_amount + invchead_freight + invchead_tax + SUM(COALESCE(round(invcitem_billed * invcitem_price / COALESCE(item_invpricerat, 1),2),0)))) AS f_amount,"
+             "       formatMoney((invchead_misc_amount + invchead_freight + invchead_tax + SUM(COALESCE(round(invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id), 1),2),0)))) AS f_amount,"
              "       invchead_billto_name, invchead_billto_address1,"
              "       invchead_billto_address2, invchead_billto_address3,"
              "       invchead_billto_city, invchead_billto_state, invchead_billto_zipcode,"

@@ -692,7 +692,7 @@ void transferOrderItem::sDetermineAvailability()
             availability.prepare("SELECT itemsiteid, reorderlevel,"
                                  "       bomwork_level, bomwork_id, bomwork_parent_id,"
                                  "       bomwork_seqnumber AS bomitem_seqnumber,"
-                                 "       item_number, item_descrip, item_invuom,"
+                                 "       item_number, item_descrip, uom_name,"
                                  "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
                                  "       ordered, formatQty(ordered) AS f_ordered,"
                                  "       qoh, formatQty(qoh) AS f_qoh,"
@@ -703,16 +703,17 @@ void transferOrderItem::sDetermineAvailability()
                                  "                CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                  "                bomwork_id, bomwork_parent_id,"
                                  "                bomwork_level, bomwork_seqnumber,"
-                                 "                item_number, item_invuom,"
+                                 "                item_number, uom_name,"
                                  "                (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
                                  "                ((bomwork_qtyper * (1 + bomwork_scrap)) * :qty) AS pendalloc,"
                                  "                (qtyAllocated(itemsite_id, DATE(:schedDate)) - ((bomwork_qtyper * (1 + bomwork_scrap)) * :origQtyOrd)) AS totalalloc,"
                                  "                noNeg(itemsite_qtyonhand) AS qoh,"
                                  "                qtyOrdered(itemsite_id, DATE(:schedDate)) AS ordered"
-                                 "           FROM bomwork, item, itemsite"
+                                 "           FROM bomwork, item, itemsite, uom"
                                  "          WHERE ( (itemsite_item_id=item_id)"
                                  "            AND   (itemsite_warehous_id=:warehous_id)"
                                  "            AND   (bomwork_item_id=item_id)"
+                                 "            AND   (item_inv_uom_id=uom_id)"
                                  "            AND   (bomwork_set_id=:bomwork_set_id)"
                                  "                )"
                                  "       ) AS data "
@@ -731,7 +732,7 @@ void transferOrderItem::sDetermineAvailability()
               if (availability.value("bomwork_parent_id").toInt() == -1)
                 last = new XTreeWidgetItem( _availability, availability.value("bomwork_id").toInt(),
                                           availability.value("bomitem_seqnumber"), availability.value("item_number"),
-                                          availability.value("item_descrip"), availability.value("item_invuom"),
+                                          availability.value("item_descrip"), availability.value("uom_name"),
                                           availability.value("f_pendalloc"), availability.value("f_totalalloc"),
                                           availability.value("f_ordered"), availability.value("f_qoh"),
                                           availability.value("f_totalavail")  );
@@ -747,7 +748,7 @@ void transferOrderItem::sDetermineAvailability()
 		    //  Found it, add the current bomwork as a child of its parent
 		    last = new XTreeWidgetItem(cursor, availability.value("bomwork_id").toInt(),
 					      availability.value("bomitem_seqnumber"), availability.value("item_number"),
-					      availability.value("item_descrip"), availability.value("item_invuom"),
+					      availability.value("item_descrip"), availability.value("uom_name"),
 					      availability.value("f_pendalloc"), availability.value("f_totalalloc"),
 					      availability.value("f_ordered"), availability.value("f_qoh"),
 					      availability.value("f_totalavail")  );
@@ -790,7 +791,7 @@ void transferOrderItem::sDetermineAvailability()
         {
           int itemsiteid = availability.value("itemsite_id").toInt();
           availability.prepare( "SELECT itemsiteid, reorderlevel,"
-                                "       bomitem_seqnumber, item_number, item_descrip, item_invuom,"
+                                "       bomitem_seqnumber, item_number, item_descrip, uom_name,"
                                 "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
                                 "       ordered, formatQty(ordered) AS f_ordered,"
                                 "       qoh, formatQty(qoh) AS f_qoh,"
@@ -800,13 +801,14 @@ void transferOrderItem::sDetermineAvailability()
                                 "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
                                 "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                 "              bomitem_seqnumber, item_number,"
-                                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, item_invuom,"
+                                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
                                 "              ((bomitem_qtyper * (1 + bomitem_scrap)) * :qty) AS pendalloc,"
                                 "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - ((bomitem_qtyper * (1 + bomitem_scrap)) * :origQtyOrd)) AS totalalloc,"
                                 "              noNeg(cs.itemsite_qtyonhand) AS qoh,"
                                 "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
-                                "       FROM itemsite AS cs, itemsite AS ps, item, bomitem "
+                                "       FROM itemsite AS cs, itemsite AS ps, item, bomitem, uom "
                                 "       WHERE ( (bomitem_item_id=item_id)"
+                                "        AND (item_inv_uom_id=uom_id)"
                                 "        AND (cs.itemsite_item_id=item_id)"
                                 "        AND (cs.itemsite_warehous_id=ps.itemsite_warehous_id)"
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
@@ -823,7 +825,7 @@ void transferOrderItem::sDetermineAvailability()
           {
 	    last = new XTreeWidgetItem(_availability, last, availability.value("itemsiteid").toInt(),
 				       availability.value("bomitem_seqnumber"), availability.value("item_number"),
-				       availability.value("item_descrip"), availability.value("item_invuom"),
+				       availability.value("item_descrip"), availability.value("uom_name"),
 				       availability.value("f_pendalloc"), availability.value("f_totalalloc"),
 				       availability.value("f_ordered"), availability.value("f_qoh"),
 				       availability.value("f_totalavail")  );

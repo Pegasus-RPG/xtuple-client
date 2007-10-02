@@ -163,8 +163,8 @@ void dspItemsByProductCategory::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='O') THEN :outside"
                "            ELSE :error"
                "       END,"
-               "       item_invuom "
-               "FROM item "
+               "       uom_name "
+               "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
                "WHERE ( (item_sold)" );
     
   if (_productCategory->isSelected())

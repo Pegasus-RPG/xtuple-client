@@ -175,7 +175,7 @@ void dspIndentedBOM::sFillList()
     {
       int _worksetid = q.value("bomwork_set_id").toInt();
       QString sql( "SELECT bomwork_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, item_invuom,"
+                   "       bomwork_seqnumber, item_number, uom_name,"
                    "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                    "       formatQtyPer(bomwork_qtyper) AS f_qtyper,"
                    "       formatScrap(bomwork_scrap) AS f_scrap,"
@@ -187,8 +187,9 @@ void dspIndentedBOM::sFillList()
                    "       CASE WHEN (bomwork_effective > CURRENT_DATE) THEN TRUE"
                    "            ELSE FALSE"
                    "       END AS future "
-                   "FROM bomwork, item "
+                   "FROM bomwork, item, uom "
                    "WHERE ( (bomwork_item_id=item_id)"
+                   " AND (item_inv_uom_id=uom_id)"
                    " AND (bomwork_set_id=:bomwork_set_id)" );
 
       if (_showExpired->isChecked())
@@ -217,7 +218,7 @@ void dspIndentedBOM::sFillList()
         if (q.value("bomwork_parent_id").toInt() == -1)
           last = new XTreeWidgetItem( _bomitem, q.value("bomwork_id").toInt(),
                                     q.value("bomwork_seqnumber"), q.value("item_number"),
-                                    q.value("itemdescription"), q.value("item_invuom"),
+                                    q.value("itemdescription"), q.value("uom_name"),
                                     q.value("f_qtyper"), q.value("f_scrap"),
                                     q.value("f_effective"), q.value("f_expires") );
         else
@@ -232,7 +233,7 @@ void dspIndentedBOM::sFillList()
 //  Found it, add the current bomwork as a child of its parent
               last = new XTreeWidgetItem( cursor, q.value("bomwork_id").toInt(),
                                         q.value("bomwork_seqnumber"), q.value("item_number"),
-                                        q.value("itemdescription"), q.value("item_invuom"),
+                                        q.value("itemdescription"), q.value("uom_name"),
                                         q.value("f_qtyper"), q.value("f_scrap"),
                                         q.value("f_effective"), q.value("f_expires") );
               break;

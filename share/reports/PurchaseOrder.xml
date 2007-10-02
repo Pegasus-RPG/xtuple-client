@@ -64,7 +64,7 @@
        ELSE (poitem_vend_item_descrip)
        END AS itemdescription,
        formatQty(poitem_qty_ordered) AS f_ordered,
-       CASE WHEN (poitem_vend_uom LIKE '') THEN (item_invuom)
+       CASE WHEN (poitem_vend_uom LIKE '') THEN (uom_name)
             ELSE (poitem_vend_uom)
        END AS itemuom,
        formatPrice(poitem_unitprice) AS f_price,
@@ -73,7 +73,7 @@
        characteristicsToString('PI', poitem_id, '=', ', ') AS poitem_characteristics
 FROM poitem
 	LEFT OUTER JOIN itemsite ON (poitem_itemsite_id = itemsite_id)
-	LEFT OUTER JOIN item ON (itemsite_item_id = item_id)
+	LEFT OUTER JOIN (item JOIN uom ON (item_inv_uom_id=uom_id)) ON (itemsite_item_id = item_id)
 WHERE 	(poitem_pohead_id=&lt;? value("pohead_id") ?>) 
 ORDER BY poitem_linenumber;</sql>
  </querysource>

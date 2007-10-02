@@ -109,7 +109,7 @@ void WoLineEdit::setId(int pId)
   {
     XSqlQuery wo;
     wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
-                "       warehous_code, item_id, item_number, item_invuom,"
+                "       warehous_code, item_id, item_number, uom_name,"
                 "       item_descrip1, item_descrip2,"
                 "       wo_qtyord, wo_qtyrcv, wo_status,"
                 "       formatDate(wo_duedate) AS duedate,"
@@ -117,9 +117,10 @@ void WoLineEdit::setId(int pId)
                 "       formatQtyPer(wo_qtyord) AS ordered,"
                 "       formatQtyPer(wo_qtyrcv) AS received, "
                 "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance "
-                "FROM wo, itemsite, item, warehous "
+                "FROM wo, itemsite, item, warehous, uom "
                 "WHERE ((wo_itemsite_id=itemsite_id)"
                 " AND (itemsite_item_id=item_id)"
+                " AND (item_inv_uom_id=uom_id)"
                 " AND (itemsite_warehous_id=warehous_id)"
                 " AND (wo_id=:wo_id));" );
     wo.bindValue(":wo_id", pId);
@@ -135,7 +136,7 @@ void WoLineEdit::setId(int pId)
       emit newItemid(wo.value("item_id").toInt());
       emit warehouseChanged(wo.value("warehous_code").toString());
       emit itemNumberChanged(wo.value("item_number").toString());
-      emit uomChanged(wo.value("item_invuom").toString());
+      emit uomChanged(wo.value("uom_name").toString());
       emit itemDescrip1Changed(wo.value("item_descrip1").toString());
       emit itemDescrip2Changed(wo.value("item_descrip2").toString());
       emit startDateChanged(wo.value("startdate").toString());
@@ -592,17 +593,18 @@ void WomatlCluster::setWooperid(int pWooperid)
 
   bool qual = FALSE;
   QString sql( "SELECT womatl_id AS womatlid, item_number,"
-               "       wo_id, item_invuom, item_descrip1, item_descrip2,"
+               "       wo_id, uom_name, item_descrip1, item_descrip2,"
                "       womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
                "       formatQtyPer(womatl_qtyper) AS qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
                "       formatQtyPer(womatl_qtyreq) AS qtyreq,"
                "       formatQtyPer(womatl_qtyiss) AS qtyiss,"
                "       formatQtyPer(womatl_qtywipscrap) AS qtywipscrap "
-               "FROM womatl, wo, itemsite, item "
+               "FROM womatl, wo, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (womatl_wooper_id=:wooper_id)"
                " AND (womatl_issuemethod IN (" );
 
@@ -667,17 +669,18 @@ void WomatlCluster::setWoid(int pWoid)
 
   bool qual = FALSE;
   QString sql( "SELECT womatl_id AS womatlid, item_number,"
-               "       wo_id, item_invuom, item_descrip1, item_descrip2,"
+               "       wo_id, uom_name, item_descrip1, item_descrip2,"
                "       womatl_qtyreq AS _qtyreq, womatl_qtyiss AS _qtyiss,"
                "       formatQtyPer(womatl_qtyper) AS qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
                "       formatQtyPer(womatl_qtyreq) AS qtyreq,"
                "       formatQtyPer(womatl_qtyiss) AS qtyiss,"
                "       formatQtyPer(womatl_qtywipscrap) AS qtywipscrap "
-               "FROM womatl, wo, itemsite, item "
+               "FROM womatl, wo, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (wo_id=:wo_id)"
                " AND (womatl_issuemethod IN (" );
 
@@ -747,18 +750,19 @@ void WomatlCluster::setId(int pWomatlid)
   {
     bool qual = FALSE;
     QString sql( "SELECT list.womatl_id AS womatlid, item_number,"
-                 "       wo_id, item_invuom, item_descrip1, item_descrip2,"
+                 "       wo_id, uom_name, item_descrip1, item_descrip2,"
                  "       list.womatl_qtyreq AS _qtyreq, list.womatl_qtyiss AS _qtyiss,"
                  "       formatQtyPer(list.womatl_qtyper) AS qtyper,"
                  "       formatScrap(list.womatl_scrap) AS scrap,"
                  "       formatQtyPer(list.womatl_qtyreq) AS qtyreq,"
                  "       formatQtyPer(list.womatl_qtyiss) AS qtyiss,"
                  "       formatQtyPer(list.womatl_qtywipscrap) AS qtywipscrap "
-                 "FROM womatl AS list, womatl AS target, wo, itemsite, item "
+                 "FROM womatl AS list, womatl AS target, wo, itemsite, item, uom "
                  "WHERE ( (list.womatl_wo_id=wo_id)"
                  " AND (target.womatl_wo_id=wo_id)"
                  " AND (list.womatl_itemsite_id=itemsite_id)"
                  " AND (itemsite_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (target.womatl_id=:womatl_id)"
                  " AND (list.womatl_issuemethod IN (" );
 
@@ -860,7 +864,7 @@ void WomatlCluster::sPopulateInfo(int pWomatlid)
   }
   else if (_womatl.findFirst("womatlid", pWomatlid) != -1)
   {
-    _uom->setText(_womatl.value("item_invuom").toString());
+    _uom->setText(_womatl.value("uom_name").toString());
     _descrip1->setText(_womatl.value("item_descrip1").toString());
     _descrip2->setText(_womatl.value("item_descrip2").toString());
     _qtyPer->setText(_womatl.value("qtyper").toString());

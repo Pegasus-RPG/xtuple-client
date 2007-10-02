@@ -124,7 +124,7 @@ void ItemLineEdit::silentSetId(int pId)
   else if (pId != -1)
   {
     QString pre( "SELECT DISTINCT item_number, item_descrip1, item_descrip2,"
-                 "                item_invuom, item_type, item_config");
+                 "                uom_name, item_type, item_config");
 
     QStringList clauses;
     clauses = _extraClauses;
@@ -140,7 +140,7 @@ void ItemLineEdit::silentSetId(int pId)
   if (found)
   {
     _itemNumber = item.value("item_number").toString();
-    _uom        = item.value("item_invuom").toString();
+    _uom        = item.value("uom_name").toString();
     _itemType   = item.value("item_type").toString();
     _configured = item.value("item_config").toBool();
     _id         = pId;
@@ -152,7 +152,7 @@ void ItemLineEdit::silentSetId(int pId)
     emit typeChanged(_itemType);
     emit descrip1Changed(item.value("item_descrip1").toString());
     emit descrip2Changed(item.value("item_descrip2").toString());
-    emit uomChanged(item.value("item_invuom").toString());
+    emit uomChanged(item.value("uom_name").toString());
     emit configured(item.value("item_config").toBool());
     
     emit valid(TRUE);
@@ -591,7 +591,8 @@ void ItemCluster::setItemsiteid(int intPItemsiteid)
 QString buildItemLineEditQuery(const QString pPre, const QStringList pClauses, const QString pPost, const unsigned int pType)
 {
   QStringList clauses = pClauses;
-  QString sql = pPre + " FROM item";
+  QString sql = pPre + " FROM item, uom";
+  clauses << "(item_inv_uom_id=uom_id)";
 
   if (pType & (ItemLineEdit::cLocationControlled | ItemLineEdit::cLotSerialControlled | ItemLineEdit::cDefaultLocation | ItemLineEdit::cActive))
   {

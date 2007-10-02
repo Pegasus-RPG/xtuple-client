@@ -14,7 +14,7 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
            (select warehous_code from warehous where warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
@@ -40,7 +40,7 @@
          text('All Customer Types')
        &lt;? endif ?>
        AS custtype
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
  </querysource>
  <querysource>
@@ -340,7 +340,7 @@ ORDER BY cohist_invcdate, cust_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <line>

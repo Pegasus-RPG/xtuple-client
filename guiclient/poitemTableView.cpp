@@ -202,10 +202,11 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
 	int vendid = (qobject_cast<const PoitemTableModel*>(model))->_vendid;
 	// TODO: put queries in ItemLineEdit, trigger them with a setVendId()
         item->setQuery( QString("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-				"                item_invuom, item_type, item_config "
-				"FROM item, itemsite, itemsrc  "
+				"                uom_name, item_type, item_config "
+				"FROM item, itemsite, itemsrc, uom  "
 				"WHERE ( (itemsite_item_id=item_id)"
 				" AND (itemsrc_item_id=item_id)"
+                                " AND (item_inv_uom_id=uom_id)"
 				" AND (itemsite_active)"
 				" AND (item_active)"
 				" AND (itemsrc_active)"
@@ -213,10 +214,11 @@ QWidget *PoitemTableDelegate::createEditor(QWidget *parent,
 				"ORDER BY item_number;" )
                          .arg(vendid) );
         item->setValidationQuery( QString("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-					  "                item_invuom, item_type, item_config "
-					  "FROM item, itemsite, itemsrc  "
+					  "                uom_name, item_type, item_config "
+					  "FROM item, itemsite, itemsrc, uom  "
 					  "WHERE ( (itemsite_item_id=item_id)"
 					  " AND (itemsrc_item_id=item_id)"
+                                          " AND (item_inv_uom_id=uom_id)"
 					  " AND (itemsite_active)"
 					  " AND (item_active)"
 					  " AND (itemsrc_active)"

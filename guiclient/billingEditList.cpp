@@ -211,7 +211,7 @@ void billingEditList::sFillList()
         XTreeWidgetItem *itemLine = new XTreeWidgetItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
                                                      "", "",
                                                      q.value("item"), q.value("itemdescrip"),
-                                                     q.value("item_invuom"), q.value("qtytobill"),
+                                                     q.value("iteminvuom"), q.value("qtytobill"),
                                                      q.value("price"), q.value("extprice") );
 
 //  Add the distribution line

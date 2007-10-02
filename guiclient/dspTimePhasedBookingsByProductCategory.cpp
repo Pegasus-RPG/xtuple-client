@@ -185,13 +185,13 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
     sql += ", TEXT('$') AS uom";
   
   else if (_inventoryUnits->isChecked())
-    sql += ", item_invuom AS uom";
+    sql += ", uom_name AS uom";
 
   else if (_capacityUnits->isChecked())
-    sql += ", item_capuom AS uom";
+    sql += ", itemcapuom(item_id) AS uom";
 
   else if (_altCapacityUnits->isChecked())
-    sql += ", item_altcapuom AS uom";
+    sql += ", itemaltcapuom(item_id) AS uom";
 
   int columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
@@ -210,12 +210,12 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
 	     .arg(cursor->id());
 
     else if (_capacityUnits->isChecked())
-      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * item_capinvrat) AS bucket%1")
+      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * itemcapinvrat(item_id)) AS bucket%1")
 	     .arg(columns++)
 	     .arg(cursor->id());
 
     else if (_altCapacityUnits->isChecked())
-      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * item_altcapinvrat) AS bucket%1")
+      sql += QString(", SUM(bookingsByItemQty(itemsite_id, %2) * itemaltcapinvrat(item_id)) AS bucket%1")
 	     .arg(columns++)
 	     .arg(cursor->id());
 
@@ -224,8 +224,9 @@ void dspTimePhasedBookingsByProductCategory::sFillList()
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, warehous, prodcat "
+  sql += " FROM itemsite, item, uom, warehous, prodcat "
          "WHERE ( (itemsite_item_id=item_id)"
+         " AND (item_inv_uom_id=uom_id)"
          " AND (itemsite_warehous_id=warehous_id)"
          " AND (item_prodcat_id=prodcat_id)";
 

@@ -14,7 +14,7 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          (select warehous_code
             from warehous
@@ -23,7 +23,7 @@
          text('All Warehouses')
        &lt;? endif ?>
        AS warehouse
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
  </querysource>
  <querysource>
@@ -143,7 +143,7 @@ ORDER BY pr_duedate;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <field>

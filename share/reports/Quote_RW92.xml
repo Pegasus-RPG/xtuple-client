@@ -37,7 +37,7 @@
   <sql>SELECT quitem_linenumber,
        quitem_linenumber AS f_line,
        formatQty(quitem_qtyord) AS f_ordered,
-       item_invuom, item_number, item_descrip1,item_descrip2,
+       uom_name, item_number, item_descrip1,item_descrip2,
        CASE WHEN (item_listprice &lt; quitem_price) THEN formatPrice(quitem_price)
             ELSE formatPrice(item_listprice)
        END AS f_listprice,
@@ -46,8 +46,9 @@
        CASE WHEN (item_listprice=0) THEN 'N/A'
             ELSE formatScrap(noNeg(1 - (quitem_price / item_listprice)))
        END AS f_discount
-  FROM quitem, item
+  FROM quitem, item, uom
  WHERE ( (quitem_item_id=item_id)
+   AND   (item_inv_uom_id=uom_id)
    AND   (quitem_quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>) )
  ORDER BY quitem_linenumber;</sql>
  </querysource>
@@ -975,7 +976,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>
@@ -1089,7 +1090,7 @@ WHERE (quhead_id=&lt;? value(&quot;quhead_id&quot;) ?>);</sql>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

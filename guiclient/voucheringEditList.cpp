@@ -269,7 +269,7 @@ void voucheringEditList::sFillList()
         XTreeWidgetItem *itemLine = new XTreeWidgetItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
                                                      "", "",
                                                      q.value("itemnumber"), q.value("invoicenumber"), q.value("description"), q.value("itemtype"),
-                                                     q.value("item_invuom"), q.value("f_qty"),
+                                                     q.value("iteminvuom"), q.value("f_qty"),
                                                      q.value("f_cost") );
 
 //  Add the distribution lines

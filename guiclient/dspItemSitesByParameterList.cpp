@@ -318,7 +318,7 @@ void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu)
 void dspItemSitesByParameterList::sFillList()
 {
  QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "      (item_descrip1 || ' ' || item_descrip2), item_invuom,"
+               "      (item_descrip1 || ' ' || item_descrip2), uom_name,"
                "      formatQty(itemsite_qtyonhand),"
                "      formatBoolYN(itemsite_loccntrl),"
                "      CASE WHEN itemsite_controlmethod='R' THEN :regular"
@@ -331,8 +331,9 @@ void dspItemSitesByParameterList::sFillList()
                "      END,"
                "      formatDate(itemsite_datelastcount, 'Never'),"
                "      formatDate(itemsite_datelastused, 'Never') "
-               "FROM itemsite, warehous, item "
+               "FROM itemsite, warehous, item, uom "
                "WHERE ( (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)" );
 
   if (_parameter->isSelected())

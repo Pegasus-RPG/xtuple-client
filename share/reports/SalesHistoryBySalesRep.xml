@@ -47,7 +47,7 @@
             ELSE text(cohist_invcnumber)
        END as invnumber,
        formatDate(cohist_orderdate) AS orddate, formatDate(cohist_invcdate, 'Return') AS invcdate,
-       item_number, item_invuom, item_descrip1, item_descrip2,
+       item_number, uom_name, item_descrip1, item_descrip2,
        formatQty(cohist_qtyshipped) AS shipped,
        &lt;? if exists(&quot;showPrices&quot;) ?>
        formatPrice(cohist_unitprice) AS unitprice,
@@ -57,10 +57,11 @@
        '' AS f_total,
        &lt;? endif ?>
        round(cohist_qtyshipped * cohist_unitprice,2) AS total
-  FROM cohist, cust, itemsite, item, prodcat 
+  FROM cohist, cust, itemsite, item, uom, prodcat 
  WHERE ((cohist_itemsite_id=itemsite_id)
    AND (cohist_cust_id=cust_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (item_prodcat_id=prodcat_id)
    AND (cohist_salesrep_id=&lt;? value(&quot;salesrep_id&quot;) ?>)
    AND (cohist_invcdate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)

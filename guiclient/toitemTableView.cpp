@@ -306,8 +306,8 @@ void ToitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	if (! item->itemNumber().isEmpty() && item->isValid())
 	{
 	  XSqlQuery itemq;
-	  itemq.prepare("SELECT *, stdCost(item_id) AS stdcost "
-			"FROM item "
+	  itemq.prepare("SELECT *, stdCost(item_id) AS stdcost, uom_name "
+			"FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
 			"WHERE (item_id=:item_id);");
 	  itemq.bindValue(":item_id", item->id());
 	  itemq.exec();
@@ -325,7 +325,7 @@ void ToitemTableDelegate::setModelData(QWidget *editor, QAbstractItemModel *pMod
 	    }
 	    model->setData(index, item->itemNumber());
 	    model->setData(model->index(index.row(), TOITEM_ITEM_ID_COL), itemq.value("item_id").toInt());
-	    model->setData(model->index(index.row(), TOITEM_UOM_COL), itemq.value("item_invuom"));
+	    model->setData(model->index(index.row(), TOITEM_UOM_COL), itemq.value("uom_name"));
 	    model->setData(model->index(index.row(), TOITEM_STDCOST_COL),
 			   formatPurchPrice(itemq.value("stdcost").toDouble()));
 	  }

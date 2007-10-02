@@ -51,7 +51,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        formatQty(itemsite_qtyonhand) AS f_qoh,
        formatDate(itemsite_datelastused) AS f_datelastused,
        &lt;? if exists(&quot;showValue&quot;) ?>
@@ -71,7 +71,7 @@
                 warehous_code,
                 item_number,
                 item_descrip1,
-                item_descrip2, item_invuom,
+                item_descrip2, uom_name,
                 itemsite_qtyonhand,
                 itemsite_datelastused,
                 &lt;? if exists(&quot;useActualCosts&quot;) ?>
@@ -80,8 +80,9 @@
                   stdcost(itemsite_item_id)
                 &lt;? endif ?>
                 AS cost
-           FROM itemsite, item, warehous
+           FROM itemsite, item, warehous, uom
           WHERE ((itemsite_item_id=item_id)
+            AND (item_inv_uom_id=uom_id)
             AND (itemsite_warehous_id=warehous_id)
             AND (itemsite_active)
             AND (itemsite_datelastused &lt; &lt;? value(&quot;cutoffDate&quot;) ?>)
@@ -701,7 +702,7 @@ ORDER BY warehous_code,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

@@ -12,10 +12,10 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
     </sql>
  </querysource>
@@ -24,7 +24,7 @@
   <sql>select (REPEAT(' ',(bomwork_level-1)*3) || bomwork_seqnumber) AS f_seqnumber,
        bomworkSequence(bomwork_id) AS seq_ord,
        item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatBoolYN(bomwork_createwo) as createchild,
@@ -37,8 +37,9 @@
        formatScrap(bomwork_scrap) AS scrap,
        formatDate(bomwork_effective, 'Always') AS effective,
        formatDate(bomwork_expires, 'Never') AS expires
-  FROM bomwork, item
+  FROM bomwork, item, uom
  WHERE ((bomwork_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomwork_set_id=&lt;? value(&quot;bomworkset_id&quot;) ?>)
 &lt;? if exists(&quot;expiredDays&quot;) ?>
    AND (bomwork_expires > (CURRENT_DATE - &lt;? value(&quot;expiredDays&quot;) ?>))
@@ -138,7 +139,7 @@ ORDER BY seq_ord;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -601,7 +602,7 @@ ORDER BY seq_ord;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

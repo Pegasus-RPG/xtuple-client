@@ -89,7 +89,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        warehous_code,
        formatQty(reorderlevel) AS f_reorderlevel,
        formatQty(qoh) AS f_qoh,
@@ -140,7 +140,7 @@ FROM ( SELECT itemsite_id,
               item_number,
               item_descrip1, item_descrip2, itemsite_loccntrl,
               warehous_code,
-              item_invuom,
+              uom_name,
               CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,
               itemsite_qtyonhand AS qoh,
               CASE WHEN ((itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S'))) THEN 1
@@ -153,8 +153,9 @@ FROM ( SELECT itemsite_id,
                 stdcost(itemsite_item_id)
               &lt;? endif ?>
               AS standardcost
-         FROM itemsite, item, warehous
+         FROM itemsite, item, uom, warehous
         WHERE ((itemsite_item_id=item_id)
+          AND (item_inv_uom_id=uom_id)
           AND (itemsite_warehous_id=warehous_id)
           AND (itemsite_active)
 &lt;? if exists(&quot;classcode_id&quot;) ?>

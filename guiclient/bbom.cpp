@@ -280,15 +280,16 @@ void bbom::sFillList(int pItemid, bool)
                  "            WHEN (item_type='Y') THEN :byProduct"
                  "            ELSE :error"
                  "       END,"
-                 "       item_invuom,"
+                 "       uom_name,"
                  "       formatQtyPer(bbomitem_qtyper),"
                  "       formatDate(bbomitem_effective, 'Always'),"
                  "       formatDate(bbomitem_expires, 'Never'),"
                  "       CASE WHEN (item_type='Y') THEN :na"
                  "            ELSE formatScrap(bbomitem_costabsorb)"
                  "       END "
-                 "FROM bbomitem, item "
+                 "FROM bbomitem, item, uom "
                  "WHERE ( (bbomitem_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (bbomitem_parent_item_id=:item_id)" );
 
     if (!_showExpired->isChecked())

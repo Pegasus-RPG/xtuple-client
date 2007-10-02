@@ -20,12 +20,13 @@
   <name>detail</name>
   <sql>SELECT item_number,
        item_descrip1, item_descrip2,
-       item_invuom,
+       uom_name,
        itemsrc_vend_item_number as f_venditem,
        itemsrc_vend_uom as f_venduom,
        formatQty(itemsrc_invvendoruomratio) as f_uomratio
-  FROM itemsrc, item 
+  FROM itemsrc, item, uom
  WHERE ( (itemsrc_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsrc_vend_id=&lt;? value(&quot;vend_id&quot;) ?>) );</sql>
  </querysource>
  <rpthead>
@@ -337,7 +338,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

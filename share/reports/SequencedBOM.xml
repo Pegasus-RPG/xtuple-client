@@ -12,17 +12,17 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
     </sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>SELECT text(booitem_seqnumber) AS booseqnumber, bomitem_seqnumber,
-       item_number, item_invuom, item_descrip1, item_descrip2,
+       item_number, uom_name, item_descrip1, item_descrip2,
        formatQtyPer(bomitem_qtyper) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
        formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
@@ -34,8 +34,9 @@
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod
-  FROM booitem, bomitem, item
+  FROM booitem, bomitem, item, uom
  WHERE ((bomitem_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomitem_booitem_id=booitem_id)
    AND (bomitem_parent_item_id=&lt;? value(&quot;item_id&quot;) ?>)
 &lt;? if not exists(&quot;showExpired&quot;) ?>
@@ -47,7 +48,7 @@
 )
 UNION
 SELECT text('') AS booseqnumber, bomitem_seqnumber,
-       item_number, item_invuom, item_descrip1, item_descrip2,
+       item_number, uom_name, item_descrip1, item_descrip2,
        formatQtyPer(bomitem_qtyper) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
        formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
@@ -59,8 +60,9 @@ SELECT text('') AS booseqnumber, bomitem_seqnumber,
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod
-  FROM bomitem, item
+  FROM bomitem, item, uom
  WHERE ((bomitem_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomitem_booitem_id=-1)
    AND (bomitem_parent_item_id=&lt;? value(&quot;item_id&quot;) ?>)
 &lt;? if not exists(&quot;showExpired&quot;) ?>
@@ -631,7 +633,7 @@ ORDER BY booseqnumber, bomitem_seqnumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

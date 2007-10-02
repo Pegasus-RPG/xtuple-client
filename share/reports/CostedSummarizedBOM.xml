@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
 &lt;? if exists("useActualCosts") ?>
@@ -20,14 +20,14 @@
 &lt;? else ?>
        text('Standard Costs') AS f_costtype
 &lt;? endif ?>
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value("item_id") ?>);
     </sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>select item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS qtyper,
@@ -38,8 +38,9 @@
        formatCost(stdCost(item_id)) AS f_cost,
        formatCost(stdCost(item_id) * SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_extcost
 &lt;? endif ?>
-  FROM bomwork, item
+  FROM bomwork, item, uom
  WHERE ((bomwork_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomwork_set_id=&lt;? value("bomworkset_id") ?>)
 &lt;? if exists("expiredDays") ?>
    AND (bomwork_expires > (CURRENT_DATE - &lt;? value("expiredDays") ?>))
@@ -52,7 +53,7 @@
    AND (bomwork_effective &lt;= CURRENT_DATE)
 &lt;? endif ?>
  )
-GROUP BY item_number, item_invuom,
+GROUP BY item_number, uom_name,
          item_descrip1, item_descrip2, item_id
 ORDER BY item_number;</sql>
  </querysource>
@@ -224,7 +225,7 @@ ORDER BY item_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -473,7 +474,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

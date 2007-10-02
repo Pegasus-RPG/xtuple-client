@@ -177,13 +177,14 @@ void dspUnbalancedQOHByClassCode::sPopulateMenu(QMenu *pMenu)
 void dspUnbalancedQOHByClassCode::sFillList()
 {
   QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2), item_invuom,"
+               "       (item_descrip1 || ' ' || item_descrip2), uom_name,"
                "       formatQty(itemsite_qtyonhand),"
                "       formatQty(detailedQOH(itemsite_id, FALSE)),"
                "       formatQty(itemsite_nnqoh),"
                "       formatQty(detailedNNQOH(itemsite_id, FALSE)) "
-               "FROM warehous, item, itemsite "
+               "FROM warehous, item, itemsite, uom "
                "WHERE ( (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) )"
                " AND ( (itemsite_qtyonhand <> detailedQOH(itemsite_id, FALSE))"

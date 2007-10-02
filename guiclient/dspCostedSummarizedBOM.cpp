@@ -180,7 +180,7 @@ void dspCostedSummarizedBOM::sFillList()
 
       QString sql( "SELECT -1, item_number,"
                    "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       item_invuom,"
+                   "       uom_name,"
                    "       formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_qtyper," );
 
       if (_useActualCosts->isChecked())
@@ -190,8 +190,9 @@ void dspCostedSummarizedBOM::sFillList()
         sql += " formatCost(stdCost(item_id)) AS f_cost,"
                " formatCost(stdCost(item_id) * SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_extcost ";
 
-      sql += "FROM bomwork, item "
+      sql += "FROM bomwork, item, uom "
              "WHERE ( (bomwork_item_id=item_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (bomwork_set_id=:bomwork_set_id)";
 
       if (_showExpired->isChecked())
@@ -205,7 +206,7 @@ void dspCostedSummarizedBOM::sFillList()
         sql += " AND (bomwork_effective <= CURRENT_DATE)";
 
       sql += ") "
-             "GROUP BY item_number, item_invuom,"
+             "GROUP BY item_number, uom_name,"
              "         item_descrip1, item_descrip2, item_id "
              "ORDER BY item_number;";
 

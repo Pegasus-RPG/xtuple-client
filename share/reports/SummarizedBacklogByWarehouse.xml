@@ -60,7 +60,7 @@
        formatDate(cohead_packdate) AS f_packdate,
        &lt;? if exists("showPrices") ?>
          formatMoney( SUM( round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         (coitem_price / item_invpricerat),2) ) )
+                         (coitem_price / iteminvpricerat(item_id)),2) ) )
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -73,16 +73,16 @@
        AS f_cost,
        &lt;? if exists("showPrices") ?>
          formatMoney( SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         ((coitem_price / item_invpricerat) - stdcost(item_id)) ) )
+                         ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) )
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_margin,
        SUM( round( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-            (coitem_price / item_invpricerat),2) ) AS sales,
+            (coitem_price / iteminvpricerat(item_id)),2) ) AS sales,
        SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) AS cost,
        SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-            ((coitem_price / item_invpricerat) - stdcost(item_id)) ) AS margin,
+            ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) AS margin,
        MIN(coitem_scheddate) AS scheddate,
        formatShipmentNumber(cosmisc_id) AS cosmisc_number,
        CASE WHEN (cosmisc_shipped IS NULL) THEN text('')
@@ -132,10 +132,10 @@ cohead_number, cosmisc_shipped;</sql>
        formatMoney( SUM( margin ) ) AS f_margin
   FROM (
 SELECT SUM( round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         (coitem_price / item_invpricerat),2) ) AS sales,
+                         (coitem_price / iteminvpricerat(item_id)),2) ) AS sales,
        SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) AS cost,
        SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         ((coitem_price / item_invpricerat) - stdcost(item_id)) ) AS margin
+                         ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) AS margin
   FROM coitem, itemsite, item, cust, 
        cohead
  WHERE ( (coitem_cohead_id=cohead_id)

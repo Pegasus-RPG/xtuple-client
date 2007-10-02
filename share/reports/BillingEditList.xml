@@ -21,7 +21,7 @@
        text(cohead_number) 		AS f_ordernumber,
        cohead_number 			AS ordernumber,
        -1 				AS linenumber,
-       '' 				AS item_invuom,
+       '' 				AS iteminvuom,
        '' 				AS qtytobill,
        '' 				AS price,
        '' 				AS extprice,
@@ -51,7 +51,7 @@ SELECT cohead_id 			AS orderid,
        ''		 		AS f_ordernumber,
        cohead_number			AS ordernumber,
        -1 				AS linenumber,
-       '' 				AS item_invuom,
+       '' 				AS iteminvuom,
        '' 				AS qtytobill,
        formatExtPrice(cobmisc_freight) 	AS price,
        formatExtPrice(cobmisc_freight) 	AS extprice,
@@ -80,7 +80,7 @@ SELECT cohead_id 								AS orderid,
         ''		 							AS f_ordernumber, 
 	cohead_number								AS ordernumber,
 	-1 									AS linenumber,
-	'' 									AS item_invuom,
+	'' 									AS iteminvuom,
         '' 									AS qtytobill,
         formatExtPrice(cobmisc_misc) 						AS price,
         formatExtPrice(cobmisc_misc) 						AS extprice,
@@ -109,7 +109,7 @@ SELECT  cohead_id 								AS orderid,
         ''		 							AS f_ordernumber, 
 	cohead_number								as ordernumber,
 	-1				 					AS linenumber,
-	''						 			AS item_invuom,
+	''						 			AS iteminvuom,
         '' 									AS qtytobill,
         formatExtPrice(cobmisc_tax) 						AS price,
         formatExtPrice(cobmisc_tax) 						AS extprice,
@@ -139,23 +139,24 @@ SELECT  cohead_id 								AS orderid,
         ''		 							AS f_ordernumber, 
         cohead_number	 							AS ordernumber, 
 	coitem_linenumber 							AS linenumber,
-	item_invuom,
+	uom_name AS iteminvuom,
         formatQty(cobill_qty) 							AS qtytobill,
         formatPrice(coitem_price) 						AS price,
-        formatExtPrice(cobill_qty * (coitem_price / item_invpricerat)) 		AS extprice,
-	(cobill_qty * (coitem_price / item_invpricerat))			AS subextprice,
-	(cobill_qty * (coitem_price / item_invpricerat))			AS runningextprice,
+        formatExtPrice(cobill_qty * (coitem_price / iteminvpricerat(item_id))) 		AS extprice,
+	(cobill_qty * (coitem_price / iteminvpricerat(item_id)))			AS subextprice,
+	(cobill_qty * (coitem_price / iteminvpricerat(item_id)))			AS runningextprice,
         '' AS debit,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip)
                     FROM accnt, salesaccnt
                     WHERE ((salesaccnt_sales_accnt_id=accnt_id)
                      AND (salesaccnt_id=findSalesAccnt(itemsite_id, cohead_cust_id)))), 'Not Assigned') AS credit
-FROM item, itemsite, cobmisc, cohead, cobill, coitem
+FROM item, itemsite, cobmisc, cohead, cobill, coitem, uom
 WHERE ( (coitem_itemsite_id=itemsite_id)
  AND (cobill_coitem_id=coitem_id)
  AND (cobill_cobmisc_id=cobmisc_id)
  AND (cobmisc_cohead_id=cohead_id)
  AND (itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (cobill_cobmisc_id=cobmisc_id)
  AND (NOT cobmisc_posted)
 &lt;? if exists(&quot;showPrinted&quot;) ?>
@@ -174,7 +175,7 @@ SELECT 	cmhead_id 					AS orderid,
         text(cmhead_number) 				AS f_ordernumber,
 	cmhead_number					AS ordernumber,
 	-1 						AS linenumber,
-	'' 						AS item_invuom,
+	'' 						AS iteminvuom,
         '' 						AS qtytobill,
         '' 						AS price,
         '' 						AS extprice,
@@ -204,7 +205,7 @@ SELECT  cmhead_id 								AS orderid,
         ''		 							AS f_ordernumber, 
         cmhead_number	 							AS ordernumber, 
 	-1 									AS linenumber,
-	'' 									AS item_invuom,
+	'' 									AS iteminvuom,
         '' 									AS qtytobill,
         formatExtPrice(cmhead_freight) 						AS price,
         formatExtPrice(cmhead_freight) 						AS extprice,
@@ -233,21 +234,22 @@ SELECT  cmhead_id 								AS orderid,
         ''		 							AS f_ordernumber, 
         cmhead_number	 							AS ordernumber, 
 	cmitem_linenumber 							AS linenumber,
-	item_invuom,
+	iteminvuom,
         formatQty(cmitem_qtycredit) 						AS qtytobill,
         formatPrice(cmitem_unitprice) 						AS price,
-        formatExtPrice(cmitem_qtycredit * (cmitem_unitprice / item_invpricerat)) 	AS extprice,
-	(cmitem_qtycredit * (cmitem_unitprice / item_invpricerat) * -1)			AS subextprice,
-	(cmitem_qtycredit * (cmitem_unitprice / item_invpricerat) * -1)			AS runningextprice,
+        formatExtPrice(cmitem_qtycredit * (cmitem_unitprice / iteminvpricerat(item_id))) 	AS extprice,
+	(cmitem_qtycredit * (cmitem_unitprice / iteminvpricerat(item_id)) * -1)			AS subextprice,
+	(cmitem_qtycredit * (cmitem_unitprice / iteminvpricerat(item_id)) * -1)			AS runningextprice,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) 
                     FROM accnt, salesaccnt 
                     WHERE ((salesaccnt_sales_accnt_id=accnt_id) 
                      AND (salesaccnt_id=findSalesAccnt(itemsite_id, cmhead_cust_id)))), 'Not Assigned') AS credit,
         '' AS debit
-FROM item, itemsite, cmhead, cmitem 
+FROM item, itemsite, cmhead, cmitem, uom
 WHERE ( (cmitem_itemsite_id=itemsite_id)
  AND (cmitem_cmhead_id=cmhead_id)
  AND (itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (NOT cmhead_posted)
  AND (NOT cmhead_hold)
 &lt;? if exists(&quot;showPrinted&quot;) ?>
@@ -864,7 +866,7 @@ ORDER BY ordernumber, linenumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>iteminvuom</column>
     </data>
    </field>
    <field>

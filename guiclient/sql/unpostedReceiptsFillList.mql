@@ -3,7 +3,7 @@ SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
        poitem_linenumber AS orderitem_linenumber,
        formatDate(recv_duedate) AS recv_duedate,
        COALESCE(item_number, <? value("nonInventory") ?>) AS item_number,
-       COALESCE(item_invuom, <? value("na") ?>) AS item_invuom,
+       COALESCE(uom_name, <? value("na") ?>) AS uom_name,
        recv_vend_item_number,
        recv_vend_uom,
        formatQty(poitem_qty_ordered)  AS qty_ordered,
@@ -12,7 +12,7 @@ SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
        formatDate(recv_date)   AS recv_date,
        formatDate(COALESCE(recv_gldistdate, recv_date)) AS recv_gldistdate
 FROM vend, pohead, poitem, recv LEFT OUTER JOIN 
-     (itemsite JOIN ITEM ON (itemsite_item_id=item_id))
+     (itemsite JOIN item ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))
       ON (recv_itemsite_id=itemsite_id)
 WHERE ( (recv_orderitem_id=poitem_id)
   AND   (NOT recv_posted)
@@ -26,7 +26,7 @@ SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
        toitem_linenumber AS orderitem_linenumber,
        formatDate(recv_duedate) AS recv_duedate,
        COALESCE(item_number, <? value("nonInventory") ?>) AS item_number,
-       COALESCE(item_invuom, <? value("na") ?>) AS item_invuom,
+       COALESCE(uom_name, <? value("na") ?>) AS uom_name,
        recv_vend_item_number,
        recv_vend_uom,
        formatQty(toitem_qty_ordered)  AS qty_ordered,
@@ -34,7 +34,7 @@ SELECT recv_id, recv_orderitem_id, recv_order_number, recv_order_type,
        formatQty(recv_qty)     AS recv_qty,
        formatDate(recv_date)   AS recv_date,
        formatDate(COALESCE(recv_gldistdate, recv_date)) AS recv_gldistdate
-FROM recv, toitem LEFT OUTER JOIN item ON (toitem_item_id=item_id)
+FROM recv, toitem LEFT OUTER JOIN (item JOIN uom ON (item_inv_uom_id=uom_id)) ON (toitem_item_id=item_id)
 WHERE ( (recv_orderitem_id=toitem_id)
   AND   (NOT recv_posted)
   AND   (recv_order_type='TO') )

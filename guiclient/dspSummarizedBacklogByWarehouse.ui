@@ -393,7 +393,7 @@
           <item>
            <widget class="QLabel" name="_totalQtyLit" >
             <property name="text" >
-             <string>Total Qty (Shipping UOM):</string>
+             <string>Total Qty (Inventory UOM):</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>

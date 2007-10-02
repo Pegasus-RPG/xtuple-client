@@ -155,7 +155,7 @@ void dspBookingsBySalesRep::sFillList()
                  "       item_number,"
                  "       formatQty(coitem_qtyord),"
                  "       formatSalesPrice(coitem_price),"
-                 "       formatMoney(coitem_qtyord * coitem_price / item_invpricerat) "
+                 "       formatMoney(coitem_qtyord * coitem_price / iteminvpricerat(item_id)) "
                  "FROM coitem, cohead, cust, itemsite, item, prodcat "
                  "WHERE ( (coitem_cohead_id=cohead_id)"
                  " AND (cohead_cust_id=cust_id)"

@@ -250,13 +250,14 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
 {
   if (pWomatlid != -1)
   {
-    q.prepare( "SELECT item_descrip1, item_descrip2, item_invuom, itemsite_qtyonhand,"
+    q.prepare( "SELECT item_descrip1, item_descrip2, uom_name, itemsite_qtyonhand,"
                "       formatQty(womatl_qtyreq) AS qtyreq,"
                "       formatQty(womatl_qtyiss) AS qtyiss,"
                "       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS qtybalance "
-               "FROM womatl, itemsite, item "
+               "FROM womatl, itemsite, item, uom "
                "WHERE ( (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (womatl_id=:womatl_id) );" );
     q.bindValue(":womatl_id", pWomatlid);
     q.exec();
@@ -264,7 +265,7 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
     {
       _compDescription1->setText(q.value("item_descrip1").toString());
       _compDescription2->setText(q.value("item_descrip2").toString());
-      _compUOM->setText(q.value("item_invuom").toString());
+      _compUOM->setText(q.value("uom_name").toString());
       _qtyRequired->setText(q.value("qtyreq").toString());
       _qtyIssued->setText(q.value("qtyiss").toString());
       _qtyToIssue->setText(q.value("qtybalance").toString());

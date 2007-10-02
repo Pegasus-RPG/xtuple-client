@@ -213,11 +213,12 @@ void dspItemCostsByClassCode::sPostCosts()
 void dspItemCostsByClassCode::sFillList()
 {
   QString sql( "SELECT item_id, item_number, description,"
-               "       item_invuom, formatCost(scost), formatCost(acost) "
+               "       uom_name, formatCost(scost), formatCost(acost) "
                "FROM ( SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "              item_invuom, stdcost(item_id) AS scost, actcost(item_id) AS acost"
-               "       FROM item, classcode"
-               "       WHERE ((item_classcode_id=classcode_id)" );
+               "              uom_name, stdcost(item_id) AS scost, actcost(item_id) AS acost"
+               "       FROM item, classcode, uom"
+               "       WHERE ((item_classcode_id=classcode_id)"
+               "         AND  (item_inv_uom_id=uom_id)" );
 
   if (_classCode->isSelected())
     sql += " AND (classcode_id=:classcode_id)";

@@ -150,10 +150,11 @@ void dspCapacityUOMsByClassCode::sFillList()
 void dspCapacityUOMsByClassCode::sFillList(int pItemid, bool pLocalUpdate)
 {
   QString sql( "SELECT item_id, classcode_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2), item_invuom,"
-               "       item_capuom, formatQty(item_capinvrat), item_altcapuom, formatQty(item_altcapinvrat) "
-               "FROM item, classcode "
-               "WHERE ( (item_classcode_id=classcode_id)" );
+               "       (item_descrip1 || ' ' || item_descrip2), uom_name,"
+               "       itemcapuom(item_id), formatQty(itemcapinvrat(item_id)), itemaltcapuom(item_id), formatQty(itemaltcapinvrat(item_id)) "
+               "FROM item, classcode, uom "
+               "WHERE ( (item_classcode_id=classcode_id)"
+               "  AND   (item_inv_uom_id=uom_id)" );
 
   if (_classCode->isSelected())
     sql += " AND (classcode_id=:classcode_id)";

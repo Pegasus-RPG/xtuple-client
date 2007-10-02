@@ -213,14 +213,15 @@ void dspIndentedWhereUsed::sFillList()
       int worksetid = q.value("workset_id").toInt();
 
       QString sql( "SELECT bomwork_id, item_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, item_invuom,"
+                   "       bomwork_seqnumber, item_number, uom_name,"
                    "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                    "       formatQtyPer(bomwork_qtyper) AS qtyper,"
                    "       formatScrap(bomwork_scrap) AS scrap,"
                    "       formatDate(bomwork_effective, 'Always') AS effective,"
                    "       formatDate(bomwork_expires, 'Never') AS expires "
-                   "FROM bomwork, item "
+                   "FROM bomwork, item, uom "
                    "WHERE ( (bomwork_item_id=item_id)"
+                   " AND (item_inv_uom_id=uom_id)"
                    " AND (bomwork_set_id=:bomwork_set_id)" );
 
       if (!_showExpired->isChecked())
@@ -240,7 +241,7 @@ void dspIndentedWhereUsed::sFillList()
         if (q.value("bomwork_parent_id").toInt() == -1)
           new XTreeWidgetItem( _bomitem, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                              q.value("bomwork_seqnumber"), q.value("item_number"),
-                             q.value("itemdescription"), q.value("item_invuom"),
+                             q.value("itemdescription"), q.value("uom_name"),
                              q.value("qtyper"), q.value("scrap"),
                              q.value("effective"), q.value("expires") );
         else
@@ -252,7 +253,7 @@ void dspIndentedWhereUsed::sFillList()
 	    {
 	      new XTreeWidgetItem(cursor, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
 				 q.value("bomwork_seqnumber"), q.value("item_number"),
-				 q.value("itemdescription"), q.value("item_invuom"),
+				 q.value("itemdescription"), q.value("uom_name"),
 				 q.value("qtyper"), q.value("scrap"),
 				 q.value("effective"), q.value("expires") );
 	      cursor->setExpanded(TRUE);

@@ -262,7 +262,7 @@ void dspExpiredInventoryByClassCode::sFillList()
 {
   _expired->clear();
 
-  QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, item_invuom,"
+  QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, uom_name,"
                "       itemloc_lotserial, formatDate(itemloc_expiration) AS f_expiration,"
                "       formatQty(itemloc_qty) AS f_qty,"
                "       formatCost(cost) AS f_unitcost,"
@@ -270,7 +270,7 @@ void dspExpiredInventoryByClassCode::sFillList()
                "       formatMoney(noNeg(cost * itemloc_qty)) AS f_value,"
                "       cost "
                "FROM ( SELECT itemsite_id, itemloc_id, warehous_code, item_number,"
-               "              item_invuom, itemloc_lotserial, itemloc_expiration,"
+               "              uom_name, itemloc_lotserial, itemloc_expiration,"
                "              itemloc_qty," );
 
   if (_useStandardCosts->isChecked())
@@ -278,9 +278,10 @@ void dspExpiredInventoryByClassCode::sFillList()
   else if (_useActualCosts->isChecked())
     sql += " actcost(itemsite_item_id) AS cost ";
 
-  sql += "FROM itemloc, itemsite, item, warehous "
+  sql += "FROM itemloc, itemsite, item, warehous, uom "
          "WHERE ( (itemloc_itemsite_id=itemsite_id)"
          " AND (itemsite_item_id=item_id)"
+         " AND (item_inv_uom_id=uom_id)"
          " AND (itemsite_warehous_id=warehous_id)"
          " AND (itemsite_perishable)"
          " AND (itemloc_expiration < (CURRENT_DATE + :thresholdDays))";
@@ -315,7 +316,7 @@ void dspExpiredInventoryByClassCode::sFillList()
 			       q.value("itemloc_id").toInt(),
 			       q.value("warehous_code"),
 			       q.value("item_number"),
-			       q.value("item_invuom"),
+			       q.value("uom_name"),
 			       q.value("itemloc_lotserial"),
 			       q.value("f_expiration"),
 			       q.value("f_qty"),

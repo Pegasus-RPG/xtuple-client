@@ -366,7 +366,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
     }
                  
     QString sql( "SELECT itemsite_id, coitem_id,"
-                 "       item_number, item_description, item_invuom, item_picklist,"
+                 "       item_number, item_description, uom_name, item_picklist,"
                  "       qoh, formatQty(qoh) AS f_qoh,sobalance,"
                  "       formatQty(sobalance) AS f_sobalance,"
                  "       formatQty(allocated) AS f_allocated,"
@@ -390,7 +390,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "<? endif ?>"
                  "FROM ( SELECT itemsite_id, coitem_id,"
                  "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "              item_invuom, item_picklist,"
+                 "              uom_name, item_picklist,"
                  "              noNeg(itemsite_qtyonhand) AS qoh,"
                  "              noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS sobalance,"
                  "              qtyAllocated(itemsite_id, coitem_scheddate) AS allocated,"
@@ -405,7 +405,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "              ((wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS wo_latestart,"
                  "              (wo_duedate<=CURRENT_DATE) AS wo_latedue " 
                  "<? endif ?>" 
-                 "       FROM cohead, itemsite,item, coitem "
+                 "       FROM cohead, itemsite, item, uom, coitem "
                  "<? if exists(\"showWoSupply\") ?> "
                  "            LEFT OUTER JOIN wo"
                  "             ON ((coitem_itemsite_id=wo_itemsite_id)"
@@ -417,6 +417,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "       WHERE ( (coitem_cohead_id=cohead_id)"
                  "        AND (coitem_itemsite_id=itemsite_id)"
                  "        AND (itemsite_item_id=item_id)"
+                 "        AND (item_inv_uom_id=uom_id)"
                  "        AND (coitem_status <> 'X')"
                  "        AND (cohead_id=<? value(\"sohead_id\") ?>))"
                  ") AS data "
@@ -453,7 +454,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
         coitem = new XTreeWidgetItem( _avail, coitem,
                                                q.value("itemsite_id").toInt(), q.value("coitem_id").toInt(),
                                                q.value("item_number"),
-                                               q.value("item_description"), q.value("item_invuom"),
+                                               q.value("item_description"), q.value("uom_name"),
                                                q.value("f_qoh"), q.value("f_sobalance"),
                                                q.value("f_allocated"), q.value("f_ordered"),
                                                q.value("f_soavail"), q.value("f_totalavail"),

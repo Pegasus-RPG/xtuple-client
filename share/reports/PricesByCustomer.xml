@@ -70,9 +70,9 @@ FROM (
          item_number AS itemnumber, item_descrip1, item_descrip2,
          ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM ipsass, ipshead, ipsprice, item
@@ -94,9 +94,9 @@ FROM (
          item_number AS itemnumber, item_descrip1, item_descrip2,
          ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM ipsass, ipshead, ipsprice, item, cust
@@ -119,9 +119,9 @@ FROM (
          item_number AS itemnumber, item_descrip1, item_descrip2,
          ipsprice_qtybreak AS qtybreak, ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM sale, ipshead, ipsprice, item
@@ -142,9 +142,9 @@ FROM (
          item_number AS itemnumber, item_descrip1, item_descrip2,
          -1 AS qtybreak, item_listprice AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM item

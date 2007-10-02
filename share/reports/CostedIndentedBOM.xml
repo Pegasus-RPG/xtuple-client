@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        &lt;? if exists(&quot;useActualCosts&quot;) ?>
@@ -23,7 +23,7 @@
        AS lbl_usecosts,
        formatCost(actcost(item_id)) AS f_actual,
        formatCost(stdcost(item_id)) AS f_standard
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
     </sql>
  </querysource>
@@ -32,7 +32,7 @@
   <sql>select (REPEAT(' ',(bomwork_level-1)*3) || bomwork_seqnumber) AS f_seqnumber,
        bomworkSequence(bomwork_id) AS seq_ord,
        item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatBoolYN(bomwork_createwo) as createchild,
@@ -59,13 +59,14 @@
        END AS extendedcost,
 &lt;? endif ?>
        bomwork_level
-  FROM bomwork, item
+  FROM bomwork, item, uom
  WHERE ((bomwork_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomwork_set_id=&lt;? value(&quot;bomworkset_id&quot;) ?>)
    AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1)) )
 
 UNION SELECT '',
-             '' AS seq_ord, costelem_type AS item_number, '' AS item_invuom,
+             '' AS seq_ord, costelem_type AS item_number, '' AS uom_name,
              '' AS item_descrip1, '' AS item_descrip2,
              '' AS createchild, '' AS issuemethod,
              '' AS qtyper, '' AS scrap, '' AS effective, '' AS expires,
@@ -196,7 +197,7 @@ ORDER BY seq_ord, item_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -761,7 +762,7 @@ ORDER BY seq_ord, item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

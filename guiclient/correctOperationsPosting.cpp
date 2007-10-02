@@ -134,16 +134,17 @@ void correctOperationsPosting::sHandleWoid(int pWoid)
   }
   _wooper->populate(q);
 
-  q.prepare( "SELECT item_invuom "
-             "FROM wo, itemsite, item "
+  q.prepare( "SELECT uom_name "
+             "FROM wo, itemsite, item, uom "
              "WHERE ( (wo_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (wo_id=:wo_id) );" );
   q.bindValue(":wo_id", pWoid);
   q.exec();
   if (q.first())
     _inventoryUOM->setText( tr("Post in Inventory UOMs (%1)")
-                            .arg(q.value("item_invuom").toString()) );
+                            .arg(q.value("uom_name").toString()) );
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

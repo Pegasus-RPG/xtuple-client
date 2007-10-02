@@ -12,19 +12,20 @@
  <querysource>
   <name>head</name>
   <sql>SELECT formatWONumber(wo_id) AS wonumber,
-       warehous_code, item_number, item_invuom,
+       warehous_code, item_number, uom_name,
        item_descrip1, item_descrip2,
        wo_status
-  FROM wo, itemsite, item, warehous 
+  FROM wo, itemsite, item, warehous, uom
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>))</sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>SELECT formatDate(posted) AS f_posted,
-       item_number, item_descrip1, item_descrip2, item_invuom,
+       item_number, item_descrip1, item_descrip2, uom_name,
        formatQty(ordered) AS f_ordered,
        formatQty(received) AS f_produced,
        formatQty(projreq) AS f_projreq,
@@ -34,7 +35,7 @@
        formatQtyPer(actqtyper - projqtyper) AS f_qtypervar,
        formatPrcnt((1 - (actqtyper / projqtyper)) * -1) AS f_percent
   FROM ( SELECT womatlvar_posted AS posted,
-                item_number, item_invuom,
+                item_number, uom_name,
                 item_descrip1, item_descrip2,
                 womatlvar_qtyord AS ordered,
                 womatlvar_qtyrcv AS received,
@@ -42,9 +43,10 @@
                 womatlvar_qtyper AS projqtyper,
                 (womatlvar_qtyiss) AS actiss,
                 (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper 
-           FROM womatlvar, itemsite, item, wo
+           FROM womatlvar, itemsite, item, wo, uom
           WHERE ((womatlvar_component_itemsite_id=itemsite_id)
             AND (itemsite_item_id=item_id)
+            AND (item_inv_uom_id=uom_id)
             AND (wo_number=womatlvar_number)
             AND (wo_subnumber=womatlvar_subnumber)
             AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) ) ) AS data
@@ -356,7 +358,7 @@ ORDER BY item_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -888,7 +890,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

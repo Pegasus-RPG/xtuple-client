@@ -110,7 +110,7 @@ SELECT 1 AS groupby,&#xd;
        coitem_memo,&#xd;
        item_number,&#xd;
        formatitemsitebarcode(itemsite_id) AS item_barcode,&#xd;
-       item_invuom,&#xd;
+       uom_name,&#xd;
        item_shipuom,&#xd;
        item_descrip1,&#xd;
        item_descrip2,&#xd;
@@ -152,9 +152,10 @@ SELECT 1 AS groupby,&#xd;
                                           >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'&#xd;
             ELSE coitem_status&#xd;
        END AS f_status&#xd;
-  FROM itemsite, item, coitem&#xd;
+  FROM itemsite, item, uom, coitem&#xd;
  WHERE ( (coitem_itemsite_id=itemsite_id)&#xd;
    AND (itemsite_item_id=item_id)&#xd;
+   AND (item_inv_uom_id=uom_id)&#xd;
    AND (coitem_status &lt;> 'X')&#xd;
    &#xd;
    &lt;? if exists("hide closed") ?>&#xd;
@@ -164,7 +165,7 @@ SELECT 1 AS groupby,&#xd;
 &#xd;
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)&#xd;
 )&#xd;
-GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, item_invuom, item_shipuom,&#xd;
+GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,&#xd;
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qtyshipped,&#xd;
          coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,&#xd;
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id&#xd;
@@ -179,7 +180,7 @@ SELECT 1 AS groupby,&#xd;
        coitem_memo,&#xd;
        item_number,&#xd;
        formatitemsitebarcode(itemsite_id) AS item_barcode,&#xd;
-       item_invuom,&#xd;
+       uom_name,&#xd;
        item_shipuom,&#xd;
        item_descrip1,&#xd;
        item_descrip2,&#xd;
@@ -221,14 +222,15 @@ SELECT 1 AS groupby,&#xd;
                                           >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'&#xd;
             ELSE coitem_status&#xd;
        END AS f_status&#xd;
-  FROM itemsite, item, coitem, coship&#xd;
+  FROM itemsite, item, uom, coitem, coship&#xd;
  WHERE ( (coitem_itemsite_id=itemsite_id)&#xd;
    AND (itemsite_item_id=item_id)&#xd;
+   AND (item_inv_uom_id=uom_id)&#xd;
    AND (coitem_status &lt;> 'X')&#xd;
    AND (coitem_id=coship_coitem_id)&#xd;
    AND (coship_cosmisc_id=&lt;? value("cosmisc_id") ?>)&#xd;
 )&#xd;
---GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, item_invuom, item_shipuom,&#xd;
+--GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,&#xd;
 --         item_descrip1, item_descrip2, coitem_qtyord, coitem_qtyshipped,&#xd;
 --         coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,&#xd;
 --         itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id, coship_qty&#xd;
@@ -1099,7 +1101,7 @@ ORDER BY ordernumber;</sql>
      <vcenter/>
      <data>
       <query>detail</query>
-      <column>item_invuom</column>
+      <column>uom_name</column>
      </data>
     </field>
    </foot>

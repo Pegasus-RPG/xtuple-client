@@ -187,7 +187,7 @@ void dspTimePhasedSalesByItem::sCalculate()
     sql += ", TEXT('$') AS uom, warehous_code";
   
   else if (_inventoryUnits->isChecked())
-    sql += ", item_invuom AS uom, warehous_code";
+    sql += ", uom_name AS uom, warehous_code";
 
   int columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
@@ -208,8 +208,9 @@ void dspTimePhasedSalesByItem::sCalculate()
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, warehous "
+  sql += " FROM itemsite, item, uom, warehous "
          "WHERE ( (itemsite_item_id=item_id)"
+         " AND (item_inv_uom_id=uom_id)"
          " AND (itemsite_warehous_id=warehous_id)";
 
   if (_warehouse->isSelected())

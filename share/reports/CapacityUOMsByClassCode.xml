@@ -28,15 +28,16 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
-       item_capuom,
-       formatRatio(item_capinvrat) AS capratio,
-       item_altcapuom,
-       formatRatio(item_altcapinvrat) AS altcapratio,
+       uom_name,
+       itemcapuom(item_id) AS capuom,
+       formatRatio(itemcapinvrat(item_id)) AS capratio,
+       itemaltcapuom(item_id) altcapuom,
+       formatRatio(itemaltcapinvrat(item_id)) AS altcapratio,
        item_shipuom,
-       formatRatio(item_shipinvrat) AS shipratio
-  FROM item, classcode
+       formatRatio(iteminvpricerat(item_id)) AS shipratio
+  FROM item, classcode, uom
  WHERE ((item_classcode_id=classcode_id)
+   AND (item_inv_uom_id=uom_id)
 &lt;? if exists(&quot;classcode_id&quot;) ?>
    AND (classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
 &lt;? elseif exists(&quot;classcode_pattern&quot;) ?>
@@ -521,7 +522,7 @@ ORDER BY classcode_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_capuom</column>
+     <column>capuom</column>
     </data>
    </field>
    <field>
@@ -559,7 +560,7 @@ ORDER BY classcode_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_altcapuom</column>
+     <column>altcapuom</column>
     </data>
    </field>
    <field>
@@ -578,7 +579,7 @@ ORDER BY classcode_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <line>

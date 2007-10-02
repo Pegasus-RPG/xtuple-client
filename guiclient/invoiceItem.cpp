@@ -458,12 +458,12 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
 {
   if ( (_itemSelected->isChecked()) && (pItemid != -1) )
   {
-    q.prepare( "SELECT item_priceuom,"
-               "       item_invpricerat, formatUOMRatio(item_invpricerat) AS f_invpricerat,"
+    q.prepare( "SELECT uom_name,"
+               "       iteminvpricerat(item_id) AS invpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
                "       item_listprice, "
                "       stdcost(item_id) AS f_unitcost,"
 	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
-               "FROM item "
+               "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
     q.bindValue(":taxauth", _taxauthid);
@@ -473,9 +473,9 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
       if (_mode == cNew)
         sDeterminePrice();
 
-      _priceRatioCache = q.value("item_invpricerat").toDouble();
+      _priceRatioCache = q.value("invpricerat").toDouble();
       _priceRatio->setText(q.value("f_invpricerat").toString());
-      _pricingUOM->setText(q.value("item_priceuom").toString());
+      _pricingUOM->setText(q.value("uom_name").toString());
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
       _taxtype->setId(q.value("taxtype_id").toInt());

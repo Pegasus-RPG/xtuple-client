@@ -22,17 +22,19 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT itemloc_id, warehous_code, item_number, item_descrip1, item_descrip2,
-       itemloc_lotserial, item_invuom, formatQty(itemloc_qty) AS f_qoh
-FROM itemloc, itemsite, warehous, item
+       itemloc_lotserial, uom_name, formatQty(itemloc_qty) AS f_qoh
+FROM itemloc, itemsite, warehous, item, uom
 WHERE ((itemloc_itemsite_id=itemsite_id)
  AND (itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (itemsite_warehous_id=warehous_id)
  AND (itemloc_location_id=&lt;? value(&quot;location_id&quot;) ?>))
 
 UNION SELECT -1, warehous_code, item_number, item_descrip1, item_descrip2,
-             'N/A', item_invuom, formatQty(itemsite_qtyonhand)
-FROM itemsite, warehous, item
+             'N/A', uom_name, formatQty(itemsite_qtyonhand)
+FROM itemsite, warehous, item, uom
 WHERE ((itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (itemsite_warehous_id=warehous_id)
  AND (NOT itemsite_loccntrl)
  AND (itemsite_location_id=&lt;? value(&quot;location_id&quot;) ?>))
@@ -536,7 +538,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

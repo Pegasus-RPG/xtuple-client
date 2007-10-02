@@ -165,7 +165,7 @@ void dspPricesByCustomerType::sFillList()
 
     sql += "FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,"
            "              ipshead_name AS schedulename, :custType AS type,"
-           "              item_number AS itemnumber, item_priceuom AS priceuom, item_invpricerat,"
+           "              item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
            "              (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
            "              ipsprice_qtybreak AS qtybreak, "
 	   "		  ipsprice_price AS price, ipshead_curr_id AS curr_id, "
@@ -174,15 +174,16 @@ void dspPricesByCustomerType::sFillList()
     if (_showCosts->isChecked())
     {
       if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(ipsprice_item_id) * item_invpricerat) AS cost ";
+        sql += ", (stdcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
       else if (_useActualCosts->isChecked())
-        sql += ", (actcost(ipsprice_item_id) * item_invpricerat) AS cost ";
+        sql += ", (actcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
     }
 
-    sql += "FROM ipsass, ipshead, ipsprice, item "
+    sql += "FROM ipsass, ipshead, ipsprice, item, uom "
            "WHERE ( (ipsass_ipshead_id=ipshead_id)"
            " AND (ipsprice_ipshead_id=ipshead_id)"
            " AND (ipsprice_item_id=item_id)"
+           " AND (item_price_uom_id=uom_id)"
            " AND (ipsass_custtype_id=:custtype_id) ";
                   
     if (!_showExpired->isChecked())
@@ -194,7 +195,7 @@ void dspPricesByCustomerType::sFillList()
     sql += ") "
            "UNION SELECT ipsprice_id AS itemid, 2 AS sourcetype,"
            "             ipshead_name AS schedulename, :custTypePattern AS type,"
-           "             item_number AS itemnumber, item_priceuom AS priceuom, item_invpricerat,"
+           "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
            "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
            "             ipsprice_qtybreak AS qtybreak,"
 	   "		 ipsprice_price AS price, ipshead_curr_id AS curr_id,"
@@ -203,9 +204,9 @@ void dspPricesByCustomerType::sFillList()
     if (_showCosts->isChecked())
     {
       if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(ipsprice_item_id) * item_invpricerat) AS cost ";
+        sql += ", (stdcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
       else if (_useActualCosts->isChecked())
-        sql += ", (actcost(ipsprice_item_id) * item_invpricerat) AS cost ";
+        sql += ", (actcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
     }
 
     sql += "FROM ipsass, ipshead, ipsprice, item, custtype "
@@ -225,7 +226,7 @@ void dspPricesByCustomerType::sFillList()
     sql += ") "
            "UNION SELECT ipsprice_id AS itemid, 3 AS sourcetype,"
            "             ipshead_name AS schedulename, (:sale || '-' || sale_name) AS type,"
-           "             item_number AS itemnumber, item_priceuom AS priceuom, item_invpricerat,"
+           "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
            "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
            "             ipsprice_qtybreak AS qtybreak, "
 	   "		 ipsprice_price AS price, ipshead_curr_id AS curr_id, "
@@ -234,14 +235,15 @@ void dspPricesByCustomerType::sFillList()
     if (_showCosts->isChecked())
     {
       if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(ipsprice_item_id) * item_invpricerat) AS cost ";
+        sql += ", (stdcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
       else if (_useActualCosts->isChecked())
-        sql += ", (actcost(ipsprice_item_id) * item_invpricerat) AS cost ";
+        sql += ", (actcost(ipsprice_item_id) * iteminvpricerat(item_id)) AS cost ";
     }
 
-    sql += "FROM sale, ipshead, ipsprice, item "
+    sql += "FROM sale, ipshead, ipsprice, item, uom "
            "WHERE ( (sale_ipshead_id=ipshead_id)"
            " AND (ipsprice_ipshead_id=ipshead_id)"
+           " AND (item_price_uom_id=uom_id)"
            " AND (ipsprice_item_id=item_id)";
 
     if (!_showExpired->isChecked())
@@ -253,7 +255,7 @@ void dspPricesByCustomerType::sFillList()
     sql += ") "
            "UNION SELECT item_id AS itemid, 0 AS sourcetype,"
            "             '' AS schedulename, :listPrice AS type,"
-           "             item_number AS itemnumber, item_priceuom AS priceuom, item_invpricerat,"
+           "             item_number AS itemnumber, uom_name AS priceuom, iteminvpricerat(item_id) AS invpricerat,"
            "             (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
            "             -1 AS qtybreak, item_listprice AS price, "
 	   "		  baseCurrId() AS curr_id, "
@@ -262,12 +264,12 @@ void dspPricesByCustomerType::sFillList()
     if (_showCosts->isChecked())
     {
       if (_useStandardCosts->isChecked())
-        sql += ", (stdcost(item_id) * item_invpricerat) AS cost ";
+        sql += ", (stdcost(item_id) * iteminvpricerat(item_id)) AS cost ";
       else if (_useActualCosts->isChecked())
-        sql += ", (actcost(item_id) * item_invpricerat) AS cost ";
+        sql += ", (actcost(item_id) * iteminvpricerat(item_id)) AS cost ";
     }
 
-    sql += "FROM item "
+    sql += "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
            "WHERE ( (item_sold)"
            " AND (NOT item_exclusive) ) ) AS data "
            "ORDER BY itemnumber, price;";

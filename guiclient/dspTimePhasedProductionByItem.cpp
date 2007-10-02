@@ -207,7 +207,7 @@ void dspTimePhasedProductionByItem::sCalculate()
   _columnDates.clear();
   _production->setColumnCount(3);
 
-  QString sql("SELECT itemsite_id, item_number, warehous_code, item_invuom");
+  QString sql("SELECT itemsite_id, item_number, warehous_code, uom_name");
 
   int columns = 1;
   QList<QTreeWidgetItem*> selected = _periods->selectedItems();
@@ -222,8 +222,9 @@ void dspTimePhasedProductionByItem::sCalculate()
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, warehous "
+  sql += " FROM itemsite, item, uom, warehous "
          "WHERE ((itemsite_item_id=item_id)"
+         " AND (item_inv_uom_id=uom_id)"
          " AND (itemsite_warehous_id=warehous_id)";
 
   if (_warehouse->isSelected())

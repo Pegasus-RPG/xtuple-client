@@ -790,7 +790,7 @@ void invoice::sFillItemList()
              "       formatSalesPrice(invcitem_price) AS f_price,"
              "       formatMoney(round((invcitem_billed * invcitem_price) / "
 	     "                  (CASE WHEN(item_id IS NULL) THEN 1 "
-	     "			ELSE item_invpricerat END), 2)) AS f_extend "
+	     "			ELSE iteminvpricerat(item_id) END), 2)) AS f_extend "
              "FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id) "
              "WHERE (invcitem_invchead_id=:invchead_id) "
              "ORDER BY invcitem_linenumber;" );
@@ -807,7 +807,7 @@ void invoice::sFillItemList()
   //  Determine the subtotal
   q.prepare( "SELECT SUM( round((invcitem_billed * invcitem_price /"
              "            CASE WHEN (item_id IS NULL) THEN 1"
-             "                 ELSE item_invpricerat"
+             "                 ELSE iteminvpricerat(item_id)"
              "            END),2) ) AS subtotal "
              "FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) "
              "WHERE (invcitem_invchead_id=:invchead_id);" );

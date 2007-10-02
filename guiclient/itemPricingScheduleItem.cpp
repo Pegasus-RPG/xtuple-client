@@ -328,12 +328,12 @@ void itemPricingScheduleItem::populate()
 void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 {
   XSqlQuery cost;
-  cost.prepare( "SELECT item_priceuom,"
-                "       formatUOMRatio(item_invpricerat) AS f_ratio,"
+  cost.prepare( "SELECT uom_name,"
+                "       formatUOMRatio(iteminvpricerat(item_id)) AS f_ratio,"
                 "       item_listprice, "
-                "       (stdcost(item_id) * item_invpricerat) AS standard,"
-                "       (actcost(item_id, :curr_id) * item_invpricerat) AS actual "
-                "FROM item "
+                "       (stdcost(item_id) * iteminvpricerat(item_id)) AS standard,"
+                "       (actcost(item_id, :curr_id) * iteminvpricerat(item_id)) AS actual "
+                "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
                 "WHERE (item_id=:item_id);" );
   cost.bindValue(":item_id", pItemid);
   cost.bindValue(":curr_id", _actCost->id());
@@ -341,7 +341,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
   if (cost.first())
   {
     _listPrice->setBaseValue(cost.value("item_listprice").toDouble());
-    _priceUOM->setText(cost.value("item_priceuom").toString());
+    _priceUOM->setText(cost.value("uom_name").toString());
     _pricingRatio->setText(cost.value("f_ratio").toString());
 
     _stdCost->setBaseValue(cost.value("standard").toDouble());

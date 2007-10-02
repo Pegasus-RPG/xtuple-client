@@ -36,10 +36,10 @@
        findPeriodEnd(rcalitem_id) AS pend,
        (formatDate(findPeriodStart(rcalitem_id)) || '-' || formatDate(findPeriodEnd(rcalitem_id))) AS period,
        item_number,
-       item_invuom AS f_uom,
+       uom_name AS f_uom,
        warehous_code,
        formatQty(qtyAvailable(itemsite_id, findPeriodStart(rcalitem_id))) AS f_unit
-  FROM rcalitem, itemsite, item, warehous
+  FROM rcalitem, itemsite, item, uom, warehous
  WHERE ((rcalitem_id in (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -50,6 +50,7 @@
                         ))
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
 &lt;? endif ?>
@@ -66,10 +67,10 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
        findPeriodEnd(acalitem_id) AS pend,
        (formatDate(findPeriodStart(acalitem_id)) || '-' || formatDate(findPeriodEnd(acalitem_id))) AS period,
        item_number,
-       item_invuom AS f_uom,
+       uom_name AS f_uom,
        warehous_code,
        formatQty(qtyAvailable(itemsite_id, findPeriodStart(acalitem_id))) AS f_unit
-  FROM acalitem, itemsite, item, warehous
+  FROM acalitem, itemsite, item, uom, warehous
  WHERE ((acalitem_id IN (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -80,6 +81,7 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
                         ))
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
 &lt;? endif ?>

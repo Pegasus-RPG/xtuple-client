@@ -14,11 +14,12 @@
   <sql>SELECT formatWONumber(wo_id) AS wonumber,
        warehous_code as warehouse,
        item_number, item_descrip1,
-       item_descrip2, item_invuom,
+       item_descrip2, uom_name,
        wo_status AS status
-  FROM wo, itemsite, item, warehous
+  FROM wo, itemsite, item, uom, warehous
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) );</sql>
  </querysource>

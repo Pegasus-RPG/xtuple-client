@@ -15,15 +15,16 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
-       item_capuom,
-       formatRatio(item_capinvrat) AS capratio,
-       item_altcapuom,
-       formatRatio(item_altcapinvrat) AS altcapratio,
+       uom_name,
+       itemcapuom(item_id) AS capuom,
+       formatRatio(itemcapinvrat(item_id)) AS capratio,
+       itemaltcapuom(item_id) AS altcapuom,
+       formatRatio(itemaltcapinvrat(item_id)) AS altcapratio,
        item_shipuom,
        formatRatio(item_shipinvrat) AS shipratio
-  FROM item, prodcat
+  FROM item, prodcat, uom
  WHERE ((item_sold)
+   AND (item_inv_uom_id=uom_id)
    AND (item_prodcat_id=prodcat_id)
 &lt;? if exists(&quot;prodcat_id&quot;) ?>
    AND (prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
@@ -503,7 +504,7 @@ ORDER BY prodcat_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_capuom</column>
+     <column>capuom</column>
     </data>
    </field>
    <line>
@@ -529,7 +530,7 @@ ORDER BY prodcat_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_altcapuom</column>
+     <column>altcapuom</column>
     </data>
    </field>
    <field>
@@ -662,7 +663,7 @@ ORDER BY prodcat_code, item_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
   </detail>

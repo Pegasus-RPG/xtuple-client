@@ -241,10 +241,11 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='O') THEN :outsideProcess"
                "            ELSE :error"
                "       END,"
-               "       item_invuom "
-               "FROM item, charass, char "
+               "       uom_name "
+               "FROM item, charass, char, uom "
                "WHERE ( (charass_target_type='I')"
                " AND (charass_target_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (charass_char_id=char_id)"
                " AND (char_id=:char_id)"
                " AND (charass_value ~* :charass_value) " );

@@ -11,7 +11,7 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT item_number, item_descrip1, item_descrip2, item_invuom,
+  <sql>SELECT item_number, item_descrip1, item_descrip2, uom_name,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code FROM warehous WHERE warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
        &lt;? else ?>
@@ -32,7 +32,7 @@
          text('All Items')
        &lt;? endif ?>
        AS f_whichitems
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
 </sql>
  </querysource>
@@ -40,7 +40,7 @@
   <name>detail</name>
   <sql>SELECT warehous_code, pohead_number as f_ponumber, vend_name,
        formatDate(poitem_duedate) as f_duedate,
-       poitem_vend_uom as item_invuom, 
+       poitem_vend_uom as uom_name, 
        formatQty(poitem_qty_ordered) as f_ordered,
        formatQty(poitem_qty_received) as f_received,
        formatQty(poitem_qty_returned) as f_returned 
@@ -233,7 +233,7 @@ ORDER BY poitem_duedate;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -599,7 +599,7 @@ ORDER BY poitem_duedate;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

@@ -284,7 +284,7 @@ void dspTimePhasedAvailability::sCalculate()
   _availability->clear();
   _availability->setColumnCount(3);
 
-  QString sql( "SELECT itemsite_id, item_number, item_invuom, warehous_code,"
+  QString sql( "SELECT itemsite_id, item_number, uom_name, warehous_code,"
                "       CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                "       CASE WHEN (item_type IN ('F', 'B', 'C', 'Y', 'R')) THEN 0"
                "            WHEN (item_type IN ('M')) THEN 1"
@@ -306,8 +306,9 @@ void dspTimePhasedAvailability::sCalculate()
     _columnDates.append(DatePair(cursor->startDate(), cursor->endDate()));
   }
 
-  sql += " FROM itemsite, item, warehous "
+  sql += " FROM itemsite, item, warehous, uom "
          "WHERE ((itemsite_item_id=item_id)"
+         " AND (item_inv_uom_id=uom_id)"
          " AND (itemsite_warehous_id=warehous_id)";
 
   if (_warehouse->isSelected())
@@ -335,7 +336,7 @@ void dspTimePhasedAvailability::sCalculate()
       reorderLevel = q.value("reorderlevel").toDouble();
 
       last = new XTreeWidgetItem( _availability, last, q.value("itemsite_id").toInt(), q.value("itemtype").toInt(),
-                                q.value("item_number"), q.value("item_invuom"),
+                                q.value("item_number"), q.value("uom_name"),
                                 q.value("warehous_code") );
 
       for (int column = 1; column < columns; column++)

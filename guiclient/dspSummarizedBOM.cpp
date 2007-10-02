@@ -189,7 +189,7 @@ void dspSummarizedBOM::sFillList()
 
   QString sql( "SELECT -1, item_number,"
 	       "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-	       "       item_invuom,"
+	       "       uom_name,"
 	       "       formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_qtyper,"
 	       "       CASE WHEN(bomwork_expires <= CURRENT_DATE) THEN TRUE"
 	       "            ELSE FALSE"
@@ -197,10 +197,11 @@ void dspSummarizedBOM::sFillList()
 	       "       CASE WHEN(bomwork_effective > CURRENT_DATE) THEN TRUE"
 	       "            ELSE FALSE"
 	       "       END AS future "
-	       "FROM bomwork, item "
+	       "FROM bomwork, item, uom "
 	       "WHERE ( (bomwork_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
 	       " AND (bomwork_set_id=<? value(\"bomworkset_id\") ?>) ) "
-	       "GROUP BY item_number, item_invuom,"
+	       "GROUP BY item_number, uom_name,"
 	       "         item_descrip1, item_descrip2,"
 	       "         bomwork_expires, bomwork_effective "
 	       "ORDER BY item_number;" );
@@ -211,7 +212,7 @@ void dspSummarizedBOM::sFillList()
   while (q.next())
   {
     last = new XTreeWidgetItem(_bomitem, last, -1, q.value("item_number"),
-			       q.value("itemdescription"), q.value("item_invuom"),
+			       q.value("itemdescription"), q.value("uom_name"),
 			       q.value("f_qtyper") );
 
     if (q.value("expired").toBool())

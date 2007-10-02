@@ -12,14 +12,15 @@
  <querysource>
   <name>Head</name>
   <sql>SELECT formatWoNumber(wo_id) AS wonumber, wo_prodnotes,
-                item_number, item_invuom, item_descrip1, item_descrip2,
+                item_number, uom_name, item_descrip1, item_descrip2,
                 warehous_code, formatQty(wo_qtyord) AS qtyord,
                 formatQty(wo_qtyrcv) AS qtyrcv,
                 formatDate(wo_startdate) AS startdate,
                 formatDate(wo_duedate) AS duedate
-         FROM wo, itemsite, item, warehous
+         FROM wo, itemsite, item, warehous, uom
          WHERE ((wo_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
+          AND (item_inv_uom_id=uom_id)
           AND (itemsite_warehous_id=warehous_id)
           AND (wo_id=%1))
     </sql>
@@ -27,7 +28,7 @@
  <querysource>
   <name>Detail</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatQty(womatl_qtyreq) AS qtyreq,
@@ -39,10 +40,11 @@
             WHEN (womatl_issuemethod='M') THEN text('Mixed')
             ELSE text(womatl_issuemethod)
        END AS f_issuemethod
-  FROM womatl, itemsite, item
+  FROM womatl, itemsite, item, uom
  WHERE ((item_picklist)
    AND (womatl_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (womatl_wo_id=%1) );
     </sql>
  </querysource>

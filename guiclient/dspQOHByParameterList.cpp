@@ -338,7 +338,7 @@ void dspQOHByParameterList::sFillList()
   _qoh->clear();
   
   QString sql( "SELECT itemsite_id, detail,"
-               "       warehous_code, classcode_code, item_number, item_invuom,"
+               "       warehous_code, classcode_code, item_number, uom_name,"
                "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
                "       defaultlocation,"
                "       formatQty(reorderlevel) AS f_reorderlevel,"
@@ -350,7 +350,7 @@ void dspQOHByParameterList::sFillList()
                "       cost, reorderlevel, qoh, nnqoh "
                "FROM ( SELECT itemsite_id,"
                "              ( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L', 'S')) ) AS detail,"
-               "              warehous_code, classcode_code, item_number, item_invuom, item_descrip1, item_descrip2,"
+               "              warehous_code, classcode_code, item_number, uom_name, item_descrip1, item_descrip2,"
                "              CASE WHEN (NOT useDefaultLocation(itemsite_id)) THEN :none"
                "                   ELSE defaultLocationName(itemsite_id)"
                "              END AS defaultlocation,"
@@ -363,8 +363,9 @@ void dspQOHByParameterList::sFillList()
   else if (_useActualCosts->isChecked())
     sql += " actcost(item_id) AS cost ";
 
-  sql += "FROM itemsite, item, classcode, warehous "
+  sql += "FROM itemsite, item, classcode, warehous, uom "
          "WHERE ( (itemsite_item_id=item_id)"
+         " AND (item_inv_uom_id=uom_id)"
          " AND (item_classcode_id=classcode_id)"
          " AND (itemsite_warehous_id=warehous_id)"
          " AND (itemsite_active)";
@@ -421,7 +422,7 @@ void dspQOHByParameterList::sFillList()
     {
       last = new XTreeWidgetItem( _qoh, last, q.value("itemsite_id").toInt(), q.value("detail").toInt(),
                                   q.value("warehous_code"), q.value("classcode_code"), q.value("item_number"),
-                                  q.value("itemdescrip"), q.value("item_invuom"),
+                                  q.value("itemdescrip"), q.value("uom_name"),
                                   q.value("defaultlocation"), q.value("f_reorderlevel"),
                                   q.value("f_qoh"), q.value("f_nnqoh") );
 

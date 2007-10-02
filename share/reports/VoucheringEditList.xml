@@ -23,7 +23,7 @@
             ELSE ''
        END AS vendnumber,
        description,
-       item_invuom,
+       iteminvuom,
        f_qty,
        CASE WHEN(itemid = 1) THEN cost
             ELSE 0
@@ -529,7 +529,7 @@
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>iteminvuom</column>
     </data>
    </field>
    <field>

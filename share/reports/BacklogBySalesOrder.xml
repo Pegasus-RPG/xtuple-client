@@ -24,19 +24,19 @@ WHERE ((cohead_cust_id=cust_id)
   <name>detail</name>
   <sql>SELECT coitem_id, itemsite_id,
        coitem_linenumber, item_number,
-       item_descrip1, item_descrip2, item_invuom, warehous_code,
+       item_descrip1, item_descrip2, uom_name, warehous_code,
        formatQty(coitem_qtyord) AS f_ordered,
        formatQty(coitem_qtyshipped) AS f_shipped,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,
        formatQty(atshipping) AS f_atshipping,
        formatQty(available) AS f_available
 FROM ( SELECT coitem_id, itemsite_id, coitem_linenumber, item_number,
-              item_descrip1, item_descrip2, item_invuom, warehous_code,
+              item_descrip1, item_descrip2, uom_name, warehous_code,
               coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,
               SUM(coship_qty) AS atshipping,
               CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,
               qtyAvailable(itemsite_id, coitem_scheddate) AS available
-       FROM itemsite, item, warehous,
+       FROM itemsite, item, uom, warehous,
             coitem LEFT OUTER JOIN
             ( coship JOIN
               cosmisc ON ( (coship_cosmisc_id=cosmisc_id) AND (NOT cosmisc_shipped) )
@@ -44,10 +44,11 @@ FROM ( SELECT coitem_id, itemsite_id, coitem_linenumber, item_number,
        WHERE ((coitem_itemsite_id=itemsite_id)
         AND (coitem_status &lt;> 'X')
         AND (itemsite_item_id=item_id)
+        AND (item_inv_uom_id=uom_id)
         AND (itemsite_warehous_id=warehous_id)
         AND (coitem_cohead_id=&lt;? value(&quot;sohead_id&quot;) ?>))
        GROUP BY coitem_id, itemsite_id, coitem_linenumber, item_number,
-                item_descrip1, item_descrip2, item_invuom, warehous_code,
+                item_descrip1, item_descrip2, uom_name, warehous_code,
                 coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,
                 reorderlevel, coitem_scheddate
        ORDER BY coitem_linenumber ) AS data;</sql>
@@ -788,7 +789,7 @@ FROM ( SELECT coitem_id, itemsite_id, coitem_linenumber, item_number,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

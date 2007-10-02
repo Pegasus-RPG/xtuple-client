@@ -26,15 +26,15 @@
             WHEN (item_type='O') THEN 'Outside Process'
             ELSE item_type
        END AS itemtype,
-       item_invuom,
-       item_capuom,
-       item_altcapuom,
-       item_priceuom,
-       item_shipuom,
-       formatRatio(item_capinvrat) AS capratio,
-       formatRatio(item_altcapinvrat) AS altcapratio,
-       formatRatio(item_shipinvrat) AS shipratio,
-       formatRatio(item_invpricerat) AS priceratio,
+       iuom.uom_name AS invuom,
+       itemcapuom(item_id) AS capuom,
+       itemaltcapuom(item_id) AS altcapuom,
+       puom.uom_name AS priceuom,
+       puom.uom_name AS shipuom,
+       formatRatio(itemcapinvrat(item_id)) AS capratio,
+       formatRatio(itemaltcapinvrat(item_id)) AS altcapratio,
+       formatRatio(iteminvpricerat(item_id)) AS shipratio,
+       formatRatio(iteminvpricerat(item_id)) AS priceratio,
        formatBoolYN(item_sold) AS sold,
        formatBoolYN(item_exclusive) AS exclusive,
        formatBoolYN(item_taxable) AS taxable,
@@ -43,8 +43,10 @@
        formatWeight(item_prodweight) AS prodweight,
        formatWeight(item_packweight) AS packweight,
        prodcat_code
-  FROM item, prodcat
+  FROM item, prodcat, uom AS iuom, uom AS puom
  WHERE ((item_prodcat_id=prodcat_id)
+   AND (item_inv_uom_id=iuom.uom_id)
+   AND (item_price_uom_id=puom.uom_id)
 &lt;? if exists(&quot;prodcat_id&quot;) ?>
    AND (prodcat_id=&lt;? value(&quot;prodcat_id&quot;) ?>)
 &lt;? elseif exists(&quot;prodcat_pattern&quot;) ?>
@@ -954,7 +956,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_priceuom</column>
+     <column>priceuom</column>
     </data>
    </field>
    <field>
@@ -1106,7 +1108,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_shipuom</column>
+     <column>shipuom</column>
     </data>
    </field>
    <field>
@@ -1182,7 +1184,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_capuom</column>
+     <column>capuom</column>
     </data>
    </field>
    <field>
@@ -1239,7 +1241,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_altcapuom</column>
+     <column>altcapuom</column>
     </data>
    </field>
    <field>
@@ -1277,7 +1279,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>invuom</column>
     </data>
    </field>
   </detail>

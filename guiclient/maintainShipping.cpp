@@ -403,7 +403,7 @@ void maintainShipping::sFillList()
         line = new XTreeWidgetItem( order, line, shipheadid, lineitemid,
                                   "", q.value("linenumber"), "",
                                   q.value("item_number"), q.value("description"),
-                                  "", q.value("item_invuom"),
+                                  "", q.value("uom_name"),
                                   "", q.value("holdtype") );
 
 	//  If we are looking for a selected order and this is it, cache it
@@ -420,7 +420,7 @@ void maintainShipping::sFillList()
                                   "",
 				  q.value("shipitem_transdate").toString() + " by " +
 				  q.value("shipitem_trans_username").toString(),
-                                  "", q.value("item_invuom"),
+                                  "", q.value("uom_name"),
                                   formatQty(q.value("shipqty").toDouble()),
 				  q.value("holdtype") );
 

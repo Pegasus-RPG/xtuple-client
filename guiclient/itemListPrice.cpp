@@ -143,29 +143,29 @@ void itemListPrice::sSave()
 
 void itemListPrice::sPopulate()
 {
-  q.prepare( "SELECT item_priceuom, item_invpricerat,"
+  q.prepare( "SELECT uom_name, invpricerat,"
              "       formatSalesPrice(item_listprice) AS f_listprice,"
-             "       formatUOMRatio(item_invpricerat) AS f_ratio,"
-             "       formatSalesPrice(item_listprice / item_invpricerat) AS f_extprice,"
+             "       formatUOMRatio(iteminvpricerat(item_id)) AS f_ratio,"
+             "       formatSalesPrice(item_listprice / iteminvpricerat(item_id)) AS f_extprice,"
              "       standardcost, formatCost(standardcost) AS f_standardcost,"
              "       actualcost, formatCost(actualCost) AS f_actualcost,"
-             "       formatCost(standardcost * item_invpricerat) AS f_extstandardcost,"
-             "       formatCost(actualCost * item_invpricerat) AS f_extactualcost "
-             "FROM ( SELECT item_priceuom, item_listprice, item_invpricerat,"
+             "       formatCost(standardcost * iteminvpricerat(item_id)) AS f_extstandardcost,"
+             "       formatCost(actualCost * iteminvpricerat(item_id)) AS f_extactualcost "
+             "FROM ( SELECT uom_name, item_listprice, iteminvpricerat(item_id) AS invpricerat,"
              "              stdCost(item_id) AS standardcost,"
              "              actCost(item_id) AS actualcost "
-             "       FROM item "
+             "       FROM item JOIN uom ON (item_price_uom_id=uom_id)"
              "       WHERE (item_id=:item_id) ) AS data;" );
   q.bindValue(":item_id", _item->id());
   q.exec();
   if (q.first())
   {
-    _cachedRatio = q.value("item_invpricerat").toDouble();
+    _cachedRatio = q.value("invpricerat").toDouble();
     _cachedStdCost = q.value("standardcost").toDouble();
     _cachedActCost = q.value("actualcost").toDouble();
 
     _listPrice->setText(q.value("f_listprice").toString());
-    _priceUOM->setText(q.value("item_priceuom").toString());
+    _priceUOM->setText(q.value("uom_name").toString());
     _pricingRatio->setText(q.value("f_ratio").toString());
     _extPrice->setText(q.value("f_extprice").toString());
 

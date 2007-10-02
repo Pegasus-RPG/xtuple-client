@@ -12,14 +12,15 @@
  <querysource>
   <name>Detail</name>
   <sql>SELECT formatWONumber(wo_id) AS wonumber,
-       wo_status, warehous_code, item_number, item_descrip1, item_descrip2, item_invuom,
+       wo_status, warehous_code, item_number, item_descrip1, item_descrip2, uom_name,
        formatQty(wo_qtyord) AS ordered,
        formatQty(wo_qtyrcv) AS received,
        formatDate(wo_startdate) AS startdate,
        formatDate(wo_duedate) AS duedate
-FROM wo, itemsite, warehous, item
+FROM wo, itemsite, warehous, item, uom
 WHERE ( (wo_itemsite_id=itemsite_id)
  AND (itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (itemsite_warehous_id=warehous_id)
 
 &lt;? if exists(&quot;showOnlyRI&quot;) ?>
@@ -711,7 +712,7 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

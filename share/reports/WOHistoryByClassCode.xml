@@ -13,7 +13,7 @@
   <name>Detail</name>
   <sql>SELECT formatWoNumber(wo_id) AS wonumber,
        wo_status, warehous_code,
-       item_number, item_descrip1, item_descrip2, item_invuom,
+       item_number, item_descrip1, item_descrip2, uom_name,
        formatQty(wo_qtyord) AS ordered,
        formatQty(wo_qtyrcv) AS received,
        formatDate(wo_startdate) AS startdate,
@@ -24,9 +24,10 @@
          text('')
        &lt;? endif ?>
        AS value
-  FROM wo, itemsite, warehous, item
+  FROM wo, itemsite, warehous, item, uom
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
 &lt;? if exists(&quot;classcode_id&quot;) ?>
    AND (item_classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
@@ -637,7 +638,7 @@ ORDER BY item_number;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

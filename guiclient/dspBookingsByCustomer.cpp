@@ -191,7 +191,7 @@ void dspBookingsByCustomer::sFillList()
                "       item_number, (item_descrip1 || ' ' || item_descrip2),"
                "       formatQty(coitem_qtyord),"
                "       formatSalesPrice(coitem_price),"
-               "       formatMoney(coitem_qtyord * coitem_price / item_invpricerat) "
+               "       formatMoney(coitem_qtyord * coitem_price / iteminvpricerat(item_id)) "
                "FROM coitem, cohead, cust, itemsite, item, prodcat "
                "WHERE ((coitem_cohead_id=cohead_id)"
                " AND (cohead_cust_id=cust_id)"

@@ -1267,12 +1267,12 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
   if (pItemid != -1)
   {
 //  Grab the price for this item/customer/qty
-    q.prepare( "SELECT item_type, item_config, item_priceuom,"
-               "       item_invpricerat, formatUOMRatio(item_invpricerat) AS f_invpricerat,"
+    q.prepare( "SELECT item_type, item_config, uom_name,"
+               "       iteminvpricerat(item_id) AS invpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
                "       item_listprice, "
                "       stdcost(item_id) AS f_unitcost,"
 	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
-               "FROM item "
+               "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
     q.bindValue(":taxauth", _taxauthid);
@@ -1282,10 +1282,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       if (_mode == cNew)
         sDeterminePrice();
 
-      _priceRatio = q.value("item_invpricerat").toDouble();
+      _priceRatio = q.value("invpricerat").toDouble();
       
       //TO DO ***This needs to be replaced by new UOM logic****
-      //_pricingUOM->setText(q.value("item_priceuom").toString());
+      //_pricingUOM->setText(q.value("uom_name").toString());
       //_ratio->setText(q.value("f_invpricerat").toString());
       //_listPrice->setBaseValue(q.value("item_listprice").toDouble());
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
@@ -1459,7 +1459,7 @@ void salesOrderItem::sDetermineAvailability()
             availability.prepare("SELECT itemsiteid, reorderlevel,"
                                  "       bomwork_level, bomwork_id, bomwork_parent_id,"
                                  "       bomwork_seqnumber AS bomitem_seqnumber,"
-                                 "       item_number, item_descrip, item_invuom,"
+                                 "       item_number, item_descrip, uom_name,"
                                  "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
                                  "       ordered, formatQty(ordered) AS f_ordered,"
                                  "       qoh, formatQty(qoh) AS f_qoh,"
@@ -1470,14 +1470,15 @@ void salesOrderItem::sDetermineAvailability()
                                  "                CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                  "                bomwork_id, bomwork_parent_id,"
                                  "                bomwork_level, bomwork_seqnumber,"
-                                 "                item_number, item_invuom,"
+                                 "                item_number, uom_name,"
                                  "                (item_descrip1 || ' ' || item_descrip2) AS item_descrip,"
                                  "                ((bomwork_qtyper * (1 + bomwork_scrap)) * :qty) AS pendalloc,"
                                  "                (qtyAllocated(itemsite_id, DATE(:schedDate)) - ((bomwork_qtyper * (1 + bomwork_scrap)) * :origQtyOrd)) AS totalalloc,"
                                  "                noNeg(itemsite_qtyonhand) AS qoh,"
                                  "                qtyOrdered(itemsite_id, DATE(:schedDate)) AS ordered"
-                                 "           FROM bomwork, item, itemsite"
+                                 "           FROM bomwork, item, itemsite, uom"
                                  "          WHERE ( (itemsite_item_id=item_id)"
+                                 "            AND   (item_inv_uom_id=uom_id)"
                                  "            AND   (itemsite_warehous_id=:warehous_id)"
                                  "            AND   (bomwork_item_id=item_id)"
                                  "            AND   (bomwork_set_id=:bomwork_set_id)"
@@ -1498,7 +1499,7 @@ void salesOrderItem::sDetermineAvailability()
               if (availability.value("bomwork_parent_id").toInt() == -1)
                 last = new XTreeWidgetItem( _availability, availability.value("bomwork_id").toInt(),
                                           availability.value("bomitem_seqnumber"), availability.value("item_number"),
-                                          availability.value("item_descrip"), availability.value("item_invuom"),
+                                          availability.value("item_descrip"), availability.value("uom_name"),
                                           availability.value("f_pendalloc"), availability.value("f_totalalloc"),
                                           availability.value("f_ordered"), availability.value("f_qoh"),
                                           availability.value("f_totalavail")  );
@@ -1515,7 +1516,7 @@ void salesOrderItem::sDetermineAvailability()
                     //  Found it, add the current bomwork as a child of its parent
                     last = new XTreeWidgetItem( cursor, availability.value("bomwork_id").toInt(),
                                               availability.value("bomitem_seqnumber"), availability.value("item_number"),
-                                              availability.value("item_descrip"), availability.value("item_invuom"),
+                                              availability.value("item_descrip"), availability.value("uom_name"),
                                               availability.value("f_pendalloc"), availability.value("f_totalalloc"),
                                               availability.value("f_ordered"), availability.value("f_qoh"),
                                               availability.value("f_totalavail")  );
@@ -1558,7 +1559,7 @@ void salesOrderItem::sDetermineAvailability()
         {
           int itemsiteid = availability.value("itemsite_id").toInt();
           availability.prepare( "SELECT itemsiteid, reorderlevel,"
-                                "       bomitem_seqnumber, item_number, item_descrip, item_invuom,"
+                                "       bomitem_seqnumber, item_number, item_descrip, uom_name,"
                                 "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
                                 "       ordered, formatQty(ordered) AS f_ordered,"
                                 "       qoh, formatQty(qoh) AS f_qoh,"
@@ -1568,13 +1569,14 @@ void salesOrderItem::sDetermineAvailability()
                                 "FROM ( SELECT cs.itemsite_id AS itemsiteid,"
                                 "              CASE WHEN(cs.itemsite_useparams) THEN cs.itemsite_reorderlevel ELSE 0.0 END AS reorderlevel,"
                                 "              bomitem_seqnumber, item_number,"
-                                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, item_invuom,"
+                                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
                                 "              ((bomitem_qtyper * (1 + bomitem_scrap)) * :qty) AS pendalloc,"
                                 "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - ((bomitem_qtyper * (1 + bomitem_scrap)) * :origQtyOrd)) AS totalalloc,"
                                 "              noNeg(cs.itemsite_qtyonhand) AS qoh,"
                                 "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
-                                "       FROM itemsite AS cs, itemsite AS ps, item, bomitem "
+                                "       FROM itemsite AS cs, itemsite AS ps, item, bomitem, uom "
                                 "       WHERE ( (bomitem_item_id=item_id)"
+                                "        AND (item_inv_uom_id=uom_id)"
                                 "        AND (cs.itemsite_item_id=item_id)"
                                 "        AND (cs.itemsite_warehous_id=ps.itemsite_warehous_id)"
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
@@ -1594,7 +1596,7 @@ void salesOrderItem::sDetermineAvailability()
 				       availability.value("bomitem_seqnumber"),
 				       availability.value("item_number"),
 				       availability.value("item_descrip"),
-				       availability.value("item_invuom"),
+				       availability.value("uom_name"),
 				       availability.value("f_pendalloc"),
 				       availability.value("f_totalalloc"),
 				       availability.value("f_ordered"),
@@ -1837,7 +1839,7 @@ void salesOrderItem::populate()
   XSqlQuery item;
   sql = "<? if exists(\"isSalesOrder\") ?>"
 	"SELECT itemsite_leadtime, warehous_id, warehous_code,"
-	"       item_id, item_priceuom, item_invpricerat, item_listprice,"
+	"       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
 	"       stdCost(item_id) AS stdcost,"
 	"       coitem_status, coitem_cohead_id,"
 	"       coitem_order_type, coitem_order_id, coitem_custpn,"
@@ -1856,16 +1858,17 @@ void salesOrderItem::populate()
 	"         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
 	"       coitem_tax_id,"
 	"       getItemTaxType(item_id, cohead_taxauth_id) AS coitem_taxtype_id "
-	"FROM coitem, warehous, itemsite, item, cohead "
+	"FROM coitem, warehous, itemsite, item, uom, cohead "
 	"WHERE ( (coitem_itemsite_id=itemsite_id)"
 	" AND (itemsite_warehous_id=warehous_id)"
 	" AND (itemsite_item_id=item_id)"
+        " AND (item_price_uom_id=uom_id)"
 	" AND (cohead_id=coitem_cohead_id)"
 	" AND (coitem_id=<? value(\"id\") ?>));" 
 	"<? else ?>"
 	"SELECT itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
 	"       warehous_code,"
-	"       item_id, item_priceuom, item_invpricerat, item_listprice,"
+	"       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
 	"       stdcost(item_id) AS stdcost,"
 	"       'O' AS coitem_status, quitem_quhead_id AS coitem_cohead_id,"
 	"	'' AS coitem_order_type, -1 AS coitem_order_id,"
@@ -1883,8 +1886,9 @@ void salesOrderItem::populate()
 	"       0 AS coship_qty,"
 	"       quitem_tax_id AS coitem_tax_id,"
 	"       getItemTaxType(item_id, quhead_taxauth_id) AS coitem_taxtype_id "
-	"  FROM item, quhead, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
+	"  FROM item, uom, quhead, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
 	" WHERE ( (quitem_item_id=item_id)"
+        "   AND   (item_price_uom_id=uom_id)"
 	"   AND   (quhead_id=quitem_quhead_id)"
 	"   AND   (quitem_id=<? value(\"id\") ?>) );"
 	"<? endif ?>" ;
@@ -1900,10 +1904,10 @@ void salesOrderItem::populate()
     _soheadid = item.value("coitem_cohead_id").toInt();
     _comments->setId(_soitemid);
     _lineNumber->setText(item.value("coitem_linenumber").toString());
-    _priceRatio = item.value("item_invpricerat").toDouble();
+    _priceRatio = item.value("invpricerat").toDouble();
     //TO DO ***This needs to be replaced by new UOM logic****
     //_ratio->setText(formatUOMRatio(_priceRatio));
-    //_pricingUOM->setText(item.value("item_priceuom").toString());
+    //_pricingUOM->setText(item.value("uom_name").toString());
     _unitCost->setBaseValue(item.value("stdcost").toDouble());
     _shippedToDate->setText(formatQty(item.value("qtyshipped").toDouble()));
 

@@ -660,16 +660,17 @@ void dspWoScheduleByParameterList::sFillList()
                "       formatWONumber(wo_id) as wonumber,"
                "       wo_status, wo_priority, warehous_code,"
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       item_invuom,"
+               "       uom_name,"
                "       formatQty(wo_qtyord) as ordered,"
                "       formatQty(wo_qtyrcv) as received,"
                "       formatDate(wo_startdate) as startdate,"
                "       formatDate(wo_duedate) as duedate,"
                "       ((wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS latestart,"
                "       (wo_duedate<=CURRENT_DATE) AS latedue "
-               "FROM wo, itemsite, warehous, item "
+               "FROM wo, itemsite, warehous, item, uom "
                "WHERE ( (wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (wo_startdate BETWEEN :startDate AND :endDate)" );
 
@@ -727,7 +728,7 @@ void dspWoScheduleByParameterList::sFillList()
                                              q.value("wo_ordtype"), q.value("wonumber"),
                                              q.value("wo_status"), q.value("wo_priority"),
                                              q.value("warehous_code"), q.value("item_number"),
-                                             q.value("description"), q.value("item_invuom"),
+                                             q.value("description"), q.value("uom_name"),
                                              q.value("ordered"), q.value("received"),
                                              q.value("startdate") );
     last->setText(11, q.value("duedate").toString());

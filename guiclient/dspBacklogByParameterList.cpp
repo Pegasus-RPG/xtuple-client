@@ -365,7 +365,7 @@ void dspBacklogByParameterList::sFillList()
 		 "                   FROM coitem "
 		 "                   WHERE (coitem_cohead_id=cohead_id))) AS f_shipdate,"
                  "       formatDate(coitem_scheddate) AS f_scheddate,"
-                 "       item_number, item_invuom,"
+                 "       item_number, uom_name,"
                  "       formatQty(coitem_qtyord) AS f_ordered,"
                  "       formatQty(coitem_qtyshipped) AS f_shipped,"
                  "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + "
@@ -373,15 +373,16 @@ void dspBacklogByParameterList::sFillList()
                  "       formatMoney(round(noNeg(coitem_qtyord - "
 		 "                               coitem_qtyshipped + "
 		 "                               coitem_qtyreturned) * "
-		 "                         (coitem_price / item_invpricerat), 2)) AS f_backlog,"
+		 "                         (coitem_price / iteminvpricerat(item_id)), 2)) AS f_backlog,"
                  "       round(noNeg(coitem_qtyord - coitem_qtyshipped + "
 		 "                   coitem_qtyreturned) * "
-		 "             (coitem_price / item_invpricerat),2) AS backlog "
-                 "FROM cohead, coitem, itemsite, item, cust "
+		 "             (coitem_price / iteminvpricerat(item_id)),2) AS backlog "
+                 "FROM cohead, coitem, itemsite, item, cust, uom "
                  "WHERE ((coitem_cohead_id=cohead_id)"
                  " AND (cohead_cust_id=cust_id)"
                  " AND (coitem_itemsite_id=itemsite_id)"
                  " AND (itemsite_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (coitem_status NOT IN ('C','X'))"
                  " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
 		 "                             AND <? value(\"endDate\") ?>)"
@@ -469,7 +470,7 @@ void dspBacklogByParameterList::sFillList()
         new XTreeWidgetItem( head, soheadid, q.value("coitem_id").toInt(),
                            q.value("coitem_linenumber"), q.value("item_number"),
                            "", q.value("f_scheddate"),
-                           q.value("item_invuom"), q.value("f_ordered"),
+                           q.value("uom_name"), q.value("f_ordered"),
                            q.value("f_shipped"), q.value("f_balance"),
                            q.value("f_backlog") );
 

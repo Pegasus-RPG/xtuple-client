@@ -51,7 +51,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        itemloc_lotserial,
        formatQty(itemloc_qty) AS f_qoh,
        formatDate(itemloc_expiration) AS f_expiration,
@@ -73,7 +73,7 @@
                 item_number,
                 item_descrip1,
                 item_descrip2,
-                item_invuom,
+                uom_name,
                 itemloc_lotserial,
                 itemloc_qty,
                 itemloc_expiration,
@@ -83,9 +83,10 @@
                   stdcost(itemsite_item_id)
                 &lt;? endif ?>
                 AS cost
-           FROM itemloc, itemsite, item, warehous
+           FROM itemloc, itemsite, item, warehous, uom
           WHERE ((itemloc_itemsite_id=itemsite_id)
             AND (itemsite_item_id=item_id)
+            AND (item_inv_uom_id=uom_id)
             AND (itemsite_warehous_id=warehous_id)
             AND (itemsite_perishable)
             AND (itemloc_expiration &lt; (CURRENT_DATE + &lt;? value(&quot;thresholdDays&quot;) ?>))
@@ -635,7 +636,7 @@ ORDER BY warehous_code,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

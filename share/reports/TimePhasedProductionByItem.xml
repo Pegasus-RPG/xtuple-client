@@ -36,10 +36,10 @@
        findPeriodEnd(calitem_id) AS pend,
        (formatDate(findPeriodStart(calitem_id)) || '-' || formatDate(findPeriodEnd(calitem_id))) AS period,
        item_number,
-       item_invuom,
+       uom_name,
        warehous_code,
        formatQty(SUM(summProd(itemsite_id, calitem_id))) AS f_unit
-  FROM itemsite, item, warehous,
+  FROM itemsite, item, uom, warehous,
        (SELECT rcalitem_id AS calitem_id
           FROM rcalitem
          WHERE (rcalitem_id in (
@@ -64,6 +64,7 @@
         ) AS calitem
  WHERE ((itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
 &lt;? endif ?>
@@ -73,7 +74,7 @@
    AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ &lt;? value(&quot;plancode_pattern&quot;) ?>)))
 &lt;? endif ?>
   )
-GROUP BY pstart, pend, period, item_number, warehous_code, item_invuom
+GROUP BY pstart, pend, period, item_number, warehous_code, uom_name
 ORDER BY pstart, item_number, warehous_code;</sql>
  </querysource>
  <rpthead>
@@ -452,7 +453,7 @@ ORDER BY pstart, item_number, warehous_code;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
   </detail>

@@ -49,7 +49,7 @@
        (formatDate(findPeriodStart(rcalitem_id)) || '-' || formatDate(findPeriodEnd(rcalitem_id))) AS period,
        item_number,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
-         item_invuom
+         uom_name
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -67,7 +67,7 @@
          shipmentsByItemValue(itemsite_id, rcalitem_id)
        &lt;? endif ?>
        AS unit
-  FROM rcalitem, itemsite, item, warehous
+  FROM rcalitem, itemsite, item, uom, warehous
  WHERE ((rcalitem_id in (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -78,6 +78,7 @@
                         ))
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
 &lt;? endif ?>
@@ -95,7 +96,7 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
        (formatDate(findPeriodStart(acalitem_id)) || '-' || formatDate(findPeriodEnd(acalitem_id))) AS period,
        item_number,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
-         item_invuom
+         uom_name
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -113,7 +114,7 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
          shipmentsByItemValue(itemsite_id, acalitem_id)
        &lt;? endif ?>
        AS unit
-  FROM acalitem, itemsite, item, warehous
+  FROM acalitem, itemsite, item, uom, warehous
  WHERE ((acalitem_id IN (
 &lt;? foreach(&quot;period_id_list&quot;) ?>
   &lt;? if not isfirst(&quot;period_id_list&quot;) ?>
@@ -124,6 +125,7 @@ SELECT findPeriodStart(acalitem_id) AS pstart,
                         ))
    AND (itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
 &lt;? endif ?>

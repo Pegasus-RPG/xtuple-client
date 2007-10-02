@@ -14,7 +14,7 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        warehous_code AS warehouse,
        &lt;? if exists("showPlanned") ?>
          text('Yes')
@@ -22,8 +22,9 @@
          text('No')
        &lt;? endif ?>
        AS showplnord
-  FROM item, warehous
+  FROM item, uom, warehous
  WHERE ((item_id=&lt;? value("item_id") ?>)
+   AND (item_inv_uom_id=uom_id)
    AND (warehous_id=&lt;? value("warehous_id") ?>))</sql>
  </querysource>
  <querysource>
@@ -433,7 +434,7 @@ WHERE ((itemsite_item_id=&lt;? value("item_id") ?>)
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <line>

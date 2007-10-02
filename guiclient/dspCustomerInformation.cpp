@@ -382,7 +382,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
         _ytdSales->setText(query.value("ytdsales").toString());
 
       query.prepare( "SELECT formatMoney( COALESCE( SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *"
-                     "                                   (coitem_price / item_invpricerat) ), 0 ) ) AS backlog "
+                     "                                   (coitem_price / iteminvpricerat(item_id)) ), 0 ) ) AS backlog "
                      "FROM cohead, coitem, itemsite, item "
                      "WHERE ( (coitem_cohead_id=cohead_id)"
                      " AND (coitem_itemsite_id=itemsite_id)"

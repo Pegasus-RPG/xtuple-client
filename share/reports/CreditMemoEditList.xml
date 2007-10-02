@@ -22,7 +22,7 @@
        END AS descrip,
        ordernumber,
        linenumber,
-       item_invuom,
+       iteminvuom,
        qtytobill,
        price,
        extprice,
@@ -509,7 +509,7 @@ ORDER BY ordernumber, linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>iteminvuom</column>
     </data>
    </field>
    <field>

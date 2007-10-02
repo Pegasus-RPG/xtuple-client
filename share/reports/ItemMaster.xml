@@ -27,31 +27,34 @@
        END AS f_item_type,
        formatBoolYN(item_config) AS f_item_config,
        (classcode_code||' - '||classcode_descrip) AS f_classcode,
-       item_invuom,
+       iuom.uom_name AS invuom,
        formatBoolYN(item_picklist) AS f_item_picklist,
        formatBoolYN(item_fractional) AS f_item_fractional,
-       item_capuom, item_altcapuom, item_shipuom,
-       formatUOMRatio(item_capinvrat) AS f_item_capinvrat,
-       formatUOMRatio(item_altcapinvrat) AS f_item_altcapinvrat,
-       formatUOMRatio(item_shipinvrat) AS f_item_shipinvrat,
+       itemcapuom(item_id) AS capuom, itemaltcapuom(item_id) AS altcapuom, puom.uom_name AS shipuom,
+       formatUOMRatio(itemcapinvrat(item_id)) AS f_capinvrat,
+       formatUOMRatio(itemaltcapinvrat(item_id)) AS f_altcapinvrat,
+       formatUOMRatio(iteminvpricerat(item_id)) AS f_shipinvrat,
        formatWeight(item_prodweight) AS f_item_prodweight,
        formatWeight(item_packweight) AS f_item_packweight,
        formatBoolYN(item_sold) AS f_item_sold
-  FROM item, classcode
+  FROM item, classcode, uom AS iuom, uom AS puom
  WHERE ((item_id=&lt;? value(&quot;item_id&quot;) ?>)
+   AND  (item_inv_uom_id=iuom.uom_id)
+   AND  (item_price_uom_id=puom.uom_id)
    AND  (item_classcode_id=classcode_id) );</sql>
  </querysource>
  <querysource>
   <name>sold</name>
-  <sql>SELECT item_priceuom,
-       formatUOMRatio(item_invpricerat) AS f_item_invpricerat,
+  <sql>SELECT uom_name,
+       formatUOMRatio(iteminvpricerat(item_id)) AS f_iteminvpricerat,
        (prodcat_code||' - '||prodcat_descrip) AS f_prodcat,
        formatBoolYN(item_taxable) AS f_item_taxable,
        formatBoolYN(item_exclusive) AS f_item_exclusive,
        formatPrice(item_listprice) AS f_item_listprice,
-       formatExtPrice(item_listprice / item_invpricerat) AS f_extprice
-  FROM item, prodcat
+       formatExtPrice(item_listprice / iteminvpricerat(item_id)) AS f_extprice
+  FROM item, prodcat, uom
  WHERE ((item_id=&lt;? value(&quot;item_id&quot;) ?>)
+   AND  (item_price_uom_id=uom_id)
    AND  (item_sold)
    AND  (item_prodcat_id=prodcat_id) );</sql>
  </querysource>
@@ -132,7 +135,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_shipuom</column>
+    <column>shipuom</column>
    </data>
   </field>
   <field>
@@ -205,7 +208,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>f_item_shipinvrat</column>
+    <column>f_shipinvrat</column>
    </data>
   </field>
   <field>
@@ -259,7 +262,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_altcapuom</column>
+    <column>altcapuom</column>
    </data>
   </field>
   <field>
@@ -377,7 +380,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>f_item_altcapinvrat</column>
+    <column>f_altcapinvrat</column>
    </data>
   </field>
   <label>
@@ -428,7 +431,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>invuom</column>
    </data>
   </field>
   <label>
@@ -479,7 +482,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_capuom</column>
+    <column>capuom</column>
    </data>
   </field>
   <label>
@@ -622,7 +625,7 @@ ORDER BY comment_date;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>f_item_capinvrat</column>
+    <column>f_capinvrat</column>
    </data>
   </field>
   <label>
@@ -929,7 +932,7 @@ ORDER BY comment_date;</sql>
     <vcenter/>
     <data>
      <query>sold</query>
-     <column>f_item_invpricerat</column>
+     <column>f_iteminvpricerat</column>
     </data>
    </field>
    <label>
@@ -964,7 +967,7 @@ ORDER BY comment_date;</sql>
     <vcenter/>
     <data>
      <query>sold</query>
-     <column>item_priceuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <label>

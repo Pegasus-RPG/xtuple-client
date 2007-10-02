@@ -861,7 +861,7 @@ void creditMemo::sFillList()
              "       formatQty(cmitem_qtyreturned),"
              "       formatQty(cmitem_qtycredit),"
              "       formatSalesPrice(cmitem_unitprice),"
-             "       formatMoney(cmitem_qtycredit * cmitem_unitprice / item_invpricerat) "
+             "       formatMoney(cmitem_qtycredit * cmitem_unitprice / iteminvpricerat(item_id)) "
              "FROM cmitem, itemsite, item, warehous "
              "WHERE ( (cmitem_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
@@ -885,7 +885,7 @@ void creditMemo::sCalculateSubtotal()
 {
 //  Determine the subtotal and line item tax
   XSqlQuery query;
-  query.prepare( "SELECT (SUM(cmitem_qtycredit * cmitem_unitprice / item_invpricerat)) AS subtotal,"
+  query.prepare( "SELECT (SUM(cmitem_qtycredit * cmitem_unitprice / iteminvpricerat(item_id))) AS subtotal,"
                  "       SUM(cmitem_tax_ratea) AS taxa,"
                  "       SUM(cmitem_tax_rateb) AS taxb,"
                  "       SUM(cmitem_tax_ratec) AS taxc "

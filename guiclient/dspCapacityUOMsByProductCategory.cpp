@@ -149,9 +149,9 @@ void dspCapacityUOMsByProductCategory::sFillList()
 void dspCapacityUOMsByProductCategory::sFillList(int pItemid, bool pLocalUpdate)
 {
   QString sql( "SELECT item_id, item_number,"
-               " (item_descrip1 || ' ' || item_descrip2), item_invuom,"
-               " item_capuom, formatQty(item_capinvrat), item_altcapuom, formatQty(item_altcapinvrat) "
-               "FROM item "
+               " (item_descrip1 || ' ' || item_descrip2), uom_name,"
+               " itemcapuom(item_id), formatQty(itemcapinvrat(item_id)), itemaltcapuom(item_id), formatQty(itemaltcapinvrat(item_id)) "
+               "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
                "WHERE ( (item_sold)");
 
   if (_productCategory->isSelected())

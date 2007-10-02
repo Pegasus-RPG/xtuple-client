@@ -49,14 +49,14 @@
        vend_name,
        formatDate(poitem_duedate) as f_duedate,
        COALESCE(item_number, (text('NonInv - ') || poitem_vend_item_number)) AS itemnumber,
-       COALESCE(item_invuom, poitem_vend_uom) AS itemuom,
+       COALESCE(uom_name, poitem_vend_uom) AS itemuom,
        formatQty(poitem_qty_ordered) as f_ordered,
        formatQty(poitem_qty_received) as f_received,
        formatQty(poitem_qty_returned) as f_returned
   FROM pohead, vend,
        poitem LEFT OUTER JOIN
          (itemsite JOIN item
-           ON (itemsite_item_id=item_id))
+           ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))
          ON (poitem_itemsite_id=itemsite_id) 
  WHERE ((poitem_pohead_id=pohead_id)
    AND (pohead_vend_id=vend_id)

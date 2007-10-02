@@ -37,11 +37,11 @@
        formatPrcnt((1 - (actqtyper / projqtyper)) * -1) AS f_percent
   FROM ( SELECT womatlvar_posted AS posted,
                 parentitem.item_number AS parent_number,
-                parentitem.item_invuom AS parent_invuom,
+                puom.uom_name AS parent_invuom,
                 parentitem.item_descrip1 AS parent_descrip1,
                 parentitem.item_descrip2 AS parent_descrip2,
                 componentitem.item_number AS child_number,
-                componentitem.item_invuom AS child_invuom,
+                cuom.uom_name AS child_invuom,
                 componentitem.item_descrip1 AS child_descrip1,
                 componentitem.item_descrip2 AS child_descrip2,
                 womatlvar_qtyord AS ordered,
@@ -51,11 +51,13 @@
                 (womatlvar_qtyiss) AS actiss,
                 (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper 
            FROM womatlvar, itemsite AS componentsite, itemsite AS parentsite,
-                item AS componentitem, item AS parentitem
+                item AS componentitem, item AS parentitem, uom AS puom, uom AS cuom
           WHERE ((womatlvar_parent_itemsite_id=parentsite.itemsite_id)
             AND (womatlvar_component_itemsite_id=componentsite.itemsite_id)
             AND (parentsite.itemsite_item_id=parentitem.item_id)
+            AND (parentitem.item_inv_uom_id=puom.uom_id)
             AND (componentsite.itemsite_item_id=componentitem.item_id)
+            AND (componentitem.item_inv_uom_id=cuom.uom_id)
             AND (womatlvar_posted BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
             AND (componentsite.itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)

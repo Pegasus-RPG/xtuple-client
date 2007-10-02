@@ -211,17 +211,19 @@ void dspQOHByLocation::sFillList()
     }
 
     q.prepare( "SELECT itemloc_id, warehous_code, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       itemloc_lotserial, item_invuom, formatQty(itemloc_qty) "
-               "FROM itemloc, itemsite, warehous, item "
+               "       itemloc_lotserial, uom_name, formatQty(itemloc_qty) "
+               "FROM itemloc, itemsite, warehous, item, uom "
                "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (itemloc_location_id=:location_id) ) "
 
                "UNION SELECT -1, warehous_code, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "             :na, item_invuom, formatQty(itemsite_qtyonhand) "
-               "FROM itemsite, warehous, item "
+               "             :na, uom_name, formatQty(itemsite_qtyonhand) "
+               "FROM itemsite, warehous, item, uom "
                "WHERE ((itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (NOT itemsite_loccntrl)"
                " AND (itemsite_location_id=:location_id)) "

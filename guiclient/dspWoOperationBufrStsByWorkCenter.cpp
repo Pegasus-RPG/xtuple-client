@@ -256,13 +256,14 @@ void dspWoOperationBufrStsByWorkCenter::sFillList()
                "       CASE WHEN (wooper_rncomplete) THEN :complete"
                "            ELSE formatTime(noNeg(wooper_rntime - wooper_rnconsumed))"
                "       END AS f_rncomplete,"
-               "       formatQty(noNeg(wo_qtyord - wooper_qtyrcv)) AS f_qtyremain, item_invuom,"
+               "       formatQty(noNeg(wo_qtyord - wooper_qtyrcv)) AS f_qtyremain, uom_name,"
                "       (bufrsts_status > 65) AS emergency "
-               "  FROM wooper, wo, itemsite, item, bufrsts "
+               "  FROM wooper, wo, itemsite, item, uom, bufrsts "
                " WHERE ( (wooper_wo_id=wo_id)"
                "   AND   (wo_itemsite_id=itemsite_id)"
                "   AND   (wo_status <> 'C')"
                "   AND   (itemsite_item_id=item_id)"
+               "   AND   (item_inv_uom_id=uom_id)"
                "   AND   (bufrsts_target_type='W')"
                "   AND   (bufrsts_target_id=wo_id)"
                "   AND   (bufrsts_date=current_date)"
@@ -289,7 +290,7 @@ void dspWoOperationBufrStsByWorkCenter::sFillList()
 			      q.value("wooper_seqnumber"), q.value("f_stdoper"),
 			      q.value("f_descrip"), q.value("f_sucomplete"),
 			      q.value("f_rncomplete"), q.value("f_qtyremain"),
-			      q.value("item_invuom") );
+			      q.value("uom_name") );
     if(q.value("emergency").toBool())
       last->setTextColor(1, "red");
   }

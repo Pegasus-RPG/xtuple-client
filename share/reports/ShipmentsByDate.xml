@@ -26,15 +26,16 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        warehous_code,
        formatQty(coitem_qtyord) AS f_qtyord,
        formatQty(SUM(coship_qty)) AS f_qtyshipped
-  FROM coship, cosmisc, coitem, cohead, cust, itemsite, item, warehous
+  FROM coship, cosmisc, coitem, cohead, cust, itemsite, item, uom, warehous
  WHERE ( (coship_cosmisc_id=cosmisc_id)
    AND (coship_coitem_id=coitem_id)
    AND (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (cosmisc_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
@@ -43,7 +44,7 @@
 GROUP BY cosmisc_id, coitem_id,
          cohead_number, cust_number, cust_name, cosmisc_shipdate,
          coitem_linenumber, item_number, item_descrip1, item_descrip2,
-         item_invuom, warehous_code, coitem_qtyord
+         uom_name, warehous_code, coitem_qtyord
 ORDER BY cosmisc_id, coitem_linenumber;</sql>
  </querysource>
  <rpthead>
@@ -656,7 +657,7 @@ ORDER BY cosmisc_id, coitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

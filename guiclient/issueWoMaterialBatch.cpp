@@ -210,7 +210,7 @@ void issueWoMaterialBatch::sFillList()
   {
     XSqlQuery womatl;
     womatl.prepare( "SELECT womatl_id, item_number,"
-                    " (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_invuom,"
+                    " (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
                     " CASE WHEN (womatl_issuemethod = 'S') THEN :push"
                     "      WHEN (womatl_issuemethod = 'L') THEN :pull"
                     "      WHEN (womatl_issuemethod = 'M') THEN :mixed"
@@ -219,9 +219,10 @@ void issueWoMaterialBatch::sFillList()
                     " formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS required,"
                     " formatQty(itemsite_qtyonhand) AS qoh,"
                     " formatQty(abs(noneg((itemsite_qtyonhand - womatl_qtyreq) * -1))) AS short "
-                    "FROM womatl, itemsite, item "
+                    "FROM womatl, itemsite, item, uom "
                     "WHERE ((womatl_itemsite_id=itemsite_id)"
                     " AND (itemsite_item_id=item_id)"
+                    " AND (item_inv_uom_id=uom_id)"
                     " AND (womatl_wo_id=:wo_id)) "
                     "ORDER BY item_number;" );
     womatl.bindValue(":push", tr("Push"));
@@ -238,7 +239,7 @@ void issueWoMaterialBatch::sFillList()
 				 womatl.value("womatl_id").toInt(),
 				 womatl.value("item_number"),
 				 womatl.value("itemdescrip"),
-				 womatl.value("item_invuom"),
+				 womatl.value("uom_name"),
 				 womatl.value("issuemethod"),
 				 womatl.value("required"),
 				 womatl.value("qoh"),

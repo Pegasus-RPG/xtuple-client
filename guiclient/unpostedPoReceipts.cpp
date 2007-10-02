@@ -354,7 +354,7 @@ void unpostedPoReceipts::sFillList()
 			       fillq.value("orderitem_linenumber"),
 			       fillq.value("recv_duedate"),
 			       fillq.value("item_number"),
-			       fillq.value("item_invuom"),
+			       fillq.value("uom_name"),
 			       fillq.value("recv_vend_item_number"),
 			       fillq.value("recv_vend_uom"),
 			       fillq.value("qty_ordered"),

@@ -162,19 +162,20 @@ void dspWoSoStatus::sFillList()
 {
   QString sql( "SELECT wo_id,"
                "       formatWONumber(wo_id) AS wonumber,"
-               "       wo_status, item_number, item_invuom,"
+               "       wo_status, item_number, uom_name,"
                "       warehous_code,"
                "       cohead_number,"
                "       formatQty(wo_qtyord) AS qtyord,"
                "       formatQty(wo_qtyrcv) AS qtyrcv,"
                "       formatDate(wo_startdate) AS startdate,"
                "       formatDate(wo_duedate) AS duedate "
-               "FROM coitem, cohead, wo, itemsite, warehous, item "
+               "FROM coitem, cohead, wo, itemsite, warehous, item, uom "
                "WHERE ( (coitem_cohead_id=cohead_id)"
                " AND (coitem_order_id=wo_id)"
                " AND (coitem_status <> 'X')"
                " AND (wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (wo_status IN ('O','E','S','R','I') )" );
 

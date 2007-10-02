@@ -353,10 +353,11 @@ void woOperation::sPopulateWoInfo(int pWoid)
   if(pWoid == -1)
     return;
 
-  q.prepare( "SELECT wo_qtyord, item_invuom "
-             "FROM wo, itemsite, item "
+  q.prepare( "SELECT wo_qtyord, uom_name "
+             "FROM wo, itemsite, item, uom "
              "WHERE ( (wo_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (wo_id=:wo_id) );" );
   q.bindValue(":wo_id", pWoid);
   q.exec();
@@ -364,8 +365,8 @@ void woOperation::sPopulateWoInfo(int pWoid)
   {
     _cachedQtyOrdered = q.value("wo_qtyord").toDouble();
 
-    _invUOM1->setText(q.value("item_invuom").toString());
-    _invUOM2->setText(q.value("item_invuom").toString());
+    _invUOM1->setText(q.value("uom_name").toString());
+    _invUOM2->setText(q.value("uom_name").toString());
   }
   else
     systemError(this, tr("A System Error occurred at %1::%2.")

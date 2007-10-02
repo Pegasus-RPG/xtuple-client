@@ -23,7 +23,7 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT formatWONumber(wo_id) AS wonumber,
-       wo_status, item_number, item_invuom,
+       wo_status, item_number, uom_name,
        item_descrip1, item_descrip2,
        warehous_code,
        cohead_number,
@@ -31,12 +31,13 @@
        formatQty(wo_qtyrcv) AS qtyrcv,
        formatDate(wo_startdate) AS startdate,
        formatDate(wo_duedate) AS duedate 
-  FROM coitem, cohead, wo, itemsite, warehous, item 
+  FROM coitem, cohead, wo, itemsite, warehous, item, uom
  WHERE ((coitem_cohead_id=cohead_id)
    AND (coitem_order_id=wo_id)
    AND (coitem_status&lt;>'X')
    AND (wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_status IN ('O', 'E', 'R', 'I'))
 &lt;? if exists(&quot;warehous_id&quot;) ?>

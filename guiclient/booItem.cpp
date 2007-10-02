@@ -410,15 +410,16 @@ void booItem::populate()
                    "       booitem_descrip1, booitem_descrip2, booitem_toolref,"
                    "       formatTime(booitem_sutime) AS f_sutime, booitem_sucosttype, booitem_surpt,"
                    "       formatTime(booitem_rntime) AS f_rntime, booitem_rncosttype, booitem_rnrpt,"
-                   "       booitem_produom, item_invuom,"
+                   "       booitem_produom, uom_name,"
                    "       formatRatio(booitem_invproduomratio) AS invproduomratio,"
                    "       formatRatio(booitem_rnqtyper) AS rnqtyper,"
                    "       booitem_issuecomp, booitem_rcvinv,"
                    "       booitem_pullthrough, booitem_overlap,"
                    "       booitem_configtype, booitem_configid, booitem_configflag,"
                    "       booitem_instruc, booitem_wip_location_id "
-                   "FROM booitem, item "
+                   "FROM booitem, item, uom "
                    "WHERE ( (booitem_item_id=item_id)"
+                   " AND (item_inv_uom_id=uom_id)"
                    " AND (booitem_id=:booitem_id) );" );
   booitem.bindValue(":booitem_id", _booitemid);
   booitem.exec();
@@ -441,8 +442,8 @@ void booItem::populate()
     _toolingReference->setText(booitem.value("booitem_toolref"));
     _setupTime->setText(booitem.value("f_sutime"));
     _prodUOM->setText(booitem.value("booitem_produom"));
-    _invUOM1->setText(booitem.value("item_invuom").toString());
-    _invUOM2->setText(booitem.value("item_invuom").toString());
+    _invUOM1->setText(booitem.value("uom_name").toString());
+    _invUOM2->setText(booitem.value("uom_name").toString());
     _invProdUOMRatio->setText(booitem.value("invproduomratio"));
     _runTime->setText(booitem.value("f_rntime"));
     _runTimePer->setText(booitem.value("rnqtyper"));

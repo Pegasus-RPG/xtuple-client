@@ -277,7 +277,7 @@ void dspSlowMovingInventoryByClassCode::sFillList()
   _itemsite->clear();
 
   QString sql( "SELECT itemsite_id, warehous_code, item_number,"
-               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_invuom,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
                "       itemsite_qtyonhand, formatQty(itemsite_qtyonhand) AS f_qoh,"
                "       formatDate(itemsite_datelastused) AS f_datelastused,"
                "       formatCost(cost) AS f_unitcost,"
@@ -285,15 +285,16 @@ void dspSlowMovingInventoryByClassCode::sFillList()
                "       formatMoney(noNeg(cost * itemsite_qtyonhand)) AS f_value,"
                "       cost "
                "FROM ( SELECT itemsite_id, warehous_code, item_number,"
-               "              item_descrip1, item_descrip2, item_invuom,"
+               "              item_descrip1, item_descrip2, uom_name,"
                "              itemsite_qtyonhand, itemsite_datelastused,"
 	       "<? if exists(\"useActualCosts\") ?>"
 	       "              actcost(itemsite_item_id) "
 	       "<? else ?>"
 	       "              stdcost(itemsite_item_id) "
 	       "<? endif ?> AS cost "
-	       "FROM itemsite, item, warehous "
+	       "FROM itemsite, item, warehous, uom "
 	       "WHERE ((itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
 	       " AND (itemsite_warehous_id=warehous_id)"
 	       " AND (itemsite_active)"
 	       " AND (itemsite_datelastused < <? value(\"cutoffDate\") ?>)"
@@ -325,7 +326,7 @@ void dspSlowMovingInventoryByClassCode::sFillList()
   {
     last = new XTreeWidgetItem( _itemsite, last, q.value("itemsite_id").toInt(),
 				q.value("warehous_code"), q.value("item_number"),
-				q.value("itemdescrip"), q.value("item_invuom"),
+				q.value("itemdescrip"), q.value("uom_name"),
 				q.value("f_datelastused"), q.value("f_qoh") );
 
     last->setText(6, q.value("f_unitcost").toString());

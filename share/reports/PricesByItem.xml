@@ -68,9 +68,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
               ipsprice_qtybreak AS qtybreak,
               ipsprice_price AS price,
               &lt;? if exists(&quot;actualCosts&quot;) ?>
-                (actcost(item_id) * item_invpricerat)
+                (actcost(item_id) * iteminvpricerat(item_id))
               &lt;? else ?>
-                (stdcost(item_id) * item_invpricerat)
+                (stdcost(item_id) * iteminvpricerat(item_id))
               &lt;? endif ?>
               AS cost
          FROM ipsass, ipshead, ipsprice, cust, item
@@ -94,9 +94,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
          ipsprice_qtybreak AS qtybreak,
          ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM ipsass, ipshead, ipsprice, custtype, item
@@ -120,9 +120,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
          ipsprice_qtybreak AS qtybreak,
          ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM ipsass, ipshead, ipsprice, custtype, item
@@ -147,9 +147,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
          ipsprice_qtybreak AS qtybreak,
          ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM sale, ipshead, ipsprice, item
@@ -172,9 +172,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
          ipsprice_qtybreak AS qtybreak,
          ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM ipsass, ipshead, ipsprice, cust, shipto, item
@@ -199,9 +199,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
          ipsprice_qtybreak AS qtybreak,
          ipsprice_price AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM ipsass, ipshead, ipsprice, cust, shipto, item
@@ -227,9 +227,9 @@ FROM ( SELECT ipsprice_id AS itemid, 1 AS sourcetype,
          -1 AS qtybreak,
          item_listprice AS price,
          &lt;? if exists(&quot;actualCosts&quot;) ?>
-           (actcost(item_id) * item_invpricerat)
+           (actcost(item_id) * iteminvpricerat(item_id))
          &lt;? else ?>
-           (stdcost(item_id) * item_invpricerat)
+           (stdcost(item_id) * iteminvpricerat(item_id))
          &lt;? endif ?>
          AS cost
     FROM item

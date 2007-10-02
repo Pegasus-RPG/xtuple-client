@@ -220,16 +220,17 @@ void postOperations::sHandleWoid(int pWoid)
     return;
   }
 
-  w.prepare( "SELECT item_invuom "
-             "FROM wo, itemsite, item "
+  w.prepare( "SELECT uom_name "
+             "FROM wo, itemsite, item, uom "
              "WHERE ( (wo_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (wo_id=:wo_id) );" );
   w.bindValue(":wo_id", pWoid);
   w.exec();
   if (w.first())
     _inventoryUOM->setText( tr("Post in Inventory UOMs (%1)")
-                            .arg(w.value("item_invuom").toString()) );
+                            .arg(w.value("uom_name").toString()) );
   else if (w.lastError().type() != QSqlError::None)
   {
     systemError(this, w.lastError().databaseText(), __FILE__, __LINE__);

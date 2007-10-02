@@ -347,7 +347,7 @@ void dspWoOperationsByWorkCenter::sFillList()
                "       CASE WHEN (wooper_rncomplete) THEN :complete"
                "            ELSE formatTime(noNeg(wooper_rntime - wooper_rnconsumed))"
                "       END AS runremain,"
-               "       formatQty(noNeg(wo_qtyord - wooper_qtyrcv)) AS qtyremain, item_invuom,"
+               "       formatQty(noNeg(wo_qtyord - wooper_qtyrcv)) AS qtyremain, uom_name,"
                "       CASE WHEN(wo_ordtype='M') THEN :mrp"
                "            WHEN(wo_ordtype='P') THEN :mps"
                "            WHEN(wo_ordtype='S') THEN (:so||'-'||formatSoNumber(wo_ordid))"
@@ -356,10 +356,11 @@ void dspWoOperationsByWorkCenter::sFillList()
                "            ELSE wo_ordtype"
                "       END AS source,"
                "       (date(wooper_scheduled) < CURRENT_DATE) AS overdue "
-               "FROM wooper, wo, itemsite, item "
+               "FROM wooper, wo, itemsite, item, uom "
                "WHERE ( (wooper_wo_id=wo_id)"
                " AND (wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (DATE(wooper_scheduled) BETWEEN :startDate AND :endDate)"
                " AND (wooper_wrkcnt_id=:wrkcnt_id)" );
 
@@ -390,7 +391,7 @@ void dspWoOperationsByWorkCenter::sFillList()
                              q.value("item_number"), q.value("wooper_seqnumber"),
                              q.value("stdoper"), q.value("descrip"),
                              q.value("setupremain"), q.value("runremain"),
-                             q.value("qtyremain"), q.value("item_invuom") );
+                             q.value("qtyremain"), q.value("uom_name") );
     if(q.value("overdue").toBool())
       last->setTextColor("red");
   }

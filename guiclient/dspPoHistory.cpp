@@ -106,7 +106,7 @@ void dspPoHistory::sFillList()
   {
     q.prepare( "SELECT poitem_id, poitem_linenumber,"
                "       COALESCE(item_number, :nonInventory),"
-               "       COALESCE(item_invuom, :na),"
+               "       COALESCE(uom_name, :na),"
                "       formatDate(poitem_duedate),"
                "       poitem_vend_item_number, poitem_vend_uom,"
                "       formatQty(poitem_qty_ordered),"
@@ -114,7 +114,7 @@ void dspPoHistory::sFillList()
                "       formatqty(poitem_qty_returned) "
                "FROM poitem LEFT OUTER JOIN"
                "     ( itemsite JOIN item"
-               "       ON (itemsite_item_id=item_id) )"
+               "       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))"
                "     ON (poitem_itemsite_id=itemsite_id) "
                "WHERE (poitem_pohead_id=:pohead_id) "
                "ORDER BY poitem_linenumber;" );

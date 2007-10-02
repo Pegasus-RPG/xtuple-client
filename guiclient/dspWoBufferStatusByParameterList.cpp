@@ -594,7 +594,7 @@ void dspWoBufferStatusByParameterList::sFillList()
                "       formatWONumber(wo_id) as wonumber,"
                "       wo_status, wo_priority, warehous_code,"
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       item_invuom,"
+               "       uom_name,"
                "       formatQty(wo_qtyord) as ordered,"
                "       formatQty(wo_qtyrcv) as received,"
                "       CASE WHEN (bufrsts_type='T') THEN :time"
@@ -602,9 +602,10 @@ void dspWoBufferStatusByParameterList::sFillList()
 	       "       END AS bufrststype,"
                "       bufrsts_status,"
                "       (bufrsts_status>=66) AS emergency"
-               "  FROM wo, itemsite, warehous, item, bufrsts "
+               "  FROM wo, itemsite, warehous, item, uom, bufrsts "
                " WHERE ( (wo_itemsite_id=itemsite_id)"
                "   AND   (itemsite_item_id=item_id)"
+               "   AND   (item_inv_uom_id=uom_id)"
                "   AND   (itemsite_warehous_id=warehous_id)"
 	       "   AND   (bufrsts_target_type='W')"
 	       "   AND   (bufrsts_target_id=wo_id)"
@@ -658,7 +659,7 @@ void dspWoBufferStatusByParameterList::sFillList()
                                 q.value("wo_ordtype"), q.value("wonumber"),
                                 q.value("wo_status"), q.value("wo_priority"),
                                 q.value("warehous_code"), q.value("item_number"),
-                                q.value("description"), q.value("item_invuom"),
+                                q.value("description"), q.value("uom_name"),
                                 q.value("ordered"), q.value("received"),
                                 q.value("bufrststype") );
     last->setText(11, q.value("bufrsts_status").toString());

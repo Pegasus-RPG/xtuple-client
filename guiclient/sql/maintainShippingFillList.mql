@@ -3,7 +3,7 @@ SELECT shiphead_id, coitem_id AS lineitem_id, shipitem_id,
        cohead_number AS order_number,
        coitem_linenumber AS linenumber,
        cust_number AS dest, cohead_billtoname AS destcntct,
-       shiphead_shipvia, item_number, item_invuom,
+       shiphead_shipvia, item_number, uom_name,
        (item_descrip1 || ' ' || item_descrip2) AS description,
        formatDate(shipitem_transdate) AS shipitem_transdate,
        shipitem_trans_username,
@@ -13,12 +13,13 @@ SELECT shiphead_id, coitem_id AS lineitem_id, shipitem_id,
             WHEN (shiphead_sfstatus='P') THEN <? value("printed") ?>
             ELSE <? value("error") ?>
        END AS sfstatus 
-FROM cohead, cust, coitem, itemsite, item, shiphead, shipitem 
+FROM cohead, cust, coitem, itemsite, item, uom, shiphead, shipitem 
 WHERE ((coitem_cohead_id=cohead_id)
  AND (shipitem_orderitem_id=coitem_id)
  AND (cohead_cust_id=cust_id)
  AND (coitem_itemsite_id=itemsite_id)
  AND (itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (shipitem_shiphead_id=shiphead_id)
  AND (NOT shiphead_shipped)
  AND (shiphead_order_type='SO')
@@ -33,7 +34,7 @@ SELECT shiphead_id, toitem_id AS lineitem_id, shipitem_id,
        tohead_number AS order_number,
        toitem_linenumber AS linenumber,
        tohead_destname AS dest, tohead_destcntct_name AS destcntct,
-       shiphead_shipvia, item_number, item_invuom,
+       shiphead_shipvia, item_number, uom_name,
        (item_descrip1 || ' ' || item_descrip2) AS description,
        formatDate(shipitem_transdate) AS shipitem_transdate,
        shipitem_trans_username,
@@ -43,10 +44,11 @@ SELECT shiphead_id, toitem_id AS lineitem_id, shipitem_id,
             WHEN (shiphead_sfstatus='P') THEN <? value("printed") ?>
             ELSE <? value("error") ?>
        END AS sfstatus 
-FROM tohead, toitem, item, shiphead, shipitem 
+FROM tohead, toitem, item, uom, shiphead, shipitem 
 WHERE ((toitem_tohead_id=tohead_id)
  AND (shipitem_orderitem_id=toitem_id)
  AND (toitem_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (shipitem_shiphead_id=shiphead_id)
  AND (NOT shiphead_shipped)
  AND (shiphead_order_type='TO')

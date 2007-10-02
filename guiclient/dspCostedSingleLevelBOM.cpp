@@ -199,7 +199,7 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
 
     QString sql( "SELECT bomitem_id, bomitem_item_id AS item_id,"
                  "       bomitem_seqnumber, item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription, item_invuom,"
+                 "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription, uom_name,"
                  "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
                  "       formatScrap(bomitem_scrap) AS f_scrap,"
                  "       formatDate(bomitem_effective, 'Always') AS f_effective,"
@@ -215,14 +215,15 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
               " (bomitem_qtyper * (1 + bomitem_scrap) * actcost(bomitem_item_id)) AS extendedcost,";
 
     sql += " bomitem_effective AS effective "
-           "FROM bomitem, item "
+           "FROM bomitem, item, uom "
            "WHERE ( (bomitem_item_id=item_id)"
+           " AND (item_inv_uom_id=uom_id)"
            " AND (bomitem_parent_item_id=:item_id)"
            " AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires - 1)) ) "
 
            "UNION SELECT -1 AS bomitem_id, -1 AS item_id,"
            "             -1 AS bomitem_seqnumber, costelem_type AS item_number,"
-           "             '' AS itemdescription, '' AS item_invuom,"
+           "             '' AS itemdescription, '' AS uom_name,"
            "             '' AS qtyper, '' AS scrap, '' AS f_effective, '' AS f_expires,"
            "             '' AS f_unitcost,";
 
@@ -254,7 +255,7 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
       else
         last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("item_id").toInt(),
                                   q.value("bomitem_seqnumber").toString(), q.value("item_number").toString(),
-                                  q.value("itemdescription").toString(), q.value("item_invuom").toString(),
+                                  q.value("itemdescription").toString(), q.value("uom_name").toString(),
                                   q.value("f_qtyper").toString(), q.value("f_scrap").toString(),
                                   q.value("f_effective").toString(), q.value("f_expires").toString() );
 

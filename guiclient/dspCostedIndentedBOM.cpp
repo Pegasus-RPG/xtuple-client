@@ -218,7 +218,7 @@ void dspCostedIndentedBOM::sFillList()
       int _worksetid = q.value("bomwork_set_id").toInt();
 
       QString sql( "SELECT bomwork_id, item_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, item_invuom,"
+                   "       bomwork_seqnumber, item_number, uom_name,"
                    "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                    "       formatQtyPer(bomwork_qtyper) AS qtyper,"
                    "       formatScrap(bomwork_scrap) AS scrap,"
@@ -235,13 +235,14 @@ void dspCostedIndentedBOM::sFillList()
               " (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost) AS extendedcost,";
 
       sql += " bomwork_level "
-             "FROM bomwork, item "
+             "FROM bomwork, item, uom "
              "WHERE ((bomwork_item_id=item_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (bomwork_set_id=:bomwork_set_id)"
              " AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1))) "
 
              "UNION SELECT -1 AS bomwork_id, -1 AS item_id, -1 AS bomwork_parent_id,"
-             "             99999 AS bomwork_seqnumber, costelem_type AS item_number, '' AS item_invuom,"
+             "             99999 AS bomwork_seqnumber, costelem_type AS item_number, '' AS uom_name,"
              "             '' AS itemdescription,"
              "             '' AS qtyper, '' AS scrap, '' AS effective, '' AS expires,";
 
@@ -285,7 +286,7 @@ void dspCostedIndentedBOM::sFillList()
           {
             last = new XTreeWidgetItem( _bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                                       q.value("bomwork_seqnumber"), q.value("item_number"),
-                                      q.value("itemdescription"), q.value("item_invuom"),
+                                      q.value("itemdescription"), q.value("uom_name"),
                                       q.value("qtyper"), q.value("scrap"),
                                       q.value("effective"), q.value("expires"),
                                       q.value("f_unitcost"), q.value("f_extendedcost") );
@@ -312,7 +313,7 @@ void dspCostedIndentedBOM::sFillList()
 						q.value("bomwork_seqnumber"),
 						q.value("item_number"),
 						q.value("itemdescription"),
-						q.value("item_invuom"),
+						q.value("uom_name"),
 						q.value("qtyper"),
 						q.value("scrap"),
 						q.value("effective"),

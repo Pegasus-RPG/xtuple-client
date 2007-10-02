@@ -56,7 +56,7 @@
        coitem_memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
-       item_invuom,
+       uom_name,
        item_shipuom,
        item_descrip1,
        item_descrip2,
@@ -98,9 +98,10 @@
                                           >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'
             ELSE coitem_status
        END AS f_status
-  FROM itemsite, item, coitem
+  FROM itemsite, item, uom, coitem
  WHERE ( (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (coitem_status &lt;> 'X')
    AND (coitem_status &lt;> 'C')
 -- 1 REMOVE THIS AND CLOSED LINES WILL NOT DISPLAY ON PACKING LIST  
@@ -110,7 +111,7 @@
 -- &lt;? endif ?>
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)
 )
-GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, item_invuom, item_shipuom,
+GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qtyshipped,
          coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
@@ -988,7 +989,7 @@ WHERE ((image_name='logo'));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

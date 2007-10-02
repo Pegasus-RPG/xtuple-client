@@ -28,7 +28,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom as f_uom,
+       uom_name as f_uom,
        formatCost(scost) as f_stdcost,
        formatCost(acost) as f_actcost,
        classcode_code
@@ -36,12 +36,13 @@
                 item_number,
                 item_descrip1,
                 item_descrip2,
-                item_invuom,
+                uom_name,
                 stdcost(item_id) AS scost,
                 actcost(item_id) AS acost,
                 classcode_code
-           FROM item, classcode
+           FROM item, classcode, uom
           WHERE ((item_classcode_id=classcode_id)
+            AND (item_inv_uom_id=uom_id)
           &lt;? if exists(&quot;classcode_id&quot;) ?>
             AND (classcode_id=&lt;? value(&quot;classcode_id&quot;) ?>)
           &lt;? elseif exists(&quot;classcode_pattern&quot;) ?>

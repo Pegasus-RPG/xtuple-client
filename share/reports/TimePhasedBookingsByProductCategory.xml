@@ -53,11 +53,11 @@
        (formatDate(calitem_start) || '-' || formatDate(calitem_end)) AS period,
        prodcat_code,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
-         item_invuom
+         uom_name
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         item_capuom
+         itemcapuom(item_id)
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         item_altcapuom
+         itemaltcapuom(item_id)
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -66,9 +66,9 @@
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          formatQty(SUM(bookingsByItemQty(itemsite_id, calitem_id)))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         formatQty(SUM(bookingsByItemQty(itemsite_id, calitem_id) * item_capinvrat))
+         formatQty(SUM(bookingsByItemQty(itemsite_id, calitem_id) * itemcapinvrat(item_id)))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         formatQty(SUM(bookingsByItemQty(itemsite_id, calitem_id) * item_altcapinvrat))
+         formatQty(SUM(bookingsByItemQty(itemsite_id, calitem_id) * itemaltcapinvrat(item_id)))
        &lt;? else ?>
          formatExtPrice(SUM(bookingsByItemValue(itemsite_id, calitem_id)))
        &lt;? endif ?>
@@ -76,14 +76,14 @@
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          SUM(bookingsByItemQty(itemsite_id, calitem_id))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         SUM(bookingsByItemQty(itemsite_id, calitem_id) * item_capinvrat)
+         SUM(bookingsByItemQty(itemsite_id, calitem_id) * itemcapinvrat(item_id))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         SUM(bookingsByItemQty(itemsite_id, calitem_id) * item_altcapinvrat)
+         SUM(bookingsByItemQty(itemsite_id, calitem_id) * itemaltcapinvrat(item_id))
        &lt;? else ?>
          SUM(bookingsByItemValue(itemsite_id, calitem_id))
        &lt;? endif ?>
        AS unit
-  FROM itemsite, item, warehous, prodcat,
+  FROM itemsite, item, uom, warehous, prodcat,
        ( SELECT rcalitem_id AS calitem_id,
                 findPeriodStart(rcalitem_id) AS calitem_start,
                 findPeriodEnd(rcalitem_id) AS calitem_end
@@ -114,6 +114,7 @@
        ) AS calitem
  WHERE ((itemsite_warehous_id=warehous_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (item_prodcat_id=prodcat_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)

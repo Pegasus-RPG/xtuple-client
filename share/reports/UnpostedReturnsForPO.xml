@@ -17,7 +17,7 @@
   <name>detail</name>
   <sql>SELECT poitem_linenumber,
        COALESCE(item_number, 'Non-Inventory') AS item_number,
-       COALESCE(item_invuom, 'N/A') AS item_invuom,
+       COALESCE(uom_name, 'N/A') AS uom_name,
        poitem_vend_item_number, poitem_vend_uom,
        formatQty(poitem_qty_ordered)  AS f_poitem_qty_ordered,
        formatQty(poitem_qty_received) AS f_poitem_qty_received,
@@ -27,7 +27,7 @@
 FROM poreject LEFT OUTER JOIN rjctcode ON (poreject_rjctcode_id=rjctcode_id),
      poitem LEFT OUTER JOIN
      ( itemsite JOIN item
-       ON (itemsite_item_id=item_id)
+       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)
      ) ON (poitem_itemsite_id=itemsite_id)
 WHERE ((poreject_poitem_id=poitem_id)
   AND  (NOT poreject_posted)
@@ -35,7 +35,7 @@ WHERE ((poreject_poitem_id=poitem_id)
 GROUP BY
         poitem_linenumber,
         item_number,
-        item_invuom,
+        uom_name,
         poitem_vend_item_number,
         poitem_vend_uom,
         poitem_qty_ordered,
@@ -528,7 +528,7 @@ WHERE ((image_name='logo'));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

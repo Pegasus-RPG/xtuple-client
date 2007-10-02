@@ -2192,8 +2192,8 @@ void salesOrder::sFillItemList()
                 "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
                 "       formatQty(COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) AS f_atshipping,"
                 "       formatSalesPrice(coitem_price) AS f_unitprice,"
-                "       formatMoney(round(coitem_qtyord * coitem_price / item_invpricerat,2)) AS f_extprice,"
-                "       round((COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) * coitem_price / item_invpricerat,2) AS shippingAmount,"
+                "       formatMoney(round(coitem_qtyord * coitem_price / iteminvpricerat(item_id),2)) AS f_extprice,"
+                "       round((COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) * coitem_price / iteminvpricerat(item_id),2) AS shippingAmount,"
                 "       (noNeg(coitem_qtyord) <> COALESCE(SUM(coship_qty), 0)) AS tagged,"
                 "       CASE WHEN coitem_scheddate > current_date THEN 1"
                 "            ELSE 0"
@@ -2211,7 +2211,7 @@ void salesOrder::sFillItemList()
                    "GROUP BY coitem_id, coitem_cohead_id, itemsite_id, itemsite_qtyonhand, coitem_qtyshipped,"
                    "         coitem_linenumber, item_id, item_number, item_descrip1, item_descrip2,"
                    "         warehous_id, warehous_code, coitem_status, coitem_qtyord, coitem_qtyreturned,"
-                   "         coitem_price, item_invpricerat, coitem_scheddate "
+                   "         coitem_price, coitem_scheddate "
                    "ORDER BY coitem_linenumber;" );
     q.prepare(sql);
     q.bindValue(":cohead_id", _soheadid);
@@ -2274,7 +2274,7 @@ void salesOrder::sFillItemList()
                "       formatQty(quitem_qtyord) AS f_ordered,"
                "       formatQty(0) AS f_shipped,"
                "       formatSalesPrice(quitem_price) AS f_unitprice,"
-               "       formatMoney(round(quitem_qtyord * quitem_price / item_invpricerat,2)) AS f_extprice "
+               "       formatMoney(round(quitem_qtyord * quitem_price / iteminvpricerat(item_id),2)) AS f_extprice "
                "  FROM item, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
                " WHERE ( (quitem_item_id=item_id)"
                "   AND   (quitem_quhead_id=:quhead_id) ) "
@@ -2298,7 +2298,7 @@ void salesOrder::sFillItemList()
 
   //  Determine the subtotal
   if (ISORDER(_mode))
-    q.prepare( "SELECT SUM(round(coitem_qtyord * coitem_price / item_invpricerat,2)) AS subtotal,"
+    q.prepare( "SELECT SUM(round(coitem_qtyord * coitem_price / iteminvpricerat(item_id),2)) AS subtotal,"
                "       SUM(round(coitem_qtyord * stdCost(item_id),2)) AS totalcost "
                "FROM coitem, itemsite, item "
                "WHERE ( (coitem_cohead_id=:head_id)"
@@ -2306,7 +2306,7 @@ void salesOrder::sFillItemList()
                " AND (coitem_status <> 'X')"
                " AND (itemsite_item_id=item_id) );" );
   else
-    q.prepare( "SELECT SUM(round(quitem_qtyord * quitem_price / item_invpricerat,2)) AS subtotal,"
+    q.prepare( "SELECT SUM(round(quitem_qtyord * quitem_price / iteminvpricerat(item_id),2)) AS subtotal,"
                "       SUM(round(quitem_qtyord * stdCost(item_id),2)) AS totalcost "
                "  FROM quitem, item "
                " WHERE ( (quitem_quhead_id=:head_id)"
@@ -4287,18 +4287,18 @@ void salesOrder::recalculateTax()
 
   //  Determine the line item tax
   if (ISORDER(_mode))
-    itemq.prepare( "SELECT SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_price) / item_invpricerat, 2), 0, 'A'), 2)) AS itemtaxa,"
-                   "       SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_price) / item_invpricerat, 2), 0, 'B'), 2)) AS itemtaxb,"
-                   "       SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_price) / item_invpricerat, 2), 0, 'C'), 2)) AS itemtaxc "
+    itemq.prepare( "SELECT SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_price) / iteminvpricerat(item_id), 2), 0, 'A'), 2)) AS itemtaxa,"
+                   "       SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_price) / iteminvpricerat(item_id), 2), 0, 'B'), 2)) AS itemtaxb,"
+                   "       SUM(ROUND(calculateTax(coitem_tax_id, ROUND((coitem_qtyord * coitem_price) / iteminvpricerat(item_id), 2), 0, 'C'), 2)) AS itemtaxc "
                    "FROM coitem, itemsite, item "
                    "WHERE ((coitem_cohead_id=:head_id)"
                    "  AND  (coitem_status != 'X')"
                    "  AND  (coitem_itemsite_id=itemsite_id)"
                    "  AND  (itemsite_item_id=item_id));" );
   else // ISQUOTE(_mode)
-    itemq.prepare( "SELECT SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_price) / item_invpricerat, 2), 0, 'A'), 2)) AS itemtaxa,"
-                   "       SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_price) / item_invpricerat, 2), 0, 'B'), 2)) AS itemtaxb,"
-                   "       SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_price) / item_invpricerat, 2), 0, 'C'), 2)) AS itemtaxc "
+    itemq.prepare( "SELECT SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_price) / iteminvpricerat(item_id), 2), 0, 'A'), 2)) AS itemtaxa,"
+                   "       SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_price) / iteminvpricerat(item_id), 2), 0, 'B'), 2)) AS itemtaxb,"
+                   "       SUM(ROUND(calculateTax(quitem_tax_id, ROUND((quitem_qtyord * quitem_price) / iteminvpricerat(item_id), 2), 0, 'C'), 2)) AS itemtaxc "
                    "FROM quitem, item "
                    "WHERE ((quitem_quhead_id=:head_id)"
                    "  AND  (quitem_item_id=item_id));" );

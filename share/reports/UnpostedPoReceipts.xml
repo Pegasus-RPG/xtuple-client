@@ -16,7 +16,7 @@
        poitem_linenumber,
        formatDate(porecv_duedate) AS porecv_duedate,
        COALESCE(item_number, 'Non-Inventory') AS item_number,
-       COALESCE(item_invuom, 'N/A') AS item_invuom,
+       COALESCE(uom_name, 'N/A') AS uom_name,
        porecv_vend_item_number,
        porecv_vend_uom,
        formatQty(poitem_qty_ordered) AS poitem_qty_ordered,
@@ -26,7 +26,7 @@
        formatDate(COALESCE(porecv_gldistdate, porecv_date)) AS porecv_gldistdate,
       poitem_pohead_id 
 FROM vend, pohead, poitem, porecv LEFT OUTER JOIN 
-     (itemsite JOIN ITEM ON (itemsite_item_id=item_id))
+     (itemsite JOIN item ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))
       ON (porecv_itemsite_id=itemsite_id)
 WHERE ( (porecv_poitem_id=poitem_id)
   AND   (NOT porecv_posted)
@@ -358,7 +358,7 @@ ORDER BY porecv_ponumber, poitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

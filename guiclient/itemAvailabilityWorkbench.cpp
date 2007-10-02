@@ -292,12 +292,13 @@ void itemAvailabilityWorkbench::sFillListWhereUsed()
   {
     QString sql( "SELECT bomitem_parent_item_id, item_id, bomitem_seqnumber,"
                  "       item_number, (item_descrip1 || ' ' || item_descrip2),"
-                 "       item_invuom, formatQtyper(bomitem_qtyper),"
+                 "       uom_name, formatQtyper(bomitem_qtyper),"
                  "       formatScrap(bomitem_scrap),"
                  "       formatDate(bomitem_effective, 'Always'),"
                  "       formatDate(bomitem_expires, 'Never') "
-                 "FROM bomitem, item "
+                 "FROM bomitem, item, uom "
                  "WHERE ( (bomitem_parent_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_item_id=:item_id)" );
 
     if (_effective->isNull())
@@ -615,7 +616,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
       int _worksetid = q.value("bomwork_set_id").toInt();
 
       QString sql( "SELECT bomwork_id, item_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, item_invuom,"
+                   "       bomwork_seqnumber, item_number, uom_name,"
                    "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                    "       formatQtyPer(bomwork_qtyper) AS qtyper,"
                    "       formatScrap(bomwork_scrap) AS scrap,"
@@ -641,13 +642,14 @@ void itemAvailabilityWorkbench::sFillListCosted()
       }
 
       sql += " bomwork_level "
-             "FROM bomwork, item "
+             "FROM bomwork, item, uom "
              "WHERE ((bomwork_item_id=item_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (bomwork_set_id=:bomwork_set_id)"
              " AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1))) "
 
              "UNION SELECT -1 AS bomwork_id, -1 AS item_id, -1 AS bomwork_parent_id,"
-             "             99999 AS bomwork_seqnumber, costelem_type AS item_number, '' AS item_invuom,"
+             "             99999 AS bomwork_seqnumber, costelem_type AS item_number, '' AS uom_name,"
              "             '' AS itemdescription,"
              "             '' AS qtyper, '' AS scrap, '' AS effective, '' AS expires,";
 
@@ -700,7 +702,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
           {
             last = new XTreeWidgetItem( _bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                                       q.value("bomwork_seqnumber"), q.value("item_number"),
-                                      q.value("itemdescription"), q.value("item_invuom"),
+                                      q.value("itemdescription"), q.value("uom_name"),
                                       q.value("qtyper"), q.value("scrap"),
                                       q.value("effective"), q.value("expires"),
                                       q.value("f_unitcost"), q.value("f_extendedcost") );
@@ -724,7 +726,7 @@ void itemAvailabilityWorkbench::sFillListCosted()
 
                 child = new XTreeWidgetItem( cursor, sibling, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                                            q.value("bomwork_seqnumber"), q.value("item_number"),
-                                           q.value("itemdescription"), q.value("item_invuom"),
+                                           q.value("itemdescription"), q.value("uom_name"),
                                            q.value("qtyper"), q.value("scrap"),
                                            q.value("effective"), q.value("expires"),
                                            q.value("f_unitcost"), q.value("f_extendedcost") );

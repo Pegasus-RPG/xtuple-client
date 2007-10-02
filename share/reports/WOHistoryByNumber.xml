@@ -13,7 +13,7 @@
   <name>Detail</name>
   <sql>SELECT wo_subnumber AS subnumber,
        wo_status, warehous_code,
-       item_number, item_descrip1, item_descrip2, item_invuom,
+       item_number, item_descrip1, item_descrip2, uom_name,
        formatQty(wo_qtyord) AS ordered,
        formatQty(wo_qtyrcv) AS received,
        formatDate(wo_startdate) AS startdate,
@@ -24,9 +24,10 @@
          text('')
        &lt;? endif ?>
        AS value
-  FROM wo, itemsite, warehous, item
+  FROM wo, itemsite, warehous, item, uom
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_number=&lt;? value(&quot;woNumber&quot;) ?>)
 &lt;? if exists(&quot;showOnlyTopLeve&quot;) ?>
@@ -606,7 +607,7 @@ ORDER BY wo_subnumber;
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

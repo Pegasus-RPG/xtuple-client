@@ -14,8 +14,8 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom
-  FROM item
+       uom_name
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
  </querysource>
  <querysource>
@@ -164,7 +164,7 @@
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <line>

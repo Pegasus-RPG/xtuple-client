@@ -13,17 +13,18 @@
   <name>head</name>
   <sql>SELECT formatWONumber(wo_id) AS wonumber,
        warehous_code as warehouse,
-       item_number, item_descrip1, item_descrip2, item_invuom,
+       item_number, item_descrip1, item_descrip2, uom_name,
        wo_status AS status
-  FROM wo, itemsite, item, warehous
+  FROM wo, itemsite, item, uom, warehous
  WHERE ((wo_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_warehous_id=warehous_id)
    AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) );</sql>
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT item_number, item_descrip1, item_descrip2, item_invuom,
+  <sql>SELECT item_number, item_descrip1, item_descrip2, uom_name,
                formatQty(qoh) AS adjqoh,
                formatQty(wobalance) AS woalloc,
                formatQty(allocated) AS totalalloc,
@@ -31,15 +32,16 @@
                formatQty(qoh + ordered - wobalance) AS woavail,
                formatQty(qoh + ordered - allocated) AS totalavail
    FROM (SELECT item_number, item_descrip1, item_descrip2,
-                item_invuom,
+                uom_name,
                 noNeg(itemsite_qtyonhand) AS qoh,
                 noNeg(womatl_qtyreq - womatl_qtyiss) AS wobalance,
                 qtyAllocated(itemsite_id, womatl_duedate) AS allocated,
                 qtyOrdered(itemsite_id, womatl_duedate) AS ordered
-           FROM wo, womatl, itemsite, item
+           FROM wo, womatl, itemsite, item, uom
           WHERE ((womatl_wo_id=wo_id)
              AND (womatl_itemsite_id=itemsite_id)
              AND (itemsite_item_id=item_id)
+             AND (item_inv_uom_id=uom_id)
              AND (womatl_wo_id=&lt;? value(&quot;wo_id&quot;) ?>))
         ) AS data
 &lt;? if exists(&quot;onlyShowShortages&quot;) ?>
@@ -81,7 +83,7 @@ ORDER BY item_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -789,7 +791,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
   </detail>

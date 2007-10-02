@@ -148,7 +148,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     _bomitem->clear();
 
     QString sql( "SELECT bomitem_id, TEXT(booitem_seqnumber) AS seqnumber, bomitem_seqnumber, item_number,"
-                 "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip, item_invuom,"
+                 "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip, uom_name,"
                  "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
                  "       formatScrap(bomitem_scrap) AS f_scrap,"
                  "       formatDate(bomitem_effective, :always) AS f_effective,"
@@ -160,8 +160,9 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
                  "       CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
                  "            ELSE FALSE"
                  "       END AS future "
-                 "FROM bomitem, booitem, item "
+                 "FROM bomitem, booitem, item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_parent_item_id=:item_id)"
                  " AND (bomitem_booitem_id=booitem_id)" );
 
@@ -173,7 +174,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
 
     sql += " ) "
            "UNION SELECT bomitem_id, '' AS seqnumber, bomitem_seqnumber, item_number,"
-           "             (item_descrip1 || ' ' || item_descrip2), item_invuom,"
+           "             (item_descrip1 || ' ' || item_descrip2), uom_name,"
            "             formatQtyper(bomitem_qtyper),"
            "             formatScrap(bomitem_scrap),"
            "             formatDate(bomitem_effective, :always),"
@@ -185,8 +186,9 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
            "             CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
            "                  ELSE FALSE"
            "             END AS future "
-           "FROM bomitem, item "
+           "FROM bomitem, item, uom "
            "WHERE ( (bomitem_item_id=item_id)"
+           " AND (item_inv_uom_id=uom_id)"
            " AND (bomitem_parent_item_id=:item_id)"
            " AND (bomitem_booitem_id=-1)";
 
@@ -209,7 +211,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     {
       last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(), q.value("seqnumber"),
                                 q.value("bomitem_seqnumber"), q.value("item_number"),
-                                q.value("f_descrip"), q.value("item_invuom"),
+                                q.value("f_descrip"), q.value("uom_name"),
                                 q.value("f_qtyper"), q.value("f_scrap"),
                                 q.value("f_effective"), q.value("f_expires") );
 

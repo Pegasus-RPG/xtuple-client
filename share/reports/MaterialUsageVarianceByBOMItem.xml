@@ -14,11 +14,11 @@
   <sql>SELECT parent.item_number AS parent_number,
        parent.item_descrip1 AS parent_descrip1,
        parent.item_descrip2 AS parent_descrip2,
-       parent.item_invuom AS parent_invuom,
+       puom.uom_name AS parent_invuom,
        child.item_number AS comp_number,
        child.item_descrip1 AS comp_descrip1,
        child.item_descrip2 AS comp_descrip2,
-       child.item_invuom AS comp_invuom,
+       cuom.uom_name AS comp_invuom,
        bomitem_seqnumber as comp_seqnumber,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
@@ -28,9 +28,11 @@
          text('All Warehouses')
        &lt;? endif ?>
        AS warehouse
-  FROM item as parent, item as child, bomitem
+  FROM item as parent, item as child, uom AS puom, uom AS cuom, bomitem
  WHERE ((parent.item_id=&lt;? value(&quot;item_id&quot;) ?>)
+   AND (parent.item_inv_uom_id=puom.uom_id)
    AND (bomitem_item_id=child.item_id)
+   AND (child.item_inv_uom_id=cuom.uom_id)
    AND (bomitem_id=&lt;? value(&quot;component_item_id&quot;) ?>) );
 </sql>
  </querysource>

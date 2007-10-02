@@ -12,13 +12,13 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        CASE WHEN (&lt;? value(&quot;cutOffDate&quot;) ?> >= date('12/31/2099')) THEN text('Latest')
             ELSE formatDate(&lt;? value(&quot;cutOffDate&quot;) ?>)
        END AS cutoffdate
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
     </sql>
  </querysource>
@@ -26,8 +26,8 @@
   <name>detail</name>
   <sql>SELECT formatDate(bomitem_effective) as actiondate,
        'Effective' AS action,
-       bomitem_seqnumber, item_number, item_invuom,
-       item_descrip1, item_descrip2, item_invuom,
+       bomitem_seqnumber, item_number, uom_name,
+       item_descrip1, item_descrip2, uom_name,
        formatQtyPer(bomitem_qtyper) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
        formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
@@ -39,16 +39,17 @@
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod
-  FROM bomitem, item
+  FROM bomitem, item, uom
  WHERE ((bomitem_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomitem_parent_item_id=&lt;? value(&quot;item_id&quot;) ?>)
    AND (bomitem_effective BETWEEN CURRENT_DATE AND &lt;? value(&quot;cutOffDate&quot;) ?>)
 )
 UNION
 SELECT formatDate(bomitem_expires) as actiondate,
        'Expires' AS action,
-       bomitem_seqnumber, item_number, item_invuom,
-       item_descrip1, item_descrip2, item_invuom,
+       bomitem_seqnumber, item_number, uom_name,
+       item_descrip1, item_descrip2, uom_name,
        formatQtyPer(bomitem_qtyper) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
        formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
@@ -60,8 +61,9 @@ SELECT formatDate(bomitem_expires) as actiondate,
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod
-FROM bomitem, item
+FROM bomitem, item, uom
 WHERE ((bomitem_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (bomitem_parent_item_id=&lt;? value(&quot;item_id&quot;) ?>)
  AND (bomitem_expires BETWEEN CURRENT_DATE AND &lt;? value(&quot;cutOffDate&quot;) ?>)
 )
@@ -629,7 +631,7 @@ ORDER BY action, actiondate, bomitem_seqnumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatCost(stdcost(item_id)) AS standardcost,
@@ -23,7 +23,7 @@
          text('Standard Cost')
        &lt;? endif ?>
        AS costtype
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value("item_id") ?>);
     </sql>
  </querysource>
@@ -32,7 +32,7 @@
   <sql>SELECT bomitem_seqnumber AS orderby,
        text(bomitem_seqnumber) AS seqnumber,
        item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatBoolYN(bomitem_createwo) AS createchild,
@@ -58,8 +58,9 @@
          formatCost((stdcost(bomitem_item_id) * (bomitem_qtyper * (1 + bomitem_scrap))))
        &lt;? endif ?>
        AS extcost
-  FROM bomitem, item
+  FROM bomitem, item, uom
  WHERE ( (bomitem_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomitem_parent_item_id=&lt;? value("item_id") ?>)
    AND (CURRENT_DATE BETWEEN bomitem_effective and (bomitem_expires - 1))
 )
@@ -67,7 +68,7 @@ UNION
 SELECT 0 AS orderby,
        '' AS seqnumber,
        costelem_type AS item_number,
-       '' AS item_invuom,
+       '' AS uom_name,
        '' AS item_descrip1,
        '' AS item_descrip2,
        '' AS createchild,
@@ -824,7 +825,7 @@ ORDER BY orderby;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

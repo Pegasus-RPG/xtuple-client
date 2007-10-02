@@ -14,7 +14,7 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
@@ -23,7 +23,7 @@
          text('All Warehouses')
        &lt;? endif ?>
        AS warehouse
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
  </querysource>
  <querysource>
@@ -33,7 +33,7 @@
        cust_number, cust_name,
        formatQty(coitem_qtyord) AS ordered,
        formatPrice(coitem_price) AS unitprice,
-       formatExtPrice(coitem_qtyord * (coitem_price / item_invpricerat)) AS f_extprice 
+       formatExtPrice(coitem_qtyord * (coitem_price / iteminvpricerat(item_id))) AS f_extprice 
   FROM coitem, cohead, cust, itemsite, item 
  WHERE ((coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
@@ -395,7 +395,7 @@ ORDER BY cohead_orderdate;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
  </rpthead>

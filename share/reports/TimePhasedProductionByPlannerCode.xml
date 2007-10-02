@@ -53,11 +53,11 @@
        (formatDate(findPeriodStart(calitem_id)) || '-' || formatDate(findPeriodEnd(calitem_id))) AS period,
        plancode_code,
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
-         item_invuom
+         uom_name
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         item_capuom
+         itemcapuom(item_id)
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         item_altcapuom
+         itemaltcapuom(item_id)
        &lt;? else ?>
          text('')
        &lt;? endif ?>
@@ -66,14 +66,14 @@
        &lt;? if exists(&quot;inventoryUnits&quot;) ?>
          formatQty(SUM(summProd(itemsite_id, calitem_id)))
        &lt;? elseif exists(&quot;capacityUnits&quot;) ?>
-         formatQty(SUM(summProd(itemsite_id, calitem_id) * item_capinvrat))
+         formatQty(SUM(summProd(itemsite_id, calitem_id) * itemcapinvrat(item_id)))
        &lt;? elseif exists(&quot;altCapacityUnits&quot;) ?>
-         formatQty(SUM(summProd(itemsite_id, calitem_id) * item_altcapinvrat))
+         formatQty(SUM(summProd(itemsite_id, calitem_id) * itemaltcapinvrat(item_id)))
        &lt;? else ?>
          formatQty(SUM(summProd(itemsite_id, calitem_id)))
        &lt;? endif ?>
        AS f_unit
-  FROM itemsite, item, warehous, plancode,
+  FROM itemsite, item, uom, warehous, plancode,
        (SELECT rcalitem_id AS calitem_id
           FROM rcalitem
          WHERE (rcalitem_id in (
@@ -101,6 +101,7 @@
    AND (itemsite_active)
 &lt;? endif ?>
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (itemsite_plancode_id=plancode_id)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
    AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)

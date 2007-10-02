@@ -39,7 +39,7 @@
        item_number, item_descrip1, item_descrip2,
        formatQty(coitem_qtyord) AS ordered,
        formatPrice(coitem_price) AS unitprice,
-       formatExtPrice(coitem_qtyord * (coitem_price / item_invpricerat)) AS f_extprice
+       formatExtPrice(coitem_qtyord * (coitem_price / iteminvpricerat(item_id))) AS f_extprice
   FROM coitem, cohead, cust, itemsite, item, prodcat 
  WHERE ((coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)

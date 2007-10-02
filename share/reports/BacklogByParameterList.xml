@@ -71,23 +71,24 @@
   <sql>SELECT cohead_number, coitem_linenumber, cust_name,
        formatDate(cohead_orderdate) AS f_orderdate,
        formatDate(coitem_scheddate) AS f_scheddate,
-       item_number, item_invuom,
+       item_number, uom_name,
        item_descrip1, item_descrip2,
        formatQty(coitem_qtyord) AS f_qtyord,
        formatQty(coitem_qtyshipped) AS f_qtyship,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance, 
        &lt;? if exists(&quot;showPrices&quot;) ?>
-         formatMoney(round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / item_invpricerat),2))
+         formatMoney(round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2))
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_ammount,
-       round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / item_invpricerat),2) AS backlog 
-  FROM cohead, coitem, itemsite, item, cust 
+       round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2) AS backlog 
+  FROM cohead, coitem, itemsite, item, cust, uom
  WHERE ((coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)
    AND (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (coitem_status NOT IN ('C','X'))
    AND (coitem_scheddate BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
@@ -952,7 +953,7 @@ ORDER BY coitem_scheddate, cohead_number, coitem_linenumber;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
   </detail>

@@ -12,22 +12,23 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
     </sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>select item_number,
-       item_invuom,
+       uom_name,
        item_descrip1,
        item_descrip2,
        formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS qtyper
-  FROM bomwork, item
+  FROM bomwork, item, uom
  WHERE ((bomwork_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (bomwork_set_id=&lt;? value(&quot;bomworkset_id&quot;) ?>)
 &lt;? if exists(&quot;expiredDays&quot;) ?>
    AND (bomwork_expires > (CURRENT_DATE - &lt;? value(&quot;expiredDays&quot;) ?>))
@@ -40,7 +41,7 @@
    AND (bomwork_effective &lt;= CURRENT_DATE)
 &lt;? endif ?>
  )
-GROUP BY item_number, item_invuom,
+GROUP BY item_number, uom_name,
          item_descrip1, item_descrip2
 ORDER BY item_number;</sql>
  </querysource>
@@ -113,7 +114,7 @@ ORDER BY item_number;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>
@@ -381,7 +382,7 @@ ORDER BY item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

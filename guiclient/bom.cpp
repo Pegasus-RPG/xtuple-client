@@ -378,7 +378,7 @@ void BOM::sFillList(int pItemid, bool)
     
     QString sql( "SELECT bomitem_id, item_id, bomitem_seqnumber,"
                  "       item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "       item_invuom,"
+                 "       uom_name,"
                  "       CASE WHEN (bomitem_issuemethod = 'S') THEN :push"
                  "            WHEN (bomitem_issuemethod = 'L') THEN :pull"
                  "            WHEN (bomitem_issuemethod = 'M') THEN :mixed"
@@ -389,8 +389,9 @@ void BOM::sFillList(int pItemid, bool)
                  "       formatDate(bomitem_effective, :always) AS f_effective,"
                  "       formatDate(bomitem_expires, :never) AS f_expires,"
                  "       (bomitem_configtype<>'N') AS config "
-                 "FROM bomitem, item "
+                 "FROM bomitem, item, uom "
                  "WHERE ((bomitem_item_id=item_id)"
+                 " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_parent_item_id=:item_id)" );
     
     if (!_showExpired->isChecked())
@@ -425,7 +426,7 @@ void BOM::sFillList(int pItemid, bool)
 				 q.value("bomitem_seqnumber"),
 				 q.value("item_number"),
 				 q.value("item_description"),
-				 q.value("item_invuom"),
+				 q.value("uom_name"),
 				 q.value("issuemethod"), q.value("f_qtyper"),
 				 q.value("f_scrap"), q.value("f_effective"),
 				 q.value("f_expires") );

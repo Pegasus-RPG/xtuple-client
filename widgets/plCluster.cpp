@@ -83,13 +83,14 @@ void PlanOrdLineEdit::setId(int pId)
 {
   XSqlQuery planord;
   planord.prepare( "SELECT formatPloNumber(planord_id) AS plnumber,"
-                   "       warehous_code, item_number, item_invuom,"
+                   "       warehous_code, item_number, uom_name,"
                    "       item_descrip1, item_descrip2,"
                    "       formatQty(planord_qty) AS qty,"
                    "       formatDate(planord_duedate) AS duedate "
-                   "FROM planord, itemsite, item, warehous "
+                   "FROM planord, itemsite, item, warehous, uom "
                    "WHERE ( (planord_itemsite_id=itemsite_id)"
                    " AND (itemsite_item_id=item_id)"
+                   " AND (item_inv_uom_id=uom_id)"
                    " AND (itemsite_warehous_id=warehous_id)"
                    " AND (planord_id=:planord_id) );" );
   planord.bindValue(":planord_id", pId);
@@ -104,7 +105,7 @@ void PlanOrdLineEdit::setId(int pId)
     emit newId(_id);
     emit warehouseChanged(planord.value("warehous_code").toString());
     emit itemNumberChanged(planord.value("item_number").toString());
-    emit uomChanged(planord.value("item_invuom").toString());
+    emit uomChanged(planord.value("uom_name").toString());
     emit itemDescrip1Changed(planord.value("item_descrip1").toString());
     emit itemDescrip2Changed(planord.value("item_descrip2").toString());
     emit dueDateChanged(planord.value("duedate").toString());

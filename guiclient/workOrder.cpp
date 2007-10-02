@@ -82,8 +82,8 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _woid = -1;
 
   _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                  "       item_active, item_config, item_type, item_invuom "
-                  "FROM item "
+                  "       item_active, item_config, item_type, uom_name "
+                  "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
                   "WHERE (item_type IN ('M', 'B')) ");
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;

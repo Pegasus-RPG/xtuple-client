@@ -143,7 +143,7 @@ void postInvoices::sPost()
 	 "       GROUP BY invchead_id "
 	 "       HAVING SUM(round(invcitem_billed * invcitem_price /  "
 	 "     	     CASE WHEN (item_id IS NULL) THEN 1 "
-	 "     	     ELSE item_invpricerat END, 2)) <= 0) AS foo;");
+	 "     	     ELSE iteminvpricerat(item_id) END, 2)) <= 0) AS foo;");
   if (q.first() && q.value("numZeroInvcs").toInt() > 0)
   {
     int toPost = QMessageBox::question(this, tr("Invoices for 0 Amount"),

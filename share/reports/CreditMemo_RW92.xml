@@ -38,12 +38,13 @@ ORDER BY cmhead_number;</sql>
   <sql>SELECT cmitem_linenumber,
           formatQty(cmitem_qtycredit) AS qtycredit,
           formatQty(cmitem_qtyreturned) AS qtyreturned,
-          item_invuom, item_number, item_descrip1, item_descrip2,
+          uom_name, item_number, item_descrip1, item_descrip2,
           formatPrice(cmitem_unitprice) AS unitprice,
           formatExtPrice(cmitem_unitprice * cmitem_qtycredit) AS extprice
-         FROM cmitem, itemsite, item
+         FROM cmitem, itemsite, item, uom
          WHERE ((cmitem_itemsite_id=itemsite_id)
           AND (itemsite_item_id=item_id)
+          AND (item_inv_uom_id=uom_id)
           AND (cmitem_cmhead_id=%1))
          ORDER BY cmitem_linenumber;</sql>
  </querysource>
@@ -434,7 +435,7 @@ ORDER BY cmhead_number;</sql>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>
@@ -529,7 +530,7 @@ ORDER BY cmhead_number;</sql>
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

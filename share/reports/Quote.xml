@@ -70,7 +70,7 @@
        warehous_code,
        formatQty(quitem_qtyord) as f_ordered,
        formatPrice(quitem_price) as f_price,
-       formatExtprice(quitem_qtyord * (quitem_price / item_invpricerat)) as f_extprice
+       formatExtprice(quitem_qtyord * (quitem_price / iteminvpricerat(item_id))) as f_extprice
   FROM item, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id)
  WHERE ( (quitem_item_id=item_id)
    AND   (quitem_quhead_id=&lt;? value("quhead_id") ?>) )
@@ -84,14 +84,14 @@
        formatExtPrice(quhead_freight) as f_freight,
        formatExtPrice(subtotal + tax + quhead_freight) AS f_total
   FROM quhead,
-       (SELECT SUM(quitem_qtyord * (quitem_price / item_invpricerat)) AS subtotal
+       (SELECT SUM(quitem_qtyord * (quitem_price / iteminvpricerat(item_id))) AS subtotal
           FROM quitem, item
          WHERE ((quitem_quhead_id=&lt;? value("quhead_id") ?>)
            AND  (quitem_item_id=item_id)) ) AS subtot,
        (SELECT calculateTax(quhead_tax_id,
                             SUM(quitem_qtyord
                               * (quitem_price
-                              / item_invpricerat)),
+                              / iteminvpricerat(item_id))),
                             quhead_freight) AS tax
           FROM quitem, item,
                (SELECT quhead_tax_id,
@@ -107,17 +107,17 @@
  </querysource>
  <querysource>
   <name>GroupFoot</name>
-  <sql>SELECT formatMoney(SUM(round(quitem_price * quitem_qtyord / item_invpricerat ,2))) AS f_extprice,
+  <sql>SELECT formatMoney(SUM(round(quitem_price * quitem_qtyord / iteminvpricerat(item_id) ,2))) AS f_extprice,
        formatMoney(quhead_freight) AS f_freight,
        formatMoney(quhead_misc) AS f_misc,
 
 -- Old way of calculating Tax:       
---formatMoney(calculateTax(quhead_tax_id, SUM(round(quitem_price * CASE WHEN (item_taxable) THEN quitem_qtyord ELSE 0 END / item_invpricerat ,2)), quhead_freight, 'T')) AS f_tax,
+--formatMoney(calculateTax(quhead_tax_id, SUM(round(quitem_price * CASE WHEN (item_taxable) THEN quitem_qtyord ELSE 0 END / iteminvpricerat(item_id) ,2)), quhead_freight, 'T')) AS f_tax,
 --
 -- New way after 2.1.1:
 formatMoney((select 
 ((
-select sum(calculatetax(quitem_tax_id, (quitem_qtyord * quitem_price / item_invpricerat), '0')) from quitem, quhead, item, itemsite where quhead_id  = &lt;? value("quhead_id") ?> and quitem_quhead_id = quhead_id and quitem_itemsite_id = itemsite_id and itemsite_item_id  = item_id
+select sum(calculatetax(quitem_tax_id, (quitem_qtyord * quitem_price / iteminvpricerat(item_id)), '0')) from quitem, quhead, item, itemsite where quhead_id  = &lt;? value("quhead_id") ?> and quitem_quhead_id = quhead_id and quitem_itemsite_id = itemsite_id and itemsite_item_id  = item_id
 )
 +
 (
@@ -137,7 +137,7 @@ select calculatetax((select getfreighttaxselection((select quhead_taxauth_id fro
 --Note: in 2.1.1 replace Tax Calc with new method in the section 
 --of the query that returns f_totaldue:
 --Old f_total due START:
---formatMoney((calculateTax(quhead_tax_id, SUM(round(quitem_price * CASE WHEN (item_taxable) THEN quitem_qtyord ELSE 0 END / --item_invpricerat ,2)), quhead_freight, 'T')) + SUM(round(quitem_price * quitem_qtyord / item_invpricerat ,2)) + quhead_freight + --quhead_misc) as f_totaldue
+--formatMoney((calculateTax(quhead_tax_id, SUM(round(quitem_price * CASE WHEN (item_taxable) THEN quitem_qtyord ELSE 0 END / --iteminvpricerat(item_id) ,2)), quhead_freight, 'T')) + SUM(round(quitem_price * quitem_qtyord / iteminvpricerat(item_id) ,2)) + quhead_freight + --quhead_misc) as f_totaldue
 --Old f_totaldue END
 
 ------------------------------------
@@ -145,7 +145,7 @@ select calculatetax((select getfreighttaxselection((select quhead_taxauth_id fro
 
 formatMoney(
 (
-select sum(calculatetax(quitem_tax_id, (quitem_qtyord * quitem_price / item_invpricerat), '0')) from quitem, quhead, item, itemsite where quhead_id  = &lt;? value("quhead_id") ?> and quitem_quhead_id = quhead_id and quitem_itemsite_id = itemsite_id and itemsite_item_id  = item_id
+select sum(calculatetax(quitem_tax_id, (quitem_qtyord * quitem_price / iteminvpricerat(item_id)), '0')) from quitem, quhead, item, itemsite where quhead_id  = &lt;? value("quhead_id") ?> and quitem_quhead_id = quhead_id and quitem_itemsite_id = itemsite_id and itemsite_item_id  = item_id
 )
 +
 (
@@ -160,7 +160,7 @@ select calculatetax((select getfreighttaxselection((select quhead_taxauth_id fro
 select calculatetax((select getfreighttaxselection((select quhead_taxauth_id from quhead where quhead_id = &lt;? value("quhead_id")?>))), quhead_freight, quhead_freight, 'C') from quhead where quhead_id = &lt;? value("quhead_id") ?>
 )
 
- + SUM(round(quitem_price * quitem_qtyord / item_invpricerat ,2)) 
+ + SUM(round(quitem_price * quitem_qtyord / iteminvpricerat(item_id) ,2)) 
  + quhead_freight 
  + quhead_misc) 
 AS f_totaldue

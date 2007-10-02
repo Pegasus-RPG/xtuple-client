@@ -20,15 +20,16 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT poitem_linenumber as f_number,
-       item_number as f_item, item_invuom as f_uom1,
+       item_number as f_item, uom_name as f_uom1,
        formatDate(poitem_duedate) as f_duedate,
        poitem_vend_item_number as f_vend_item,
        poitem_vend_uom as f_uom2,
        formatQty(poitem_qty_ordered) as f_ordered,
        formatqty(poitem_qty_received) as f_received
-  FROM poitem, itemsite, item 
+  FROM poitem, itemsite, item, uom
  WHERE ((poitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
+   AND (item_inv_uom_id=uom_id)
    AND (poitem_pohead_id=&lt;? value(&quot;pohead_id&quot;) ?>)) 
 ORDER BY poitem_linenumber;</sql>
  </querysource>

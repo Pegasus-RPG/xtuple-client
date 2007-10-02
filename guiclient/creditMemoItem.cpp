@@ -259,18 +259,20 @@ enum SetResponse creditMemoItem::set(const ParameterList &pParams)
 
   if (restrict)
     _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2, item_active,"
-                              "                item_config, item_type, item_invuom "
-                              "FROM invchead, invcitem, item "
+                              "                item_config, item_type, uom_name "
+                              "FROM invchead, invcitem, item, uom "
                               "WHERE ( (invcitem_invchead_id=invchead_id)"
                               " AND (invcitem_item_id=item_id)"
+                              " AND (item_inv_uom_id=uom_id)"
                               " AND (invchead_invcnumber=%1) ) "
                               "ORDER BY item_number;" )
                      .arg(_invoiceNumber) );
   else
     _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                item_invuom, item_type, item_config "
-                              "FROM item, itemsite "
+                              "                uom_name, item_type, item_config "
+                              "FROM item, itemsite, uom "
                               "WHERE ( (itemsite_item_id=item_id)"
+                              " AND (item_inv_uom_id=uom_id)"
                               " AND (itemsite_active)"
                               " AND (item_active)"
                               " AND (customerCanPurchase(item_id, %1, %2)) ) "
@@ -372,22 +374,22 @@ void creditMemoItem::sSave()
 void creditMemoItem::sPopulateItemInfo()
 {
   XSqlQuery item;
-  item.prepare( "SELECT item_priceuom,"
-                "       item_invpricerat, formatUOMRatio(item_invpricerat) AS f_invpricerat,"
+  item.prepare( "SELECT uom_name,"
+                "       iteminvpricerat(item_id) AS iteminvpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
                 "       item_listprice, "
                 "       stdCost(item_id) AS f_cost,"
 		"       getItemTaxType(item_id, :taxauth) AS taxtype_id "
-                "FROM item "
+                "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
                 "WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _item->id());
   item.exec();
   if (item.first())
   {
     // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
-    _priceRatio = item.value("item_invpricerat").toDouble();
+    _priceRatio = item.value("iteminvpricerat").toDouble();
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
 
-    _pricingUOM->setText(item.value("item_priceuom").toString());
+    _pricingUOM->setText(item.value("uom_name").toString());
     _ratio->setText(item.value("f_invpricerat").toString());
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt());

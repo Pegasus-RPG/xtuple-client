@@ -49,7 +49,7 @@
             ELSE (poitem_vend_item_descrip)
        END AS itemdescription,
        formatQty(poitem_qty_ordered) AS f_ordered,
-       CASE WHEN (poitem_vend_uom LIKE '') THEN (item_invuom)
+       CASE WHEN (poitem_vend_uom LIKE '') THEN (uom_name)
             ELSE (poitem_vend_uom)
        END AS itemuom,
        formatPrice(poitem_unitprice) AS f_price,
@@ -57,7 +57,7 @@
        formatDate(poitem_duedate) AS f_duedate
   FROM poitem LEFT OUTER JOIN
          ( itemsite JOIN item
-           ON (itemsite_item_id=item_id) )
+           ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id))
          ON (poitem_itemsite_id=itemsite_id)
  WHERE (poitem_pohead_id=&lt;? value(&quot;pohead_id&quot;) ?>)
 ORDER BY poitem_linenumber;</sql>

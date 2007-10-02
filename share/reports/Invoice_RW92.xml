@@ -1,7 +1,7 @@
 <!DOCTYPE openRPTDef>
 <report>
  <title>Invoice RW92</title>
- <name>Invoice</name>
+ <name></name>
  <description>Invoice RW92</description>
  <size>Letter</size>
  <portrait/>
@@ -33,14 +33,15 @@
   <sql>SELECT coitem_linenumber,
                formatQty(cobill_qty) AS qtytobill,
                formatQty(coitem_qtyord) AS qtyordered,
-               item_invuom, item_number, item_descrip1, item_descrip2,
+               uom_name, item_number, item_descrip1, item_descrip2,
                formatPrice(coitem_price) AS unitprice,
                formatExtPrice(coitem_price * cobill_qty) AS extprice
-FROM cobmisc, cobill, coitem, itemsite, item
+FROM cobmisc, cobill, coitem, itemsite, item, uom
 WHERE ((cobill_cobmisc_id=cobmisc_id)
  AND (cobill_coitem_id=coitem_id)
  AND (coitem_itemsite_id=itemsite_id)
  AND (itemsite_item_id=item_id)
+ AND (item_inv_uom_id=uom_id)
  AND (cobmisc_id=%1))
 ORDER BY coitem_linenumber;</sql>
  </querysource>
@@ -482,7 +483,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>
@@ -539,7 +540,7 @@ FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
    <field>

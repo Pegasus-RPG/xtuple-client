@@ -14,7 +14,7 @@
   <sql>SELECT item_number,
        item_descrip1,
        item_descrip2,
-       item_invuom,
+       uom_name,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
          ( SELECT warehous_code
              FROM warehous
@@ -25,14 +25,14 @@
        AS warehouse,
        formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
 </sql>
  </querysource>
  <querysource>
   <name>detail</name>
   <sql>SELECT formatDate(posted) AS f_posted,
-       item_number, item_descrip1, item_descrip2, item_invuom,
+       item_number, item_descrip1, item_descrip2, uom_name,
        formatQty(ordered) AS f_ordered,
        formatQty(received) AS f_produced,
        formatQty(projreq) AS f_projreq,
@@ -42,7 +42,7 @@
        formatQtyPer(actqtyper - projqtyper) AS f_qtypervar,
        formatPrcnt((1 - (actqtyper / projqtyper)) * -1) AS f_percent
   FROM ( SELECT womatlvar_posted AS posted,
-                item_number, item_invuom,
+                item_number, uom_name,
                 item_descrip1, item_descrip2,
                 womatlvar_qtyord AS ordered,
                 womatlvar_qtyrcv AS received,
@@ -51,10 +51,11 @@
                 (womatlvar_qtyiss) AS actiss,
                 (womatlvar_qtyiss / (womatlvar_qtyrcv * (1 + womatlvar_scrap))) AS actqtyper 
            FROM womatlvar, itemsite AS component,
-                itemsite AS parent, item 
+                itemsite AS parent, item, uom
           WHERE ((womatlvar_parent_itemsite_id=parent.itemsite_id)
             AND (womatlvar_component_itemsite_id=component.itemsite_id)
             AND (parent.itemsite_item_id=item_id)
+            AND (item_inv_uom_id=uom_id)
             AND (component.itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
             AND (womatlvar_posted BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
 &lt;? if exists(&quot;warehous_id&quot;) ?>
@@ -191,7 +192,7 @@ ORDER BY posted;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <field>
@@ -959,7 +960,7 @@ ORDER BY posted;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
+     <column>uom_name</column>
     </data>
    </field>
   </detail>

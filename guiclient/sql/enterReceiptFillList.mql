@@ -2,7 +2,7 @@
 SELECT poitem_id, poitem_linenumber,
        formatDate(poitem_duedate),
        COALESCE(item_number, <? value("nonInventory") ?>),
-       COALESCE(item_invuom, <? value("na") ?>),
+       COALESCE(uom_name, <? value("na") ?>),
        poitem_vend_item_number,
        poitem_vend_uom,
        formatQty(poitem_qty_ordered),
@@ -10,7 +10,7 @@ SELECT poitem_id, poitem_linenumber,
        formatQty(qtyToReceive(<? value("ordertype") ?>, poitem_id))
 FROM poitem LEFT OUTER JOIN 
      ( itemsite JOIN item 
-       ON (itemsite_item_id=item_id)
+       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)
      ) ON (poitem_itemsite_id=itemsite_id) 
 WHERE ( (poitem_status <> 'C')
  AND (poitem_pohead_id=<? value("pohead_id") ?>) )
@@ -19,13 +19,13 @@ ORDER BY poitem_linenumber;
 SELECT toitem_id, toitem_linenumber,
        formatDate(toitem_duedate),
        COALESCE(item_number, <? value("nonInventory") ?>),
-       COALESCE(item_invuom, <? value("na") ?>),
+       COALESCE(uom_name, <? value("na") ?>),
        '',
        toitem_uom,
        formatQty(toitem_qty_ordered),
        formatQty(toitem_qty_received),
        formatQty(qtyToReceive(<? value("ordertype") ?>, toitem_id))
-FROM toitem, item
+FROM toitem, item JOIN uom ON (item_inv_uom_id=uom_id)
 WHERE ((toitem_item_id=item_id)
   AND  (toitem_status <> 'C')
   AND  (toitem_tohead_id=<? value("tohead_id") ?>) )

@@ -132,12 +132,13 @@ void dspUnusedPurchasedItems::sPrint()
 void dspUnusedPurchasedItems::sFillList()
 {
   QString sql( "SELECT DISTINCT item_id, item_number,"
-               "                (item_descrip1 || ' ' || item_descrip2), item_invuom,"
+               "                (item_descrip1 || ' ' || item_descrip2), uom_name,"
                "                formatQty(SUM(itemsite_qtyonhand)),"
                "                formatDate(MAX(itemsite_datelastcount), 'Never'),"
                "                formatDate(MAX(itemsite_datelastused), 'Never') "
-               "FROM item, itemsite "
+               "FROM item, itemsite, uom "
                "WHERE ((itemsite_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (item_id NOT IN (SELECT DISTINCT bomitem_item_id FROM bomitem))"
                " AND (NOT item_sold)"
                " AND (item_type IN ('P', 'O'))" );
@@ -151,7 +152,7 @@ void dspUnusedPurchasedItems::sFillList()
     sql += " AND (itemsite_controlmethod <> 'N')";
 
   sql += ") "
-         "GROUP BY item_id, item_number, item_invuom, item_descrip1, item_descrip2 "
+         "GROUP BY item_id, item_number, uom_name, item_descrip1, item_descrip2 "
          "ORDER BY item_number;";
 
   q.prepare(sql);

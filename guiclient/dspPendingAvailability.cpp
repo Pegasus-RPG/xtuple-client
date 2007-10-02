@@ -157,7 +157,7 @@ void dspPendingAvailability::sFillList()
 
   _items->clear();
 
-  QString sql( "SELECT itemsite_id, bomitem_seqnumber, item_number, item_descrip, item_invuom,"
+  QString sql( "SELECT itemsite_id, bomitem_seqnumber, item_number, item_descrip, uom_name,"
                "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
                "       formatQty(totalalloc + pendalloc) AS f_totalalloc,"
                "       qoh, formatQty(qoh) AS f_qoh,"
@@ -165,15 +165,16 @@ void dspPendingAvailability::sFillList()
                "       formatQty(qoh + ordered - (totalalloc + pendalloc)) AS f_totalavail,"
                "       reorderlevel "
                "FROM ( SELECT itemsite_id, bomitem_seqnumber, item_number,"
-               "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, item_invuom,"
+               "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
                "              ((bomitem_qtyper * (1 + bomitem_scrap)) * :buildQty) AS pendalloc,"
                "              qtyAllocated(itemsite_id, DATE(:buildDate)) AS totalalloc,"
                "              noNeg(itemsite_qtyonhand) AS qoh,"
                "              qtyOrdered(itemsite_id, DATE(:buildDate)) AS ordered,"
                "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"
-               "       FROM itemsite, item, bomitem "
+               "       FROM itemsite, item, bomitem, uom "
                "       WHERE ( (bomitem_item_id=itemsite_item_id)"
                "        AND (itemsite_item_id=item_id)"
+               "        AND (item_inv_uom_id=uom_id)"
                "        AND (itemsite_warehous_id=:warehous_id)"
                "        AND (bomitem_parent_item_id=:item_id)" );
 
@@ -199,7 +200,7 @@ void dspPendingAvailability::sFillList()
     {
       last = new XTreeWidgetItem( _items, last, q.value("itemsite_id").toInt(),
 				 q.value("bomitem_seqnumber"), q.value("item_number"),
-				 q.value("item_descrip"), q.value("item_invuom"),
+				 q.value("item_descrip"), q.value("uom_name"),
 				 q.value("f_pendalloc"), q.value("f_totalalloc"),
 				 q.value("f_qoh"), q.value("f_totalavail")  );
 

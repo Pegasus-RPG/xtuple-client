@@ -12,7 +12,7 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number, item_descrip1,
-       item_descrip2, item_invuom,
+       item_descrip2, uom_name,
        formatDate(&lt;? value(&quot;startDate&quot;) ?>, 'Earliest') AS startdate,
        formatDate(&lt;? value(&quot;endDate&quot;) ?>, 'Latest') AS enddate,
        &lt;? if exists(&quot;warehous_id&quot;) ?>
@@ -27,7 +27,7 @@
        TEXT('All Agents')
        &lt;? endif ?>
        AS agentUsername
-  FROM item
+  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
  WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
  </querysource>
  <querysource>
@@ -443,7 +443,7 @@ ORDER BY porecv_date DESC;</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>item_invuom</column>
+    <column>uom_name</column>
    </data>
   </field>
   <label>

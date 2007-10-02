@@ -326,15 +326,15 @@ void dspSummarizedBacklogByWarehouse::sFillList()
                  "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
                  "       formatDate(cohead_packdate) AS f_packdate,"
                  "       formatMoney( SUM( round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *"
-                 "                         (coitem_price / item_invpricerat), 2) ) ) AS f_sales,"
+                 "                         (coitem_price / iteminvpricerat(item_id)), 2) ) ) AS f_sales,"
                  "       formatCost(SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) ) AS f_cost,"
                  "       formatMoney( SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *"
-                 "                         ((coitem_price / item_invpricerat) - stdcost(item_id)) ) ) AS f_margin,"
+                 "                         ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) ) AS f_margin,"
                  "       SUM( round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *"
-                 "            (coitem_price / item_invpricerat), 2) ) AS sales,"
+                 "            (coitem_price / iteminvpricerat(item_id)), 2) ) AS sales,"
                  "       SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) AS cost,"
                  "       SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *"
-                 "            ((coitem_price / item_invpricerat) - stdcost(item_id)) ) AS margin,"
+                 "            ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) AS margin,"
                  "       MIN(coitem_scheddate) AS scheddate,"
 		 "       COALESCE(cosmisc_id, -1) AS cosmisc_id, "
 		 "       formatShipmentNumber(cosmisc_id) AS cosmisc_number, "
@@ -516,7 +516,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
         _totalLineItems->setText(q.value("totalitems").toString());
 //  ToDo
 
-      sql = "SELECT formatQty(SUM((coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * item_shipinvrat)) AS f_totalqty "
+      sql = "SELECT formatQty(SUM(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_totalqty "
             "FROM cohead, coitem, itemsite, item, cust "
             "WHERE ( (coitem_cohead_id=cohead_id)"
             " AND (coitem_itemsite_id=itemsite_id)"

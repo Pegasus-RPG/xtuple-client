@@ -157,11 +157,11 @@ void dspPricesByItem::sFillList()
     if (_showCosts->isChecked())
     {
       if (_useStandardCosts->isChecked())
-          q.prepare( "SELECT (stdCost(item_id) * item_invpricerat) AS cost "
+          q.prepare( "SELECT (stdCost(item_id) * iteminvpricerat(item_id)) AS cost "
                      "FROM item "
                      "WHERE (item_id=:item_id);");
       else if (_useActualCosts->isChecked())
-          q.prepare( "SELECT (actCost(item_id) * item_invpricerat) AS cost "
+          q.prepare( "SELECT (actCost(item_id) * iteminvpricerat(item_id)) AS cost "
                      "FROM item "
                      "WHERE (item_id=:item_id);");
 

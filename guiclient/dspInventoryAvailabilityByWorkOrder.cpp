@@ -314,7 +314,7 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
   if (_wo->isValid())
   {
     QString sql( "SELECT itemsite_id, womatl_id, type,"
-                 "       item_number, item_description, item_invuom, item_picklist,"
+                 "       item_number, item_description, uom_name, item_picklist,"
                  "       qoh, formatQty(qoh) AS f_qoh,"
                  "       formatQty(wobalance) AS f_wobalance,"
                  "       formatQty(allocated) AS f_allocated,"
@@ -329,16 +329,17 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
                  "                   ELSE ''"
                  "              END AS type,"
                  "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "              item_invuom, item_picklist,"
+                 "              uom_name, item_picklist,"
                  "              noNeg(itemsite_qtyonhand) AS qoh,"
                  "              noNeg(womatl_qtyreq - womatl_qtyiss) AS wobalance,"
                  "              qtyAllocated(itemsite_id, womatl_duedate) AS allocated,"
                  "              qtyOrdered(itemsite_id, womatl_duedate) AS ordered,"
                  "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"
-                 "       FROM wo, womatl, itemsite, item "
+                 "       FROM wo, womatl, itemsite, item, uom "
                  "       WHERE ( (womatl_wo_id=wo_id)"
                  "        AND (womatl_itemsite_id=itemsite_id)"
                  "        AND (itemsite_item_id=item_id)"
+                 "        AND (item_inv_uom_id=uom_id)"
                  "        AND (womatl_wo_id=:wo_id)) ) AS data " );
 
     if (_onlyShowShortages->isChecked())
@@ -356,7 +357,7 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
       last = new XTreeWidgetItem( _womatl, last,
                                   q.value("itemsite_id").toInt(), q.value("womatl_id").toInt(),
                                   q.value("type"), q.value("item_number"),
-                                  q.value("item_description"), q.value("item_invuom"),
+                                  q.value("item_description"), q.value("uom_name"),
                                   q.value("f_qoh"), q.value("f_wobalance"),
                                   q.value("f_allocated"), q.value("f_ordered"),
                                   q.value("f_woavail"), q.value("f_totalavail") );

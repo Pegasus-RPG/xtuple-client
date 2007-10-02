@@ -317,16 +317,17 @@ void dspPoItemsByBufferStatus::sFillList()
 	       "       bufrsts_status,"
                "       item_number,"
                "       item_descrip1,"
-               "       item_invuom,"
+               "       uom_name,"
                "       formatQty(poitem_qty_ordered) AS f_qtyordered,"
                "       formatQty(poitem_qty_received) AS f_qtyreceived,"
                "       formatQty(poitem_qty_returned) AS f_qtyreturned,"
 	       "       formatDate(poitem_duedate) AS f_duedate,"
                "       (bufrsts_status >66) AS emergency "
-               "  FROM pohead, poitem, vend,itemsite,item, bufrsts "
+               "  FROM pohead, poitem, vend,itemsite, item, uom, bufrsts "
                " WHERE ((poitem_pohead_id=pohead_id)"
                "   AND  (pohead_vend_id=vend_id)"
 	       "   AND  (itemsite_item_id=item_id)"
+               "   AND  (item_inv_uom_id=uom_id)"
                "   AND  (poitem_itemsite_id=itemsite_id)"
                "   AND  (pohead_vend_id=vend_id)"
                "   AND  (poitem_status='O')"
@@ -373,7 +374,7 @@ void dspPoItemsByBufferStatus::sFillList()
                                   q.value("pohead_number").toString(), q.value("warehousecode"),
                                   q.value("poitemstatus"), q.value("vend_name"),
                                   q.value("bufrsts_status"), q.value("bufrststype"), q.value("item_number"), 
-                                  q.value("item_descrip1"), q.value("item_invuom"),
+                                  q.value("item_descrip1"), q.value("uom_name"),
                                   q.value("f_qtyordered"), q.value("f_qtyreceived") );
       last->setText(11, q.value("f_qtyreturned").toString());
       last->setText(12, q.value("f_duedate").toString());

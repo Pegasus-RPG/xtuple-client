@@ -241,14 +241,14 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
            (_item->itemType() == "P") )
       {
         sql = "SELECT bomitem_id, item_id, seqnumber, item_number,"
-              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_invuom,"
+              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
               "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
               "       formatScrap(bomitem_scrap) AS f_scrap,"
               "       formatCost(cost) AS f_cost,"
               "       formatCost(extendedcost) AS f_extendedcost,"
               "       extendedcost "
               "FROM ( SELECT bomitem_id, bomitem_seqnumber AS seqnumber, bomitem_qtyper, bomitem_scrap,"
-              "              item_id, item_number, item_descrip1, item_descrip2, item_invuom, ";
+              "              item_id, item_number, item_descrip1, item_descrip2, uom_name, ";
 
         if (_standardCosts->isChecked())
           sql += " itemcost_stdcost AS cost,"
@@ -258,8 +258,9 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
                  " (bomitem_qtyper * (1 + bomitem_scrap) * itemcost_actcost) AS extendedcost ";
 
   
-        sql += "FROM bomitem, item, itemcost, costelem "
+        sql += "FROM bomitem, item, itemcost, costelem, uom "
                "WHERE ( (bomitem_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))"
                " AND (itemcost_item_id=item_id)"
                " AND (itemcost_costelem_id=costelem_id)"
@@ -270,14 +271,14 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
       else if (_item->itemType() == "C")
       {
         sql = "SELECT bbomitem_id, item_id, seqnumber, item_number,"
-              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, item_invuom,"
+              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
               "       formatQtyPer(bbomitem_qtyper) AS f_qtyper,"
               "       formatScrap(bbomitem_costabsorb) AS f_scrap,"
               "       formatCost(cost) AS f_cost,"
               "       formatCost(extendedcost) AS f_extendedcost,"
               "       extendedcost "
               "FROM ( SELECT bbomitem_id, bbomitem_seqnumber AS seqnumber, bbomitem_qtyper, bbomitem_costabsorb,"
-              "              item_id, item_number, item_descrip1, item_descrip2, item_invuom, ";
+              "              item_id, item_number, item_descrip1, item_descrip2, uom_name, ";
 
         if (_standardCosts->isChecked())
           sql += " itemcost_stdcost AS cost,"
@@ -287,8 +288,9 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
                  " (itemcost_actcost / bbomitem_qtyper * bbomitem_costabsorb) AS extendedcost ";
 
 
-        sql += "FROM bbomitem, item, itemcost "
+        sql += "FROM bbomitem, item, itemcost, uom "
                "WHERE ( (bbomitem_parent_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (CURRENT_DATE BETWEEN bbomitem_effective AND (bbomitem_expires-1))"
                " AND (itemcost_item_id=bbomitem_parent_item_id)"
                " AND (itemcost_costelem_id=:costelem_id)"
@@ -296,7 +298,7 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
 
                "UNION SELECT source.bbomitem_id, source.bbomitem_seqnumber AS seqnumber,"
                "             source.bbomitem_qtyper, target.bbomitem_costabsorb,"
-               "             item_id, item_number, item_descrip1, item_descrip2, item_invuom,";
+               "             item_id, item_number, item_descrip1, item_descrip2, uom_name,";
 
 
         if (_standardCosts->isChecked())
@@ -306,12 +308,13 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
           sql += " itemcost_actcost AS cost,"
                  " (itemcost_actcost * source.bbomitem_qtyper / target.bbomitem_qtyper * target.bbomitem_costabsorb) AS extendedcost ";
 
-        sql += "FROM item, itemcost, bbomitem AS target, bbomitem AS source "
+        sql += "FROM item, itemcost, bbomitem AS target, bbomitem AS source, uom "
                "WHERE ( (source.bbomitem_parent_item_id=target.bbomitem_parent_item_id)"
                " AND (CURRENT_DATE BETWEEN source.bbomitem_effective AND (source.bbomitem_expires-1))"
                " AND (CURRENT_DATE BETWEEN target.bbomitem_effective AND (target.bbomitem_expires-1))"
                " AND (source.bbomitem_item_id=itemcost_item_id)"
                " AND (source.bbomitem_item_id=item_id)"
+               " AND (item_inv_uom_id=uom_id)"
                " AND (item_type='Y')"
                " AND (target.bbomitem_item_id=:item_id)"
                " AND (itemcost_costelem_id=:costelem_id) ) ) AS data "
@@ -332,7 +335,7 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
 				   q.value("seqnumber"),
 				   q.value("item_number"),
 				   q.value("itemdescrip"),
-				   q.value("item_invuom"),
+				   q.value("uom_name"),
 				   q.value("f_qtyper"),
 				   q.value("f_scrap"),
 				   q.value("f_cost"),

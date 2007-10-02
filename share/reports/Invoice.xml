@@ -42,7 +42,7 @@ ORDER BY ordernumber;</sql>
   <name>Detail</name>
   <sql>SELECT invcitem_linenumber,
        formatQty(invcitem_billed) AS f_billed,
-       item_invuom AS invuom,
+       uom_name AS invuom,
        CASE WHEN (item_number IS NULL) THEN invcitem_number
             WHEN (invcitem_custpn != '') THEN invcitem_custpn
             else item_number
@@ -54,25 +54,25 @@ ORDER BY ordernumber;</sql>
        CASE WHEN (invcitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
             ELSE itemalias_descrip2
        END AS descrip2,
-       formatPrice(invcitem_price / COALESCE(item_invpricerat,1)) AS f_unitprice,
-       formatMoney(round(invcitem_billed * invcitem_price / COALESCE(item_invpricerat,1),2)) AS f_extprice,
+       formatPrice(invcitem_price / COALESCE(iteminvpricerat(item_id),1)) AS f_unitprice,
+       formatMoney(round(invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1),2)) AS f_extprice,
        invcitem_notes,
        getInvcitemLotSerial(invcitem_id) AS lotserial,
        characteristicsToString('SI', (SELECT coitem_id FROM coitem, cohead, invchead WHERE (cohead_number=invchead_ordernumber and invchead_id=&lt;? value("invchead_id") ?> and coitem_cohead_id=cohead_id and coitem_linenumber=invcitem_linenumber)), '=', ', ') AS coitem_characteristics
-FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=invcitem_custpn)
+FROM invcitem LEFT OUTER JOIN (item JOIN uom ON (item_inv_uom_id=uom_id)) ON (invcitem_item_id=item_id) LEFT OUTER JOIN itemalias ON (itemalias_item_id=item_id AND itemalias_number=invcitem_custpn)
 WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>)
 ORDER BY invcitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT formatMoney(SUM(round(invcitem_billed * invcitem_price / COALESCE(item_invpricerat,1),2))) AS f_extprice
+  <sql>SELECT formatMoney(SUM(round(invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1),2))) AS f_extprice
 FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id)
 WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
   <sql>SELECT formatMoney( noNeg(invchead_freight + invchead_misc_amount + invchead_tax +
-                       ( SELECT COALESCE(SUM(round((invcitem_billed * invcitem_price / COALESCE(item_invpricerat,1)),2)), 0)
+                       ( SELECT COALESCE(SUM(round((invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1)),2)), 0)
                          FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id)
                          WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>) )
                     - total_allocated) ) AS f_totaldue,
