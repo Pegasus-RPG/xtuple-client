@@ -124,7 +124,7 @@
      <item>
       <widget class="QGroupBox" name="_characteristicGroup" >
        <property name="title" >
-        <string>Enable Characteristics Template</string>
+        <string>Enable Characteristics Profile</string>
        </property>
        <property name="checkable" >
         <bool>true</bool>
