@@ -123,7 +123,8 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
                     "       formatQty(coitem_qtyord) AS f_qtyordered,"
                     "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
                     "       formatQty(coitem_qtyord - coitem_qtyshipped) AS f_qtybalance,"
-                    "       (coitem_qtyord - coitem_qtyshipped) AS qtybalance "
+                    "       (coitem_qtyord - coitem_qtyshipped) AS qtybalance,"
+                    "       COALESCE(coitem_tax_id, -1) AS tax_id "
                     "FROM coitem, itemsite, cohead, cust "
                     "WHERE ( (coitem_itemsite_id=itemsite_id)"
                     " AND (coitem_cohead_id=cohead_id)"
@@ -142,6 +143,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _ordered->setText(soitem.value("f_qtyordered").toString());
       _shipped->setText(soitem.value("f_qtyshipped").toString());
       _balance->setText(soitem.value("f_qtybalance").toString());
+      _taxCode->setId(soitem.value("tax_id").toInt());
 
       _cachedPartialShip = soitem.value("cust_partialship").toBool();
       _closeLine->setChecked(!_cachedPartialShip);
