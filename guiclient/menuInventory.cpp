@@ -374,7 +374,7 @@ menuInventory::menuInventory(OpenMFGGUIClient *Pparent) :
     { "menu",				tr("&Reports"),			  (char*)reportsMenu,			mainMenu,	true,	NULL, NULL, true , NULL },
     
     //  Inventory | Reports | Item Sites
-    { "menu",				tr("&Itemsites"),			  (char*)reportsItemsitesMenu,			reportsMenu,	_privleges->check("ViewItemSites"),	NULL, NULL, true , NULL },
+    { "menu",				tr("&Item Sites"),			  (char*)reportsItemsitesMenu,			reportsMenu,	_privleges->check("ViewItemSites"),	NULL, NULL, true , NULL },
     { "im.dspItemSitesByPlannerCode",	tr("by &Planner Code..."),	  SLOT(sDspItemSitesByPlannerCode()),	reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
     { "im.dspItemSitesByCostCategory",	tr("by C&ost Category..."),	  SLOT(sDspItemSitesByCostCategory()),	reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL },
     { "im.dspItemSitesByClassCode",	tr("by &Class Code..."),	  SLOT(sDspItemSitesByClassCode()),	reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL },  
