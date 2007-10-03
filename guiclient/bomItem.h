@@ -94,6 +94,7 @@ private:
     int _sourceBomitemid;
     int _itemid;
     int _booitemid;
+    double _ratio;
 
 };
 

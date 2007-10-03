@@ -94,7 +94,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter );
   _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft   );
   _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter );
+  _bomitem->addColumn(tr("Issue UOM"),    _uomColumn,   Qt::AlignCenter );
   _bomitem->addColumn(tr("Issue Method"), _itemColumn,  Qt::AlignCenter );
   _bomitem->addColumn(tr("Qty. Per"),     _qtyColumn,   Qt::AlignRight  );
   _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight  );
@@ -378,7 +378,7 @@ void BOM::sFillList(int pItemid, bool)
     
     QString sql( "SELECT bomitem_id, item_id, bomitem_seqnumber,"
                  "       item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "       uom_name,"
+                 "       itemuombytype(bomitem_item_id, 'MaterialIssue') AS issueuom,"
                  "       CASE WHEN (bomitem_issuemethod = 'S') THEN :push"
                  "            WHEN (bomitem_issuemethod = 'L') THEN :pull"
                  "            WHEN (bomitem_issuemethod = 'M') THEN :mixed"
@@ -389,9 +389,8 @@ void BOM::sFillList(int pItemid, bool)
                  "       formatDate(bomitem_effective, :always) AS f_effective,"
                  "       formatDate(bomitem_expires, :never) AS f_expires,"
                  "       (bomitem_configtype<>'N') AS config "
-                 "FROM bomitem, item, uom "
+                 "FROM bomitem, item "
                  "WHERE ((bomitem_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_parent_item_id=:item_id)" );
     
     if (!_showExpired->isChecked())
@@ -426,7 +425,7 @@ void BOM::sFillList(int pItemid, bool)
 				 q.value("bomitem_seqnumber"),
 				 q.value("item_number"),
 				 q.value("item_description"),
-				 q.value("uom_name"),
+				 q.value("issueuom"),
 				 q.value("issuemethod"), q.value("f_qtyper"),
 				 q.value("f_scrap"), q.value("f_effective"),
 				 q.value("f_expires") );

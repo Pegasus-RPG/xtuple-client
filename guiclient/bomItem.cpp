@@ -69,65 +69,67 @@
 bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    QButtonGroup* _substituteGroupInt = new QButtonGroup(this);
-    _substituteGroupInt->addButton(_noSubstitutes);
-    _substituteGroupInt->addButton(_itemDefinedSubstitutes);
-    _substituteGroupInt->addButton(_bomDefinedSubstitutes);
+  QButtonGroup* _substituteGroupInt = new QButtonGroup(this);
+  _substituteGroupInt->addButton(_noSubstitutes);
+  _substituteGroupInt->addButton(_itemDefinedSubstitutes);
+  _substituteGroupInt->addButton(_bomDefinedSubstitutes);
 
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
-    connect(_booitemList, SIGNAL(clicked()), this, SLOT(sBooitemList()));
-    connect(_issueMethod, SIGNAL(activated(int)), this, SLOT(sHandleIssueMethod(int)));
-    connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
-    connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
-    connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
+  connect(_booitemList, SIGNAL(clicked()), this, SLOT(sBooitemList()));
+  connect(_issueMethod, SIGNAL(activated(int)), this, SLOT(sHandleIssueMethod(int)));
+  connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
+  connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
+  connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
+
+  _ratio = 1.0;
 
 #ifdef Q_WS_MAC
-    _booitemList->setMaximumWidth(50);
+  _booitemList->setMaximumWidth(50);
 #else
-    _booitemList->setMaximumWidth(25);
+  _booitemList->setMaximumWidth(25);
 #endif
 
-    if (_metrics->boolean("AllowInactiveBomItems"))
-      _item->setType(ItemLineEdit::cGeneralComponents);
-    else
-      _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
+  if (_metrics->boolean("AllowInactiveBomItems"))
+    _item->setType(ItemLineEdit::cGeneralComponents);
+  else
+    _item->setType(ItemLineEdit::cGeneralComponents | ItemLineEdit::cActive);
 
-    _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
-    _dates->setStartCaption(tr("Effective"));
-    _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
-    _dates->setEndCaption(tr("Expires"));
+  _dates->setStartNull(tr("Always"), omfgThis->startOfTime(), TRUE);
+  _dates->setStartCaption(tr("Effective"));
+  _dates->setEndNull(tr("Never"), omfgThis->endOfTime(), TRUE);
+  _dates->setEndCaption(tr("Expires"));
 
-    _qtyPer->setValidator(omfgThis->qtyPerVal());
-    _scrap->setValidator(omfgThis->scrapVal());
+  _qtyPer->setValidator(omfgThis->qtyPerVal());
+  _scrap->setValidator(omfgThis->scrapVal());
 
-    _bomitemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter );
-    _bomitemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
-    _bomitemsub->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
-    _bomitemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight  );
+  _bomitemsub->addColumn(tr("Rank"),        _whsColumn,  Qt::AlignCenter );
+  _bomitemsub->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft   );
+  _bomitemsub->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
+  _bomitemsub->addColumn(tr("Ratio"),       _qtyColumn,  Qt::AlignRight  );
 
-    _item->setFocus();
-    
-    if (!_metrics->boolean("Routings"))
-    {
-      _usedAtLit->hide();
-      _usedAt->hide();
-      _booitemList->hide();
-      _scheduleAtWooper->hide();
-    }
+  _item->setFocus();
+  
+  if (!_metrics->boolean("Routings"))
+  {
+    _usedAtLit->hide();
+    _usedAt->hide();
+    _booitemList->hide();
+    _scheduleAtWooper->hide();
+  }
 }
 
 bomItem::~bomItem()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void bomItem::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse bomItem::set(const ParameterList &pParams)
@@ -293,7 +295,7 @@ void bomItem::sSave()
   q.bindValue(":booitem_id", _booitemid);
   q.bindValue(":parent_item_id", _itemid);
   q.bindValue(":component_item_id", _item->id());
-  q.bindValue(":qtyPer", _qtyPer->toDouble());
+  q.bindValue(":qtyPer", _qtyPer->toDouble() * _ratio);
   q.bindValue(":scrap", (_scrap->toDouble() / 100));
   q.bindValue(":effective", _dates->startDate());
   q.bindValue(":expires", _dates->endDate());
@@ -428,9 +430,11 @@ void bomItem::populate()
              "       bomitem_booitem_id, bomitem_createwo, bomitem_issuemethod,"
              "       bomitem_configtype, bomitem_configid, bomitem_configflag,"
              "       bomitem_schedatwooper, bomitem_ecn, item_type,"
-             "       formatQtyper(bomitem_qtyper) AS qtyper,"
+             "       formatQtyper(bomitem_qtyper/itemuomratiobytype(bomitem_item_id, 'MaterialIssue')) AS qtyper,"
              "       formatScrap(bomitem_scrap) AS scrap,"
-             "       bomitem_effective, bomitem_expires, bomitem_subtype "
+             "       bomitem_effective, bomitem_expires, bomitem_subtype,"
+             "       itemuomratiobytype(bomitem_item_id, 'MaterialIssue') AS ratio,"
+             "       itemuombytype(bomitem_item_id, 'MaterialIssue') AS issueuom "
              "FROM bomitem, item "
              "WHERE ( (bomitem_parent_item_id=item_id)"
              " AND (bomitem_id=:bomitem_id) );" );
@@ -440,6 +444,8 @@ void bomItem::populate()
   {
     _itemid = q.value("bomitem_parent_item_id").toInt();
     _item->setId(q.value("bomitem_item_id").toInt());
+    _issueUOM->setText(q.value("issueuom").toString());
+    _ratio = q.value("ratio").toDouble();
 
     if (q.value("bomitem_issuemethod").toString() == "S")
       _issueMethod->setCurrentItem(0);
