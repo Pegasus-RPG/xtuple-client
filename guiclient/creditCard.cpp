@@ -125,19 +125,26 @@ enum SetResponse creditCard::set(const ParameterList &pParams)
       _mode = cNew;
       _address->setCountry("United States");
 
-/*      XSqlQuery cust;
-      cust.prepare( "SELECT cust_number, cust_name "
-                 "FROM cust "
-                 "WHERE (cust_id=:cust_id);" );
+      cust.prepare( "SELECT cust_number, cust_name,"
+                    "       addr_line1, addr_line2, addr_line3,"
+                    "       addr_city, addr_state, addr_country,"
+                    "       addr_postalcode "
+                    "  FROM custinfo, cntct, addr "
+                    " WHERE((cust_id=:cust_id)"
+                    "   AND (cust_cntct_id=cntct_id)"
+                    "   AND (cntct_addr_id=addr_id));" );
       cust.bindValue(":cust_id", _custid);
       cust.exec();
       if (cust.first())
       {
-        _custNum->setText(cust.value("cust_number").toString());
-        _custName->setText(cust.value("cust_name").toString());
-
+        _address->setLine1(cust.value("addr_line1").toString());
+        _address->setLine3(cust.value("addr_line3").toString());
+        _address->setLine2(cust.value("addr_line2").toString());
+        _address->setCity(cust.value("addr_city").toString());
+        _address->setState(cust.value("addr_state").toString());
+        _address->setPostalCode(cust.value("addr_postalcode").toString());
+        _address->setCountry(cust.value("addr_country").toString());
       }
-*/
       _fundsType2->setFocus();
     }
     else if (param.toString() == "edit")
