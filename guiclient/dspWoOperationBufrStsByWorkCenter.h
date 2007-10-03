@@ -72,6 +72,8 @@ public:
     dspWoOperationBufrStsByWorkCenter(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspWoOperationBufrStsByWorkCenter();
 
+    virtual ParameterList buildParameters();
+
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPrint();
@@ -81,6 +83,7 @@ public slots:
     virtual void sDeleteOperation();
     virtual void sFillList();
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
+    virtual void sSubmit();
 
 protected slots:
     virtual void languageChange();

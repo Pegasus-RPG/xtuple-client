@@ -63,6 +63,7 @@
 #include <QStatusBar>
 #include <openreports.h>
 #include "woOperation.h"
+#include "submitReport.h"
 
 /*
  *  Constructs a dspWoOperationBufrStsByWorkCenter as a child of 'parent', with the
@@ -83,6 +84,7 @@ dspWoOperationBufrStsByWorkCenter::dspWoOperationBufrStsByWorkCenter(QWidget* pa
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_wrkcnt, SIGNAL(valid(bool)), _query, SLOT(setEnabled(bool)));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
 
   _wrkcnt->populate( "SELECT wrkcnt_id, wrkcnt_code "
                      "FROM wrkcnt "
@@ -103,6 +105,9 @@ dspWoOperationBufrStsByWorkCenter::dspWoOperationBufrStsByWorkCenter(QWidget* pa
   Preferences _pref = Preferences(omfgThis->username());
   if (_pref.boolean("XCheckBox/forgetful"))
     _QtyAvailOnly->setChecked(true);
+
+  if (!_metrics->boolean("EnableBatchManager"))
+    _submit->hide();
 
   sFillList();
 }
@@ -144,11 +149,7 @@ enum SetResponse dspWoOperationBufrStsByWorkCenter::set(const ParameterList &pPa
 
 void dspWoOperationBufrStsByWorkCenter::sPrint()
 {
-  ParameterList params;
-  params.append("wrkcnt_id", _wrkcnt->id());
-
-  if(_QtyAvailOnly->isChecked())
-    params.append("QtyAvailOnly");
+  ParameterList params(buildParameters());
 
   orReport report("WOOperationBufrStsByWorkCenter", params);
   if (report.isValid())
@@ -295,3 +296,32 @@ void dspWoOperationBufrStsByWorkCenter::sFillList()
       last->setTextColor(1, "red");
   }
 }
+
+void dspWoOperationBufrStsByWorkCenter::sSubmit()
+{
+  ParameterList params(buildParameters());
+  params.append("report_name","WOOperationBufrStsByWorkCenter");
+
+  submitReport newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.check() == cNoReportDefinition)
+    QMessageBox::critical( this, tr("Report Definition Not Found"),
+                           tr( "The report defintions for this report, \"WOOperationBufrStsByWorkCenter\" cannot be found.\n"
+                               "Please contact your Systems Administrator and report this issue." ) );
+  else
+    newdlg.exec();
+}
+
+ParameterList dspWoOperationBufrStsByWorkCenter::buildParameters()
+{
+  ParameterList params;
+  params.append("wrkcnt_id", _wrkcnt->id());
+
+  if(_QtyAvailOnly->isChecked())
+    params.append("QtyAvailOnly");
+
+  return params;
+
+}
+

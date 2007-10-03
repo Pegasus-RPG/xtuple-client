@@ -318,6 +318,13 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QPushButton" name="_submit" >
+          <property name="text" >
+           <string>&amp;Submit</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -428,6 +435,8 @@
   <tabstop>_query</tabstop>
   <tabstop>_wooper</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_submit</tabstop>
+  <tabstop>_autoUpdate</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <includes>
