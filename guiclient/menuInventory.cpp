@@ -293,7 +293,7 @@ menuInventory::menuInventory(OpenMFGGUIClient *Pparent) :
     { "menu",				tr("Count &Tags"),		  (char*)physicalReportsTagsMenu,	    physicalReportsMenu,	  _privleges->check("ViewCountTags"),	NULL, NULL, true , NULL },
     { "im.dspCountTagsByItem",		tr("by &Item..."),	  SLOT(sDspCountTagsByItem()),	    physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
     { "im.dspCountTagsByWarehouse",	tr("by &Warehouse..."), SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.dspCountTagsByClassCode",	tr("by &ClassCode..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL },     
+    { "im.dspCountTagsByClassCode",	tr("by &Class Code..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL },     
 
     { "separator",			NULL,				  NULL,				mainMenu, true, NULL, NULL, true , NULL },
 
