@@ -85,6 +85,9 @@ dspPurchaseReqsByPlannerCode::dspPurchaseReqsByPlannerCode(QWidget* parent, cons
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_pr, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), true);
+
   _plannerCode->setType(PlannerCode);
 
   _pr->addColumn(tr("Item Number"),  _itemColumn,   Qt::AlignLeft   );
