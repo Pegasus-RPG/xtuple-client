@@ -1679,7 +1679,7 @@
                     <bool>false</bool>
                    </property>
                    <property name="text" >
-                    <string>Show Purchase Menu</string>
+                    <string>Show Purchase Toolbar</string>
                    </property>
                   </widget>
                  </item>
@@ -2117,14 +2117,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
