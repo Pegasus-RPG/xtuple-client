@@ -1576,19 +1576,20 @@ void item::sFillUOMList()
 {
   _uomconv->clear();
   q.prepare("SELECT itemuomconv_id, itemuom_id,"
-            "       uom_name, uomtype_name,"
-            "       itemuomconv_ratio,"
+            "       (nuom.uom_name||'/'||duom.uom_name) AS uomname, uomtype_name,"
+            "       (itemuomconv_from_value||'/'||itemuomconv_to_value) AS uomvalue,"
             "       formatBoolYN(uomconv_id IS NOT NULL) AS global,"
             "       formatBoolYN(itemuomconv_fractional) AS fractional"
             "  FROM item"
             "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-            "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+            "  JOIN uom AS nuom ON (itemuomconv_from_uom_id=nuom.uom_id)"
+            "  JOIN uom AS duom ON (itemuomconv_to_uom_id=duom.uom_id)"
             "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
             "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
-            "  LEFT OUTER JOIN uomconv ON ((uomconv_from_uom_id=item_inv_uom_id AND uomconv_to_uom_id=uom_id)"
-            "                           OR (uomconv_to_uom_id=item_inv_uom_id AND uomconv_from_uom_id=uom_id))"
+            "  LEFT OUTER JOIN uomconv ON ((uomconv_from_uom_id=duom.uom_id AND uomconv_to_uom_id=nuom.uom_id)"
+            "                           OR (uomconv_to_uom_id=duom.uom_id AND uomconv_from_uom_id=nuom.uom_id))"
             " WHERE((item_id=:item_id))"
-            " ORDER BY uom_name, uomtype_name;");
+            " ORDER BY itemuomconv_id, uomtype_name;");
   q.bindValue(":item_id", _itemid);
   q.exec();
   XTreeWidgetItem * last = 0;
@@ -1596,13 +1597,13 @@ void item::sFillUOMList()
   QString uomname;
   while(q.next())
   {
-    if(q.value("uom_name").toString() != uomname)
+    if(q.value("uomname").toString() != uomname)
     {
-      uomname = q.value("uom_name").toString();
+      uomname = q.value("uomname").toString();
       parent = new XTreeWidgetItem(_uomconv, parent,
                                    q.value("itemuomconv_id").toInt(), -1,
-                                   q.value("uom_name"),
-                                   q.value("itemuomconv_ratio"),
+                                   q.value("uomname"),
+                                   q.value("uomvalue"),
                                    q.value("global"), q.value("fractional"));
       last = 0;
     }
@@ -1631,6 +1632,16 @@ void item::sPopulatePriceUOMs()
             "SELECT uom_id, uom_name"
             "  FROM uom"
             "  JOIN itemuomconv ON (itemuomconv_to_uom_id=uom_id)"
+            "  JOIN item ON (itemuomconv_from_uom_id=item_inv_uom_id)"
+            "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
+            "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
+            " WHERE((itemuomconv_item_id=:item_id)"
+            "   AND (uomtype_name='Selling'))"
+            " UNION "
+            "SELECT uom_id, uom_name"
+            "  FROM uom"
+            "  JOIN itemuomconv ON (itemuomconv_from_uom_id=uom_id)"
+            "  JOIN item ON (itemuomconv_to_uom_id=item_inv_uom_id)"
             "  JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
             "  JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
             " WHERE((itemuomconv_item_id=:item_id)"

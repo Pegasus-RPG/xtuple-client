@@ -295,7 +295,7 @@ void bomItem::sSave()
   q.bindValue(":booitem_id", _booitemid);
   q.bindValue(":parent_item_id", _itemid);
   q.bindValue(":component_item_id", _item->id());
-  q.bindValue(":qtyPer", _qtyPer->toDouble() * _ratio);
+  q.bindValue(":qtyPer", _qtyPer->toDouble() / _ratio);
   q.bindValue(":scrap", (_scrap->toDouble() / 100));
   q.bindValue(":effective", _dates->startDate());
   q.bindValue(":expires", _dates->endDate());
@@ -430,7 +430,7 @@ void bomItem::populate()
              "       bomitem_booitem_id, bomitem_createwo, bomitem_issuemethod,"
              "       bomitem_configtype, bomitem_configid, bomitem_configflag,"
              "       bomitem_schedatwooper, bomitem_ecn, item_type,"
-             "       formatQtyper(bomitem_qtyper/itemuomratiobytype(bomitem_item_id, 'MaterialIssue')) AS qtyper,"
+             "       formatQtyper(bomitem_qtyper*itemuomratiobytype(bomitem_item_id, 'MaterialIssue')) AS qtyper,"
              "       formatScrap(bomitem_scrap) AS scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
              "       itemuomratiobytype(bomitem_item_id, 'MaterialIssue') AS ratio,"

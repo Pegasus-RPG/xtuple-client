@@ -89,6 +89,8 @@ private:
     int _mode;
     int _itemid;
     int _itemuomconvid;
+    bool _ignoreSignals;
+    int _uomidFrom;
 
 };
 

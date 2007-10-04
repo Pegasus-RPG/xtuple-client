@@ -81,11 +81,14 @@ protected slots:
 
     virtual void sSave();
     virtual void sCheck();
+    virtual void sFromChanged();
+    virtual void sToChanged();
 
 private:
     int _uomidFrom;
     int _uomconvid;
     int _mode;
+    bool _ignoreSignals;
 
 };
 

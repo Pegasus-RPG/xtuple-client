@@ -74,12 +74,15 @@ uomConv::uomConv(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 
   _uomidFrom = -1;
   _uomconvid = -1;
+  _ignoreSignals = false;
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_uomTo, SIGNAL(currentIndexChanged(int)), this, SLOT(sCheck()));
+  connect(_uomFrom, SIGNAL(currentIndexChanged(int)), this, SLOT(sFromChanged()));
+  connect(_uomTo, SIGNAL(currentIndexChanged(int)), this, SLOT(sToChanged()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(reject()));
 
+  _uomFrom->setType(XComboBox::UOMs);
   _uomTo->setType(XComboBox::UOMs);
 }
 
@@ -109,11 +112,10 @@ enum SetResponse uomConv::set(const ParameterList &pParams)
   if (valid)
   {
     _uomidFrom = param.toInt();
-    q.prepare("SELECT uom_name FROM uom WHERE (uom_id=:uom_id);");
-    q.bindValue(":uom_id", _uomidFrom);
-    q.exec();
-    if(q.first())
-      _uomFrom->setText(q.value("uom_name").toString());
+    _ignoreSignals = true;
+    _uomFrom->setId(_uomidFrom);
+    _uomTo->setId(_uomidFrom);
+    _ignoreSignals = false;
   }
 
   param = pParams.value("uomconv_id", &valid);
@@ -127,24 +129,23 @@ enum SetResponse uomConv::set(const ParameterList &pParams)
   if (valid)
   {
     if (param.toString() == "new")
-    {
       _mode = cNew;
-
-      _ratio->setFocus();
-    }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
 
       _uomTo->setEnabled(false);
+      _uomFrom->setEnabled(false);
       _save->setFocus();
     }
     else if (param.toString() == "view")
     {
       _mode = cView;
 
-      _ratio->setEnabled(false);
+      _fromValue->setEnabled(false);
+      _toValue->setEnabled(false);
       _uomTo->setEnabled(false);
+      _uomFrom->setEnabled(false);
       _fractional->setEnabled(false);
       _cancel->setText(tr("&Close"));
       _save->hide();
@@ -159,18 +160,28 @@ enum SetResponse uomConv::set(const ParameterList &pParams)
 void uomConv::sSave()
 {
   bool valid;
-  if (_ratio->toDouble(&valid) == 0)
+  if (_fromValue->toDouble(&valid) == 0)
   {
     QMessageBox::information( this, tr("No Ratio Entered"),
                               tr("You must enter a valid Ratio before saving this UOM Conversion.") );
-    _ratio->setFocus();
+    _fromValue->setFocus();
+    return;
+  }
+
+  if (_toValue->toDouble(&valid) == 0)
+  {
+    QMessageBox::information( this, tr("No Ratio Entered"),
+                              tr("You must enter a valid Ratio before saving this UOM Conversion.") );
+    _toValue->setFocus();
     return;
   }
 
   if (_mode == cEdit)
     q.prepare( "UPDATE uomconv "
-               "   SET uomconv_ratio=:uomconv_ratio, uomconv_fractional=:uomconv_fractional "
-               "WHERE (uomconv_id=:uomconv_id);" );
+               "   SET uomconv_from_value=:uomconv_from_value,"
+               "       uomconv_to_value=:uomconv_to_value,"
+               "       uomconv_fractional=:uomconv_fractional "
+               " WHERE(uomconv_id=:uomconv_id);" );
   else if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('uomconv_uomconv_id_seq') AS uomconv_id");
@@ -185,19 +196,48 @@ void uomConv::sSave()
     }
  
     q.prepare( "INSERT INTO uomconv "
-               "( uomconv_id, uomconv_from_uom_id, uomconv_to_uom_id, uomconv_ratio, uomconv_fractional ) "
+               "( uomconv_id, uomconv_from_uom_id, uomconv_from_value, uomconv_to_uom_id, uomconv_to_value, uomconv_fractional ) "
                "VALUES "
-               "( :uomconv_id, :uomconv_from_uom_id, :uomconv_to_uom_id, :uomconv_ratio, :uomconv_fractional );" );
+               "( :uomconv_id, :uomconv_from_uom_id, :uomconv_from_value, :uomconv_to_uom_id, :uomconv_to_value, :uomconv_fractional );" );
   }
 
   q.bindValue(":uomconv_id", _uomconvid);
-  q.bindValue(":uomconv_from_uom_id", _uomidFrom);
+  q.bindValue(":uomconv_from_uom_id", _uomFrom->id());
   q.bindValue(":uomconv_to_uom_id", _uomTo->id());
-  q.bindValue(":uomconv_ratio", _ratio->toDouble());
+  q.bindValue(":uomconv_from_value", _fromValue->toDouble());
+  q.bindValue(":uomconv_to_value", _toValue->toDouble());
   q.bindValue(":uomconv_fractional", QVariant(_fractional->isChecked(), 0));
   q.exec();
 
   accept();
+}
+
+void uomConv::sFromChanged()
+{
+  if(cNew != _mode || _ignoreSignals)
+    return;
+
+  if(_uomFrom->id() != _uomidFrom && _uomTo->id() != _uomidFrom)
+  {
+    _ignoreSignals = true;
+    _uomTo->setId(_uomidFrom);
+    _ignoreSignals = false;
+  }
+  sCheck();
+}
+
+void uomConv::sToChanged()
+{
+  if(cNew != _mode || _ignoreSignals)
+    return;
+
+  if(_uomFrom->id() != _uomidFrom && _uomTo->id() != _uomidFrom)
+  {
+    _ignoreSignals = true;
+    _uomFrom->setId(_uomidFrom);
+    _ignoreSignals = false;
+  }
+  sCheck();
 }
 
 void uomConv::sCheck()
@@ -208,14 +248,15 @@ void uomConv::sCheck()
                "  FROM uomconv"
                " WHERE((uomconv_from_uom_id=:from AND uomconv_to_uom_id=:to)"
                "    OR (uomconv_from_uom_id=:to AND uomconv_to_uom_id=:from));" );
-    q.bindValue(":from", _uomidFrom);
+    q.bindValue(":from", _uomFrom->id());
     q.bindValue(":to", _uomTo->id());
     q.exec();
     if (q.first())
     {
       _uomconvid = q.value("uomconv_id").toInt();
       _mode = cEdit;
-      _uomTo->setEnabled(FALSE);
+      _uomTo->setEnabled(false);
+      _uomFrom->setEnabled(false);
       populate();
     }
   }
@@ -223,18 +264,21 @@ void uomConv::sCheck()
 
 void uomConv::populate()
 {
-  q.prepare( "SELECT uomconv_to_uom_id, uom_id, uom_name,"
-             "       uomconv_ratio, uomconv_fractional "
-             "  FROM uomconv JOIN uom ON (uomconv_from_uom_id=uom_id)"
+  q.prepare( "SELECT uomconv_from_uom_id,"
+             "       uomconv_from_value,"
+             "       uomconv_to_uom_id,"
+             "       uomconv_to_value,"
+             "       uomconv_fractional "
+             "  FROM uomconv"
              " WHERE(uomconv_id=:uomconv_id);" );
   q.bindValue(":uomconv_id", _uomconvid);
   q.exec();
   if (q.first())
   {
-    _uomidFrom = q.value("uom_id").toInt();
-    _uomFrom->setText(q.value("uom_name").toString());
+    _uomFrom->setId(q.value("uomconv_from_uom_id").toInt());
     _uomTo->setId(q.value("uomconv_to_uom_id").toInt());
-    _ratio->setText(q.value("uomconv_ratio").toString());
+    _fromValue->setText(q.value("uomconv_from_value").toString());
+    _toValue->setText(q.value("uomconv_to_value").toString());
     _fractional->setChecked(q.value("uomconv_fractional").toBool());
   }
 }

@@ -85,10 +85,9 @@ uom::uom(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-  _uomconv->addColumn(tr("UOM To"), _itemColumn, Qt::AlignLeft);
-  _uomconv->addColumn(tr("Ratio"),  -1,         Qt::AlignRight);
+  _uomconv->addColumn(tr("UOM/UOM"),    -1,        Qt::AlignLeft);
+  _uomconv->addColumn(tr("Value"),      -1,        Qt::AlignRight);
   _uomconv->addColumn(tr("Fractional"), _ynColumn, Qt::AlignCenter);
-  _uomconv->addColumn(tr("Inverse"), _ynColumn, Qt::AlignCenter);
 }
 
 /*
@@ -229,24 +228,18 @@ void uom::populate()
 
 void uom::sFillList()
 {
-  q.prepare("SELECT uomconv_id, 0 AS uomconv_inverse,"
-            "       uom_name, uomconv_ratio,"
-            "       formatBoolYN(uomconv_fractional) AS f_fractional,"
-            "       formatBoolYN(false) AS f_inverse"
-            "  FROM uomconv JOIN uom ON (uomconv_to_uom_id=uom_id)"
-            " WHERE(uomconv_from_uom_id=:uom_id)"
-            " UNION "
-            "SELECT uomconv_id, 1 AS uomconv_inverse,"
-            "       uom_name,"
-            "       CAST((1.0/uomconv_ratio) AS numeric(20,10)) AS uomconv_ratio,"
-            "       formatBoolYN(uomconv_fractional) AS f_fractional,"
-            "       formatBoolYN(true) AS f_inverse"
-            "  FROM uomconv JOIN uom ON (uomconv_from_uom_id=uom_id)"
-            " WHERE(uomconv_to_uom_id=:uom_id)"
-            " ORDER BY uom_name;");
+  q.prepare("SELECT uomconv_id,"
+            "       (nuom.uom_name||'/'||duom.uom_name),"
+            "       (uomconv_from_value||'/'||uomconv_to_value),"
+            "       formatBoolYN(uomconv_fractional) AS f_fractional"
+            "  FROM uomconv"
+            "  JOIN uom AS nuom ON (uomconv_from_uom_id=nuom.uom_id)"
+            "  JOIN uom AS duom ON (uomconv_to_uom_id=duom.uom_id)"
+            " WHERE((uomconv_from_uom_id=:uom_id)"
+            "    OR (uomconv_to_uom_id=:uom_id));");
   q.bindValue(":uom_id", _uomid);
   q.exec();
-  _uomconv->populate(q, TRUE);
+  _uomconv->populate(q);
 }
 
 void uom::sSelected()
@@ -293,7 +286,7 @@ void uom::sEdit()
 
 void uom::sDelete()
 {
-  q.prepare( "SELECT deleteUOMConv(:uom_id) AS result;" );
+  q.prepare( "SELECT deleteUOMConv(:uomconv_id) AS result;" );
   q.bindValue(":uomconv_id", _uomconv->id());
   q.exec();
   if (q.first())
