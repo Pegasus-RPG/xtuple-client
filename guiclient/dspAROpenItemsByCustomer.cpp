@@ -229,6 +229,7 @@ void dspAROpenItemsByCustomer::sPrint()
 {
   ParameterList params;
   _dates->appendValue(params);
+  params.append("asofDate", _asOf->date());
   params.append("cust_id", _cust->id());
 
   orReport report("AROpenItemsByCustomer", params);

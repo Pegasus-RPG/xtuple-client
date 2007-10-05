@@ -207,6 +207,7 @@ void dspAPOpenItemsByVendor::sPrint()
 {
   ParameterList params;
   params.append("vend_id", _vend->id());
+  params.append("asofDate", _asOf->date());
   _dates->appendValue(params);
 
   orReport report("APOpenItemsByVendor", params);
