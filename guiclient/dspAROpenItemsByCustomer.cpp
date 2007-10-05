@@ -116,6 +116,7 @@ dspAROpenItemsByCustomer::dspAROpenItemsByCustomer(QWidget* parent, const char* 
     _aropen->headerItem()->setText(9, tr("Balance\n(in %1)").arg(currConcat));
   }
 
+  _asOf->setDate(omfgThis->dbDate(), true);
   _cust->setFocus();
 }
 
@@ -152,6 +153,11 @@ enum SetResponse dspAROpenItemsByCustomer::set(const ParameterList &pParams)
   param = pParams.value("endDate", &valid);
   if (valid)
     _dates->setEndDate(param.toDate());
+    
+  param = pParams.value("asofDate", &valid);
+  if (valid)
+    _asOf->setDate(param.toDate());
+    _asOf->setEnabled(FALSE);
 
   if (pParams.inList("run"))
   {
@@ -246,21 +252,23 @@ void dspAROpenItemsByCustomer::sFillList()
              "       formatDate(aropen_docdate) AS f_docdate,"
              "       formatDate(aropen_duedate) AS f_duedate,"
              "       formatMoney(aropen_amount) AS f_amount,"
-             "       formatMoney(aropen_paid) AS f_paid,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)"
-             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
-             "            ELSE (aropen_amount - aropen_paid)"
+             "       formatMoney(arapplied(aropen_id,:asofdate)) AS f_paid,"
+             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - arapplied(aropen_id,:asofdate)) * -1)"
+             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - arapplied(aropen_id,:asofdate))"
+             "            ELSE (aropen_amount - arapplied(aropen_id,:asofdate))"
              "       END AS balance,"
-	     "       currConcat(aropen_curr_id) AS currAbbr,"
+	         "       currConcat(aropen_curr_id) AS currAbbr,"
              "       currToBase(aropen_curr_id,"
-	     "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)"
-             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
-             "            ELSE (aropen_amount - aropen_paid)"
+	         "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - arapplied(aropen_id,:asofdate)) * -1)"
+             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - arapplied(aropen_id,:asofdate))"
+             "            ELSE (aropen_amount - arapplied(aropen_id,:asofdate))"
              "       END, aropen_docdate) AS base_balance "
              "  FROM aropen "
-             " WHERE ( (aropen_open)"
+             " WHERE ( (COALESCE(aropen_closedate,date :asofdate + integer '1')>:asofdate) "
+             "   AND   (aropen_docdate<=:asofdate)"
              "   AND   (aropen_cust_id=:cust_id) "
-             "   AND   (aropen_duedate BETWEEN :startDate AND :endDate) ) "
+             "   AND   (aropen_duedate BETWEEN :startDate AND :endDate) "
+             "   AND   ((currtobase(aropen_curr_id,aropen_amount,:asofdate) - arapplied(aropen_id,:asofdate)) > 0)) "
              " ORDER BY aropen_docdate;" );
   _dates->bindValue(q);
   q.bindValue(":cust_id", _cust->id());
@@ -268,6 +276,7 @@ void dspAROpenItemsByCustomer::sFillList()
   q.bindValue(":debitMemo", tr("D/M"));
   q.bindValue(":invoice", tr("Invoice"));
   q.bindValue(":cashdeposit", tr("C/D"));
+  q.bindValue(":asofdate", _asOf->date());
   q.exec();
   if (q.first())
   {

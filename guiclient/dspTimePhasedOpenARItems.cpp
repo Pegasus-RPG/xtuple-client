@@ -234,6 +234,7 @@ void dspTimePhasedOpenARItems::sViewOpenItems()
       params.append("endDate",asOfDate.addDays(-91) );
   }
   params.append("run");
+  params.append("asofDate", _asOf->date());
 
   dspAROpenItemsByCustomer *newdlg = new dspAROpenItemsByCustomer();
   newdlg->set(params);

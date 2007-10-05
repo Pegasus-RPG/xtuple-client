@@ -116,6 +116,7 @@ dspAPOpenItemsByVendor::dspAPOpenItemsByVendor(QWidget* parent, const char* name
     _apopen->headerItem()->setText(10, tr("Balance\n(in %1)").arg(currConcat));
   }
 
+  _asOf->setDate(omfgThis->dbDate(), true);
   _vend->setFocus();
 }
 
@@ -152,6 +153,11 @@ enum SetResponse dspAPOpenItemsByVendor::set(const ParameterList &pParams)
   param = pParams.value("endDate", &valid);
   if (valid)
     _dates->setEndDate(param.toDate());
+
+  param = pParams.value("asofDate", &valid);
+  if (valid)
+    _asOf->setDate(param.toDate());
+    _asOf->setEnabled(FALSE);
 
   if (pParams.inList("run"))
   {
@@ -224,26 +230,29 @@ void dspAPOpenItemsByVendor::sFillList()
              "       formatDate(apopen_docdate) AS f_docdate,"
              "       formatDate(apopen_duedate) AS f_duedate,"
              "       formatMoney(apopen_amount) AS f_amount,"
-             "       formatMoney(apopen_paid) AS f_paid,"
-             "       CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apopen_paid) * -1)"
-             "            WHEN (apopen_doctype IN ('V', 'D')) THEN (apopen_amount - apopen_paid)"
-             "            ELSE (apopen_amount - apopen_paid)"
+             "       formatMoney(apapplied(apopen_id,:asofdate)) AS f_paid,"
+             "       CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apapplied(apopen_id,:asofdate)) * -1)"
+             "            WHEN (apopen_doctype IN ('V', 'D')) THEN (apopen_amount - apapplied(apopen_id,:asofdate))"
+             "            ELSE (apopen_amount - apapplied(apopen_id,:asofdate))"
              "       END AS balance, currConcat(apopen_curr_id) AS currAbbr,"
              "       currToBase(apopen_curr_id,"
-	     "           CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apopen_paid) * -1)"
-             "            WHEN (apopen_doctype IN ('V', 'D')) THEN (apopen_amount - apopen_paid)"
+	     "           CASE WHEN (apopen_doctype='C') THEN ((apopen_amount - apapplied(apopen_id,:asofdate)) * -1)"
+             "            WHEN (apopen_doctype IN ('V', 'D')) THEN (apopen_amount - apapplied(apopen_id,:asofdate))"
              "            ELSE (apopen_amount - apopen_paid)"
              "            END, apopen_docdate) AS base_balance "
              "FROM apopen "
-             "WHERE ( (apopen_open)"
-             " AND (apopen_vend_id=:vend_id) "
-             " AND (apopen_duedate BETWEEN :startDate AND :endDate) ) "
-             "ORDER BY apopen_docdate;" );
+             " WHERE ( (COALESCE(apopen_closedate,date :asofdate + integer '1')>:asofdate) "
+             "   AND   (apopen_docdate<=:asofdate)"
+             "   AND   (apopen_vend_id=:vend_id) "
+             "   AND   (apopen_duedate BETWEEN :startDate AND :endDate) "
+             "   AND   ((currtobase(apopen_curr_id,apopen_amount,:asofdate) - apapplied(apopen_id,:asofdate)) > 0)) "
+             " ORDER BY apopen_docdate;" );
   _dates->bindValue(q);
   q.bindValue(":vend_id", _vend->id());
   q.bindValue(":creditMemo", tr("C/M"));
   q.bindValue(":debitMemo", tr("D/M"));
   q.bindValue(":voucher", tr("Voucher"));
+  q.bindValue(":asofdate", _asOf->date());
   q.exec();
   if (q.first())
   {
