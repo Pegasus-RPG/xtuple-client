@@ -79,7 +79,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
     virtual void sNew();
     virtual void sEdit();
     virtual void sView();

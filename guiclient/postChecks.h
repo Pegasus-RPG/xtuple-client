@@ -55,22 +55,24 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef VOIDAPCHECKS_H
-#define VOIDAPCHECKS_H
+#ifndef POSTCHECKS_H
+#define POSTCHECKS_H
 
+#include "OpenMFGGUIClient.h"
 #include <QDialog>
-#include "ui_voidAPChecks.h"
+#include <parameter.h>
+#include "ui_postChecks.h"
 
-class voidAPChecks : public QDialog, public Ui::voidAPChecks
+class postChecks : public QDialog, public Ui::postChecks
 {
     Q_OBJECT
 
 public:
-    voidAPChecks(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~voidAPChecks();
+    postChecks(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~postChecks();
 
 public slots:
-    virtual void sVoid();
+    virtual void sPost();
     virtual void sHandleBankAccount( int pBankaccntid );
 
 protected slots:
@@ -78,4 +80,4 @@ protected slots:
 
 };
 
-#endif // VOIDAPCHECKS_H
+#endif // POSTCHECKS_H

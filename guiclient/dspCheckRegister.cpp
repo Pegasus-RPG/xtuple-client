@@ -88,57 +88,62 @@ dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_apchk, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_check, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  _apchk->addColumn(tr("Void"),        _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Misc."),       _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Prt'd"),       _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Posted"),      _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Chk./Vchr."),  _itemColumn,  Qt::AlignCenter );
-  _apchk->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
-  _apchk->addColumn(tr("Check Date") , _dateColumn,     Qt::AlignCenter );
-  _apchk->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight  );
-  _apchk->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight  );
-  _apchk->sortByColumn(4);
+  _check->addColumn(tr("Void"),        _ynColumn,    Qt::AlignCenter );
+  _check->addColumn(tr("Misc."),       _ynColumn,    Qt::AlignCenter );
+  _check->addColumn(tr("Prt'd"),       _ynColumn,    Qt::AlignCenter );
+  _check->addColumn(tr("Posted"),      _ynColumn,    Qt::AlignCenter );
+  _check->addColumn(tr("Chk./Vchr."),  _itemColumn,  Qt::AlignCenter );
+  _check->addColumn(tr("Recipient"),   -1,           Qt::AlignLeft   );
+  _check->addColumn(tr("Check Date") , _dateColumn,     Qt::AlignCenter );
+  _check->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight  );
+  _check->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignRight  );
+  _check->sortByColumn(4);
 
   if (omfgThis->singleCurrency())
   {
-    _apchk->hideColumn(8);
+    _check->hideColumn(8);
     _totalCurr->hide();
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspCheckRegister::~dspCheckRegister()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspCheckRegister::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspCheckRegister::sPrint()
+bool dspCheckRegister::setParams(ParameterList &pParams)
 {
   if(!_dates->allValid())
   {
-    QMessageBox::information( this, tr("Invalid Dates"), tr("Invalid date range specified. Please specify a valid date range.") );
+    QMessageBox::information( this, tr("Invalid Dates"),
+			      tr("<p>Invalid dates specified. Please specify a "
+				 "valid date range.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
+  pParams.append("bankaccnt_id", _bankaccnt->id());
+  _dates->appendValue(pParams);
+  if(_showDetail->isChecked())
+    pParams.append("showDetail");
+  
+  return true;
+}
+
+void dspCheckRegister::sPrint()
+{
   ParameterList params;
-  params.append("bankaccnt_id", _bankaccnt->id());
-  _dates->appendValue(params);
+  if (! setParams(params))
+    return;
 
   orReport report("CheckRegister", params);
   if(report.isValid())
@@ -149,16 +154,11 @@ void dspCheckRegister::sPrint()
 
 void dspCheckRegister::sFillList()
 {
-  if(!checkParams())
-    return;
-  
   MetaSQLQuery mql = mqlLoad(":/ap/displays/CheckRegister/FillListDetail.mql");
 
   ParameterList params;
-  params.append("bankaccnt_id", _bankaccnt->id());
-  _dates->appendValue(params);
-  if(_showDetail->isChecked())
-    params.append("showDetail");
+  if (!setParams(params))
+    return;
 
   q = mql.toQuery(params);
   if (q.lastError().type() != QSqlError::None)
@@ -166,77 +166,68 @@ void dspCheckRegister::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
   
-  _apchk->clear();
-  if (q.first())
+  _check->clear();
+  XTreeWidgetItem *header = NULL;
+  int           checkid = -1;
+  while (q.next())
   {
-    XTreeWidgetItem *header = NULL;
-    int           apchkid = -1;
-
-    do
+    if (q.value("checkid").toInt() != checkid)
     {
-      if (q.value("apchkid").toInt() != apchkid)
-      {
-        apchkid = q.value("apchkid").toInt();
-        header = new XTreeWidgetItem( _apchk, header, apchkid, q.value("extra").toInt(),
-                                    q.value("f_void"), q.value("f_misc"),
-                                    q.value("f_printed"), q.value("f_posted"), q.value("number"),
-                                    q.value("description"), q.value("f_checkdate"),
-                                    q.value("f_amount"), q.value("currAbbr"));
-      }
-      else if (header)
-      {
-        XTreeWidgetItem *item = new XTreeWidgetItem( header, apchkid, 0);
-        item->setText(4, q.value("number"));
-        item->setText(5, q.value("description"));
-        item->setText(7, q.value("f_amount"));
-      }
+      checkid = q.value("checkid").toInt();
+      header = new XTreeWidgetItem( _check, header, checkid, q.value("extra").toInt(),
+				  q.value("f_void"), q.value("f_misc"),
+				  q.value("f_printed"), q.value("f_posted"), q.value("number"),
+				  q.value("description"), q.value("f_checkdate"),
+				  q.value("f_amount"), q.value("currAbbr"));
     }
-    while (q.next());
+    else if (header)
+    {
+      XTreeWidgetItem *item = new XTreeWidgetItem( header, checkid, 0);
+      item->setText(4, q.value("number"));
+      item->setText(5, q.value("description"));
+      item->setText(7, q.value("f_amount"));
+    }
+  }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   if(_showDetail->isChecked())
-    _apchk->expandAll();
+    _check->expandAll();
 
-  q.prepare( "SELECT formatMoney(SUM(currToCurr(apchk_curr_id, bankaccnt_curr_id,"
-	     "	                                apchk_amount, apchk_checkdate))) AS f_amount,"
-	     "       currConcat(bankaccnt_curr_id) AS currAbbr "
-             "FROM apchk, vend, bankaccnt "
-             "WHERE ( (apchk_vend_id=vend_id) "
-             "  AND   (NOT apchk_void)"
-             " AND (apchk_checkdate BETWEEN :startDate AND :endDate) "
-	     " AND (bankaccnt_id=apchk_bankaccnt_id) "
-             " AND (apchk_bankaccnt_id=:bankaccnt_id) )"
-             " GROUP BY bankaccnt_curr_id;" );
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  _dates->bindValue(q);
-  q.exec();
+  QString tots("SELECT formatMoney(SUM(currToCurr(checkhead_curr_id,"
+	       "                                  bankaccnt_curr_id,"
+	       "	                          checkhead_amount,"
+	       "                                  checkhead_checkdate))) AS f_amount,"
+	       "       currConcat(bankaccnt_curr_id) AS currAbbr "
+	       "FROM checkhead, bankaccnt "
+	       "WHERE ((NOT checkhead_void)"
+	       " AND (checkhead_checkdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>) "
+	       " AND (bankaccnt_id=checkhead_bankaccnt_id) "
+	       " AND (checkhead_bankaccnt_id=<? value(\"bankaccnt_id\") ?>) )"
+	       " GROUP BY bankaccnt_curr_id;" );
+  MetaSQLQuery totm(tots);
+  q = totm.toQuery(params);	// reused from above
   if(q.first())
   {
     _total->setText(q.value("f_amount").toString());
     _totalCurr->setText(q.value("currAbbr").toString());
   }
-}
-
-bool dspCheckRegister::checkParams()
-{
-  if(!_dates->allValid())
+  else if (q.lastError().type() != QSqlError::None)
   {
-    QMessageBox::information( this, tr("Invalid Dates"), tr("Invalid dates specified. Please specify a valid date range.") );
-    _dates->setFocus();
-    return false;
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  
-  return true;
 }
-
 
 void dspCheckRegister::sPopulateMenu( QMenu * pMenu )
 {
   int menuItem;
 
-  if(_apchk->altId() == 1)
+  if(_check->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Void Posted Check"), this, SLOT(sVoidPosted()), 0);
     if(!_privleges->check("VoidPostedAPCheck"))
@@ -255,9 +246,9 @@ void dspCheckRegister::sVoidPosted()
   if (returnVal == QDialog::Accepted)
   {
     QDate voidDate = newdlg.getDate();
-    q.prepare("SELECT voidPostedAPCheck(:apchk_id, fetchJournalNumber('AP-CK'),"
+    q.prepare("SELECT voidPostedCheck(:check_id, fetchJournalNumber('AP-CK'),"
 	      "                         DATE :voidDate) AS result;");
-    q.bindValue(":apchk_id", _apchk->id());
+    q.bindValue(":check_id", _check->id());
     q.bindValue(":voidDate", voidDate);
     q.exec();
     if (q.first())
@@ -265,7 +256,7 @@ void dspCheckRegister::sVoidPosted()
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("voidPostedAPCheck", result),
+	systemError(this, storedProcErrorLookup("voidPostedCheck", result),
 			    __FILE__, __LINE__);
 	return;
       }

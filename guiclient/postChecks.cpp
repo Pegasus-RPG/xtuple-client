@@ -55,13 +55,16 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "postAPCheck.h"
+#include "postChecks.h"
 
-#include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 
-postAPCheck::postAPCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+#include <openreports.h>
+
+#include "storedProcErrorLookup.h"
+
+postChecks::postChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
@@ -69,104 +72,71 @@ postAPCheck::postAPCheck(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
 
-  _captive = FALSE;
-
-  _apchk->setAllowNull(TRUE);
-
+  _bankaccnt->setAllowNull(TRUE);
   _bankaccnt->setType(XComboBox::APBankAccounts);
+
+  Preferences _pref = Preferences(omfgThis->username());
+  if (_pref.boolean("XCheckBox/forgetful"))
+    _printJournal->setChecked(true);
+
 }
 
-postAPCheck::~postAPCheck()
+postChecks::~postChecks()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-void postAPCheck::languageChange()
+void postChecks::languageChange()
 {
   retranslateUi(this);
 }
 
-enum SetResponse postAPCheck::set(const ParameterList &pParams)
+void postChecks::sPost()
 {
-  _captive = TRUE;
-
-  QVariant param;
-  bool     valid;
-
-  param = pParams.value("apchk_id", &valid);
-  if (valid)
-  {
-    populate(param.toInt());
-    _bankaccnt->setEnabled(FALSE);
-    _apchk->setEnabled(FALSE);
-  }
-
-  return NoError;
-}
-
-void postAPCheck::sPost()
-{
-  q.prepare( "SELECT apchk_posted FROM apchk WHERE (apchk_id=:apchk_id); ");
-  q.bindValue(":apchk_id", _apchk->id());
+  q.prepare("SELECT postChecks(:bankaccnt_id) AS result;");
+  q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
-  if(q.first() && q.value("apchk_posted").toBool())
+  if (q.first())
   {
-    QMessageBox::information( this, tr("Check Already Posted"),
-          tr("The selected A/P Check has already been posted.") );
+    int result = q.value("result").toInt();
+    if (result < 0)
+      systemError(this, storedProcErrorLookup("postChecks", result), __FILE__, __LINE__);
+
+    omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
+
+    if (_printJournal->isChecked())
+    {
+      ParameterList params;
+      params.append("journalNumber", result);
+
+      orReport report("CheckJournal", params);
+      if (report.isValid())
+        report.print();
+      else
+        report.reportError(this);
+    }
+
+    accept();
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  q.prepare( "SELECT apchk_bankaccnt_id, postAPCheck(apchk_id) AS result "
-             "FROM apchk "
-             "WHERE ((apchk_id=:apchk_id)"
-             " AND  (NOT apchk_posted) );" );
-  q.bindValue(":apchk_id", _apchk->id());
-  q.exec();
-  if (q.first())
-  {
-    omfgThis->sAPChecksUpdated(q.value("apchk_bankaccnt_id").toInt(), _apchk->id(), TRUE);
-
-    if (_captive)
-      accept();
-    else
-    {
-      sHandleBankAccount(_bankaccnt->id());
-      _close->setText(tr("&Close"));
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
 }
 
-void postAPCheck::sHandleBankAccount(int pBankaccntid)
+void postChecks::sHandleBankAccount(int pBankaccntid)
 {
-  q.prepare( "SELECT apchk_id, (TEXT(apchk_number) || '-' || vend_name) "
-             "FROM apchk, vend "
-             "WHERE ( (apchk_vend_id=vend_id)"
-             " AND (NOT apchk_void)"
-             " AND (NOT apchk_posted)"
-             " AND (apchk_printed)"
-             " AND (apchk_bankaccnt_id=:bankaccnt_id) ) "
-             "ORDER BY apchk_number;" );
+  q.prepare( "SELECT COUNT(*) AS numofchecks "
+             "FROM checkhead "
+             "WHERE ( (NOT checkhead_void)"
+             " AND (NOT checkhead_posted)"
+             " AND (checkhead_printed)"
+             " AND (checkhead_bankaccnt_id=:bankaccnt_id) );" );
   q.bindValue(":bankaccnt_id", pBankaccntid);
   q.exec();
-  _apchk->populate(q);
-  _apchk->setNull();
-}
-
-void postAPCheck::populate(int pApchkid)
-{
-  q.prepare( "SELECT apchk_bankaccnt_id "
-             "FROM apchk "
-             "WHERE (apchk_id=:apchk_id);" );
-  q.bindValue(":apchk_id", pApchkid);
-  q.exec();
   if (q.first())
-  {
-    _bankaccnt->setId(q.value("apchk_bankaccnt_id").toInt());
-    _apchk->setId(pApchkid);
-  }
+    _numberOfChecks->setText(q.value("numofchecks").toString());
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

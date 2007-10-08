@@ -57,26 +57,21 @@
 
 #include "selectPayments.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QSqlError>
-#include <parameter.h>
+
 #include <openreports.h>
+#include <parameter.h>
+
 #include "OpenMFGGUIClient.h"
 #include "selectBankAccount.h"
 #include "selectPayment.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a selectPayments as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
 
   QButtonGroup * vendorButtonGroup = new QButtonGroup(this);
   vendorButtonGroup->addButton(_allVendors);
@@ -89,32 +84,21 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   dueButtonGroup->addButton(_dueOlder);
   dueButtonGroup->addButton(_dueBetween);
 
-  // signals and slots connections
-  connect(_selectedVendor, SIGNAL(toggled(bool)), _vend, SLOT(setEnabled(bool)));
-  connect(_selectedVendorType, SIGNAL(toggled(bool)), _vendorTypes, SLOT(setEnabled(bool)));
-  connect(_vendorTypePattern, SIGNAL(toggled(bool)), _vendorType, SLOT(setEnabled(bool)));
-  connect(_apopen, SIGNAL(valid(bool)), _select, SLOT(setEnabled(bool)));
-  connect(_apopen, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));
-  connect(_selectDue, SIGNAL(clicked()), this, SLOT(sSelectDue()));
-  connect(_selectDiscount, SIGNAL(clicked()), this, SLOT(sSelectDiscount()));
-  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
-  connect(_selectLine, SIGNAL(clicked()), this, SLOT(sSelectLine()));
   connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
   connect(_clearAll, SIGNAL(clicked()), this, SLOT(sClearAll()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_vend, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_vendorTypes, SIGNAL(newID(int)), this, SLOT(sFillList()));
-  connect(_vendorType, SIGNAL(lostFocus()), this, SLOT(sFillList()));
-  connect(vendorButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_apopen, SIGNAL(itemSelected(int)), _select, SLOT(animateClick()));
-  connect(_dueOlder, SIGNAL(toggled(bool)), _dueOlderDate, SLOT(setEnabled(bool)));
-  connect(_dueOlderDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   connect(_dueBetweenDates, SIGNAL(updated()), this, SLOT(sFillList()));
-  connect(_dueBetween, SIGNAL(toggled(bool)), _dueBetweenDates, SLOT(setEnabled(bool)));
+  connect(_dueOlderDate, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_select, SIGNAL(clicked()), this, SLOT(sSelect()));
+  connect(_selectDiscount, SIGNAL(clicked()), this, SLOT(sSelectDiscount()));
+  connect(_selectDue, SIGNAL(clicked()), this, SLOT(sSelectDue()));
+  connect(_selectLine, SIGNAL(clicked()), this, SLOT(sSelectLine()));
+  connect(_vend, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_vendorType, SIGNAL(lostFocus()), this, SLOT(sFillList()));
+  connect(_vendorTypes, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(dueButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
+  connect(vendorButtonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
 
-  statusBar()->hide();
   _ignoreUpdates = false;
   
   _vendorTypes->setType(XComboBox::VendorTypes);
@@ -149,18 +133,11 @@ selectPayments::selectPayments(QWidget* parent, const char* name, Qt::WFlags fl)
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 selectPayments::~selectPayments()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void selectPayments::languageChange()
 {
   retranslateUi(this);
@@ -299,6 +276,11 @@ void selectPayments::sClearAll()
   q.bindValue(":vendtype_id", _vendorTypes->id());
   q.bindValue(":vendtype_code", _vendorType->text());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   omfgThis->sPaymentsUpdated(-1, -1, TRUE);
 }
@@ -353,6 +335,22 @@ void selectPayments::sSelectLine()
       q.bindValue(":apopen_id", cursor->id());
       q.bindValue(":bankaccnt_id", bankaccntid);
       q.exec();
+      if (q.first())
+      {
+	int result = q.value("result").toInt();
+	if (result < 0)
+	{
+	  systemError(this, cursor->text(0) + " " + cursor->text(2) + "\n" +
+			    storedProcErrorLookup("selectPayment", result),
+		      __FILE__, __LINE__);
+	  return;
+	}
+      }
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
       update = TRUE;
     }
   
@@ -372,6 +370,22 @@ void selectPayments::sClear()
     cursor = (XTreeWidgetItem*)list.at(i);
     q.bindValue(":apopen_id", cursor->altId());
     q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+	systemError(this, cursor->text(0) + " " + cursor->text(2) + "\n" +
+			  storedProcErrorLookup("clearPayment", result),
+		    __FILE__, __LINE__);
+	return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     update = TRUE;
   }
 
@@ -399,20 +413,20 @@ void selectPayments::sFillList()
                "       formatDate(apopen_duedate) AS f_duedate,"
                "       formatDate(apopen_docdate) AS f_docdate,"
                "       formatMoney(apopen_amount - apopen_paid - "
-               "                   COALESCE((SELECT SUM(currToCurr(apchkitem_curr_id, apopen_curr_id, apchkitem_amount + apchkitem_discount, CURRENT_DATE)) "
-               "                             FROM apchkitem, apchk "
-               "                             WHERE ((apchkitem_apchk_id=apchk_id) "
-               "                              AND (apchkitem_apopen_id=apopen_id) "
-               "                              AND (NOT apchk_void) "
-               "                              AND (NOT apchk_posted)) "
+               "                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
+               "                             FROM checkitem, checkhead "
+               "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
+               "                              AND (checkitem_apopen_id=apopen_id) "
+               "                              AND (NOT checkhead_void) "
+               "                              AND (NOT checkhead_posted)) "
                "                           ), 0)) AS f_amount,"
                "       (apopen_amount - apopen_paid - "
-               "                   COALESCE((SELECT SUM(currToCurr(apchkitem_curr_id, apopen_curr_id, apchkitem_amount + apchkitem_discount, CURRENT_DATE)) "
-               "                             FROM apchkitem, apchk "
-               "                             WHERE ((apchkitem_apchk_id=apchk_id) "
-               "                              AND (apchkitem_apopen_id=apopen_id) "
-               "                              AND (NOT apchk_void) "
-               "                              AND (NOT apchk_posted)) "
+               "                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount + checkitem_discount, CURRENT_DATE)) "
+               "                             FROM checkitem, checkhead "
+               "                             WHERE ((checkitem_checkhead_id=checkhead_id) "
+               "                              AND (checkitem_apopen_id=apopen_id) "
+               "                              AND (NOT checkhead_void) "
+               "                              AND (NOT checkhead_posted)) "
                "                           ), 0)) AS amount,"
                "       COALESCE(currToBase(apselect_curr_id, SUM(apselect_amount), CURRENT_DATE), 0) AS selected_base,"
                "       COALESCE(SUM(apselect_amount), 0) AS selected,"
@@ -454,33 +468,33 @@ void selectPayments::sFillList()
   else if(_dueBetween->isChecked())
     _dueBetweenDates->bindValue(q);
   q.exec();
-  if (q.first())
+  double running = 0;
+  XTreeWidgetItem * last = 0;
+
+  while (q.next())
   {
-    double running = 0;
+    // skip records that have a zero amount
+    if(q.value("amount").toDouble() == 0.0)
+      continue;
 
-    XTreeWidgetItem * last = 0;
-    do
-    {
-      // skip records that have a zero amount
-      if(q.value("amount").toDouble() == 0.0)
-        continue;
+    running += q.value("selected_base").toDouble();
 
-      running += q.value("selected_base").toDouble();
-
-      last = new XTreeWidgetItem( _apopen, last,
-                                  q.value("apopen_id").toInt(), q.value("apselectid").toInt(),
-                                  q.value("vendor"), q.value("doctype"),
-                                  q.value("apopen_docnumber"), q.value("apopen_invcnumber"), q.value("apopen_ponumber"),
-                                  q.value("f_duedate"), q.value("f_docdate"),
-                                  q.value("f_amount"),
-                                  formatMoney(q.value("selected").toDouble()),
-                                  q.value("f_discount"),
-                                  q.value("curr_concat"));
-      last->setText(11, formatMoney(running));
-      if (q.value("late").toBool())
-        last->setTextColor("red");
-    }
-    while (q.next());
+    last = new XTreeWidgetItem( _apopen, last,
+				q.value("apopen_id").toInt(), q.value("apselectid").toInt(),
+				q.value("vendor"), q.value("doctype"),
+				q.value("apopen_docnumber"), q.value("apopen_invcnumber"), q.value("apopen_ponumber"),
+				q.value("f_duedate"), q.value("f_docdate"),
+				q.value("f_amount"),
+				formatMoney(q.value("selected").toDouble()),
+				q.value("f_discount"),
+				q.value("curr_concat"));
+    last->setText(11, formatMoney(running));
+    if (q.value("late").toBool())
+      last->setTextColor("red");
+  }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

@@ -21,12 +21,12 @@
        apopen_docnumber, apopen_ponumber,
        apopen_duedate, apopen_docdate,
        (apopen_amount - apopen_paid -
-                   COALESCE((SELECT SUM(currToCurr(apchkitem_curr_id, apopen_curr_id, apchkitem_amount, CURRENT_DATE))
-                             FROM apchkitem, apchk
-                             WHERE ((apchkitem_apchk_id=apchk_id)
-                              AND (apchkitem_apopen_id=apopen_id)
-                              AND (NOT apchk_void)
-                              AND (NOT apchk_posted))
+                   COALESCE((SELECT SUM(currToCurr(checkitem_curr_id, apopen_curr_id, checkitem_amount, CURRENT_DATE))
+                             FROM checkitem, checkhead
+                             WHERE ((checkitem_checkhead_id=checkhead_id)
+                              AND (checkitem_apopen_id=apopen_id)
+                              AND (NOT checkhead_void)
+                              AND (NOT checkhead_posted))
                            ), 0)) AS amount,
        formatMoney(COALESCE(SUM(apselect_amount), 0)) AS f_selected,
        formatBoolYN(apopen_duedate &lt;= CURRENT_DATE) AS f_late

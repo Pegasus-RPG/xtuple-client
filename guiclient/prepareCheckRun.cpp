@@ -55,36 +55,101 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef PRINTAPCHECK_H
-#define PRINTAPCHECK_H
+#include "prepareCheckRun.h"
 
-#include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
-#include <parameter.h>
-#include "ui_printAPCheck.h"
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-class printAPCheck : public QDialog, public Ui::printAPCheck
+#include "storedProcErrorLookup.h"
+
+prepareCheckRun::prepareCheckRun(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : QDialog(parent, name, modal, fl)
 {
-    Q_OBJECT
+    setupUi(this);
 
-public:
-    printAPCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~printAPCheck();
+    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
+    connect(_prepare, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-    virtual void init();
+    _checkDate->setDate(omfgThis->dbDate());
+}
 
-public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sHandleBankAccount( int pBankaccntid );
-    virtual void populate( int pApchkid );
+prepareCheckRun::~prepareCheckRun()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
 
-protected slots:
-    virtual void languageChange();
+void prepareCheckRun::languageChange()
+{
+    retranslateUi(this);
+}
 
-private:
-    bool _captive;
+void prepareCheckRun::sPrint()
+{
+  q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
+  q.bindValue(":bankaccnt_id", _bankaccnt->id());
+  q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("setNextCheckNumber", result),
+		  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+  }
 
-};
+  q.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
+  q.bindValue(":bankaccnt_id", _bankaccnt->id());
+  q.bindValue(":checkDate", _checkDate->date());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("createChecks", result),
+		  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+  }
 
-#endif // PRINTAPCHECK_H
+  omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
+
+  accept();
+}
+
+void prepareCheckRun::sPopulate()
+{
+  if (_bankaccnt->id() != -1)
+  {
+    XSqlQuery checkNumber;
+    checkNumber.prepare( "SELECT bankaccnt_nextchknum "
+                         "FROM bankaccnt "
+                         "WHERE (bankaccnt_id=:bankaccnt_id);" );
+    checkNumber.bindValue(":bankaccnt_id", _bankaccnt->id());
+    checkNumber.exec();
+    if (checkNumber.first())
+      _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+    }
+  }
+  else
+    _nextCheckNum->clear();
+}
+

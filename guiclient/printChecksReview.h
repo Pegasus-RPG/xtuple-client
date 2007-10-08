@@ -55,39 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef VIEWAPCHECKRUN_H
-#define VIEWAPCHECKRUN_H
+#ifndef PRINTCHECKSREVIEW_H
+#define PRINTCHECKSREVIEW_H
 
-#include "OpenMFGGUIClient.h"
-#include <QMainWindow>
-#include <parameter.h>
-#include "ui_viewAPCheckRun.h"
+#include <QDialog>
+#include "ui_printChecksReview.h"
 
-class viewAPCheckRun : public QMainWindow, public Ui::viewAPCheckRun
+class printChecksReview : public QDialog, public Ui::printChecksReview
 {
     Q_OBJECT
 
 public:
-    viewAPCheckRun(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~viewAPCheckRun();
+    printChecksReview(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~printChecksReview();
 
 public slots:
-    virtual void sVoid();
-    virtual void sDelete();
-    virtual void sEdit();
-    virtual void sReplace();
-    virtual void sReplaceAll();
-    virtual void sPrint();
-    virtual void sPost();
-    virtual void sHandleItemSelection();
-    virtual void sFillList(int);
-    virtual void sFillList();
-    virtual void sPrintEditList();
-    virtual void sPrintCheckRun();
+    virtual void sUnmark();
+    virtual void sMarkPrinted();
+    virtual void sMarkVoided();
+    virtual void sMarkReplaced();
+    virtual void sSelectAll();
+
+protected:
+    virtual void markSelected( int );
 
 protected slots:
     virtual void languageChange();
 
+    virtual void sComplete();
+
+private:
+
 };
 
-#endif // VIEWAPCHECKRUN_H
+#endif // PRINTCHECKSREVIEW_H

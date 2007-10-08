@@ -11,79 +11,114 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>Head</name>
-  <sql>SELECT
+  <sql>SELECT -- just vendors
 
-CASE  
-WHEN vendaddr_code = 'REMIT' or vendaddr_code = 'Remit' or vendaddr_code = 'remit' THEN 
-formatAddr(
-addr.addr_line1,
-addr.addr_line2,
-addr.addr_line3,
-(addr.addr_city || ', ' || 
-addr.addr_state || ', ' || 
-addr.addr_postalcode),
-addr.addr_country)
-ELSE 
-formatAddr(vend_address1, vend_address2, vend_address3, 
-( vend_city || ', ' || vend_state || ' ' || vend_zip ), vend_country)
-END 
-AS check_address,
+  CASE WHEN UPPER(vendaddr_code) = 'REMIT' THEN
+    formatAddr(
+    addr.addr_line1,
+    addr.addr_line2,
+    addr.addr_line3,
+    (addr.addr_city || ', ' || 
+    addr.addr_state || ', ' || 
+    addr.addr_postalcode),
+    addr.addr_country)
+  ELSE 
+    formatAddr(vend_address1, vend_address2, vend_address3, 
+    ( vend_city || ', ' || vend_state || ' ' || vend_zip ), vend_country)
+  END 
+  AS check_address,
 
-CASE  
-WHEN vendaddr_code = 'REMIT' or vendaddr_code = 'Remit' or vendaddr_code = 'remit' THEN 
-vendaddrinfo.vendaddr_name
-ELSE 
-vend.vend_name
-END 
-AS vend_name, 
-vend_address1, 
-vend_address2, vend_address3,
-vend_city || ', ' || vend_state || ' ' || vend_zip AS address4,
-formatDate(apchk_checkdate) AS f_checkdate,
-formatMoney(apchk_amount) AS f_amount,
-initcap(spellAmount(apchk_amount, curr_id)) AS f_words,
-CASE WHEN(apchk_void) THEN text('V O I D')
-else text('')
-END AS f_void,
-apchk_number,
-apchk_for AS memo,
-vend_number,
-apchk_for,
-curr_symbol,
-curr_abbr,
-curr_name
-FROM apchk, 
-vend LEFT JOIN vendaddrinfo ON vend.vend_id = vendaddrinfo.vendaddr_vend_id 
-and vendaddrinfo.vendaddr_code = 'REMIT' or vendaddrinfo.vendaddr_code = 'Remit' or vendaddrinfo.vendaddr_code = 'remit' 
-LEFT JOIN addr ON addr_id = vendaddr_addr_id,
-bankaccnt, curr_symbol
-WHERE ( (apchk_vend_id=vend_id)
+  CASE WHEN UPPER(vendaddr_code) = 'REMIT' THEN
+    vendaddrinfo.vendaddr_name
+  ELSE 
+    vend.vend_name
+  END AS checkrecip_name, 
+  vend_address1, 
+  vend_address2, vend_address3,
+  vend_city || ', ' || vend_state || ' ' || vend_zip AS address4,
+  formatDate(checkhead_checkdate) AS f_checkdate,
+  formatMoney(checkhead_amount) AS f_amount,
+  initcap(spellAmount(checkhead_amount, curr_id)) AS f_words,
+  CASE WHEN(checkhead_void) THEN text('V O I D')
+  else text('')
+  END AS f_void,
+  checkhead_number,
+  checkhead_for AS memo,
+  vend_number AS checkrecip_number,
+  checkhead_for,
+  curr_symbol,
+  curr_abbr,
+  curr_name
+FROM checkhead, vend LEFT JOIN
+     vendaddrinfo ON ((vend.vend_id=vendaddrinfo.vendaddr_vend_id)
+		  AND (UPPER(vendaddr_code)='REMIT')) LEFT JOIN
+     addr ON (addr_id=vendaddr_addr_id),
+     bankaccnt, curr_symbol
+WHERE ( (checkhead_recip_id=vend_id)
+  AND (checkhead_recip_type='V')
+  AND (checkhead_curr_id = curr_id)
+  AND (checkhead_id=&lt;? value("checkhead_id") ?>) )
 
-AND (apchk_curr_id = curr_id)
-AND (apchk_id=&lt;? value("apchk_id") ?>) )
+UNION
+
+SELECT	-- everyone other than vendors
+  formatAddr(
+  addr.addr_line1,
+  addr.addr_line2,
+  addr.addr_line3,
+  (addr.addr_city || ', ' || 
+  addr.addr_state || ', ' || 
+  addr.addr_postalcode),
+  addr.addr_country) AS check_address,
+  checkrecip_name, 
+  addr.addr_line1,
+  addr.addr_line2,
+  addr.addr_line3,
+  (addr.addr_city || ', ' ||
+  addr.addr_state || ', ' || addr.addr_postalcode) AS address4,
+  formatDate(checkhead_checkdate) AS f_checkdate,
+  formatMoney(checkhead_amount) AS f_amount,
+  initcap(spellAmount(checkhead_amount, curr_id)) AS f_words,
+  CASE WHEN(checkhead_void) THEN text('V O I D') else text('') END AS f_void,
+  checkhead_number,
+  checkhead_for AS memo,
+  checkrecip_number,
+  checkhead_for,
+  curr_symbol,
+  curr_abbr,
+  curr_name
+FROM checkhead LEFT JOIN
+     checkrecip ON ((checkhead_recip_id=checkrecip_id)
+		AND (checkhead_recip_type=checkrecip_type)) LEFT JOIN
+     addr ON (addr_id = checkrecip_addr_id),
+     bankaccnt, curr_symbol
+WHERE ((checkhead_recip_type != 'V')
+  AND  (checkhead_curr_id = curr_id)
+  AND  (checkhead_id=&lt;? value("checkhead_id") ?>) )
+
 LIMIT 1;</sql>
  </querysource>
  <querysource>
   <name>TopDetail2</name>
-  <sql>SELECT&#xd;
+  <sql>SELECT&#xd; -- only have top part for vendors?
 --VOUCHER-------------&#xd;
  1 as sequence_value, &#xd;
   1 as ord, &#xd;
-  apchkitem_invcnumber, &#xd;
-  apchkitem_ponumber, &#xd;
-  formatMoney(apchkitem_amount) as f_amount, &#xd;
+  checkitem_invcnumber, &#xd;
+  checkitem_ponumber, &#xd;
+  formatMoney(checkitem_amount) as f_amount, &#xd;
   'Invoice#: ' || vohead_invcnumber AS vohead_invcnumber, &#xd;
   formatDate(vohead_docdate), &#xd;
   vohead_reference, &#xd;
-  formatMoney(apchkitem_amount),&#xd;
-  'Voucher: ' || apchkitem_vouchernumber AS vouchernumber,&#xd;
+  formatMoney(checkitem_amount),&#xd;
+  'Voucher: ' || checkitem_vouchernumber AS vouchernumber,&#xd;
   formatMoney(apopen_amount) as amount,&#xd;
-  formatMoney(apchkitem_discount) AS disc_cred&#xd;
-FROM apchkitem, vohead, apopen &#xd;
+  formatMoney(checkitem_discount) AS disc_cred&#xd;
+FROM checkitem, vohead, apopen &#xd;
 WHERE (&#xd;
-(apchkitem_apchk_id= &lt;? value("apchk_id") ?>) &#xd;
-AND apchkitem_vouchernumber = vohead_number&#xd;
-AND apopen_docnumber = apchkitem_vouchernumber&#xd;
+(checkitem_checkhead_id= &lt;? value("checkhead_id") ?>) &#xd;
+AND checkitem_vouchernumber = vohead_number&#xd;
+AND apopen_docnumber = checkitem_vouchernumber&#xd;
 AND apopen_doctype = 'V')&#xd;
 &#xd;
 UNION&#xd;
@@ -92,21 +127,22 @@ SELECT&#xd;
 --DEBIT MEMO -------------------------&#xd;
  1 as sequence_value, &#xd;
   2 as ord, &#xd;
-  apchkitem_invcnumber, &#xd;
-  apchkitem_ponumber, &#xd;
-  formatMoney(apchkitem_amount) as f_amount, &#xd;
- 'Debit Memo PO#: ' || apchkitem_ponumber AS vohead_invcnumber, &#xd;
+  checkitem_invcnumber, &#xd;
+  checkitem_ponumber, &#xd;
+  formatMoney(checkitem_amount) as f_amount, &#xd;
+ 'Debit Memo PO#: ' || checkitem_ponumber AS vohead_invcnumber, &#xd;
  '' as vohead_docdate, &#xd;
- 'Debit Memo: ' || apchkitem_vouchernumber as vohead_reference, &#xd;
-  formatMoney(apchkitem_amount),&#xd;
-  apchkitem_vouchernumber AS vouchernumber,&#xd;
+ 'Debit Memo: ' || checkitem_vouchernumber as vohead_reference, &#xd;
+  formatMoney(checkitem_amount),&#xd;
+  checkitem_vouchernumber AS vouchernumber,&#xd;
   formatMoney(apopen_amount) as amount,&#xd;
-  formatMoney(apchkitem_discount) AS disc_cred&#xd;
-FROM apchk, apchkitem, apopen &#xd;
+  formatMoney(checkitem_discount) AS disc_cred&#xd;
+FROM checkhead, checkitem, apopen &#xd;
 WHERE (&#xd;
-(apchkitem_apchk_id= &lt;? value("apchk_id") ?>) &#xd;
-and apchkitem_apchk_id = apchk_id&#xd;
-and apchkitem_vouchernumber = apopen_docnumber&#xd;
+(checkitem_checkhead_id= &lt;? value("checkhead_id") ?>) &#xd;
+and checkitem_checkhead_id = checkhead_id&#xd;
+AND (checkhead_recip_type='V')
+and checkitem_vouchernumber = apopen_docnumber&#xd;
 AND apopen_doctype = 'D')&#xd;
 &#xd;
 UNION&#xd;
@@ -115,21 +151,21 @@ SELECT &#xd;
 --CREDITs--------------------------&#xd;
  1 as sequence_value, &#xd;
  3 as ord, &#xd;
- apchkitem_invcnumber, &#xd;
- apchkitem_ponumber, &#xd;
- formatMoney(apchkitem_amount) as f_amount, &#xd;
+ checkitem_invcnumber, &#xd;
+ checkitem_ponumber, &#xd;
+ formatMoney(checkitem_amount) as f_amount, &#xd;
  'Invoice#: ' || vohead_invcnumber AS vohead_invcnumber, &#xd;
  formatDate(vohead_docdate), &#xd;
  'Credit Applied: ' || apapply_source_doctype || ' ' || apapply_source_docnumber  AS vohead_reference, &#xd;
- '' as apchkitem_amount,&#xd;
- 'Voucher ' || apchkitem_vouchernumber AS vouchernumber,&#xd;
+ '' as checkitem_amount,&#xd;
+ 'Voucher ' || checkitem_vouchernumber AS vouchernumber,&#xd;
  '' AS amount,&#xd;
  formatMoney((apapply_amount)) as disc_cred&#xd;
-FROM apchkitem, vohead, apapply &#xd;
+FROM checkitem, vohead, apapply &#xd;
 WHERE (&#xd;
-(apchkitem_apchk_id=&lt;? value("apchk_id") ?>) &#xd;
-AND apchkitem_vouchernumber = vohead_number &#xd;
-AND apapply_target_docnumber = apchkitem_vouchernumber )&#xd;
+(checkitem_checkhead_id=&lt;? value("checkhead_id") ?>) &#xd;
+AND checkitem_vouchernumber = vohead_number &#xd;
+AND apapply_target_docnumber = checkitem_vouchernumber )&#xd;
 &#xd;
 &#xd;
 UNION &#xd;
@@ -137,13 +173,13 @@ UNION &#xd;
 select &#xd;
  sequence_value, &#xd;
  4 as ord, &#xd;
- '' as apchkitem_invcnumber, &#xd;
- '' as apchkitem_ponumber, &#xd;
+ '' as checkitem_invcnumber, &#xd;
+ '' as checkitem_ponumber, &#xd;
  '' as f_amount, &#xd;
  '' as vohead_invcnumber, &#xd;
  '' as vohead_docdate, &#xd;
  '' as vohead_reference, &#xd;
- '' as apchkitem_amount,&#xd;
+ '' as checkitem_amount,&#xd;
  '' as vouchernumber,&#xd;
  '' as amount,&#xd;
  '' as disc_cred&#xd;
@@ -215,7 +251,7 @@ LIMIT 16;&#xd;
     <bottom/>
     <data>
      <query>Head</query>
-     <column>vend_name</column>
+     <column>checkrecip_name</column>
     </data>
    </field>
    <field>
@@ -234,7 +270,7 @@ LIMIT 16;&#xd;
     <bottom/>
     <data>
      <query>Head</query>
-     <column>vend_number</column>
+     <column>checkrecip_number</column>
     </data>
    </field>
    <line>
@@ -331,7 +367,7 @@ LIMIT 16;&#xd;
     <top/>
     <data>
      <query>Head</query>
-     <column>apchk_number</column>
+     <column>checkhead_number</column>
     </data>
    </field>
   </detail>
@@ -539,7 +575,7 @@ LIMIT 16;&#xd;
   </detail>
  </section>
  <section>
-  <name>Apchkitem</name>
+  <name>checkitem</name>
   <detail>
    <key>
     <query>Head</query>
@@ -638,7 +674,7 @@ LIMIT 16;&#xd;
     <top/>
     <data>
      <query>Head</query>
-     <column>vend_name</column>
+     <column>checkrecip_name</column>
     </data>
    </field>
    <field>
@@ -759,7 +795,7 @@ LIMIT 16;&#xd;
     <top/>
     <data>
      <query>Head</query>
-     <column>apchk_number</column>
+     <column>checkhead_number</column>
     </data>
    </field>
    <label>
@@ -810,7 +846,7 @@ LIMIT 16;&#xd;
     <bottom/>
     <data>
      <query>Head</query>
-     <column>vend_name</column>
+     <column>checkrecip_name</column>
     </data>
    </field>
    <field>
@@ -864,7 +900,7 @@ LIMIT 16;&#xd;
     <bottom/>
     <data>
      <query>Head</query>
-     <column>vend_number</column>
+     <column>checkrecip_number</column>
     </data>
    </field>
   </detail>

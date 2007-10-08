@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>postAPChecks</class>
- <widget class="QDialog" name="postAPChecks" >
+ <class>postChecks</class>
+ <widget class="QDialog" name="postChecks" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Post A/P Checks</string>
+   <string>Post Checks</string>
   </property>
   <layout class="QHBoxLayout" >
    <property name="margin" >
@@ -247,7 +247,7 @@
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>postAPChecks</receiver>
+   <receiver>postChecks</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >

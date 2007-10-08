@@ -55,101 +55,28 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "prepareAPCheckRun.h"
+#ifndef PREPARECHECKRUN_H
+#define PREPARECHECKRUN_H
 
-#include <QMessageBox>
-#include <QSqlError>
-#include <QVariant>
+#include "OpenMFGGUIClient.h"
+#include <QDialog>
+#include "ui_prepareCheckRun.h"
 
-#include "storedProcErrorLookup.h"
-
-prepareAPCheckRun::prepareAPCheckRun(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+class prepareCheckRun : public QDialog, public Ui::prepareCheckRun
 {
-    setupUi(this);
+    Q_OBJECT
 
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
-    connect(_prepare, SIGNAL(clicked()), this, SLOT(sPrint()));
+public:
+    prepareCheckRun(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~prepareCheckRun();
 
-    _checkDate->setDate(omfgThis->dbDate());
-}
+public slots:
+    virtual void sPrint();
+    virtual void sPopulate();
 
-prepareAPCheckRun::~prepareAPCheckRun()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
+protected slots:
+    virtual void languageChange();
 
-void prepareAPCheckRun::languageChange()
-{
-    retranslateUi(this);
-}
+};
 
-void prepareAPCheckRun::sPrint()
-{
-  q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("setNextCheckNumber", result),
-		  __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-  }
-
-  q.prepare("SELECT createAPChecks(:bankaccnt_id, :checkDate) AS result;");
-  q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  q.bindValue(":checkDate", _checkDate->date());
-  q.exec();
-  if (q.first())
-  {
-    int result = q.value("result").toInt();
-    if (result < 0)
-    {
-      systemError(this, storedProcErrorLookup("createAPChecks", result),
-		  __FILE__, __LINE__);
-      return;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::NoError)
-  {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-  }
-
-  omfgThis->sAPChecksUpdated(_bankaccnt->id(), -1, TRUE);
-
-  accept();
-}
-
-void prepareAPCheckRun::sPopulate()
-{
-  if (_bankaccnt->id() != -1)
-  {
-    XSqlQuery checkNumber;
-    checkNumber.prepare( "SELECT bankaccnt_nextchknum "
-                         "FROM bankaccnt "
-                         "WHERE (bankaccnt_id=:bankaccnt_id);" );
-    checkNumber.bindValue(":bankaccnt_id", _bankaccnt->id());
-    checkNumber.exec();
-    if (checkNumber.first())
-      _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
-    }
-  }
-  else
-    _nextCheckNum->clear();
-}
-
+#endif // PREPARECHECKRUN_H

@@ -219,7 +219,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                sysLocale.ui locales.ui location.ui locations.ui                                       \
                lotSerialComments.ui lotSerialHistory.ui maintainBudget.ui                             \
                maintainItemCosts.ui massExpireComponent.ui massReplaceComponent.ui                    \
-               materialReceiptTrans.ui miscVoucher.ui miscAPCheck.ui                                  \
+               materialReceiptTrans.ui miscVoucher.ui miscCheck.ui                                    \
                invoice.ui invoiceItem.ui                                                              \
                opportunity.ui opportunityList.ui                                                      \
                opportunitySource.ui opportunitySources.ui opportunityStage.ui opportunityStages.ui    \
@@ -227,7 +227,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                packingListBatch.ui                                                                    \
                plannedOrder.ui plannerCodes.ui plannerCode.ui                                         \
                plannedSchedules.ui plannedSchedule.ui plannedScheduleItem.ui                          \
-               poLiabilityDistrib.ui postAPCheck.ui postAPChecks.ui postCashReceipts.ui               \
+               poLiabilityDistrib.ui postCheck.ui postChecks.ui postCashReceipts.ui                   \
                postCostsByClassCode.ui postCostsByItem.ui                                             \
                postCountSlips.ui postCountTags.ui postBillingSelections.ui                            \
                postCreditMemos.ui postInvoices.ui                                                     \
@@ -235,10 +235,10 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                postOperations.ui postGLTransactionsToExternal.ui                                      \
                postProduction.ui postMiscProduction.ui                                                \
                postStandardJournal.ui postStandardJournalGroup.ui                                     \
-               postVouchers.ui prepareAPCheckRun.ui priceList.ui                                      \
+               postVouchers.ui prepareCheckRun.ui priceList.ui                                        \
                pricingScheduleAssignment.ui pricingScheduleAssignments.ui                             \
                printAnnodizingPurchaseRequests.ui                                                     \
-               printAPCheck.ui printAPChecks.ui printAPChecksReview.ui                                \
+               printCheck.ui printChecks.ui printChecksReview.ui                                      \
                printCreditMemo.ui printCreditMemos.ui reprintCreditMemos.ui                           \
                printInvoice.ui printInvoices.ui printInvoicesByShipvia.ui reprintInvoices.ui          \
                printPackingList.ui                                                                    \
@@ -311,7 +311,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                userCostingElement.ui costingElements.ui userEventNotification.ui                      \
                vendor.ui vendors.ui                                                                   \
                vendorAddress.ui vendorAddressList.ui                                                  \
-               vendorType.ui vendorTypes.ui viewAPCheckRun.ui voidAPChecks.ui                         \
+               vendorType.ui vendorTypes.ui viewCheckRun.ui voidChecks.ui                             \
                voucher.ui voucheringEditList.ui voucherItemDistrib.ui voucherItem.ui                  \
                voucherMiscDistrib.ui                                                                  \
                warehouses.ui warehouse.ui warehouseZone.ui                                            \
@@ -518,7 +518,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                sysLocale.h locales.h location.h locations.h                                           \
                lotSerialComments.h lotSerialHistory.h maintainBudget.h                                \
                maintainItemCosts.h massExpireComponent.h massReplaceComponent.h                       \
-               materialReceiptTrans.h miscVoucher.h miscAPCheck.h                                     \
+               materialReceiptTrans.h miscVoucher.h miscCheck.h                                       \
                mqlutil.h                                                                              \
                invoice.h invoiceItem.h                                                                \
                opportunity.h opportunityList.h                                                        \
@@ -528,7 +528,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                plannedOrder.h plannerCodes.h plannerCode.h                                            \
                plannedSchedules.h plannedSchedule.h plannedScheduleItem.h                             \
                poitemTableModel.h poitemTableView.h poLiabilityDistrib.h                              \
-               postAPCheck.h postAPChecks.h postCashReceipts.h                                        \
+               postCheck.h postChecks.h postCashReceipts.h                                            \
                postCostsByClassCode.h postCostsByItem.h                                               \
                postCountSlips.h postCountTags.h postBillingSelections.h                               \
                postCreditMemos.h postInvoices.h                                                       \
@@ -536,10 +536,10 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                postOperations.h postGLTransactionsToExternal.h                                        \
                postProduction.h postMiscProduction.h                                                  \
                postStandardJournal.h postStandardJournalGroup.h                                       \
-               postVouchers.h prepareAPCheckRun.h priceList.h                                         \
+               postVouchers.h prepareCheckRun.h priceList.h                                           \
                pricingScheduleAssignment.h pricingScheduleAssignments.h                               \
                printAnnodizingPurchaseRequests.h                                                      \
-               printAPCheck.h printAPChecks.h printAPChecksReview.h                                   \
+               printCheck.h printChecks.h printChecksReview.h                                         \
                printCreditMemo.h printCreditMemos.h reprintCreditMemos.h                              \
                printInvoice.h printInvoices.h printInvoicesByShipvia.h reprintInvoices.h              \
                printPackingList.h                                                                     \
@@ -613,7 +613,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                userCostingElement.h costingElements.h userEventNotification.h                         \
                vendor.h vendors.h                                                                     \
                vendorAddress.h vendorAddressList.h                                                    \
-               vendorType.h vendorTypes.h viewAPCheckRun.h voidAPChecks.h                             \
+               vendorType.h vendorTypes.h viewCheckRun.h voidChecks.h                                 \
                voucher.h voucheringEditList.h voucherItemDistrib.h voucherItem.h                      \
                voucherMiscDistrib.h                                                                   \
                warehouses.h warehouse.h warehouseZone.h                                               \
@@ -822,7 +822,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                sysLocale.cpp locales.cpp location.cpp locations.cpp                                   \
                lotSerialComments.cpp lotSerialHistory.cpp maintainBudget.cpp                          \
                maintainItemCosts.cpp massExpireComponent.cpp massReplaceComponent.cpp                 \
-               materialReceiptTrans.cpp miscVoucher.cpp miscAPCheck.cpp                               \
+               materialReceiptTrans.cpp miscVoucher.cpp miscCheck.cpp                                 \
                mqlutil.cpp                                                                            \
                invoice.cpp invoiceItem.cpp                                                            \
                opportunity.cpp opportunityList.cpp                                                    \
@@ -832,7 +832,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                plannedOrder.cpp plannerCodes.cpp plannerCode.cpp                                      \
                plannedSchedules.cpp plannedSchedule.cpp plannedScheduleItem.cpp                       \
                poitemTableModel.cpp poitemTableView.cpp poLiabilityDistrib.cpp                        \
-               postAPCheck.cpp postAPChecks.cpp postCashReceipts.cpp                                  \
+               postCheck.cpp postChecks.cpp postCashReceipts.cpp                                      \
                postCostsByClassCode.cpp postCostsByItem.cpp                                           \
                postCountSlips.cpp postCountTags.cpp postBillingSelections.cpp                         \
                postCreditMemos.cpp postInvoices.cpp                                                   \
@@ -840,10 +840,10 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                postOperations.cpp postGLTransactionsToExternal.cpp                                    \
                postProduction.cpp postMiscProduction.cpp                                              \
                postStandardJournal.cpp postStandardJournalGroup.cpp                                   \
-               postVouchers.cpp prepareAPCheckRun.cpp priceList.cpp                                   \
+               postVouchers.cpp prepareCheckRun.cpp priceList.cpp                                     \
                pricingScheduleAssignment.cpp pricingScheduleAssignments.cpp                           \
                printAnnodizingPurchaseRequests.cpp                                                    \
-               printAPCheck.cpp printAPChecks.cpp printAPChecksReview.cpp                             \
+               printCheck.cpp printChecks.cpp printChecksReview.cpp                                   \
                printCreditMemo.cpp printCreditMemos.cpp reprintCreditMemos.cpp                        \
                printInvoice.cpp printInvoices.cpp printInvoicesByShipvia.cpp reprintInvoices.cpp      \
                printPackingList.cpp                                                                   \
@@ -917,7 +917,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                userCostingElement.cpp costingElements.cpp userEventNotification.cpp                   \
                version.cpp vendor.cpp vendors.cpp                                                     \
                vendorAddress.cpp vendorAddressList.cpp                                                \
-               vendorType.cpp vendorTypes.cpp viewAPCheckRun.cpp voidAPChecks.cpp                     \
+               vendorType.cpp vendorTypes.cpp viewCheckRun.cpp voidChecks.cpp                         \
                voucher.cpp voucheringEditList.cpp voucherItemDistrib.cpp voucherItem.cpp              \
                voucherMiscDistrib.cpp                                                                 \
                warehouses.cpp warehouse.cpp warehouseZone.cpp                                         \

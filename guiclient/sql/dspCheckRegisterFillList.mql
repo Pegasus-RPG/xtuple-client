@@ -1,41 +1,43 @@
 -- dspCheckRegister::sFillList() detail query
 -- shows all the checks for a given date range
 -- and additionally fills in the check item detail if showDetail exists
-SELECT apchk_id AS apchkid,
-       CASE WHEN(apchk_void) THEN -1
-            WHEN(apchk_posted) THEN 1
+SELECT checkhead_id AS checkid,
+       CASE WHEN(checkhead_void) THEN -1
+            WHEN(checkhead_posted) THEN 1
             ELSE 0
        END AS extra,
-       -1 AS apchkitem_id,
-       formatBoolYN(apchk_void) AS f_void,
-       formatBoolYN(apchk_misc) AS f_misc,
-       formatBoolYN(apchk_printed) AS f_printed,
-       formatBoolYN(apchk_posted) AS f_posted,
-       TEXT(apchk_number) AS number,
-       (vend_number || '-' || vend_name) AS description,
-       formatDate(apchk_checkdate) AS f_checkdate,
-       formatMoney(apchk_amount) AS f_amount, 
-       currConcat(apchk_curr_id) AS currAbbr,
-       apchk_number,
+       -1 AS checkitem_id,
+       formatBoolYN(checkhead_void) AS f_void,
+       formatBoolYN(checkhead_misc) AS f_misc,
+       formatBoolYN(checkhead_printed) AS f_printed,
+       formatBoolYN(checkhead_posted) AS f_posted,
+       TEXT(checkhead_number) AS number,
+       COALESCE(checkrecip_number || '-' || checkrecip_name,
+		checkhead_recip_type || '-' || checkhead_recip_id ) AS description,
+       formatDate(checkhead_checkdate) AS f_checkdate,
+       formatMoney(checkhead_amount) AS f_amount, 
+       currConcat(checkhead_curr_id) AS currAbbr,
+       checkhead_number,
        1 AS orderby
-  FROM apchk, vend
- WHERE ( (apchk_vend_id=vend_id)
-   AND   (apchk_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
-   AND   (apchk_bankaccnt_id=<? value("bankaccnt_id") ?>) )
+  FROM checkhead LEFT OUTER JOIN
+       checkrecip ON ((checkhead_recip_id=checkrecip_id)
+		 AND  (checkhead_recip_type=checkrecip_type))
+ WHERE ((checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+   AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>) )
 <? if exists("showDetail") ?>
 UNION
-SELECT apchkitem_apchk_id AS apchkid, 0 AS extra, apchkitem_id,
+SELECT checkitem_checkhead_id AS checkid, 0 AS extra, checkitem_id,
        '' AS f_void, '' AS f_misc, '' AS f_printed, '' AS f_posted,
-       apchkitem_vouchernumber AS number,
-       apchkitem_invcnumber AS description,
+       checkitem_vouchernumber AS number,
+       checkitem_invcnumber AS description,
        '' AS f_checkdate,
-       formatMoney(apchkitem_amount) AS f_amount,
-       currConcat(apchkitem_curr_id) AS currAbbr, 
-       apchk_number, 
+       formatMoney(checkitem_amount) AS f_amount,
+       currConcat(checkitem_curr_id) AS currAbbr, 
+       checkhead_number, 
        2 AS orderby 
-  FROM apchkitem, apchk 
- WHERE ( (apchkitem_apchk_id=apchk_id)
-   AND   (apchk_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
-   AND   (apchk_bankaccnt_id=<? value("bankaccnt_id") ?>) )
+  FROM checkitem, checkhead 
+ WHERE ( (checkitem_checkhead_id=checkhead_id)
+   AND   (checkhead_checkdate BETWEEN <? value("startDate") ?> AND <? value("endDate") ?>)
+   AND   (checkhead_bankaccnt_id=<? value("bankaccnt_id") ?>) )
 <? endif ?>
- ORDER BY apchk_number, apchkid, orderby;
+ ORDER BY checkhead_number, checkid, orderby;

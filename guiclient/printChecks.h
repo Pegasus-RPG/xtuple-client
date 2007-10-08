@@ -55,28 +55,34 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef PREPAREAPCHECKRUN_H
-#define PREPAREAPCHECKRUN_H
+#ifndef PRINTCHECKS_H
+#define PRINTCHECKS_H
 
 #include "OpenMFGGUIClient.h"
 #include <QDialog>
-#include "ui_prepareAPCheckRun.h"
+#include <parameter.h>
+#include "ui_printChecks.h"
 
-class prepareAPCheckRun : public QDialog, public Ui::prepareAPCheckRun
+class printChecks : public QDialog, public Ui::printChecks
 {
     Q_OBJECT
 
 public:
-    prepareAPCheckRun(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~prepareAPCheckRun();
+    printChecks(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~printChecks();
 
 public slots:
+    virtual SetResponse set( ParameterList pParams );
     virtual void sPrint();
+    virtual void sHandleBankAccount( int pBankaccntid );
     virtual void sPopulate();
 
 protected slots:
     virtual void languageChange();
 
+private:
+    bool _captive;
+
 };
 
-#endif // PREPAREAPCHECKRUN_H
+#endif // PRINTCHECKS_H

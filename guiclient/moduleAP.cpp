@@ -82,14 +82,14 @@
 
 #include "selectPayments.h"
 #include "selectedPayments.h"
-#include "prepareAPCheckRun.h"
-#include "viewAPCheckRun.h"
-#include "miscAPCheck.h"
-#include "printAPCheck.h"
-#include "printAPChecks.h"
-#include "voidAPChecks.h"
-#include "postAPCheck.h"
-#include "postAPChecks.h"
+#include "prepareCheckRun.h"
+#include "viewCheckRun.h"
+#include "miscCheck.h"
+#include "printCheck.h"
+#include "printChecks.h"
+#include "voidChecks.h"
+#include "postCheck.h"
+#include "postChecks.h"
 
 #include "unappliedAPCreditMemos.h"
 #include "apOpenItem.h"
@@ -210,7 +210,7 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
 
   paymentsMenu->insertSeparator();
 
-  parent->actions.append( new Action( parent, "ap.printAPCheck", tr("Print A/P Check..."),
+  parent->actions.append( new Action( parent, "ap.printCheck", tr("Print Check..."),
                                       this, SLOT(sPrintCheck()),
                                       paymentsMenu, _privleges->check("MaintainPayments") ) );
 
@@ -226,11 +226,11 @@ moduleAP::moduleAP(OpenMFGGUIClient *Pparent) :
 
   paymentsMenu->insertSeparator();
 
-  parent->actions.append( new Action( parent, "ap.postAPCheck", tr("Post A/P Check..."),
+  parent->actions.append( new Action( parent, "ap.postCheck", tr("Post Check..."),
                                       this, SLOT(sPostCheck()),
                                       paymentsMenu, _privleges->check("PostPayments") ) );
 
-  parent->actions.append( new Action( parent, "ap.postAPChecks", tr("Post A/P Checks..."),
+  parent->actions.append( new Action( parent, "ap.postChecks", tr("Post Checks..."),
                                       this, SLOT(sPostChecks()),
                                       paymentsMenu, _privleges->check("PostPayments") ) );
 
@@ -421,45 +421,45 @@ void moduleAP::sCreateMiscCheck()
   ParameterList params;
   params.append("new");
 
-  miscAPCheck *newdlg = new miscAPCheck();
+  miscCheck *newdlg = new miscCheck();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
 void moduleAP::sPrepareCheckRun()
 {
-  prepareAPCheckRun(parent, "", TRUE).exec();
+  prepareCheckRun(parent, "", TRUE).exec();
 }
 
 void moduleAP::sViewCheckRun()
 {
-  omfgThis->handleNewWindow(new viewAPCheckRun());
+  omfgThis->handleNewWindow(new viewCheckRun());
 }
 
 void moduleAP::sPrintCheck()
 {
-  printAPCheck(parent, "", TRUE).exec();
+  printCheck(parent, "", TRUE).exec();
 }
 
 void moduleAP::sPrintCheckRun()
 {
-  printAPChecks(parent, "", TRUE).exec();
+  printChecks(parent, "", TRUE).exec();
 }
 
 void moduleAP::sVoidCheckRun()
 {
-  voidAPChecks newdlg(parent, "", TRUE);
+  voidChecks newdlg(parent, "", TRUE);
   newdlg.exec();
 }
 
 void moduleAP::sPostCheck()
 {
-  postAPCheck(parent, "", TRUE).exec();
+  postCheck(parent, "", TRUE).exec();
 }
 
 void moduleAP::sPostChecks()
 {
-  postAPChecks(parent, "", TRUE).exec();
+  postChecks(parent, "", TRUE).exec();
 }
 
 

@@ -2,8 +2,8 @@
   <author></author>
   <comment></comment>
   <exportmacro></exportmacro>
-  <class>voidAPChecks</class>
-  <widget class="QDialog" name="voidAPChecks" >
+  <class>voidChecks</class>
+  <widget class="QDialog" name="voidChecks" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Void A/P Checks</string>
+      <string>Void Checks</string>
     </property>
     <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -308,7 +308,7 @@
       </item>
     </layout>
   </widget>
-  <layoutdefault spacing="6" margin="11" />
+  <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
@@ -329,7 +329,7 @@
     <connection>
       <sender>_close</sender>
       <signal>clicked()</signal>
-      <receiver>voidAPChecks</receiver>
+      <receiver>voidChecks</receiver>
       <slot>reject()</slot>
     </connection>
   </connections>

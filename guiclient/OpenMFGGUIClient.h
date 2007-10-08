@@ -279,7 +279,7 @@ class OpenMFGGUIClient : public QMainWindow
   public slots:
     void sReportError(const QString &);
     void sTick();
-    void sAPChecksUpdated(int, int, bool);
+    void sChecksUpdated(int, int, bool);
     void sAssortmentsUpdated(int, bool);
     void sBBOMsUpdated(int, bool);
     void sBOMsUpdated(int, bool);
@@ -324,7 +324,7 @@ class OpenMFGGUIClient : public QMainWindow
   signals:
     void tick();
 
-    void apChecksUpdated(int, int, bool);
+    void checksUpdated(int, int, bool);
     void assortmentsUpdated(int, bool);
     void bankAdjustmentsUpdated(int, bool);
     void bbomsUpdated(int, bool);

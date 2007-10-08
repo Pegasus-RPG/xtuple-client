@@ -55,29 +55,39 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef POSTAPCHECKS_H
-#define POSTAPCHECKS_H
+#ifndef VIEWCHECKRUN_H
+#define VIEWCHECKRUN_H
 
 #include "OpenMFGGUIClient.h"
-#include <QDialog>
+#include <QMainWindow>
 #include <parameter.h>
-#include "ui_postAPChecks.h"
+#include "ui_viewCheckRun.h"
 
-class postAPChecks : public QDialog, public Ui::postAPChecks
+class viewCheckRun : public QMainWindow, public Ui::viewCheckRun
 {
     Q_OBJECT
 
 public:
-    postAPChecks(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~postAPChecks();
+    viewCheckRun(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~viewCheckRun();
 
 public slots:
+    virtual void sVoid();
+    virtual void sDelete();
+    virtual void sEdit();
+    virtual void sReplace();
+    virtual void sReplaceAll();
+    virtual void sPrint();
     virtual void sPost();
-    virtual void sHandleBankAccount( int pBankaccntid );
+    virtual void sHandleItemSelection();
+    virtual void sFillList(int);
+    virtual void sFillList();
+    virtual void sPrintEditList();
+    virtual void sPrintCheckRun();
 
 protected slots:
     virtual void languageChange();
 
 };
 
-#endif // POSTAPCHECKS_H
+#endif // VIEWCHECKRUN_H

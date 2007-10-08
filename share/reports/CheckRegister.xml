@@ -25,35 +25,37 @@
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>SELECT apchk_id AS apchkid,
-       formatBoolYN(apchk_void) AS f_void,
-       formatBoolYN(apchk_misc) AS f_misc,
-       formatBoolYN(apchk_printed) AS f_printed,
-       formatBoolYN(apchk_posted) AS f_posted,
-       TEXT(apchk_number) AS number,
-       (vend_number || '-' || vend_name) AS description,
-       formatDate(apchk_checkdate) AS f_checkdate,
-       currToCurr(apchk_curr_id, bankaccnt_curr_id, apchk_amount, apchk_checkdate) AS apchk_amount_bankcurr,
-       formatMoney(apchk_amount) AS f_amount,
+  <sql>SELECT checkhead_id AS checkheadid,
+       formatBoolYN(checkhead_void) AS f_void,
+       formatBoolYN(checkhead_misc) AS f_misc,
+       formatBoolYN(checkhead_printed) AS f_printed,
+       formatBoolYN(checkhead_posted) AS f_posted,
+       TEXT(checkhead_number) AS number,
+       (checkrrecip_number || '-' || checkrrecip_name) AS description,
+       formatDate(checkhead_checkdate) AS f_checkdate,
+       currToCurr(checkhead_curr_id, bankaccnt_curr_id, checkhead_amount, checkhead_checkdate) AS checkhead_amount_bankcurr,
+       formatMoney(checkhead_amount) AS f_amount,
        curr_symbol as currAbbr
-  FROM apchk, vend, curr_symbol, bankaccnt
- WHERE ( (apchk_vend_id=vend_id)
-   AND   (apchk_checkdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-   AND   (apchk_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
-   AND   (apchk_bankaccnt_id=bankaccnt_id)
-   AND   (apchk_curr_id = curr_id) )
-ORDER BY apchk_number</sql>
+  FROM checkhead, checkrecip, curr_symbol, bankaccnt
+ WHERE ( (checkhead_recip_id=checkrecip_id)
+   AND   (checkhead_recip_type=checkrecip_type)
+   AND   (checkhead_checkdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+   AND   (checkhead_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
+   AND   (checkhead_bankaccnt_id=bankaccnt_id)
+   AND   (checkhead_curr_id = curr_id) )
+ORDER BY checkhead_number</sql>
  </querysource>
  <querysource>
   <name>total</name>
-  <sql>SELECT formatMoney(SUM(currToCurr(apchk_curr_id, bankaccnt_curr_id, apchk_amount, apchk_checkdate))) AS f_amount,
+  <sql>SELECT formatMoney(SUM(currToCurr(checkhead_curr_id, bankaccnt_curr_id, checkhead_amount, checkhead_checkdate))) AS f_amount,
        currConcat(bankaccnt_curr_id) AS currAbbr
-  FROM apchk, vend, bankaccnt
- WHERE ( (apchk_vend_id=vend_id)
-   AND   (NOT apchk_void)
-   AND   (apchk_checkdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
-   AND   (apchk_bankaccnt_id=bankaccnt_id)
-   AND   (apchk_bankaccnt_id=&lt;? value("bankaccnt_id") ?>) )
+  FROM checkhead, checkrecip, bankaccnt
+ WHERE ( (checkhead_recip_id=checkrecip_id)
+   AND   (checkhead_recip_type=checkrecip_type)
+   AND   (NOT checkhead_void)
+   AND   (checkhead_checkdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+   AND   (checkhead_bankaccnt_id=bankaccnt_id)
+   AND   (checkhead_bankaccnt_id=&lt;? value("bankaccnt_id") ?>) )
 GROUP BY bankaccnt_curr_id;</sql>
  </querysource>
  <rpthead>
@@ -229,7 +231,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Vendor</string>
+   <string>Recipient</string>
   </label>
   <label>
    <rect>
@@ -434,7 +436,7 @@ GROUP BY bankaccnt_curr_id;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Vendor</string>
+   <string>Recipient</string>
   </label>
   <line>
    <xstart>5</xstart>

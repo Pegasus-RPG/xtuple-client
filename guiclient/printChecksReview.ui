@@ -2,8 +2,8 @@
   <author></author>
   <comment></comment>
   <exportmacro></exportmacro>
-  <class>printAPChecksReview</class>
-  <widget class="QDialog" name="printAPChecksReview" >
+  <class>printChecksReview</class>
+  <widget class="QDialog" name="printChecksReview" >
     <property name="geometry" >
       <rect>
         <x>0</x>

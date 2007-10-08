@@ -941,9 +941,9 @@ void OpenMFGGUIClient::sReportsChanged(int pReportid, bool pLocal)
   emit reportsChanged(pReportid, pLocal);
 }
 
-void OpenMFGGUIClient::sAPChecksUpdated(int pBankaccntid, int pAPChkid, bool pLocal)
+void OpenMFGGUIClient::sChecksUpdated(int pBankaccntid, int pCheckid, bool pLocal)
 {
-  emit apChecksUpdated(pBankaccntid, pAPChkid, pLocal);
+  emit checksUpdated(pBankaccntid, pCheckid, pLocal);
   emit paymentsUpdated(pBankaccntid, -1, pLocal);
 }
 

@@ -1,6 +1,6 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>View A/P Check Run Edit List</title>
+ <title>View Check Run Edit List</title>
  <name>ViewAPCheckRunEditList</name>
  <description></description>
  <size>Letter</size>
@@ -11,37 +11,38 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT apchk_id AS primaryid,
+  <sql>SELECT checkhead_id AS primaryid,
        -1 AS secondaryid,
-       formatBoolYN(apchk_void) AS f_void,
-       formatBoolYN(apchk_printed) AS f_printed,
-       TEXT(apchk_number) AS number,
-       (vend_number || '-' || vend_name) AS description,
-       formatDate(apchk_checkdate) AS f_checkdate,
-       formatMoney(apchk_amount) AS f_amount,
-       apchk_number AS orderby
-  FROM apchk, vend
- WHERE ( (apchk_vend_id=vend_id)
-   AND (apchk_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
-   AND (NOT apchk_posted)
-   AND (NOT apchk_replaced)
-   AND (NOT apchk_deleted) )
+       formatBoolYN(checkhead_void) AS f_void,
+       formatBoolYN(checkhead_printed) AS f_printed,
+       TEXT(checkhead_number) AS number,
+       (checkrecip_number || '-' || checkrecip_name) AS description,
+       formatDate(checkhead_checkdate) AS f_checkdate,
+       formatMoney(checkhead_amount) AS f_amount,
+       checkhead_number AS orderby
+  FROM checkhead LEFT OUTER JOIN
+       checkrecip ON ((checkrecip_id=checkhead_recip_id)
+		 AND  (checkrecip_type=checkhead_recip_type))
+ WHERE ((checkhead_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
+   AND  (NOT checkhead_posted)
+   AND  (NOT checkhead_replaced)
+   AND  (NOT checkhead_deleted) )
 
-UNION SELECT apchkitem_apchk_id AS primaryid,
-             apchkitem_id AS secondaryid,
+UNION SELECT checkitem_checkhead_id AS primaryid,
+             checkitem_id AS secondaryid,
              '' AS f_void,
              '' AS f_printed,
-             apchkitem_vouchernumber AS number,
-             apchkitem_invcnumber AS description,
+             checkitem_vouchernumber AS number,
+             checkitem_invcnumber AS description,
              '' AS f_checkdate,
-             formatMoney(apchkitem_amount) AS f_amount,
-             apchk_number AS orderby
-        FROM apchkitem, apchk
-       WHERE ( (apchkitem_apchk_id=apchk_id)
-         AND (apchk_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
-         AND (NOT apchk_posted)
-         AND (NOT apchk_replaced)
-         AND (NOT apchk_deleted) )
+             formatMoney(checkitem_amount) AS f_amount,
+             checkhead_number AS orderby
+        FROM checkitem, checkhead
+       WHERE ( (checkitem_checkhead_id=checkhead_id)
+         AND (checkhead_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
+         AND (NOT checkhead_posted)
+         AND (NOT checkhead_replaced)
+         AND (NOT checkhead_deleted) )
 
 ORDER BY orderby desc, secondaryid, number;</sql>
  </querysource>
@@ -115,7 +116,7 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Vendor/Invoice #</string>
+   <string>Recipient/Invoice #</string>
   </label>
   <label>
    <rect>
@@ -260,7 +261,7 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Vendor/Invoice #</string>
+   <string>Recipient/Invoice #</string>
   </label>
   <label>
    <rect>

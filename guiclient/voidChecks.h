@@ -55,40 +55,27 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef PRINTAPCHECKSREVIEW_H
-#define PRINTAPCHECKSREVIEW_H
+#ifndef VOIDCHECKS_H
+#define VOIDCHECKS_H
 
-#include <Qt3Support/Q3Header>
-#include <QtGui/QDialog>
-#include "ui_printAPChecksReview.h"
+#include <QDialog>
+#include "ui_voidChecks.h"
 
-class printAPChecksReview : public QDialog, public Ui::printAPChecksReview
+class voidChecks : public QDialog, public Ui::voidChecks
 {
     Q_OBJECT
 
 public:
-    printAPChecksReview(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~printAPChecksReview();
+    voidChecks(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~voidChecks();
 
 public slots:
-    virtual void sUnmark();
-    virtual void sMarkPrinted();
-    virtual void sMarkVoided();
-    virtual void sMarkReplaced();
-    virtual void sSelectAll();
-
-protected:
-    virtual void markSelected( int );
+    virtual void sVoid();
+    virtual void sHandleBankAccount( int pBankaccntid );
 
 protected slots:
     virtual void languageChange();
 
-    virtual void sComplete();
-
-
-private:
-    void init();
-
 };
 
-#endif // PRINTAPCHECKSREVIEW_H
+#endif // VOIDCHECKS_H

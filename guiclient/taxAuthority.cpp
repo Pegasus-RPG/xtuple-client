@@ -253,7 +253,8 @@ void taxAuthority::sSave()
                "       taxauth_extref=:taxauth_extref,"
                "       taxauth_curr_id=:taxauth_curr_id,"
                "       taxauth_addr_id=:taxauth_addr_id,"
-	       "       taxauth_county=:taxauth_county "
+	       "       taxauth_county=:taxauth_county,"
+	       "       taxauth_accnt_id=:taxauth_accnt_id "
                "WHERE (taxauth_id=:taxauth_id);" );
   }
   else if (_mode == cNew)
@@ -269,9 +270,13 @@ void taxAuthority::sSave()
     }
 
     q.prepare( "INSERT INTO taxauth "
-               "( taxauth_id, taxauth_code, taxauth_name, taxauth_extref, taxauth_curr_id, taxauth_addr_id, taxauth_county ) "
+               "( taxauth_id, taxauth_code, taxauth_name, taxauth_extref,"
+	       "  taxauth_curr_id, taxauth_addr_id, taxauth_county,"
+	       "  taxauth_accnt_id) "
                "VALUES "
-               "( :taxauth_id, :taxauth_code, :taxauth_name, :taxauth_extref, :taxauth_curr_id, :taxauth_addr_id, :taxauth_county );" );
+               "( :taxauth_id, :taxauth_code, :taxauth_name, :taxauth_extref,"
+	       "  :taxauth_curr_id, :taxauth_addr_id, :taxauth_county,"
+	       "  :taxauth_accnt_id);" );
   }
   q.bindValue(":taxauth_id", _taxauthid);
   q.bindValue(":taxauth_code", _code->text().stripWhiteSpace());
@@ -282,6 +287,8 @@ void taxAuthority::sSave()
   if(_address->isValid())
     q.bindValue(":taxauth_addr_id", _address->id());
   q.bindValue(":taxauth_county",    _county->text());
+  if(_glaccnt->isValid())
+    q.bindValue(":taxauth_accnt_id", _glaccnt->id());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -347,7 +354,7 @@ void taxAuthority::populate()
              "       taxauth_extref,"
              "       COALESCE(taxauth_curr_id,-1) AS curr_id,"
              "       COALESCE(taxauth_addr_id,-1) AS addr_id,"
-	     "       taxauth_county, crmacct_id "
+	     "       taxauth_county, crmacct_id, taxauth_accnt_id "
              "FROM taxauth LEFT OUTER JOIN "
 	     "     crmacct ON (crmacct_taxauth_id=taxauth_id) "
              "WHERE (taxauth_id=:taxauth_id);" );
@@ -363,6 +370,7 @@ void taxAuthority::populate()
     if (! q.value("crmacct_id").isNull())
       _crmacct->setId(q.value("crmacct_id").toInt());
     _county->setText(q.value("taxauth_county").toString());
+    _glaccnt->setId(q.value("taxauth_accnt_id").toInt());
   }
   else if (q.lastError().type() != QSqlError::None)
   {

@@ -55,34 +55,39 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef POSTAPCHECK_H
-#define POSTAPCHECK_H
+#ifndef MISCCHECK_H
+#define MISCCHECK_H
 
 #include "OpenMFGGUIClient.h"
-#include <QDialog>
+#include <QMainWindow>
 #include <parameter.h>
-#include "ui_postAPCheck.h"
 
-class postAPCheck : public QDialog, public Ui::postAPCheck
+#include "ui_miscCheck.h"
+
+class miscCheck : public QMainWindow, public Ui::miscCheck
 {
     Q_OBJECT
 
 public:
-    postAPCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~postAPCheck();
+    miscCheck(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~miscCheck();
+
+    virtual void populate();
 
 public slots:
-    virtual enum SetResponse set(const ParameterList & pParams );
-    virtual void sPost();
-    virtual void sHandleBankAccount( int pBankaccntid );
-    virtual void populate( int pApchkid );
+    virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void sHandleButtons();
+    virtual void sPopulateBankInfo( int pBankaccntid );
+    virtual void sSave();
 
 protected slots:
     virtual void languageChange();
 
 private:
     bool _captive;
+    int _checkid;
+    int _mode;
 
 };
 
-#endif // POSTAPCHECK_H
+#endif // MISCCHECK_H

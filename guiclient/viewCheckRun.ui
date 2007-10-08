@@ -1,6 +1,6 @@
 <ui version="4.0" >
- <class>viewAPCheckRun</class>
- <widget class="QMainWindow" name="viewAPCheckRun" >
+ <class>viewCheckRun</class>
+ <widget class="QMainWindow" name="viewCheckRun" >
   <property name="geometry" >
    <rect>
     <x>0</x>
@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>View A/P Check Run</string>
+   <string>View Check Run</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
@@ -170,9 +170,9 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QLabel" name="_apChecksLit" >
+       <widget class="QLabel" name="_checksLit" >
         <property name="text" >
-         <string>A/P Checks:</string>
+         <string>Checks:</string>
         </property>
        </widget>
       </item>
@@ -185,7 +185,7 @@
          <number>7</number>
         </property>
         <item>
-         <widget class="XTreeWidget" name="_apchk" >
+         <widget class="XTreeWidget" name="_check" >
           <property name="sizePolicy" >
            <sizepolicy>
             <hsizetype>7</hsizetype>
@@ -345,7 +345,7 @@
  </customwidgets>
  <tabstops>
   <tabstop>_bankaccnt</tabstop>
-  <tabstop>_apchk</tabstop>
+  <tabstop>_check</tabstop>
   <tabstop>_printCheck</tabstop>
   <tabstop>_postCheck</tabstop>
   <tabstop>_void</tabstop>
@@ -366,7 +366,7 @@
   <connection>
    <sender>_close</sender>
    <signal>clicked()</signal>
-   <receiver>viewAPCheckRun</receiver>
+   <receiver>viewCheckRun</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -380,7 +380,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>_apchk</sender>
+   <sender>_check</sender>
    <signal>itemSelected(int)</signal>
    <receiver>_edit</receiver>
    <slot>animateClick()</slot>

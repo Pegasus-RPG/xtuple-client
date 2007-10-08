@@ -11,15 +11,16 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT vend_name,
-       apchk_number,
-       formatDate(apchk_checkdate) AS f_checkdate,
-       formatMoney(apchk_amount) AS f_amount,
-       apchk_amount
-  FROM vend, apchk
- WHERE ((apchk_vend_id=vend_id)
-   AND (apchk_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) )
-ORDER BY apchk_number;
+  <sql>SELECT checkrecip_name,
+       checkhead_number,
+       formatDate(checkhead_checkdate) AS f_checkdate,
+       formatMoney(checkhead_amount) AS f_amount,
+       checkhead_amount
+  FROM checkhead, checkrecip
+ WHERE ((checkhead_recip_id=checkrecip_id)
+   AND  (checkhead_recip_type=checkrecip_type)
+   AND  (checkhead_journalnumber=&lt;? value(&quot;journalNumber&quot;) ?>) )
+ORDER BY checkhead_number;
     </sql>
  </querysource>
  <querysource>
@@ -292,7 +293,7 @@ ORDER BY apchk_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>vend_name</column>
+     <column>checkrecip_name</column>
     </data>
    </field>
    <field>
@@ -311,7 +312,7 @@ ORDER BY apchk_number;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>apchk_number</column>
+     <column>checkhead_number</column>
     </data>
    </field>
    <field>
@@ -445,7 +446,7 @@ ORDER BY apchk_number;
    <vcenter/>
    <data>
     <query>detail</query>
-    <column>apchk_amount</column>
+    <column>checkhead_amount</column>
    </data>
    <tracktotal builtin="true" >money</tracktotal>
   </field>

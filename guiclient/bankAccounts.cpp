@@ -57,61 +57,28 @@
 
 #include "bankAccounts.h"
 
-#include <QVariant>
+#include <QMenu>
 #include <QMessageBox>
-#include <QStatusBar>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
+
 #include "bankAccount.h"
 
-/*
- *  Constructs a bankAccounts as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 bankAccounts::bankAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_bankaccnt, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_bankaccnt, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_serviceCharge, SIGNAL(clicked()), this, SLOT(sPostServiceCharge()));
-    connect(_adjustment, SIGNAL(clicked()), this, SLOT(sPostAdjustment()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-bankAccounts::~bankAccounts()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void bankAccounts::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void bankAccounts::init()
-{
-  statusBar()->hide();
+  connect(_adjustment,    SIGNAL(clicked()), this, SLOT(sPostAdjustment()));
+  connect(_bankaccnt, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_delete,        SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,          SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,           SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print,         SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_serviceCharge, SIGNAL(clicked()), this, SLOT(sPostServiceCharge()));
+  connect(_view,          SIGNAL(clicked()), this, SLOT(sView()));
   
   _bankaccnt->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft   );
   _bankaccnt->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
@@ -136,6 +103,16 @@ void bankAccounts::init()
   }
 
   sFillList();
+}
+
+bankAccounts::~bankAccounts()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void bankAccounts::languageChange()
+{
+  retranslateUi(this);
 }
 
 void bankAccounts::sNew()
@@ -189,10 +166,16 @@ void bankAccounts::sFillList()
   q.bindValue(":cash", tr("Cash"));
   q.exec();
   _bankaccnt->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void bankAccounts::sDelete()
 {
+  // TODO: put all of this into a stored proc
   q.prepare( "SELECT cashrcpt_id "
              "FROM cashrcpt "
              "WHERE (cashrcpt_bankaccnt_id=:bankaccnt_id) "
@@ -202,20 +185,22 @@ void bankAccounts::sDelete()
   if (q.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Bank Account"),
-                           tr("The selected Bank Account cannot be deleted as Cash Receipts have been posted against it.\n") );
+                           tr("<p>The selected Bank Account cannot be deleted "
+			      "as Cash Receipts have been posted against it."));
     return;
   }
 
-  q.prepare( "SELECT apchk_id "
-             "FROM apchk "
-             "WHERE (apchk_bankaccnt_id=:bankaccnt_id) "
+  q.prepare( "SELECT checkhead_id "
+             "FROM checkhead "
+             "WHERE (checkhead_bankaccnt_id=:bankaccnt_id) "
              "LIMIT 1;" );
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
   if (q.first())
   {
     QMessageBox::critical( this, tr("Cannot Delete Bank Account"),
-                           tr("The selected Bank Account cannot be delete as A/P Checks have been posted against it.\n") );
+                           tr("<p>The selected Bank Account cannot be delete "
+			      "as Checks have been posted against it.") );
     return;
   }
 
@@ -223,6 +208,11 @@ void bankAccounts::sDelete()
              "WHERE (bankaccnt_id=:bankaccnt_id);" );
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillList();
 }
 

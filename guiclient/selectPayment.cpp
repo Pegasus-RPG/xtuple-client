@@ -57,28 +57,19 @@
 
 #include "selectPayment.h"
 
-#include <QVariant>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
+
 #include "applyDiscount.h"
 
-/*
- *  Constructs a selectPayment as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 selectPayment::selectPayment(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-  connect(_discount, SIGNAL(clicked()), this, SLOT(sDiscount()));
+  connect(_discount, SIGNAL(clicked()),      this, SLOT(sDiscount()));
+  connect(_save,     SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_selected, SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
 
   _bankaccnt->setAllowNull(TRUE);
@@ -88,18 +79,11 @@ selectPayment::selectPayment(QWidget* parent, const char* name, bool modal, Qt::
   sPriceGroup();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 selectPayment::~selectPayment()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void selectPayment::languageChange()
 {
   retranslateUi(this);
@@ -129,6 +113,11 @@ enum SetResponse selectPayment::set(const ParameterList &pParams)
       _mode = cEdit;
       _apselectid = q.value("apselect_id").toInt();
     }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
     else
     {
       _mode = cNew;
@@ -147,8 +136,8 @@ void selectPayment::sSave()
   if (_selected->isZero())
   {
     QMessageBox::warning( this, tr("Cannot Select for Payment"),
-      tr("You must specify an amount greater than zero.\n"
-         "If you want to clear this selection you may do so\n"
+      tr("<p>You must specify an amount greater than zero. "
+         "If you want to clear this selection you may do so "
          "from the screen you selected this payment from.") );
     return;
   }
@@ -163,7 +152,8 @@ void selectPayment::sSave()
   if (_bankaccnt->id() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Select for Payment"),
-                          tr("You must select a Bank Account from which this Payment is to be paid.") );
+                          tr("<p>You must select a Bank Account from which "
+			     "this Payment is to be paid.") );
     _bankaccnt->setFocus();
     return;
   }
@@ -179,13 +169,14 @@ void selectPayment::sSave()
     {
 	int response = QMessageBox::question(this,
 			     tr("Currencies Do Not Match"),
-			     tr("The currency selected for this payment (%1) "
-				 "is not the same as the currency for the Bank "
-				 "Account (%2).\nWould you like to use this "
-				 "Bank Account anyway?")
+			     tr("<p>The currency selected for this payment "
+				 "(%1) is not the same as the currency for the "
+				 "Bank Account (%2). Would you like to use "
+				 "this Bank Account anyway?")
 			       .arg(_selected->currAbbr())
 			       .arg(q.value("currAbbr").toString()),
-			      QMessageBox::Yes, QMessageBox::No);
+			      QMessageBox::Yes,
+			      QMessageBox::No | QMessageBox::Default);
 	if (response == QMessageBox::No)
 	{
 	    _bankaccnt->setFocus();
@@ -204,7 +195,11 @@ void selectPayment::sSave()
     q.exec("SELECT NEXTVAL('apselect_apselect_id_seq') AS apselect_id;");
     if (q.first())
       _apselectid = q.value("apselect_id").toInt();
-//  ToDo
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     q.prepare( "INSERT INTO apselect "
                "( apselect_id, apselect_apopen_id,"
@@ -232,6 +227,11 @@ void selectPayment::sSave()
   q.bindValue(":apselect_docdate", _docDate->date());
   q.bindValue(":apselect_discount", _discountAmount->localValue());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   omfgThis->sPaymentsUpdated(_bankaccnt->id(), _apselectid, TRUE);
 
@@ -245,20 +245,20 @@ void selectPayment::populate()
              "       apopen_amount, "
 	     "       COALESCE(apselect_curr_id, apopen_curr_id) AS curr_id, "
              "       (apopen_amount - apopen_paid"
-             "          - COALESCE((SELECT SUM(apchkitem_amount + apchkitem_discount) "
-             "                        FROM apchkitem, apchk "
-             "                       WHERE ((apchkitem_apchk_id=apchk_id) "
-             "                         AND (apchkitem_apopen_id=apopen_id) "
-             "                         AND (NOT apchk_void) "
-             "                         AND (NOT apchk_posted)) "
+             "          - COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
+             "                        FROM checkitem, checkhead "
+             "                       WHERE ((checkitem_checkhead_id=checkhead_id) "
+             "                         AND (checkitem_apopen_id=apopen_id) "
+             "                         AND (NOT checkhead_void) "
+             "                         AND (NOT checkhead_posted)) "
              "                     ),0)) AS f_amount,"
              "       COALESCE(apselect_amount, (apopen_amount - apopen_paid"
-             "          - COALESCE((SELECT SUM(apchkitem_amount + apchkitem_discount) "
-             "                        FROM apchkitem, apchk "
-             "                       WHERE ((apchkitem_apchk_id=apchk_id) "
-             "                         AND (apchkitem_apopen_id=apopen_id) "
-             "                         AND (NOT apchk_void) "
-             "                         AND (NOT apchk_posted)) "
+             "          - COALESCE((SELECT SUM(checkitem_amount + checkitem_discount) "
+             "                        FROM checkitem, checkhead "
+             "                       WHERE ((checkitem_checkhead_id=checkhead_id) "
+             "                         AND (checkitem_apopen_id=apopen_id) "
+             "                         AND (NOT checkhead_void) "
+             "                         AND (NOT checkhead_posted)) "
              "                     ),0))) AS f_selected,"
              "       COALESCE(apselect_discount, 0.0) AS discount,"
              "       COALESCE(apselect_bankaccnt_id, -1) AS bankaccnt_id,"
@@ -284,7 +284,11 @@ void selectPayment::populate()
     if(q.value("bankaccnt_id").toInt() != -1)
       _bankaccnt->setId(q.value("bankaccnt_id").toInt());
   }
-//  ToDo    
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void selectPayment::sDiscount()

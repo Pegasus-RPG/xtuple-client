@@ -76,7 +76,7 @@ public slots:
     virtual void sVoidPosted();
 
 protected:
-    virtual bool checkParams();
+    virtual bool setParams(ParameterList &);
 
 protected slots:
     virtual void languageChange();

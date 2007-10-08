@@ -285,12 +285,12 @@
           <string>Checks</string>
          </property>
          <property name="buddy" >
-          <cstring>_apchk</cstring>
+          <cstring>_check</cstring>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="XTreeWidget" name="_apchk" >
+        <widget class="XTreeWidget" name="_check" >
          <property name="rootIsDecorated" >
           <bool>true</bool>
          </property>
@@ -388,7 +388,7 @@
   <tabstop>_dates</tabstop>
   <tabstop>_showDetail</tabstop>
   <tabstop>_query</tabstop>
-  <tabstop>_apchk</tabstop>
+  <tabstop>_check</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

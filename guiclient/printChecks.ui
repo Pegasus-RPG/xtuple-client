@@ -2,8 +2,8 @@
   <author></author>
   <comment></comment>
   <exportmacro></exportmacro>
-  <class>printAPChecks</class>
-  <widget class="QDialog" name="printAPChecks" >
+  <class>printChecks</class>
+  <widget class="QDialog" name="printChecks" >
     <property name="geometry" >
       <rect>
         <x>0</x>
@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Print A/P Checks</string>
+      <string>Print Checks</string>
     </property>
     <layout class="QHBoxLayout" >
       <property name="margin" >
@@ -244,7 +244,7 @@
       </item>
     </layout>
   </widget>
-  <layoutdefault spacing="6" margin="11" />
+  <layoutdefault spacing="5" margin="5" />
   <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
   <customwidgets>
     <customwidget>
@@ -269,7 +269,7 @@
     <connection>
       <sender>_close</sender>
       <signal>clicked()</signal>
-      <receiver>printAPChecks</receiver>
+      <receiver>printChecks</receiver>
       <slot>reject()</slot>
     </connection>
   </connections>

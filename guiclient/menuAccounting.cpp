@@ -83,14 +83,14 @@
 
 #include "selectPayments.h"
 #include "selectedPayments.h"
-#include "prepareAPCheckRun.h"
-#include "viewAPCheckRun.h"
-#include "miscAPCheck.h"
-#include "printAPCheck.h"
-#include "printAPChecks.h"
-#include "voidAPChecks.h"
-#include "postAPCheck.h"
-#include "postAPChecks.h"
+#include "prepareCheckRun.h"
+#include "viewCheckRun.h"
+#include "miscCheck.h"
+#include "printCheck.h"
+#include "printChecks.h"
+#include "voidChecks.h"
+#include "postCheck.h"
+#include "postChecks.h"
 
 #include "unappliedAPCreditMemos.h"
 #include "apOpenItem.h"
@@ -277,8 +277,8 @@ menuAccounting::menuAccounting(OpenMFGGUIClient *Pparent) :
     { "separator", NULL, NULL, apPaymentsMenu, true, NULL, NULL, true, NULL },
     { "ap.voidCheckRun", tr("&Void Check Run..."), SLOT(sVoidCheckRun()), apPaymentsMenu, _privleges->check("MaintainPayments"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apPaymentsMenu, true, NULL, NULL, true, NULL },
-    { "ap.postAPCheck", tr("Post A/P &Check..."), SLOT(sPostCheck()), apPaymentsMenu, _privleges->check("PostPayments"), NULL, NULL, true , NULL },
-    { "ap.postAPChecks", tr("P&ost A/P Checks..."), SLOT(sPostChecks()), apPaymentsMenu, _privleges->check("PostPayments"), NULL, NULL, true , NULL },
+    { "ap.postCheck", tr("Post &Check..."), SLOT(sPostCheck()), apPaymentsMenu, _privleges->check("PostPayments"), NULL, NULL, true , NULL },
+    { "ap.postChecks", tr("P&ost Checks..."), SLOT(sPostChecks()), apPaymentsMenu, _privleges->check("PostPayments"), NULL, NULL, true , NULL },
                        
     { "separator", NULL, NULL, apMenu, true, NULL, NULL, true, NULL },
     
@@ -286,7 +286,7 @@ menuAccounting::menuAccounting(OpenMFGGUIClient *Pparent) :
     { "menu", tr("&Forms"), (char*)apFormsMenu, apMenu, true, NULL, NULL, true, NULL },
     { "ap.printPurchaseOrder", tr("Print Purchase &Order..."), SLOT(sPrintPurchaseOrder()), apFormsMenu, _privleges->check("PrintPurchaseOrders"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apFormsMenu, true, NULL, NULL, true, NULL },
-    { "ap.printAPCheck", tr("Print A/P &Check..."), SLOT(sPrintCheck()), apFormsMenu, _privleges->check("MaintainPayments"), NULL, NULL, true , NULL },
+    { "ap.printCheck", tr("Print &Check..."), SLOT(sPrintCheck()), apFormsMenu, _privleges->check("MaintainPayments"), NULL, NULL, true , NULL },
     { "ap.printCheckRun", tr("Print Check &Run..."), SLOT(sPrintCheckRun()), apFormsMenu, _privleges->check("MaintainPayments"), NULL, NULL, true , NULL },
     
     // Accounting | Accaunts Payable |  Reports
@@ -610,45 +610,45 @@ void menuAccounting::sCreateMiscCheck()
   ParameterList params;
   params.append("new");
 
-  miscAPCheck *newdlg = new miscAPCheck();
+  miscCheck *newdlg = new miscCheck();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
 void menuAccounting::sPrepareCheckRun()
 {
-  prepareAPCheckRun(parent, "", TRUE).exec();
+  prepareCheckRun(parent, "", TRUE).exec();
 }
 
 void menuAccounting::sViewCheckRun()
 {
-  omfgThis->handleNewWindow(new viewAPCheckRun());
+  omfgThis->handleNewWindow(new viewCheckRun());
 }
 
 void menuAccounting::sPrintCheck()
 {
-  printAPCheck(parent, "", TRUE).exec();
+  printCheck(parent, "", TRUE).exec();
 }
 
 void menuAccounting::sPrintCheckRun()
 {
-  printAPChecks(parent, "", TRUE).exec();
+  printChecks(parent, "", TRUE).exec();
 }
 
 void menuAccounting::sVoidCheckRun()
 {
-  voidAPChecks newdlg(parent, "", TRUE);
+  voidChecks newdlg(parent, "", TRUE);
   newdlg.exec();
 }
 
 void menuAccounting::sPostCheck()
 {
-  postAPCheck(parent, "", TRUE).exec();
+  postCheck(parent, "", TRUE).exec();
 }
 
 void menuAccounting::sPostChecks()
 {
-  postAPChecks(parent, "", TRUE).exec();
+  postChecks(parent, "", TRUE).exec();
 }
 
 

@@ -369,7 +369,8 @@ void initErrorLookupHash()
   { "deleteCustomer",	-3, QString("Credit Memos"),		-2, "" },
   { "deleteCustomer",	-4, QString("custhist"),		-2, "" },
   { "deleteCustomer",	-5, QString("A/R Open"),		-2, "" },
-  { "deleteCustomer",	-6, QString("ipsass"),			 0, "" },
+  { "deleteCustomer",	-6, TR("The selected Customer cannot be deleted as "
+			       "Checks have been written to it."),	0, "" },
   { "deleteCustomer",   -7, TR("The selected Customer cannot be deleted as there "
                                "are still Invoices assigned to it. You must "
                                "delete all of the selected Customer's Invoices "
@@ -486,6 +487,13 @@ void initErrorLookupHash()
   { "deleteTax", -26,	TR("This Tax Code cannot be deleted as there are "
 			   "S/O Credit Memo Items that refer to it."),	0, "" },
 
+  { "deleteTaxAuthority", -1, TR("This Tax Authority cannot be deleted as "
+				 "there are Tax Selections for it. Change or "
+				 "delete those Tax Selections before deleting "
+				 "this Tax Authority."),		0, "" },
+  { "deleteTaxAuthority", -7, TR("This Tax Authority cannot be deleted as "
+				 "Checks have been written to it."),	0, "" },
+
   { "deleteTo",	 -1,	TR("This Transfer Order cannot be deleted as line "
 			   "items for it have already been shipped."),	0, "" },
   { "deleteTo",	 -2,	TR("This Transfer Order cannot be deleted as line "
@@ -520,7 +528,7 @@ void initErrorLookupHash()
 			       "You may deactivate this Vendor instead."),
 								 0, "" },
   { "deleteVendor",	-7, TR("The selected Vendor cannot be deleted as there "
-			       "have been A/P Checks posted against it. "
+			       "have been Checks posted against it. "
 			       "You may deactivate this Vendor instead."),
 								 0, "" },
 
@@ -663,8 +671,8 @@ void initErrorLookupHash()
 				     "posted because the G/L Account could not "
 				     "be verified."),		0, "" },
   { "postBillingSelection",
-			-1, TR("This Billing Selection cannot be posted because it "
-			       "has already been posted."),	 0, "" },
+			-1, TR("This Billing Selection cannot be posted "
+			       "because it has already been posted."),	0, "" },
 
   { "postCashReceipt", -1, TR("The selected Cash Receipt cannot be posted as "
 			      "the amount distributed is greater than the "
@@ -683,6 +691,16 @@ void initErrorLookupHash()
   { "postCashReceipt", -7, TR("The selected Cash Receipt cannot be posted, "
 			      "probably because the Customer's Prepaid Account "
 			      "was not found."),			0, "" },
+
+  { "postCheck",  -10, TR("Cannot post this Check because it has already "
+			 "been posted."),				0, "" },
+  { "postCheck",  -11, TR("Cannot post this Check because the recipient "
+			 "type is not valid."),				0, "" },
+  { "postCheck",  -12, TR("Cannot post this Check because the Expense "
+			 "Category could not be found."),		0, "" },
+  { "postCheck",  -13, TR("Cannot post this Check because the G/L Account "
+			 "against which it is to be posted is not valid."),
+			 						0, "" },
 
   { "postCreditMemo",	-1, TR("This Credit Memo cannot be posted because it "
 			       "has already been posted."),	 0, "" },
@@ -790,6 +808,14 @@ void initErrorLookupHash()
   { "releaseUnusedBillingHeader",
 			-2, TR("Cannot release this Billing Header because it "
 			       "has Line Items."), 		0, "" },
+
+  { "replaceAllVoidedChecks", -1, "", -1, "replaceVoidedCheck" },
+
+  { "replaceVoidedCheck", -1, TR("Cannot replace this voided check because "
+				 "either it has not been voided, it has "
+				 "already been posted, or it has already been"
+				 "replaced."), 0, "" },
+
   { "returnCompleteShipment",
 			-5, TR("Either a Cost Category for the Items you are "
 			       "trying to Return is not configured with a "
@@ -882,6 +908,22 @@ void initErrorLookupHash()
   { "updateTodoItem",  -10, TR("The To-Do List Item cannot be updated as "
 			       "an invalid internal ID was supplied ."),
 								 0, "" },
+
+  { "voidCheck", -1, TR("Cannot void this check because either it has already "
+			"been voided, it has already been posted, or it has "
+			"already been replaced. If this check has been posted, "
+			"try Void Posted Check with the Check Register "
+			"window."),					0, "" },
+
+  { "voidPostedCheck", -10, TR("Cannot void this check because it has already "
+			       "been voided."),				0, "" },
+  { "voidPostedCheck", -11, TR("Cannot void this check because the recipient "
+			       "type is not valid."),			0, "" },
+  { "voidPostedCheck", -12, TR("Cannot void this check because the Expense "
+			       "Category could not be found."),		0, "" },
+  { "voidPostedCheck", -13, TR("Cannot void this check because the G/L account "
+			       "to which the funds should be credited is not "
+			       "valid."),				0, "" },
 
   { "woClockIn",  -1, "", -1, "explodeWo" },
   { "woClockIn",  -2, "", -2, "explodeWo" },

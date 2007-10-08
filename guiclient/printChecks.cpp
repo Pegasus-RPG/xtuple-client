@@ -55,57 +55,42 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "printAPChecks.h"
+#include "printChecks.h"
 
-#include <Q3ValueList>
+#include <QList>
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
 
 #include <openreports.h>
-#include "printAPChecksReview.h"
 
-/*
- *  Constructs a printAPChecks as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-printAPChecks::printAPChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+#include "printChecksReview.h"
+#include "storedProcErrorLookup.h"
+
+printChecks::printChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
-
-    _bankaccnt->setAllowNull(TRUE);
-    _bankaccnt->setType(XComboBox::APBankAccounts);
+  _bankaccnt->setAllowNull(TRUE);
+  _bankaccnt->setType(XComboBox::APBankAccounts);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printAPChecks::~printAPChecks()
+printChecks::~printChecks()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printAPChecks::languageChange()
+void printChecks::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-enum SetResponse printAPChecks::set(const ParameterList pParams )
+enum SetResponse printChecks::set(const ParameterList pParams )
 {
   _captive = TRUE;
 
@@ -119,9 +104,9 @@ enum SetResponse printAPChecks::set(const ParameterList pParams )
   return NoError;
 }
 
-void printAPChecks::sPrint()
+void printChecks::sPrint()
 {
-  Q3ValueList<int> printedChecks;
+  QList<int> printedChecks;
 
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id());
@@ -130,15 +115,15 @@ void printAPChecks::sPrint()
   bool setup = true;
 
   XSqlQuery checks;
-  checks.prepare( "SELECT apchk_id, apchk_number, report_name "
-                  "FROM apchk, bankaccnt, form, report "
-                  "WHERE ( (apchk_bankaccnt_id=bankaccnt_id)"
+  checks.prepare( "SELECT checkhead_id, checkhead_number, report_name "
+                  "FROM checkhead, bankaccnt, form, report "
+                  "WHERE ( (checkhead_bankaccnt_id=bankaccnt_id)"
                   " AND (bankaccnt_check_form_id=form_id)"
                   " AND (form_report_id=report_id)"
-                  " AND (NOT apchk_printed) "
-                  " AND (NOT apchk_void) "
+                  " AND (NOT checkhead_printed) "
+                  " AND (NOT checkhead_void) "
                   " AND (bankaccnt_id=:bankaccnt_id) ) "
-                  "ORDER BY apchk_number "
+                  "ORDER BY checkhead_number "
                   "LIMIT :numtoprint; " );
   checks.bindValue(":bankaccnt_id", _bankaccnt->id());
   checks.bindValue(":numtoprint", _numberOfChecks->value());
@@ -147,19 +132,21 @@ void printAPChecks::sPrint()
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
     if(!userCanceled)
-      systemError(this, tr("Could not initialize printing system for multiple reports."));
+      systemError(this, tr("<p>Could not initialize printing system for "
+			   "multiple reports."));
     return;
   }
   while (checks.next())
   {
     ParameterList params;
-    params.append("apchk_id", checks.value("apchk_id").toInt());
+    params.append("checkhead_id", checks.value("checkhead_id").toInt());
+    params.append("apchk_id", checks.value("checkhead_id").toInt());
 
     orReport report(checks.value("report_name").toString(), params);
     if (report.isValid() && report.print(&printer, setup))
     {
       setup = false;
-      printedChecks.append(checks.value("apchk_id").toInt());
+      printedChecks.append(checks.value("checkhead_id").toInt());
     }
     else
     {
@@ -174,24 +161,32 @@ void printAPChecks::sPrint()
     return;
   }
 
-  if(!printedChecks.isEmpty())
+  if(!printedChecks.empty())
   {
-    Q3ValueList<int>::iterator it;
+    QList<int>::iterator it;
 
-    if ( QMessageBox::information( this, tr("All Checks Printed"),
-                                   tr("Did all the Checks print successfully?"),
-                                   tr("&Yes"), tr("&No"), QString::null, 1, 0 ) == 0 )
+    if ( QMessageBox::question(this, tr("All Checks Printed"),
+			       tr("<p>Did all the Checks print successfully?"),
+				QMessageBox::Yes,
+				QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
     {
       XSqlQuery postCheck;
-      postCheck.prepare( "UPDATE apchk "
-                         "SET apchk_printed=TRUE "
-                         "WHERE (apchk_id=:apchk_id);" );
-
+      postCheck.prepare( "SELECT markCheckAsPrinted(:checkhead_id) AS result;");
       for( it = printedChecks.begin(); it != printedChecks.end(); ++it)
       {
-        postCheck.bindValue(":apchk_id", (*it));
+        postCheck.bindValue(":checkhead_id", (*it));
         postCheck.exec();
-	if (postCheck.lastError().type() != QSqlError::None)
+	if (postCheck.first())
+	{
+	  int result = postCheck.value("result").toInt();
+	  if (result < 0)
+	  {
+	    systemError(this, storedProcErrorLookup("markCheckAsPrinted",
+						   result), __FILE__, __LINE__);
+	    return;
+	  }
+	}
+	else if (postCheck.lastError().type() != QSqlError::None)
 	{
 	  systemError(this, postCheck.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
@@ -200,10 +195,10 @@ void printAPChecks::sPrint()
     }
     else
     {
-      printAPChecksReview newdlg(this, "", TRUE);
-      QString query = QString( "SELECT apchk_id, apchk_number"
-                               "  FROM apchk"
-                               " WHERE (apchk_id IN (" );
+      printChecksReview newdlg(this, "", TRUE);
+      QString query = QString( "SELECT checkhead_id, checkhead_number"
+                               "  FROM checkhead"
+                               " WHERE (checkhead_id IN (" );
       bool first = true;
       for( it = printedChecks.begin(); it != printedChecks.end(); ++it)
       {
@@ -221,20 +216,22 @@ void printAPChecks::sPrint()
     }
   }
   else
-    QMessageBox::information( this, tr("No Checks Printed"), tr("No Checks were printed for the selected Bank Account.") );
+    QMessageBox::information( this, tr("No Checks Printed"),
+			     tr("<p>No Checks were printed for the selected "
+				"Bank Account.") );
 
-  omfgThis->sAPChecksUpdated(_bankaccnt->id(), -1, TRUE);
+  omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   sHandleBankAccount(_bankaccnt->id());
 }
 
-void printAPChecks::sHandleBankAccount(int pBankaccntid)
+void printChecks::sHandleBankAccount(int pBankaccntid)
 {
-  q.prepare( "SELECT TEXT(MIN(apchk_number)) as checknumber,"
+  q.prepare( "SELECT TEXT(MIN(checkhead_number)) as checknumber,"
              "       COUNT(*) AS numofchecks "
-             "FROM apchk "
-             "WHERE ( (NOT apchk_void)"
-             " AND (NOT apchk_printed)"
-             " AND (apchk_bankaccnt_id=:bankaccnt_id) );" );
+             "FROM checkhead "
+             "WHERE ( (NOT checkhead_void)"
+             " AND (NOT checkhead_printed)"
+             " AND (checkhead_bankaccnt_id=:bankaccnt_id) );" );
   q.bindValue(":bankaccnt_id", pBankaccntid);
   q.exec();
   if (q.first())
@@ -250,6 +247,6 @@ void printAPChecks::sHandleBankAccount(int pBankaccntid)
   }
 }
 
-void printAPChecks::sPopulate()
+void printChecks::sPopulate()
 {
 }

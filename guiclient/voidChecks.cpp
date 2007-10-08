@@ -55,83 +55,81 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "voidAPChecks.h"
+#include "voidChecks.h"
 
-#include <QVariant>
 #include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "OpenMFGGUIClient.h"
-/*
- *  Constructs a voidAPChecks as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-voidAPChecks::voidAPChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+#include "storedProcErrorLookup.h"
+
+voidChecks::voidChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
+  connect(_void,      SIGNAL(clicked()),  this, SLOT(sVoid()));
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-voidAPChecks::~voidAPChecks()
+voidChecks::~voidChecks()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void voidAPChecks::languageChange()
+void voidChecks::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-void voidAPChecks::sVoid()
+void voidChecks::sVoid()
 {
-  // if replace replaceVoidedAPCheck(apchk_id);
-  q.prepare("SELECT apchk_id, voidAPCheck(apchk_id) AS result"
-            "  FROM apchk"
-            " WHERE ((NOT apchk_posted)"
-            "   AND  (NOT apchk_replaced)"
-            "   AND  (NOT apchk_deleted)"
-            "   AND  (NOT apchk_void)"
-            "   AND  (apchk_bankaccnt_id=:bankaccnt_id))");
+  q.prepare("SELECT checkhead_id, checkhead_number,"
+	    "       voidCheck(checkhead_id) AS result"
+            "  FROM checkhead"
+            " WHERE ((NOT checkhead_posted)"
+            "   AND  (NOT checkhead_replaced)"
+            "   AND  (NOT checkhead_deleted)"
+            "   AND  (NOT checkhead_void)"
+            "   AND  (checkhead_bankaccnt_id=:bankaccnt_id))");
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
-  if(q.exec())
+  q.exec();
+  while (q.next())
   {
-    if(_issueReplacements->isChecked())
+    int result = q.value("result").toInt();
+    if (result < 0)
+      systemError(this,
+		  tr("Check %1").arg(q.value("checkhead_number").toString()) +
+		  "\n" + storedProcErrorLookup("voidCheck", result),
+		  __FILE__, __LINE__);
+    else if(_issueReplacements->isChecked())
     {
       XSqlQuery rplc;
-      rplc.prepare("SELECT replaceVoidedAPCheck(:apchk_id) AS result;");
+      rplc.prepare("SELECT replaceVoidedCheck(:checkhead_id) AS result;");
       while(q.next())
       {
-        rplc.bindValue(":apchk_id", q.value("apchk_id").toInt());
+        rplc.bindValue(":checkhead_id", q.value("checkhead_id").toInt());
         rplc.exec();
       }
     }
-    omfgThis->sAPChecksUpdated(_bankaccnt->id(), -1, TRUE);
-    accept();
+    omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   }
-  else
-    systemError( this, tr("A System Error occurred at %1::%2.")
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  accept();
 }
 
-void voidAPChecks::sHandleBankAccount(int pBankaccntid)
+void voidChecks::sHandleBankAccount(int pBankaccntid)
 {
   if (pBankaccntid == -1)
   {
@@ -140,14 +138,14 @@ void voidAPChecks::sHandleBankAccount(int pBankaccntid)
   }
   else
   {
-    q.prepare( "SELECT TEXT(MIN(apchk_number)) as checknumber,"
+    q.prepare( "SELECT TEXT(MIN(checkhead_number)) as checknumber,"
                "       TEXT(COUNT(*)) AS numofchecks "
-               "  FROM apchk "
-               " WHERE ( (NOT apchk_void)"
-               "   AND   (NOT apchk_posted)"
-               "   AND   (NOT apchk_replaced)"
-               "   AND   (NOT apchk_deleted)"
-               "   AND   (apchk_bankaccnt_id=:bankaccnt_id) );" );
+               "  FROM checkhead "
+               " WHERE ( (NOT checkhead_void)"
+               "   AND   (NOT checkhead_posted)"
+               "   AND   (NOT checkhead_replaced)"
+               "   AND   (NOT checkhead_deleted)"
+               "   AND   (checkhead_bankaccnt_id=:bankaccnt_id) );" );
     q.bindValue(":bankaccnt_id", pBankaccntid);
     q.exec();
     if (q.first())
@@ -155,10 +153,10 @@ void voidAPChecks::sHandleBankAccount(int pBankaccntid)
       _checkNumber->setText(q.value("checknumber").toString());
       _numberOfChecks->setText(q.value("numofchecks").toString());
     }
-    else
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
-

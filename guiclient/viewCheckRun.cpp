@@ -55,24 +55,24 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "viewAPCheckRun.h"
+#include "viewCheckRun.h"
 
 #include <QSqlError>
 
 #include <openreports.h>
 
-#include "miscAPCheck.h"
-#include "postAPCheck.h"
-#include "printAPCheck.h"
-#include "printAPChecks.h"
+#include "miscCheck.h"
+#include "postCheck.h"
+#include "printCheck.h"
+#include "printChecks.h"
 #include "storedProcErrorLookup.h"
 
-viewAPCheckRun::viewAPCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
+viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  connect(_apchk, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(sHandleItemSelection()));
+  connect(_check, SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)), this, SLOT(sHandleItemSelection()));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -84,50 +84,50 @@ viewAPCheckRun::viewAPCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_replaceAll, SIGNAL(clicked()), this, SLOT(sReplaceAll()));
   connect(_void, SIGNAL(clicked()), this, SLOT(sVoid()));
 
-  _apchk->setRootIsDecorated(TRUE);
-  _apchk->addColumn(tr("Void"),           _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Misc."),          _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Prt'd"),          _ynColumn,    Qt::AlignCenter );
-  _apchk->addColumn(tr("Chk./Voucher #"), _itemColumn,  Qt::AlignCenter );
-  _apchk->addColumn(tr("Vendor/Invc. #"), -1,           Qt::AlignLeft   );
-  _apchk->addColumn(tr("Check Date") ,    _dateColumn,  Qt::AlignCenter );
-  _apchk->addColumn(tr("Amount"),         _moneyColumn, Qt::AlignRight  );
-  _apchk->addColumn(tr("Currency"),	  _currencyColumn, Qt::AlignLeft );
+  _check->setRootIsDecorated(TRUE);
+  _check->addColumn(tr("Void"),             _ynColumn, Qt::AlignCenter );
+  _check->addColumn(tr("Misc."),            _ynColumn, Qt::AlignCenter );
+  _check->addColumn(tr("Prt'd"),            _ynColumn, Qt::AlignCenter );
+  _check->addColumn(tr("Chk./Voucher #"), _itemColumn, Qt::AlignCenter );
+  _check->addColumn(tr("Recipient/Invc. #"),       -1, Qt::AlignLeft   );
+  _check->addColumn(tr("Check Date") ,    _dateColumn, Qt::AlignCenter );
+  _check->addColumn(tr("Amount"),        _moneyColumn, Qt::AlignRight  );
+  _check->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft );
 
   if (omfgThis->singleCurrency())
-      _apchk->hideColumn(7);
+      _check->hideColumn(7);
 
-  connect(omfgThis, SIGNAL(apChecksUpdated(int, int, bool)), this, SLOT(sFillList(int)));
+  connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(sFillList(int)));
 
   sFillList();
 }
 
-viewAPCheckRun::~viewAPCheckRun()
+viewCheckRun::~viewCheckRun()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-void viewAPCheckRun::languageChange()
+void viewCheckRun::languageChange()
 {
   retranslateUi(this);
 }
 
-void viewAPCheckRun::sVoid()
+void viewCheckRun::sVoid()
 {
-  q.prepare( "SELECT apchk_bankaccnt_id, voidAPCheck(apchk_id) AS result "
-             "FROM apchk "
-             "WHERE (apchk_id=:apchk_id);" );
-  q.bindValue(":apchk_id", _apchk->id());
+  q.prepare( "SELECT checkhead_bankaccnt_id, voidCheck(checkhead_id) AS result "
+             "FROM checkhead "
+             "WHERE (checkhead_id=:checkhead_id);" );
+  q.bindValue(":checkhead_id", _check->id());
   q.exec();
   if (q.first())
   {
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("voidAPCheck", result), __FILE__, __LINE__);
+      systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sAPChecksUpdated(q.value("apchk_bankaccnt_id").toInt(), _apchk->id(), TRUE);
+    omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -136,22 +136,22 @@ void viewAPCheckRun::sVoid()
   }
 }
 
-void viewAPCheckRun::sDelete()
+void viewCheckRun::sDelete()
 {
-  q.prepare( "SELECT apchk_bankaccnt_id, deleteAPCheck(apchk_id) AS result "
-             "FROM apchk "
-             "WHERE (apchk_id=:apchk_id);" );
-  q.bindValue(":apchk_id", _apchk->id());
+  q.prepare( "SELECT checkhead_bankaccnt_id, deleteCheck(checkhead_id) AS result "
+             "FROM checkhead "
+             "WHERE (checkhead_id=:checkhead_id);" );
+  q.bindValue(":checkhead_id", _check->id());
   q.exec();
   if (q.first())
   {
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("deleteAPCheck", result), __FILE__, __LINE__);
+      systemError(this, storedProcErrorLookup("deleteCheck", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sAPChecksUpdated(q.value("apchk_bankaccnt_id").toInt(), _apchk->id(), TRUE);
+    omfgThis->sChecksUpdated(q.value("checkhead_bankaccnt_id").toInt(), _check->id(), TRUE);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -160,33 +160,33 @@ void viewAPCheckRun::sDelete()
   }
 }
 
-void viewAPCheckRun::sEdit()
+void viewCheckRun::sEdit()
 {
   ParameterList params;
   params.append("edit");
-  params.append("apchk_id", _apchk->id());
+  params.append("check_id", _check->id());
 
-  miscAPCheck *newdlg = new miscAPCheck();
+  miscCheck *newdlg = new miscCheck();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
 }
 
-void viewAPCheckRun::sReplace()
+void viewCheckRun::sReplace()
 {
-  q.prepare( "SELECT apchk_bankaccnt_id, replaceVoidedAPCheck(:apchk_id) AS result "
-             "FROM apchk "
-             "WHERE (apchk_id=:apchk_id);" );
-  q.bindValue(":apchk_id", _apchk->id());
+  q.prepare( "SELECT checkhead_bankaccnt_id, replaceVoidedCheck(:check_id) AS result "
+             "FROM checkhead "
+             "WHERE (checkhead_id=:check_id);" );
+  q.bindValue(":check_id", _check->id());
   q.exec();
   if (q.first())
   {
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("replaceVoidedAPCheck", result), __FILE__, __LINE__);
+      systemError(this, storedProcErrorLookup("replaceVoidedCheck", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sAPChecksUpdated( q.value("apchk_bankaccnt_id").toInt(),
+    omfgThis->sChecksUpdated( q.value("checkhead_bankaccnt_id").toInt(),
                                 q.value("result").toInt(), TRUE);
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -196,9 +196,9 @@ void viewAPCheckRun::sReplace()
   }
 }
 
-void viewAPCheckRun::sReplaceAll()
+void viewCheckRun::sReplaceAll()
 {
-  q.prepare("SELECT replaceAllVoidedAPChecks(:bankaccnt_id) AS result;");
+  q.prepare("SELECT replaceAllVoidedChecks(:bankaccnt_id) AS result;");
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.exec();
   if (q.first())
@@ -206,10 +206,10 @@ void viewAPCheckRun::sReplaceAll()
     int result = q.value("result").toInt();
     if (result < 0)
     {
-      systemError(this, storedProcErrorLookup("replaceAllVoidedAPChecks", result), __FILE__, __LINE__);
+      systemError(this, storedProcErrorLookup("replaceAllVoidedChecks", result), __FILE__, __LINE__);
       return;
     }
-    omfgThis->sAPChecksUpdated(_bankaccnt->id(), -1, TRUE);
+    omfgThis->sChecksUpdated(_bankaccnt->id(), -1, TRUE);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -218,29 +218,29 @@ void viewAPCheckRun::sReplaceAll()
   }
 }
 
-void viewAPCheckRun::sPrint()
+void viewCheckRun::sPrint()
 {
   ParameterList params;
-  params.append("apchk_id", _apchk->id());
+  params.append("check_id", _check->id());
 
-  printAPCheck newdlg(this, "", TRUE);
+  printCheck newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void viewAPCheckRun::sPost()
+void viewCheckRun::sPost()
 {
   ParameterList params;
-  params.append("apchk_id", _apchk->id());
+  params.append("check_id", _check->id());
 
-  postAPCheck newdlg(this, "", TRUE);
+  postCheck newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
 
-void viewAPCheckRun::sHandleItemSelection()
+void viewCheckRun::sHandleItemSelection()
 {
-  QTreeWidgetItem *selected = _apchk->currentItem();
+  QTreeWidgetItem *selected = _check->currentItem();
 
   if (! selected)
     return;
@@ -267,53 +267,54 @@ void viewAPCheckRun::sHandleItemSelection()
   }
 }
 
-void viewAPCheckRun::sFillList(int pBankaccntid)
+void viewCheckRun::sFillList(int pBankaccntid)
 {
   if (pBankaccntid == _bankaccnt->id())
     sFillList();
 }
 
-void viewAPCheckRun::sFillList()
+void viewCheckRun::sFillList()
 {
-  _apchk->clear();
+  _check->clear();
 
-  QString sql( "SELECT apchk_id AS apchkid, -1 AS apchkitem_id,"
-               "       formatBoolYN(apchk_void) AS f_void,"
-               "       formatBoolYN(apchk_misc) AS f_misc,"
-               "       formatBoolYN(apchk_printed) AS f_printed,"
-               "       TEXT(apchk_number) AS number,"
-               "       (vend_number || '-' || vend_name) AS description,"
-               "       formatDate(apchk_checkdate) AS f_checkdate,"
-               "       formatMoney(apchk_amount) AS f_amount,"
-               "       CASE WHEN (apchk_misc) THEN 1"
+  QString sql( "SELECT checkhead_id AS checkid, -1 AS checkitem_id,"
+               "       formatBoolYN(checkhead_void) AS f_void,"
+               "       formatBoolYN(checkhead_misc) AS f_misc,"
+               "       formatBoolYN(checkhead_printed) AS f_printed,"
+               "       TEXT(checkhead_number) AS number,"
+               "       (checkrecip_number || '-' || checkrecip_name) AS description,"
+               "       formatDate(checkhead_checkdate) AS f_checkdate,"
+               "       formatMoney(checkhead_amount) AS f_amount,"
+               "       CASE WHEN (checkhead_misc) THEN 1"
                "            ELSE 0"
                "       END AS misc,"
-               "       apchk_number, currConcat(apchk_curr_id) AS curr_concat, "
+               "       checkhead_number, currConcat(checkhead_curr_id) AS curr_concat, "
 	       "       1 AS orderby "
-               "FROM apchk, vend "
-               "WHERE ( (apchk_vend_id=vend_id) "
-               " AND (apchk_bankaccnt_id=:bankaccnt_id) "
-               " AND (NOT apchk_posted)"
-               " AND (NOT apchk_replaced)"
-               " AND (NOT apchk_deleted) ) "
+               "FROM checkhead LEFT OUTER JOIN"
+	       "     checkrecip ON ((checkrecip_id=checkhead_recip_id)"
+	       "               AND  (checkrecip_type=checkhead_recip_type))"
+               "WHERE ((checkhead_bankaccnt_id=:bankaccnt_id) "
+               "  AND  (NOT checkhead_posted)"
+               "  AND  (NOT checkhead_replaced)"
+               "  AND  (NOT checkhead_deleted) ) "
 
-               "UNION SELECT apchkitem_apchk_id AS apchkid, apchkitem_id,"
+               "UNION SELECT checkitem_checkhead_id AS checkid, checkitem_id,"
                "             '' AS f_void, '' AS f_misc, '' AS f_printed,"
-               "             apchkitem_vouchernumber AS number,"
-               "             apchkitem_invcnumber AS description,"
+               "             checkitem_vouchernumber AS number,"
+               "             checkitem_invcnumber AS description,"
                "             '' AS f_checkdate,"
-               "             formatMoney(apchkitem_amount) AS f_amount,"
-               "             0 AS misc, apchk_number, "
-	       "             currConcat(apchkitem_curr_id) AS curr_concat, "
+               "             formatMoney(checkitem_amount) AS f_amount,"
+               "             0 AS misc, checkhead_number, "
+	       "             currConcat(checkitem_curr_id) AS curr_concat, "
 	       "             2 AS orderby "
-               "FROM apchkitem, apchk "
-               "WHERE ( (apchkitem_apchk_id=apchk_id)"
-               " AND (apchk_bankaccnt_id=:bankaccnt_id) "
-               " AND (NOT apchk_posted)"
-               " AND (NOT apchk_replaced)"
-               " AND (NOT apchk_deleted) ) "
+               "FROM checkitem, checkhead "
+               "WHERE ( (checkitem_checkhead_id=checkhead_id)"
+               " AND (checkhead_bankaccnt_id=:bankaccnt_id) "
+               " AND (NOT checkhead_posted)"
+               " AND (NOT checkhead_replaced)"
+               " AND (NOT checkhead_deleted) ) "
 
-               "ORDER BY apchk_number, apchkid, orderby;" );
+               "ORDER BY checkhead_number, checkid, orderby;" );
 
   q.prepare(sql);
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
@@ -321,14 +322,14 @@ void viewAPCheckRun::sFillList()
   if (q.first())
   {
     XTreeWidgetItem *header = NULL;
-    int           apchkid = -1;
+    int           checkid = -1;
 
     do
     {
-      if (q.value("apchkid").toInt() != apchkid)
+      if (q.value("checkid").toInt() != checkid)
       {
-        apchkid = q.value("apchkid").toInt();
-        header = new XTreeWidgetItem( _apchk, header, apchkid, q.value("misc").toInt(),
+        checkid = q.value("checkid").toInt();
+        header = new XTreeWidgetItem( _check, header, checkid, q.value("misc").toInt(),
                                     q.value("f_void"), q.value("f_misc"),
                                     q.value("f_printed"), q.value("number"),
                                     q.value("description"), q.value("f_checkdate"),
@@ -336,7 +337,7 @@ void viewAPCheckRun::sFillList()
       }
       else if (header)
       {
-        XTreeWidgetItem *item = new XTreeWidgetItem( header, apchkid, 0);
+        XTreeWidgetItem *item = new XTreeWidgetItem( header, checkid, 0);
         item->setText(3, q.value("number"));
         item->setText(4, q.value("description"));
         item->setText(6, q.value("f_amount"));
@@ -351,7 +352,7 @@ void viewAPCheckRun::sFillList()
   }
 }
 
-void viewAPCheckRun::sPrintEditList()
+void viewCheckRun::sPrintEditList()
 {
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id()); 
@@ -363,12 +364,12 @@ void viewAPCheckRun::sPrintEditList()
     report.reportError(this);
 }
 
-void viewAPCheckRun::sPrintCheckRun()
+void viewCheckRun::sPrintCheckRun()
 {
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id()); 
 
-  printAPChecks newdlg(this, "", TRUE);
+  printChecks newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }

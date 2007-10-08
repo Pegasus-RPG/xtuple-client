@@ -55,75 +55,67 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "printAPChecksReview.h"
+#include "printChecksReview.h"
 
+#include <QSqlError>
 #include <QVariant>
 
-/*
- *  Constructs a printAPChecksReview as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
-printAPChecksReview::printAPChecksReview(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+#include "OpenMFGGUIClient.h"
+#include "storedProcErrorLookup.h"
+
+printChecksReview::printChecksReview(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_complete,  SIGNAL(clicked()), this, SLOT(sComplete()));
+  connect(_printed,   SIGNAL(clicked()), this, SLOT(sMarkPrinted()));
+  connect(_replace,   SIGNAL(clicked()), this, SLOT(sMarkReplaced()));
+  connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
+  connect(_unmark,    SIGNAL(clicked()), this, SLOT(sUnmark()));
+  connect(_voided,    SIGNAL(clicked()), this, SLOT(sMarkVoided()));
 
-    // signals and slots connections
-    connect(_complete, SIGNAL(clicked()), this, SLOT(sComplete()));
-    connect(_unmark, SIGNAL(clicked()), this, SLOT(sUnmark()));
-    connect(_printed, SIGNAL(clicked()), this, SLOT(sMarkPrinted()));
-    connect(_voided, SIGNAL(clicked()), this, SLOT(sMarkVoided()));
-    connect(_replace, SIGNAL(clicked()), this, SLOT(sMarkReplaced()));
-    connect(_selectAll, SIGNAL(clicked()), this, SLOT(sSelectAll()));
-    init();
+  _checks->addColumn(tr("Check Number"),          -1, Qt::AlignLeft );
+  _checks->addColumn(tr("Action"),       _itemColumn, Qt::AlignLeft );
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-printAPChecksReview::~printAPChecksReview()
+printChecksReview::~printChecksReview()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void printAPChecksReview::languageChange()
+void printChecksReview::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
-
 
 static const int ActionUnmark = -1;
 static const int ActionPrinted = 1;
 static const int ActionVoided = 2;
 static const int ActionReplaced = 3;
 
-void printAPChecksReview::init()
-{
-  _checks->addColumn(tr("Check Number"),          -1, Qt::AlignLeft );
-  _checks->addColumn(tr("Action"),       _itemColumn, Qt::AlignLeft );
-}
-
-void printAPChecksReview::sComplete()
+/*
+  TODO: refactor printChecks/printChecksReview so that printChecks
+	hands printChecksReview a list of checks to be reviewed
+	instead of populating printChecksReview directly.  Then
+	printChecksReview could populate its GUI from this list.
+	This will allow printChecksReview to have real error reporting
+	and recovery: requery the db for the entire passed-in list
+	and show the current state of each check so the user can
+	decide what to reprocess if there were errors.
+*/
+void printChecksReview::sComplete()
 {
   XSqlQuery checkPrint;
-  checkPrint.prepare( "UPDATE apchk "
-                      "SET apchk_printed=TRUE "
-                      "WHERE (apchk_id=:apchk_id);" );
+  checkPrint.prepare( "SELECT markCheckAsPrinted(:check_id) AS result;");
 
   XSqlQuery checkVoid;
-  checkVoid.prepare( "SELECT voidAPCheck(:apchk_id) AS result;" );
+  checkVoid.prepare( "SELECT voidCheck(:check_id) AS result;" );
 
   XSqlQuery checkReplace;
-  checkReplace.prepare( "SELECT replaceVoidedAPCheck(:apchk_id) AS result;" );
+  checkReplace.prepare( "SELECT replaceVoidedCheck(:check_id) AS result;" );
 
+  // no returns in the loop: process as much as possible, regardless of errors
   for (int i = 0; i < _checks->topLevelItemCount(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_checks->topLevelItem(i));
@@ -131,51 +123,84 @@ void printAPChecksReview::sComplete()
     switch(cursor->altId())
     {
       case ActionPrinted:
-        checkPrint.bindValue(":apchk_id", cursor->id());
+        checkPrint.bindValue(":check_id", cursor->id());
         checkPrint.exec();
+	if (checkPrint.first())
+	{
+	  int result = checkPrint.value("result").toInt();
+	  if (result < 0)
+	    systemError(this, storedProcErrorLookup("markCheckPrinted", result), __FILE__, __LINE__);
+	}
+	else if (checkPrint.lastError().type() != QSqlError::None)
+	  systemError(this, checkPrint.lastError().databaseText(), __FILE__, __LINE__);
         break;
       case ActionVoided:
-        checkVoid.bindValue(":apchk_id", cursor->id());
+        checkVoid.bindValue(":check_id", cursor->id());
         checkVoid.exec();
+	if (checkVoid.first())
+	{
+	  int result = checkVoid.value("result").toInt();
+	  if (result < 0)
+	    systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
+	}
+	else if (checkVoid.lastError().type() != QSqlError::None)
+	  systemError(this, checkVoid.lastError().databaseText(), __FILE__, __LINE__);
         break;
       case ActionReplaced:
-        checkVoid.bindValue(":apchk_id", cursor->id());
+        checkVoid.bindValue(":check_id", cursor->id());
         checkVoid.exec();
-        checkReplace.bindValue(":apchk_id", cursor->id());
+	if (checkVoid.first())
+	{
+	  int result = checkVoid.value("result").toInt();
+	  if (result < 0)
+	    systemError(this, storedProcErrorLookup("voidCheck", result), __FILE__, __LINE__);
+	}
+	else if (checkVoid.lastError().type() != QSqlError::None)
+	  systemError(this, checkVoid.lastError().databaseText(), __FILE__, __LINE__);
+        checkReplace.bindValue(":check_id", cursor->id());
         checkReplace.exec();
+	if (checkReplace.first())
+	{
+	  int result = checkReplace.value("result").toInt();
+	  if (result < 0)
+	    systemError(this, storedProcErrorLookup("replaceVoidedCheck", result), __FILE__, __LINE__);
+	}
+	else if (checkReplace.lastError().type() != QSqlError::None)
+	  systemError(this, checkReplace.lastError().databaseText(), __FILE__, __LINE__);
         break;
     }
   }
+  // TODO: after refactoring, handle any errors in the loop here and *return*
 
   close();
 }
 
-void printAPChecksReview::sUnmark()
+void printChecksReview::sUnmark()
 {
   markSelected(ActionUnmark);
 }
 
-void printAPChecksReview::sMarkPrinted()
+void printChecksReview::sMarkPrinted()
 {
   markSelected(ActionPrinted);
 }
 
-void printAPChecksReview::sMarkVoided()
+void printChecksReview::sMarkVoided()
 {
   markSelected(ActionVoided);
 }
 
-void printAPChecksReview::sMarkReplaced()
+void printChecksReview::sMarkReplaced()
 {
   markSelected(ActionReplaced);
 }
 
-void printAPChecksReview::sSelectAll()
+void printChecksReview::sSelectAll()
 {
   _checks->selectAll();
 }
 
-void printAPChecksReview::markSelected( int actionId )
+void printChecksReview::markSelected( int actionId )
 {
   QString action;
   switch(actionId)
