@@ -1,76 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS><TS version="1.1">
+<!DOCTYPE TS><TS version="1.1" language="de_DE">
+<defaultcodec></defaultcodec>
 <context>
     <name>@default</name>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="92"/>
         <source>This Credit Memo was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gutschrift wurde nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="104"/>
         <source>This Tax Authority was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Die Steuerbehörde wurde nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="95"/>
         <source>This Invoice was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung wurde nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="98"/>
         <source>This Quote was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Das Angebot wurde nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="101"/>
         <source>This Sales Order was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der Verkaufsauftrag wurde nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="103"/>
         <source>This Transfer Order was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der Transportauftrag wurde nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="107"/>
         <source>The selected Accounting Period cannot be closed because it is already closed.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dieser Abrechnungszeitraum kann nicht abgeschlossen werden. Er ist bereits abgeschlossen.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="114"/>
         <source>The selected Accounting Period cannot be closed because there is a gap between the end of the previous Period and the start of this Period. You must edit either the previous Perod or this Period to eliminate the gap.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der ausgewählte Abrechnungszeitraum kann nicht geschlossen werden, weil es eine Lücke gibt zwischen dem vorherigen Zeitraum und diesem. Sie müssen diesen oder den vorherigen Zeitraum bearbeiten, um die Lücke zu schliessen.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="118"/>
         <source>The selected Accounting Period cannot be closed because the previous Period is not closed. You must close the previous Period before you may close this Period.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der ausgewählte Abrechnungszeitraum kann nicht geschlossen werden, weil  der Zeitraum davor nicht geschlossen wurde. </translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="125"/>
         <source>The selected Accounting Period cannot be closed because there is a gap between the end of this Period and the start of the next Period. You must edit either this Period or the next Period to eliminate the gap.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der ausgewählte Abrechnungszeitraum kann nicht geschlossen werden, weil es eine Lücke gibt zwischen dem folgenden Zeitraum und diesem. Sie müssen diesen oder den folgenden Zeitraum bearbeiten, um die Lücke zu schliessen.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="127"/>
         <source>The selected Accounting Period cannot be closed because it ends in the future.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der ausgewählte Abrechnungszeitraum kann nicht geschlossen werden, weil er in der Zukunft endet...</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="134"/>
         <source>The selected Accounting Period cannot be closed because it is the last period in the Fiscal Year and the next Fiscal Year has not been defined yet. Create the next Fiscal Year before closing this Accounting Period.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der ausgewählte Abrechnungszeitraum kann nicht geschlossen werden, weil er der letzte Zeitraum im Steuerjahr ist und ein neues Steuerjahr noch nicht angelegt wurde. Legen Sie ein neues Steuerjahr an, bevor sie diesen Abrechnungszeitraum schlissen.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="143"/>
         <source>The item cannot be Closed at this time as there is inventory at shipping.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Die Bearbeitung des Artikels kann nicht beendet werden. Er befindet sich im Versendeprozess.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="153"/>
         <source>Could not convert Customer to Prospect to because there is already a Prospect with this internal ID.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"><byte value="x9"/><byte value="x9"/></translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/storedProcErrorLookup.cpp" line="159"/>
@@ -1329,7 +1330,7 @@ Address:</source>
     <message>
         <location filename="../OpenMFGGUIClient/bom.ui" line="336"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bom.ui" line="397"/>
@@ -3933,7 +3934,7 @@ point to the browser executable.</source>
     <message>
         <location filename="../OpenMFGGUIClient/poitemTableModel.cpp" line="103"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/poitemTableModel.cpp" line="104"/>
@@ -6783,7 +6784,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="../OpenMFGGUIClient/accountingYearPeriods.ui" line="69"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/accountingYearPeriods.ui" line="87"/>
@@ -6989,7 +6990,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/address.ui" line="186"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/address.ui" line="209"/>
@@ -7052,7 +7053,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/addresses.cpp" line="148"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/addresses.cpp" line="199"/>
@@ -7082,7 +7083,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/addresses.ui" line="79"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/addresses.ui" line="97"/>
@@ -7357,7 +7358,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="../OpenMFGGUIClient/apAccountAssignments.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/apAccountAssignments.ui" line="79"/>
@@ -7683,7 +7684,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="../OpenMFGGUIClient/apOpenItem.cpp" line="94"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/apOpenItem.cpp" line="253"/>
@@ -7796,7 +7797,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="../OpenMFGGUIClient/applyAPCreditMemo.cpp" line="102"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/applyAPCreditMemo.cpp" line="165"/>
@@ -7931,7 +7932,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="../OpenMFGGUIClient/applyARCreditMemo.cpp" line="97"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/applyARCreditMemo.cpp" line="300"/>
@@ -8140,7 +8141,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="../OpenMFGGUIClient/arAccountAssignments.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/arAccountAssignments.ui" line="88"/>
@@ -8534,7 +8535,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="../OpenMFGGUIClient/arOpenItem.cpp" line="89"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/arOpenItem.cpp" line="358"/>
@@ -8893,7 +8894,7 @@ Please contact your local support</source>
     <message>
         <location filename="../OpenMFGGUIClient/arWorkBench.cpp" line="143"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/arWorkBench.cpp" line="124"/>
@@ -9314,7 +9315,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/assortment.ui" line="476"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/assortment.ui" line="523"/>
@@ -9495,7 +9496,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/assortments.ui" line="210"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/assortments.ui" line="221"/>
@@ -9683,7 +9684,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/bankAccounts.ui" line="81"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bankAccounts.ui" line="96"/>
@@ -9718,7 +9719,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/bankAccounts.cpp" line="121"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -9884,7 +9885,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/bankAdjustmentEditList.ui" line="120"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bankAdjustmentEditList.ui" line="123"/>
@@ -9934,7 +9935,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/bankAdjustmentEditList.cpp" line="128"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bankAdjustmentEditList.cpp" line="262"/>
@@ -10051,7 +10052,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="../OpenMFGGUIClient/bankAdjustmentTypes.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bankAdjustmentTypes.ui" line="79"/>
@@ -10938,7 +10939,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="../OpenMFGGUIClient/bomItem.ui" line="668"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bomItem.ui" line="701"/>
@@ -11026,7 +11027,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="../OpenMFGGUIClient/bomList.ui" line="157"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/bomList.ui" line="167"/>
@@ -11164,7 +11165,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="../OpenMFGGUIClient/boo.ui" line="419"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/boo.ui" line="482"/>
@@ -11648,7 +11649,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="../OpenMFGGUIClient/booList.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/booList.ui" line="170"/>
@@ -11769,7 +11770,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="../OpenMFGGUIClient/buyCard.ui" line="105"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/buyCard.ui" line="134"/>
@@ -11822,7 +11823,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="../OpenMFGGUIClient/calendar.cpp" line="356"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/calendar.cpp" line="139"/>
@@ -12710,7 +12711,7 @@ Please contact your local support</source>
     <message>
         <location filename="../OpenMFGGUIClient/cashReceipt.cpp" line="138"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/cashReceipt.cpp" line="468"/>
@@ -12940,7 +12941,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="../OpenMFGGUIClient/cashReceiptsEditList.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/cashReceiptsEditList.ui" line="96"/>
@@ -12980,7 +12981,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="../OpenMFGGUIClient/cashReceiptsEditList.cpp" line="100"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/cashReceiptsEditList.cpp" line="235"/>
@@ -13374,7 +13375,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="../OpenMFGGUIClient/characteristics.ui" line="90"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/characteristics.ui" line="105"/>
@@ -13613,7 +13614,7 @@ You must reassign these Items before you may delete the selected Class Code.</so
     <message>
         <location filename="../OpenMFGGUIClient/classCodes.ui" line="72"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/classCodes.ui" line="87"/>
@@ -13964,7 +13965,7 @@ Have those users clock out before closing this Work Order.</source>
     <message>
         <location filename="../OpenMFGGUIClient/commentTypes.ui" line="75"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/commentTypes.ui" line="78"/>
@@ -16086,7 +16087,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/contact.ui" line="182"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/contact.ui" line="205"/>
@@ -16159,7 +16160,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/contacts.cpp" line="133"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/contacts.ui" line="16"/>
@@ -16184,7 +16185,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/contacts.ui" line="79"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/contacts.ui" line="97"/>
@@ -16593,7 +16594,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="../OpenMFGGUIClient/copyPurchaseOrder.cpp" line="91"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/copyPurchaseOrder.cpp" line="92"/>
@@ -16706,7 +16707,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="../OpenMFGGUIClient/copySalesOrder.cpp" line="117"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/copySalesOrder.cpp" line="118"/>
@@ -17153,7 +17154,7 @@ You must reassign these Items before deleting this Cost Category.</source>
     <message>
         <location filename="../OpenMFGGUIClient/costCategories.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/costCategories.ui" line="82"/>
@@ -18249,7 +18250,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="../OpenMFGGUIClient/createItemSitesByClassCode.ui" line="821"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/createItemSitesByClassCode.ui" line="945"/>
@@ -18702,7 +18703,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="../OpenMFGGUIClient/creditMemo.cpp" line="114"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/creditMemo.cpp" line="115"/>
@@ -19025,7 +19026,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="../OpenMFGGUIClient/creditMemoEditList.ui" line="68"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/creditMemoEditList.ui" line="71"/>
@@ -19294,7 +19295,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccount.cpp" line="141"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccount.cpp" line="142"/>
@@ -19475,7 +19476,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccount.ui" line="842"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccount.cpp" line="1120"/>
@@ -19763,7 +19764,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccounts.ui" line="137"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccounts.ui" line="16"/>
@@ -19793,7 +19794,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccounts.ui" line="90"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/crmaccounts.ui" line="107"/>
@@ -19903,7 +19904,7 @@ posting any transactions in the system.</source>
     <message>
         <location filename="../OpenMFGGUIClient/currency.ui" line="22"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/currency.ui" line="50"/>
@@ -20077,7 +20078,7 @@ Please check the values of these dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/currencyConversions.cpp" line="120"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/currencyConversions.cpp" line="121"/>
@@ -20190,7 +20191,7 @@ and make your selection.</source>
     <message>
         <location filename="../OpenMFGGUIClient/currencyConversions.ui" line="163"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/currencyConversions.ui" line="183"/>
@@ -20431,7 +20432,7 @@ and make your selection.</source>
     <message>
         <location filename="../OpenMFGGUIClient/customCommand.ui" line="323"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
 </context>
 <context>
@@ -21164,7 +21165,7 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="../OpenMFGGUIClient/customer.ui" line="963"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/customer.ui" line="1005"/>
@@ -21591,7 +21592,7 @@ You must reassign these Customers before you may delete the selected Customer Ty
     <message>
         <location filename="../OpenMFGGUIClient/customerTypes.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/customerTypes.ui" line="88"/>
@@ -22343,7 +22344,7 @@ You must return this material to stock before you can delete this Material Requi
     <message>
         <location filename="../OpenMFGGUIClient/departments.ui" line="95"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/departments.ui" line="16"/>
@@ -22827,7 +22828,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAPAging.ui" line="181"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAPAging.ui" line="184"/>
@@ -22945,7 +22946,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAPOpenItemsByVendor.ui" line="164"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAPOpenItemsByVendor.ui" line="185"/>
@@ -22955,7 +22956,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAPOpenItemsByVendor.cpp" line="124"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAPOpenItemsByVendor.cpp" line="140"/>
@@ -23044,7 +23045,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspARAging.ui" line="181"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspARAging.ui" line="184"/>
@@ -23257,7 +23258,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspARApplications.ui" line="325"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspARApplications.ui" line="328"/>
@@ -23410,7 +23411,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItems.ui" line="109"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItems.ui" line="144"/>
@@ -23420,7 +23421,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItems.cpp" line="98"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItems.cpp" line="155"/>
@@ -23533,7 +23534,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItemsByCustomer.ui" line="165"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItemsByCustomer.ui" line="200"/>
@@ -23543,7 +23544,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItemsByCustomer.cpp" line="99"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspAROpenItemsByCustomer.cpp" line="115"/>
@@ -23810,7 +23811,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogByCustomer.ui" line="232"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogByCustomer.ui" line="235"/>
@@ -23923,7 +23924,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogByItem.ui" line="192"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogByItem.ui" line="245"/>
@@ -24071,7 +24072,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogByParameterList.ui" line="209"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogByParameterList.ui" line="212"/>
@@ -24094,7 +24095,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogBySalesOrder.cpp" line="124"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogBySalesOrder.cpp" line="125"/>
@@ -24179,7 +24180,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogBySalesOrder.ui" line="291"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBacklogBySalesOrder.ui" line="328"/>
@@ -24332,7 +24333,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBalanceSheet.ui" line="129"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBalanceSheet.ui" line="132"/>
@@ -24415,7 +24416,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspBankrecHistory.ui" line="204"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBankrecHistory.ui" line="207"/>
@@ -24505,7 +24506,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBillingSelections.ui" line="71"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBillingSelections.ui" line="74"/>
@@ -24658,7 +24659,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByCustomer.ui" line="209"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByCustomer.ui" line="246"/>
@@ -24736,7 +24737,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByCustomerGroup.cpp" line="296"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByCustomerGroup.cpp" line="308"/>
@@ -24786,7 +24787,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByCustomerGroup.ui" line="264"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByCustomerGroup.ui" line="315"/>
@@ -24889,7 +24890,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByItem.ui" line="171"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByItem.ui" line="192"/>
@@ -24987,7 +24988,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByProductCategory.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByProductCategory.ui" line="179"/>
@@ -25090,7 +25091,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsBySalesRep.ui" line="220"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsBySalesRep.ui" line="257"/>
@@ -25203,7 +25204,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByShipTo.ui" line="191"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBookingsByShipTo.ui" line="243"/>
@@ -25281,7 +25282,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBreederDistributionVarianceByItem.ui" line="180"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBreederDistributionVarianceByItem.ui" line="201"/>
@@ -25364,7 +25365,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBreederDistributionVarianceByWarehouse.ui" line="168"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBreederDistributionVarianceByWarehouse.ui" line="189"/>
@@ -25422,7 +25423,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefEarnedCommissions.cpp" line="177"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefEarnedCommissions.ui" line="16"/>
@@ -25452,7 +25453,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefEarnedCommissions.ui" line="177"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefEarnedCommissions.ui" line="196"/>
@@ -25495,7 +25496,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomer.cpp" line="182"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomer.cpp" line="192"/>
@@ -25545,7 +25546,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomer.ui" line="232"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomer.ui" line="283"/>
@@ -25593,7 +25594,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomerType.cpp" line="186"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomerType.cpp" line="196"/>
@@ -25633,7 +25634,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomerType.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryByCustomerType.ui" line="179"/>
@@ -25736,7 +25737,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryBySalesRep.ui" line="296"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspBriefSalesHistoryBySalesRep.ui" line="333"/>
@@ -25814,7 +25815,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCapacityBufferStatusByWorkCenter.ui" line="248"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCapacityBufferStatusByWorkCenter.ui" line="300"/>
@@ -25897,7 +25898,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCapacityUOMsByClassCode.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCapacityUOMsByClassCode.ui" line="107"/>
@@ -25980,7 +25981,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCapacityUOMsByProductCategory.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCapacityUOMsByProductCategory.ui" line="107"/>
@@ -26173,7 +26174,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCashReceipts.ui" line="249"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCashReceipts.ui" line="252"/>
@@ -26276,7 +26277,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCheckRegister.ui" line="230"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCheckRegister.ui" line="233"/>
@@ -26296,7 +26297,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCheckRegister.cpp" line="105"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCheckRegister.cpp" line="237"/>
@@ -26424,7 +26425,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCostedIndentedBOM.ui" line="148"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCostedIndentedBOM.ui" line="187"/>
@@ -26532,7 +26533,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCostedSingleLevelBOM.ui" line="148"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCostedSingleLevelBOM.ui" line="187"/>
@@ -26620,7 +26621,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCostedSummarizedBOM.ui" line="445"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCostedSummarizedBOM.ui" line="484"/>
@@ -26633,7 +26634,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipEditList.cpp" line="130"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipEditList.cpp" line="131"/>
@@ -26713,7 +26714,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipEditList.ui" line="211"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipEditList.ui" line="248"/>
@@ -26776,7 +26777,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipsByWarehouse.cpp" line="119"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipsByWarehouse.cpp" line="120"/>
@@ -26836,7 +26837,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipsByWarehouse.ui" line="222"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountSlipsByWarehouse.ui" line="255"/>
@@ -26964,7 +26965,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagEditList.ui" line="455"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagEditList.ui" line="458"/>
@@ -27082,7 +27083,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByClassCode.cpp" line="117"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByClassCode.cpp" line="118"/>
@@ -27157,7 +27158,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByClassCode.ui" line="230"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByClassCode.ui" line="233"/>
@@ -27265,7 +27266,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByItem.ui" line="226"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByItem.ui" line="229"/>
@@ -27303,7 +27304,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByWarehouse.cpp" line="116"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByWarehouse.cpp" line="117"/>
@@ -27378,7 +27379,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByWarehouse.ui" line="211"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCountTagsByWarehouse.ui" line="214"/>
@@ -27556,7 +27557,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomerARHistory.ui" line="165"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomerARHistory.ui" line="203"/>
@@ -27939,7 +27940,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomerInformation.ui" line="295"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomerInformation.ui" line="298"/>
@@ -28074,7 +28075,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomerInformation.cpp" line="204"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomerInformation.cpp" line="184"/>
@@ -28440,7 +28441,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomersByCharacteristic.ui" line="196"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomersByCharacteristic.ui" line="229"/>
@@ -28513,7 +28514,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomersByCustomerType.ui" line="137"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspCustomersByCustomerType.ui" line="140"/>
@@ -28611,7 +28612,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspDepositsRegister.ui" line="118"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspDepositsRegister.ui" line="170"/>
@@ -28927,7 +28928,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspDetailedInventoryHistoryByLotSerial.ui" line="211"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspDetailedInventoryHistoryByLotSerial.ui" line="230"/>
@@ -29005,7 +29006,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspEarnedCommissions.cpp" line="188"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspEarnedCommissions.ui" line="16"/>
@@ -29035,7 +29036,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspEarnedCommissions.ui" line="177"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspEarnedCommissions.ui" line="196"/>
@@ -29113,7 +29114,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspExpediteExceptionsByPlannerCode.ui" line="191"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspExpediteExceptionsByPlannerCode.ui" line="225"/>
@@ -29241,7 +29242,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspExpiredInventoryByClassCode.ui" line="358"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspExpiredInventoryByClassCode.ui" line="361"/>
@@ -29406,7 +29407,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="../OpenMFGGUIClient/dspFinancialReport.ui" line="464"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspFinancialReport.ui" line="467"/>
@@ -29560,7 +29561,7 @@ Total</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspFrozenItemSites.ui" line="103"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspFrozenItemSites.ui" line="124"/>
@@ -29708,7 +29709,7 @@ Total</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspGLSeries.ui" line="315"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspGLSeries.ui" line="350"/>
@@ -29876,7 +29877,7 @@ Total</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspGLTransactions.ui" line="318"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspGLTransactions.ui" line="355"/>
@@ -30182,7 +30183,7 @@ Total</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspIncomeStatement.ui" line="129"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspIncomeStatement.ui" line="132"/>
@@ -30275,7 +30276,7 @@ Total</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspIndentedBOM.ui" line="387"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspIndentedBOM.ui" line="426"/>
@@ -30368,7 +30369,7 @@ Total</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspIndentedWhereUsed.ui" line="205"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspIndentedWhereUsed.ui" line="208"/>
@@ -30625,7 +30626,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityByItem.ui" line="537"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityByItem.ui" line="540"/>
@@ -30839,7 +30840,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityByParameterList.ui" line="487"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityByParameterList.ui" line="536"/>
@@ -30952,7 +30953,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityBySalesOrder.ui" line="388"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityBySalesOrder.ui" line="391"/>
@@ -30980,7 +30981,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityBySourceVendor.cpp" line="116"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityBySourceVendor.cpp" line="117"/>
@@ -31187,7 +31188,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityBySourceVendor.ui" line="598"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityBySourceVendor.ui" line="601"/>
@@ -31265,7 +31266,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityByWorkOrder.ui" line="126"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryAvailabilityByWorkOrder.ui" line="190"/>
@@ -31418,7 +31419,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryBufferStatusByParameterList.cpp" line="502"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryBufferStatusByParameterList.ui" line="16"/>
@@ -31458,7 +31459,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryBufferStatusByParameterList.ui" line="199"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryBufferStatusByParameterList.ui" line="251"/>
@@ -31471,12 +31472,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByItem.cpp" line="94"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByItem.cpp" line="95"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByItem.cpp" line="96"/>
@@ -31626,7 +31627,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByItem.ui" line="235"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByItem.ui" line="238"/>
@@ -31644,12 +31645,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByOrderNumber.cpp" line="86"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByOrderNumber.cpp" line="87"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByOrderNumber.cpp" line="88"/>
@@ -31794,7 +31795,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByOrderNumber.ui" line="251"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByOrderNumber.ui" line="254"/>
@@ -31812,12 +31813,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByParameterList.cpp" line="90"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByParameterList.cpp" line="91"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByParameterList.cpp" line="92"/>
@@ -31972,7 +31973,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByParameterList.ui" line="208"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryHistoryByParameterList.ui" line="245"/>
@@ -32070,7 +32071,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryLocator.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInventoryLocator.ui" line="163"/>
@@ -32093,12 +32094,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="88"/>
         <source>Doc./Ref. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dokument/Referenz</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="89"/>
         <source>Apply Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anwendungsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="90"/>
@@ -32108,7 +32109,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="206"/>
         <source>C/M</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">C/M</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="208"/>
@@ -32118,82 +32119,82 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="209"/>
         <source>Check</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Scheck</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="210"/>
         <source>Certified Check</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beglaubigter Scheck</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="211"/>
         <source>Master Card</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">MAsterCard</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="212"/>
         <source>Visa</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">VISA</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="213"/>
         <source>American Express</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">American Express</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="214"/>
         <source>Discover Card</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Discover Card</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="215"/>
         <source>Other Credit Card</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Andere Kreditkarte</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="216"/>
         <source>Cash</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bar</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="217"/>
         <source>Wire Transfer</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kabelüberweisung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="218"/>
         <source>Other</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Andere...</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="13"/>
         <source>Invoice Information</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnungsinformation</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="58"/>
         <source>&amp;Invoice #:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="91"/>
         <source>Customer P/O #:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kundenpostfach</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="194"/>
         <source>Invoice Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnungsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="204"/>
         <source>Ship Date:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Versenden am</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="276"/>
         <source>Invoice Amount:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnungsbetrag</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="350"/>
@@ -32203,52 +32204,52 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="353"/>
         <source>Alt+C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+C</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="363"/>
         <source>&amp;View Details</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Details anzeigen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="366"/>
         <source>Alt+V</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+V</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="376"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="379"/>
         <source>Alt+P</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+P</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="426"/>
         <source>Bill-to:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung an</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="518"/>
         <source>Ship-to:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sende zu:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="615"/>
         <source>Notes:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bemerkungen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="631"/>
         <source>Applications:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anwendungen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.cpp" line="207"/>
         <source>Cash Deposit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Bareinzahlung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceInformation.ui" line="74"/>
@@ -32271,17 +32272,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="81"/>
         <source>Doc Type</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dokumententyp</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="82"/>
         <source>Doc. #</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dokument #</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="83"/>
         <source>Reference</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Verweis</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="84"/>
@@ -32291,107 +32292,107 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="85"/>
         <source>Debit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Abbuchung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="86"/>
         <source>Credit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gutschrift</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="154"/>
         <source>View Invoice...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Rechnung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="162"/>
         <source>View Credit Memo...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Gutschrift als Beleg</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="169"/>
         <source>View Debit Memo...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Lastschrift als Beleg</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="176"/>
         <source>View Customer Deposit...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Kundeneinlage</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="223"/>
         <source>Credit Memo Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gutschriftsbeleg nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="225"/>
         <source>&lt;p&gt;The Credit Memo #%1 could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Gutschriftsbeleg #%1 kann nicht gefunden werden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="227"/>
         <source>Debit Memo Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lastschriftsbeleg nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="229"/>
         <source>&lt;p&gt;The Debit Memo #%1 could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Lastschriftsbeleg #%1 kann nicht gefunden werden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="231"/>
         <source>Document Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Dokument nicht gefunden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="233"/>
         <source>&lt;p&gt;The Document #%1 could not be found.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Das Dokument #%1 kann nicht gefunden werden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="317"/>
         <source>Invoice</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="318"/>
         <source>Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gutschriftsbeleg</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="319"/>
         <source>Debit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lastschriftsbeleg</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="320"/>
         <source>Customer Deposit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anzahlung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="365"/>
         <source>Subtotal</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zwischensumme</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.cpp" line="369"/>
         <source>Total</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gesamtsumme</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="13"/>
         <source>Invoice Register</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Rechnungsjournal</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="54"/>
         <source>All Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alle Benutzerkonten</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="72"/>
         <source>Selected Account:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ausgewähltes Benutzerkonto</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="170"/>
@@ -32401,17 +32402,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="177"/>
         <source>&amp;Query</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Anfrage</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="190"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspInvoiceRegister.ui" line="242"/>
         <source>Transactions:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Transaktionen</translation>
     </message>
 </context>
 <context>
@@ -32419,7 +32420,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="111"/>
         <source>#</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">#</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="112"/>
@@ -32434,62 +32435,62 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="114"/>
         <source>UOM</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Maßeinheit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="115"/>
         <source>Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Menge pro</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="116"/>
         <source>Scrap/Absorb. %</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ausschuss %</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="117"/>
         <source>Unit Cost</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Stückkosten</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="118"/>
         <source>Ext&apos;d Cost</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">erweiterte Kosten</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="193"/>
         <source>View BOM Item...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Artikel aus Materialabrechnung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="194"/>
         <source>View Material Costing Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Details der Materialkosten</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.cpp" line="339"/>
         <source>Totals:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gesamt:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="16"/>
         <source>Detailed Item Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Detaillierte Kosten des Artikels</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="82"/>
         <source>Cost Type:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kostenart</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="137"/>
         <source>Show Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige Standardkosten</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="147"/>
         <source>Show Actual Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zeige aktuelle Kosten</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="193"/>
@@ -32499,7 +32500,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="200"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostDetail.ui" line="234"/>
@@ -32527,17 +32528,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="110"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="111"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="112"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="156"/>
@@ -32547,22 +32548,22 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="153"/>
         <source>Actual</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="154"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="155"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.ui" line="16"/>
         <source>Item Costs History</source>
-        <translation type="unfinished"></translation>
+        <translation>Objektkostenverlauf</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.ui" line="80"/>
@@ -32572,7 +32573,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.ui" line="90"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.ui" line="93"/>
@@ -32582,12 +32583,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.ui" line="132"/>
         <source>Costing History:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kostenverlauf:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostHistory.cpp" line="115"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -32630,12 +32631,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostSummary.cpp" line="204"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostSummary.ui" line="16"/>
         <source>Item Costs Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamtkostenaufstellung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostSummary.ui" line="80"/>
@@ -32645,7 +32646,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostSummary.ui" line="90"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostSummary.ui" line="129"/>
@@ -32733,7 +32734,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostsByClassCode.ui" line="129"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemCostsByClassCode.ui" line="132"/>
@@ -32866,7 +32867,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSitesByItem.ui" line="162"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSitesByItem.ui" line="165"/>
@@ -33024,7 +33025,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSitesByParameterList.ui" line="180"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSitesByParameterList.ui" line="183"/>
@@ -33072,7 +33073,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSourcesByItem.ui" line="87"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSourcesByItem.ui" line="126"/>
@@ -33125,7 +33126,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSourcesByVendor.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemSourcesByVendor.ui" line="129"/>
@@ -33283,7 +33284,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemsByCharacteristic.ui" line="193"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemsByCharacteristic.ui" line="226"/>
@@ -33431,7 +33432,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemsByClassCode.ui" line="137"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemsByClassCode.ui" line="140"/>
@@ -33559,7 +33560,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemsByProductCategory.ui" line="131"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspItemsByProductCategory.ui" line="134"/>
@@ -33705,7 +33706,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByBOOItem.ui" line="197"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByBOOItem.ui" line="234"/>
@@ -33788,7 +33789,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByItem.ui" line="151"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByItem.ui" line="202"/>
@@ -33886,7 +33887,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByWorkCenter.ui" line="196"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByWorkCenter.ui" line="199"/>
@@ -33959,7 +33960,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByWorkOrder.ui" line="94"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspLaborVarianceByWorkOrder.ui" line="131"/>
@@ -34057,7 +34058,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMPSDetail.ui" line="229"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMPSDetail.ui" line="263"/>
@@ -34185,7 +34186,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMRPDetail.ui" line="182"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMRPDetail.ui" line="219"/>
@@ -34273,7 +34274,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByBOMItem.ui" line="193"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByBOMItem.ui" line="244"/>
@@ -34371,7 +34372,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByComponentItem.ui" line="186"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByComponentItem.ui" line="189"/>
@@ -34474,7 +34475,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByItem.ui" line="180"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByItem.ui" line="183"/>
@@ -34582,7 +34583,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByWarehouse.ui" line="174"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByWarehouse.ui" line="177"/>
@@ -34660,7 +34661,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByWorkOrder.ui" line="105"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspMaterialUsageVarianceByWorkOrder.ui" line="108"/>
@@ -34738,7 +34739,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspOperationsByWorkCenter.ui" line="202"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspOperationsByWorkCenter.ui" line="238"/>
@@ -34881,7 +34882,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspOrderActivityByProject.ui" line="183"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspOrderActivityByProject.ui" line="186"/>
@@ -35157,7 +35158,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPOsByDate.ui" line="329"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPOsByDate.ui" line="395"/>
@@ -35265,7 +35266,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPOsByVendor.ui" line="70"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPOsByVendor.ui" line="147"/>
@@ -35428,7 +35429,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPartiallyShippedOrders.ui" line="211"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPartiallyShippedOrders.ui" line="214"/>
@@ -35453,7 +35454,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPartiallyShippedOrders.cpp" line="127"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -35551,7 +35552,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPendingAvailability.ui" line="339"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPendingAvailability.ui" line="342"/>
@@ -35644,7 +35645,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPendingBOMChanges.ui" line="144"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPendingBOMChanges.ui" line="147"/>
@@ -35682,7 +35683,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByItem.cpp" line="94"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anfangsdatum:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByItem.cpp" line="95"/>
@@ -35757,7 +35758,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByItem.ui" line="157"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByItem.ui" line="160"/>
@@ -35800,17 +35801,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByPlannerCode.cpp" line="122"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Anfangs Datum:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByPlannerCode.cpp" line="123"/>
         <source>Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">End  Datum:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByPlannerCode.cpp" line="124"/>
         <source>Qty</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Menge</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByPlannerCode.cpp" line="125"/>
@@ -35870,7 +35871,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByPlannerCode.ui" line="131"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedOrdersByPlannerCode.ui" line="134"/>
@@ -36018,7 +36019,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedRevenueExpensesByPlannerCode.ui" line="489"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPlannedRevenueExpensesByPlannerCode.ui" line="523"/>
@@ -36096,7 +36097,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoDeliveryDateVariancesByItem.ui" line="254"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoDeliveryDateVariancesByItem.ui" line="305"/>
@@ -36179,7 +36180,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoDeliveryDateVariancesByVendor.ui" line="285"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoDeliveryDateVariancesByVendor.ui" line="322"/>
@@ -36252,7 +36253,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoHistory.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoHistory.ui" line="139"/>
@@ -36375,7 +36376,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemReceivingsByDate.ui" line="291"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemReceivingsByDate.ui" line="344"/>
@@ -36488,7 +36489,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemReceivingsByItem.ui" line="327"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemReceivingsByItem.ui" line="366"/>
@@ -36596,7 +36597,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemReceivingsByVendor.ui" line="302"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemReceivingsByVendor.ui" line="355"/>
@@ -36724,7 +36725,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByBufferStatus.cpp" line="350"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByBufferStatus.cpp" line="351"/>
@@ -36784,7 +36785,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByBufferStatus.ui" line="284"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -36962,7 +36963,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByDate.ui" line="353"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByDate.ui" line="406"/>
@@ -37120,7 +37121,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByItem.ui" line="282"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByItem.ui" line="334"/>
@@ -37303,7 +37304,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByVendor.ui" line="362"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoItemsByVendor.ui" line="401"/>
@@ -37411,7 +37412,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoPriceVariancesByItem.ui" line="307"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoPriceVariancesByItem.ui" line="344"/>
@@ -37421,7 +37422,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoPriceVariancesByItem.cpp" line="122"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -37514,7 +37515,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoPriceVariancesByVendor.ui" line="268"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoPriceVariancesByVendor.ui" line="271"/>
@@ -37529,7 +37530,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoPriceVariancesByVendor.cpp" line="123"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -37602,7 +37603,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoReturnsByVendor.ui" line="262"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPoReturnsByVendor.ui" line="313"/>
@@ -37750,7 +37751,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomer.ui" line="243"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomer.ui" line="246"/>
@@ -37765,7 +37766,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomer.cpp" line="95"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomer.cpp" line="318"/>
@@ -37913,7 +37914,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomerType.ui" line="274"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomerType.ui" line="277"/>
@@ -37928,7 +37929,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomerType.cpp" line="97"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByCustomerType.cpp" line="288"/>
@@ -38061,7 +38062,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByItem.ui" line="279"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByItem.ui" line="282"/>
@@ -38076,7 +38077,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByItem.cpp" line="95"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPricesByItem.cpp" line="330"/>
@@ -38144,7 +38145,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPurchaseReqsByItem.ui" line="137"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPurchaseReqsByItem.ui" line="176"/>
@@ -38247,7 +38248,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspPurchaseReqsByPlannerCode.ui" line="151"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspPurchaseReqsByPlannerCode.ui" line="183"/>
@@ -38340,7 +38341,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByItem.cpp" line="363"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByItem.ui" line="27"/>
@@ -38390,7 +38391,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByItem.ui" line="262"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByItem.ui" line="265"/>
@@ -38488,7 +38489,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByLocation.ui" line="293"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByLocation.ui" line="296"/>
@@ -38616,7 +38617,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByParameterList.cpp" line="467"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByParameterList.ui" line="13"/>
@@ -38671,7 +38672,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByParameterList.ui" line="361"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspQOHByParameterList.ui" line="410"/>
@@ -38995,7 +38996,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspRWTransactions.ui" line="343"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspRWTransactions.ui" line="380"/>
@@ -39078,7 +39079,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspReorderExceptionsByPlannerCode.ui" line="211"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspReorderExceptionsByPlannerCode.ui" line="245"/>
@@ -39146,7 +39147,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspRoughCutByWorkCenter.ui" line="209"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspRoughCutByWorkCenter.ui" line="246"/>
@@ -39254,7 +39255,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspRunningAvailability.ui" line="90"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspRunningAvailability.ui" line="169"/>
@@ -39442,7 +39443,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByBilltoName.ui" line="292"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByBilltoName.ui" line="329"/>
@@ -39585,7 +39586,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByCustomer.ui" line="301"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByCustomer.ui" line="338"/>
@@ -39658,7 +39659,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByItem.cpp" line="338"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByItem.cpp" line="359"/>
@@ -39723,7 +39724,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByItem.ui" line="340"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByItem.ui" line="377"/>
@@ -39816,7 +39817,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByParameterList.cpp" line="398"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByParameterList.cpp" line="419"/>
@@ -39866,7 +39867,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByParameterList.ui" line="267"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByParameterList.ui" line="304"/>
@@ -39999,7 +40000,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryBySalesrep.ui" line="304"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryBySalesrep.ui" line="341"/>
@@ -40077,7 +40078,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByShipTo.cpp" line="285"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByShipTo.cpp" line="306"/>
@@ -40147,7 +40148,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByShipTo.ui" line="244"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesHistoryByShipTo.ui" line="247"/>
@@ -40170,7 +40171,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesOrderStatus.cpp" line="91"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesOrderStatus.cpp" line="92"/>
@@ -40255,7 +40256,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesOrderStatus.ui" line="351"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSalesOrderStatus.ui" line="354"/>
@@ -40820,7 +40821,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSequencedBOM.ui" line="143"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSequencedBOM.ui" line="182"/>
@@ -40913,7 +40914,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsByDate.ui" line="135"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsByDate.ui" line="138"/>
@@ -40943,7 +40944,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsByDate.cpp" line="96"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsByDate.cpp" line="175"/>
@@ -40971,7 +40972,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsBySalesOrder.cpp" line="100"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsBySalesOrder.cpp" line="101"/>
@@ -41101,7 +41102,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsBySalesOrder.ui" line="337"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspShipmentsBySalesOrder.ui" line="340"/>
@@ -41209,7 +41210,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSingleLevelBOM.ui" line="390"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSingleLevelBOM.ui" line="429"/>
@@ -41302,7 +41303,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSingleLevelWhereUsed.ui" line="144"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSingleLevelWhereUsed.ui" line="147"/>
@@ -41435,7 +41436,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSlowMovingInventoryByClassCode.ui" line="351"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSlowMovingInventoryByClassCode.ui" line="385"/>
@@ -41518,7 +41519,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspStandardJournalHistory.ui" line="121"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspStandardJournalHistory.ui" line="156"/>
@@ -41571,7 +41572,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspStandardOperationsByWorkCenter.ui" line="204"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspStandardOperationsByWorkCenter.ui" line="243"/>
@@ -41679,7 +41680,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSubstituteAvailabilityByItem.ui" line="339"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSubstituteAvailabilityByItem.ui" line="381"/>
@@ -41747,7 +41748,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBOM.ui" line="387"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBOM.ui" line="426"/>
@@ -41935,7 +41936,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBacklogByWarehouse.ui" line="300"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBacklogByWarehouse.ui" line="303"/>
@@ -41993,12 +41994,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBankrecHistory.cpp" line="108"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBankrecHistory.cpp" line="109"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBankrecHistory.cpp" line="110"/>
@@ -42038,7 +42039,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBankrecHistory.ui" line="121"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedBankrecHistory.ui" line="124"/>
@@ -42181,7 +42182,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedGLTransactions.ui" line="228"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedGLTransactions.ui" line="240"/>
@@ -42211,7 +42212,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedGLTransactions.ui" line="334"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedGLTransactions.ui" line="383"/>
@@ -42289,7 +42290,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomer.ui" line="151"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomer.ui" line="186"/>
@@ -42299,7 +42300,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomer.cpp" line="120"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -42347,7 +42348,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerByItem.cpp" line="202"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerByItem.cpp" line="212"/>
@@ -42412,7 +42413,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerByItem.ui" line="267"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerByItem.ui" line="303"/>
@@ -42460,7 +42461,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerType.cpp" line="195"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerType.cpp" line="205"/>
@@ -42500,7 +42501,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerType.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerType.ui" line="193"/>
@@ -42553,7 +42554,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerTypeByItem.cpp" line="201"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerTypeByItem.cpp" line="213"/>
@@ -42593,7 +42594,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerTypeByItem.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByCustomerTypeByItem.ui" line="193"/>
@@ -42606,7 +42607,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByItem.cpp" line="115"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByItem.cpp" line="116"/>
@@ -42641,7 +42642,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByItem.cpp" line="223"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByItem.cpp" line="234"/>
@@ -42701,7 +42702,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByItem.ui" line="242"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesByItem.ui" line="293"/>
@@ -42779,7 +42780,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesBySalesRep.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesBySalesRep.ui" line="193"/>
@@ -42852,7 +42853,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesHistoryByShippingZone.ui" line="219"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedSalesHistoryByShippingZone.ui" line="267"/>
@@ -42940,7 +42941,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedTaxableSales.ui" line="183"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspSummarizedTaxableSales.ui" line="186"/>
@@ -43023,7 +43024,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedAvailability.ui" line="223"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedAvailability.ui" line="258"/>
@@ -43071,7 +43072,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedAvailableCapacityByWorkCenter.ui" line="139"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedAvailableCapacityByWorkCenter.ui" line="176"/>
@@ -43139,7 +43140,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedBookingsByCustomer.ui" line="205"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedBookingsByCustomer.ui" line="247"/>
@@ -43254,7 +43255,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedBookingsByItem.ui" line="314"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedBookingsByItem.ui" line="356"/>
@@ -43379,7 +43380,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedBookingsByProductCategory.ui" line="345"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedBookingsByProductCategory.ui" line="387"/>
@@ -43449,7 +43450,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedCapacityByWorkCenter.ui" line="130"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedCapacityByWorkCenter.ui" line="167"/>
@@ -43532,7 +43533,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedDemandByPlannerCode.ui" line="315"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedDemandByPlannerCode.ui" line="352"/>
@@ -43580,7 +43581,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedLoadByWorkCenter.ui" line="139"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedLoadByWorkCenter.ui" line="176"/>
@@ -43658,7 +43659,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedOpenAPItems.ui" line="374"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedOpenAPItems.ui" line="148"/>
@@ -43786,7 +43787,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedOpenARItems.ui" line="260"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedOpenARItems.ui" line="311"/>
@@ -43930,7 +43931,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedPlannedREByPlannerCode.ui" line="348"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedPlannedREByPlannerCode.ui" line="396"/>
@@ -43998,7 +43999,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedProductionByItem.ui" line="223"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedProductionByItem.ui" line="258"/>
@@ -44081,7 +44082,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedProductionByPlannerCode.ui" line="317"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedProductionByPlannerCode.ui" line="352"/>
@@ -44149,7 +44150,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedRoughCutByWorkCenter.ui" line="185"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedRoughCutByWorkCenter.ui" line="246"/>
@@ -44232,7 +44233,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByCustomer.ui" line="287"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByCustomer.ui" line="329"/>
@@ -44337,7 +44338,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByCustomerByItem.ui" line="273"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByCustomerByItem.ui" line="315"/>
@@ -44442,7 +44443,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByCustomerGroup.ui" line="287"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByCustomerGroup.ui" line="329"/>
@@ -44557,7 +44558,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByItem.ui" line="303"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByItem.ui" line="345"/>
@@ -44682,7 +44683,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByProductCategory.ui" line="325"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedSalesByProductCategory.ui" line="367"/>
@@ -44792,7 +44793,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedUsageStatisticsByItem.ui" line="225"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTimePhasedUsageStatisticsByItem.ui" line="257"/>
@@ -45038,7 +45039,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspTrialBalances.ui" line="271"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspTrialBalances.ui" line="308"/>
@@ -45335,7 +45336,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspUninvoicedReceivings.ui" line="184"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspUninvoicedReceivings.ui" line="187"/>
@@ -45428,7 +45429,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspUnusedPurchasedItems.ui" line="131"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspUnusedPurchasedItems.ui" line="150"/>
@@ -45516,7 +45517,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByClassCode.ui" line="197"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByClassCode.ui" line="247"/>
@@ -45594,7 +45595,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByItem.ui" line="166"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByItem.ui" line="202"/>
@@ -45682,7 +45683,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByItemGroup.ui" line="186"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByItemGroup.ui" line="239"/>
@@ -45775,7 +45776,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByWarehouse.ui" line="180"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspUsageStatisticsByWarehouse.ui" line="201"/>
@@ -45848,7 +45849,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspValidLocationsByItem.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspValidLocationsByItem.ui" line="163"/>
@@ -45991,7 +45992,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspVendorAPHistory.ui" line="198"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspVendorAPHistory.ui" line="238"/>
@@ -46129,7 +46130,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspVoucherRegister.ui" line="236"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspVoucherRegister.ui" line="288"/>
@@ -46361,7 +46362,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoBufferStatusByParameterList.cpp" line="650"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoBufferStatusByParameterList.ui" line="16"/>
@@ -46401,7 +46402,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoBufferStatusByParameterList.ui" line="218"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoBufferStatusByParameterList.ui" line="221"/>
@@ -46519,7 +46520,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByUser.cpp" line="283"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByUser.cpp" line="289"/>
@@ -46574,7 +46575,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByUser.ui" line="151"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByUser.ui" line="154"/>
@@ -46597,7 +46598,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByWorkOrder.cpp" line="119"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByWorkOrder.cpp" line="120"/>
@@ -46647,7 +46648,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByWorkOrder.cpp" line="172"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByWorkOrder.cpp" line="219"/>
@@ -46702,7 +46703,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByWorkOrder.ui" line="117"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoEffortByWorkOrder.ui" line="120"/>
@@ -46760,7 +46761,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByClassCode.cpp" line="97"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByClassCode.cpp" line="98"/>
@@ -46805,7 +46806,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByClassCode.ui" line="199"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByClassCode.ui" line="236"/>
@@ -46858,7 +46859,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByItem.cpp" line="101"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByItem.cpp" line="102"/>
@@ -46913,7 +46914,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByItem.ui" line="269"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByItem.ui" line="272"/>
@@ -46971,7 +46972,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByNumber.cpp" line="99"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByNumber.cpp" line="100"/>
@@ -47031,7 +47032,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByNumber.ui" line="246"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoHistoryByNumber.ui" line="249"/>
@@ -47159,7 +47160,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoMaterialsByItem.ui" line="163"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoMaterialsByItem.ui" line="166"/>
@@ -47262,7 +47263,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoMaterialsByWorkOrder.ui" line="86"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoMaterialsByWorkOrder.ui" line="121"/>
@@ -47413,7 +47414,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoOperationBufrStsByWorkCenter.ui" line="320"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoOperationBufrStsByWorkCenter.ui" line="323"/>
@@ -47594,7 +47595,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoOperationsByWorkCenter.ui" line="316"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoOperationsByWorkCenter.ui" line="319"/>
@@ -47750,7 +47751,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoOperationsByWorkOrder.ui" line="74"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoOperationsByWorkOrder.ui" line="77"/>
@@ -47818,7 +47819,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByItem.cpp" line="119"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByItem.cpp" line="120"/>
@@ -47992,7 +47993,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByItem.ui" line="272"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByItem.ui" line="275"/>
@@ -48106,7 +48107,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByParameterList.cpp" line="125"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByParameterList.cpp" line="126"/>
@@ -48325,7 +48326,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByParameterList.ui" line="247"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoScheduleByParameterList.ui" line="250"/>
@@ -48439,7 +48440,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatus.cpp" line="119"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatus.cpp" line="120"/>
@@ -48469,7 +48470,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatus.ui" line="109"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatus.ui" line="130"/>
@@ -48527,7 +48528,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatusMismatch.cpp" line="117"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatusMismatch.cpp" line="118"/>
@@ -48557,7 +48558,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatusMismatch.ui" line="109"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/dspWoSoStatusMismatch.ui" line="130"/>
@@ -49147,7 +49148,7 @@ being referenced by one or more records.</source>
     <message>
         <location filename="../OpenMFGGUIClient/ediProfiles.ui" line="55"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/ediProfiles.ui" line="73"/>
@@ -49790,7 +49791,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="../OpenMFGGUIClient/eventManager.cpp" line="103"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/eventManager.cpp" line="104"/>
@@ -49815,7 +49816,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="../OpenMFGGUIClient/eventManager.ui" line="257"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/eventManager.cpp" line="159"/>
@@ -49983,7 +49984,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="../OpenMFGGUIClient/expenseCategories.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/expenseCategories.ui" line="82"/>
@@ -50523,7 +50524,7 @@ Budget</source>
     <message>
         <location filename="../OpenMFGGUIClient/financialLayout.ui" line="173"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/financialLayout.ui" line="194"/>
@@ -52386,7 +52387,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="../OpenMFGGUIClient/honorifics.cpp" line="209"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/honorifics.ui" line="16"/>
@@ -52406,7 +52407,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="../OpenMFGGUIClient/honorifics.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/honorifics.ui" line="88"/>
@@ -52845,7 +52846,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incident.cpp" line="106"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incident.cpp" line="107"/>
@@ -53023,7 +53024,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incident.ui" line="491"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incident.ui" line="13"/>
@@ -53181,7 +53182,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentCategories.cpp" line="197"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentCategories.ui" line="16"/>
@@ -53201,7 +53202,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentCategories.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentCategories.ui" line="88"/>
@@ -53302,7 +53303,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentPriorities.cpp" line="197"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentPriorities.ui" line="16"/>
@@ -53322,7 +53323,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentPriorities.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentPriorities.ui" line="88"/>
@@ -53471,7 +53472,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentResolutions.cpp" line="197"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentResolutions.ui" line="16"/>
@@ -53491,7 +53492,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentResolutions.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentResolutions.ui" line="88"/>
@@ -53544,7 +53545,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentSeverities.cpp" line="197"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentSeverities.ui" line="16"/>
@@ -53564,7 +53565,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/incidentSeverities.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/incidentSeverities.ui" line="88"/>
@@ -53803,7 +53804,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/invoice.cpp" line="134"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/invoice.cpp" line="135"/>
@@ -54950,7 +54951,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="../OpenMFGGUIClient/item.ui" line="13"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/item.ui" line="69"/>
@@ -55155,7 +55156,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="../OpenMFGGUIClient/item.ui" line="2055"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/item.ui" line="1398"/>
@@ -55235,7 +55236,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="../OpenMFGGUIClient/item.ui" line="1955"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/item.cpp" line="170"/>
@@ -55776,12 +55777,12 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemAvailabilityWorkbench.cpp" line="202"/>
         <source>Time</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeit</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemAvailabilityWorkbench.cpp" line="203"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemAvailabilityWorkbench.cpp" line="204"/>
@@ -56172,7 +56173,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemAvailabilityWorkbench.ui" line="1699"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemAvailabilityWorkbench.ui" line="1702"/>
@@ -56502,7 +56503,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="../OpenMFGGUIClient/itemGroup.ui" line="275"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
 </context>
 <context>
@@ -56777,12 +56778,12 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="../OpenMFGGUIClient/itemListPrice.ui" line="436"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemListPrice.ui" line="452"/>
         <source>Actual</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell</translation>
     </message>
 </context>
 <context>
@@ -57069,7 +57070,7 @@ before saving it.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingSchedule.cpp" line="350"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingSchedule.cpp" line="351"/>
@@ -57148,12 +57149,12 @@ You may not create duplicate Pricing Schedule Items.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingScheduleItem.ui" line="420"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingScheduleItem.ui" line="436"/>
         <source>Actual</source>
-        <translation type="unfinished"></translation>
+        <translation>Aktuell</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingScheduleItem.cpp" line="248"/>
@@ -57169,7 +57170,7 @@ You may not create duplicate Pricing Schedule Items.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingScheduleItem.ui" line="53"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemPricingScheduleItem.ui" line="63"/>
@@ -57535,7 +57536,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="../OpenMFGGUIClient/itemSite.ui" line="814"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemSite.ui" line="830"/>
@@ -58036,7 +58037,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemSource.cpp" line="102"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemSource.cpp" line="103"/>
@@ -58216,7 +58217,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="../OpenMFGGUIClient/itemSources.ui" line="81"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/itemSources.ui" line="98"/>
@@ -58524,7 +58525,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/items.ui" line="293"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/items.cpp" line="302"/>
@@ -58585,32 +58586,32 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.cpp" line="128"/>
         <source>Format Name is Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der Name des Formats ist ungültig</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.cpp" line="136"/>
         <source>Report Name is Invalid</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der Name des Reports ist ungültig</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.ui" line="13"/>
         <source>Label Form</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Etikettenformat</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.ui" line="49"/>
         <source>&amp;Form Name:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Formularname</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.ui" line="62"/>
         <source>&amp;Report:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Bericht</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.ui" line="75"/>
         <source># of Labels per &amp;Page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"># Etiketten pro &amp;Druckseite</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.ui" line="186"/>
@@ -58620,12 +58621,12 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.cpp" line="129"/>
         <source>&lt;p&gt;You must enter a valid name for this Label Format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&lt;p&gt;Bitte geben Sie einen gültigen Etikettennamen ein</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForm.cpp" line="137"/>
         <source>&lt;p&gt;You must enter a select Report for this Label Format.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Für dieses Etikettenformat müssen Sie einen Bericht auswählen.</translation>
     </message>
 </context>
 <context>
@@ -58633,22 +58634,22 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/labelForms.cpp" line="110"/>
         <source>Form Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Formularname</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForms.cpp" line="111"/>
         <source>#/Page</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">/Seite</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForms.ui" line="16"/>
         <source>Label Forms</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Etikettenformen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForms.ui" line="40"/>
         <source>Label Forms:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Etiikettenformen:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/labelForms.ui" line="72"/>
@@ -58686,27 +58687,27 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/laborRate.cpp" line="182"/>
         <source>Cannot Add Labor Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kann diesen Arbeitstarif nich hinzufügen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRate.cpp" line="175"/>
         <source>You must enter a Code for the new Labor Rate.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geben Sie den Code für einen neuen Lohntarif ein</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRate.cpp" line="183"/>
         <source>You must enter a Rate for the new Labor Rate.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sie müssen einen Wert angeben für den neuen Tarif</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRate.ui" line="24"/>
         <source>Standard Labor Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard-Arbeitstarif</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRate.ui" line="60"/>
         <source>C&amp;ode:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Code:</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRate.ui" line="73"/>
@@ -58734,7 +58735,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.cpp" line="112"/>
         <source>Labor Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Arbeitstarif</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.cpp" line="113"/>
@@ -58744,39 +58745,40 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.cpp" line="114"/>
         <source>Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Tarif</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.cpp" line="188"/>
         <source>Cannot Delete Standard Labor Rate</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kann den Standardtarif nicht entfernen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.cpp" line="190"/>
         <source>The selected Standard Labor Rate cannot be deleted as it is in use at one or more Work Centers.
 You must first remove all references of the selected Standard Labor Rate before you may delete it.
 </source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Der ausgewählte Standardtarif kann nicht gelöscht werde, er ist in einem oder mehreren Betrieben im Einsatz
+Sie müssen zunächst alle Verweise auf diesen Tarif löschen, bevor Sie ihn selbst löschen können</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.ui" line="19"/>
         <source>Standard Labor Rates</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard-Arbeitstarif</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.ui" line="40"/>
         <source>Standard &amp;Labor Rates:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Standard &amp;Arbeitstarif</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.ui" line="79"/>
         <source>&amp;Close</source>
-        <translation type="unfinished">&amp;Schließen</translation>
+        <translation type="unfinished">&amp;Schließenö</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.ui" line="86"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/laborRates.ui" line="103"/>
@@ -58804,7 +58806,7 @@ You must first remove all references of the selected Standard Labor Rate before 
     <message>
         <location filename="../OpenMFGGUIClient/locales.cpp" line="113"/>
         <source>Code</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Code</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locales.cpp" line="114"/>
@@ -58814,18 +58816,18 @@ You must first remove all references of the selected Standard Labor Rate before 
     <message>
         <location filename="../OpenMFGGUIClient/locales.cpp" line="177"/>
         <source>Cannot Delete Selected Locale</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Die ausgewählte Lokalisierung kann nicht gelöscht werden</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locales.cpp" line="179"/>
         <source>The selected Locale cannot be deleted as it has been assigned to one or more Users.
 You must reassign the Locales for these Users before you may delete the selected Locale.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"> Die ausgewählte Lokalisierung kann nicht gelöscht werde, sie ist in einem oder mehreren Benutzern zugewiesen.Sie müssen zunächst alle Verweise auf diese Lokalisierung löschen, bevor Sie sie selbst löschen können</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locales.ui" line="51"/>
         <source>Locales</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lokalisierungen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locales.ui" line="80"/>
@@ -58845,7 +58847,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/locales.ui" line="115"/>
         <source>Cop&amp;y</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Kopiere</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locales.ui" line="125"/>
@@ -58868,7 +58870,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="128"/>
         <source>A System Error occurred at %1::%2.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ein Systemfehler ist aufgetreten bei %1::%2,</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="161"/>
@@ -58878,17 +58880,17 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="207"/>
         <source>Select a Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Wählen Sie ein Lager aus</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="216"/>
         <source>Enter Location Name</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Geben Sie den Namen des Speicherplatzes ein</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="409"/>
         <source>Location/Item Exists</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Speicherplatz/Element existiert bereits</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="341"/>
@@ -58898,12 +58900,12 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="57"/>
         <source>&amp;Warehouse:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Lager</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="73"/>
         <source>&amp;Zone:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Zone</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="205"/>
@@ -58913,17 +58915,17 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="236"/>
         <source>Aisle</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Gang</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="271"/>
         <source>Rack</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Regal</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="306"/>
         <source>Bin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Behälter</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="382"/>
@@ -58933,12 +58935,12 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="392"/>
         <source>&amp;Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;beschränkt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="395"/>
         <source>Alt+R</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+R</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="436"/>
@@ -58948,7 +58950,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="439"/>
         <source>Alt+C</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+C</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="446"/>
@@ -58958,17 +58960,17 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="449"/>
         <source>Alt+S</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+S</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="489"/>
         <source>D&amp;escription:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Beschreibung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="515"/>
         <source>Allowable Items:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Zulässige Objekte</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="570"/>
@@ -58978,7 +58980,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="573"/>
         <source>Alt+N</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+N</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="583"/>
@@ -58988,22 +58990,22 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/location.ui" line="586"/>
         <source>Alt+D</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Alt+D</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="209"/>
         <source>&lt;p&gt;You must select a Warehouse for this Location before creating it.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sie müssen für diesen Ort ein Lager auswählen, bevor Sie es anlegen können.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="218"/>
         <source>&lt;p&gt;You must enter a unique name to identify this Location.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Sie müssen dem Lager einen eindeutigen Namen geben.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/location.cpp" line="412"/>
         <source>&lt;p&gt;An Item record already exists in the Location. You may not add another record for the same Item</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Das Objekt exisitiert bereits in diesem Lager. Sie könen keinen weiteren Eigabesatz für das gleiche Objekt hinzufügen.</translation>
     </message>
 </context>
 <context>
@@ -59011,7 +59013,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/locations.cpp" line="114"/>
         <source>Whs.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ws.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.cpp" line="115"/>
@@ -59026,27 +59028,27 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/locations.cpp" line="117"/>
         <source>Netable</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Vernetzbar</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.cpp" line="118"/>
         <source>Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Eingeschränkt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.cpp" line="182"/>
         <source>Cannot Delete Selected Location</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ausgewählter Speicherplatz kann nicht gelöscht werden.</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.ui" line="16"/>
         <source>Warehouse Locations</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Lagerorte</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.ui" line="78"/>
         <source>Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Speicherplatz</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.ui" line="117"/>
@@ -59056,7 +59058,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="../OpenMFGGUIClient/locations.ui" line="124"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/locations.ui" line="141"/>
@@ -59531,7 +59533,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="../OpenMFGGUIClient/maintainBudget.ui" line="336"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -59594,7 +59596,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="../OpenMFGGUIClient/maintainItemCosts.cpp" line="415"/>
         <source>Totals</source>
-        <translation type="unfinished"></translation>
+        <translation>Gesamt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/maintainItemCosts.ui" line="16"/>
@@ -59624,7 +59626,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="../OpenMFGGUIClient/maintainItemCosts.cpp" line="99"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/maintainItemCosts.cpp" line="197"/>
@@ -64475,7 +64477,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="../OpenMFGGUIClient/openSalesOrders.ui" line="103"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/openSalesOrders.ui" line="138"/>
@@ -64603,7 +64605,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="../OpenMFGGUIClient/openVouchers.ui" line="106"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/openVouchers.ui" line="124"/>
@@ -65233,7 +65235,7 @@ range for this Planned Schedule. Please fix this before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/plannedSchedules.cpp" line="84"/>
         <source>Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Anfangsdatum</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/plannedSchedules.cpp" line="85"/>
@@ -65278,7 +65280,7 @@ range for this Planned Schedule. Please fix this before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/plannedSchedules.ui" line="65"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/plannedSchedules.ui" line="84"/>
@@ -65405,7 +65407,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     <message>
         <location filename="../OpenMFGGUIClient/plannerCodes.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/plannerCodes.ui" line="79"/>
@@ -67411,7 +67413,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="../OpenMFGGUIClient/priceList.cpp" line="87"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/priceList.cpp" line="88"/>
@@ -67538,7 +67540,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="../OpenMFGGUIClient/pricingScheduleAssignments.ui" line="87"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/pricingScheduleAssignments.ui" line="102"/>
@@ -67648,7 +67650,7 @@ to this Bank Account before attempting to print this A/P Check.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printAPCheck.ui" line="154"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -67711,7 +67713,7 @@ to this Bank Account before attempting to print this A/P Check.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printAPChecks.ui" line="215"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printAPChecks.cpp" line="151"/>
@@ -67837,7 +67839,7 @@ to this Bank Account before attempting to print this A/P Check.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printAnnodizingPurchaseRequests.ui" line="90"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printAnnodizingPurchaseRequests.ui" line="93"/>
@@ -67932,7 +67934,7 @@ references to this Credit Memo Form or this Credit Memo Form is created.</source
     <message>
         <location filename="../OpenMFGGUIClient/printCreditMemo.ui" line="268"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printCreditMemo.ui" line="271"/>
@@ -68062,7 +68064,7 @@ any references to this Credit Memo Form or this Credit Memo Form is created.</so
     <message>
         <location filename="../OpenMFGGUIClient/printCreditMemos.ui" line="177"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printCreditMemos.cpp" line="150"/>
@@ -68162,7 +68164,7 @@ references to this Invoice Form or this Invoice Form is created.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printInvoice.ui" line="271"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printInvoice.ui" line="274"/>
@@ -68329,7 +68331,7 @@ references to this Invoice Form or this Invoice Form is created.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printInvoices.ui" line="225"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printInvoices.ui" line="228"/>
@@ -68474,7 +68476,7 @@ references to this Invoice Form or this Invoice Form is created.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printInvoicesByShipvia.ui" line="277"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printInvoicesByShipvia.ui" line="280"/>
@@ -68539,7 +68541,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printItemLabelsByClassCode.ui" line="177"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printItemLabelsByClassCode.ui" line="180"/>
@@ -68597,7 +68599,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printLabelsByInvoice.ui" line="252"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -68635,7 +68637,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printLabelsByPo.ui" line="244"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printLabelsByPo.cpp" line="156"/>
@@ -68693,7 +68695,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printLabelsBySo.ui" line="232"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -68751,7 +68753,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printPackingList.ui" line="323"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printPackingList.cpp" line="192"/>
@@ -68819,7 +68821,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printPackingListBatchByShipvia.ui" line="121"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printPackingListBatchByShipvia.ui" line="124"/>
@@ -68862,7 +68864,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printPoForm.ui" line="149"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -68895,7 +68897,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printProductionEntrySheet.ui" line="181"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printProductionEntrySheet.ui" line="184"/>
@@ -68948,7 +68950,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/printPurchaseOrder.ui" line="249"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printPurchaseOrder.cpp" line="142"/>
@@ -69027,7 +69029,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printPurchaseOrdersByAgent.ui" line="257"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printPurchaseOrdersByAgent.cpp" line="144"/>
@@ -69070,7 +69072,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printSASpecialCalendarForm.ui" line="167"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -69148,7 +69150,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printShippingForm.ui" line="413"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printShippingForm.cpp" line="267"/>
@@ -69281,7 +69283,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printShippingForms.ui" line="236"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printShippingForms.cpp" line="182"/>
@@ -69319,7 +69321,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printSoForm.ui" line="141"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -69357,7 +69359,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printStatementByCustomer.ui" line="99"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -69443,7 +69445,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printVendorForm.ui" line="141"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -69476,7 +69478,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printWoForm.ui" line="141"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -69499,7 +69501,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printWoPickList.ui" line="173"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printWoPickList.cpp" line="142"/>
@@ -69532,7 +69534,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printWoRouting.ui" line="173"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printWoRouting.cpp" line="142"/>
@@ -69555,7 +69557,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="../OpenMFGGUIClient/printWoTraveler.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/printWoTraveler.ui" line="139"/>
@@ -69659,7 +69661,7 @@ You must first re-assign these items before deleting the selected Product Catego
     <message>
         <location filename="../OpenMFGGUIClient/productCategories.ui" line="95"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/productCategories.ui" line="110"/>
@@ -70355,7 +70357,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/prospect.ui" line="316"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/prospect.ui" line="326"/>
@@ -70436,7 +70438,7 @@ What would you like to do?</source>
     <message>
         <location filename="../OpenMFGGUIClient/purchaseOrder.cpp" line="114"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/purchaseOrder.cpp" line="115"/>
@@ -71142,7 +71144,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="../OpenMFGGUIClient/purchaseOrderTypes.ui" line="117"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/purchaseOrderTypes.ui" line="136"/>
@@ -71595,7 +71597,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="../OpenMFGGUIClient/quotes.ui" line="203"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/quotes.ui" line="213"/>
@@ -71827,7 +71829,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="../OpenMFGGUIClient/reasonCodes.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/reasonCodes.ui" line="79"/>
@@ -72384,7 +72386,7 @@ You must purge these records before you may delete the selected Reject Code.</so
     <message>
         <location filename="../OpenMFGGUIClient/rejectCodes.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rejectCodes.ui" line="79"/>
@@ -72745,7 +72747,7 @@ the Source and the Target.</source>
     <message>
         <location filename="../OpenMFGGUIClient/reports.ui" line="95"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/reports.ui" line="110"/>
@@ -72870,7 +72872,7 @@ is updated to remove any references to this Credit Memo Form or this Credit Memo
     <message>
         <location filename="../OpenMFGGUIClient/reprintCreditMemos.ui" line="167"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/reprintCreditMemos.cpp" line="147"/>
@@ -72975,7 +72977,7 @@ is updated to remove any references to this Invoice Form or this Invoice Form is
     <message>
         <location filename="../OpenMFGGUIClient/reprintInvoices.ui" line="234"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/reprintInvoices.cpp" line="161"/>
@@ -73530,7 +73532,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptAPAging.ui" line="177"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptAPAging.ui" line="180"/>
@@ -73563,7 +73565,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptAPOpenItemsByVendor.ui" line="133"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73596,7 +73598,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptARAging.ui" line="167"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptARAging.ui" line="170"/>
@@ -73704,7 +73706,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptARApplications.ui" line="332"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptARApplications.ui" line="335"/>
@@ -73737,7 +73739,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptAROpenItems.ui" line="87"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73765,7 +73767,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptAROpenItemsByCustomer.ui" line="140"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73793,7 +73795,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBOOItemsByWorkCenter.ui" line="175"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73836,7 +73838,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBacklogByCustomer.ui" line="204"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73879,7 +73881,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBacklogByItem.ui" line="204"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73922,7 +73924,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBacklogByParameterList.ui" line="189"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73955,7 +73957,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBacklogBySalesOrder.ui" line="203"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -73983,7 +73985,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBalanceSheet.ui" line="101"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptBalanceSheet.ui" line="104"/>
@@ -74021,7 +74023,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBankrecHistory.ui" line="131"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptBankrecHistory.ui" line="134"/>
@@ -74049,7 +74051,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBillOfOperations.ui" line="102"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74097,7 +74099,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBookingsByCustomer.ui" line="190"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74155,7 +74157,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBookingsByCustomerGroup.ui" line="227"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74203,7 +74205,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBookingsByItem.ui" line="171"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74251,7 +74253,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBookingsByProductCategory.ui" line="159"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74304,7 +74306,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBookingsBySalesRep.ui" line="190"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74352,7 +74354,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBookingsByShipTo.ui" line="191"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74380,7 +74382,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBreederDistributionVarianceByItem.ui" line="166"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74408,7 +74410,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBreederDistributionVarianceByWarehouse.ui" line="151"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74446,7 +74448,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBriefEarnedCommissions.ui" line="163"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74484,7 +74486,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBriefSalesHistoryByCustomer.ui" line="215"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74522,7 +74524,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBriefSalesHistoryByCustomerType.ui" line="151"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptBriefSalesHistoryByCustomerType.ui" line="154"/>
@@ -74570,7 +74572,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBriefSalesHistoryBySalesRep.ui" line="306"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74588,7 +74590,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptBuyCard.ui" line="107"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptBuyCard.ui" line="142"/>
@@ -74631,7 +74633,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCapacityBufferStatusByWorkCenter.ui" line="236"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74654,7 +74656,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCapacityUOMsByClassCode.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCapacityUOMsByClassCode.ui" line="76"/>
@@ -74682,7 +74684,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCapacityUOMsByProductCategory.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCapacityUOMsByProductCategory.ui" line="76"/>
@@ -74770,7 +74772,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCashReceipts.ui" line="256"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCashReceipts.ui" line="259"/>
@@ -74813,7 +74815,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCheckRegister.ui" line="165"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCheckRegister.ui" line="168"/>
@@ -74856,7 +74858,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCostedIndentedBOM.ui" line="165"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74884,7 +74886,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCostedSingleLevelBOM.ui" line="157"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -74942,7 +74944,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCostedSummarizedBOM.ui" line="452"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCostedSummarizedBOM.ui" line="455"/>
@@ -74980,7 +74982,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountSlipEditList.ui" line="218"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75028,7 +75030,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountSlipsByWarehouse.ui" line="224"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountSlipsByWarehouse.ui" line="227"/>
@@ -75056,7 +75058,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountTagEditList.ui" line="253"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountTagEditList.ui" line="139"/>
@@ -75104,7 +75106,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountTagsByClassCode.ui" line="202"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75137,7 +75139,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountTagsByItem.ui" line="190"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75170,7 +75172,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCountTagsByWarehouse.ui" line="194"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75223,7 +75225,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCustomerARHistory.ui" line="132"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCustomerARHistory.ui" line="135"/>
@@ -75266,7 +75268,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCustomerInformation.ui" line="159"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptCustomerInformation.ui" line="162"/>
@@ -75304,7 +75306,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCustomersByCharacteristic.ui" line="179"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75332,7 +75334,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptCustomersByCustomerType.ui" line="120"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75350,7 +75352,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptDepositsRegister.ui" line="93"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptDepositsRegister.ui" line="96"/>
@@ -75438,7 +75440,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptDetailedInventoryHistoryByLocation.ui" line="344"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75516,7 +75518,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptDetailedInventoryHistoryByLotSerial.ui" line="174"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75564,7 +75566,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptEarnedCommissions.ui" line="163"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75587,7 +75589,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptExpediteExceptionsByPlannerCode.ui" line="187"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75650,7 +75652,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptExpiredInventoryByClassCode.ui" line="352"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75668,7 +75670,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptFrozenItemSites.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75761,7 +75763,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptGLSeries.ui" line="315"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75849,7 +75851,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptGLTransactions.ui" line="326"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptGLTransactions.ui" line="329"/>
@@ -75882,7 +75884,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptIncomeStatement.ui" line="101"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptIncomeStatement.ui" line="104"/>
@@ -75930,7 +75932,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptIndentedBOM.ui" line="391"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -75978,7 +75980,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptIndentedWhereUsed.ui" line="165"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76051,7 +76053,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityByItem.ui" line="555"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityByItem.ui" line="558"/>
@@ -76134,7 +76136,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityByParameterList.ui" line="509"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76192,7 +76194,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityBySalesOrder.ui" line="394"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityBySalesOrder.ui" line="397"/>
@@ -76280,7 +76282,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityBySourceVendor.ui" line="609"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76303,7 +76305,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryAvailabilityByWorkOrder.ui" line="131"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76356,7 +76358,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryBufferStatusByParameterList.ui" line="184"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76424,7 +76426,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryHistoryByItem.ui" line="215"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76497,7 +76499,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryHistoryByOrderNumber.ui" line="256"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76585,7 +76587,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryHistoryByParameterList.ui" line="175"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76618,7 +76620,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInventoryLocator.ui" line="141"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76646,7 +76648,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptInvoiceRegister.ui" line="179"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptInvoiceRegister.ui" line="182"/>
@@ -76674,7 +76676,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemCostHistory.ui" line="102"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76697,7 +76699,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemCostSummary.ui" line="102"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76720,7 +76722,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemCostsByClassCode.ui" line="103"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76748,7 +76750,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemSitesByItem.ui" line="135"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76786,7 +76788,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemSitesByParameterList.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76804,7 +76806,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemSourcesByItem.ui" line="107"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76832,7 +76834,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemSourcesByVendor.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76865,7 +76867,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemsByCharacteristic.ui" line="176"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76893,7 +76895,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemsByClassCode.ui" line="109"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemsByClassCode.ui" line="112"/>
@@ -76921,7 +76923,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptItemsByProductCategory.ui" line="114"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76964,7 +76966,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptJournal.ui" line="106"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -76997,7 +76999,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptLaborVarianceByBOOItem.ui" line="194"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77025,7 +77027,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptLaborVarianceByItem.ui" line="162"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77058,7 +77060,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptLaborVarianceByWorkCenter.ui" line="150"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77076,7 +77078,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptLaborVarianceByWorkOrder.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77119,7 +77121,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptLocationDispatchList.ui" line="126"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptLocationDispatchList.ui" line="148"/>
@@ -77189,7 +77191,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMPSDetail.ui" line="195"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptMPSDetail.ui" line="229"/>
@@ -77264,7 +77266,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMRPDetail.ui" line="196"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptMRPDetail.ui" line="239"/>
@@ -77307,7 +77309,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMaterialUsageVarianceByBOMItem.ui" line="206"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptMaterialUsageVarianceByBOMItem.ui" line="209"/>
@@ -77340,7 +77342,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMaterialUsageVarianceByComponentItem.ui" line="156"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77368,7 +77370,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMaterialUsageVarianceByItem.ui" line="169"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77396,7 +77398,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMaterialUsageVarianceByWarehouse.ui" line="127"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77414,7 +77416,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptMaterialUsageVarianceByWorkOrder.ui" line="96"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77457,7 +77459,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptOrderActivityByProject.ui" line="181"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptOrderActivityByProject.ui" line="184"/>
@@ -77490,7 +77492,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPartiallyShippedOrders.ui" line="183"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptPartiallyShippedOrders.ui" line="16"/>
@@ -77543,7 +77545,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPendingAvailability.ui" line="362"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77581,7 +77583,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPendingBOMChanges.ui" line="156"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77599,7 +77601,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPlannedOrdersByItem.ui" line="144"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77617,7 +77619,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPlannedOrdersByPlannerCode.ui" line="117"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptPlannedOrdersByPlannerCode.ui" line="120"/>
@@ -77720,7 +77722,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPlannedRevenueExpensesByPlannerCode.ui" line="438"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77758,7 +77760,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoDeliveryDateVariancesByItem.ui" line="282"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77796,7 +77798,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoDeliveryDateVariancesByVendor.ui" line="313"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77814,7 +77816,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoHistory.ui" line="107"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77857,7 +77859,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemReceivingsByDate.ui" line="237"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77910,7 +77912,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemReceivingsByItem.ui" line="273"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77963,7 +77965,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemReceivingsByVendor.ui" line="287"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -77991,7 +77993,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemsByBufferStatus.ui" line="203"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78074,7 +78076,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemsByDate.ui" line="313"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78127,7 +78129,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemsByItem.ui" line="286"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78195,7 +78197,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemsByVendor.ui" line="344"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoItemsByVendor.ui" line="347"/>
@@ -78238,7 +78240,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoPriceVariancesByItem.ui" line="273"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78276,7 +78278,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoPriceVariancesByVendor.ui" line="273"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78314,7 +78316,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPoReturnsByVendor.ui" line="230"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78367,7 +78369,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPricesByCustomer.ui" line="269"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78425,7 +78427,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPricesByCustomerType.ui" line="282"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78468,7 +78470,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPricesByItem.ui" line="295"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78486,7 +78488,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPurchaseReqsByItem.ui" line="132"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78514,7 +78516,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptPurchaseReqsByPlannerCode.ui" line="160"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78562,7 +78564,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptQOHByItem.ui" line="265"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptQOHByItem.ui" line="268"/>
@@ -78611,7 +78613,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptQOHByLocation.ui" line="250"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptQOHByLocation.ui" line="253"/>
@@ -78664,7 +78666,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptQOHByParameterList.ui" line="290"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptQOHByParameterList.ui" line="293"/>
@@ -78707,7 +78709,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptReorderExceptionsByPlannerCode.ui" line="204"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78745,7 +78747,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptRoughCutByWorkCenter.ui" line="216"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78773,7 +78775,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptRunningAvailability.ui" line="86"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptRunningAvailability.ui" line="165"/>
@@ -78846,7 +78848,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesHistoryByBilltoName.ui" line="314"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78884,7 +78886,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesHistoryByCustomer.ui" line="283"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78922,7 +78924,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesHistoryByItem.ui" line="302"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -78975,7 +78977,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesHistoryByParameterList.ui" line="260"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79018,7 +79020,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesHistoryBySalesRep.ui" line="306"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79056,7 +79058,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesHistoryByShipTo.ui" line="305"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79100,7 +79102,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSalesOrderStatus.ui" line="236"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79138,7 +79140,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSequencedBOM.ui" line="146"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79166,7 +79168,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptShipmentsByDate.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptShipmentsByDate.ui" line="107"/>
@@ -79204,7 +79206,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptShipmentsBySalesOrder.ui" line="230"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79242,7 +79244,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSingleLevelBOM.ui" line="394"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79270,7 +79272,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSingleLevelWhereUsed.ui" line="156"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79348,7 +79350,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSlowMovingInventoryByClassCode.ui" line="301"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptSlowMovingInventoryByClassCode.ui" line="304"/>
@@ -79371,7 +79373,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptStandardJournalHistory.ui" line="104"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79399,7 +79401,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptStandardOperationsByWorkCenter.ui" line="167"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79437,7 +79439,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSubstituteAvailabilityByRootItem.ui" line="307"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79480,7 +79482,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedBOM.ui" line="391"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79533,7 +79535,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedBacklogByWarehouse.ui" line="309"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79561,7 +79563,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedBankrecHistory.ui" line="112"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedBankrecHistory.ui" line="115"/>
@@ -79639,7 +79641,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedGLTransactions.ui" line="244"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>Zeige</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedGLTransactions.ui" line="256"/>
@@ -79664,7 +79666,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedGLTransactions.ui" line="324"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79702,7 +79704,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByCustomer.ui" line="146"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79760,7 +79762,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByCustomerByItem.ui" line="267"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByCustomerByItem.ui" line="270"/>
@@ -79803,7 +79805,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByCustomerType.ui" line="159"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79841,7 +79843,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByCustomerTypeByItem.ui" line="156"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79899,7 +79901,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByItem.ui" line="246"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79937,7 +79939,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesBySalesRep.ui" line="156"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -79985,7 +79987,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedSalesByShippingZone.ui" line="228"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -80033,7 +80035,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptSummarizedTaxableSales.ui" line="163"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -80078,7 +80080,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedAvailability.ui" line="187"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedAvailability.ui" line="200"/>
@@ -80127,7 +80129,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedAvailableCapacityByWorkCenter.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedAvailableCapacityByWorkCenter.ui" line="151"/>
@@ -80172,7 +80174,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedBookingsByCustomer.ui" line="87"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedBookingsByCustomer.ui" line="100"/>
@@ -80247,7 +80249,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedBookingsByItem.ui" line="248"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedBookingsByItem.ui" line="258"/>
@@ -80327,7 +80329,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedBookingsByProductCategory.ui" line="247"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedBookingsByProductCategory.ui" line="257"/>
@@ -80366,7 +80368,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedCapacityByWorkCenter.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedCapacityByWorkCenter.ui" line="151"/>
@@ -80431,7 +80433,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedDemandByPlannerCode.ui" line="278"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedDemandByPlannerCode.ui" line="291"/>
@@ -80480,7 +80482,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedLoadByWorkCenter.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedLoadByWorkCenter.ui" line="151"/>
@@ -80540,7 +80542,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedOpenAPItems.ui" line="194"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedOpenAPItems.ui" line="207"/>
@@ -80620,7 +80622,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedOpenARItems.ui" line="198"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedOpenARItems.ui" line="211"/>
@@ -80714,7 +80716,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedPlannedREByPlannerCode.ui" line="351"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedPlannedREByPlannerCode.ui" line="405"/>
@@ -80774,7 +80776,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedProductionByItem.ui" line="202"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedProductionByItem.ui" line="215"/>
@@ -80854,7 +80856,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedProductionByPlannerCode.ui" line="333"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedProductionByPlannerCode.ui" line="346"/>
@@ -80908,7 +80910,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedRoughCutByWorkCenter.ui" line="174"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedRoughCutByWorkCenter.ui" line="215"/>
@@ -80973,7 +80975,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByCustomer.ui" line="207"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByCustomer.ui" line="220"/>
@@ -81058,7 +81060,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByCustomerByItem.ui" line="388"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByCustomerByItem.ui" line="401"/>
@@ -81111,7 +81113,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByCustomerGroup.ui" line="227"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByCustomerGroup.ui" line="230"/>
@@ -81181,7 +81183,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByItem.ui" line="225"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByItem.ui" line="238"/>
@@ -81251,7 +81253,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByProductCategory.ui" line="239"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedSalesByProductCategory.ui" line="249"/>
@@ -81296,7 +81298,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedUsageStatisticsByItem.ui" line="137"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptTimePhasedUsageStatisticsByItem.ui" line="153"/>
@@ -81344,7 +81346,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptTrialBalances.ui" line="239"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81372,7 +81374,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptUninvoicedReceivings.ui" line="183"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81400,7 +81402,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptUsageStatisticsByClassCode.ui" line="166"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81428,7 +81430,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptUsageStatisticsByItem.ui" line="166"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptUsageStatisticsByItem.ui" line="169"/>
@@ -81461,7 +81463,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptUsageStatisticsByItemGroup.ui" line="166"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81494,7 +81496,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptUsageStatisticsByWarehouse.ui" line="156"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81527,7 +81529,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptValidLocationsByItem.ui" line="137"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptValidLocationsByItem.ui" line="140"/>
@@ -81595,7 +81597,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptVendorAPHistory.ui" line="225"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptVendorAPHistory.ui" line="228"/>
@@ -81633,7 +81635,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptVoucherRegister.ui" line="232"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptVoucherRegister.ui" line="235"/>
@@ -81696,7 +81698,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoBufferStatusByParameterList.ui" line="300"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81734,7 +81736,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoEffortByUser.ui" line="123"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81752,7 +81754,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoEffortByWorkOrder.ui" line="74"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81780,7 +81782,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoHistoryByClassCode.ui" line="208"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81823,7 +81825,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoHistoryByItem.ui" line="255"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoHistoryByItem.ui" line="258"/>
@@ -81876,7 +81878,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoHistoryByNumber.ui" line="208"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81894,7 +81896,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoMaterialsByItem.ui" line="136"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81912,7 +81914,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoMaterialsByWorkOrder.ui" line="116"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81945,7 +81947,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoOperationBufrStsByWorkCenter.ui" line="275"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -81988,7 +81990,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoOperationsByWorkCenter.ui" line="304"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -82006,7 +82008,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoOperationsByWorkOrder.ui" line="88"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -82069,7 +82071,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoScheduleByItem.ui" line="317"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -82152,7 +82154,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoScheduleByParameterList.ui" line="316"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -82170,7 +82172,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoSoStatus.ui" line="99"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -82188,7 +82190,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="../OpenMFGGUIClient/rptWoSoStatusMismatch.ui" line="108"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
 </context>
 <context>
@@ -82504,7 +82506,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="../OpenMFGGUIClient/salesAccounts.ui" line="87"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/salesAccounts.ui" line="102"/>
@@ -82595,7 +82597,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="../OpenMFGGUIClient/salesCategories.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/salesCategories.ui" line="82"/>
@@ -82829,7 +82831,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="../OpenMFGGUIClient/salesOrder.cpp" line="194"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/salesOrder.cpp" line="195"/>
@@ -84646,7 +84648,7 @@ active status to inactive.</source>
     <message>
         <location filename="../OpenMFGGUIClient/salesReps.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/salesReps.ui" line="79"/>
@@ -85375,7 +85377,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="../OpenMFGGUIClient/selectOrderForBilling.cpp" line="117"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/selectOrderForBilling.cpp" line="118"/>
@@ -85814,7 +85816,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/selectPayments.ui" line="186"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/selectPayments.ui" line="239"/>
@@ -85864,7 +85866,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/selectPayments.cpp" line="138"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/selectPayments.cpp" line="139"/>
@@ -85985,7 +85987,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/selectedPayments.ui" line="167"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/selectedPayments.ui" line="212"/>
@@ -86005,7 +86007,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/selectedPayments.cpp" line="106"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/selectedPayments.cpp" line="107"/>
@@ -86101,7 +86103,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/shifts.ui" line="95"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/shifts.ui" line="16"/>
@@ -86884,7 +86886,7 @@ You must reassign these Ship-Tos before you may delete the selected Shipping For
     <message>
         <location filename="../OpenMFGGUIClient/shippingInformation.cpp" line="94"/>
         <source>Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Objekt</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/shippingInformation.cpp" line="95"/>
@@ -87129,7 +87131,7 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="../OpenMFGGUIClient/shippingZones.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/shippingZones.ui" line="79"/>
@@ -87456,7 +87458,7 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="../OpenMFGGUIClient/standardJournalGroups.ui" line="81"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/standardJournalGroups.ui" line="96"/>
@@ -87598,7 +87600,7 @@ Do you wish to convert %1 %2 at the current rate?</source>
     <message>
         <location filename="../OpenMFGGUIClient/standardJournals.ui" line="81"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/standardJournals.ui" line="96"/>
@@ -87798,7 +87800,7 @@ Standard Operation before you may delete it.</source>
     <message>
         <location filename="../OpenMFGGUIClient/standardOperations.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/standardOperations.ui" line="88"/>
@@ -87996,7 +87998,7 @@ You must reassign these G/L Accounts before you may delete the selected G/L Suba
     <message>
         <location filename="../OpenMFGGUIClient/subAccntTypes.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/subAccntTypes.ui" line="88"/>
@@ -88604,7 +88606,7 @@ You must reclass these Accounts before you may delete the selected Subaccount.</
     <message>
         <location filename="../OpenMFGGUIClient/tDspRatesByCarrier.ui" line="162"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/tDspRatesByCarrier.ui" line="165"/>
@@ -88637,7 +88639,7 @@ You must reclass these Accounts before you may delete the selected Subaccount.</
     <message>
         <location filename="../OpenMFGGUIClient/tDspRatesByDestination.ui" line="159"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/tDspRatesByDestination.ui" line="185"/>
@@ -88779,7 +88781,7 @@ You must first re-assign these items before deleting the selected Tax Authority.
     <message>
         <location filename="../OpenMFGGUIClient/taxAuthorities.ui" line="95"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/taxAuthorities.ui" line="110"/>
@@ -89511,7 +89513,7 @@ You must first re-assign these items before deleting the selected Tax Authority.
     <message>
         <location filename="../OpenMFGGUIClient/taxSelections.ui" line="284"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
 </context>
 <context>
@@ -89614,7 +89616,7 @@ You must first re-assign these items before deleting the selected Tax Type.</sou
     <message>
         <location filename="../OpenMFGGUIClient/taxTypes.ui" line="95"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/taxTypes.ui" line="110"/>
@@ -89822,7 +89824,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="../OpenMFGGUIClient/termses.ui" line="73"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/termses.ui" line="88"/>
@@ -90021,7 +90023,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="../OpenMFGGUIClient/todoList.cpp" line="128"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/todoList.cpp" line="129"/>
@@ -90076,7 +90078,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="../OpenMFGGUIClient/todoList.ui" line="254"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/todoList.cpp" line="184"/>
@@ -90504,7 +90506,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unappliedAPCreditMemos.ui" line="81"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unappliedAPCreditMemos.ui" line="99"/>
@@ -90524,7 +90526,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unappliedAPCreditMemos.cpp" line="97"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -90572,7 +90574,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unappliedARCreditMemos.ui" line="81"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unappliedARCreditMemos.ui" line="99"/>
@@ -90592,7 +90594,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unappliedARCreditMemos.cpp" line="97"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
 </context>
 <context>
@@ -90645,7 +90647,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/uninvoicedShipments.ui" line="142"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/uninvoicedShipments.ui" line="163"/>
@@ -90743,7 +90745,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedCreditMemos.ui" line="126"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedCreditMemos.ui" line="142"/>
@@ -90863,7 +90865,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedFinanceCharges.ui" line="128"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedFinanceCharges.ui" line="138"/>
@@ -90961,7 +90963,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedGLTransactions.ui" line="157"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedGLTransactions.ui" line="181"/>
@@ -91064,7 +91066,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedGlSeries.ui" line="101"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedGlSeries.ui" line="127"/>
@@ -91142,7 +91144,7 @@ creating this Transaction</source>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedInvoices.cpp" line="159"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedInvoices.cpp" line="159"/>
@@ -91409,7 +91411,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedPoReceipts.ui" line="101"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/unpostedPoReceipts.ui" line="127"/>
@@ -91703,7 +91705,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="../OpenMFGGUIClient/uoms.ui" line="84"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/uoms.ui" line="99"/>
@@ -93280,7 +93282,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="../OpenMFGGUIClient/userPreferences.ui" line="65"/>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>Benutzer</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/userPreferences.ui" line="214"/>
@@ -93295,7 +93297,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="../OpenMFGGUIClient/userPreferences.ui" line="302"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Standard</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/userPreferences.ui" line="312"/>
@@ -93506,7 +93508,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="../OpenMFGGUIClient/users.ui" line="107"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/users.ui" line="122"/>
@@ -93979,7 +93981,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/vendor.ui" line="711"/>
         <source>Delete</source>
-        <translation type="unfinished"></translation>
+        <translation>Löschen</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/vendor.ui" line="777"/>
@@ -94246,7 +94248,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="../OpenMFGGUIClient/vendorTypes.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/vendorTypes.ui" line="79"/>
@@ -94319,7 +94321,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="../OpenMFGGUIClient/vendors.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/vendors.ui" line="79"/>
@@ -94457,7 +94459,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="../OpenMFGGUIClient/viewAPCheckRun.cpp" line="128"/>
         <source>Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Währung</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/viewAPCheckRun.ui" line="279"/>
@@ -95295,7 +95297,7 @@ Please distribute manually.</source>
     <message>
         <location filename="../OpenMFGGUIClient/voucheringEditList.ui" line="72"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/voucheringEditList.cpp" line="93"/>
@@ -95743,7 +95745,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/warehouses.ui" line="126"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/warehouses.ui" line="143"/>
@@ -95859,7 +95861,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="../OpenMFGGUIClient/whseCalendars.ui" line="72"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/whseCalendars.ui" line="87"/>
@@ -96583,7 +96585,7 @@ The Work Order may be closed</source>
     <message>
         <location filename="../OpenMFGGUIClient/workCenters.ui" line="64"/>
         <source>&amp;Print</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Drucken</translation>
     </message>
     <message>
         <location filename="../OpenMFGGUIClient/workCenters.ui" line="79"/>
