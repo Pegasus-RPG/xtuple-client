@@ -247,6 +247,8 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	QString _titleSingular;
 	QString _titlePlural;
 
+        bool    _ignoreSignals;
+
     private:
 	virtual void	init();
 	virtual void	layout();

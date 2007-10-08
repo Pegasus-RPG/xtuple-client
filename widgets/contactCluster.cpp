@@ -73,6 +73,8 @@
 
 void ContactCluster::init()
 {
+    _ignoreSignals = false;
+
     _titleSingular = tr("Contact");
     _titlePlural = tr("Contacts");
     _query = "SELECT cntct.*, crmacct_name "
@@ -227,6 +229,8 @@ void ContactCluster::silentSetId(const int pId)
 	idQ.exec();
 	if (idQ.first())
 	{
+            _ignoreSignals = true;
+
 	    _id = pId;
 	    _valid = true;
 	    _honorific->setEditText(idQ.value("cntct_honorific").toString());
@@ -258,6 +262,8 @@ void ContactCluster::silentSetId(const int pId)
 	    c_active	= _active->isChecked();
 	    c_address	= _address->id();
             c_notes     = _notes;
+
+            _ignoreSignals = false;
 	}
 	else if (idQ.lastError().type() != QSqlError::None)
 	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -646,6 +652,9 @@ void ContactCluster::setSearchAcct(const int p)
 
 void ContactCluster::sCheck()
 {
+  if(_ignoreSignals)
+    return;
+
   if ((! _honorific->isVisibleTo(this) || _honorific->currentText().simplified().isEmpty()) &&
       (! _first->isVisibleTo(this)   || _first->text().simplified().isEmpty()) &&
       (! _last->isVisibleTo(this)    || _last->text().simplified().isEmpty()) &&
