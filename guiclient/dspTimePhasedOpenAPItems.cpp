@@ -393,6 +393,7 @@ void dspTimePhasedOpenAPItems::sToggleCustom()
 	_calendarLit->setHidden(FALSE);
 	_calendar->setHidden(FALSE);
 	_periods->setHidden(FALSE);
+    _asOf->setDate(omfgThis->dbDate(), true);
 	_asOf->setEnabled(FALSE);
   }
   else
