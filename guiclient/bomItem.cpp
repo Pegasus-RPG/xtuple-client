@@ -79,13 +79,12 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
   connect(_booitemList, SIGNAL(clicked()), this, SLOT(sBooitemList()));
   connect(_issueMethod, SIGNAL(activated(int)), this, SLOT(sHandleIssueMethod(int)));
   connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
   connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
   connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
-
-  _ratio = 1.0;
 
 #ifdef Q_WS_MAC
   _booitemList->setMaximumWidth(50);
@@ -227,6 +226,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
       _dates->setEnabled(FALSE);
       _createWo->setEnabled(FALSE);
       _issueMethod->setEnabled(FALSE);
+      _uom->setEnabled(FALSE);
       _booitemList->setEnabled(FALSE);
       _scheduleAtWooper->setEnabled(FALSE);
       _comments->setReadOnly(TRUE);
@@ -262,7 +262,7 @@ void bomItem::sSave()
 
   if (_mode == cNew)
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
-               "                      :qtyPer, :scrap,"
+               "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
                "                      :createWo, :booitem_id, :scheduledWithBooItem,"
@@ -270,7 +270,7 @@ void bomItem::sSave()
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
                "                      bomitem_seqnumber, :issueMethod,"
-               "                      :qtyPer, :scrap,"
+               "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
                "                      :createWo, :booitem_id, :scheduledWithBooItem,"
@@ -284,6 +284,7 @@ void bomItem::sSave()
                "    bomitem_configtype=:configType, bomitem_configid=:configId, bomitem_configflag=:configFlag,"
                "    bomitem_effective=:effective, bomitem_expires=:expires,"
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
+               "    bomitem_uom_id=:bomitem_uom_id,"
                "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype "
                "WHERE (bomitem_id=:bomitem_id);" );
   else
@@ -295,7 +296,8 @@ void bomItem::sSave()
   q.bindValue(":booitem_id", _booitemid);
   q.bindValue(":parent_item_id", _itemid);
   q.bindValue(":component_item_id", _item->id());
-  q.bindValue(":qtyPer", _qtyPer->toDouble() / _ratio);
+  q.bindValue(":bomitem_uom_id", _uom->id());
+  q.bindValue(":qtyPer", _qtyPer->toDouble());
   q.bindValue(":scrap", (_scrap->toDouble() / 100));
   q.bindValue(":effective", _dates->startDate());
   q.bindValue(":expires", _dates->endDate());
@@ -430,11 +432,10 @@ void bomItem::populate()
              "       bomitem_booitem_id, bomitem_createwo, bomitem_issuemethod,"
              "       bomitem_configtype, bomitem_configid, bomitem_configflag,"
              "       bomitem_schedatwooper, bomitem_ecn, item_type,"
-             "       formatQtyper(bomitem_qtyper*itemuomratiobytype(bomitem_item_id, 'MaterialIssue')) AS qtyper,"
+             "       formatQtyper(bomitem_qtyper) AS qtyper,"
              "       formatScrap(bomitem_scrap) AS scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
-             "       itemuomratiobytype(bomitem_item_id, 'MaterialIssue') AS ratio,"
-             "       itemuombytype(bomitem_item_id, 'MaterialIssue') AS issueuom "
+             "       bomitem_uom_id "
              "FROM bomitem, item "
              "WHERE ( (bomitem_parent_item_id=item_id)"
              " AND (bomitem_id=:bomitem_id) );" );
@@ -444,8 +445,7 @@ void bomItem::populate()
   {
     _itemid = q.value("bomitem_parent_item_id").toInt();
     _item->setId(q.value("bomitem_item_id").toInt());
-    _issueUOM->setText(q.value("issueuom").toString());
-    _ratio = q.value("ratio").toDouble();
+    _uom->setId(q.value("bomitem_uom_id").toInt());
 
     if (q.value("bomitem_issuemethod").toString() == "S")
       _issueMethod->setCurrentItem(0);
@@ -585,3 +585,38 @@ void bomItem::sFillSubstituteList()
     return;
   }
 }
+
+void bomItem::sItemIdChanged()
+{
+  XSqlQuery uom;
+  uom.prepare("SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN uom ON (item_inv_uom_id=uom_id)"
+              " WHERE(item_id=:item_id)"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " ORDER BY uom_name;");
+  uom.bindValue(":item_id", _item->id());
+  uom.exec();
+  _uom->populate(uom);
+  uom.prepare("SELECT item_inv_uom_id"
+              "  FROM item"
+              " WHERE(item_id=:item_id);");
+  uom.bindValue(":item_id", _item->id());
+  uom.exec();
+  if(uom.first())
+    _uom->setId(uom.value("item_inv_uom_id").toInt());
+}
+

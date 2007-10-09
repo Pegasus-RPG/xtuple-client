@@ -149,7 +149,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
 
     QString sql( "SELECT bomitem_id, TEXT(booitem_seqnumber) AS seqnumber, bomitem_seqnumber, item_number,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS f_descrip, uom_name,"
-                 "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
+                 "       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS f_qtyper,"
                  "       formatScrap(bomitem_scrap) AS f_scrap,"
                  "       formatDate(bomitem_effective, :always) AS f_effective,"
                  "       formatDate(bomitem_expires, :never) AS f_expires,"
@@ -175,7 +175,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     sql += " ) "
            "UNION SELECT bomitem_id, '' AS seqnumber, bomitem_seqnumber, item_number,"
            "             (item_descrip1 || ' ' || item_descrip2), uom_name,"
-           "             formatQtyper(bomitem_qtyper),"
+           "             formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
            "             formatScrap(bomitem_scrap),"
            "             formatDate(bomitem_effective, :always),"
            "             formatDate(bomitem_expires, :never),"

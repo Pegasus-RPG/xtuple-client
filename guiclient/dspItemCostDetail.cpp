@@ -242,20 +242,20 @@ void dspItemCostDetail::sFillList(int pItemid, bool pLocale)
       {
         sql = "SELECT bomitem_id, item_id, seqnumber, item_number,"
               "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip, uom_name,"
-              "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
+              "       formatQtyper(qtyper) AS f_qtyper,"
               "       formatScrap(bomitem_scrap) AS f_scrap,"
               "       formatCost(cost) AS f_cost,"
               "       formatCost(extendedcost) AS f_extendedcost,"
               "       extendedcost "
-              "FROM ( SELECT bomitem_id, bomitem_seqnumber AS seqnumber, bomitem_qtyper, bomitem_scrap,"
+              "FROM ( SELECT bomitem_id, bomitem_seqnumber AS seqnumber, itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper) AS qtyper, bomitem_scrap,"
               "              item_id, item_number, item_descrip1, item_descrip2, uom_name, ";
 
         if (_standardCosts->isChecked())
           sql += " itemcost_stdcost AS cost,"
-                 " (bomitem_qtyper * (1 + bomitem_scrap) * itemcost_stdcost) AS extendedcost ";
+                 " (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * itemcost_stdcost) AS extendedcost ";
         else
           sql += " itemcost_actcost AS cost,"
-                 " (bomitem_qtyper * (1 + bomitem_scrap) * itemcost_actcost) AS extendedcost ";
+                 " (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * itemcost_actcost) AS extendedcost ";
 
   
         sql += "FROM bomitem, item, itemcost, costelem, uom "

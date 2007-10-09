@@ -163,7 +163,7 @@ void dspPendingBOMChanges::sFillList(int, bool)
   {
     q.prepare( "SELECT bomitem_id, formatDate(bomitem_effective), :effective AS action,"
                "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       uom_name, formatQtyper(bomitem_qtyper),"
+               "       uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
                "       formatScrap(bomitem_scrap), bomitem_effective AS actiondate "
                "FROM bomitem, item, uom "
                "WHERE ( (bomitem_item_id=item_id)"
@@ -172,7 +172,7 @@ void dspPendingBOMChanges::sFillList(int, bool)
                " AND (bomitem_effective BETWEEN CURRENT_DATE AND :cutOffDate) ) "
                "UNION SELECT bomitem_id, formatDate(bomitem_expires), :expires AS action, "
                "             bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "             uom_name, formatQtyper(bomitem_qtyper),"
+               "             uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
                "             formatScrap(bomitem_scrap), bomitem_expires AS actiondate "
                "FROM bomitem, item, uom "
                "WHERE ( (bomitem_item_id=item_id)"

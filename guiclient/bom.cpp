@@ -378,7 +378,7 @@ void BOM::sFillList(int pItemid, bool)
     
     QString sql( "SELECT bomitem_id, item_id, bomitem_seqnumber,"
                  "       item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "       itemuombytype(bomitem_item_id, 'MaterialIssue') AS issueuom,"
+                 "       uom_name AS issueuom,"
                  "       CASE WHEN (bomitem_issuemethod = 'S') THEN :push"
                  "            WHEN (bomitem_issuemethod = 'L') THEN :pull"
                  "            WHEN (bomitem_issuemethod = 'M') THEN :mixed"
@@ -389,8 +389,9 @@ void BOM::sFillList(int pItemid, bool)
                  "       formatDate(bomitem_effective, :always) AS f_effective,"
                  "       formatDate(bomitem_expires, :never) AS f_expires,"
                  "       (bomitem_configtype<>'N') AS config "
-                 "FROM bomitem, item "
+                 "FROM bomitem, item, uom "
                  "WHERE ((bomitem_item_id=item_id)"
+                 " AND (bomitem_uom_id=uom_id)"
                  " AND (bomitem_parent_item_id=:item_id)" );
     
     if (!_showExpired->isChecked())
@@ -503,8 +504,8 @@ void BOM::sFillList(int pItemid, bool)
     if (_privleges->check("ViewCosts"))
     {
       sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
-            "       formatCost(COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap) * stdCost(c.item_id)))) AS f_stdcost,"
-            "       formatCost(COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap) * ROUND(actCost(c.item_id),4)))) AS f_actcost "
+            "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"
+            "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4)))) AS f_actcost "
             "FROM bomitem, item AS c, item AS p "
             "WHERE ( (bomitem_parent_item_id=p.item_id)"
             " AND (bomitem_item_id=c.item_id)"

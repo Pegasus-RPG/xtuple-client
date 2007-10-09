@@ -41,9 +41,9 @@
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod,
-       formatQtyPer(bomitem_qtyper) AS qtyper,
+       formatQtyPer(temuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
-       formatQtyPer(bomitem_qtyper * (1 + bomitem_scrap)) AS qtyreq,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) AS qtyreq,
        formatDate(bomitem_effective, 'Always') AS effective,
        formatDate(bomitem_expires, 'Never') AS expires,
        &lt;? if exists("useActualCosts") ?>
@@ -53,9 +53,9 @@
        &lt;? endif ?>
        AS unitcost,
        &lt;? if exists("useActualCosts") ?>
-         formatCost((actcost(bomitem_item_id) * (bomitem_qtyper * (1 + bomitem_scrap))))
+         formatCost((actcost(bomitem_item_id) * (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)))))
        &lt;? else ?>
-         formatCost((stdcost(bomitem_item_id) * (bomitem_qtyper * (1 + bomitem_scrap))))
+         formatCost((stdcost(bomitem_item_id) * (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)))))
        &lt;? endif ?>
        AS extcost
   FROM bomitem, item, uom

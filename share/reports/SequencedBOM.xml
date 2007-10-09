@@ -23,9 +23,9 @@
   <name>detail</name>
   <sql>SELECT text(booitem_seqnumber) AS booseqnumber, bomitem_seqnumber,
        item_number, uom_name, item_descrip1, item_descrip2,
-       formatQtyPer(bomitem_qtyper) AS qtyper,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
-       formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper + (1 * bomitem_scrap))) AS qtyreq,
        formatDate(bomitem_effective, 'Always') AS effective,
        formatDate(bomitem_expires, 'Never') AS expires,
        formatBoolYN(bomitem_createwo) AS createchild,
@@ -49,9 +49,9 @@
 UNION
 SELECT text('') AS booseqnumber, bomitem_seqnumber,
        item_number, uom_name, item_descrip1, item_descrip2,
-       formatQtyPer(bomitem_qtyper) AS qtyper,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
-       formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper + (1 * bomitem_scrap))) AS qtyreq,
        formatDate(bomitem_effective, 'Always') AS effective,
        formatDate(bomitem_expires, 'Never') AS expires,
        formatBoolYN(bomitem_createwo) AS createchild,

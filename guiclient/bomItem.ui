@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>588</width>
-    <height>574</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -28,7 +28,11 @@
       <number>6</number>
      </property>
      <item>
-      <widget class="ItemCluster" name="_item" />
+      <widget class="ItemCluster" name="_item" >
+       <property name="focusPolicy" >
+        <enum>Qt::StrongFocus</enum>
+       </property>
+      </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" >
@@ -101,7 +105,7 @@
             <enum>Qt::Vertical</enum>
            </property>
            <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
+            <enum>QSizePolicy::Expanding</enum>
            </property>
            <property name="sizeHint" >
             <size>
@@ -138,7 +142,11 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="DateCluster" name="_dates" />
+         <widget class="DateCluster" name="_dates" >
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer>
@@ -178,69 +186,221 @@
     </widget>
    </item>
    <item>
-    <layout class="QHBoxLayout" >
+    <layout class="QGridLayout" >
      <property name="margin" >
       <number>0</number>
      </property>
      <property name="spacing" >
       <number>6</number>
      </property>
-     <item>
-      <layout class="QGridLayout" >
+     <item row="4" column="0" >
+      <widget class="QLabel" name="_ecnNumLit" >
+       <property name="text" >
+        <string>ECN #:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_ecn</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QLabel" name="_issueMethodLit" >
+       <property name="text" >
+        <string>Issue Method:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_issueMethod</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QLabel" name="_scrapLit" >
+       <property name="text" >
+        <string>Sc&amp;rap %:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_scrap</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" >
+      <widget class="QLabel" name="_usedAtLit" >
+       <property name="text" >
+        <string>Used At:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_usedAt</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1" >
+      <layout class="QHBoxLayout" >
        <property name="margin" >
         <number>0</number>
        </property>
        <property name="spacing" >
-        <number>5</number>
+        <number>0</number>
        </property>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_qtyPerLit" >
-         <property name="text" >
-          <string>&amp;Qty. Per:</string>
+       <item>
+        <layout class="QHBoxLayout" >
+         <property name="margin" >
+          <number>0</number>
          </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="spacing" >
+          <number>0</number>
          </property>
-         <property name="buddy" >
-          <cstring>_qtyPer</cstring>
-         </property>
-        </widget>
+         <item>
+          <widget class="XLineEdit" name="_usedAt" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_booitemList" >
+           <property name="text" >
+            <string>...</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_scrapLit" >
-         <property name="text" >
-          <string>Sc&amp;rap %:</string>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Fixed</enum>
          </property>
-         <property name="buddy" >
-          <cstring>_scrap</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="XLineEdit" name="_qtyPer" >
-         <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>0</vsizetype>
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
-         <property name="maximumSize" >
+         <property name="sizeHint" >
           <size>
-           <width>80</width>
-           <height>32767</height>
+           <width>10</width>
+           <height>0</height>
           </size>
          </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight</set>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QCheckBox" name="_scheduleAtWooper" >
+         <property name="text" >
+          <string>Schedule w/ W/O &amp;Operation</string>
+         </property>
+         <property name="shortcut" >
+          <string>Alt+O</string>
          </property>
         </widget>
        </item>
-       <item row="1" column="1" >
+      </layout>
+     </item>
+     <item row="2" column="1" >
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="XComboBox" name="_issueMethod" >
+         <item>
+          <property name="text" >
+           <string>Push</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Pull</string>
+          </property>
+         </item>
+         <item>
+          <property name="text" >
+           <string>Mixed</string>
+          </property>
+         </item>
+        </widget>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>36</width>
+           <height>10</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="4" column="1" >
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="XLineEdit" name="_ecn" />
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item row="0" column="0" >
+      <widget class="QLabel" name="_qtyPerLit" >
+       <property name="text" >
+        <string>&amp;Qty. Per:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_qtyPer</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" >
+      <layout class="QHBoxLayout" >
+       <property name="margin" >
+        <number>0</number>
+       </property>
+       <property name="spacing" >
+        <number>6</number>
+       </property>
+       <item>
         <widget class="XLineEdit" name="_scrap" >
          <property name="sizePolicy" >
           <sizepolicy>
@@ -261,39 +421,7 @@
          </property>
         </widget>
        </item>
-       <item row="0" column="2" >
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_issueUOMLit" >
-           <property name="text" >
-            <string>Issue UOM:</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_issueUOM" >
-           <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>5</hsizetype>
-             <vsizetype>3</vsizetype>
-             <horstretch>1</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="text" >
-            <string/>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="2" >
+       <item>
         <widget class="QCheckBox" name="_createWo" >
          <property name="text" >
           <string>Create C&amp;hild W/O at Parent W/O Explosion</string>
@@ -305,245 +433,63 @@
        </item>
       </layout>
      </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>0</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>5</number>
-     </property>
-     <item>
-      <layout class="QVBoxLayout" >
+     <item row="0" column="1" >
+      <layout class="QHBoxLayout" >
        <property name="margin" >
         <number>0</number>
        </property>
        <property name="spacing" >
-        <number>5</number>
+        <number>6</number>
        </property>
        <item>
-        <widget class="QLabel" name="_issueMethodLit" >
-         <property name="text" >
-          <string>Issue Method:</string>
+        <widget class="XLineEdit" name="_qtyPer" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="margin" >
-          <number>3</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="_usedAtLit" >
-         <property name="text" >
-          <string>Used At:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="margin" >
-          <number>7</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="_ecnNumLit" >
-         <property name="text" >
-          <string>ECN #:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="margin" >
-          <number>2</number>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
+         <property name="maximumSize" >
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>80</width>
+           <height>32767</height>
           </size>
          </property>
-        </spacer>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
+         <property name="alignment" >
+          <set>Qt::AlignRight</set>
          </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XComboBox" name="_issueMethod" >
-           <item>
-            <property name="text" >
-             <string>Push</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Pull</string>
-            </property>
-           </item>
-           <item>
-            <property name="text" >
-             <string>Mixed</string>
-            </property>
-           </item>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>36</width>
-             <height>10</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
+        <widget class="QLabel" name="_issueUOMLit" >
+         <property name="text" >
+          <string>Issue UOM:</string>
          </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="XLineEdit" name="_usedAt" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_booitemList" >
-             <property name="text" >
-              <string>...</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Fixed</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>10</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="QCheckBox" name="_scheduleAtWooper" >
-           <property name="text" >
-            <string>Schedule w/ W/O &amp;Operation</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+O</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        </widget>
        </item>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
+        <widget class="XComboBox" name="_uom" >
+         <property name="sizePolicy" >
+          <sizepolicy>
+           <hsizetype>5</hsizetype>
+           <vsizetype>0</vsizetype>
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
          </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XLineEdit" name="_ecn" />
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+        </widget>
        </item>
        <item>
         <spacer>
          <property name="orientation" >
-          <enum>Qt::Vertical</enum>
+          <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>0</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -554,6 +500,14 @@
    </item>
    <item>
     <widget class="QTabWidget" name="_tab" >
+     <property name="sizePolicy" >
+      <sizepolicy>
+       <hsizetype>7</hsizetype>
+       <vsizetype>7</vsizetype>
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
      <property name="currentIndex" >
       <number>0</number>
      </property>
@@ -705,6 +659,9 @@
        </property>
        <item>
         <widget class="Comments" name="_comments" >
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
+         </property>
          <property name="type" >
           <enum>Comments::BOMItem</enum>
          </property>
@@ -720,14 +677,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>DateCluster</class>
-   <extends>QWidget</extends>
-   <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -740,20 +702,16 @@
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>Comments</class>
+   <class>DateCluster</class>
    <extends>QWidget</extends>
-   <header>comments.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <header>datecluster.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_dates</tabstop>
   <tabstop>_qtyPer</tabstop>
+  <tabstop>_uom</tabstop>
   <tabstop>_scrap</tabstop>
   <tabstop>_createWo</tabstop>
   <tabstop>_issueMethod</tabstop>
@@ -761,7 +719,9 @@
   <tabstop>_booitemList</tabstop>
   <tabstop>_scheduleAtWooper</tabstop>
   <tabstop>_ecn</tabstop>
+  <tabstop>_noSubstitutes</tabstop>
   <tabstop>_itemDefinedSubstitutes</tabstop>
+  <tabstop>_bomDefinedSubstitutes</tabstop>
   <tabstop>_bomitemsub</tabstop>
   <tabstop>_newSubstitution</tabstop>
   <tabstop>_editSubstitution</tabstop>
@@ -788,8 +748,8 @@
      <y>20</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>520</x>
+     <y>65</y>
     </hint>
    </hints>
   </connection>
@@ -800,12 +760,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>36</x>
+     <y>449</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>37</x>
+     <y>473</y>
     </hint>
    </hints>
   </connection>
@@ -816,12 +776,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>37</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>505</x>
+     <y>501</y>
     </hint>
    </hints>
   </connection>
@@ -832,12 +792,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>37</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>505</x>
+     <y>528</y>
     </hint>
    </hints>
   </connection>
@@ -848,12 +808,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>36</x>
+     <y>449</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>505</x>
+     <y>474</y>
     </hint>
    </hints>
   </connection>
@@ -864,12 +824,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>37</x>
+     <y>473</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>505</x>
+     <y>501</y>
     </hint>
    </hints>
   </connection>

@@ -84,6 +84,7 @@ public slots:
     virtual void sEditSubstitute();
     virtual void sDeleteSubstitute();
     virtual void sFillSubstituteList();
+    virtual void sItemIdChanged();
 
 protected slots:
     virtual void languageChange();
@@ -94,7 +95,6 @@ private:
     int _sourceBomitemid;
     int _itemid;
     int _booitemid;
-    double _ratio;
 
 };
 

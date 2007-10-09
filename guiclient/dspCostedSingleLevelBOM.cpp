@@ -200,19 +200,19 @@ void dspCostedSingleLevelBOM::sFillList(int pItemid, bool)
     QString sql( "SELECT bomitem_id, bomitem_item_id AS item_id,"
                  "       bomitem_seqnumber, item_number,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription, uom_name,"
-                 "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
+                 "       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS f_qtyper,"
                  "       formatScrap(bomitem_scrap) AS f_scrap,"
                  "       formatDate(bomitem_effective, 'Always') AS f_effective,"
                  "       formatDate(bomitem_expires, 'Never') AS f_expires," );
 
      if (_useStandardCosts->isChecked())
        sql += " formatCost(stdcost(bomitem_item_id)) AS f_unitcost,"
-              " formatCost(bomitem_qtyper * (1 + bomitem_scrap) * stdcost(bomitem_item_id)) AS f_extendedcost,"
-              " (bomitem_qtyper * (1 + bomitem_scrap) * stdcost(bomitem_item_id)) AS extendedcost,";
+              " formatCost(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdcost(bomitem_item_id)) AS f_extendedcost,"
+              " (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdcost(bomitem_item_id)) AS extendedcost,";
      else if (_useActualCosts->isChecked())
        sql += " formatCost(actcost(bomitem_item_id)) AS f_unitcost,"
-              " formatCost(bomitem_qtyper * (1 + bomitem_scrap) * actcost(bomitem_item_id)) AS f_extendedcost,"
-              " (bomitem_qtyper * (1 + bomitem_scrap) * actcost(bomitem_item_id)) AS extendedcost,";
+              " formatCost(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * actcost(bomitem_item_id)) AS f_extendedcost,"
+              " (itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * actcost(bomitem_item_id)) AS extendedcost,";
 
     sql += " bomitem_effective AS effective "
            "FROM bomitem, item, uom "

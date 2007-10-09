@@ -26,9 +26,9 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
             WHEN (bomitem_issuemethod='M') THEN 'Mixed'
             ELSE 'Special'
        END AS issuemethod,
-       formatQtyPer(bomitem_qtyper) AS qtyper,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS qtyper,
        formatScrap(bomitem_scrap) AS scrap,
-       formatQtyPer(bomitem_qtyper + (1 * bomitem_scrap)) AS qtyreq,
+       formatQtyPer(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper + (1 * bomitem_scrap))) AS qtyreq,
        formatDate(bomitem_effective, 'Always') AS effective,
        formatDate(bomitem_expires, 'Never') AS expires,
        bomitem_ecn

@@ -220,7 +220,7 @@ void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
   {
     QString sql( "SELECT bomitem_parent_item_id, item_id, bomitem_seqnumber,"
                  "       item_number, (item_descrip1 || ' ' || item_descrip2),"
-                 "       uom_name, formatQtyper(bomitem_qtyper),"
+                 "       uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
                  "       formatScrap(bomitem_scrap),"
                  "       formatDate(bomitem_effective, 'Always'),"
                  "       formatDate(bomitem_expires, 'Never') "

@@ -32,7 +32,7 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
        formatQty(qoh + ordered - (totalalloc + pendalloc)) AS totalavail
 FROM ( SELECT bomitem_seqnumber, item_number,
               item_descrip1, item_descrip2, uom_name,
-              ((bomitem_qtyper * (1 + bomitem_scrap)) * &lt;? value(&quot;buildQty&quot;) ?>) AS pendalloc,
+              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * &lt;? value(&quot;buildQty&quot;) ?>) AS pendalloc,
               qtyAllocated(itemsite_id, date(&lt;? value(&quot;buildDate&quot;) ?>)) AS totalalloc,
               noNeg(itemsite_qtyonhand) AS qoh,
               qtyOrdered(itemsite_id, date(&lt;? value(&quot;buildDate&quot;) ?>)) AS ordered

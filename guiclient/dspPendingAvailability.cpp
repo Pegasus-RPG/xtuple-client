@@ -166,7 +166,7 @@ void dspPendingAvailability::sFillList()
                "       reorderlevel "
                "FROM ( SELECT itemsite_id, bomitem_seqnumber, item_number,"
                "              (item_descrip1 || ' ' || item_descrip2) AS item_descrip, uom_name,"
-               "              ((bomitem_qtyper * (1 + bomitem_scrap)) * :buildQty) AS pendalloc,"
+               "              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :buildQty) AS pendalloc,"
                "              qtyAllocated(itemsite_id, DATE(:buildDate)) AS totalalloc,"
                "              noNeg(itemsite_qtyonhand) AS qoh,"
                "              qtyOrdered(itemsite_id, DATE(:buildDate)) AS ordered,"

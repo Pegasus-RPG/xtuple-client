@@ -149,7 +149,7 @@ void dspSingleLevelBOM::sFillList(int, bool)
   {
     QString sql( "SELECT bomitem_id, bomitem_seqnumber, item_number, uom_name,"
                  "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                 "       formatQtyper(bomitem_qtyper) AS f_qtyper,"
+                 "       formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)) AS f_qtyper,"
                  "       formatScrap(bomitem_scrap) AS f_scrap,"
                  "       formatDate(bomitem_effective, 'Always') AS f_effective,"
                  "       formatDate(bomitem_expires, 'Never') AS f_expires,"
