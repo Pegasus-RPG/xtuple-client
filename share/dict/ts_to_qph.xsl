@@ -4,8 +4,8 @@
   <xsl:output indent="yes"
 	      method="xml"
 	      doctype-system="QPH"/>
-  <xsl:param name="max-length" select="50"/>
-  <xsl:param name="min-count"  select="6" />
+  <xsl:param name="max-length" select="60"/>
+  <xsl:param name="min-count"  select="5" />
 
   <xsl:template match="TS">
     <QPH>
