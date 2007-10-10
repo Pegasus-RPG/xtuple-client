@@ -798,32 +798,32 @@
     <name>AddressCluster</name>
     <message>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation>地址</translation>
     </message>
     <message>
         <source>Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>地址</translation>
     </message>
     <message>
         <source>Street
 Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>街道地址:</translation>
     </message>
     <message>
         <source>City:</source>
-        <translation type="unfinished"></translation>
+        <translation>城市:</translation>
     </message>
     <message>
         <source>State:</source>
-        <translation type="unfinished"></translation>
+        <translation>省:</translation>
     </message>
     <message>
         <source>Postal Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>邮政编码:</translation>
     </message>
     <message>
         <source>Country:</source>
-        <translation type="unfinished"></translation>
+        <translation>国家:</translation>
     </message>
     <message>
         <source>Active</source>
@@ -850,94 +850,94 @@ Address:</source>
     <name>AddressList</name>
     <message>
         <source>Line 1</source>
-        <translation type="unfinished"></translation>
+        <translation>第一行</translation>
     </message>
     <message>
         <source>Line 2</source>
-        <translation type="unfinished"></translation>
+        <translation>第二行</translation>
     </message>
     <message>
         <source>Line 3</source>
-        <translation type="unfinished"></translation>
+        <translation>第三行</translation>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation>城市</translation>
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>省</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>国家</translation>
     </message>
     <message>
         <source>Postal Code</source>
-        <translation type="unfinished"></translation>
+        <translation>邮政编码</translation>
     </message>
     <message>
         <source>A System Error Occurred at %1::%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误出现在%1::%2.</translation>
     </message>
 </context>
 <context>
     <name>AddressSearch</name>
     <message>
         <source>Search Street Address</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索街道地址</translation>
     </message>
     <message>
         <source>Search City</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索城市</translation>
     </message>
     <message>
         <source>Search State</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索省</translation>
     </message>
     <message>
         <source>Search Country</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索国家</translation>
     </message>
     <message>
         <source>Search Postal Code</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索邮政编码</translation>
     </message>
     <message>
         <source>Show Inactive Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>显示不常用的地址</translation>
     </message>
     <message>
         <source>Line 1</source>
-        <translation type="unfinished"></translation>
+        <translation>第一行</translation>
     </message>
     <message>
         <source>Line 2</source>
-        <translation type="unfinished"></translation>
+        <translation>第二行</translation>
     </message>
     <message>
         <source>Line 3</source>
-        <translation type="unfinished"></translation>
+        <translation>第三行</translation>
     </message>
     <message>
         <source>City</source>
-        <translation type="unfinished"></translation>
+        <translation>城市</translation>
     </message>
     <message>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>省</translation>
     </message>
     <message>
         <source>Country</source>
-        <translation type="unfinished"></translation>
+        <translation>国家</translation>
     </message>
     <message>
         <source>Postal Code</source>
-        <translation type="unfinished"></translation>
+        <translation>邮政编码</translation>
     </message>
     <message>
         <source>A System Error Occurred at %1::%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误出现在%1::%2.</translation>
     </message>
 </context>
 <context>
@@ -1172,7 +1172,7 @@ Address:</source>
     <name>CLineEdit</name>
     <message>
         <source>A System Error occurred at %1::%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误出现在%1::%2.</translation>
     </message>
 </context>
 <context>
@@ -1444,31 +1444,31 @@ Address:</source>
     <name>Comments</name>
     <message>
         <source>Type</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="unfinished"></translation>
+        <translation>使用者</translation>
     </message>
     <message>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>新</translation>
     </message>
     <message>
         <source>View</source>
-        <translation type="unfinished"></translation>
+        <translation>查看</translation>
     </message>
     <message>
         <source>None</source>
-        <translation type="unfinished"></translation>
+        <translation>空</translation>
     </message>
     <message>
         <source>Date/Time</source>
-        <translation type="unfinished"></translation>
+        <translation>日期/时间</translation>
     </message>
 </context>
 <context>
@@ -2129,19 +2129,19 @@ Please immediately log and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Failed to open URL</source>
-        <translation type="unfinished"></translation>
+        <translation>未能成功打开URL</translation>
     </message>
     <message>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>好</translation>
     </message>
     <message>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>帮助</translation>
     </message>
     <message>
         <source>Quick Help</source>
-        <translation type="unfinished"></translation>
+        <translation>快速帮助</translation>
     </message>
     <message>
         <source>Before you can run a browser you must set the environment variable BROWSER to
@@ -2162,36 +2162,37 @@ point to the browser executable.</source>
     </message>
     <message>
         <source>Initializing the Products Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化产品模块</translation>
     </message>
     <message>
         <source>Initializing the Inventory Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化库存模块</translation>
     </message>
     <message>
         <source>Initializing the Scheduling Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化计划调度模块</translation>
     </message>
     <message>
         <source>Initializing the Purchase Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化采购模块</translation>
     </message>
     <message>
         <source>Initializing the Manufacture Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化生产制造模块</translation>
     </message>
     <message>
         <source>Initializing the Sales Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化销售模块</translation>
     </message>
     <message>
         <source>Initializing the Accounting Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化财务模块</translation>
     </message>
     <message>
         <source>A Critical Error occurred at %1::%2.
 Please immediately log out and contact your Systems Adminitrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>在%1:;%2.出现了一个关键错误.
+请立即退出系统并联系系统管理员.</translation>
     </message>
 </context>
 <context>
@@ -47789,7 +47790,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;New...</source>
-        <translation>&amp;Old...</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <source>E&amp;xplode...</source>
@@ -48256,7 +48257,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;Products</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;产品</translation>
     </message>
 </context>
 <context>
@@ -79725,7 +79726,7 @@ Check the database server log for errors.</source>
     </message>
     <message>
         <source>Address</source>
-        <translation type="unfinished"></translation>
+        <translation>地址</translation>
     </message>
     <message>
         <source>Edit...</source>
