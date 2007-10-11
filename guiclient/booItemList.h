@@ -84,7 +84,7 @@ protected slots:
 
 
 private:
-    int _booitemid;
+	int _booitemseqid;
 
 };
 

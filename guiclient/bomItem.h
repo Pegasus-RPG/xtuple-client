@@ -94,7 +94,7 @@ private:
     int _bomitemid;
     int _sourceBomitemid;
     int _itemid;
-    int _booitemid;
+    int _booitemseqid;
 
 };
 

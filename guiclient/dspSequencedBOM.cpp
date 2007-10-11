@@ -160,11 +160,11 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
                  "       CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
                  "            ELSE FALSE"
                  "       END AS future "
-                 "FROM bomitem, booitem, item, uom "
+				 "FROM bomitem, booitem(:item_id), item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
                  " AND (bomitem_parent_item_id=:item_id)"
-                 " AND (bomitem_booitem_id=booitem_id)" );
+                 " AND (bomitem_booitem_seq_id=booitem_seq_id)" );
 
     if (!_showExpired->isChecked())
       sql += " AND (bomitem_expires>CURRENT_DATE)";
@@ -190,7 +190,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
            "WHERE ( (bomitem_item_id=item_id)"
            " AND (item_inv_uom_id=uom_id)"
            " AND (bomitem_parent_item_id=:item_id)"
-           " AND (bomitem_booitem_id=-1)";
+           " AND (bomitem_booitem_seq_id=-1)";
 
     if (!_showExpired->isChecked())
       sql += " AND (bomitem_expires>CURRENT_DATE)";

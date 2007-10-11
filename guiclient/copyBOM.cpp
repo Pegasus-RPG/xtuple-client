@@ -148,11 +148,11 @@ void copyBOM::sCopy()
                                     "attempting to copy an existing Bill of Materials." ) );
     else
     {
+	
       q.prepare("SELECT bomitem_id "
-                "FROM bomitem "
-                "WHERE ( (bomitem_booitem_id != -1) "
-                " AND (bomitem_booitem_id IS NOT NULL) "
-                " AND (bomitem_parent_item_id=:item_id) ) "
+		        "FROM bomitem(:item_id) "
+                "WHERE ( (bomitem_booitem_seq_id != -1) "
+                " AND (bomitem_booitem_seq_id IS NOT NULL) ) "
                 "LIMIT 1;" );
       q.bindValue(":item_id", _source->id());
       q.exec();
@@ -160,7 +160,7 @@ void copyBOM::sCopy()
         QMessageBox::information( this, tr("Dependent BOO Data"),
           tr("One or more of the components for this Bill of Materials make reference to a\n"
              "Bill of Operations. These references cannot be copied and must be added manually.") );
-
+      
       q.prepare("SELECT copyBOM(:sourceid, :targetid) AS result;");
       q.bindValue(":sourceid", _source->id());
       q.bindValue(":targetid", _target->id());

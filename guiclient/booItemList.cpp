@@ -105,9 +105,9 @@ enum SetResponse booItemList::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("booitem_id", &valid);
+  param = pParams.value("booitem_seq_id", &valid);
   if (valid)
-    _booitemid = param.toInt();
+    _booitemseqid = param.toInt();
 
   param = pParams.value("item_id", &valid);
   if (valid)
@@ -121,7 +121,7 @@ enum SetResponse booItemList::set(const ParameterList &pParams)
 
 void booItemList::sClose()
 {
-  done(_booitemid);
+  done(_booitemseqid);
 }
 
 void booItemList::sClear()
@@ -136,14 +136,13 @@ void booItemList::sSelect()
 
 void booItemList::sFillList()
 {
-  q.prepare( "SELECT booitem_id, booitem_seqnumber,"
+  q.prepare( "SELECT booitem_seq_id, booitem_seqnumber,"
              "       (booitem_descrip1 || ' ' || booitem_descrip2) "
-             "FROM booitem "
-             "WHERE ( (booitem_item_id=:item_id)"
-             " AND (CURRENT_DATE BETWEEN booitem_effective AND booitem_expires) ) "
+			 "FROM booitem(:item_id) "
+             "WHERE ( (CURRENT_DATE BETWEEN booitem_effective AND booitem_expires) ) "
              "ORDER BY booitem_seqnumber;" );
   q.bindValue(":item_id", _item->id());
   q.exec();
-  _booitem->populate(q, _booitemid );
+  _booitem->populate(q, _booitemseqid );
 }
 

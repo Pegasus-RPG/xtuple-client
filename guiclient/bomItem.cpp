@@ -153,7 +153,7 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
-      _booitemid = -1;
+      _booitemseqid = -1;
 
       QString issueMethod = _metrics->value("DefaultWomatlIssueMethod");
       if (issueMethod == "S")
@@ -265,7 +265,7 @@ void bomItem::sSave()
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
-               "                      :createWo, :booitem_id, :scheduledWithBooItem,"
+               "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype ) AS result;" );
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
@@ -273,13 +273,13 @@ void bomItem::sSave()
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
-               "                      :createWo, :booitem_id, :scheduledWithBooItem,"
+               "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype ) AS result "
                "FROM bomitem "
                "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE bomitem "
-               "SET bomitem_booitem_id=:booitem_id, bomitem_schedatwooper=:scheduledWithBooItem,"
+               "SET bomitem_booitem_seq_id=:booitem_seq_id, bomitem_schedatwooper=:scheduledWithBooItem,"
                "    bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
                "    bomitem_configtype=:configType, bomitem_configid=:configId, bomitem_configflag=:configFlag,"
                "    bomitem_effective=:effective, bomitem_expires=:expires,"
@@ -293,7 +293,7 @@ void bomItem::sSave()
 
   q.bindValue(":bomitem_id", _bomitemid);
   q.bindValue(":sourceBomitem_id", _sourceBomitemid);
-  q.bindValue(":booitem_id", _booitemid);
+  q.bindValue(":booitem_seq_id", _booitemseqid);
   q.bindValue(":parent_item_id", _itemid);
   q.bindValue(":component_item_id", _item->id());
   q.bindValue(":bomitem_uom_id", _uom->id());
@@ -394,18 +394,19 @@ void bomItem::sBooitemList()
 {
   ParameterList params;
   params.append("item_id", _itemid);
-  params.append("booitem_id", _booitemid);
+  params.append("booitem_seq_id", _booitemseqid);
 
   booItemList newdlg(this, "", TRUE);
   newdlg.set(params);
-  _booitemid = newdlg.exec();
+  _booitemseqid = newdlg.exec();
 
-  if (_booitemid != -1)
+  if (_booitemseqid != -1)
   {
     q.prepare( "SELECT (TEXT(booitem_seqnumber) || '-' || booitem_descrip1 || ' ' || booitem_descrip2) AS description "
-               "FROM booitem "
-               "WHERE (booitem_id=:booitem_id);" );
-    q.bindValue(":booitem_id", _booitemid);
+		       "FROM booitem(:item_id) "
+               "WHERE (booitem_seq_id=:booitem_seq_id);" );
+	q.bindValue(":item_id", _itemid);
+    q.bindValue(":booitem_seq_id", _booitemseqid);
     q.exec();
     if (q.first())
     {
@@ -429,7 +430,7 @@ void bomItem::sBooitemList()
 void bomItem::populate()
 {
   q.prepare( "SELECT bomitem_item_id, bomitem_parent_item_id, item_config,"
-             "       bomitem_booitem_id, bomitem_createwo, bomitem_issuemethod,"
+             "       bomitem_booitem_seq_id, bomitem_createwo, bomitem_issuemethod,"
              "       bomitem_configtype, bomitem_configid, bomitem_configflag,"
              "       bomitem_schedatwooper, bomitem_ecn, item_type,"
              "       formatQtyper(bomitem_qtyper) AS qtyper,"
@@ -467,7 +468,7 @@ void bomItem::populate()
       _ecn->setText(q.value("bomitem_ecn").toString());
 
     bool scheduledAtWooper = q.value("bomitem_schedatwooper").toBool();
-    _booitemid = q.value("bomitem_booitem_id").toInt();
+    _booitemseqid = q.value("bomitem_booitem_seq_id").toInt();
 
     _comments->setId(_bomitemid);
 
@@ -480,12 +481,13 @@ void bomItem::populate()
 
     sFillSubstituteList();
 
-    if (_booitemid != -1)
+    if (_booitemseqid != -1)
     {
       q.prepare( "SELECT (TEXT(booitem_seqnumber) || '-' || booitem_descrip1 || ' ' || booitem_descrip2) AS description "
-                 "FROM booitem "
-                 "WHERE (booitem_id=:booitem_id);" );
-      q.bindValue(":booitem_id", _booitemid);
+		         "FROM booitem(:item_id) "
+                 "WHERE (booitem_seq_id=:booitem_seq_id);" );
+	  q.bindValue(":item_id", _itemid);
+      q.bindValue(":booitem_seq_id", _booitemseqid);
       q.exec();
       if (q.first())
       {
@@ -495,7 +497,7 @@ void bomItem::populate()
       }
       else
       {
-        _booitemid = -1;
+        _booitemseqid = -1;
         _scheduleAtWooper->setEnabled(FALSE);
       }
     }
