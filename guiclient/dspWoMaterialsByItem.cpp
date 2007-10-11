@@ -89,6 +89,7 @@ dspWoMaterialsByItem::dspWoMaterialsByItem(QWidget* parent, const char* name, Qt
   _womatl->addColumn(tr("Parent Item #"), _itemColumn,  Qt::AlignLeft   );
   _womatl->addColumn(tr("Oper. #"),       _dateColumn,  Qt::AlignCenter );
   _womatl->addColumn(tr("Iss. Meth."),    _dateColumn,  Qt::AlignCenter );
+  _womatl->addColumn(tr("Iss. UOM"),      _uomColumn,   Qt::AlignLeft   );
   _womatl->addColumn(tr("Qty. Per"),      _qtyColumn,   Qt::AlignRight  );
   _womatl->addColumn(tr("Scrap %"),       _prcntColumn, Qt::AlignRight  );
   _womatl->addColumn(tr("Required"),      _qtyColumn,   Qt::AlignRight  );
@@ -145,6 +146,7 @@ void dspWoMaterialsByItem::sFillList()
                "            WHEN (womatl_issuemethod = 'M') THEN :mixed"
                "            ELSE :error"
                "       END AS issuemethod,"
+               "       uom_name,"
                "       formatQty(womatl_qtyper) as qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
                "       formatQty(womatl_qtyreq) AS qtyreq,"
@@ -154,8 +156,9 @@ void dspWoMaterialsByItem::sFillList()
                "       noNeg(womatl_qtyreq - womatl_qtyiss) AS balance,"
                "       formatDate(womatl_duedate) AS duedate,"
                "       (womatl_duedate <= CURRENT_DATE) as latedue "
-               "FROM wo, womatl, itemsite AS parentsite, itemsite AS componentsite, item "
+               "FROM wo, womatl, itemsite AS parentsite, itemsite AS componentsite, item, uom "
                "WHERE ((womatl_wo_id=wo_id)"
+               " AND (womatl_uom_id=uom_id)"
                " AND (wo_status <> 'C')"
                " AND (wo_itemsite_id=parentsite.itemsite_id)"
                " AND (womatl_itemsite_id=componentsite.itemsite_id)"
@@ -188,17 +191,17 @@ void dspWoMaterialsByItem::sFillList()
       last = new XTreeWidgetItem( _womatl, last, q.value("womatl_id").toInt(),
 				 q.value("wonumber"), q.value("item_number"),
 				 q.value("wooperseq"), q.value("issuemethod"),
-				 q.value("qtyper"), q.value("scrap"),
+				 q.value("uom_name"), q.value("qtyper"), q.value("scrap"),
 				 q.value("qtyreq"), q.value("qtyiss"),
-				 q.value("scrapped"), q.value("f_balance"),
-				 q.value("duedate") );
+				 q.value("scrapped"), q.value("f_balance"));
+      last->setText(11, q.value("duedate").toString());
       if (q.value("latedue").toBool())
-        last->setTextColor(10, "red");
+        last->setTextColor(11, "red");
     }
     while (q.next());
 
     new XTreeWidgetItem( _womatl, last, -1,
-                       "", tr("Total Required:"), "", "", "", "", "", "", "",
+                       "", tr("Total Required:"), "", "", "", "", "", "", "", "",
                        formatQty(totalRequired) );
   }
 }

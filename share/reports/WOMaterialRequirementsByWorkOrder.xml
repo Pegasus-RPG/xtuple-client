@@ -32,14 +32,16 @@
             WHEN (womatl_issuemethod = 'M') THEN 'Mixed'
             ELSE 'Error'
        END AS issuemethod,
+       uom_name,
        formatQtyper(womatl_qtyper) AS qtyper,
        formatScrap(womatl_scrap) AS scrappercent,
        formatQty(womatl_qtyreq) AS required,
        formatQty(womatl_qtyiss) AS issued,
        formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balance,
        formatDate(womatl_duedate) AS duedate
-FROM wo, womatl, itemsite, item
+FROM wo, womatl, itemsite, item, uom
 WHERE ((womatl_wo_id=wo_id)
+ AND (womatl_uom_id=uom_id)
  AND (womatl_itemsite_id=itemsite_id)
  AND (itemsite_item_id=item_id)
  AND (wo_id=&lt;? value(&quot;wo_id&quot;) ?>) )

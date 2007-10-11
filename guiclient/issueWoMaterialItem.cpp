@@ -176,7 +176,7 @@ void issueWoMaterialItem::sIssue()
   q.prepare("SELECT itemsite_id, item_number, warehous_code, "
             "       (COALESCE((SELECT SUM(itemloc_qty) "
             "                    FROM itemloc "
-            "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, :qty)) AS isqtyavail "
+            "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) >= roundQty(item_fractional, itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, :qty))) AS isqtyavail "
             "  FROM womatl, itemsite, item, warehous "
             " WHERE ((womatl_itemsite_id=itemsite_id) "
             "   AND (itemsite_item_id=item_id) "
@@ -250,14 +250,14 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
 {
   if (pWomatlid != -1)
   {
-    q.prepare( "SELECT item_descrip1, item_descrip2, uom_name, itemsite_qtyonhand,"
+    q.prepare( "SELECT item_descrip1, item_descrip2, uom_name, itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
                "       formatQty(womatl_qtyreq) AS qtyreq,"
                "       formatQty(womatl_qtyiss) AS qtyiss,"
                "       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS qtybalance "
                "FROM womatl, itemsite, item, uom "
                "WHERE ( (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
+               " AND (womatl_uom_id=uom_id)"
                " AND (womatl_id=:womatl_id) );" );
     q.bindValue(":womatl_id", pWomatlid);
     q.exec();
@@ -270,7 +270,7 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
       _qtyIssued->setText(q.value("qtyiss").toString());
       _qtyToIssue->setText(q.value("qtybalance").toString());
       
-      _cachedQOH = q.value("itemsite_qtyonhand").toDouble();
+      _cachedQOH = q.value("qtyonhand").toDouble();
       _beforeQty->setText(formatQty(_cachedQOH));
 
       sPopulateQOH();

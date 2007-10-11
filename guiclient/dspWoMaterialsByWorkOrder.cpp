@@ -90,6 +90,7 @@ dspWoMaterialsByWorkOrder::dspWoMaterialsByWorkOrder(QWidget* parent, const char
   _womatl->addColumn(tr("Component Item"),  _itemColumn,  Qt::AlignLeft   );
   _womatl->addColumn(tr("Oper. #"),         _dateColumn,  Qt::AlignCenter );
   _womatl->addColumn(tr("Iss. Meth.") ,     _orderColumn, Qt::AlignCenter );
+  _womatl->addColumn(tr("Iss. UOM") ,       _uomColumn,   Qt::AlignLeft   );
   _womatl->addColumn(tr("Qty. Per"),        _qtyColumn,   Qt::AlignRight  );
   _womatl->addColumn(tr("Scrap %"),         _prcntColumn, Qt::AlignRight  );
   _womatl->addColumn(tr("Required"),        _qtyColumn,   Qt::AlignRight  );
@@ -179,6 +180,7 @@ void dspWoMaterialsByWorkOrder::sFillList()
                "            WHEN (womatl_issuemethod = 'M') THEN :mixed"
                "            ELSE :error"
                "       END AS issuemethod,"
+               "       uom_name,"
                "       formatQtyper(womatl_qtyper) AS qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
                "       formatQty(womatl_qtyreq) AS qtyreq,"
@@ -187,8 +189,9 @@ void dspWoMaterialsByWorkOrder::sFillList()
                "       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balance,"
                "       formatDate(womatl_duedate) AS duedate, "
                "       bool(womatl_duedate <= CURRENT_DATE) AS latedue "
-               "FROM wo, womatl, itemsite, item "
+               "FROM wo, womatl, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
+               " AND (womatl_uom_id=uom_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (wo_id=:wo_id) ) "
@@ -204,13 +207,13 @@ void dspWoMaterialsByWorkOrder::sFillList()
     {
       last = new XTreeWidgetItem( _womatl, last, q.value("womatl_id").toInt(),
 				 q.value("item_number"), q.value("wooperseq"),
-				 q.value("issuemethod"), q.value("qtyper"),
+				 q.value("issuemethod"), q.value("uom_name"), q.value("qtyper"),
 				 q.value("scrap"), q.value("qtyreq"),
 				 q.value("qtyiss"), q.value("scrapped"),
 				 q.value("balance"), q.value("duedate") );
 
       if (q.value("latedue").toBool())
-        last->setTextColor(9, "red");
+        last->setTextColor(10, "red");
     }
   }
 }

@@ -108,6 +108,7 @@ postOperations::postOperations(QWidget* parent, const char* name, bool modal, Qt
 
   _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
   _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
+  _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft  );
   _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight );
 }
 
@@ -307,10 +308,11 @@ void postOperations::sHandleWooperid(int)
       if (w.value("wooper_issuecomp").toBool())
       {
         w.prepare( "SELECT womatl_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-                   "       formatQtyPer(womatl_qtyper) "
-                   "FROM womatl, itemsite, item "
+                   "       uom_name, formatQtyPer(womatl_qtyper) "
+                   "FROM womatl, itemsite, item, uom "
                    "WHERE ( (womatl_itemsite_id=itemsite_id)"
                    " AND (womatl_issuemethod IN ('L', 'M'))"
+                   " AND (womatl_uom_id=uom_id)"
                    " AND (itemsite_item_id=item_id)"
                    " AND (womatl_wooper_id=:wooper_id) ) "
                    "ORDER BY item_number;" );

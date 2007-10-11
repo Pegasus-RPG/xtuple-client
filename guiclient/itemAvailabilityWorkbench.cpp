@@ -865,15 +865,16 @@ void itemAvailabilityWorkbench::sFillListRunning()
                "       formatDate(womatl_duedate) AS duedate,"
                "       womatl_duedate AS r_duedate,"
                "       (FALSE) AS late,"
-               "       formatQty(womatl_qtyreq) AS f_qtyordered,"
-               "       formatQty(womatl_qtyiss) AS f_qtyreceived,"
-               "       formatQty((noNeg(womatl_qtyreq - womatl_qtyiss) * -1)) AS f_balance,"
-               "       (noNeg(womatl_qtyreq - womatl_qtyiss) * -1) AS balance "
-               "FROM womatl, wo, itemsite, item "
+               "       formatQty(itemuomtouom(matis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq)) AS f_qtyordered,"
+               "       formatQty(itemuomtouom(matis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyiss)) AS f_qtyreceived,"
+               "       formatQty((noNeg(itemuomtouom(matis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) * -1)) AS f_balance,"
+               "       (noNeg(itemuomtouom(matis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) * -1) AS balance "
+               "FROM womatl, wo, itemsite AS wois, item, itemsite AS matis "
                "WHERE ( (wo_status<>'C')"
-               " AND (wo_itemsite_id=itemsite_id)"
+               " AND (wo_itemsite_id=wois.itemsite_id)"
                " AND (womatl_wo_id=wo_id)"
-               " AND (itemsite_item_id=item_id)"
+               " AND (wois.itemsite_item_id=item_id)"
+               " AND (womatl_itemsite_id=matis.itemsite_id)"
                " AND (womatl_itemsite_id=:itemsite_id) ) ";
       }
 

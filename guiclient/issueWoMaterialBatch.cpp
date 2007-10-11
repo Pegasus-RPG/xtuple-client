@@ -144,7 +144,7 @@ void issueWoMaterialBatch::sIssue()
                 "       (COALESCE((SELECT SUM(itemloc_qty) "
                 "                    FROM itemloc "
                 "                   WHERE (itemloc_itemsite_id=itemsite_id)), 0.0) "
-                "        >= roundQty(item_fractional, noNeg(womatl_qtyreq - womatl_qtyiss))) AS isqtyavail "
+                "        >= roundQty(item_fractional, noNeg(itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)))) AS isqtyavail "
                 "  FROM womatl, itemsite, item, warehous "
                 " WHERE ( (womatl_itemsite_id=itemsite_id) "
                 "   AND (itemsite_item_id=item_id) "
@@ -222,7 +222,7 @@ void issueWoMaterialBatch::sFillList()
                     "FROM womatl, itemsite, item, uom "
                     "WHERE ((womatl_itemsite_id=itemsite_id)"
                     " AND (itemsite_item_id=item_id)"
-                    " AND (item_inv_uom_id=uom_id)"
+                    " AND (womatl_uom_id=uom_id)"
                     " AND (womatl_wo_id=:wo_id)) "
                     "ORDER BY item_number;" );
     womatl.bindValue(":push", tr("Push"));

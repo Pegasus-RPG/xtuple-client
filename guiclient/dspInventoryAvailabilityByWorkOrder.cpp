@@ -331,7 +331,7 @@ void dspInventoryAvailabilityByWorkOrder::sFillList()
                  "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
                  "              uom_name, item_picklist,"
                  "              noNeg(itemsite_qtyonhand) AS qoh,"
-                 "              noNeg(womatl_qtyreq - womatl_qtyiss) AS wobalance,"
+                 "              noNeg(itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) AS wobalance,"
                  "              qtyAllocated(itemsite_id, womatl_duedate) AS allocated,"
                  "              qtyOrdered(itemsite_id, womatl_duedate) AS ordered,"
                  "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"

@@ -87,17 +87,18 @@ correctOperationsPosting::correctOperationsPosting(QWidget* parent, const char* 
 
   _womatl->addColumn(tr("Item Number"), _itemColumn, Qt::AlignLeft  );
   _womatl->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
+  _womatl->addColumn(tr("Iss. UOM"),    _uomColumn,  Qt::AlignLeft  );
   _womatl->addColumn(tr("Qty. per"),    _qtyColumn,  Qt::AlignRight );
 }
 
 correctOperationsPosting::~correctOperationsPosting()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void correctOperationsPosting::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse correctOperationsPosting::set(const ParameterList &pParams)
@@ -196,9 +197,10 @@ void correctOperationsPosting::sHandleWooperid(int)
       if (q.value("wooper_issuecomp").toBool())
       {
         q.prepare( "SELECT womatl_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
-                   "       formatQtyPer(womatl_qtyper) "
-                   "FROM womatl, itemsite, item "
+                   "       uom_name, formatQtyPer(womatl_qtyper) "
+                   "FROM womatl, itemsite, item, uom "
                    "WHERE ( (womatl_itemsite_id=itemsite_id)"
+                   " AND (womatl_uom_id=uom_id)"
                    " AND (womatl_issuemethod IN ('L', 'M'))"
                    " AND (itemsite_item_id=item_id)"
                    " AND (womatl_wooper_id=:wooper_id) ) "

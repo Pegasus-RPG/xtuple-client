@@ -89,6 +89,7 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   _womatl->addColumn(tr("Component Item"), _itemColumn,  Qt::AlignLeft   );
   _womatl->addColumn(tr("Description"),    -1,           Qt::AlignLeft   );
   _womatl->addColumn(tr("Iss. Meth."),     _orderColumn, Qt::AlignCenter );
+  _womatl->addColumn(tr("Iss. UOM"),       _uomColumn,   Qt::AlignLeft   );
   _womatl->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight  );
   _womatl->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight  );
   _womatl->addColumn(tr("Required"),       _qtyColumn,   Qt::AlignRight  );
@@ -326,10 +327,10 @@ void workOrderMaterials::sSubstitute()
   int womatlid = _womatl->id();
 
   XSqlQuery sub;
-  sub.prepare( "SELECT womatl_qtyper, womatl_wo_id,"
+  sub.prepare( "SELECT itemuomtouom(itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper) AS qtyper, womatl_wo_id,"
                "       womatl_scrap, womatl_issuemethod,"
                "       womatl_duedate "
-               "FROM womatl "
+               "FROM womatl JOIN itemsite ON (womatl_itemsite_id=itemsite_id) "
                "WHERE (womatl_id=:womatl_id);" );
   sub.bindValue(":womatl_id", womatlid);
   sub.exec();
@@ -349,7 +350,7 @@ void workOrderMaterials::sSubstitute()
       params.append("mode", "new");
       params.append("wo_id", sub.value("womatl_wo_id"));
       params.append("item_id", result);
-      params.append("qtyPer", (sub.value("womatl_qtyper").toDouble() * substitute._uomratio));
+      params.append("qtyPer", (sub.value("qtyper").toDouble() * substitute._uomratio));
       params.append("scrap", sub.value("womatl_scrap"));
 
       if (sub.value("womatl_issuemethod").toString() == "S")
@@ -400,6 +401,7 @@ void workOrderMaterials::sFillList()
                "            WHEN (womatl_issuemethod = 'M') THEN 'Mixed'"
                "            ELSE 'Error'"
                "       END AS issuemethod,"
+               "       uom_name,"
                "       formatQtyper(womatl_qtyper) AS qtyper,"
                "       formatScrap(womatl_scrap) AS scrap,"
                "       formatQty(womatl_qtyreq) AS qtyreq,"
@@ -411,8 +413,9 @@ void workOrderMaterials::sFillList()
                "       CASE WHEN (womatl_qtyiss <> 0) THEN 1"
                "            ELSE 0"
                "       END AS issued "
-               "FROM wo, womatl, itemsite, item "
+               "FROM wo, womatl, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
+               " AND (womatl_uom_id=uom_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (wo_id=:wo_id) ) "
@@ -426,13 +429,13 @@ void workOrderMaterials::sFillList()
 				 q.value("womatl_id").toInt(),
 				 q.value("issued").toInt(),
 				 q.value("item_number"), q.value("description"),
-				 q.value("issuemethod"), q.value("qtyper"),
+				 q.value("issuemethod"), q.value("uom_name"), q.value("qtyper"),
 				 q.value("scrap"), q.value("qtyreq"),
 				 q.value("qtyiss"), q.value("scrapped"),
 				 q.value("balance"), q.value("duedate") );
 
       if (q.value("latedue").toBool())
-        last->setTextColor(9, "red");
+        last->setTextColor(10, "red");
 
       if (q.value("womatl_id").toInt() == womatlid)
         selected = last;
@@ -505,8 +508,8 @@ void workOrderMaterials::sFillList()
     if (_privleges->check("ViewCosts"))
     {
       q.prepare( "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
-                 "       formatCost(COALESCE(SUM(womatl_qtyper * (1 + womatl_scrap) * stdCost(c.item_id)))) AS f_stdcost,"
-                 "       formatCost(COALESCE(SUM(womatl_qtyper * (1 + womatl_scrap) * actCost(c.item_id)))) AS f_actcost "
+                 "       formatCost(COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"
+                 "       formatCost(COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * actCost(c.item_id)))) AS f_actcost "
                  "FROM wo, womatl, itemsite AS ci, itemsite AS pi, item AS c, item AS p "
                  "WHERE ( (womatl_wo_id=wo_id)"
                  " AND (womatl_itemsite_id=ci.itemsite_id)"

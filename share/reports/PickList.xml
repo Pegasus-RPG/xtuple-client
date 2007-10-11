@@ -44,7 +44,7 @@
  WHERE ((item_picklist)
    AND (womatl_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
+   AND (womatl_uom_id=uom_id)
    AND (womatl_wo_id=%1) );
     </sql>
  </querysource>

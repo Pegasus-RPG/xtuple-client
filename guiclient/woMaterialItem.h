@@ -59,7 +59,7 @@
 #define WOMATERIALITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_woMaterialItem.h"
@@ -73,16 +73,15 @@ public:
     ~woMaterialItem();
 
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
 
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
     virtual void sSave();
     virtual void sUpdateQtyRequired();
-
+    virtual void sItemIdChanged();
 
 private:
     int _mode;

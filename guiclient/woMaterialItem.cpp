@@ -57,9 +57,9 @@
 
 #include "woMaterialItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 #include "inputManager.h"
 
 /*
@@ -72,38 +72,17 @@
 woMaterialItem::woMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_qtyPer, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
-    connect(_scrap, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
-    connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
-}
+  // signals and slots connections
+  connect(_qtyPer, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
+  connect(_scrap, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQtyRequired()));
+  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-woMaterialItem::~woMaterialItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void woMaterialItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void woMaterialItem::init()
-{
   _captive = FALSE;
 
   _wo->setType(cWoOpen | cWoExploded | cWoIssued | cWoReleased);
@@ -122,7 +101,24 @@ void woMaterialItem::init()
     _issueMethod->setCurrentItem(2);
 }
 
-enum SetResponse woMaterialItem::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+woMaterialItem::~woMaterialItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void woMaterialItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse woMaterialItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -148,6 +144,10 @@ enum SetResponse woMaterialItem::set(ParameterList &pParams)
   param = pParams.value("qtyPer", &valid);
   if (valid)
     _qtyPer->setText(formatQtyPer(param.toDouble()));
+
+  param = pParams.value("uom_id", &valid);
+  if (valid)
+    _uom->setId(param.toInt());
 
   param = pParams.value("scrap", &valid);
   if (valid)
@@ -197,6 +197,7 @@ enum SetResponse woMaterialItem::set(ParameterList &pParams)
       _wo->setEnabled(FALSE);
       _item->setEnabled(FALSE);
       _qtyPer->setEnabled(FALSE);
+      _uom->setEnabled(FALSE);
       _scrap->setEnabled(FALSE);
       _issueMethod->setEnabled(FALSE);
       _close->setText(tr("&Close"));
@@ -252,11 +253,12 @@ void woMaterialItem::sSave()
 
     int itemsiteid = q.value("itemsiteid").toInt();
 
-    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :qtyPer, :scrap) AS womatlid;");
+    q.prepare("SELECT createWoMaterial(:wo_id, :itemsite_id, :issueMethod, :uom_id, :qtyPer, :scrap) AS womatlid;");
     q.bindValue(":wo_id", _wo->id());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":issueMethod", issueMethod);
     q.bindValue(":qtyPer", _qtyPer->toDouble());
+    q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
     q.exec();
     if (q.first())
@@ -267,6 +269,7 @@ void woMaterialItem::sSave()
   {
     q.prepare( "UPDATE womatl "
                "SET womatl_qtyper=:qtyPer, womatl_scrap=:scrap, womatl_issuemethod=:issueMethod,"
+               "    womatl_uom_id=:uom_id,"
                "    womatl_qtyreq=(:qtyPer * (1 + :scrap) * wo_qtyord) "
                "FROM wo "
                "WHERE ( (womatl_wo_id=wo_id)"
@@ -274,6 +277,7 @@ void woMaterialItem::sSave()
     q.bindValue(":womatl_id", _womatlid);
     q.bindValue(":issueMethod", issueMethod);
     q.bindValue(":qtyPer", _qtyPer->toDouble());
+    q.bindValue(":uom_id", _uom->id());
     q.bindValue(":scrap", (_scrap->toDouble() / 100));
     q.exec();
   }
@@ -301,6 +305,7 @@ void woMaterialItem::populate()
 {
   q.prepare( "SELECT womatl_wo_id, itemsite_item_id,"
              "       formatQtyPer(womatl_qtyper) AS qtyper,"
+             "       womatl_uom_id,"
              "       formatScrap(womatl_scrap) AS scrap,"
              "       womatl_issuemethod "
              "FROM womatl, itemsite "
@@ -313,6 +318,7 @@ void woMaterialItem::populate()
     _wo->setId(q.value("womatl_wo_id").toInt());
     _item->setId(q.value("itemsite_item_id").toInt());
     _qtyPer->setText(q.value("qtyper").toString());
+    _uom->setId(q.value("womatl_uom_id").toInt());
     _scrap->setText(q.value("scrap").toString());
 
     if (q.value("womatl_issuemethod").toString() == "S")
@@ -322,5 +328,39 @@ void woMaterialItem::populate()
     else if (q.value("womatl_issuemethod").toString() == "M")
       _issueMethod->setCurrentItem(2);
   }
+}
+
+void woMaterialItem::sItemIdChanged()
+{
+  XSqlQuery uom;
+  uom.prepare("SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN uom ON (item_inv_uom_id=uom_id)"
+              " WHERE(item_id=:item_id)"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " ORDER BY uom_name;");
+  uom.bindValue(":item_id", _item->id());
+  uom.exec();
+  _uom->populate(uom);
+  uom.prepare("SELECT item_inv_uom_id"
+              "  FROM item"
+              " WHERE(item_id=:item_id);");
+  uom.bindValue(":item_id", _item->id());
+  uom.exec();
+  if(uom.first())
+    _uom->setId(uom.value("item_inv_uom_id").toInt());
 }
 

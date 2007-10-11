@@ -121,10 +121,10 @@ SELECT wo_id AS orderid, womatl_id AS altorderid,
       formatDate(womatl_duedate) AS duedate,
       womatl_duedate AS r_duedate,
       FALSE AS late,
-      formatQty(womatl_qtyreq) AS f_qtyordered,
-      formatQty(womatl_qtyiss) AS f_qtyreceived,
-      formatQty((noNeg(womatl_qtyreq - womatl_qtyiss) * -1)) AS f_balance,
-      (noNeg(womatl_qtyreq - womatl_qtyiss) * -1) AS balance
+      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq)) AS f_qtyordered,
+      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyiss)) AS f_qtyreceived,
+      formatQty((noNeg(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) * -1)) AS f_balance,
+      (noNeg(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq - womatl_qtyiss)) * -1) AS balance
 FROM womatl, wo, itemsite AS wois, item, itemsite AS womatlis
 WHERE ((wo_status&lt;>'C')
   AND  (wo_itemsite_id=wois.itemsite_id)

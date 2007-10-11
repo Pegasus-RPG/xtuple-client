@@ -604,7 +604,7 @@ void WomatlCluster::setWooperid(int pWooperid)
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
+               " AND (womatl_uom_id=uom_id)"
                " AND (womatl_wooper_id=:wooper_id)"
                " AND (womatl_issuemethod IN (" );
 
@@ -680,7 +680,7 @@ void WomatlCluster::setWoid(int pWoid)
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
-               " AND (item_inv_uom_id=uom_id)"
+               " AND (womatl_uom_id=uom_id)"
                " AND (wo_id=:wo_id)"
                " AND (womatl_issuemethod IN (" );
 
@@ -762,7 +762,7 @@ void WomatlCluster::setId(int pWomatlid)
                  " AND (target.womatl_wo_id=wo_id)"
                  " AND (list.womatl_itemsite_id=itemsite_id)"
                  " AND (itemsite_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
+                 " AND (list.womatl_uom_id=uom_id)"
                  " AND (target.womatl_id=:womatl_id)"
                  " AND (list.womatl_issuemethod IN (" );
 
