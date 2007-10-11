@@ -89,6 +89,7 @@
 #include "plugins/polineeditplugin.h"
 #include "plugins/projectclusterplugin.h"
 #include "plugins/projectlineeditplugin.h"
+#include "plugins/revisionclusterplugin.h"
 #include "plugins/shiftclusterplugin.h"
 #include "plugins/shipmentclusterplugin.h"
 #include "plugins/shiptoclusterplugin.h"
@@ -151,6 +152,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new PoLineEditPlugin(this));
   m_plugins.append(new ProjectClusterPlugin(this));
   m_plugins.append(new ProjectLineEditPlugin(this));
+  m_plugins.append(new RevisionClusterPlugin(this));
   m_plugins.append(new ShiftClusterPlugin(this));
   m_plugins.append(new ShipmentClusterPlugin(this));
   m_plugins.append(new ShiptoClusterPlugin(this));

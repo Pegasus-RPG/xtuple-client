@@ -78,6 +78,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_moveUp, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_moveDown, SIGNAL(clicked()), this, SLOT(sMoveDown()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -114,6 +115,8 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+
+  _activate->hide();
 }
 
 BOM::~BOM()
@@ -134,6 +137,29 @@ enum SetResponse BOM::set(const ParameterList &pParams)
   param = pParams.value("item_id", &valid);
   if (valid)
     _item->setId(param.toInt());
+   {
+     param = pParams.value("revision_id", &valid);
+     if (valid)
+       _revision->setId(param.toInt());
+     else if (_metrics->boolean("RevControl"))
+	 {
+	   q.prepare("SELECT rev_id,rev_status "
+	             "FROM rev "
+				 "WHERE ( (rev_target_type='BOM') " 
+				 "AND (rev_target_id=:item_id) "
+				 "AND (rev_status='A') );");
+	   q.bindValue(":item_id", _item->id());
+	   q.exec();
+	   if (q.first())
+         _revision->setId(q.value("rev_id").toInt());
+	     if (q.value("rev_status").toString() == "P")
+			 _activate->show();
+	   else
+         _revision->setId(-1);
+	 }
+	 else
+		 _revision->setId(-1);
+   }
   
   param = pParams.value("mode", &valid);
   if (valid)
@@ -152,6 +178,7 @@ enum SetResponse BOM::set(const ParameterList &pParams)
     {
       _mode = cNew;
       _item->setFocus();
+	  _revision->setId(-1);
     }
     else if (param.toString() == "edit")
     {
@@ -221,7 +248,7 @@ void BOM::sSave()
   }
   
   q.bindValue(":bomhead_docnum", _documentNum->text());
-  q.bindValue(":bomhead_revision", _revision->text());
+  q.bindValue(":bomhead_revision", _revision->number());
   q.bindValue(":bomhead_revisiondate", _revisionDate->date());
   q.bindValue(":bomhead_batchsize", _batchSize->toDouble());
   if(_doRequireQtyPer->isChecked())
@@ -235,7 +262,8 @@ void BOM::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
-  
+  params.append("revision_id", _revision->id());
+
   if (_showExpired->isChecked())
     params.append("expiredDays", 999);
   
@@ -271,6 +299,7 @@ void BOM::sNew()
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
   
   bomItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -348,18 +377,20 @@ void BOM::sFillList(int pItemid, bool)
 {
   if (_item->isValid() && (pItemid == _item->id()))
   {
-    q.prepare( "SELECT bomhead_docnum, bomhead_revision,"
+    q.prepare( "SELECT bomhead_docnum, bomhead_rev_id,"
                "       bomhead_revisiondate,"
                "       formatQty(bomhead_batchsize) AS f_batchsize,"
                "       bomhead_requiredqtyper "
                "FROM bomhead "
-               "WHERE (bomhead_item_id=:item_id);" );
+               "WHERE ( (bomhead_item_id=:item_id)"
+			   "AND (bomhead_rev_id=:revision_id) );" );
     q.bindValue(":item_id", _item->id());
+	q.bindValue(":revision_id", _revision->id());
     q.exec();
     if (q.first())
     {
       _documentNum->setText(q.value("bomhead_docnum"));
-      _revision->setText(q.value("bomhead_revision"));
+    //  _revision->setId(q.value("bomhead_rev_id").toInt());
       _revisionDate->setDate(q.value("bomhead_revisiondate").toDate());
       _batchSize->setText(q.value("f_batchsize"));
       if(q.value("bomhead_requiredqtyper").toDouble()!=0)
@@ -389,10 +420,9 @@ void BOM::sFillList(int pItemid, bool)
                  "       formatDate(bomitem_effective, :always) AS f_effective,"
                  "       formatDate(bomitem_expires, :never) AS f_expires,"
                  "       (bomitem_configtype<>'N') AS config "
-                 "FROM bomitem, item, uom "
+				 "FROM bomitem(:item_id,:revision_id), item, uom "
                  "WHERE ((bomitem_item_id=item_id)"
-                 " AND (bomitem_uom_id=uom_id)"
-                 " AND (bomitem_parent_item_id=:item_id)" );
+                 " AND (bomitem_uom_id=uom_id)" );
     
     if (!_showExpired->isChecked())
       sql += " AND (bomitem_expires > CURRENT_DATE)";
@@ -416,6 +446,7 @@ void BOM::sFillList(int pItemid, bool)
     q.bindValue(":always", tr("Always"));
     q.bindValue(":never", tr("Never"));
     q.bindValue(":item_id", _item->id());
+	q.bindValue(":revision_id", _revision->id());
     q.exec();
     XTreeWidgetItem *last = 0;
     while (q.next())
@@ -446,9 +477,8 @@ void BOM::sFillList(int pItemid, bool)
     sql = "SELECT item_picklist,"
           "       COUNT(*) AS total,"
           "       COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap))) AS qtyper "
-          "FROM bomitem, item "
-          "WHERE ( (bomitem_item_id=item_id)"
-          " AND (bomitem_parent_item_id=:item_id)";
+		  "FROM bomitem(:item_id,:revision_id), item "
+          "WHERE ( (bomitem_item_id=item_id)";
     
     if (!_showExpired->isChecked())
       sql += " AND (bomitem_expires > CURRENT_DATE)";
@@ -461,6 +491,7 @@ void BOM::sFillList(int pItemid, bool)
     
     q.prepare(sql);
     q.bindValue(":item_id", _item->id());
+	q.bindValue(":revision_id", _revision->id());
     q.exec();
     bool   foundPick    = FALSE;
     bool   foundNonPick = FALSE;
@@ -506,9 +537,8 @@ void BOM::sFillList(int pItemid, bool)
       sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
             "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"
             "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4)))) AS f_actcost "
-            "FROM bomitem, item AS c, item AS p "
-            "WHERE ( (bomitem_parent_item_id=p.item_id)"
-            " AND (bomitem_item_id=c.item_id)"
+			"FROM bomitem(:item_id,:revision_id), item AS c, item AS p "
+            "WHERE ( (bomitem_item_id=c.item_id)"
             " AND (p.item_id=:item_id)";
       
       if (!_showExpired->isChecked())

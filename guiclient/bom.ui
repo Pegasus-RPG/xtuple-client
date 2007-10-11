@@ -20,18 +20,28 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
+    <property name="leftMargin" >
      <number>9</number>
     </property>
-    <property name="spacing" >
+    <property name="topMargin" >
+     <number>9</number>
+    </property>
+    <property name="rightMargin" >
+     <number>9</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>9</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>6</number>
+    </property>
+    <property name="verticalSpacing" >
      <number>6</number>
     </property>
     <item row="1" column="0" colspan="3" >
      <widget class="QFrame" name="frame_2" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -40,34 +50,73 @@
        <enum>QFrame::NoFrame</enum>
       </property>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item rowspan="2" row="1" column="2" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
+             <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="spacing" >
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
@@ -135,10 +184,19 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
+             <property name="spacing" >
               <number>0</number>
              </property>
-             <property name="spacing" >
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
               <number>0</number>
              </property>
              <item>
@@ -198,9 +256,7 @@
        <item row="1" column="0" colspan="2" >
         <widget class="XTreeWidget" name="_bomitem" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>7</hsizetype>
-           <vsizetype>7</vsizetype>
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -232,10 +288,22 @@
           <string/>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="0" >
@@ -254,9 +322,7 @@
              <bool>false</bool>
             </property>
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -367,10 +433,22 @@
           <string/>
          </property>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>9</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>9</number>
+          </property>
+          <property name="rightMargin" >
+           <number>9</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>9</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="1" column="2" >
@@ -539,10 +617,19 @@
     </item>
     <item row="0" column="2" >
      <layout class="QVBoxLayout" >
-      <property name="margin" >
+      <property name="spacing" >
        <number>0</number>
       </property>
-      <property name="spacing" >
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
        <number>0</number>
       </property>
       <item>
@@ -565,6 +652,13 @@
         </property>
         <property name="default" >
          <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="_activate" >
+        <property name="text" >
+         <string>&amp;Activate</string>
         </property>
        </widget>
       </item>
@@ -596,24 +690,64 @@
     <item row="0" column="1" >
      <widget class="QGroupBox" name="_revGroup" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>5</hsizetype>
-        <vsizetype>1</vsizetype>
+       <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
       <property name="title" >
-       <string>Revision</string>
+       <string/>
       </property>
       <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <item row="4" column="0" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="_revisionLit" >
+         <property name="text" >
+          <string>Revision:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+         </property>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="RevisionCluster" name="_revision" />
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_documentNumLit" >
+         <property name="text" >
+          <string>Docu&amp;ment #:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_documentNum</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="XLineEdit" name="_documentNum" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_revisionDateLit" >
+         <property name="text" >
+          <string>Revision Da&amp;te:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_revisionDate</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="DLineEdit" name="_revisionDate" />
+       </item>
+       <item row="3" column="0" >
         <widget class="QLabel" name="_batchSizeLit" >
          <property name="text" >
           <string>Batch Size:</string>
@@ -627,46 +761,9 @@
         </widget>
        </item>
        <item row="3" column="1" >
-        <widget class="DLineEdit" name="_revisionDate" />
-       </item>
-       <item row="3" column="0" >
-        <widget class="QLabel" name="_revisionDateLit" >
-         <property name="text" >
-          <string>Revision Da&amp;te:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_revisionDate</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2" >
-        <widget class="QPushButton" name="_revList" >
-         <property name="maximumSize" >
-          <size>
-           <width>50</width>
-           <height>16777215</height>
-          </size>
-         </property>
-         <property name="text" >
-          <string>...</string>
-         </property>
-         <property name="autoDefault" >
-          <bool>true</bool>
-         </property>
-         <property name="default" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1" >
         <widget class="XLineEdit" name="_batchSize" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>0</vsizetype>
+          <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -682,88 +779,37 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_documentNumLit" >
-         <property name="text" >
-          <string>Docu&amp;ment #:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_documentNum</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="XLineEdit" name="_documentNum" />
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_revisionLit" >
-         <property name="text" >
-          <string>Revisi&amp;on:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_documentNum</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="XLineEdit" name="_revision" />
-       </item>
-       <item row="1" column="1" >
-        <widget class="XComboBox" name="_status" >
-         <item>
-          <property name="text" >
-           <string>Pending</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>Active</string>
-          </property>
-         </item>
-         <item>
-          <property name="text" >
-           <string>Inactive</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_statusLit" >
-         <property name="text" >
-          <string>Status:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
       </layout>
      </widget>
     </item>
     <item row="0" column="0" >
      <widget class="QGroupBox" name="_itemGroup" >
       <property name="title" >
-       <string>Item</string>
+       <string/>
       </property>
       <layout class="QGridLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>9</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
         <number>6</number>
        </property>
        <item row="2" column="0" >
         <widget class="QCheckBox" name="_showExpired" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>1</hsizetype>
-           <vsizetype>0</vsizetype>
+          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -776,9 +822,7 @@
        <item row="3" column="0" >
         <widget class="QCheckBox" name="_showFuture" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>1</hsizetype>
-           <vsizetype>0</vsizetype>
+          <sizepolicy vsizetype="Fixed" hsizetype="Minimum" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -791,9 +835,7 @@
        <item row="0" column="0" >
         <widget class="ItemCluster" name="_item" >
          <property name="sizePolicy" >
-          <sizepolicy>
-           <hsizetype>5</hsizetype>
-           <vsizetype>1</vsizetype>
+          <sizepolicy vsizetype="Minimum" hsizetype="Preferred" >
            <horstretch>0</horstretch>
            <verstretch>0</verstretch>
           </sizepolicy>
@@ -823,9 +865,19 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RevisionCluster</class>
+   <extends>QWidget</extends>
+   <header>revisioncluster.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
@@ -837,23 +889,10 @@
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
   </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_showExpired</tabstop>
   <tabstop>_showFuture</tabstop>
-  <tabstop>_revision</tabstop>
-  <tabstop>_revList</tabstop>
-  <tabstop>_status</tabstop>
   <tabstop>_documentNum</tabstop>
   <tabstop>_revisionDate</tabstop>
   <tabstop>_batchSize</tabstop>

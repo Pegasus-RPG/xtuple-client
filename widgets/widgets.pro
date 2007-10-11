@@ -40,11 +40,11 @@ dynamic {
              plugins/expenselineeditplugin.h \
              plugins/glclusterplugin.h \
              plugins/invoicelineeditplugin.h \
-	     plugins/incidentclusterplugin.h \
+	       plugins/incidentclusterplugin.h \
              plugins/itemclusterplugin.h \
              plugins/itemlineeditplugin.h \
              plugins/lotserialclusterplugin.h \
-	     plugins/opportunityclusterplugin.h \
+	       plugins/opportunityclusterplugin.h \
              plugins/parametergroupplugin.h \
              plugins/periodslistviewplugin.h \
              plugins/planordclusterplugin.h \
@@ -53,6 +53,7 @@ dynamic {
              plugins/polineeditplugin.h \
              plugins/projectclusterplugin.h \
              plugins/projectlineeditplugin.h \
+             plugins/revisionclusterplugin.h\
              plugins/shiftclusterplugin.h \
              plugins/shipmentclusterplugin.h \
              plugins/shiptoclusterplugin.h \
@@ -102,21 +103,22 @@ SOURCES    += OpenMFGWidgets.cpp \
               vendorcluster.cpp \
               soCluster.cpp salesOrderList.cpp \
               shiptoCluster.cpp shipToList.cpp \
-	      toCluster.cpp \
-	      transferOrderList.cpp \
+	        toCluster.cpp \
+	        transferOrderList.cpp \
               calendarTools.cpp \
               parametergroup.cpp \
               comment.cpp comments.cpp \
               xurllabel.cpp \
-	      currCluster.cpp usernameCluster.cpp usernameList.cpp \
+	        currCluster.cpp usernameCluster.cpp usernameList.cpp \
               workcenterCluster.cpp \
               projectCluster.cpp projectList.cpp \
               expensecluster.cpp \
               datecluster.cpp \
-	      virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
+	        virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
               xtreewidget.cpp \
-	      lotserialCluster.cpp \
-	      shipmentCluster.cpp
+	        lotserialCluster.cpp \
+	        shipmentCluster.cpp \
+              revisionCluster.cpp
 
 HEADERS    += OpenMFGWidgets.h \
 	      addresscluster.h contactcluster.h crmacctcluster.h \
@@ -148,7 +150,8 @@ HEADERS    += OpenMFGWidgets.h \
 	      virtualCluster.h deptcluster.h shiftcluster.h \
               xtreewidget.h \
 	      lotserialCluster.h \
-	      shipmentcluster.h
+	      shipmentcluster.h \
+              revisioncluster.h
 
 FORMS += accountSearch.ui
 
