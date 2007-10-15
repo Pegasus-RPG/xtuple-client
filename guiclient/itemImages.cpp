@@ -104,10 +104,7 @@ void itemImages::init()
 {
   statusBar()->hide();
 
-#ifdef Q_WS_MAC
-  _prev->setMaximumWidth(50);
-  _next->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _prev->setMaximumWidth(25);
   _next->setMaximumWidth(25);
 #endif

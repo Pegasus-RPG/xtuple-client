@@ -86,9 +86,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
   connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
 
-#ifdef Q_WS_MAC
-  _booitemList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _booitemList->setMaximumWidth(25);
 #endif
 

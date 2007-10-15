@@ -105,9 +105,7 @@ void copySalesOrder::init()
 {
   _captive = FALSE;
 
-#ifdef Q_WS_MAC
-  _soList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _soList->setMaximumWidth(25);
 #endif
 

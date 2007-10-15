@@ -500,9 +500,7 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   itemLayout->addWidget(_itemNumber);
 
   _itemList = new QPushButton(tr("..."), this, "_itemList");
-#ifdef Q_WS_MAC
-  _itemList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _itemList->setMaximumWidth(25);
 #endif
   _itemList->setFocusPolicy(Qt::NoFocus);

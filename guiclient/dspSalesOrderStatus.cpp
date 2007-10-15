@@ -78,9 +78,7 @@ dspSalesOrderStatus::dspSalesOrderStatus(QWidget* parent, const char* name, Qt::
   connect(_soList, SIGNAL(clicked()), this, SLOT(sSalesOrderList()));
   connect(_so, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
-#ifdef Q_WS_MAC
-  _soList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _soList->setMaximumWidth(25);
 #endif
 

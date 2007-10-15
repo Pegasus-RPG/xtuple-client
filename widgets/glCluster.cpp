@@ -168,9 +168,7 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   _layoutMain->addWidget(_account);
 
   _list = new QPushButton(tr("..."), this, "_list");
-#ifdef Q_WS_MAC
-  _list->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
 #endif
   _list->setFocusPolicy(Qt::NoFocus);

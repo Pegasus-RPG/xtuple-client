@@ -84,9 +84,7 @@ image::image(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-#ifdef Q_WS_MAC
-  _fileList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _fileList->setMaximumWidth(25);
 #endif
 

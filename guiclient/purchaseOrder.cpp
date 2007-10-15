@@ -101,9 +101,7 @@ purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendaddrList, SIGNAL(clicked()),     this, SLOT(sVendaddrList()));
   connect(_vendor,       SIGNAL(newId(int)),    this, SLOT(sHandleVendor(int)));
 
-#ifdef Q_WS_MAC
-  _vendaddrList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _vendaddrList->setMaximumWidth(25);
 #endif
 

@@ -84,9 +84,7 @@ dspShipmentsBySalesOrder::dspShipmentsBySalesOrder(QWidget* parent, const char* 
   connect(_soship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
-#ifdef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _salesOrderList->setMaximumWidth(25);
 #endif
 

@@ -87,9 +87,7 @@ countSlip::countSlip(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   _captive = FALSE;
 
-#ifdef Q_WS_MAC
-  _countTagList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _countTagList->setMaximumWidth(25);
 #endif
 

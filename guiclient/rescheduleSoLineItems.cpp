@@ -86,9 +86,7 @@ rescheduleSoLineItems::rescheduleSoLineItems(QWidget* parent, const char* name, 
 
   _captive = FALSE;
 
-#ifdef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _salesOrderList->setMaximumWidth(25);
 #endif
 

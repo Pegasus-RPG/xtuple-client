@@ -89,9 +89,7 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
   connect(_postAll, SIGNAL(clicked()), this, SLOT(sPostAll()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
-#ifdef Q_WS_MAC
-  _countTagList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _countTagList->setMaximumWidth(25);
 #endif
 

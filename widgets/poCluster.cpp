@@ -243,9 +243,7 @@ PoCluster::PoCluster(QWidget *parent, const char *name) :
 
   _poList = new QPushButton(tr("..."), firstLine);
   _poList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifdef Q_WS_MAC
-  _poList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _poList->setMaximumWidth(25);
 #endif
   _poList->setFocusPolicy(Qt::NoFocus);

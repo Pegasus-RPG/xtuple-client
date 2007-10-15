@@ -76,9 +76,7 @@ dspInvoiceInformation::dspInvoiceInformation(QWidget* parent, const char* name, 
   connect(_invoiceList, SIGNAL(clicked()), this, SLOT(sInvoiceList()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sViewDetails()));
 
-#ifdef Q_WS_MAC
-  _invoiceList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _invoiceList->setMaximumWidth(25);
 #endif
 

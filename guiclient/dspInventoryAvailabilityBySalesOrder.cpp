@@ -97,9 +97,7 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
   connect(_avail, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
 
-#ifdef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _salesOrderList->setMaximumWidth(25);
 #endif
 

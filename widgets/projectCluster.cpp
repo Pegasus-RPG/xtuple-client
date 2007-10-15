@@ -214,9 +214,7 @@ void ProjectCluster::constructor()
 
   _prjList = new QPushButton(tr("..."), this, "_prjList");
   _prjList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifdef Q_WS_MAC
-  _prjList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _prjList->setMaximumWidth(25);
 #endif
   _prjList->setFocusPolicy(Qt::NoFocus);

@@ -103,10 +103,7 @@ void configureAccountingSystem::languageChange()
 
 void configureAccountingSystem::init()
 {
-#ifdef Q_WS_MAC
-  _importPathList->setMaximumWidth(50);
-  _exportPathList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _importPathList->setMaximumWidth(25);
   _exportPathList->setMaximumWidth(25);
 #endif

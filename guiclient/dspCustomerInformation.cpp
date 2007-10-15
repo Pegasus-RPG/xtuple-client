@@ -105,9 +105,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_viewQuote, SIGNAL(clicked()), this, SLOT(sViewQuote()));
   connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
 
-#ifdef Q_WS_MAC
-  _custList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _custList->setMaximumWidth(25);
 #endif
 

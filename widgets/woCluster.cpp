@@ -344,9 +344,7 @@ void WoCluster::constructor()
 
   _woList = new QPushButton(tr("..."), this, "_woList");
   _woList->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifdef Q_WS_MAC
-  _woList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _woList->setMaximumWidth(25);
 #endif
   _woList->setFocusPolicy(Qt::NoFocus);

@@ -79,9 +79,7 @@ copyPurchaseOrder::copyPurchaseOrder(QWidget* parent, const char* name, bool mod
 
     _captive = FALSE;
 
-#ifdef Q_WS_MAC
-    _poList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
     _poList->setMaximumWidth(25);
 #endif
 

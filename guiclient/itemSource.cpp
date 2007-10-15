@@ -84,9 +84,7 @@ itemSource::itemSource(QWidget* parent, const char* name, bool modal, Qt::WFlags
 
   _item->setType(ItemLineEdit::cGeneralPurchased);
 
-#ifdef Q_WS_MAC
-  _vendorList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _vendorList->setMaximumWidth(25);
 #endif
 

@@ -117,9 +117,7 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
 
   setFreeFormShipto(false);
 
-#ifdef Q_WS_MAC
-  _shipToList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _shipToList->setMaximumWidth(25);
 #endif
 

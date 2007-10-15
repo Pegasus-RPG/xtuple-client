@@ -60,7 +60,7 @@
 //  Copyright (c) 2002-2007, OpenMFG, LLC
 
 #include <Q3DragObject>
-#include <Q3HBoxLayout>
+#include <QHBoxLayout>
 #include <QDragEnterEvent>
 #include <QDropEvent>
 #include <QLabel>
@@ -434,9 +434,9 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   QWidget(pParent, name)
 {
 //  Create and place the component Widgets
-  Q3HBoxLayout *layoutMain = new Q3HBoxLayout(this, 0, 7, "layoutMain"); 
-  Q3HBoxLayout *layoutNumber = new Q3HBoxLayout(0, 0, 5, "layoutNumber"); 
-  Q3HBoxLayout *layoutButtons = new Q3HBoxLayout(0, 0, 0, "layoutButtons"); 
+  QHBoxLayout *layoutMain = new QHBoxLayout(this, 0, 7, "layoutMain"); 
+  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 5, "layoutNumber"); 
+  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, 0, "layoutButtons"); 
 
   QLabel *_customerNumberLit = new QLabel(tr("Customer #:"), this, "_customerNumberLit");
   _customerNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -447,18 +447,14 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   layoutMain->addLayout(layoutNumber);
 
   _list = new QPushButton(tr("..."), this, "_list");
-#ifdef Q_WS_MAC
-  _list->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
 #endif
   _list->setFocusPolicy(Qt::NoFocus);
   layoutButtons->addWidget(_list);
 
   _info = new QPushButton(tr("?"), this, "_info");
-#ifdef Q_WS_MAC
-  _info->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _info->setMaximumWidth(25);
 #endif
   _info->setFocusPolicy(Qt::NoFocus);

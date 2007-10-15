@@ -116,9 +116,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
 
   statusBar()->hide();
 
-#ifdef Q_WS_MAC
-  _poList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _poList->setMaximumWidth(25);
 #endif
 

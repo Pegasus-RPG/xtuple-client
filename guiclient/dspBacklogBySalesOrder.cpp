@@ -87,9 +87,7 @@ dspBacklogBySalesOrder::dspBacklogBySalesOrder(QWidget* parent, const char* name
   connect(_soitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_salesOrder, SIGNAL(requestList()), this, SLOT(sSalesOrderList()));
 
-#ifdef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _salesOrderList->setMaximumWidth(25);
 #endif
 

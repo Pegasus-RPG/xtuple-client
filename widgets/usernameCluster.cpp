@@ -175,9 +175,7 @@ UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
 
   _list = new QPushButton(tr("..."), this);
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifdef Q_WS_MAC
-  _list->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _list->setMaximumWidth(25);
 #endif
   _list->setFocusPolicy(Qt::NoFocus);

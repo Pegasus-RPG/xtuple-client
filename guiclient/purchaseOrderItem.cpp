@@ -69,9 +69,7 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
 {
   setupUi(this);
 
-#ifdef Q_WS_MAC
-  _vendorItemNumberList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _vendorItemNumberList->setMaximumWidth(25);
 #endif
 

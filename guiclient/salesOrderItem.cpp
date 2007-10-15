@@ -123,10 +123,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_taxcode,		SIGNAL(newID(int)), this, SLOT(sLookupTax()));
   connect(_taxtype,		SIGNAL(newID(int)), this, SLOT(sLookupTaxCode()));
 
-#ifdef Q_WS_MAC
-  _listPrices->setMaximumWidth(50);
-  _subItemList->setMaximumWidth(50);
-#else
+#ifndef Q_WS_MAC
   _listPrices->setMaximumWidth(25);
   _subItemList->setMaximumWidth(25);
 #endif
