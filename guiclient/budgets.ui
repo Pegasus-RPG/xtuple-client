@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Budgets</string>
+   <string>List Budgets</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

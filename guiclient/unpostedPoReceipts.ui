@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Unposted Receipts</string>
+   <string>List Unposted Receipts</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

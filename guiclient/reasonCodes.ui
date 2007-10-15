@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Reason Codes</string>
+      <string>List Reason Codes</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

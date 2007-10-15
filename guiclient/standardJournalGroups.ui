@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Standard Journal Groups</string>
+   <string>List Standard Journal Groups</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

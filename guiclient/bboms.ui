@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Breeder Bills of Materials</string>
+      <string>List Breeder Bills of Materials</string>
     </property>
     <widget class="QWidget" >
       <layout class="QVBoxLayout" >

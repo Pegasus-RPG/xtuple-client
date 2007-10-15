@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>EDI Profiles</string>
+      <string>List EDI Profiles</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

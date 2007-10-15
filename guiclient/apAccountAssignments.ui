@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>A/P Account Assignments</string>
+      <string>List A/P Account Assignments</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

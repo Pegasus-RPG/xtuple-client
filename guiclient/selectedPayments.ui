@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Selected Payments</string>
+   <string>List Selected Payments</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >

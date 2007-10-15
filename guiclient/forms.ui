@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Forms</string>
+      <string>List Forms</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

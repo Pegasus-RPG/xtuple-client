@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Warehouse Calendar Exceptions</string>
+   <string>List Warehouse Calendar Exceptions</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

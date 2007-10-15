@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Units of Measure</string>
+      <string>List Units of Measure</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

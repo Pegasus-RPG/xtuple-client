@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Check Formats</string>
+      <string>List Check Formats</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

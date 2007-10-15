@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Unposted Credit Memos</string>
+   <string>List Unposted Credit Memos</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

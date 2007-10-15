@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Planner Codes</string>
+      <string>List Planner Codes</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

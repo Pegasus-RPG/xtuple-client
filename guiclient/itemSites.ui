@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Item Sites</string>
+   <string>List Item Sites</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >

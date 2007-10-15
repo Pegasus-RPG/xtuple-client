@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Comment Types</string>
+      <string>List Comment Types</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Opportunity Stages</string>
+   <string>List Opportunity Stages</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

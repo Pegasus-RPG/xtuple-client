@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Cost Categories</string>
+      <string>List Cost Categories</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

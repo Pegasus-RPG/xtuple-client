@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Open Sales Orders</string>
+      <string>List Open Sales Orders</string>
     </property>
     <widget class="QWidget" >
       <layout class="QVBoxLayout" >

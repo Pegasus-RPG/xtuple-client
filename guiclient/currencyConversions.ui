@@ -19,7 +19,7 @@
       </size>
     </property>
     <property name="windowTitle" >
-      <string>Currency Exchange Rates</string>
+      <string>List Currency Exchange Rates</string>
     </property>
     <widget class="QWidget" >
       <layout class="QVBoxLayout" >

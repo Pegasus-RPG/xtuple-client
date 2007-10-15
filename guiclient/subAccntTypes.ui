@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>G/L Subaccount Types</string>
+      <string>List G/L Subaccount Types</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

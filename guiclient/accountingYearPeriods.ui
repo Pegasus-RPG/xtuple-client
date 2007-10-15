@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Fiscal Years</string>
+   <string>List Fiscal Years</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

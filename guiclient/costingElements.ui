@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>User-Defined Costing Elements</string>
+   <string>List User-Defined Costing Elements</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Customer Groups</string>
+      <string>List Customer Groups</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

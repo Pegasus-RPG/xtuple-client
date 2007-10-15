@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Incident Severities</string>
+   <string>List Incident Severities</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

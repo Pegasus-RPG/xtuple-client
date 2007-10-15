@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Hot Keys</string>
+      <string>List Hot Keys</string>
     </property>
     <layout class="QVBoxLayout" >
       <property name="margin" >

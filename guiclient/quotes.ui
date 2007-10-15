@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Quotes</string>
+   <string>List Quotes</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >

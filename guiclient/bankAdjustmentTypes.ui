@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Adjustment Types</string>
+      <string>List Adjustment Types</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

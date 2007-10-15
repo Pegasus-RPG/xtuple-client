@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Standard Operations</string>
+      <string>List Standard Operations</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

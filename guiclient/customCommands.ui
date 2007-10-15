@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Custom Commands</string>
+   <string>List Custom Commands</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

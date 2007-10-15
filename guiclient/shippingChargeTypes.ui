@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Shipping Charge Types</string>
+      <string>List Shipping Charge Types</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

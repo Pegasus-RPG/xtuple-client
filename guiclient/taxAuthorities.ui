@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Tax Authorities</string>
+   <string>List Tax Authorities</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

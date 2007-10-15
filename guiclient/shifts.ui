@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Shifts</string>
+      <string>List Shifts</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

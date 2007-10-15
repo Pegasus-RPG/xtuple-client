@@ -13,7 +13,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Standard Journals</string>
+   <string>List Standard Journals</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QHBoxLayout" >

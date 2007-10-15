@@ -16,7 +16,7 @@
    </size>
   </property>
   <property name="windowTitle" >
-   <string>Open Return Material Authorizations</string>
+   <string>List Return Material Authorizations</string>
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >

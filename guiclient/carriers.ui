@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Carriers</string>
+      <string>List Carriers</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

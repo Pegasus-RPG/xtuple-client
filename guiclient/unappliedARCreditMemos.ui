@@ -13,7 +13,7 @@
       </rect>
     </property>
     <property name="windowTitle" >
-      <string>Unapplied A/R Credit Memos</string>
+      <string>List Unapplied A/R Credit Memos</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

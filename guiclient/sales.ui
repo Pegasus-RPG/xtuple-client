@@ -16,7 +16,7 @@
       <cursor>0</cursor>
     </property>
     <property name="windowTitle" >
-      <string>Sales</string>
+      <string>List Sales</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >

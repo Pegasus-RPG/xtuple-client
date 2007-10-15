@@ -16,7 +16,7 @@
       <cursor>0</cursor>
     </property>
     <property name="windowTitle" >
-      <string>Standard Labor Rates</string>
+      <string>List Standard Labor Rates</string>
     </property>
     <widget class="QWidget" >
       <layout class="QHBoxLayout" >
