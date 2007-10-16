@@ -62,6 +62,7 @@
 #include <QMessageBox>
 #include <QValidator>
 #include <QVariant>
+#include <QSqlError>
 
 #include <openreports.h>
 
@@ -86,6 +87,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
+  connect(_activate, SIGNAL(clicked()), this, SLOT(sActivate()));
 
   _totalQtyPerCache = 0.0;
   
@@ -143,22 +145,8 @@ enum SetResponse BOM::set(const ParameterList &pParams)
        _revision->setId(param.toInt());
      else if (_metrics->boolean("RevControl"))
 	 {
-	   q.prepare("SELECT rev_id,rev_status "
-	             "FROM rev "
-				 "WHERE ( (rev_target_type='BOM') " 
-				 "AND (rev_target_id=:item_id) "
-				 "AND (rev_status='A') );");
-	   q.bindValue(":item_id", _item->id());
-	   q.exec();
-	   if (q.first())
-         _revision->setId(q.value("rev_id").toInt());
-	     if (q.value("rev_status").toString() == "P")
-			 _activate->show();
-	   else
-         _revision->setId(-1);
+	   _revision->setTargetId(_item->id());
 	 }
-	 else
-		 _revision->setId(-1);
    }
   
   param = pParams.value("mode", &valid);
@@ -382,7 +370,7 @@ void BOM::sFillList(int pItemid, bool)
                "       formatQty(bomhead_batchsize) AS f_batchsize,"
                "       bomhead_requiredqtyper "
                "FROM bomhead "
-               "WHERE ( (bomhead_item_id=:item_id)"
+               "WHERE ( (bomhead_item_id=:item_id) "
 			   "AND (bomhead_rev_id=:revision_id) );" );
     q.bindValue(":item_id", _item->id());
 	q.bindValue(":revision_id", _revision->id());
@@ -390,7 +378,6 @@ void BOM::sFillList(int pItemid, bool)
     if (q.first())
     {
       _documentNum->setText(q.value("bomhead_docnum"));
-    //  _revision->setId(q.value("bomhead_rev_id").toInt());
       _revisionDate->setDate(q.value("bomhead_revisiondate").toDate());
       _batchSize->setText(q.value("f_batchsize"));
       if(q.value("bomhead_requiredqtyper").toDouble()!=0)
@@ -398,6 +385,30 @@ void BOM::sFillList(int pItemid, bool)
         _doRequireQtyPer->setChecked(true);
         _requiredQtyPer->setText(q.value("bomhead_requiredqtyper").toString());
       }
+	  if ((_revision->description() == "Pending") && (_privleges->check("MaintainRevisions")))
+	  	  _activate->show();
+  	  else if (_revision->description() == "Inactive")
+	  {
+		  _save->setEnabled(FALSE);
+	      _new->setEnabled(FALSE);
+		  _documentNum->setEnabled(FALSE);
+		  _revisionDate->setEnabled(FALSE);
+		  _batchSize->setEnabled(FALSE);
+		  _bomitem->setEnabled(FALSE);
+		  _activate->hide();
+	  }
+	  else
+		  _activate->hide();
+
+	  if ((_revision->description() == "Pending") || (_revision->description() == "Active"))
+	  {
+		  _save->setEnabled(TRUE);
+	      _new->setEnabled(TRUE);
+		  _documentNum->setEnabled(TRUE);
+		  _revisionDate->setEnabled(TRUE);
+		  _batchSize->setEnabled(TRUE);
+		  _bomitem->setEnabled(TRUE);
+	  }
     }
     else
     {
@@ -608,3 +619,16 @@ bool BOM::sCheckRequiredQtyPer()
   return true;
 }
 
+void BOM::sActivate()
+{
+	q.prepare("SELECT activateRev(:rev_id) AS result;");
+	q.bindValue(":rev_id", _revision->id());
+	q.exec();
+	if (q.first())
+	  _revision->setId(_revision->id());
+	else  if (q.lastError().type() != QSqlError::None)
+	{
+	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
+}
