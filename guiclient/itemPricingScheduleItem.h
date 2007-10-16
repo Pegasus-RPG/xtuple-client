@@ -59,7 +59,7 @@
 #define ITEMPRICINGSCHEDULEITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_itemPricingScheduleItem.h"
@@ -72,15 +72,15 @@ public:
     itemPricingScheduleItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~itemPricingScheduleItem();
 
-    virtual void init();
-
 public slots:
-    virtual SetResponse set( ParameterList & pParams );
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
     virtual void sUpdateCosts( int pItemid );
     virtual void sUpdateMargins();
     virtual void sTypeChanged();
+    virtual void sQtyUOMChanged();
+    virtual void sPriceUOMChanged();
 
 protected slots:
     virtual void languageChange();
@@ -90,6 +90,7 @@ private:
     int _ipsheadid;
     int _ipsitemid;
     int _ipsprodcatid;
+    int _invuomid;
 
 };
 

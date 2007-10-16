@@ -57,9 +57,9 @@
 
 #include "itemListPrice.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 
 /*
  *  Constructs a itemListPrice as a child of 'parent', with the
@@ -71,38 +71,16 @@
 itemListPrice::itemListPrice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulate()));
-    connect(_listPrice, SIGNAL(lostFocus()), this, SLOT(sUpdateMargins()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulate()));
+  connect(_listPrice, SIGNAL(lostFocus()), this, SLOT(sUpdateMargins()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-itemListPrice::~itemListPrice()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void itemListPrice::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void itemListPrice::init()
-{
   _item->setType(ItemLineEdit::cSold);
   _listPrice->setValidator(omfgThis->priceVal());
 
@@ -114,7 +92,24 @@ void itemListPrice::init()
   }
 }
 
-enum SetResponse itemListPrice::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+itemListPrice::~itemListPrice()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void itemListPrice::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse itemListPrice::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -151,7 +146,7 @@ void itemListPrice::sPopulate()
              "       actualcost, formatCost(actualCost) AS f_actualcost,"
              "       formatCost(standardcost * iteminvpricerat(item_id)) AS f_extstandardcost,"
              "       formatCost(actualCost * iteminvpricerat(item_id)) AS f_extactualcost "
-             "FROM ( SELECT uom_name, item_listprice, iteminvpricerat(item_id) AS invpricerat,"
+             "FROM ( SELECT item_id, uom_name, item_listprice, iteminvpricerat(item_id) AS invpricerat,"
              "              stdCost(item_id) AS standardcost,"
              "              actCost(item_id) AS actualcost "
              "       FROM item JOIN uom ON (item_price_uom_id=uom_id)"

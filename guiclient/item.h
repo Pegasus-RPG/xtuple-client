@@ -129,6 +129,7 @@ public slots:
     virtual void sDeleteUOM();
     virtual void sFillUOMList();
     virtual void sPopulatePriceUOMs();
+    virtual void closeEvent( QCloseEvent * pEvent );
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );
@@ -141,7 +142,9 @@ private:
     int _itemid;
     bool _disallowPlanningType;
     QString _originalItemType;
+    bool _inTransaction;
 
+    void saveCore();
 };
 
 #endif // ITEM_2_H

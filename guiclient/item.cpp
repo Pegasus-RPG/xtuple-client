@@ -64,6 +64,7 @@
 #include <QStatusBar>
 #include <QKeyEvent>
 #include <QSqlError>
+#include <QCloseEvent>
 
 #include <openreports.h>
 #include "itemSite.h"
@@ -147,6 +148,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   statusBar()->hide();
   _disallowPlanningType = false;
+  _inTransaction = false;
 
   _listprice->setValidator(omfgThis->moneyVal());
   _prodWeight->setValidator(omfgThis->weightVal());
@@ -390,6 +392,38 @@ enum SetResponse item::set(const ParameterList &pParams)
   return NoError;
 }
 
+void item::saveCore()
+{
+  if(cNew != _mode || _inTransaction)
+    return;
+
+  if (_inventoryUOM->id() == -1)
+  {
+    QMessageBox::information( this, tr("Cannot Save Item"),
+                              tr("You must select an Inventory Unit of Measure for this Item before continuing.")  );
+    _inventoryUOM->setFocus();
+    return;
+  }
+
+  q.exec("BEGIN;");
+  _inTransaction = true;
+
+  q.prepare("INSERT INTO item"
+            "      (item_id, item_inv_uom_id, item_price_uom_id)"
+            "VALUES(:item_id, :item_inv_uom_id, :item_inv_uom_id);");
+  q.bindValue(":item_id", _itemid);
+  q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
+  if(!q.exec() || q.lastError().type() != QSqlError::None)
+  {
+    q.exec("ROLLBACK;");
+    _inTransaction = false;
+    return;
+  }
+
+  // TODO: We can enable certain functionality here that needs a saved record
+  _newUOM->setEnabled(true);
+}
+
 void item::sSave()
 {
   QString itemNumber = _itemNumber->text().stripWhiteSpace().upper();
@@ -459,6 +493,13 @@ void item::sSave()
     return;
   }
 
+  if ((_sold->isChecked()) && (_priceUOM->id() == -1))
+  {
+    QMessageBox::information( this, tr("Cannot Save Item"),
+                              tr("You must select a Selling UOM for this Sold Item before continuing.") );
+    return;
+  }
+
   if (_classcode->id() == -1)
   {
     QMessageBox::information( this, tr("Cannot Save Item"),
@@ -508,7 +549,7 @@ void item::sSave()
 // ToDo
   }
 
-  if ( (_mode == cNew) || (_mode == cCopy) )
+  if ( (_mode == cNew && !_inTransaction) || (_mode == cCopy) )
     q.prepare( "INSERT INTO item "
                "( item_id, item_number, item_active,"
                "  item_descrip1, item_descrip2,"
@@ -531,7 +572,7 @@ void item::sSave()
                "  :item_exclusive,"
                "  :item_listprice, :item_upccode, :item_config,"
                "  :item_comments, :item_extdescrip );" );
-  else if (_mode == cEdit)
+  else if ((_mode == cEdit) || (cNew == _mode && _inTransaction))
     q.prepare( "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
                "    item_type=:item_type, item_inv_uom_id=:item_inv_uom_id, item_classcode_id=:item_classcode_id,"
@@ -586,6 +627,12 @@ void item::sSave()
     q.bindValue(":item_id", _itemid);
     q.bindValue(":sourceItem_id", sourceItemid);
     q.exec();
+  }
+
+  if(_inTransaction)
+  {
+    q.exec("COMMIT;");
+    _inTransaction = false;
   }
 
   omfgThis->sItemsUpdated(_itemid, TRUE);
@@ -908,6 +955,7 @@ void item::sPopulateUOMs()
 {
   if (_inventoryUOM->id()!=-1)
   {
+    saveCore();
     sPopulatePriceUOMs();
     if (_priceUOM->id()==-1)
       _priceUOM->setId(_inventoryUOM->id());
@@ -1626,8 +1674,8 @@ void item::sPopulatePriceUOMs()
 {
   int pid = _priceUOM->id();
   q.prepare("SELECT uom_id, uom_name"
-            "  FROM uom JOIN item ON (item_inv_uom_id=uom_id)"
-            " WHERE(item_id=:item_id)"
+            "  FROM uom"
+            " WHERE(uom_id=:uom_id)"
             " UNION "
             "SELECT uom_id, uom_name"
             "  FROM uom"
@@ -1648,7 +1696,19 @@ void item::sPopulatePriceUOMs()
             "   AND (uomtype_name='Selling'))"
             " ORDER BY uom_name;");
   q.bindValue(":item_id", _itemid);
+  q.bindValue(":uom_id", _inventoryUOM->id());
   q.exec();
   _priceUOM->populate(q, pid);
+}
+
+void item::closeEvent(QCloseEvent *pEvent)
+{
+  if(_inTransaction)
+  {
+    q.exec("ROLLBACK;");
+    _inTransaction = false;
+  }
+
+  QMainWindow::closeEvent(pEvent);
 }
 

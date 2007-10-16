@@ -59,7 +59,7 @@
 #define ITEMLISTPRICE_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_itemListPrice.h"
@@ -72,10 +72,8 @@ public:
     itemListPrice(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~itemListPrice();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sSave();
     virtual void sPopulate();
     virtual void sUpdateMargins();

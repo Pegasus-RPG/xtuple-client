@@ -57,9 +57,9 @@
 
 #include "itemPricingScheduleItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 
 /*
  *  Constructs a itemPricingScheduleItem as a child of 'parent', with the
@@ -71,48 +71,29 @@
 itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sUpdateCosts(int)));
-    connect(_price, SIGNAL(idChanged(int)), _actCost, SLOT(setId(int)));
-    connect(_price, SIGNAL(idChanged(int)), _stdCost, SLOT(setId(int)));
-    connect(_price, SIGNAL(idChanged(int)), _listPrice, SLOT(setId(int)));
-    connect(_price, SIGNAL(effectiveChanged(const QDate&)), _actCost, SLOT(setEffective(const QDate&)));
-    connect(_price, SIGNAL(effectiveChanged(const QDate&)), _stdCost, SLOT(setEffective(const QDate&)));
-    connect(_price, SIGNAL(effectiveChanged(const QDate&)), _listPrice, SLOT(setEffective(const QDate&)));
-    connect(_price, SIGNAL(valueChanged()), this, SLOT(sUpdateMargins()));
-    connect(_itemSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_item, SIGNAL(valid(bool)), _save, SLOT(setEnabled(bool)));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sUpdateCosts(int)));
+  connect(_price, SIGNAL(idChanged(int)), _actCost, SLOT(setId(int)));
+  connect(_price, SIGNAL(idChanged(int)), _stdCost, SLOT(setId(int)));
+  connect(_price, SIGNAL(idChanged(int)), _listPrice, SLOT(setId(int)));
+  connect(_price, SIGNAL(effectiveChanged(const QDate&)), _actCost, SLOT(setEffective(const QDate&)));
+  connect(_price, SIGNAL(effectiveChanged(const QDate&)), _stdCost, SLOT(setEffective(const QDate&)));
+  connect(_price, SIGNAL(effectiveChanged(const QDate&)), _listPrice, SLOT(setEffective(const QDate&)));
+  connect(_price, SIGNAL(valueChanged()), this, SLOT(sUpdateMargins()));
+  connect(_itemSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
+  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-itemPricingScheduleItem::~itemPricingScheduleItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void itemPricingScheduleItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void itemPricingScheduleItem::init()
-{
   _ipsheadid = -1;
   _ipsitemid = -1;
   _ipsprodcatid = -1;
+  _invuomid = -1;
 
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
@@ -121,7 +102,24 @@ void itemPricingScheduleItem::init()
   _prodcat->setType(XComboBox::ProductCategories);
 }
 
-enum SetResponse itemPricingScheduleItem::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+itemPricingScheduleItem::~itemPricingScheduleItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void itemPricingScheduleItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -207,10 +205,12 @@ void itemPricingScheduleItem::sSave()
                  "FROM ipsitem "
                  "WHERE ( (ipsitem_ipshead_id=:ipshead_id)"
                  " AND (ipsitem_item_id=:item_id)"
+                 " AND (ipsitem_qty_uom_id=:uom_id"
                  " AND (ipsitem_qtybreak=:qtybreak) );" );
       q.bindValue(":ipshead_id", _ipsheadid);
       q.bindValue(":item_id", _item->id());
       q.bindValue(":qtybreak", _qtyBreak->toDouble());
+      q.bindValue(":uom_id", _qtyUOM->id());
       q.exec();
       if (q.first())
       {
@@ -226,9 +226,9 @@ void itemPricingScheduleItem::sSave()
       //  ToDo
 
       q.prepare( "INSERT INTO ipsitem "
-                 "( ipsitem_id, ipsitem_ipshead_id, ipsitem_item_id, ipsitem_qtybreak, ipsitem_price ) "
+                 "( ipsitem_id, ipsitem_ipshead_id, ipsitem_item_id, ipsitem_qty_uom_id, ipsitem_qtybreak, ipsitem_price_uom_id, ipsitem_price ) "
                  "VALUES "
-                 "( :ipsitem_id, :ipshead_id, :ipsitem_item_id, :ipsitem_qtybreak, :ipsitem_price );" );
+                 "( :ipsitem_id, :ipshead_id, :ipsitem_item_id, :qty_uom_id, :ipsitem_qtybreak, :price_uom_id, :ipsitem_price );" );
     }
     else
     {
@@ -264,7 +264,10 @@ void itemPricingScheduleItem::sSave()
   {
     if(_itemSelected->isChecked())
       q.prepare( "UPDATE ipsitem "
-                 "SET ipsitem_qtybreak=:ipsitem_qtybreak, ipsitem_price=:ipsitem_price "
+                 "   SET ipsitem_qty_uom_id=:qty_uom_id,"
+                 "       ipsitem_qtybreak=:ipsitem_qtybreak,"
+                 "       ipsitem_price_uom_id=:price_uom_id,"
+                 "       ipsitem_price=:ipsitem_price "
                  "WHERE (ipsitem_id=:ipsitem_id);" );
     else
       q.prepare( "UPDATE ipsprodcat "
@@ -281,6 +284,8 @@ void itemPricingScheduleItem::sSave()
   q.bindValue(":ipsprodcat_qtybreak", _qtyBreakCat->toDouble());
   q.bindValue(":ipsitem_price", _price->localValue());
   q.bindValue(":ipsprodcat_discntprcnt", (_discount->toDouble() / 100.0));
+  q.bindValue(":qty_uom_id", _qtyUOM->id());
+  q.bindValue(":price_uom_id", _priceUOM->id());
   q.exec();
 
   if(_itemSelected->isChecked())
@@ -294,7 +299,10 @@ void itemPricingScheduleItem::populate()
   if(_itemSelected->isChecked())
   {
     q.prepare( "SELECT ipsitem_item_id,"
-               "       ipsitem_qtybreak, ipsitem_price "
+               "       ipsitem_qty_uom_id,"
+               "       ipsitem_qtybreak,"
+               "       ipsitem_price_uom_id,"
+               "       ipsitem_price "
                "FROM ipsitem "
                "WHERE (ipsitem_id=:ipsitem_id);" );
     q.bindValue(":ipsitem_id", _ipsitemid);
@@ -304,6 +312,8 @@ void itemPricingScheduleItem::populate()
       _item->setId(q.value("ipsitem_item_id").toInt());
       _qtyBreak->setText(formatQty(q.value("ipsitem_qtybreak").toDouble()));
       _price->setLocalValue(q.value("ipsitem_price").toDouble());
+      _qtyUOM->setId(q.value("ipsitem_qty_uom_id").toInt());
+      _priceUOM->setId(q.value("ipsitem_price_uom_id").toInt());
 
       sUpdateMargins();
     }
@@ -327,25 +337,53 @@ void itemPricingScheduleItem::populate()
 
 void itemPricingScheduleItem::sUpdateCosts(int pItemid)
 {
+  XSqlQuery uom;
+  uom.prepare("SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN uom ON (item_inv_uom_id=uom_id)"
+              " WHERE(item_id=:item_id)"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " ORDER BY uom_name;");
+  uom.bindValue(":item_id", _item->id());
+  uom.exec();
+  _qtyUOM->populate(uom);
+  _priceUOM->populate(uom);
+
   XSqlQuery cost;
-  cost.prepare( "SELECT uom_name,"
+  cost.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                 "       formatUOMRatio(iteminvpricerat(item_id)) AS f_ratio,"
                 "       item_listprice, "
                 "       (stdcost(item_id) * iteminvpricerat(item_id)) AS standard,"
                 "       (actcost(item_id, :curr_id) * iteminvpricerat(item_id)) AS actual "
-                "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
-                "WHERE (item_id=:item_id);" );
+                "  FROM item"
+                " WHERE (item_id=:item_id);" );
   cost.bindValue(":item_id", pItemid);
   cost.bindValue(":curr_id", _actCost->id());
   cost.exec();
   if (cost.first())
   {
+    _invuomid = cost.value("item_inv_uom_id").toInt();
     _listPrice->setBaseValue(cost.value("item_listprice").toDouble());
-    _priceUOM->setText(cost.value("uom_name").toString());
     _pricingRatio->setText(cost.value("f_ratio").toString());
 
     _stdCost->setBaseValue(cost.value("standard").toDouble());
     _actCost->setLocalValue(cost.value("actual").toDouble());
+
+    _qtyUOM->setId(cost.value("item_inv_uom_id").toInt());
+    _priceUOM->setId(cost.value("item_price_uom_id").toInt());
   }
 }
 
@@ -398,6 +436,48 @@ void itemPricingScheduleItem::sTypeChanged()
   {
     _widgetStack->setCurrentIndex(1);
     _save->setEnabled(true);
+  }
+}
+
+void itemPricingScheduleItem::sQtyUOMChanged()
+{
+  if(_qtyUOM->id() != _invuomid)
+  {
+    _priceUOM->setId(_qtyUOM->id());
+    _priceUOM->setEnabled(false);
+  }
+  else
+    _priceUOM->setEnabled(true);
+  sPriceUOMChanged();
+}
+
+void itemPricingScheduleItem::sPriceUOMChanged()
+{
+  if(_priceUOM->id() == -1 || _qtyUOM->id() == -1)
+    return;
+
+  XSqlQuery cost;
+  cost.prepare( "SELECT "
+                "       formatUOMRatio(itemuomtouomratio(item_id, :qtyuomid, :priceuomid)) AS f_ratio,"
+                "       ((item_listprice / iteminvpricerat(item_id)) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS listprice, "
+                "       (stdcost(item_id) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS standard,"
+                "       (actcost(item_id, :curr_id) * itemuomtouomratio(item_id, :priceuomid, item_inv_uom_id)) AS actual "
+                "  FROM item"
+                " WHERE (item_id=:item_id);" );
+  cost.bindValue(":item_id", _item->id());
+  cost.bindValue(":curr_id", _actCost->id());
+  cost.bindValue(":qtyuomid", _qtyUOM->id());
+  cost.bindValue(":priceuomid", _priceUOM->id());
+  cost.exec();
+  if (cost.first())
+  {
+    _listPrice->setBaseValue(cost.value("listprice").toDouble());
+    _pricingRatio->setText(cost.value("f_ratio").toString());
+
+    _stdCost->setBaseValue(cost.value("standard").toDouble());
+    _actCost->setLocalValue(cost.value("actual").toDouble());
+
+    sUpdateMargins();
   }
 }
 

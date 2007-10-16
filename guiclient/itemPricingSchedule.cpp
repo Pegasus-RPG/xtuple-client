@@ -90,7 +90,9 @@ itemPricingSchedule::itemPricingSchedule(QWidget* parent, const char* name, bool
   _ipsitem->addColumn(tr("Type"),            _ynColumn,    Qt::AlignLeft  );
   _ipsitem->addColumn(tr("Item/Prod. Cat."), _itemColumn,  Qt::AlignLeft  );
   _ipsitem->addColumn(tr("Description"),     -1,           Qt::AlignLeft  );
+  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter);
   _ipsitem->addColumn(tr("Qty. Break"),      _qtyColumn,   Qt::AlignRight );
+  _ipsitem->addColumn(tr("UOM"),             _uomColumn,   Qt::AlignCenter);
   _ipsitem->addColumn(tr("Price/Discount"),  _priceColumn, Qt::AlignRight );
 
   _currency->setType(XComboBox::Currencies);
@@ -193,9 +195,11 @@ enum SetResponse itemPricingSchedule::set(const ParameterList &pParams)
       q.prepare(" INSERT "
                 "   INTO ipsitem "
                 "       (ipsitem_ipshead_id, ipsitem_item_id, "
-                "        ipsitem_qtybreak, ipsitem_price) "
+                "        ipsitem_qtybreak, ipsitem_price,"
+                "        ipsitem_qty_uom_id, ipsitem_price_uom_id) "
                 " SELECT :ipshead_id, ipsitem_item_id, "
-                "        ipsitem_qtybreak, ipsitem_price "
+                "        ipsitem_qtybreak, ipsitem_price,"
+                "        ipsitem_qty_uom_id, ipsitem_price_uom_id "
                 "   FROM ipsitem "
                 "  WHERE (ipsitem_ipshead_id=:oldipshead_id); "
                 " INSERT "
@@ -332,15 +336,17 @@ void itemPricingSchedule::sFillList(int pIpsitemid)
 {
   q.prepare( "SELECT ipsitem_id, 1 AS altid, :item, item_number AS number,"
              "       (item_descrip1 || ' ' || item_descrip2),"
-             "       formatQty(ipsitem_qtybreak), formatSalesPrice(ipsitem_price),"
+             "       qty.uom_name, formatQty(ipsitem_qtybreak), price.uom_name, formatSalesPrice(ipsitem_price),"
              "       ipsitem_qtybreak AS qtybreak"
-             "  FROM ipsitem, item "
+             "  FROM ipsitem, item, uom AS qty, uom AS price "
              " WHERE ( (ipsitem_item_id=item_id)"
+             "   AND   (ipsitem_qty_uom_id=qty.uom_id)"
+             "   AND   (ipsitem_price_uom_id=price.uom_id)"
              "   AND   (ipsitem_ipshead_id=:ipshead_id) )"
              " UNION "
              "SELECT ipsprodcat_id, 2 AS altid, :prodcat, prodcat_code AS number,"
              "       prodcat_descrip,"
-             "       formatQty(ipsprodcat_qtybreak), formatPrcnt(ipsprodcat_discntprcnt)||'%',"
+             "       '', formatQty(ipsprodcat_qtybreak), '', formatPrcnt(ipsprodcat_discntprcnt)||'%',"
              "       ipsprodcat_qtybreak AS qtybreak"
              "  FROM ipsprodcat, prodcat"
              " WHERE ( (ipsprodcat_prodcat_id=prodcat_id)"
