@@ -83,8 +83,44 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 {
   Q_OBJECT
 
+  Q_ENUMS(RevisionTypes)
+  Q_ENUMS(Roles)
+
+  Q_PROPERTY(RevisionTypes   type READ type WRITE setType )
+//  Q_PROPERTY(Roles     type READ type   WRITE setRole   )
+
   public:
     RevisionCluster(QWidget *, const char * = 0);
+
+    enum RevisionTypes
+    {
+      BOM,
+      BOO			
+    };
+
+	RevisionTypes type();
+	void setType(RevisionTypes);
+/*
+    enum Roles
+    {
+      cMaintain            = 0x00000001,
+      cViewList            = 0x00000002
+    };
+ 
+	Roles type();*/
+
+	int _targetId;
+	   
+
+//	void setRole(Roles);
+
+  public slots:
+	void setTargetId(int pItem);
+    void setActive();
+
+  protected:
+	enum RevisionTypes _type;
+//	enum Roles _role;
 };
 
 #endif

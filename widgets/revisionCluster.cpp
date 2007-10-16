@@ -58,6 +58,7 @@
 //  revisioncluster.cpp
 //  Copyright (c) 2007, OpenMFG, LLC
 
+#include <QMessageBox>
 #include "revisioncluster.h"
 
 RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
@@ -65,10 +66,66 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
 {
   addNumberWidget(new RevisionLineEdit(this, pName));
   _info->hide();
+  if (_x_metrics)
+  {
+    if (!_x_metrics->boolean("RevControl"))
+    {
+      _list->hide();
+    }
+  }
+}
+enum RevisionCluster::RevisionTypes RevisionCluster::type()
+{
+  return _type;
 }
 
+void RevisionCluster::setType(RevisionTypes pType)
+{
+  _type = pType;
+}
+void RevisionCluster::setTargetId(int pItem)
+{
+  _targetId = pItem;
+  setActive();
+}
+void RevisionCluster::setActive()
+{
+  QString _etype;
+  XSqlQuery revision;
+
+  switch (_type)
+  {
+    case BOM:
+      _etype="BOM";
+	  break;
+
+    case BOO:
+      _etype="BOO";
+	  break;
+
+	default:
+	  break;
+  }
+
+  revision.prepare( "SELECT rev_id "
+                    "FROM rev "
+					"WHERE ( (rev_target_type=:target_type) "
+					"AND (rev_target_id=:target_id) "
+					"AND (rev_status='A') );" );
+  revision.bindValue(":target_type", _etype);
+  revision.bindValue(":target_id", _targetId);
+  revision.exec();
+  if (revision.first())
+  {
+    setId(revision.value("rev_id").toInt());
+  }
+  else
+  {
+    setId(-1);
+  }
+}
 RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, 0, pName)
+  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
 {
   setTitles(tr("Revision"), tr("Revisions"));
 }
