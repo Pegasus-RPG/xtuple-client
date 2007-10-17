@@ -216,7 +216,7 @@ void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
 
   pMenu->insertSeparator();
 
-  menuItem = pMenu->insertItem(tr("Print Pick Lists..."), this, SLOT(sPrintPickLists()), 0);
+  menuItem = pMenu->insertItem(tr("Print Pick List(s)..."), this, SLOT(sPrintPickLists()), 0);
   if (!_privleges->check("PrintWorkOrderPaperWork"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
