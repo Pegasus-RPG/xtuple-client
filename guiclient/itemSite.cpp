@@ -115,7 +115,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   {
     _controlMethod->removeItem(3);
     _controlMethod->removeItem(2);
-    _perishable->hide();
+    _expire->hide();
   }
   
   //If routings disabled, hide options
@@ -258,7 +258,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_soldRanking->setEnabled(FALSE);
 	_stocked->setEnabled(FALSE);
 	_controlMethod->setEnabled(FALSE);
-	_perishable->setEnabled(FALSE);
+	_expire->setEnabled(FALSE);
 	_locationControl->setEnabled(FALSE);
 	_disallowBlankWIP->setEnabled(FALSE);
 	_useDefaultLocation->setEnabled(FALSE);
@@ -549,7 +549,7 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked(), 0));
   newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked(), 0));
   newItemSite.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_perishable", QVariant(_perishable->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_perishable", QVariant((_expire->isChecked() && _perishable->isChecked()), 0));
   newItemSite.bindValue(":itemsite_loccntrl", QVariant(_locationControl->isChecked(), 0));
   newItemSite.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked()), 0));
     
@@ -670,16 +670,10 @@ void itemSite::sHandleSupplied(bool pSupplied)
 void itemSite::sHandleControlMethod()
 {
   if ( (_controlMethod->currentItem() == 2) ||
-       (_controlMethod->currentItem() == 3) )
-  {     
-    _perishable->setEnabled(TRUE);
-    _warranty->setEnabled(TRUE);
-  }
+       (_controlMethod->currentItem() == 3) )    
+    _expire->setEnabled(TRUE);
   else
-  {
-    _perishable->setEnabled(FALSE);
-    _warranty->setEnabled(FALSE);
-  }
+    _expire->setEnabled(FALSE);
 }
 
 void itemSite::sCacheItemType(const QString &pItemType)
@@ -889,14 +883,12 @@ void itemSite::populate()
     if ( (_controlMethod->currentItem() == 2) ||
          (_controlMethod->currentItem() == 3) )
     {
-      _perishable->setEnabled(TRUE);
+      _expire->setEnabled(TRUE);
+      _expire->setChecked(itemsite.value("itemsite_perishable").toBool());
       _perishable->setChecked(itemsite.value("itemsite_perishable").toBool());
     }
     else
-    {
-      _perishable->setEnabled(FALSE);
-      _perishable->setChecked(FALSE);
-    }
+      _expire->setEnabled(FALSE);
 
     _costcat->setId(itemsite.value("itemsite_costcat_id").toInt());
     _plannerCode->setId(itemsite.value("itemsite_plancode_id").toInt());
