@@ -74,6 +74,20 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
     }
   }
 }
+enum RevisionCluster::Modes RevisionCluster::mode()
+{
+  return _mode;
+}
+void RevisionCluster::setMode(Modes pMode)
+{
+  _mode = pMode;
+  /*
+  if  ((_x_privleges) &&
+	  (_mode==View && !_x_privleges->check("ViewRevisions")) ||
+	  (_mode==Use && !_x_privleges->check("UseRevisions")) ||
+	  (_mode==Maintain && !_x_privleges->check("MaintainRevisions")))
+    _list->hide();*/
+}
 enum RevisionCluster::RevisionTypes RevisionCluster::type()
 {
   return _type;
