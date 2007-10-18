@@ -3,20 +3,21 @@
 
   Conventions:
 
+  - Element names match the names of the columns to which they map in
+    the API.
+
+  - Elements are listed in the same order as in the API views.
+
   - Element and attribute names are all lower case.
 
-  - Element names match the names of the columns to which they map in
-    the API with the following exceptions:
+  - Attributes are used wherever the list of possible values for a
+    database field is short and well known. Examples include order
+    status and booleans.  Otherwise the value of a field in the API
+    is taken from the element content.
 
-    + Groups of elements which occur together frequently are grouped into
-      parent elements (e.g. address).
+  - Attributes that hold the value of an element are always named 'value'.
 
-    + Phone numbers occur frequently and they will probably be moved
-      out of the contact record in the future, so there's a single
-      phone element with attributes defining the type of phone
-      number (voice, alternate, fax, ...).
-
-  - Attribute values are in the case expected by the API.
+  - Attribute values are capitalized exactly as encoded in the API.
 
   - Space characters have been replaced by _ in attribute values that the
     API expects to contain spaces.
@@ -27,20 +28,7 @@
     All id attributes in this file should have positive integer values,
     *not* ID or IDREF values.
 
-  - Attributes are used wherever the list of possible values is
-    short and well known. Examples include order status and booleans.
-    Otherwise the value of a field in the API is taken from the
-    element content.
-
-  - Attributes that hold the value of an element are always named 'value'.
-
-  - Required elements are listed first unless doing so doesn't make sense
-    (e.g. address lines 2 and 3 should always precede city, even if they're
-    optional).
-
   Significant differences between this DTD and the import API views:
-
-  - The DTD currently forces a specific order for subelements?
 
   - The API defaults most boolean values in the underlying tables
     to 'false'. That's because values weren't specified. Here,
@@ -52,9 +40,6 @@
 <!--
   The following elements are represented in the DTD but are not directly
   importable through the API views:
-    address
-    contact
-    edi_profile
   -->
 <!ELEMENT xtupleimport (custchar |
 			custcomment |
@@ -73,35 +58,33 @@
 			saleslinecomment |
 			salesorder |
 			salesordercomment)+ >
-
-<!ELEMENT address	( addressline, addressline?, addressline?,
-			  city, state?, postalcode?, country?
-			) >
-<!ATTLIST address	id	CDATA	#IMPLIED
-			role   (billto)	#IMPLIED
-			changeflag (CHECK|CHANGEONE|CHANGEALL)	#IMPLIED >
-
-<!ELEMENT contact ( honorific?, first?, last?, job_title?,
-		    phone?, phone?, phone?, email?, web?,
-		    address?
-		  ) >
-		  <!-- phone role=voice, alternate, fax -->
-<!ATTLIST contact	id	CDATA			#IMPLIED
-		  	role	(billing|correspond)	#IMPLIED >
+<!ATTLIST xtupleimport version	CDATA	#FIXED "development" >
 
 <!ELEMENT custchar (customer_number, characteristic, value ) >
 
-<!ELEMENT custcomment (customer_number, type, text, date?, username?) >
+<!ELEMENT custcomment (customer_number, type, date?, username?, text) >
 
-<!ELEMENT custcreditcard (customer_number, credit_card_type, active,
-			  credit_card_number, name, address,
-			  expiration_month, expiration_year, key ) >
+<!ELEMENT custcreditcard (customer_number,
+			  credit_card_type,
+			  active,
+			  credit_card_number,
+			  name,
+			  street_address1,
+			  street_address2,
+			  city,
+			  state,
+			  postal_code,
+			  country,
+			  expiration_month,
+			  expiration_year,
+			  key
+			 ) >
 
 <!ELEMENT customer (  customer_number,
-		      sales_rep,
 		      customer_type?,
 		      customer_name?,
 		      active? ,
+		      sales_rep,
 		      commission?,
 		      ship_via?,
 		      ship_form?,
@@ -124,14 +107,56 @@
 		      credit_status_exceed_hold?,
 		      uses_purchase_orders?,
 		      uses_blanket_pos?,
-		      contact?,
-		      contact?,
+		      billing_contact_id?,
+		      billing_contact_honorific?,
+		      billing_contact_first?,
+		      billing_contact_last?,
+		      billing_contact_job_title?,
+		      billing_contact_voice?,
+		      billing_contact_alternate?,
+		      billing_contact_fax?,
+		      billing_contact_email?,
+		      billing_contact_web?,
+		      billing_contact_address_change?,
+		      billing_contact_address1?,
+		      billing_contact_address2?,
+		      billing_contact_address3?,
+		      billing_contact_city?,
+		      billing_contact_state?,
+		      billing_contact_postalcode?,
+		      billing_contact_country?,
+		      correspond_contact_id?,
+		      correspond_contact_honorific?,
+		      correspond_contact_first?,
+		      correspond_contact_last?,
+		      correspond_contact_job_title?,
+		      correspond_contact_voice?,
+		      correspond_contact_alternate?,
+		      correspond_contact_fax?,
+		      correspond_contact_email?,
+		      correspond_contact_web?,
+		      correspond_contact_address_change?,
+		      correspond_contact_address1?,
+		      correspond_contact_address2?,
+		      correspond_contact_address3?,
+		      correspond_contact_city?,
+		      correspond_contact_state?,
+		      correspond_contact_postalcode?,
+		      correspond_contact_country?,
 		      notes?,
-		      edi_profile?,
-		      edi_profile?
+		      so_edi_profile?,
+		      so_edi_email?,
+		      so_edi_cc?,
+		      so_edi_subject?,
+		      so_edi_filename?,
+		      so_edi_emailbody?,
+		      invc_edi_profile?,
+		      invc_edi_email?,
+		      invc_edi_cc?,
+		      invc_edi_subject?,
+		      invc_edi_filename?,
+		      invc_edi_emailbody?
 		   ) >
-		      <!-- contacts role = billing, correspond -->
-		      <!-- edi_profiles role = so, invc -->
 <!ATTLIST customer	id	CDATA	#IMPLIED >
 
 <!ELEMENT custshipto ( customer_number,
@@ -139,8 +164,22 @@
 		       active?,
 		       name?,
 		       default_flag?,
-		       address?,
-		       contact?,
+		       address1?,
+		       address2?,
+		       address3?,
+		       city?,
+		       state?,
+		       postal_code?,
+		       country?,
+		       address_change?,
+		       contact_id?,
+		       honorific?,
+		       first?,
+		       last?,
+		       job_title?,
+		       phone?,
+		       fax?,
+		       email?,
 		       sales_rep?,
 		       commission?,
 		       zone?,
@@ -156,15 +195,6 @@
 
 <!ELEMENT custtax (customer_number, tax_authority, registration_number) >
 
-<!ELEMENT edi_profile (edi_profile_name,
-		       edi_profile_email?,
-		       edi_profile_cc?,
-		       edi_profile_subject?,
-		       edi_profile_filename?,
-		       edi_profile_emailbody?) >
-<!ATTLIST edi_profile	id	CDATA	#IMPLIED
-			role (cust|invc|shipto|so)	#IMPLIED >
-
 <!ELEMENT journalentry ( currency,
 			 amount,
 			 dist_date,
@@ -174,7 +204,6 @@
 			 notes ) >
 
 <!ELEMENT quote (  quote_number,
-		   customer_number,
 		   warehouse?,
 		   quote_date?,
 		   pack_date?,
@@ -184,8 +213,25 @@
 		   tax_authority?,
 		   terms?,
 		   project_number?,
-		   ( billto_name?, address?)?,
-		   ( shipto_number?, shipto_name?, phone?, address?)?,
+		   customer_number,
+		   billto_name?,
+		   billto_address1?,
+		   billto_address2?,
+		   billto_address3?,
+		   billto_city?,
+		   billto_state?,
+		   billto_postal_code?,
+		   billto_country?,
+		   shipto_number?,
+		   shipto_name?,
+		   shipto_phone?,
+		   shipto_address1?,
+		   shipto_address2?,
+		   shipto_address3?,
+		   shipto_city?,
+		   shipto_state?,
+		   shipto_postal_code?,
+		   shipto_country?,
 		   cust_po_number?,
 		   fob?,
 		   ship_via?,
@@ -203,16 +249,16 @@
 <!ELEMENT quotecomment ( quote_number,
 			 type,
 			 date,
-			 text,
-			 username?
+			 username?,
+			 text
 			) >
 
 <!ELEMENT quoteline ( quote_number,
-		      item_number,
-		      qty_ordered,
 		      line_number?,
+		      item_number,
 		      customer_pn?,
 		      sold_from_whs?,
+		      qty_ordered,
 		      net_unit_price?,
 		      scheduled_date,
 		      tax_type?,
@@ -228,26 +274,26 @@
 <!ELEMENT quotelinechar ( quote_number,
 			  line_number,
 			  characteristic,
-			  value
+			  value?
 			) >
 
 <!ELEMENT quotelinecomment ( quote_number,
 			     line_number,
 			     type,
 			     date,
-			     text,
-			     username?
+			     username?,
+			     text
 			   ) >
 
 <!ELEMENT salesline	( order_number,
+			  line_number?,
 			  ( item_number | customer_pn |
 			    (item_number, customer_pn)
 			  ),
-			  qty_ordered,
-			  line_number?,
 			  substitute_for?,
 			  sold_from_whs?,
 			  status?,
+			  qty_ordered,
 			  net_unit_price?,
 			  scheduled_date?,
 			  tax_type?,
@@ -268,62 +314,117 @@
 <!ELEMENT saleslinecomment ( order_number,
 			     line_number,
 			     type,
-			     text,
 			     date?,
-			     username?
+			     username?,
+			     text
 			   ) >
 
 <!ELEMENT salesorder (	order_number,
+			warehouse?,
+			order_date?,
+			pack_date?,
+			originated_by?,
+			sales_rep?,
+			commission?,
+			tax_authority?,
+			terms?,
+			project_number?,
 			customer_number,
-			(
-			  warehouse?,
-			  order_date?,
-			  pack_date?,
-			  originated_by?,
-			  sales_rep?,
-			  commission?,
-			  tax_authority?,
-			  terms?,
-			  project_number?,
-			  (billto_name?, address?)?,
-			  ( shipto_number?,
-			    shipto_name?,
-			    phone?,
-			    address?
-			  )?,
-			  cust_po_number?,
-			  fob?,
-			  ship_via?,
-			  hold_type?,
-			  shipping_chgs?,
-			  shipping_form?,
-			  ship_complete?,
-			  currency?,
-			  ( misc_charge_description,
-			    misc_account_number,
-			    misc_charge
-			  )?,
-			  freight?,
-			  order_notes?,
-			  shipping_notes?,
-			  add_to_packing_list_batch?
-			)?
+			billto_name?,
+			billto_address1?,
+			billto_address2?,
+			billto_address3?,
+			billto_city?,
+			billto_state?,
+			billto_postal_code?,
+			billto_country?,
+			shipto_number?,
+			shipto_name?,
+			shipto_phone?,
+			shipto_address1?,
+			shipto_address2?,
+			shipto_address3,
+			shipto_city?,
+			shipto_state?,
+			shipto_postal_code?,
+			shipto_country?,
+			cust_po_number?,
+			fob?,
+			ship_via?,
+			hold_type?,
+			shipping_chgs?,
+			shipping_form?,
+			ship_complete?,
+			currency?,
+			( misc_charge_description,
+			  misc_account_number,
+			  misc_charge
+			)?,
+			freight?,
+			order_notes?,
+			shipping_notes?,
+			add_to_packing_list_batch?
 		      )>
 <!ATTLIST salesorder	id	CDATA	#IMPLIED >
 
 <!ELEMENT salesordercomment ( order_number,
 			      type,
-			      text,
 			      date?,
-			      username?
+			      username?,
+			      text
 			    ) >
 
-<!ELEMENT addressline		(#PCDATA) >
-<!ELEMENT amount		(#PCDATA) >	<!-- money -->
-<!ELEMENT billto_name		(#PCDATA) >
-<!ELEMENT characteristic	(#PCDATA) >
-<!ELEMENT city			(#PCDATA) >
-<!ELEMENT commission		(#PCDATA) >
+<!ELEMENT address1			(#PCDATA) >
+<!ELEMENT address2			(#PCDATA) >
+<!ELEMENT address3			(#PCDATA) >
+<!ELEMENT addressline			(#PCDATA) >
+<!ELEMENT amount			(#PCDATA) >	<!-- money -->
+<!ELEMENT billing_contact_address1	(#PCDATA) >
+<!ELEMENT billing_contact_address2	(#PCDATA) >
+<!ELEMENT billing_contact_address3	(#PCDATA) >
+<!ELEMENT billing_contact_alternate	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT billing_contact_city		(#PCDATA) >
+<!ELEMENT billing_contact_country	(#PCDATA) >
+<!ELEMENT billing_contact_email		(#PCDATA) >	<!-- email address -->
+<!ELEMENT billing_contact_fax		(#PCDATA) >	<!-- phone number -->
+<!ELEMENT billing_contact_first		(#PCDATA) >
+<!ELEMENT billing_contact_honorific	(#PCDATA) >
+<!ELEMENT billing_contact_id		(#PCDATA) >	<!-- positive int -->
+<!ELEMENT billing_contact_job_title	(#PCDATA) >
+<!ELEMENT billing_contact_last		(#PCDATA) >
+<!ELEMENT billing_contact_postalcode	(#PCDATA) >
+<!ELEMENT billing_contact_state		(#PCDATA) >
+<!ELEMENT billing_contact_voice		(#PCDATA) >	<!-- phone number -->
+<!ELEMENT billing_contact_web		(#PCDATA) >	<!-- URL -->
+<!ELEMENT billto_address1		(#PCDATA) >
+<!ELEMENT billto_address2		(#PCDATA) >
+<!ELEMENT billto_address3		(#PCDATA) >
+<!ELEMENT billto_city			(#PCDATA) >
+<!ELEMENT billto_country		(#PCDATA) >
+<!ELEMENT billto_name			(#PCDATA) >
+<!ELEMENT billto_postal_code		(#PCDATA) >
+<!ELEMENT billto_state			(#PCDATA) >
+<!ELEMENT characteristic		(#PCDATA) >
+<!ELEMENT city				(#PCDATA) >
+<!ELEMENT commission			(#PCDATA) >
+<!ELEMENT contact_id			(#PCDATA) >	<!-- positive int -->
+<!ELEMENT correspond_contact_address1	(#PCDATA) >
+<!ELEMENT correspond_contact_address2	(#PCDATA) >
+<!ELEMENT correspond_contact_address3	(#PCDATA) >
+<!ELEMENT correspond_contact_alternate	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT correspond_contact_city	(#PCDATA) >
+<!ELEMENT correspond_contact_country	(#PCDATA) >
+<!ELEMENT correspond_contact_email	(#PCDATA) >	<!-- email address -->
+<!ELEMENT correspond_contact_fax	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT correspond_contact_first	(#PCDATA) >
+<!ELEMENT correspond_contact_honorific	(#PCDATA) >
+<!ELEMENT correspond_contact_id		(#PCDATA) >	<!-- positive int -->
+<!ELEMENT correspond_contact_job_title	(#PCDATA) >
+<!ELEMENT correspond_contact_last	(#PCDATA) >
+<!ELEMENT correspond_contact_postalcode	(#PCDATA) >
+<!ELEMENT correspond_contact_state	(#PCDATA) >
+<!ELEMENT correspond_contact_voice	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT correspond_contact_web	(#PCDATA) >	<!-- URL -->
 <!ELEMENT country		(#PCDATA) >
 <!ELEMENT credit		(#PCDATA) >	<!-- 00-00-00-00 -->
 <!ELEMENT credit_card_number	(#PCDATA) >
@@ -345,20 +446,22 @@
 <!ELEMENT discount_pct_from_list (#PCDATA) >	<!-- Numeric -->
 <!ELEMENT dist_date		(#PCDATA) >	<!-- PostgreSQL timestamp -->
 <!ELEMENT doc_number		(#PCDATA) >
-<!ELEMENT edi_profile_cc	(#PCDATA) >	<!-- email address -->
-<!ELEMENT edi_profile_email	(#PCDATA) >	<!-- email address -->
-<!ELEMENT edi_profile_emailbody	(#PCDATA) >
-<!ELEMENT edi_profile_filename	(#PCDATA) >
-<!ELEMENT edi_profile_name	(#PCDATA) >	<!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
-<!ELEMENT edi_profile_subject	(#PCDATA) >
+<!ELEMENT edi_profile		(#PCDATA) >
 <!ELEMENT email			(#PCDATA) >	<!-- email address -->
 <!ELEMENT expiration_month	(#PCDATA) >
 <!ELEMENT expiration_year	(#PCDATA) >
+<!ELEMENT fax			(#PCDATA) >	<!-- phone number -->
 <!ELEMENT first			(#PCDATA) >
 <!ELEMENT fob			(#PCDATA) >
 <!ELEMENT freight		(#PCDATA) >	<!-- Numeric -->
 <!ELEMENT general_notes		(#PCDATA) >
 <!ELEMENT honorific		(#PCDATA) >
+<!ELEMENT invc_edi_cc		(#PCDATA) >	<!-- email address -->
+<!ELEMENT invc_edi_email	(#PCDATA) >	<!-- email address -->
+<!ELEMENT invc_edi_emailbody	(#PCDATA) >
+<!ELEMENT invc_edi_filename	(#PCDATA) >
+<!ELEMENT invc_edi_profile	(#PCDATA) >	<!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
+<!ELEMENT invc_edi_subject	(#PCDATA) >
 <!ELEMENT item_number	 	(#PCDATA) >
 <!ELEMENT job_title		(#PCDATA) >
 <!ELEMENT key			(#PCDATA) >
@@ -375,7 +478,8 @@
 <!ELEMENT order_number		(#PCDATA) >	<!-- positive Integer -->
 <!ELEMENT overwrite_po_price	(#PCDATA) >	<!-- Numeric -->
 <!ELEMENT pack_date		(#PCDATA) >	<!-- PostgreSQL timestamp -->
-<!ELEMENT postalcode		(#PCDATA) >
+<!ELEMENT phone			(#PCDATA) >	<!-- phone number -->
+<!ELEMENT postal_code		(#PCDATA) >
 <!ELEMENT preferred_selling_whs	(#PCDATA) >
 <!ELEMENT project_number	(#PCDATA) >	<!-- positive Integer -->
 <!ELEMENT qty_ordered	 	(#PCDATA) >	<!-- Numeric -->
@@ -390,10 +494,26 @@
 <!ELEMENT shipping_chgs		(#PCDATA) >
 <!ELEMENT shipping_form		(#PCDATA) >
 <!ELEMENT shipping_notes	(#PCDATA) >
+<!ELEMENT shipto_address1	(#PCDATA) >
+<!ELEMENT shipto_address2	(#PCDATA) >
+<!ELEMENT shipto_address3	(#PCDATA) >
+<!ELEMENT shipto_city		(#PCDATA) >
+<!ELEMENT shipto_country	(#PCDATA) >
 <!ELEMENT shipto_name		(#PCDATA) >
 <!ELEMENT shipto_number		(#PCDATA) >
+<!ELEMENT shipto_phone		(#PCDATA) >
+<!ELEMENT shipto_postal_code	(#PCDATA) >
+<!ELEMENT shipto_state		(#PCDATA) >
+<!ELEMENT so_edi_cc		(#PCDATA) >	<!-- email address -->
+<!ELEMENT so_edi_email		(#PCDATA) >	<!-- email address -->
+<!ELEMENT so_edi_emailbody	(#PCDATA) >
+<!ELEMENT so_edi_filename	(#PCDATA) >
+<!ELEMENT so_edi_profile	(#PCDATA) >	<!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
+<!ELEMENT so_edi_subject	(#PCDATA) >
 <!ELEMENT sold_from_whs	 	(#PCDATA) >
 <!ELEMENT state			(#PCDATA) >
+<!ELEMENT street_address1	(#PCDATA) >
+<!ELEMENT street_address2	(#PCDATA) >
 <!ELEMENT substitute_for 	(#PCDATA) >
 <!ELEMENT supplying_whs 	(#PCDATA) >
 <!ELEMENT tax_authority		(#PCDATA) >
@@ -420,6 +540,9 @@
 <!ELEMENT accepts_partial_shipments EMPTY >
 <!ATTLIST accepts_partial_shipments value (true|false) 'true' >
 
+<!ELEMENT address_change EMPTY >
+<!ATTLIST address_change value	(CHECK|CHANGEONE|CHANGEALL) #REQUIRED >
+
 <!ELEMENT allow_free_form_billto EMPTY >
 <!ATTLIST allow_free_form_billto value (true|false) 'true' >
 
@@ -429,14 +552,20 @@
 <!ELEMENT balance_method EMPTY >
 <!ATTLIST balance_method value (Balance_Forward|Open_Items) #REQUIRED >
 
+<!ELEMENT billing_contact_address_change EMPTY >
+<!ATTLIST billing_contact_address_change value (CHECK|CHANGEONE|CHANGEALL) #REQUIRED >
+
+<!ELEMENT correspond_contact_address_change EMPTY >
+<!ATTLIST correspond_contact_address_change value (CHECK|CHANGEONE|CHANGEALL) #REQUIRED >
+
 <!ELEMENT create_order		EMPTY >
 <!ATTLIST create_order	value (true|false)	'true' >
 
 <!ELEMENT credit_card_type EMPTY>
-<!ATTLIST credit_card_type value (V | Visa |
-				  M | Master_Card |
-				  A | American_Express |
-				  D | Discover |
+<!ATTLIST credit_card_type value (Visa |
+				  Master_Card |
+				  American_Express |
+				  Discover |
 				  Not_Supported) #REQUIRED >
 
 <!ELEMENT credit_status	EMPTY >
@@ -456,9 +585,6 @@
 
 <!ELEMENT originated_by	EMPTY >
 <!ATTLIST originated_by	value	(Customer|Internet|Sales_Rep.) #REQUIRED >
-
-<!ELEMENT phone (#PCDATA) >
-<!ATTLIST phone		role	(voice|alternate|fax)	#IMPLIED >
 
 <!ELEMENT ship_complete	EMPTY	 >
 <!ATTLIST ship_complete	value	(true|false)	'true' >
