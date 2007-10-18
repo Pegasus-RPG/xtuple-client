@@ -343,7 +343,7 @@
 			shipto_phone?,
 			shipto_address1?,
 			shipto_address2?,
-			shipto_address3,
+			shipto_address3?,
 			shipto_city?,
 			shipto_state?,
 			shipto_postal_code?,
