@@ -88,7 +88,6 @@ public slots:
     virtual void sFillList( int pItemid, bool );
     virtual void sClose();
     virtual bool sCheckRequiredQtyPer();
-	virtual void sActivate();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

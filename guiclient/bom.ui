@@ -699,16 +699,10 @@
        <string/>
       </property>
       <layout class="QGridLayout" >
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_revisionLit" >
-         <property name="text" >
-          <string>Revision:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
-         </property>
-         <property name="margin" >
-          <number>0</number>
+       <item row="0" column="0" colspan="2" >
+        <widget class="RevisionCluster" name="_revision" >
+         <property name="readOnly" >
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -773,19 +767,6 @@
          </property>
          <property name="alignment" >
           <set>Qt::AlignRight</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="RevisionCluster" name="_revision" >
-         <property name="readOnly" >
-          <bool>false</bool>
-         </property>
-         <property name="type" >
-          <enum>RevisionCluster::BOM</enum>
-         </property>
-         <property name="mode" >
-          <enum>RevisionCluster::Maintain</enum>
          </property>
         </widget>
        </item>
@@ -954,6 +935,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_revision</sender>
+   <signal>canActivate(bool)</signal>
+   <receiver>_activate</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>570</x>
+     <y>39</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>751</x>
+     <y>69</y>
     </hint>
    </hints>
   </connection>

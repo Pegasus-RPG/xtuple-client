@@ -87,7 +87,6 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_expire, SIGNAL(clicked()), this, SLOT(sExpire()));
-  connect(_activate, SIGNAL(clicked()), this, SLOT(sActivate()));
 
   _totalQtyPerCache = 0.0;
   
@@ -118,7 +117,8 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
-  _activate->hide();
+  _revision->setType("BOM");
+  _revision->setMode("Maintain");
 }
 
 BOM::~BOM()
@@ -366,7 +366,7 @@ void BOM::sFillList(int pItemid, bool)
   if (_item->isValid() && (pItemid == _item->id()))
   {
     q.prepare( "SELECT bomhead_docnum, bomhead_rev_id,"
-               "       bomhead_revisiondate,"
+               "       bomhead_revision, bomhead_revisiondate,"
                "       formatQty(bomhead_batchsize) AS f_batchsize,"
                "       bomhead_requiredqtyper "
                "FROM bomhead "
@@ -378,6 +378,7 @@ void BOM::sFillList(int pItemid, bool)
     if (q.first())
     {
       _documentNum->setText(q.value("bomhead_docnum"));
+	  _revision->setNumber(q.value("bomhead_revision").toString());
       _revisionDate->setDate(q.value("bomhead_revisiondate").toDate());
       _batchSize->setText(q.value("f_batchsize"));
       if(q.value("bomhead_requiredqtyper").toDouble()!=0)
@@ -385,9 +386,7 @@ void BOM::sFillList(int pItemid, bool)
         _doRequireQtyPer->setChecked(true);
         _requiredQtyPer->setText(q.value("bomhead_requiredqtyper").toString());
       }
-	  if ((_revision->description() == "Pending") && (_privleges->check("MaintainRevisions")))
-	  	  _activate->show();
-  	  else if (_revision->description() == "Inactive")
+      if (_revision->description() == "Inactive")
 	  {
 		  _save->setEnabled(FALSE);
 	      _new->setEnabled(FALSE);
@@ -395,10 +394,7 @@ void BOM::sFillList(int pItemid, bool)
 		  _revisionDate->setEnabled(FALSE);
 		  _batchSize->setEnabled(FALSE);
 		  _bomitem->setEnabled(FALSE);
-		  _activate->hide();
 	  }
-	  else
-		  _activate->hide();
 
 	  if ((_revision->description() == "Pending") || (_revision->description() == "Active"))
 	  {
@@ -617,18 +613,4 @@ bool BOM::sCheckRequiredQtyPer()
   }
   
   return true;
-}
-
-void BOM::sActivate()
-{
-	q.prepare("SELECT activateRev(:rev_id) AS result;");
-	q.bindValue(":rev_id", _revision->id());
-	q.exec();
-	if (q.first())
-	  _revision->setId(_revision->id());
-	else  if (q.lastError().type() != QSqlError::None)
-	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
 }
