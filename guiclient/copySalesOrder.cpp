@@ -177,7 +177,7 @@ void copySalesOrder::sPopulateSoInfo(int)
                "       item_number, (item_descrip1 || ' ' || item_descrip2), warehous_code,"
                "       formatQty(coitem_qtyord),"
                "       formatSalesPrice(coitem_price),"
-               "       formatMoney(coitem_qtyord * coitem_price / iteminvpricerat(item_id)) "
+               "       formatMoney((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) "
                "FROM coitem, itemsite, item, warehous "
                "WHERE ( (coitem_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"

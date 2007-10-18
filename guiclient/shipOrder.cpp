@@ -831,7 +831,7 @@ void shipOrder::sFillList()
     }
     
     QString vals = "<? if exists(\"sohead_id\") ?>"
-	    "SELECT formatMoney(SUM(round(shipitem_qty * coitem_price / iteminvpricerat(item_id),2))) AS f_value "
+	    "SELECT formatMoney(SUM(round(shipitem_qty * coitem_price / coitem_price_invuomratio,2))) AS f_value "
 	    "FROM coitem, shiphead, shipitem, itemsite, item "
 	    "WHERE ( (shipitem_orderitem_id=coitem_id)"
 	    " AND (shipitem_shiphead_id=shiphead_id)"

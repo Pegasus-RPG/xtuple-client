@@ -98,6 +98,8 @@ public slots:
     virtual void sLookupTax();
     virtual void sLookupTaxCode();
     virtual void sTaxDetail();
+    virtual void sQtyUOMChanged();
+    virtual void sPriceUOMChanged();
 
 protected slots:
     virtual void languageChange();
@@ -138,6 +140,9 @@ private:
     double	_cachedRateC;
     int		_taxauthid;
     QStandardItemModel * _itemchar;
+    int _invuomid;
+    double _qtyinvuomratio;
+    double _priceinvuomratio;
 
 };
 

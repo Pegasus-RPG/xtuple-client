@@ -122,6 +122,8 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_taxLit, SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));
   connect(_taxcode,		SIGNAL(newID(int)), this, SLOT(sLookupTax()));
   connect(_taxtype,		SIGNAL(newID(int)), this, SLOT(sLookupTaxCode()));
+  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
 
 #ifndef Q_WS_MAC
   _listPrices->setMaximumWidth(25);
@@ -136,6 +138,10 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _error = false;
   _originalQtyOrd = 0.0;
   _updateItemsite = false;
+  _qtyinvuomratio = 1.0;
+  _priceinvuomratio = 1.0;
+  _priceRatio = 1.0;
+  _invuomid = -1;
 
   _availabilityLastItemid = -1;
   _availabilityLastWarehousid = -1;
@@ -593,13 +599,12 @@ void salesOrderItem::clear()
   _item->setId(-1);
   _customerPN->clear();
   _qtyOrdered->clear();
+  _qtyUOM->clear();
+  _priceUOM->clear();
   _netUnitPrice->clear();
   _extendedPrice->clear();
   _scheduledDate->clear();
   _promisedDate->clear();
-  //TO DO ***This needs to be replaced by new UOM logic****
-  //_pricingUOM->clear();
-  //_ratio->clear();
   _unitCost->clear();
   _listPrice->clear();
   _customerPrice->clear();
@@ -704,14 +709,19 @@ void salesOrderItem::sSave()
     q.prepare( "INSERT INTO coitem "
                "( coitem_id, coitem_cohead_id, coitem_linenumber, coitem_itemsite_id,"
                "  coitem_status, coitem_scheddate, coitem_promdate,"
-               "  coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned,"
-               "  coitem_unitcost, coitem_custprice, coitem_price, coitem_order_type, coitem_order_id,"
+               "  coitem_qtyord, coitem_qty_uom_id, coitem_qty_invuomratio,"
+               "  coitem_qtyshipped, coitem_qtyreturned,"
+               "  coitem_unitcost, coitem_custprice,"
+               "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
+               "  coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
 	       "  coitem_prcost, coitem_tax_id ) "
                "SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
-               "       :soitem_qtyord, 0, 0,"
-               "       stdCost(:item_id), :soitem_custprice, :soitem_price, '', -1,"
+               "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
+               "       stdCost(:item_id), :soitem_custprice,"
+               "       :soitem_price, :price_uom_id, :price_invuomratio,"
+               "       '', -1,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
 	       "       :soitem_prcost, :soitem_tax_id "
                "FROM itemsite "
@@ -723,8 +733,12 @@ void salesOrderItem::sSave()
     q.bindValue(":soitem_scheddate", _scheduledDate->date());
     q.bindValue(":soitem_promdate", promiseDate);
     q.bindValue(":soitem_qtyord", _qtyOrdered->toDouble());
+    q.bindValue(":qty_uom_id", _qtyUOM->id());
+    q.bindValue(":qty_invuomratio", _qtyinvuomratio);
     q.bindValue(":soitem_custprice", _customerPrice->localValue());
     q.bindValue(":soitem_price", _netUnitPrice->localValue());
+    q.bindValue(":price_uom_id", _priceUOM->id());
+    q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":soitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":soitem_custpn", _customerPN->text());
     q.bindValue(":soitem_memo", _notes->text());
@@ -745,7 +759,9 @@ void salesOrderItem::sSave()
   {
     q.prepare( "UPDATE coitem "
                "SET coitem_scheddate=:soitem_scheddate, coitem_promdate=:soitem_promdate,"
-               "    coitem_qtyord=:soitem_qtyord, coitem_price=:soitem_price, coitem_memo=:soitem_memo,"
+               "    coitem_qtyord=:soitem_qtyord, coitem_qty_uom_id=:qty_uom_id, coitem_qty_invuomratio=:qty_invuomratio,"
+               "    coitem_price=:soitem_price, coitem_price_uom_id=:price_uom_id, coitem_price_invuomratio=:price_invuomratio,"
+               "    coitem_memo=:soitem_memo,"
                "    coitem_order_id=:soitem_order_id, coitem_substitute_item_id=:soitem_substitute_item_id,"
                "    coitem_prcost=:soitem_prcost,"
                "    coitem_tax_id=:soitem_tax_id "
@@ -753,7 +769,11 @@ void salesOrderItem::sSave()
     q.bindValue(":soitem_scheddate", _scheduledDate->date());
     q.bindValue(":soitem_promdate", promiseDate);
     q.bindValue(":soitem_qtyord", _qtyOrdered->toDouble());
+    q.bindValue(":qty_uom_id", _qtyUOM->id());
+    q.bindValue(":qty_invuomratio", _qtyinvuomratio);
     q.bindValue(":soitem_price", _netUnitPrice->localValue());
+    q.bindValue(":price_uom_id", _priceUOM->id());
+    q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":soitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":soitem_memo", _notes->text());
     q.bindValue(":soitem_order_id", _orderId);
@@ -819,7 +839,7 @@ void salesOrderItem::sSave()
           {
             q.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE) AS result;");
             q.bindValue(":wo_id", _orderId);
-            q.bindValue(":qty", _qtyOrdered->toDouble());
+            q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
             q.exec();
 	    if (q.first())
 	    {
@@ -851,7 +871,7 @@ void salesOrderItem::sSave()
           {
             q.prepare("SELECT changePrQty(:pr_id, :qty) AS result;");
             q.bindValue(":pr_id", _orderId);
-            q.bindValue(":qty", _qtyOrdered->toDouble());
+            q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
             q.exec();
 	    if (q.first())
 	    {
@@ -893,13 +913,17 @@ void salesOrderItem::sSave()
     q.prepare( "INSERT INTO quitem "
                "( quitem_id, quitem_quhead_id, quitem_linenumber, quitem_itemsite_id,"
                "  quitem_item_id, quitem_scheddate, quitem_qtyord,"
+               "  quitem_qty_uom_id, quitem_qty_invuomratio,"
                "  quitem_unitcost, quitem_custprice, quitem_price,"
+               "  quitem_price_uom_id, quitem_price_invuomratio,"
                "  quitem_custpn, quitem_memo, quitem_createorder, "
 	       "  quitem_order_warehous_id, quitem_prcost, quitem_tax_id ) "
                "VALUES(:quitem_id, :quitem_quhead_id, :quitem_linenumber,"
                "       (SELECT itemsite_id FROM itemsite WHERE ((itemsite_item_id=:item_id) AND (itemsite_warehous_id=:warehous_id))),"
                "       :item_id, :quitem_scheddate, :quitem_qtyord,"
+               "       :qty_uom_id, :qty_invuomratio,"
                "       stdCost(:item_id), :quitem_custprice, :quitem_price,"
+               "       :price_uom_id, :price_invuomratio,"
                "       :quitem_custpn, :quitem_memo, :quitem_createorder, "
 	       "       :quitem_order_warehous_id, :quitem_prcost, :quitem_tax_id);" );
     q.bindValue(":quitem_id", _soitemid);
@@ -907,8 +931,12 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_linenumber", _lineNumber->text().toInt());
     q.bindValue(":quitem_scheddate", _scheduledDate->date());
     q.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
+    q.bindValue(":qty_uom_id", _qtyUOM->id());
+    q.bindValue(":qty_invuomratio", _qtyinvuomratio);
     q.bindValue(":quitem_custprice", _customerPrice->localValue());
     q.bindValue(":quitem_price", _netUnitPrice->localValue());
+    q.bindValue(":price_uom_id", _priceUOM->id());
+    q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":quitem_custpn", _customerPN->text());
     q.bindValue(":quitem_memo", _notes->text());
     q.bindValue(":quitem_createorder", QVariant(_createOrder->isChecked(), 0));
@@ -929,7 +957,10 @@ void salesOrderItem::sSave()
   {
     q.prepare( "UPDATE quitem "
                "SET quitem_scheddate=:quitem_scheddate,"
-               "    quitem_qtyord=:quitem_qtyord, quitem_price=:quitem_price,"
+               "    quitem_qtyord=:quitem_qtyord,"
+               "    quitem_qty_uom_id=:qty_uom_id, quitem_qty_invuomratio=:qty_invuomratio,"
+               "    quitem_price=:quitem_price,"
+               "    quitem_price_uom_id=:price_uom_id, quitem_price_invuomratio=:priceinvuomratio,"
                "    quitem_memo=:quitem_memo, quitem_createorder=:quitem_createorder,"
                "    quitem_order_warehous_id=:quitem_order_warehous_id,"
 	       "    quitem_prcost=:quitem_prcost, quitem_tax_id=:quitem_tax_id "
@@ -937,7 +968,11 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_scheddate", _scheduledDate->date());
     q.bindValue(":quitem_promdate", promiseDate);
     q.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
+    q.bindValue(":qty_uom_id", _qtyUOM->id());
+    q.bindValue(":qty_invuomratio", _qtyinvuomratio);
     q.bindValue(":quitem_price", _netUnitPrice->localValue());
+    q.bindValue(":price_uom_id", _priceUOM->id());
+    q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":quitem_memo", _notes->text());
     q.bindValue(":quitem_createorder", QVariant(_createOrder->isChecked(), 0));
     q.bindValue(":quitem_order_warehous_id", _supplyWarehouse->id());
@@ -1171,7 +1206,7 @@ void salesOrderItem::sListPrices()
   params.append("cust_id", _custid);
   params.append("shipto_id", _shiptoid);
   params.append("item_id", _item->id());
-  params.append("qty", _qtyOrdered->toDouble());
+  params.append("qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
   params.append("curr_id", _netUnitPrice->id());
   params.append("effective", _netUnitPrice->effective());
 
@@ -1179,7 +1214,7 @@ void salesOrderItem::sListPrices()
   newdlg.set(params);
   if (newdlg.exec() == QDialog::Accepted)
   {
-    _netUnitPrice->setLocalValue(newdlg._selectedPrice);
+    _netUnitPrice->setLocalValue((newdlg._selectedPrice * _priceRatio) * _priceinvuomratio);
     sCalculateDiscountPrcnt();
   }
 }
@@ -1215,7 +1250,7 @@ void salesOrderItem::sDeterminePrice()
                        "WHERE (item_id=:item_id);" );
     itemprice.bindValue(":cust_id", _custid);
     itemprice.bindValue(":shipto_id", _shiptoid);
-    itemprice.bindValue(":qty", _qtyOrdered->toDouble());
+    itemprice.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
     itemprice.bindValue(":item_id", _item->id());
     itemprice.bindValue(":curr_id", _customerPrice->id());
     itemprice.bindValue(":effective", _customerPrice->effective());
@@ -1243,8 +1278,10 @@ void salesOrderItem::sDeterminePrice()
       }
       else
       {
-        _customerPrice->setLocalValue(itemprice.value("price").toDouble());
-        _netUnitPrice->setLocalValue(itemprice.value("price").toDouble());
+        double price = itemprice.value("price").toDouble();
+        price = (price * _priceRatio) * _priceinvuomratio;
+        _customerPrice->setLocalValue(price);
+        _netUnitPrice->setLocalValue(price);
 
         sCalculateDiscountPrcnt();
         _orderQtyChanged = _qtyOrdered->toDouble();
@@ -1263,13 +1300,39 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
   _itemchar->removeRows(0, _itemchar->rowCount());
   if (pItemid != -1)
   {
+    XSqlQuery uom;
+    uom.prepare("SELECT uom_id, uom_name"
+                "  FROM item"
+                "  JOIN uom ON (item_inv_uom_id=uom_id)"
+                " WHERE(item_id=:item_id)"
+                " UNION "
+                "SELECT uom_id, uom_name"
+                "  FROM item"
+                "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+                "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+                " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
+                "   AND (item_id=:item_id))"
+                " UNION "
+                "SELECT uom_id, uom_name"
+                "  FROM item"
+                "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+                "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+                " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
+                "   AND (item_id=:item_id))"
+                " ORDER BY uom_name;");
+    uom.bindValue(":item_id", _item->id());
+    uom.exec();
+    _qtyUOM->populate(uom);
+    _priceUOM->populate(uom);
+
 //  Grab the price for this item/customer/qty
     q.prepare( "SELECT item_type, item_config, uom_name,"
-               "       iteminvpricerat(item_id) AS invpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
+               "       item_inv_uom_id, item_price_uom_id,"
+               "       iteminvpricerat(item_id) AS invpricerat,"
                "       item_listprice, "
                "       stdcost(item_id) AS f_unitcost,"
 	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
-               "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
+               "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
                "WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
     q.bindValue(":taxauth", _taxauthid);
@@ -1279,12 +1342,15 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       if (_mode == cNew)
         sDeterminePrice();
 
-      _priceRatio = q.value("invpricerat").toDouble();
+      _priceRatio = q.value("invpricerat").toDouble(); // Always ratio from default price uom
+      _invuomid = q.value("item_inv_uom_id").toInt();
+      _priceinvuomratio = _priceRatio; // the ration from the currently selected price uom
+      _qtyinvuomratio = 1.0;
+
+      _qtyUOM->setId(q.value("item_inv_uom_id").toInt());
+      _priceUOM->setId(q.value("item_price_uom_id").toInt());
       
-      //TO DO ***This needs to be replaced by new UOM logic****
-      //_pricingUOM->setText(q.value("uom_name").toString());
-      //_ratio->setText(q.value("f_invpricerat").toString());
-      //_listPrice->setBaseValue(q.value("item_listprice").toDouble());
+      _listPrice->setBaseValue(q.value("item_listprice").toDouble());
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
       _taxtype->setId(q.value("taxtype_id").toInt());
 
@@ -1391,7 +1457,7 @@ void salesOrderItem::sDetermineAvailability()
     && (_scheduledDate->date()==_availabilityLastSchedDate)
     && (_showAvailability->isChecked()==_availabilityLastShow)
     && (_showIndented->isChecked()==_availabilityLastShowIndent)
-    && (_qtyOrdered->toDouble()==_availabilityQtyOrdered) )
+    && ((_qtyOrdered->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered) )
     return;
 
   _availabilityLastItemid = _item->id();
@@ -1399,7 +1465,7 @@ void salesOrderItem::sDetermineAvailability()
   _availabilityLastSchedDate = _scheduledDate->date();
   _availabilityLastShow = _showAvailability->isChecked();
   _availabilityLastShowIndent = _showIndented->isChecked();
-  _availabilityQtyOrdered = _qtyOrdered->toDouble();
+  _availabilityQtyOrdered = (_qtyOrdered->toDouble() * _qtyinvuomratio);
 
   _availability->clear();
 
@@ -1432,7 +1498,7 @@ void salesOrderItem::sDetermineAvailability()
       _onOrder->setText(availability.value("f_ordered").toString());
       _available->setText(availability.value("f_available").toString());
 
-      if (availability.value("available").toDouble() < _qtyOrdered->toDouble())
+      if (availability.value("available").toDouble() < _availabilityQtyOrdered)
         _available->setPaletteForegroundColor(QColor("red"));
       else
         _available->setPaletteForegroundColor(QColor("black"));
@@ -1484,7 +1550,7 @@ void salesOrderItem::sDetermineAvailability()
                                  "ORDER BY bomwork_level, bomwork_seqnumber DESC;");
             availability.bindValue(":bomwork_set_id", _worksetid);
             availability.bindValue(":warehous_id", _warehouse->id());
-            availability.bindValue(":qty", _qtyOrdered->toDouble());
+            availability.bindValue(":qty", _availabilityQtyOrdered);
             availability.bindValue(":schedDate", _scheduledDate->date());
             availability.bindValue(":origQtyOrd", _originalQtyOrd);
             availability.exec();
@@ -1581,7 +1647,7 @@ void salesOrderItem::sDetermineAvailability()
                                 "        AND (ps.itemsite_id=:itemsite_id) ) ) AS data "
                                 "ORDER BY bomitem_seqnumber;" );
           availability.bindValue(":itemsite_id", itemsiteid);
-          availability.bindValue(":qty", _qtyOrdered->toDouble());
+          availability.bindValue(":qty", _availabilityQtyOrdered);
           availability.bindValue(":schedDate", _scheduledDate->date());
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
           availability.exec();
@@ -1656,7 +1722,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
 
 void salesOrderItem::sCalculateExtendedPrice()
 {
-  _extendedPrice->setLocalValue(_qtyOrdered->toDouble() * _netUnitPrice->localValue() / _priceRatio);
+  _extendedPrice->setLocalValue(((_qtyOrdered->toDouble() * _qtyinvuomratio) / _priceinvuomratio) * _netUnitPrice->localValue());
 }
 
 void salesOrderItem::sHandleWo(bool pCreate)
@@ -1770,7 +1836,7 @@ void salesOrderItem::sPopulateOrderInfo()
                    "FROM itemsite "
                    "WHERE ((itemsite_item_id=:item_id)"
                    " AND (itemsite_warehous_id=:warehous_id));" );
-      qty.bindValue(":qty", _qtyOrdered->toDouble());
+      qty.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
       qty.bindValue(":warehous_id", (_item->itemType() == "M" ? _supplyWarehouse->id() : _warehouse->id()));
       qty.exec();
@@ -1837,6 +1903,7 @@ void salesOrderItem::populate()
   sql = "<? if exists(\"isSalesOrder\") ?>"
 	"SELECT itemsite_leadtime, warehous_id, warehous_code,"
 	"       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
+        "       item_inv_uom_id,"
 	"       stdCost(item_id) AS stdcost,"
 	"       coitem_status, coitem_cohead_id,"
 	"       coitem_order_type, coitem_order_id, coitem_custpn,"
@@ -1844,10 +1911,14 @@ void salesOrderItem::populate()
 	"       NULL AS quitem_order_warehous_id,"
 	"       coitem_linenumber,"
 	"       coitem_qtyord AS qtyord,"
+        "       coitem_qty_uom_id AS qty_uom_id,"
+        "       coitem_qty_invuomratio AS qty_invuomratio,"
 	"       coitem_qtyshipped AS qtyshipped,"
 	"       coitem_scheddate,"
 	"       coitem_custprice,"
 	"       coitem_price,"
+        "       coitem_price_uom_id AS price_uom_id,"
+        "       coitem_price_invuomratio AS price_invuomratio,"
 	"       formatDate(coitem_promdate) AS promdate,"
 	"       coitem_substitute_item_id, coitem_prcost,"
 	"       (SELECT COALESCE(SUM(coship_qty), 0)"
@@ -1859,13 +1930,14 @@ void salesOrderItem::populate()
 	"WHERE ( (coitem_itemsite_id=itemsite_id)"
 	" AND (itemsite_warehous_id=warehous_id)"
 	" AND (itemsite_item_id=item_id)"
-        " AND (item_price_uom_id=uom_id)"
+        " AND (item_inv_uom_id=uom_id)"
 	" AND (cohead_id=coitem_cohead_id)"
 	" AND (coitem_id=<? value(\"id\") ?>));" 
 	"<? else ?>"
 	"SELECT itemsite_leadtime, COALESCE(warehous_id, -1) AS warehous_id, "
 	"       warehous_code,"
 	"       item_id, uom_name, iteminvpricerat(item_id) AS invpricerat, item_listprice,"
+        "       item_inv_uom_id,"
 	"       stdcost(item_id) AS stdcost,"
 	"       'O' AS coitem_status, quitem_quhead_id AS coitem_cohead_id,"
 	"	'' AS coitem_order_type, -1 AS coitem_order_id,"
@@ -1874,10 +1946,14 @@ void salesOrderItem::populate()
 	"       quitem_order_warehous_id,"
 	"       quitem_linenumber AS coitem_linenumber,"
 	"       quitem_qtyord AS qtyord,"
+        "       quitem_qty_uom_id AS qty_uom_id,"
+        "       quitem_qty_invuomratio AS qty_invuomratio,"
 	"       NULL AS qtyshipped,"
 	"       quitem_scheddate AS coitem_scheddate,"
 	"       quitem_custprice AS coitem_custprice, "
 	"       quitem_price AS coitem_price,"
+        "       quitem_price_uom_id AS price_uom_id,"
+        "       quitem_price_invuomratio AS price_invuomratio,"
 	"       NULL AS promdate,"
 	"       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
 	"       0 AS coship_qty,"
@@ -1885,7 +1961,7 @@ void salesOrderItem::populate()
 	"       getItemTaxType(item_id, quhead_taxauth_id) AS coitem_taxtype_id "
 	"  FROM item, uom, quhead, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
 	" WHERE ( (quitem_item_id=item_id)"
-        "   AND   (item_price_uom_id=uom_id)"
+        "   AND   (item_inv_uom_id=uom_id)"
 	"   AND   (quhead_id=quitem_quhead_id)"
 	"   AND   (quitem_id=<? value(\"id\") ?>) );"
 	"<? endif ?>" ;
@@ -1902,13 +1978,15 @@ void salesOrderItem::populate()
     _comments->setId(_soitemid);
     _lineNumber->setText(item.value("coitem_linenumber").toString());
     _priceRatio = item.value("invpricerat").toDouble();
-    //TO DO ***This needs to be replaced by new UOM logic****
-    //_ratio->setText(formatUOMRatio(_priceRatio));
-    //_pricingUOM->setText(item.value("uom_name").toString());
-    _unitCost->setBaseValue(item.value("stdcost").toDouble());
     _shippedToDate->setText(formatQty(item.value("qtyshipped").toDouble()));
 
     _item->setId(item.value("item_id").toInt()); // should precede _taxtype/code
+    _invuomid = item.value("item_inv_uom_id").toInt();
+    _qtyUOM->setId(item.value("qty_uom_id").toInt());
+    _priceUOM->setId(item.value("price_uom_id").toInt());
+    _qtyinvuomratio = item.value("qty_invuomratio").toDouble();
+    _priceinvuomratio = item.value("price_invuomratio").toDouble();
+    _unitCost->setBaseValue(item.value("stdcost").toDouble());
     // do tax stuff before _qtyOrdered so signal cascade has data to work with
     _taxtype->setId(item.value("coitem_taxtype_id").toInt());
     _taxcode->setId(item.value("coitem_tax_id").toInt());
@@ -1927,7 +2005,7 @@ void salesOrderItem::populate()
       _subItem->setId(item.value("coitem_substitute_item_id").toInt());
     }
     _customerPrice->setLocalValue(item.value("coitem_custprice").toDouble());
-    _listPrice->setBaseValue(item.value("item_listprice").toDouble());
+    _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _leadTime = item.value("itemsite_leadtime").toInt();
     _cQtyOrdered = _qtyOrdered->toDouble();
@@ -2396,3 +2474,66 @@ void salesOrderItem::sTaxDetail()
     _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
 }
+
+void salesOrderItem::sQtyUOMChanged()
+{
+  if(_qtyUOM->id() == _invuomid)
+    _qtyinvuomratio = 1.0;
+  else
+  {
+    XSqlQuery invuom;
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+                   "  FROM item"
+                   " WHERE(item_id=:item_id);");
+    invuom.bindValue(":item_id", _item->id());
+    invuom.bindValue(":uom_id", _qtyUOM->id());
+    invuom.exec();
+    if(invuom.first())
+      _qtyinvuomratio = invuom.value("ratio").toDouble();
+    else
+      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  if(_qtyUOM->id() != _invuomid)
+  {
+    _priceUOM->setId(_qtyUOM->id());
+    _priceUOM->setEnabled(false);
+  }
+  else
+    _priceUOM->setEnabled(true);
+  sCalculateExtendedPrice();
+}
+
+void salesOrderItem::sPriceUOMChanged()
+{
+  if(_priceUOM->id() == -1 || _qtyUOM->id() == -1)
+    return;
+
+  if(_priceUOM->id() == _invuomid)
+    _priceinvuomratio = 1.0;
+  else
+  {
+    XSqlQuery invuom;
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+                   "  FROM item"
+                   " WHERE(item_id=:item_id);");
+    invuom.bindValue(":item_id", _item->id());
+    invuom.bindValue(":uom_id", _priceUOM->id());
+    invuom.exec();
+    if(invuom.first())
+      _priceinvuomratio = invuom.value("ratio").toDouble();
+    else
+      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  XSqlQuery item;
+  item.prepare("SELECT item_listprice"
+               "  FROM item"
+               " WHERE(item_id=:item_id);");
+  item.bindValue(":item_id", _item->id());
+  item.exec();
+  item.first();
+  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
+  sDeterminePrice();
+}
+
