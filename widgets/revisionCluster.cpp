@@ -75,7 +75,7 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
     }
   }
 
- connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
+  connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
 }
 
 void RevisionCluster::setActive()
@@ -272,10 +272,36 @@ void RevisionLineEdit::sParse()
 	  }
 	  else
       {
-	    if (TRUE) //allow new
+	    if (_allowNew) //allow new
 		{
-		 // emit newRevision(stripped);
-		  setId(-1);
+          if (QMessageBox::question(this, tr("Create New Revision?"),
+				  tr("Revision does not exist.  Would you like to create a new one?"),
+				     QMessageBox::Yes | QMessageBox::Default,
+				     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+		  {
+		    XSqlQuery newrev;
+			if (_type==BOM)
+				newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
+			else if (_type==BOO)
+				newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
+			newrev.bindValue(":target_id", _targetId);
+			newrev.bindValue(":revision", text());
+		    newrev.exec();
+			if (newrev.first())
+			  setId(newrev.value("result").toInt());
+			else
+			{
+	          clear();
+	    	  setId(_id);
+	          if (newrev.lastError().type() != QSqlError::None)
+	          QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+					      .arg(__FILE__)
+					      .arg(__LINE__),
+		      newrev.lastError().databaseText());
+			}
+		  }
+		else
+		  setId(_id);
 		}
 		else 
 	    {
