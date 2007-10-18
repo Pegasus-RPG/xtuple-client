@@ -74,8 +74,37 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT;
 
+  Q_ENUMS(Modes)
+  Q_ENUMS(RevisionTypes)
+
+  Q_PROPERTY(Modes     mode READ mode   WRITE setMode   )
+  Q_PROPERTY(RevisionTypes   type READ type WRITE setType )
+
   public:
     RevisionLineEdit(QWidget *, const char * = 0);
+
+    enum RevisionTypes { All, BOM, BOO };
+	enum Modes { View, Use, Maintain };
+    virtual Modes mode();
+	virtual RevisionTypes type();
+ //   virtual bool TargetId;
+
+  protected slots:
+    virtual void sParse();
+
+  public slots:
+    void setActive();
+  	void setMode(QString);
+  	void setMode(Modes);
+	void setTargetId(int pItem);
+	void setType(QString);
+	void setType(RevisionTypes);
+ //   void sNewRevision(QString pRevision);
+
+  private:
+	enum Modes _mode;
+	enum RevisionTypes _type;
+	int _targetId;
 
 };
 
@@ -83,43 +112,18 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 {
   Q_OBJECT
 
-  Q_ENUMS(RevisionTypes)
-  Q_ENUMS(Modes)
-
-  Q_PROPERTY(RevisionTypes   type READ type WRITE setType )
-  Q_PROPERTY(Modes     mode READ mode   WRITE setMode   )
-
   public:
     RevisionCluster(QWidget *, const char * = 0);
-
-    enum RevisionTypes
-    {
-      BOM,
-      BOO			
-    };
-
-	RevisionTypes type();
-	void setType(RevisionTypes);
-
-    enum Modes
-    {
-      View,
-      Use,
-	  Maintain
-    };
- 
-	Modes mode();
-	void setMode(Modes);
-
-	int _targetId;
+	virtual RevisionLineEdit::Modes mode();
+	virtual RevisionLineEdit::RevisionTypes type();
 
   public slots:
-	void setTargetId(int pItem);
-    void setActive();
-
-  protected:
-	enum RevisionTypes _type;
-	enum Modes _mode;
+    virtual void setActive();
+  	virtual void setMode(QString);
+	virtual void setMode(RevisionLineEdit::Modes);
+  	virtual void setType(QString);
+	virtual void setType(RevisionLineEdit::RevisionTypes);
+	virtual void setTargetId(int pItem);
 };
 
 #endif

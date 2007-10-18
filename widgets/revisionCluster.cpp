@@ -59,6 +59,7 @@
 //  Copyright (c) 2007, OpenMFG, LLC
 
 #include <QMessageBox>
+#include <QSqlError>
 #include "revisioncluster.h"
 
 RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
@@ -74,35 +75,89 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
     }
   }
 }
-enum RevisionCluster::Modes RevisionCluster::mode()
+
+void RevisionCluster::setActive()
 {
-  return _mode;
+  return (static_cast<RevisionLineEdit*>(_number))->setActive();
 }
-void RevisionCluster::setMode(Modes pMode)
+
+void RevisionCluster::setMode(QString pmode)
 {
-  _mode = pMode;
-  /*
-  if  ((_x_privleges) &&
-	  (_mode==View && !_x_privleges->check("ViewRevisions")) ||
-	  (_mode==Use && !_x_privleges->check("UseRevisions")) ||
-	  (_mode==Maintain && !_x_privleges->check("MaintainRevisions")))
-    _list->hide();*/
+  return (static_cast<RevisionLineEdit*>(_number))->setMode(pmode);
 }
-enum RevisionCluster::RevisionTypes RevisionCluster::type()
+
+void RevisionCluster::setMode(RevisionLineEdit::Modes pmode)
+{
+  return (static_cast<RevisionLineEdit*>(_number))->setMode(pmode);
+}
+
+void RevisionCluster::setTargetId(int ptargetid)
+{
+  return (static_cast<RevisionLineEdit*>(_number))->setTargetId(ptargetid);
+}
+
+void RevisionCluster::setType(QString ptype)
+{
+  return (static_cast<RevisionLineEdit*>(_number))->setType(ptype);
+}
+
+void RevisionCluster::setType(RevisionLineEdit::RevisionTypes ptype)
+{
+  return (static_cast<RevisionLineEdit*>(_number))->setType(ptype);
+}
+
+/////////////////////////////////////////////////////////////////////////////////
+
+RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
+  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
+{
+  setTitles(tr("Revision"), tr("Revisions"));
+  _type=All;
+}
+
+RevisionLineEdit::RevisionTypes RevisionCluster::type()
+{
+  return (static_cast<RevisionLineEdit*>(_number))->type();
+}
+
+RevisionLineEdit::RevisionTypes RevisionLineEdit::type()
 {
   return _type;
 }
 
-void RevisionCluster::setType(RevisionTypes pType)
+RevisionLineEdit::Modes RevisionCluster::mode()
 {
-  _type = pType;
+  return (static_cast<RevisionLineEdit*>(_number))->mode();
 }
-void RevisionCluster::setTargetId(int pItem)
+
+RevisionLineEdit::Modes RevisionLineEdit::mode()
 {
-  _targetId = pItem;
-  setActive();
+  return _mode;
 }
-void RevisionCluster::setActive()
+
+void RevisionLineEdit::setMode(Modes pMode)
+{
+  _mode = pMode;
+}
+
+void RevisionLineEdit::setMode(QString pmode)
+{
+  if (pmode == "View")
+    setMode(View);
+  else if (pmode == "Use")
+    setMode(Use);
+  else if (pmode == "Maintain")
+    setMode(Maintain);
+  else
+  {
+    QMessageBox::critical(this, tr("Invalid Mode"),
+			  tr("RevisionLineEdit::setMode received "
+			     "an invalid Mode %1").arg(pmode));
+    setMode(View);
+  }
+}
+
+void RevisionLineEdit::setActive()
 {
   QString _etype;
   XSqlQuery revision;
@@ -138,8 +193,84 @@ void RevisionCluster::setActive()
     setId(-1);
   }
 }
-RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
+
+void RevisionLineEdit::setTargetId(int pItem)
 {
-  setTitles(tr("Revision"), tr("Revisions"));
+  _targetId = pItem;
+  setActive();
 }
+
+void RevisionLineEdit::setType(QString ptype)
+{
+  if (ptype == "BOM")
+    setType(BOM);
+  else if (ptype == "BOO")
+    setType(BOO);
+  else
+  {
+    QMessageBox::critical(this, tr("Invalid Revision Type"),
+			  tr("RevisionLineEdit::setType received "
+			     "an invalid RevisionType %1").arg(ptype));
+    setType(All);
+  }
+}
+
+void RevisionLineEdit::setType(RevisionTypes pType)
+{
+  _type = pType;
+}
+
+void RevisionLineEdit::sParse()
+{
+  //VirtualClusterLineEdit:sParse();
+  if (! _parsed)
+  {
+    QString stripped = text().stripWhiteSpace().upper();
+    if (stripped.length() == 0)
+    {
+	  _parsed = TRUE;
+	  //setId(-1);
+    }
+    else
+    {
+	  XSqlQuery numQ;
+	  numQ.prepare(_query + _numClause +
+		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+		    QString(";"));
+	  numQ.bindValue(":number", stripped);
+	  numQ.exec();
+	  if (numQ.first())
+	  {
+	    _valid = true;
+	    setId(numQ.value("id").toInt());
+	    if (_hasName)
+	      _name = (numQ.value("name").toString());
+	    if (_hasDescription)
+	      _description = numQ.value("description").toString();
+	  }
+	  else
+      {
+	    if (TRUE) //allow new
+		{
+		 // emit newRevision(stripped);
+		  setId(-1);
+		}
+		else 
+	    {
+	      clear();
+		  setId(_id);
+	      if (numQ.lastError().type() != QSqlError::None)
+	      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+					      .arg(__FILE__)
+					      .arg(__LINE__),
+		  numQ.lastError().databaseText());
+        }
+	  }
+	}
+  }
+
+  _parsed = TRUE;
+  emit valid(_valid);
+  emit parsed(); 
+}
+
