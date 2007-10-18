@@ -74,6 +74,8 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
       _list->hide();
     }
   }
+
+ connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
 }
 
 void RevisionCluster::setActive()
@@ -106,6 +108,19 @@ void RevisionCluster::setType(RevisionLineEdit::RevisionTypes ptype)
   return (static_cast<RevisionLineEdit*>(_number))->setType(ptype);
 }
 
+void RevisionCluster::sModeChanged()
+{
+  if  (_x_privleges)
+  {
+	_list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privleges->check("ViewRevisions")) ||
+		       ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privleges->check("UseRevisions")) ||
+			   ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privleges->check("MaintainRevisions")));
+	setReadOnly(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privleges->check("MaintainRevisions")) ||
+		       ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
+			   (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));
+  }
+}
+
 /////////////////////////////////////////////////////////////////////////////////
 
 RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
@@ -113,6 +128,7 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
 {
   setTitles(tr("Revision"), tr("Revisions"));
   _type=All;
+  _allowNew=FALSE;
 }
 
 RevisionLineEdit::RevisionTypes RevisionCluster::type()
@@ -137,7 +153,13 @@ RevisionLineEdit::Modes RevisionLineEdit::mode()
 
 void RevisionLineEdit::setMode(Modes pMode)
 {
-  _mode = pMode;
+  if (_mode!=pMode)
+  {
+    _mode = pMode;
+    if  (_x_privleges)
+      _allowNew=((pMode=Maintain) && (_x_privleges->check("MaintainRevisions")));
+    emit modeChanged();
+  }
 }
 
 void RevisionLineEdit::setMode(QString pmode)

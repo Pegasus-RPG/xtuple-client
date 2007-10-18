@@ -87,7 +87,6 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 	enum Modes { View, Use, Maintain };
     virtual Modes mode();
 	virtual RevisionTypes type();
- //   virtual bool TargetId;
 
   protected slots:
     virtual void sParse();
@@ -99,12 +98,15 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 	void setTargetId(int pItem);
 	void setType(QString);
 	void setType(RevisionTypes);
- //   void sNewRevision(QString pRevision);
 
   private:
 	enum Modes _mode;
 	enum RevisionTypes _type;
 	int _targetId;
+	bool _allowNew;
+
+  signals:
+    void modeChanged();
 
 };
 
@@ -117,6 +119,9 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 	virtual RevisionLineEdit::Modes mode();
 	virtual RevisionLineEdit::RevisionTypes type();
 
+  private slots:
+    void sModeChanged();
+
   public slots:
     virtual void setActive();
   	virtual void setMode(QString);
@@ -124,6 +129,7 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
   	virtual void setType(QString);
 	virtual void setType(RevisionLineEdit::RevisionTypes);
 	virtual void setTargetId(int pItem);
+
 };
 
 #endif
