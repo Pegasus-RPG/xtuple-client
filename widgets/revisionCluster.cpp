@@ -87,7 +87,7 @@ void RevisionCluster::Activate()
   activate.bindValue(":rev_id", _number->id());
   activate.exec();
   if (activate.first())
-    setId(activate.value("result").toInt());
+    setDescription("Active");
   else  if (activate.lastError().type() != QSqlError::None)
   {
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -160,8 +160,7 @@ RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
   _type=All;
   _allowNew=FALSE;
   if (_x_metrics)
-    if (_x_metrics->boolean("RevControl"))
-		_isRevControl=TRUE;
+    _isRevControl=(_x_metrics->boolean("RevControl"));
 }
 
 RevisionLineEdit::RevisionTypes RevisionCluster::type()
