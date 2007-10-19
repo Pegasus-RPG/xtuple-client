@@ -221,22 +221,18 @@ void RevisionLineEdit::setActive()
     switch (_type)
     {
       case BOM:
-        _etype="BOM";
+	  _etype="BOM";
 	  break;
 
     case BOO:
-      _etype="BOO";
+	  _etype="BOO";
 	  break;
 
 	default:
 	  break;
     }
 
-    revision.prepare( "SELECT rev_id "
-                      "FROM rev "
-	  				  "WHERE ( (rev_target_type=:target_type) "
-					  "AND (rev_target_id=:target_id) "
-					  "AND (rev_status='A') );" );
+	revision.prepare( "SELECT getActiveRevId(:target_type,:target_id) AS rev_id;" );
     revision.bindValue(":target_type", _etype);
     revision.bindValue(":target_id", _targetId);
     revision.exec();
