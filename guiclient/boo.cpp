@@ -133,6 +133,15 @@ enum SetResponse boo::set(const ParameterList &pParams)
   param = pParams.value("item_id", &valid);
   if (valid)
     _item->setId(param.toInt());
+   {
+     param = pParams.value("revision_id", &valid);
+     if (valid)
+       _revision->setId(param.toInt());
+     else if (_metrics->boolean("RevControl"))
+	 {
+	   _revision->setTargetId(_item->id());
+	 }
+   }
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -217,19 +226,20 @@ void boo::sSave()
 
   q.bindValue(":boohead_docnum", _documentNum->text());
   q.bindValue(":boohead_leadtime", _productionLeadTime->text().toInt());
-  q.bindValue(":boohead_revision", _revision->text());
+  q.bindValue(":boohead_revision", _revision->number());
   q.bindValue(":boohead_revisiondate", _revisionDate->date());
   q.bindValue(":boohead_final_location_id", _finalLocation->id());
   q.bindValue(":boohead_closewo", QVariant(_closeWO->isChecked(), 0));
   q.exec();
 
-  _close->setFocus();
+  close();
 }
 
 void boo::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
 
   orReport report("BillOfOperations", params);
   if (report.isValid())
@@ -260,6 +270,7 @@ void boo::sNew()
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
 
   booItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -347,13 +358,15 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
              "       boohead_revisiondate, boohead_final_location_id,"
              "       boohead_closewo "
              "FROM boohead "
-             "WHERE (boohead_item_id=:item_id);" );
+             "WHERE ((boohead_item_id=:item_id) "
+			 "AND (boohead_rev_id=:revision_id));" );
   q.bindValue(":item_id", _item->id());
+  q.bindValue(":revision_id", _revision->id());
   q.exec();
   if (q.first())
   {
     _documentNum->setText(q.value("boohead_docnum").toString());
-    _revision->setText(q.value("boohead_revision").toString());
+    _revision->setNumber(q.value("boohead_revision").toString());
     _revisionDate->setDate(q.value("boohead_revisiondate").toDate());
     _finalLocation->setId(q.value("boohead_final_location_id").toInt());
     _closeWO->setChecked(q.value("boohead_closewo").toBool());
@@ -374,9 +387,8 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
                "       formatDate(booitem_expires, 'Never') AS f_expires,"
                "       booitem_execday, (booitem_configtype<>'N') AS config "
                "FROM wrkcnt,"
-               "     booitem LEFT OUTER JOIN stdopn ON (booitem_stdopn_id=stdopn_id) "
-               "WHERE ( (booitem_wrkcnt_id=wrkcnt_id)"
-               " AND (booitem_item_id=:item_id)" );
+			   "     booitem(:item_id,:revision_id) LEFT OUTER JOIN stdopn ON (booitem_stdopn_id=stdopn_id) "
+               "WHERE ((booitem_wrkcnt_id=wrkcnt_id)" );
 
   if (!_showExpired->isChecked())
     sql += " AND (booitem_expires > CURRENT_DATE)";
@@ -390,6 +402,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
   q.prepare(sql);
   q.bindValue(":none", tr("None"));
   q.bindValue(":item_id", _item->id());
+  q.bindValue(":revision_id",_revision->id());
   q.exec();
   if (q.first())
   {

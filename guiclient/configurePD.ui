@@ -13,35 +13,71 @@
    <string>P/D Module Configuration</string>
   </property>
   <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
    <property name="spacing" >
     <number>6</number>
    </property>
+   <property name="leftMargin" >
+    <number>9</number>
+   </property>
+   <property name="topMargin" >
+    <number>9</number>
+   </property>
+   <property name="rightMargin" >
+    <number>9</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>9</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
+     <property name="spacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
        </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QGroupBox" name="_routings" >
@@ -52,11 +88,20 @@
             <bool>true</bool>
            </property>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>6</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>6</number>
+            </property>
+            <property name="topMargin" >
+             <number>6</number>
+            </property>
+            <property name="rightMargin" >
+             <number>6</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>6</number>
             </property>
             <item>
              <widget class="QGroupBox" name="QButtonGroup_1" >
@@ -64,11 +109,20 @@
                <string>Track Machine Overhead</string>
               </property>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>5</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
+               </property>
+               <property name="leftMargin" >
+                <number>5</number>
+               </property>
+               <property name="topMargin" >
+                <number>5</number>
+               </property>
+               <property name="rightMargin" >
+                <number>5</number>
+               </property>
+               <property name="bottomMargin" >
+                <number>5</number>
                </property>
                <item>
                 <widget class="QRadioButton" name="_machineOverhead" >
@@ -123,10 +177,19 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
@@ -140,6 +203,13 @@
           <widget class="QCheckBox" name="_transforms" >
            <property name="text" >
             <string>Enable Transforms</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_revision" >
+           <property name="text" >
+            <string>Enable Revision Controls</string>
            </property>
           </widget>
          </item>
@@ -161,11 +231,20 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>6</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QGroupBox" name="_defaultGroup" >
@@ -173,11 +252,20 @@
             <string>Defaults</string>
            </property>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>5</number>
             </property>
             <item>
              <widget class="QCheckBox" name="_exclusive" >
@@ -191,11 +279,20 @@
             </item>
             <item>
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>5</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="_issueMethodLit" >
@@ -271,11 +368,20 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
+     </property>
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
       <widget class="QPushButton" name="_close" >
@@ -320,16 +426,18 @@
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <tabstops>
+  <tabstop>_routings</tabstop>
   <tabstop>_machineOverhead</tabstop>
   <tabstop>_generalOverhead</tabstop>
   <tabstop>_bbom</tabstop>
   <tabstop>_transforms</tabstop>
+  <tabstop>_revision</tabstop>
   <tabstop>_changeLog</tabstop>
   <tabstop>_inactiveBomItems</tabstop>
   <tabstop>_exclusive</tabstop>
   <tabstop>_issueMethod</tabstop>
-  <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <resources/>
  <connections>

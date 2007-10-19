@@ -704,6 +704,12 @@
          <property name="readOnly" >
           <bool>false</bool>
          </property>
+         <property name="mode" >
+          <enum>RevisionLineEdit::Maintain</enum>
+         </property>
+         <property name="type" >
+          <enum>RevisionLineEdit::BOM</enum>
+         </property>
         </widget>
        </item>
        <item row="1" column="0" >

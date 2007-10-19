@@ -91,6 +91,7 @@ protected slots:
 private:
     int _mode;
     int _booitemid;
+	int _revisionid;
 
 };
 

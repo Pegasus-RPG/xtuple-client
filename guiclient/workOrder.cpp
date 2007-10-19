@@ -445,7 +445,8 @@ void workOrder::sCreate()
     }
   
     q.prepare( "SELECT createWo( :woNumber, :itemsite_id, :priority, :orderQty,"
-               "                 :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id ) AS result;" );
+               "                 :leadTime, :dueDate, :productionNotes, :ordtype, :ordid, :prj_id,"
+			   "                 :bom_rev_id, :boo_rev_id) AS result;" );
     q.bindValue(":woNumber", _woNumber->text().toInt());
     q.bindValue(":itemsite_id", itemsiteid);
     q.bindValue(":priority", _priority->value());
@@ -454,6 +455,8 @@ void workOrder::sCreate()
     q.bindValue(":dueDate", _dueDate->date());
     q.bindValue(":productionNotes", _productionNotes->text());
     q.bindValue(":prj_id", _project->id());
+	q.bindValue(":bom_rev_id", _bomRevision->id());
+	q.bindValue(":boo_rev_id", _booRevision->id());
     if(cRelease == _mode)
     {
       q.bindValue(":ordtype", _planordtype);
@@ -662,6 +665,8 @@ void workOrder::sPopulateItemChar( int pItemid )
   _itemchar->removeRows(0, _itemchar->rowCount());
   if (pItemid != -1)
   {
+    _bomRevision->setTargetId(pItemid);
+	_booRevision->setTargetId(pItemid);
     q.prepare( "SELECT DISTINCT char_id, char_name,"
                "       COALESCE(b.charass_value, (SELECT c.charass_value FROM charass c WHERE ((c.charass_target_type='I') AND (c.charass_target_id=:item_id) AND (c.charass_default) AND (c.charass_char_id=char_id)) LIMIT 1)) AS charass_value"
                "  FROM charass a, char "

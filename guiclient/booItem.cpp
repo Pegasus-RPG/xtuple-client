@@ -152,6 +152,10 @@ enum SetResponse booItem::set(ParameterList &pParams)
   if (valid)
     _item->setId(param.toInt());
 
+  param = pParams.value("revision_id", &valid);
+  if (valid)
+    _revisionid = param.toInt();
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -248,7 +252,7 @@ void booItem::sSave()
                  "  booitem_issuecomp, booitem_rcvinv,"
                  "  booitem_pullthrough, booitem_overlap,"
                  "  booitem_configtype, booitem_configid, booitem_configflag,"
-                 "  booitem_instruc, booitem_wip_location_id ) "
+                 "  booitem_instruc, booitem_wip_location_id, booitem_rev_id ) "
                  "VALUES "
                  "( :effective, :expires, :booitem_execday,"
                  "  :booitem_id, :booitem_item_id,"
@@ -263,7 +267,7 @@ void booItem::sSave()
                  "  :booitem_issuecomp, :booitem_rcvinv,"
                  "  :booitem_pullthrough, :booitem_overlap,"
                  "  :booitem_configtype, :booitem_configid, :booitem_configflag,"
-                 "  :booitem_instruc, :booitem_wip_location_id );" );
+				 "  :booitem_instruc, :booitem_wip_location_id, :booitem_rev_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE booitem "
@@ -308,6 +312,7 @@ void booItem::sSave()
   q.bindValue(":booitem_configtype", "N");
   q.bindValue(":booitem_configid", -1);
   q.bindValue(":booitem_configflag", QVariant(FALSE, 0));
+  q.bindValue(":booitem_rev_id", _revisionid);
   q.exec();
 
   omfgThis->sBOOsUpdated(_booitemid, TRUE);
