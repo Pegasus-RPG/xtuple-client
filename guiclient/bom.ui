@@ -954,5 +954,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_activate</sender>
+   <signal>clicked()</signal>
+   <receiver>_revision</receiver>
+   <slot>Activate()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>751</x>
+     <y>69</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>532</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

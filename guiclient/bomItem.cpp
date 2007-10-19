@@ -145,6 +145,10 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
   if (valid)
     _itemid = param.toInt();
 
+  param = pParams.value("revision_id", &valid);
+  if (valid)
+    _revisionid = param.toInt();
+
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -264,7 +268,7 @@ void bomItem::sSave()
                "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
-               "                      :ecn, :subtype ) AS result;" );
+			   "                      :ecn, :subtype, :revision_id ) AS result;" );
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
                "                      bomitem_seqnumber, :issueMethod,"
@@ -272,9 +276,9 @@ void bomItem::sSave()
                "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
-               "                      :ecn, :subtype ) AS result "
-               "FROM bomitem "
-               "WHERE (bomitem_id=:sourceBomitem_id);" );
+			   "                      :ecn, :subtype, :revision_id ) AS result "
+			   "FROM bomitem "
+			   "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit)
     q.prepare( "UPDATE bomitem "
                "SET bomitem_booitem_seq_id=:booitem_seq_id, bomitem_schedatwooper=:scheduledWithBooItem,"
@@ -317,6 +321,7 @@ void bomItem::sSave()
     q.bindValue(":subtype", "I");
   else if (_bomDefinedSubstitutes->isChecked())
     q.bindValue(":subtype", "B");
+  q.bindValue(":revision_id", _revisionid);
 
   q.bindValue(":configType", "N");
   q.bindValue(":configId", -1);
