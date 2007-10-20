@@ -62,6 +62,11 @@
 #include <QSqlError>
 #include "revisioncluster.h"
 
+QString RevisionLineEdit::typeText()
+{
+  return _typeText;
+}
+
 RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
@@ -73,14 +78,45 @@ RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
     if (!_x_metrics->boolean("RevControl"))
     {
       _list->hide();
+	  emit isRevControl(FALSE);
     }
+	else
+	  emit isRevControl(TRUE);
   }
 
   connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
   connect(_number, SIGNAL(canActivate(bool)), this, SLOT(sCanActivate(bool)));
 }
+RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
+  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
+{
+  setTitles(tr("Revision"), tr("Revisions"));
+  _type=All;
+  _allowNew=FALSE;
+  if (_x_metrics)
+    _isRevControl=(_x_metrics->boolean("RevControl"));
+}
 
-void RevisionCluster::Activate()
+RevisionLineEdit::RevisionTypes RevisionCluster::type()
+{
+  return (static_cast<RevisionLineEdit*>(_number))->type();
+}
+
+RevisionLineEdit::RevisionTypes RevisionLineEdit::type()
+{
+  return _type;
+}
+
+RevisionLineEdit::Modes RevisionCluster::mode()
+{
+  return (static_cast<RevisionLineEdit*>(_number))->mode();
+}
+
+RevisionLineEdit::Modes RevisionLineEdit::mode()
+{
+  return _mode;
+}
+void RevisionCluster::activate()
 {
   XSqlQuery activate;
   activate.prepare("SELECT activateRev(:rev_id) AS result;");
@@ -143,44 +179,14 @@ void RevisionCluster::sModeChanged()
 	  (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privleges->check("MaintainRevisions")) ||
 	  	                                                    ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
 			                                                (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));
-    }
+      emit isRevControl(TRUE);   
+	}
 	else
     {
       _list->hide();
       (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
+	  emit isRevControl(FALSE);
     }
-}
-
-/////////////////////////////////////////////////////////////////////////////////
-
-RevisionLineEdit::RevisionLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "rev", "rev_id", "rev_number", 0, "CASE WHEN rev_status='A' THEN 'Active' WHEN rev_status='P' THEN 'Pending' ELSE 'Inactive' END", 0, pName)
-{
-  setTitles(tr("Revision"), tr("Revisions"));
-  _type=All;
-  _allowNew=FALSE;
-  if (_x_metrics)
-    _isRevControl=(_x_metrics->boolean("RevControl"));
-}
-
-RevisionLineEdit::RevisionTypes RevisionCluster::type()
-{
-  return (static_cast<RevisionLineEdit*>(_number))->type();
-}
-
-RevisionLineEdit::RevisionTypes RevisionLineEdit::type()
-{
-  return _type;
-}
-
-RevisionLineEdit::Modes RevisionCluster::mode()
-{
-  return (static_cast<RevisionLineEdit*>(_number))->mode();
-}
-
-RevisionLineEdit::Modes RevisionLineEdit::mode()
-{
-  return _mode;
 }
 
 void RevisionLineEdit::setMode(Modes pMode)
@@ -215,25 +221,9 @@ void RevisionLineEdit::setActive()
 {
   if (_isRevControl)
   {
-    QString _etype;
     XSqlQuery revision;
-
-    switch (_type)
-    {
-      case BOM:
-	  _etype="BOM";
-	  break;
-
-    case BOO:
-	  _etype="BOO";
-	  break;
-
-	default:
-	  break;
-    }
-
 	revision.prepare( "SELECT getActiveRevId(:target_type,:target_id) AS rev_id;" );
-    revision.bindValue(":target_type", _etype);
+    revision.bindValue(":target_type", typeText());
     revision.bindValue(":target_id", _targetId);
     revision.exec();
     if (revision.first())
@@ -259,9 +249,12 @@ void RevisionLineEdit::setId(const int pId)
 
 void RevisionLineEdit::setTargetId(int pItem)
 {
-  _targetId = pItem;
-  setExtraClause(QString(" (rev_target_id=%1) ").arg(pItem));
-  setActive();
+  if (_isRevControl)
+  {
+    _targetId = pItem;
+    setExtraClause(QString(" ((rev_target_type='%1') AND (rev_target_id=%2)) ").arg(typeText()).arg(pItem));
+    setActive();
+  }
 }
 
 void RevisionLineEdit::setType(QString ptype)
@@ -282,6 +275,20 @@ void RevisionLineEdit::setType(QString ptype)
 void RevisionLineEdit::setType(RevisionTypes pType)
 {
   _type = pType;
+  switch (pType)
+  {
+    case BOM:
+	  _typeText="BOM";
+	  break;
+
+    case BOO:
+	  _typeText="BOO";
+	  break;
+
+	default:
+	  _typeText="All";
+	break;
+  }
 }
 
 void RevisionLineEdit::sParse()
@@ -289,6 +296,7 @@ void RevisionLineEdit::sParse()
   if ((_isRevControl) && (!_parsed))
   {
     QString stripped = text().stripWhiteSpace().upper();
+	setText(stripped);
     if (stripped.length() == 0)
     {
       setId(-1);
@@ -311,10 +319,7 @@ void RevisionLineEdit::sParse()
 				   " AND (rev_target_type=:target_type));");
   	  numQ.bindValue(":number", stripped);
 	  numQ.bindValue(":target_id",_targetId);
-	  if (_type=BOM)
-	    numQ.bindValue(":target_type", "BOM");
-	  else
-	    numQ.bindValue(":target_type", "BOO");
+	  numQ.bindValue(":target_type",typeText());
 	  numQ.exec();
 	  if (numQ.first())
 	  {

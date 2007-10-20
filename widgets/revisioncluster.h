@@ -83,10 +83,11 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
   public:
     RevisionLineEdit(QWidget *, const char * = 0);
 
-    enum RevisionTypes { All, BOM, BOO };
 	enum Modes { View, Use, Maintain };
+    enum RevisionTypes { All, BOM, BOO };
     virtual Modes mode();
 	virtual RevisionTypes type();
+	virtual QString typeText();
 
   protected slots:
 	virtual void setId(const int);
@@ -101,22 +102,29 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
 	void setType(RevisionTypes);
 
   private:
+	bool _allowNew;
+	bool _isRevControl;
 	enum Modes _mode;
 	enum RevisionTypes _type;
 	int _targetId;
-	bool _allowNew;
 	QString _cachenum;
-	bool _isRevControl;
+    QString _typeText;
 
   signals:
-    void modeChanged();
 	void canActivate(bool);
+    void modeChanged();
 
 };
 
 class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 {
   Q_OBJECT
+
+  Q_ENUMS(RevisionLineEdit::Modes)
+  Q_ENUMS(RevisionLineEdit::RevisionTypes)
+
+  Q_PROPERTY(RevisionLineEdit::Modes     mode READ mode   WRITE setMode   )
+  Q_PROPERTY(RevisionLineEdit::RevisionTypes   type READ type WRITE setType )
 
   public:
     RevisionCluster(QWidget *, const char * = 0);
@@ -126,10 +134,10 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
   private slots:
     void sModeChanged();
 	void sCanActivate(bool p);
+    void setActive();
 
   public slots:
-    void Activate();
-    virtual void setActive();
+    void activate();
   	virtual void setMode(QString);
 	virtual void setMode(RevisionLineEdit::Modes);
   	virtual void setType(QString);
@@ -138,6 +146,7 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 
   signals:
     void canActivate(bool);
+	void isRevControl(bool);
 };
 
 #endif
