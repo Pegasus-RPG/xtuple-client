@@ -83,6 +83,7 @@ boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_moveDown, SIGNAL(clicked()), this, SLOT(sMoveDown()));
   connect(_moveUp, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
@@ -137,10 +138,6 @@ enum SetResponse boo::set(const ParameterList &pParams)
      param = pParams.value("revision_id", &valid);
      if (valid)
        _revision->setId(param.toInt());
-     else if (_metrics->boolean("RevControl"))
-	 {
-	   _revision->setTargetId(_item->id());
-	 }
    }
 
   param = pParams.value("mode", &valid);
@@ -196,22 +193,16 @@ enum SetResponse boo::set(const ParameterList &pParams)
 
 void boo::sSave()
 {
-  q.prepare( "SELECT boohead_id "
-             "FROM boohead "
-             "WHERE (boohead_item_id=:item_id);" );
-  q.bindValue(":item_id", _item->id());
-  q.exec();
   if (q.first())
   {
-    int booheadid = q.value("boohead_id").toInt();
-
-    q.prepare( "UPDATE boohead "
+	q.prepare( "UPDATE boohead "
                "SET boohead_docnum=:boohead_docnum, boohead_leadtime=:boohead_leadtime,"
                "    boohead_revision=:boohead_revision, boohead_revisiondate=:boohead_revisiondate,"
                "    boohead_final_location_id=:boohead_final_location_id,"
                "    boohead_closewo=:boohead_closewo "
-               "WHERE (boohead_id=:boohead_id);" );
-    q.bindValue(":boohead_id", booheadid);
+               "WHERE ((boohead_item_id=:boohead_item_id) "
+			   "AND (boohead_rev_id=:boohead_rev_id));" );
+    q.bindValue(":boohead_rev_id", _revision->id());
   }
   else
   {
@@ -221,9 +212,9 @@ void boo::sSave()
                "VALUES "
                "( :boohead_item_id, :boohead_docnum, :boohead_leadtime, :boohead_closewo,"
                "  :boohead_revision, :boohead_revisiondate, :boohead_final_location_id );" );
-    q.bindValue(":boohead_item_id", _item->id());
   }
 
+  q.bindValue(":boohead_item_id", _item->id());
   q.bindValue(":boohead_docnum", _documentNum->text());
   q.bindValue(":boohead_leadtime", _productionLeadTime->text().toInt());
   q.bindValue(":boohead_revision", _revision->number());
@@ -354,7 +345,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
   q.exec();
   _finalLocation->populate(q, locid);
 
-  q.prepare( "SELECT boohead_docnum, boohead_revision,"
+  q.prepare( "SELECT boohead_id, boohead_docnum, boohead_revision,"
              "       boohead_revisiondate, boohead_final_location_id,"
              "       boohead_closewo "
              "FROM boohead "
@@ -373,9 +364,9 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
   }
 
   q.prepare( "SELECT MAX(booitem_execday) AS leadtime "
-             "FROM booitem "
-             "WHERE (booitem_item_id=:item_id);" );
+             "FROM booitem(:item_id,:revision_id);" );
   q.bindValue(":item_id", _item->id());
+  q.bindValue(":revision_id",_revision->id());
   q.exec();
   if (q.first())
     _productionLeadTime->setText(q.value("leadtime").toString());

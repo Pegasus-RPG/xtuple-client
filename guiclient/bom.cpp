@@ -140,10 +140,6 @@ enum SetResponse BOM::set(const ParameterList &pParams)
      param = pParams.value("revision_id", &valid);
      if (valid)
        _revision->setId(param.toInt());
-     else if (_metrics->boolean("RevControl"))
-	 {
-	   _revision->setTargetId(_item->id());
-	 }
    }
   
   param = pParams.value("mode", &valid);

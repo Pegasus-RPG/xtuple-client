@@ -938,5 +938,37 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_bomRevision</receiver>
+   <slot>setTargetId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>237</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>126</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_booRevision</receiver>
+   <slot>setTargetId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>237</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>348</x>
+     <y>188</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

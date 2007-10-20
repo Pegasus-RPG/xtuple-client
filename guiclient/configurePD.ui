@@ -207,9 +207,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QCheckBox" name="_revision" >
+          <widget class="QCheckBox" name="_revControl" >
            <property name="text" >
-            <string>Enable Revision Controls</string>
+            <string>Enable Revision Control</string>
            </property>
           </widget>
          </item>
@@ -431,7 +431,7 @@
   <tabstop>_generalOverhead</tabstop>
   <tabstop>_bbom</tabstop>
   <tabstop>_transforms</tabstop>
-  <tabstop>_revision</tabstop>
+  <tabstop>_revControl</tabstop>
   <tabstop>_changeLog</tabstop>
   <tabstop>_inactiveBomItems</tabstop>
   <tabstop>_exclusive</tabstop>

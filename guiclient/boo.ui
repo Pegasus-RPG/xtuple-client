@@ -113,7 +113,7 @@
           <bool>false</bool>
          </property>
          <property name="mode" >
-          <enum>RevisionLineEdit::Use</enum>
+          <enum>RevisionLineEdit::Maintain</enum>
          </property>
          <property name="type" >
           <enum>RevisionLineEdit::BOO</enum>
@@ -269,7 +269,7 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="pushButton" >
+         <widget class="QPushButton" name="_activate" >
           <property name="text" >
            <string>&amp;Activate</string>
           </property>
@@ -632,6 +632,54 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_revision</sender>
+   <signal>canActivate(bool)</signal>
+   <receiver>_activate</receiver>
+   <slot>setVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>506</x>
+     <y>37</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>710</x>
+     <y>80</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_activate</sender>
+   <signal>clicked()</signal>
+   <receiver>_revision</receiver>
+   <slot>activate()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>710</x>
+     <y>80</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>506</x>
+     <y>37</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_revision</receiver>
+   <slot>setTargetId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>176</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>506</x>
+     <y>37</y>
     </hint>
    </hints>
   </connection>

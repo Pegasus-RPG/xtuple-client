@@ -964,11 +964,27 @@
    <sender>_activate</sender>
    <signal>clicked()</signal>
    <receiver>_revision</receiver>
-   <slot>Activate()</slot>
+   <slot>activate()</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>751</x>
      <y>69</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>532</x>
+     <y>39</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_revision</receiver>
+   <slot>setTargetId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>181</x>
+     <y>46</y>
     </hint>
     <hint type="destinationlabel" >
      <x>532</x>

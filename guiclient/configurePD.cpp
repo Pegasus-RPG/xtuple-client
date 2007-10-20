@@ -58,6 +58,9 @@
 #include "configurePD.h"
 
 #include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
+#include "storedProcErrorLookup.h"
 #include "OpenMFGGUIClient.h"
 
 /*
@@ -98,6 +101,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   {
     _routings->hide();
     _routings->setChecked(FALSE);
+	_revControl->hide();
     _bbom->hide();
     _transforms->hide();
   }
@@ -134,6 +138,15 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
     }
     else 
       _transforms->setChecked(_metrics->boolean("Transforms"));
+
+    q.exec("SELECT * FROM rev LIMIT 1;");
+    if (q.first())
+    {
+      _revControl->setChecked(TRUE);
+      _revControl->setEnabled(FALSE);
+    }
+    else 
+      _revControl->setChecked(_metrics->boolean("RevControl"));
   }
   
   //Remove this when old menu system goes away
@@ -164,10 +177,52 @@ void configurePD::languageChange()
 
 void configurePD::sSave()
 {
+  if (!_metrics->boolean("RevControl") && (_revControl->isChecked()))
+  {
+    if (QMessageBox::warning(this, tr("Enable Revision Control"),
+	  tr("Enabling revision control will create control records "
+	     "for products that contain revision number data.  This "
+		 "change can not be undone.  Do you wish to proceed?"),
+	    QMessageBox::Yes | QMessageBox::Default,
+	    QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+	{
+      _metrics->set("RevControl", TRUE);
+	  q.exec("SELECT createbomrev(bomhead_item_id,bomhead_revision) AS result "
+		      "FROM bomhead "
+		      "WHERE ((COALESCE(bomhead_revision,'') <> '') "
+			  "AND (bomhead_rev_id=-1))"
+			  "UNION "
+              "SELECT createboorev(boohead_item_id,boohead_revision) "
+		      "FROM boohead "
+			  "WHERE ((COALESCE(boohead_revision,'') <> '') "
+			  "AND (boohead_rev_id=-1));");
+	  if (q.first())
+	    if (q.value("result").toInt() < 0)
+	    {
+	      systemError(this, storedProcErrorLookup("CreateRevision", q.value("result").toInt()),
+			  __FILE__, __LINE__);
+         _metrics->set("RevControl", FALSE);
+	      return;
+	    }
+	  if (q.lastError().type() != QSqlError::None)
+	  {
+	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+	      .arg(__FILE__)
+		  .arg(__LINE__),
+		  q.lastError().databaseText());
+		_metrics->set("RevControl", FALSE);
+	    return;
+	  }
+	}
+	else
+	  return;
+  }
+
   _metrics->set("TrackMachineOverhead", ((_machineOverhead->isChecked()) ? QString("M") : QString("G")));
   _metrics->set("Routings", ((_routings->isChecked()) || (!_routings->isCheckable())));
   _metrics->set("BBOM", ((_bbom->isChecked()) && (!_bbom->isHidden())));
   _metrics->set("Transforms", ((_transforms->isChecked()) && (!_transforms->isHidden())));
+  _metrics->set("RevControl", ((_revControl->isChecked()) && (!_revControl->isHidden())));
   _metrics->set("AllowInactiveBomItems", _inactiveBomItems->isChecked());
   _metrics->set("DefaultSoldItemsExclusive", _exclusive->isChecked());
   _metrics->set("ItemChangeLog", _changeLog->isChecked());
