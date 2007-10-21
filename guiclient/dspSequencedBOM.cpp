@@ -85,6 +85,9 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 dspSequencedBOM::~dspSequencedBOM()
@@ -119,6 +122,7 @@ void dspSequencedBOM::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
 
   if (_showExpired->isChecked())
     params.append("showExpired");
@@ -160,10 +164,9 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
                  "       CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
                  "            ELSE FALSE"
                  "       END AS future "
-				 "FROM bomitem, booitem(:item_id), item, uom "
+				 "FROM bomitem(:item_id,:revision_id), booitem(:item_id), item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
-                 " AND (bomitem_parent_item_id=:item_id)"
                  " AND (bomitem_booitem_seq_id=booitem_seq_id)" );
 
     if (!_showExpired->isChecked())
@@ -186,7 +189,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
            "             CASE WHEN(bomitem_effective > CURRENT_DATE) THEN TRUE"
            "                  ELSE FALSE"
            "             END AS future "
-           "FROM bomitem, item, uom "
+		   "FROM bomitem(:item_id,:revision_id), item, uom "
            "WHERE ( (bomitem_item_id=item_id)"
            " AND (item_inv_uom_id=uom_id)"
            " AND (bomitem_parent_item_id=:item_id)"
@@ -205,6 +208,7 @@ void dspSequencedBOM::sFillList(int pItemid, bool)
     q.bindValue(":always", tr("Always"));
     q.bindValue(":never", tr("Never"));
     q.bindValue(":item_id", _item->id());
+    q.bindValue(":revision_id", _revision->id());
     q.exec();
     XTreeWidgetItem *last = 0;
     while (q.next())

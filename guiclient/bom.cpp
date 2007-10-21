@@ -325,6 +325,7 @@ void BOM::sReplace()
   ParameterList params;
   params.append("mode", "replace");
   params.append("bomitem_id", _bomitem->id());
+  params.append("revision_id", _revision->id());
   
   bomItem newdlg(this, "", TRUE);
   newdlg.set(params);

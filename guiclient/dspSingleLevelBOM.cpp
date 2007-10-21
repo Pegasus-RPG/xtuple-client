@@ -87,6 +87,9 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
   _effectiveDays->setEnabled(_showFuture->isChecked());
 
   _item->setFocus();
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 dspSingleLevelBOM::~dspSingleLevelBOM()
@@ -121,6 +124,7 @@ void dspSingleLevelBOM::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
 
   if (_showExpired->isChecked())
     params.append("expiredDays", _expiredDays->value());
@@ -160,10 +164,9 @@ void dspSingleLevelBOM::sFillList(int, bool)
                  "       CASE WHEN (bomitem_effective > CURRENT_DATE) THEN TRUE"
                  "            ELSE FALSE"
                  "       END AS future "
-                 "FROM bomitem, item, uom "
+				 "FROM bomitem(:item_id,:revision_id), item, uom "
                  "WHERE ( (bomitem_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
-                 " AND (bomitem_parent_item_id=:item_id)" );
+                 " AND (item_inv_uom_id=uom_id)" );
 
     if (_showExpired->isChecked())
       sql += " AND (bomitem_expires > (CURRENT_DATE - :expiredDays))";
@@ -180,6 +183,7 @@ void dspSingleLevelBOM::sFillList(int, bool)
 
     q.prepare(sql);
     q.bindValue(":item_id", _item->id());
+    q.bindValue(":revision_id", _revision->id());
     q.bindValue(":expiredDays", _expiredDays->value());
     q.bindValue(":effectiveDays", _effectiveDays->value());
     q.exec();

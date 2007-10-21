@@ -297,6 +297,7 @@ void bomItem::sSave()
   q.bindValue(":sourceBomitem_id", _sourceBomitemid);
   q.bindValue(":booitem_seq_id", _booitemseqid);
   q.bindValue(":parent_item_id", _itemid);
+  q.bindValue(":revision_id", _revisionid);
   q.bindValue(":component_item_id", _item->id());
   q.bindValue(":bomitem_uom_id", _uom->id());
   q.bindValue(":qtyPer", _qtyPer->toDouble());

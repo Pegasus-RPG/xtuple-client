@@ -111,6 +111,10 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _warehouseLit->hide();
     _warehouse->hide();
   }
+  
+  //If not Revision Control, hide controls
+  _bomGroup->setVisible(_metrics->boolean("RevControl"));
+  _booGroup->setVisible(_metrics->boolean("RevControl"));
 }
 
 /*
@@ -780,4 +784,5 @@ void workOrder::sClose()
 
   close();
 }
+
 

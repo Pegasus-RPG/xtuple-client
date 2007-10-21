@@ -907,38 +907,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>_bomRevision</sender>
-   <signal>isRevControl(bool)</signal>
-   <receiver>_bomGroup</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>125</x>
-     <y>188</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>125</x>
-     <y>181</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_booRevision</sender>
-   <signal>isRevControl(bool)</signal>
-   <receiver>_booGroup</receiver>
-   <slot>setVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>344</x>
-     <y>188</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>344</x>
-     <y>181</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_item</sender>
    <signal>newId(int)</signal>
    <receiver>_bomRevision</receiver>
