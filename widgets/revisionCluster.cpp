@@ -296,7 +296,6 @@ void RevisionLineEdit::sParse()
   if ((_isRevControl) && (!_parsed))
   {
     QString stripped = text().stripWhiteSpace().upper();
-	setText(stripped);
     if (stripped.length() == 0)
     {
       setId(-1);
@@ -307,6 +306,7 @@ void RevisionLineEdit::sParse()
 	
       XSqlQuery numQ;
 	  numQ.prepare("SELECT rev_id, "
+		           "rev_number, "
 		           "CASE WHEN rev_status='A' THEN "
 				   "  'Active' "
 				   "WHEN rev_status='P' THEN "
@@ -314,7 +314,7 @@ void RevisionLineEdit::sParse()
 				   "ELSE 'Inactive' "
 				   "END AS status "
 				   "FROM rev "
-		           "WHERE ((rev_number=:number)"
+				   "WHERE ((rev_number=UPPER(:number))"
 				   " AND (rev_target_id=:target_id)"
 				   " AND (rev_target_type=:target_type));");
   	  numQ.bindValue(":number", stripped);
@@ -324,8 +324,9 @@ void RevisionLineEdit::sParse()
 	  if (numQ.first())
 	  {
 	    _valid = true;
+		//setText(""); //Little hack here because text doesn't see change to upper case.
 	    setId(numQ.value("rev_id").toInt());
-	    _description = numQ.value("status").toString();
+		setText(numQ.value("rev_number").toString());
 	  }
       else
       {
