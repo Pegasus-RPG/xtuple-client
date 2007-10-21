@@ -146,7 +146,6 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 
   signals:
     void canActivate(bool);
-	void isRevControl(bool);
 };
 
 #endif

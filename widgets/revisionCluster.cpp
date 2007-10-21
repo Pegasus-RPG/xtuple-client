@@ -70,19 +70,12 @@ QString RevisionLineEdit::typeText()
 RevisionCluster::RevisionCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
-  setLabel("Revision:");
+  setLabel("Revision: ");
   addNumberWidget(new RevisionLineEdit(this, pName));
   _info->hide();
   if (_x_metrics)
-  {
     if (!_x_metrics->boolean("RevControl"))
-    {
       _list->hide();
-	  emit isRevControl(FALSE);
-    }
-	else
-	  emit isRevControl(TRUE);
-  }
 
   connect(_number, SIGNAL(modeChanged()), this, SLOT(sModeChanged()));
   connect(_number, SIGNAL(canActivate(bool)), this, SLOT(sCanActivate(bool)));
@@ -178,14 +171,12 @@ void RevisionCluster::sModeChanged()
 			                                      ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("MaintainRevisions") || _x_privleges->check("ViewInactiveRevisions"))));
 	  (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privleges->check("MaintainRevisions")) ||
 	  	                                                    ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
-			                                                (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));
-      emit isRevControl(TRUE);   
+			                                                (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));  
 	}
 	else
     {
       _list->hide();
       (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
-	  emit isRevControl(FALSE);
     }
 }
 
