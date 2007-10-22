@@ -141,27 +141,26 @@ void dspIndentedBOM::sPrint()
     return;
   }
 
-    int worksetid = q.value("result").toInt();
-    ParameterList params;
+  ParameterList params;
 
-    params.append("item_id", _item->id());
-    params.append("revision_id", _revision->id());
+  params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
 
-    if(_showExpired->isChecked())
-      params.append("expiredDays", _expiredDays->value());
-	else
-	  params.append("expiredDays", 0);
+  if(_showExpired->isChecked())
+    params.append("expiredDays", _expiredDays->value());
+  else
+	params.append("expiredDays", 0);
 
-    if(_showFuture->isChecked())
-      params.append("futureDays", _effectiveDays->value());
-	else
-	  params.append("futureDays", 0);
+  if(_showFuture->isChecked())
+    params.append("futureDays", _effectiveDays->value());
+  else
+	params.append("futureDays", 0);
 
-    orReport report("IndentedBOM", params);
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
+  orReport report("IndentedBOM", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void dspIndentedBOM::sFillList()
@@ -190,7 +189,7 @@ void dspIndentedBOM::sFillList()
     {
       // If the level this item is on is lower than the last level we just did then we need
       // to pop the stack a number of times till we are equal.
-      while(q.value("indentedbom_bomwork_level").toInt() < level)
+      while(q.value("bomdata_bomwork_level").toInt() < level)
       {
         level--;
         last = parent.pop();
@@ -198,7 +197,7 @@ void dspIndentedBOM::sFillList()
 
       // If the level this item is on is higher than the last level we need to push the last
       // item onto the stack a number of times till we are equal. (Should only ever be 1.)
-      while(q.value("indentedbom_bomwork_level").toInt() > level)
+      while(q.value("bomdata_bomwork_level").toInt() > level)
       {
         level++;
         parent.push(last);
@@ -208,21 +207,21 @@ void dspIndentedBOM::sFillList()
       // If there is an item in the stack use that as the parameter to the new xlistviewitem
       // otherwise we'll just use the xlistview _layout
       if(!parent.isEmpty() && parent.top())
-        last = new XTreeWidgetItem(parent.top(), last, q.value("indentedbom_bomwork_id").toInt(),
-                                    q.value("indentedbom_bomwork_seqnumber"), q.value("indentedbom_item_number"),
-                                    q.value("indentedbom_itemdescription"), q.value("indentedbom_uom_name"),
-                                    q.value("indentedbom_qtyper"), q.value("indentedbom_scrap"),
-                                    q.value("indentedbom_effective"), q.value("indentedbom_expires") );
+        last = new XTreeWidgetItem(parent.top(), last, q.value("bomdata_bomwork_id").toInt(),
+                                    q.value("bomdata_bomwork_seqnumber"), q.value("bomdata_item_number"),
+                                    q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
+                                    q.value("bomdata_qtyper"), q.value("bomdata_scrap"),
+                                    q.value("bomdata_effective"), q.value("bomdata_expires") );
       else
-        last = new XTreeWidgetItem(_bomitem, last, q.value("indentedbom_bomwork_id").toInt(),
-                                    q.value("indentedbom_bomwork_seqnumber"), q.value("indentedbom_item_number"),
-                                    q.value("indentedbom_itemdescription"), q.value("indentedbom_uom_name"),
-                                    q.value("indentedbom_qtyper"), q.value("indentedbom_scrap"),
-                                    q.value("indentedbom_effective"), q.value("indentedbom_expires") );
+        last = new XTreeWidgetItem(_bomitem, last, q.value("bomdata_bomwork_id").toInt(),
+                                    q.value("bomdata_bomwork_seqnumber"), q.value("bomdata_item_number"),
+                                    q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
+                                    q.value("bomdata_qtyper"), q.value("bomdata_scrap"),
+                                    q.value("bomdata_effective"), q.value("bomdata_expires") );
 	          
-	  if (q.value("indentedbom_expired").toBool())
+	  if (q.value("bomdata_expired").toBool())
         last->setTextColor("red");
-      else if (q.value("indentedbom_future").toBool())
+      else if (q.value("bomdata_future").toBool())
         last->setTextColor("blue");
     }
     _bomitem->expandAll();
