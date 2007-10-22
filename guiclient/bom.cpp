@@ -116,6 +116,8 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   }
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  _revision->setMode(RevisionLineEdit::Maintain);
+  _revision->setType("BOM");
 }
 
 BOM::~BOM()

@@ -107,6 +107,9 @@ boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
   _booitem->addColumn(tr("Exec. Day"),   _qtyColumn,  Qt::AlignCenter );
   
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
+
+  _revision->setMode(RevisionLineEdit::Maintain);
+  _revision->setType("BOO");
 }
 
 /*

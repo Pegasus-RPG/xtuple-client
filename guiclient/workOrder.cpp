@@ -77,6 +77,11 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_dueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sUpdateStartDate()));
   connect(_leadTime, SIGNAL(valueChanged(int)), this, SLOT(sUpdateStartDate()));
 
+  _bomRevision->setMode(RevisionLineEdit::Use);
+  _bomRevision->setType("BOM");
+  _booRevision->setMode(RevisionLineEdit::Use);
+  _booRevision->setType("BOO");
+
   _captive = FALSE;
   _planordid = -1;
   _woid = -1;
@@ -111,7 +116,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _warehouseLit->hide();
     _warehouse->hide();
   }
-  
+
   //If not Revision Control, hide controls
   _bomGroup->setVisible(_metrics->boolean("RevControl"));
   _booGroup->setVisible(_metrics->boolean("RevControl"));

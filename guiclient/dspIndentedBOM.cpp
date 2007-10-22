@@ -58,6 +58,7 @@
 #include "dspIndentedBOM.h"
 
 #include <QMessageBox>
+#include <QStack>
 #include <QVariant>
 
 #include <openreports.h>
@@ -91,6 +92,11 @@ dspIndentedBOM::dspIndentedBOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _effectiveDays->setEnabled(_showFuture->isChecked());
 
   _item->setFocus();
+  _revision->setMode(RevisionLineEdit::View);
+  _revision->setType("BOM");
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 dspIndentedBOM::~dspIndentedBOM()
@@ -110,7 +116,12 @@ enum SetResponse dspIndentedBOM::set(const ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
+  {
     _item->setId(param.toInt());
+    param = pParams.value("revision_id", &valid);
+    if (valid)
+      _revision->setId(param.toInt());
+  }
 
   if (pParams.inList("run"))
   {
@@ -130,127 +141,90 @@ void dspIndentedBOM::sPrint()
     return;
   }
 
-  q.prepare("SELECT indentedBOM(:item_id) AS result;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
-  {
     int worksetid = q.value("result").toInt();
     ParameterList params;
 
     params.append("item_id", _item->id());
-    params.append("bomworkset_id", worksetid);
+    params.append("revision_id", _revision->id());
 
     if(_showExpired->isChecked())
       params.append("expiredDays", _expiredDays->value());
+	else
+	  params.append("expiredDays", 0);
 
     if(_showFuture->isChecked())
       params.append("futureDays", _effectiveDays->value());
+	else
+	  params.append("futureDays", 0);
 
     orReport report("IndentedBOM", params);
     if (report.isValid())
       report.print();
     else
       report.reportError(this);
-
-    q.prepare("SELECT deleteBOMWorkset(:bomworkset_id) AS result;");
-    q.bindValue(":bomworkset_id", worksetid);
-    q.exec();
-  }
-  else
-    QMessageBox::critical( this, tr("Error Executing Report"),
-                           tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void dspIndentedBOM::sFillList()
 {
   _bomitem->clear();
-
+  
   if (_item->isValid())
   {
-    q.prepare("SELECT indentedBOM(:item_id) AS bomwork_set_id;");
+	q.prepare("SELECT * FROM indentedBOM(:item_id, :revision_id, :expired, :effective);");
     q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
-    {
-      int _worksetid = q.value("bomwork_set_id").toInt();
-      QString sql( "SELECT bomwork_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, uom_name,"
-                   "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       formatQtyPer(bomwork_qtyper) AS f_qtyper,"
-                   "       formatScrap(bomwork_scrap) AS f_scrap,"
-                   "       formatDate(bomwork_effective, 'Always') AS f_effective,"
-                   "       formatDate(bomwork_expires, 'Never') AS f_expires,"
-                   "       CASE WHEN (bomwork_expires <= CURRENT_DATE) THEN TRUE"
-                   "            ELSE FALSE"
-                   "       END AS expired,"
-                   "       CASE WHEN (bomwork_effective > CURRENT_DATE) THEN TRUE"
-                   "            ELSE FALSE"
-                   "       END AS future "
-                   "FROM bomwork, item, uom "
-                   "WHERE ( (bomwork_item_id=item_id)"
-                   " AND (item_inv_uom_id=uom_id)"
-                   " AND (bomwork_set_id=:bomwork_set_id)" );
-
-      if (_showExpired->isChecked())
-        sql += " AND (bomwork_expires > (CURRENT_DATE - :expired))";
-      else
-        sql += " AND (bomwork_expires > CURRENT_DATE)";
-
-      if (_showFuture->isChecked())
-        sql += " AND (bomwork_effective <= (CURRENT_DATE + :effective))";
-      else
-        sql += " AND (bomwork_effective <= CURRENT_DATE)";
-
-      sql += ") "
-             "ORDER BY bomwork_level, bomwork_seqnumber DESC;";
-
-      q.prepare(sql);
-      q.bindValue(":bomwork_set_id", _worksetid);
+    q.bindValue(":revision_id", _revision->id());
+    if (!_showExpired->isChecked())
+	  q.bindValue(":expired", 0);
+	else
       q.bindValue(":expired", _expiredDays->value());
+    if (!_showFuture->isChecked())
+      q.bindValue(":effective", 0);
+	else
       q.bindValue(":effective", _effectiveDays->value());
-      q.exec();
-      while (q.next())
+    q.exec();
+
+    QStack<XTreeWidgetItem*> parent;
+    XTreeWidgetItem *last = 0;
+    int level = 1;
+    while(q.next())
+    {
+      // If the level this item is on is lower than the last level we just did then we need
+      // to pop the stack a number of times till we are equal.
+      while(q.value("indentedbom_bomwork_level").toInt() < level)
       {
-        XTreeWidgetItem *last = NULL;
-
-//  If the current bomwork is top level, make it a child of the XTreeWidget
-        if (q.value("bomwork_parent_id").toInt() == -1)
-          last = new XTreeWidgetItem( _bomitem, q.value("bomwork_id").toInt(),
-                                    q.value("bomwork_seqnumber"), q.value("item_number"),
-                                    q.value("itemdescription"), q.value("uom_name"),
-                                    q.value("f_qtyper"), q.value("f_scrap"),
-                                    q.value("f_effective"), q.value("f_expires") );
-        else
-        {
-//  March though the existing list, looking for the parent for the current bomwork
-	  for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
-	  {
-	    XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_bomitem->topLevelItem(i));
-            cursor->setExpanded(TRUE);
-            if (cursor->id() == q.value("bomwork_parent_id").toInt())
-            {
-//  Found it, add the current bomwork as a child of its parent
-              last = new XTreeWidgetItem( cursor, q.value("bomwork_id").toInt(),
-                                        q.value("bomwork_seqnumber"), q.value("item_number"),
-                                        q.value("itemdescription"), q.value("uom_name"),
-                                        q.value("f_qtyper"), q.value("f_scrap"),
-                                        q.value("f_effective"), q.value("f_expires") );
-              break;
-            }
-          }
-        }
-
-        if (q.value("expired").toBool())
-          last->setTextColor("red");
-        else if (q.value("future").toBool())
-          last->setTextColor("blue");
+        level--;
+        last = parent.pop();
       }
 
-//  All done with the bomwork set, delete it
-      q.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
-      q.bindValue(":bomwork_set_id", _worksetid);
-      q.exec();
+      // If the level this item is on is higher than the last level we need to push the last
+      // item onto the stack a number of times till we are equal. (Should only ever be 1.)
+      while(q.value("indentedbom_bomwork_level").toInt() > level)
+      {
+        level++;
+        parent.push(last);
+        last = 0;
+      }
+
+      // If there is an item in the stack use that as the parameter to the new xlistviewitem
+      // otherwise we'll just use the xlistview _layout
+      if(!parent.isEmpty() && parent.top())
+        last = new XTreeWidgetItem(parent.top(), last, q.value("indentedbom_bomwork_id").toInt(),
+                                    q.value("indentedbom_bomwork_seqnumber"), q.value("indentedbom_item_number"),
+                                    q.value("indentedbom_itemdescription"), q.value("indentedbom_uom_name"),
+                                    q.value("indentedbom_qtyper"), q.value("indentedbom_scrap"),
+                                    q.value("indentedbom_effective"), q.value("indentedbom_expires") );
+      else
+        last = new XTreeWidgetItem(_bomitem, last, q.value("indentedbom_bomwork_id").toInt(),
+                                    q.value("indentedbom_bomwork_seqnumber"), q.value("indentedbom_item_number"),
+                                    q.value("indentedbom_itemdescription"), q.value("indentedbom_uom_name"),
+                                    q.value("indentedbom_qtyper"), q.value("indentedbom_scrap"),
+                                    q.value("indentedbom_effective"), q.value("indentedbom_expires") );
+	          
+	  if (q.value("indentedbom_expired").toBool())
+        last->setTextColor("red");
+      else if (q.value("indentedbom_future").toBool())
+        last->setTextColor("blue");
     }
+    _bomitem->expandAll();
   }
 }

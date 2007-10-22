@@ -1,62 +1,77 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspPendingBOMChanges</class>
  <widget class="QMainWindow" name="dspPendingBOMChanges" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>640</width>
-    <height>295</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Pending Bill of Materials Changes</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>640</width>
-     <height>295</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <item>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" >
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>7</number>
-      </property>
       <item>
-       <widget class="ItemCluster" name="_item" />
+       <widget class="ItemCluster" name="_item" >
+        <property name="focusPolicy" >
+         <enum>Qt::TabFocus</enum>
+        </property>
+       </widget>
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="RevisionCluster" name="_revision" >
+          <property name="focusPolicy" >
+           <enum>Qt::TabFocus</enum>
+          </property>
+          <property name="readOnly" >
+           <bool>false</bool>
+          </property>
+          <property name="mode" >
+           <enum>RevisionLineEdit::View</enum>
+          </property>
+          <property name="type" >
+           <enum>RevisionLineEdit::BOM</enum>
+          </property>
+         </widget>
+        </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="QLabel" name="_cutoffDateLit" >
@@ -78,10 +93,13 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
           <property name="sizeHint" >
            <size>
-            <width>20</width>
-            <height>20</height>
+            <width>0</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -90,10 +108,19 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>0</number>
         </property>
-        <property name="spacing" >
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
          <number>0</number>
         </property>
         <item>
@@ -114,19 +141,37 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
+          <property name="spacing" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
            <number>0</number>
           </property>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QPushButton" name="_close" >
@@ -155,6 +200,9 @@
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
             </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
             <property name="sizeHint" >
              <size>
               <width>20</width>
@@ -169,27 +217,25 @@
       </item>
      </layout>
     </item>
-    <item>
-     <layout class="QVBoxLayout" >
-      <property name="margin" >
+    <item row="1" column="0" >
+     <layout class="QGridLayout" >
+      <property name="horizontalSpacing" >
        <number>0</number>
       </property>
-      <property name="spacing" >
+      <property name="verticalSpacing" >
        <number>0</number>
       </property>
-      <item>
+      <item row="0" column="0" >
        <widget class="QLabel" name="_bomChangesLit" >
         <property name="text" >
          <string>Pending Bill of Materials Changes:</string>
         </property>
        </widget>
       </item>
-      <item>
+      <item row="1" column="0" >
        <widget class="XTreeWidget" name="_bomitem" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>7</vsizetype>
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -211,47 +257,35 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
    <container>1</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>RevisionCluster</class>
+   <extends>QWidget</extends>
+   <header>revisioncluster.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>QTreeWidget</class>
-   <extends>Q3Frame</extends>
-   <header>q3listview.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>QMainWindow</class>
-   <extends>QWidget</extends>
-   <header>qmainwindow.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>DLineEdit</class>
-   <extends>QWidget</extends>
-   <header>dlineedit.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_item</tabstop>
+  <tabstop>_revision</tabstop>
   <tabstop>_cutoff</tabstop>
-  <tabstop>_bomitem</tabstop>
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_bomitem</tabstop>
  </tabstops>
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>
@@ -287,6 +321,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_revision</receiver>
+   <slot>setTargetId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>167</x>
+     <y>43</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>422</x>
+     <y>25</y>
     </hint>
    </hints>
   </connection>

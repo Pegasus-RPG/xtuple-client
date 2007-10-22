@@ -87,6 +87,8 @@ dspSingleLevelBOM::dspSingleLevelBOM(QWidget* parent, const char* name, Qt::WFla
   _effectiveDays->setEnabled(_showFuture->isChecked());
 
   _item->setFocus();
+  _revision->setMode(RevisionLineEdit::View);
+  _revision->setType("BOM");
 
   //If not Revision Control, hide control
   _revision->setVisible(_metrics->boolean("RevControl"));

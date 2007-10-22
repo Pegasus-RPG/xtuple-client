@@ -67,6 +67,7 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
   setupUi(this);
 
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_showExpired, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_showFuture, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
@@ -85,6 +86,8 @@ dspSequencedBOM::dspSequencedBOM(QWidget* parent, const char* name, Qt::WFlags f
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  _revision->setMode(RevisionLineEdit::View);
+  _revision->setType("BOM");
 
   //If not Revision Control, hide control
   _revision->setVisible(_metrics->boolean("RevControl"));

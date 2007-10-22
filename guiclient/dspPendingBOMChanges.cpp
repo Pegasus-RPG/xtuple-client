@@ -70,6 +70,7 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   setupUi(this);
 
   connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_cutoff, SIGNAL(newDate(const QDate&)), this, SLOT(sFillList()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -91,6 +92,11 @@ dspPendingBOMChanges::dspPendingBOMChanges(QWidget* parent, const char* name, Qt
   _bomitem->addColumn(tr("Scrap %"),     _prcntColumn, Qt::AlignRight  );
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
+  _revision->setMode(RevisionLineEdit::View);
+  _revision->setType("BOM");
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 dspPendingBOMChanges::~dspPendingBOMChanges()
@@ -107,6 +113,7 @@ void dspPendingBOMChanges::sPrint()
 {
   ParameterList params;
   params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
   params.append("cutOffDate", _cutoff->date());
 
   orReport report("PendingBOMChanges", params);
@@ -165,24 +172,23 @@ void dspPendingBOMChanges::sFillList(int, bool)
                "       bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2),"
                "       uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
                "       formatScrap(bomitem_scrap), bomitem_effective AS actiondate "
-               "FROM bomitem, item, uom "
+			   "FROM bomitem(:item_id,:revision_id), item, uom "
                "WHERE ( (bomitem_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
-               " AND (bomitem_parent_item_id=:item_id) "
                " AND (bomitem_effective BETWEEN CURRENT_DATE AND :cutOffDate) ) "
                "UNION SELECT bomitem_id, formatDate(bomitem_expires), :expires AS action, "
                "             bomitem_seqnumber, item_number, (item_descrip1 || ' ' || item_descrip2),"
                "             uom_name, formatQtyper(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper)),"
                "             formatScrap(bomitem_scrap), bomitem_expires AS actiondate "
-               "FROM bomitem, item, uom "
+			   "FROM bomitem(:item_id,:revision_id), item, uom "
                "WHERE ( (bomitem_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
-               " AND (bomitem_parent_item_id=:item_id) "
                " AND (bomitem_expires BETWEEN CURRENT_DATE AND :cutOffDate) ) "
                "ORDER BY action, actiondate, bomitem_seqnumber;" );
     q.bindValue(":effective", tr("Effective"));
     q.bindValue(":expires", tr("Expires"));
     q.bindValue(":item_id", _item->id());
+	q.bindValue(":revision_id", _revision->id());
     q.bindValue(":cutOffDate", _cutoff->date());
     q.exec();
     _bomitem->populate(q);

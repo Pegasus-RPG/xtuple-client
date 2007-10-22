@@ -89,6 +89,11 @@ dspSummarizedBOM::dspSummarizedBOM(QWidget* parent, const char* name, Qt::WFlags
   _effectiveDays->setEnabled(_showFuture->isChecked());
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList()));
+  _revision->setMode(RevisionLineEdit::View);
+  _revision->setType("BOM");
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 dspSummarizedBOM::~dspSummarizedBOM()
@@ -108,7 +113,12 @@ enum SetResponse dspSummarizedBOM::set(const ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
+  {
     _item->setId(param.toInt());
+    param = pParams.value("revision_id", &valid);
+    if (valid)
+      _revision->setId(param.toInt());
+  }
 
   if (pParams.inList("run"))
   {
@@ -122,7 +132,10 @@ enum SetResponse dspSummarizedBOM::set(const ParameterList &pParams)
 bool dspSummarizedBOM::setParams(ParameterList &params)
 {
   if (_item->isValid())
+  {
     params.append("item_id", _item->id());
+    params.append("revision_id", _item->id());
+  }
   else
     return false;
 
@@ -132,7 +145,7 @@ bool dspSummarizedBOM::setParams(ParameterList &params)
   if (_showFuture->isChecked())
     params.append("futureDays", _effectiveDays->value());
 
-  QString wss("SELECT summarizedBOM(<? value(\"item_id\") ?>,"
+  QString wss("SELECT summarizedBOM(<? value(\"item_id\") ?>,<? value(\"item_id\") ?>"
 	      "                     COALESCE(<? value(\"expiredDays\") ?>, 0),"
 	      "                     COALESCE(<? value(\"futureDays\") ?>, 0)"
 	      "                    ) AS result;");
