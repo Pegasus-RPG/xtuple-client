@@ -63,6 +63,7 @@
 #include <QMessageBox>
 #include <QMenu>
 #include <openreports.h>
+#include <QStack>
 #include "dspInventoryHistoryByItem.h"
 
 /*
@@ -212,7 +213,8 @@ void dspIndentedWhereUsed::sFillList()
     {
       int worksetid = q.value("workset_id").toInt();
 
-      QString sql( "SELECT bomwork_id, item_id, bomwork_parent_id,"
+      QString sql( "SELECT bomwork_level, bomwork_id, item_id, bomwork_parent_id,"
+		           "       bomworkitemsequence(bomwork_id) as seqord, "
                    "       bomwork_seqnumber, item_number, uom_name,"
                    "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
                    "       formatQtyPer(bomwork_qtyper) AS qtyper,"
@@ -231,38 +233,51 @@ void dspIndentedWhereUsed::sFillList()
         sql += " AND (bomwork_effective <= CURRENT_DATE)";
 
       sql += ") "
-             "ORDER BY bomwork_level, item_number DESC;";
+             "ORDER BY seqord;";
 
       q.prepare(sql);
       q.bindValue(":bomwork_set_id", worksetid);
       q.exec();
-      while (q.next())
+
+      QStack<XTreeWidgetItem*> parent;
+      XTreeWidgetItem *last = 0;
+      int level = 0;
+      while(q.next())
       {
-        if (q.value("bomwork_parent_id").toInt() == -1)
-          new XTreeWidgetItem( _bomitem, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
+        // If the level this item is on is lower than the last level we just did then we need
+        // to pop the stack a number of times till we are equal.
+        while(q.value("bomwork_level").toInt() < level)
+        {
+          level--;
+          last = parent.pop();
+        }
+
+        // If the level this item is on is higher than the last level we need to push the last
+        // item onto the stack a number of times till we are equal. (Should only ever be 1.)
+        while(q.value("bomwork_level").toInt() > level)
+        {
+          level++;
+          parent.push(last);
+          last = 0;
+        }
+
+        // If there is an item in the stack use that as the parameter to the new xlistviewitem
+        // otherwise we'll just use the xlistview _layout
+        if(!parent.isEmpty() && parent.top())
+          last = new XTreeWidgetItem(parent.top(), last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
                              q.value("bomwork_seqnumber"), q.value("item_number"),
                              q.value("itemdescription"), q.value("uom_name"),
                              q.value("qtyper"), q.value("scrap"),
                              q.value("effective"), q.value("expires") );
         else
-        {
-	  for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
-	  {
-	    XTreeWidgetItem *cursor = (XTreeWidgetItem*)(_bomitem->topLevelItem(i));
-	    if (cursor->id() == q.value("bomwork_parent_id").toInt())
-	    {
-	      new XTreeWidgetItem(cursor, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-				 q.value("bomwork_seqnumber"), q.value("item_number"),
-				 q.value("itemdescription"), q.value("uom_name"),
-				 q.value("qtyper"), q.value("scrap"),
-				 q.value("effective"), q.value("expires") );
-	      cursor->setExpanded(TRUE);
+          last = new XTreeWidgetItem(_bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
+                             q.value("bomwork_seqnumber"), q.value("item_number"),
+                             q.value("itemdescription"), q.value("uom_name"),
+                             q.value("qtyper"), q.value("scrap"),
+                             q.value("effective"), q.value("expires") );
 
-	      break;
-            }
-          }
-        }
       }
+      _bomitem->expandAll();
 
       q.prepare("SELECT deleteBOMWorkset(:workset_id) AS result;");
       q.bindValue(":bomwork_set_id", worksetid);

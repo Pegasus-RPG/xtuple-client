@@ -224,10 +224,11 @@ void dspSingleLevelWhereUsed::sFillList(int pItemid, bool pLocal)
                  "       formatScrap(bomitem_scrap),"
                  "       formatDate(bomitem_effective, 'Always'),"
                  "       formatDate(bomitem_expires, 'Never') "
-                 "FROM bomitem, item, uom "
+				 "FROM bomitem, item, uom "
                  "WHERE ( (bomitem_parent_item_id=item_id)"
                  " AND (item_inv_uom_id=uom_id)"
-                 " AND (bomitem_item_id=:item_id)" );
+                 " AND (bomitem_item_id=:item_id)"
+				 " AND (bomitem_rev_id=getActiveRevId('BOM',bomitem_parent_item_id))");
 
     if (_effective->isNull())
       sql += "AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))";
