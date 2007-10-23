@@ -93,7 +93,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        formatQty(coitem_qtyord) AS ordered,
        formatQty(coship_qty) AS atshipping,
 
-       formatQty(roundUp(coitem_qtyord /
+       formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) /
                          CASE WHEN(item_shipinvrat = 0) THEN 1
                                                         ELSE item_shipinvrat
                          END)) AS shipordered,
@@ -136,7 +136,7 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
    AND (coship_cosmisc_id=&lt;? value("cosmisc_id") ?>)
 )
 GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,
-         item_descrip1, item_descrip2, coitem_qtyord, coitem_qtyshipped,
+         item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id, coship_qty
 &lt;? if exists("MultiWhs") ?>

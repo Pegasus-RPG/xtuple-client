@@ -49,7 +49,7 @@ WHERE (cohist_cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
  </querysource>
  <querysource>
   <name>backlog</name>
-  <sql>SELECT formatMoney( COALESCE( SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *                                   (coitem_price / iteminvpricerat(item_id)) ), 0 ) ) AS backlog FROM cohead, coitem, itemsite, item WHERE ( (coitem_cohead_id=cohead_id) AND (coitem_itemsite_id=itemsite_id) AND (itemsite_item_id=item_id) AND (coitem_status='O') AND (cohead_cust_id=&lt;? value(&quot;cust_id&quot;) ?>) );</sql>
+  <sql>SELECT formatMoney( COALESCE( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio) ), 0 ) ) AS backlog FROM cohead, coitem, itemsite, item WHERE ( (coitem_cohead_id=cohead_id) AND (coitem_itemsite_id=itemsite_id) AND (itemsite_item_id=item_id) AND (coitem_status='O') AND (cohead_cust_id=&lt;? value(&quot;cust_id&quot;) ?>) );</sql>
  </querysource>
  <querysource>
   <name>OpenBalance</name>

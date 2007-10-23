@@ -29,7 +29,7 @@ DESTDIR     = ../bin
 MOC_DIR     = moc
 UI_DIR      = ui
 
-FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui     pricingScheduleGeneration.ui                        \
+FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui                             \
                accountingPeriod.ui accountingPeriods.ui accountingYearPeriod.ui                       \
                accountingYearPeriods.ui addPoComment.ui                                               \
 	       address.ui addresses.ui                                                                \
@@ -322,7 +322,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui     pr
                zeroUncountedCountTagsByWarehouse.ui                                                   \
                idleShutdown.ui xdateinputdialog.ui 
 
-HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwInterface.h   pricingScheduleGeneration.h          \
+HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwInterface.h             \
                ../common/format.h                                                                     \
                menuProducts.h menuInventory.h menuSchedule.h menuPurchase.h                           \
 	       menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
@@ -624,7 +624,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h
 
 
-SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp rwInterface.cpp    pricingScheduleGeneration.cpp  \
+SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp rwInterface.cpp      \
                menuProducts.cpp menuInventory.cpp menuSchedule.cpp menuPurchase.cpp                   \
 	       menuManufacture.cpp menuCRM.cpp menuSales.cpp menuAccounting.cpp menuSystem.cpp        \
                moduleAP.cpp moduleAR.cpp moduleSO.cpp moduleCP.cpp moduleGL.cpp                       \

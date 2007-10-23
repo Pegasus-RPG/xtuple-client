@@ -131,8 +131,10 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _invcitem->addColumn(tr("#"),           _seqColumn,      Qt::AlignCenter );
   _invcitem->addColumn(tr("Item"),        _itemColumn,     Qt::AlignLeft   );
   _invcitem->addColumn(tr("Description"), -1,              Qt::AlignLeft   );
+  _invcitem->addColumn(tr("Qty. UOM"),    _uomColumn,      Qt::AlignLeft   );
   _invcitem->addColumn(tr("Ordered"),     _qtyColumn,      Qt::AlignRight  );
   _invcitem->addColumn(tr("Billed"),      _qtyColumn,      Qt::AlignRight  );
+  _invcitem->addColumn(tr("Price UOM"),   _uomColumn,      Qt::AlignLeft   );
   _invcitem->addColumn(tr("Price"),       _moneyColumn,    Qt::AlignRight  );
   _invcitem->addColumn(tr("Extended"),    _bigMoneyColumn, Qt::AlignRight  );
 
@@ -783,13 +785,17 @@ void invoice::sFillItemList()
              "       CASE WHEN (item_id IS NULL) THEN invcitem_descrip"
              "            ELSE (item_descrip1 || ' ' || item_descrip2)"
              "       END AS itemdescription,"
+             "       quom.uom_name,"
              "       formatQty(invcitem_ordered) AS f_ordered,"
              "       formatQty(invcitem_billed) AS f_billed,"
+             "       puom.uom_name,"
              "       formatSalesPrice(invcitem_price) AS f_price,"
-             "       formatMoney(round((invcitem_billed * invcitem_price) / "
+             "       formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
 	     "                  (CASE WHEN(item_id IS NULL) THEN 1 "
-	     "			ELSE iteminvpricerat(item_id) END), 2)) AS f_extend "
+	     "			      ELSE invcitem_price_invuomratio END)), 2)) AS f_extend "
              "FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id) "
+             "  LEFT OUTER JOIN uom AS quom ON (invcitem_qty_uom_id=quom.uom_id)"
+             "  LEFT OUTER JOIN uom AS puom ON (invcitem_price_uom_id=puom.uom_id)"
              "WHERE (invcitem_invchead_id=:invchead_id) "
              "ORDER BY invcitem_linenumber;" );
   q.bindValue(":invchead_id", _invcheadid);
@@ -803,10 +809,10 @@ void invoice::sFillItemList()
   _invcitem->populate(q);
 
   //  Determine the subtotal
-  q.prepare( "SELECT SUM( round((invcitem_billed * invcitem_price /"
+  q.prepare( "SELECT SUM( round(((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price /"
              "            CASE WHEN (item_id IS NULL) THEN 1"
-             "                 ELSE iteminvpricerat(item_id)"
-             "            END),2) ) AS subtotal "
+             "                 ELSE invcitem_price_invuomratio"
+             "            END)),2) ) AS subtotal "
              "FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) "
              "WHERE (invcitem_invchead_id=:invchead_id);" );
   q.bindValue(":invchead_id", _invcheadid);

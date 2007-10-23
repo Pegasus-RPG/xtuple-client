@@ -142,9 +142,9 @@ SELECT  cohead_id 								AS orderid,
 	uom_name AS iteminvuom,
         formatQty(cobill_qty) 							AS qtytobill,
         formatPrice(coitem_price) 						AS price,
-        formatExtPrice(cobill_qty * (coitem_price / iteminvpricerat(item_id))) 		AS extprice,
-	(cobill_qty * (coitem_price / iteminvpricerat(item_id)))			AS subextprice,
-	(cobill_qty * (coitem_price / iteminvpricerat(item_id)))			AS runningextprice,
+        formatExtPrice((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) 		AS extprice,
+	((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio))			AS subextprice,
+	((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio))			AS runningextprice,
         '' AS debit,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip)
                     FROM accnt, salesaccnt

@@ -800,7 +800,7 @@ void shipOrder::sFillList()
 		 " AND (shiphead_order_type=<? value(\"ordertype\") ?>)"
 		 " AND (coitem_itemsite_id=itemsite_id)"
 		 " AND (itemsite_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
+                 " AND (coitem_qty_uom_id=uom_id)"
 		 " AND (shiphead_order_id=<? value(\"sohead_id\") ?>) ) "
 		 "GROUP BY coitem_id, coitem_linenumber, item_number,"
 		 "         uom_name, itemdescrip;"
@@ -831,7 +831,7 @@ void shipOrder::sFillList()
     }
     
     QString vals = "<? if exists(\"sohead_id\") ?>"
-	    "SELECT formatMoney(SUM(round(shipitem_qty * coitem_price / coitem_price_invuomratio,2))) AS f_value "
+	    "SELECT formatMoney(SUM(round((shipitem_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2))) AS f_value "
 	    "FROM coitem, shiphead, shipitem, itemsite, item "
 	    "WHERE ( (shipitem_orderitem_id=coitem_id)"
 	    " AND (shipitem_shiphead_id=shiphead_id)"

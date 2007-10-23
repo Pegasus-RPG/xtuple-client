@@ -59,30 +59,30 @@
        formatDate(MIN(coitem_scheddate)) AS f_scheddate,
        formatDate(cohead_packdate) AS f_packdate,
        &lt;? if exists("showPrices") ?>
-         formatMoney( SUM( round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         (coitem_price / iteminvpricerat(item_id)),2) ) )
+         formatMoney( SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                         (coitem_price / coitem_price_invuomratio),2) ) )
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_sales,
        &lt;? if exists("showPrices") ?>
-         formatCost(SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) )
+         formatCost(SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) )
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_cost,
        &lt;? if exists("showPrices") ?>
-         formatMoney( SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) )
+         formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                         ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) )
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_margin,
-       SUM( round( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-            (coitem_price / iteminvpricerat(item_id)),2) ) AS sales,
-       SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) AS cost,
-       SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-            ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) AS margin,
+       SUM( round( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+            (coitem_price / coitem_price_invuomratio),2) ) AS sales,
+       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,
+       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+            ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,
        MIN(coitem_scheddate) AS scheddate,
        formatShipmentNumber(cosmisc_id) AS cosmisc_number,
        CASE WHEN (cosmisc_shipped IS NULL) THEN text('')
@@ -131,11 +131,11 @@ cohead_number, cosmisc_shipped;</sql>
        formatCost( SUM( cost ) ) AS f_cost,
        formatMoney( SUM( margin ) ) AS f_margin
   FROM (
-SELECT SUM( round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         (coitem_price / iteminvpricerat(item_id)),2) ) AS sales,
-       SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * stdcost(item_id) ) AS cost,
-       SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                         ((coitem_price / iteminvpricerat(item_id)) - stdcost(item_id)) ) AS margin
+SELECT SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                         (coitem_price / coitem_price_invuomratio),2) ) AS sales,
+       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,
+       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                         ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin
   FROM coitem, itemsite, item, cust, 
        cohead
  WHERE ( (coitem_cohead_id=cohead_id)

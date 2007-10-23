@@ -14,10 +14,10 @@
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >
-    <number>5</number>
+    <number>9</number>
    </property>
    <property name="spacing" >
-    <number>5</number>
+    <number>6</number>
    </property>
    <item>
     <layout class="QHBoxLayout" >
@@ -531,7 +531,7 @@
       <number>0</number>
      </property>
      <property name="spacing" >
-      <number>5</number>
+      <number>6</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
@@ -539,7 +539,7 @@
         <number>0</number>
        </property>
        <property name="spacing" >
-        <number>5</number>
+        <number>0</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
@@ -547,7 +547,7 @@
           <number>0</number>
          </property>
          <property name="spacing" >
-          <number>5</number>
+          <number>6</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
@@ -574,6 +574,19 @@
             <widget class="QLabel" name="_qtyBilledLit" >
              <property name="text" >
               <string>Qty. Billed:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>_billed</cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="_qtyUOMLit" >
+             <property name="text" >
+              <string>Qty. UOM:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -647,6 +660,9 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="XComboBox" name="_qtyUOM" />
+           </item>
           </layout>
          </item>
         </layout>
@@ -661,8 +677,8 @@
          </property>
          <property name="sizeHint" >
           <size>
-           <width>16</width>
-           <height>0</height>
+           <width>183</width>
+           <height>41</height>
           </size>
          </property>
         </spacer>
@@ -814,108 +830,49 @@
       </layout>
      </item>
      <item>
-      <layout class="QVBoxLayout" >
+      <layout class="QGridLayout" >
        <property name="margin" >
         <number>0</number>
        </property>
        <property name="spacing" >
         <number>5</number>
        </property>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
+       <item row="1" column="1" >
+        <widget class="QLabel" name="_priceRatio" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
          </property>
-         <property name="spacing" >
-          <number>5</number>
+         <property name="text" >
+          <string/>
          </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_pricingUOMLit" >
-             <property name="minimumSize" >
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string>Pricing UOM:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_priceRatioLit" >
-             <property name="minimumSize" >
-              <size>
-               <width>0</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string>Ratio:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_pricingUOM" >
-             <property name="minimumSize" >
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_priceRatio" >
-             <property name="minimumSize" >
-              <size>
-               <width>80</width>
-               <height>0</height>
-              </size>
-             </property>
-             <property name="text" >
-              <string/>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
        </item>
-       <item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_priceRatioLit" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string>Inv./Price Ratio:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="XComboBox" name="_pricingUOM" />
+       </item>
+       <item row="2" column="0" colspan="2" >
         <widget class="QGroupBox" name="_priceGroup" >
          <property name="title" >
           <string/>
@@ -930,7 +887,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="_unitCostLit" >
             <property name="text" >
-             <string>Unit Cost:</string>
+             <string>Unit Cost (Inv. UOM):</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -996,6 +953,22 @@
          </layout>
         </widget>
        </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="_pricingUOMLit" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string>Pricing UOM:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
       </layout>
      </item>
     </layout>
@@ -1042,6 +1015,26 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
@@ -1056,26 +1049,6 @@
    <extends>QWidget</extends>
    <header>currcluster.h</header>
   </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ItemCluster</class>
-   <extends>QWidget</extends>
-   <header>itemcluster.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_itemSelected</tabstop>
@@ -1088,13 +1061,15 @@
   <tabstop>_custPn</tabstop>
   <tabstop>_ordered</tabstop>
   <tabstop>_billed</tabstop>
+  <tabstop>_qtyUOM</tabstop>
   <tabstop>_price</tabstop>
+  <tabstop>_pricingUOM</tabstop>
   <tabstop>_extended</tabstop>
   <tabstop>_taxtype</tabstop>
   <tabstop>_taxcode</tabstop>
   <tabstop>_tax</tabstop>
-  <tabstop>_save</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <includes>

@@ -54,8 +54,8 @@ ORDER BY ordernumber;</sql>
        CASE WHEN (invcitem_custpn != '' AND itemalias_usedescrip=TRUE) THEN itemalias_descrip2
             ELSE itemalias_descrip2
        END AS descrip2,
-       formatPrice(invcitem_price / COALESCE(iteminvpricerat(item_id),1)) AS f_unitprice,
-       formatMoney(round(invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1),2)) AS f_extprice,
+       formatPrice(invcitem_price / COALESCE(invcitem_price_invuomratio,1)) AS f_unitprice,
+       formatMoney(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2)) AS f_extprice,
        invcitem_notes,
        getInvcitemLotSerial(invcitem_id) AS lotserial,
        characteristicsToString('SI', (SELECT coitem_id FROM coitem, cohead, invchead WHERE (cohead_number=invchead_ordernumber and invchead_id=&lt;? value("invchead_id") ?> and coitem_cohead_id=cohead_id and coitem_linenumber=invcitem_linenumber)), '=', ', ') AS coitem_characteristics
@@ -65,14 +65,14 @@ ORDER BY invcitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT formatMoney(SUM(round(invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1),2))) AS f_extprice
+  <sql>SELECT formatMoney(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2))) AS f_extprice
 FROM invcitem LEFT OUTER JOIN item on (invcitem_item_id=item_id)
 WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>GroupExtended</name>
   <sql>SELECT formatMoney( noNeg(invchead_freight + invchead_misc_amount + invchead_tax +
-                       ( SELECT COALESCE(SUM(round((invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1)),2)), 0)
+                       ( SELECT COALESCE(SUM(round(((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1))),2)), 0)
                          FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id)
                          WHERE (invcitem_invchead_id=&lt;? value("invchead_id") ?>) )
                     - total_allocated) ) AS f_totaldue,

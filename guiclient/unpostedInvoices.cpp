@@ -234,9 +234,9 @@ void unpostedInvoices::sPost()
 		"  AND  (invchead_invcdate BETWEEN curr_effective AND curr_expires));");
   // if SUM becomes dependent on curr_id then move XRATE before it in the loop
   XSqlQuery sum;
-  sum.prepare("SELECT SUM(round(invcitem_billed * invcitem_price / "
+  sum.prepare("SELECT SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
 	      "                 CASE WHEN (item_id IS NULL) THEN 1"
-	      "                  ELSE iteminvpricerat(item_id) END, 2)) AS subtotal "
+	      "                  ELSE invcitem_price_invuomratio END), 2)) AS subtotal "
 	      "FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) "
 	      "WHERE (invcitem_invchead_id=:invchead_id);");
   q.prepare("SELECT postInvoice(:invchead_id) AS result;");

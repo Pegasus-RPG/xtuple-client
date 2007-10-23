@@ -79,6 +79,9 @@ invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_taxLit,  SIGNAL(leftClickedURL(QString)), this, SLOT(sTaxDetail()));
   connect(_taxcode, SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
   connect(_taxtype, SIGNAL(newID(int)),     this, SLOT(sLookupTaxCode()));
+  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_miscSelected, SIGNAL(toggled(bool)), this, SLOT(sMiscSelected(bool)));
 
   _item->setType(ItemLineEdit::cSold);
 
@@ -100,6 +103,9 @@ invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _cachedRateA	= 0;
   _cachedRateB	= 0;
   _cachedRateC	= 0;
+  _qtyinvuomratio = 1.0;
+  _priceinvuomratio = 1.0;
+  _invuomid = -1;
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -307,7 +313,9 @@ void invoiceItem::sSave()
                "  invcitem_number, invcitem_descrip, invcitem_salescat_id,"
                "  invcitem_custpn,"
                "  invcitem_ordered, invcitem_billed,"
+               "  invcitem_qty_uom_id, invcitem_qty_invuomratio,"
                "  invcitem_custprice, invcitem_price,"
+               "  invcitem_price_uom_id, invcitem_price_invuomratio,"
                "  invcitem_notes, "
 	       "  invcitem_tax_id, invcitem_taxtype_id, "
 	       "  invcitem_tax_pcta, invcitem_tax_pctb, invcitem_tax_pctc, "
@@ -318,7 +326,9 @@ void invoiceItem::sSave()
                "  :invcitem_number, :invcitem_descrip, :invcitem_salescat_id,"
                "  :invcitem_custpn,"
                "  :invcitem_ordered, :invcitem_billed,"
+               "  :qty_uom_id, :qty_invuomratio,"
                "  :invcitem_custprice, :invcitem_price,"
+               "  :price_uom_id, :price_invuomratio,"
                "  :invcitem_notes, "
 	       "  :invcitem_tax_id, :invcitem_taxtype_id, "
 	       "  :invcitem_tax_pcta, :invcitem_tax_pctb, :invcitem_tax_pctc, "
@@ -334,7 +344,9 @@ void invoiceItem::sSave()
                "    invcitem_salescat_id=:invcitem_salescat_id,"
                "    invcitem_custpn=:invcitem_custpn,"
                "    invcitem_ordered=:invcitem_ordered, invcitem_billed=:invcitem_billed,"
+               "    invcitem_qty_uom_id=:qty_uom_id, invcitem_qty_invuomratio=:qty_invuomratio,"
                "    invcitem_custprice=:invcitem_custprice, invcitem_price=:invcitem_price,"
+               "    invcitem_price_uom_id=:price_uom_id, invcitem_price_invuomratio=:price_invuomratio,"
                "    invcitem_notes=:invcitem_notes,"
 	       "    invcitem_tax_id=:invcitem_tax_id,"
 	       "    invcitem_taxtype_id=:invcitem_taxtype_id,"
@@ -364,8 +376,14 @@ void invoiceItem::sSave()
   q.bindValue(":invcitem_custpn", _custPn->text());
   q.bindValue(":invcitem_ordered", _ordered->toDouble());
   q.bindValue(":invcitem_billed", _billed->toDouble());
+  if(!_miscSelected->isChecked())
+    q.bindValue(":qty_uom_id", _qtyUOM->id());
+  q.bindValue(":qty_invuomratio", _qtyinvuomratio);
   q.bindValue(":invcitem_custprice", _custPrice->localValue());
   q.bindValue(":invcitem_price", _price->localValue());
+  if(!_miscSelected->isChecked())
+    q.bindValue(":price_uom_id", _pricingUOM->id());
+  q.bindValue(":price_invuomratio", _priceinvuomratio);
   q.bindValue(":invcitem_notes", _notes->text());
   if(_taxcode->isValid())
     q.bindValue(":invcitem_tax_id",	_taxcode->id());
@@ -418,11 +436,17 @@ void invoiceItem::populate()
       _salescat->setId(invcitem.value("invcitem_salescat_id").toInt());
     }
 
+    _qtyUOM->setId(invcitem.value("invcitem_qty_uom_id").toInt());
+    _qtyinvuomratio = invcitem.value("invcitem_qty_invuomratio").toDouble();
+    _pricingUOM->setId(invcitem.value("invcitem_price_uom_id").toInt());
+    _priceinvuomratio = invcitem.value("invcitem_price_invuomratio").toDouble();
+    _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
+
     _ordered->setText(formatQty(invcitem.value("invcitem_ordered").toDouble()));
     _billed->setText(formatQty(invcitem.value("invcitem_billed").toDouble()));
     _price->setLocalValue(invcitem.value("invcitem_price").toDouble());
     _custPrice->setLocalValue(invcitem.value("invcitem_custprice").toDouble());
-    _listPrice->setBaseValue(invcitem.value("f_listprice").toDouble());
+    _listPrice->setBaseValue((invcitem.value("f_listprice").toDouble() * _priceRatioCache) * _priceinvuomratio);
 
     _custPn->setText(invcitem.value("invcitem_custpn").toString());
     _notes->setText(invcitem.value("invcitem_notes").toString());
@@ -440,9 +464,9 @@ void invoiceItem::populate()
 
     _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (invcitem.lastError().type() != QSqlError::None)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, invcitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -451,20 +475,45 @@ void invoiceItem::populate()
 
 void invoiceItem::sCalculateExtendedPrice()
 {
-  _extended->setLocalValue(_billed->toDouble() * _price->localValue());
+  _extended->setLocalValue((_billed->toDouble() * _qtyinvuomratio) * (_price->localValue() / _priceinvuomratio));
 }
 
 void invoiceItem::sPopulateItemInfo(int pItemid)
 {
   if ( (_itemSelected->isChecked()) && (pItemid != -1) )
   {
-    q.prepare( "SELECT uom_name,"
+    XSqlQuery uom;
+    uom.prepare("SELECT uom_id, uom_name"
+                "  FROM item"
+                "  JOIN uom ON (item_inv_uom_id=uom_id)"
+                " WHERE(item_id=:item_id)"
+                " UNION "
+                "SELECT uom_id, uom_name"
+                "  FROM item"
+                "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+                "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+                " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
+                "   AND (item_id=:item_id))"
+                " UNION "
+                "SELECT uom_id, uom_name"
+                "  FROM item"
+                "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+                "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+                " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
+                "   AND (item_id=:item_id))"
+                " ORDER BY uom_name;");
+    uom.bindValue(":item_id", _item->id());
+    uom.exec();
+    _qtyUOM->populate(uom);
+    _pricingUOM->populate(uom);
+
+    q.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                "       iteminvpricerat(item_id) AS invpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
                "       item_listprice, "
                "       stdcost(item_id) AS f_unitcost,"
 	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
-               "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
-               "WHERE (item_id=:item_id);" );
+               "  FROM item"
+               " WHERE (item_id=:item_id);" );
     q.bindValue(":item_id", pItemid);
     q.bindValue(":taxauth", _taxauthid);
     q.exec();
@@ -475,8 +524,13 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
 
       _priceRatioCache = q.value("invpricerat").toDouble();
       _priceRatio->setText(q.value("f_invpricerat").toString());
-      _pricingUOM->setText(q.value("uom_name").toString());
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
+
+      _invuomid = q.value("item_inv_uom_id").toInt();
+      _qtyUOM->setId(q.value("item_inv_uom_id").toInt());
+      _pricingUOM->setId(q.value("item_price_uom_id").toInt());
+      _qtyinvuomratio = 1.0;
+      _priceinvuomratio = q.value("invpricerat").toDouble();
       _unitCost->setBaseValue(q.value("f_unitcost").toDouble());
       _taxtype->setId(q.value("taxtype_id").toInt());
     }
@@ -489,8 +543,11 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
   else
   {
     _priceRatioCache = 1.0;
-    _priceRatio->setText("1.0");
-    _pricingUOM->setText(tr("EACH"));
+    _qtyinvuomratio = 1.0;
+    _priceinvuomratio = 1.0;
+    _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
+    _qtyUOM->clear();
+    _pricingUOM->clear();
     _listPrice->clear();
     _unitCost->clear();
   }
@@ -529,8 +586,10 @@ void invoiceItem::sDeterminePrice()
         _billed->setFocus();
 	return;
       }
-      _custPrice->setLocalValue(itemprice.value("price").toDouble());
-      _price->setLocalValue(itemprice.value("price").toDouble());
+      double price = itemprice.value("price").toDouble();
+      price = (price * _priceRatioCache) * _priceinvuomratio;
+      _custPrice->setLocalValue(price);
+      _price->setLocalValue(price);
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -637,3 +696,74 @@ void invoiceItem::sTaxDetail()
     _tax->setLocalValue(_cachedRateA + _cachedRateB + _cachedRateC);
   }
 }
+
+void invoiceItem::sQtyUOMChanged()
+{
+  if(_qtyUOM->id() == _invuomid)
+    _qtyinvuomratio = 1.0;
+  else
+  {
+    XSqlQuery invuom;
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+                   "  FROM item"
+                   " WHERE(item_id=:item_id);");
+    invuom.bindValue(":item_id", _item->id());
+    invuom.bindValue(":uom_id", _qtyUOM->id());
+    invuom.exec();
+    if(invuom.first())
+      _qtyinvuomratio = invuom.value("ratio").toDouble();
+    else
+      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  if(_qtyUOM->id() != _invuomid)
+  {
+    _pricingUOM->setId(_qtyUOM->id());
+    _pricingUOM->setEnabled(false);
+  }
+  else
+    _pricingUOM->setEnabled(true);
+  sCalculateExtendedPrice();
+}
+
+void invoiceItem::sPriceUOMChanged()
+{
+  if(_pricingUOM->id() == -1 || _qtyUOM->id() == -1)
+    return;
+
+  if(_pricingUOM->id() == _invuomid)
+    _priceinvuomratio = 1.0;
+  else
+  {
+    XSqlQuery invuom;
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+                   "  FROM item"
+                   " WHERE(item_id=:item_id);");
+    invuom.bindValue(":item_id", _item->id());
+    invuom.bindValue(":uom_id", _pricingUOM->id());
+    invuom.exec();
+    if(invuom.first())
+      _priceinvuomratio = invuom.value("ratio").toDouble();
+    else
+      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+  }
+  _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
+
+  XSqlQuery item;
+  item.prepare("SELECT item_listprice"
+               "  FROM item"
+               " WHERE(item_id=:item_id);");
+  item.bindValue(":item_id", _item->id());
+  item.exec();
+  item.first();
+  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatioCache) * _priceinvuomratio);
+  sDeterminePrice();
+  sCalculateExtendedPrice();
+}
+
+void invoiceItem::sMiscSelected(bool isMisc)
+{
+  if(isMisc)
+    _item->setId(-1);
+}
+

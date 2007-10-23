@@ -69,9 +69,9 @@
                     WHERE ( (coship_coitem_id=coitem_id)
                      AND (coship_cosmisc_id=cosmisc_id)
                      AND (NOT cosmisc_shipped) ) ) ) AS atshipping,
-       formatQty(roundUp(coitem_qtyord / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipordered,
-       formatQty(roundUp((coitem_qtyshipped - coitem_qtyreturned) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipshipped,
-       formatQty(roundUp(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipbalance,
+       formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipordered,
+       formatQty(roundUp(((coitem_qtyshipped - coitem_qtyreturned) * coitem_qty_invuomratio) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipshipped,
+       formatQty(roundUp((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) / CASE WHEN(item_shipinvrat = 0) THEN 1 ELSE item_shipinvrat END)) AS shipbalance,
        formatQty(roundUp( ( SELECT COALESCE(SUM(coship_qty), 0)
                             FROM coship, cosmisc
                             WHERE ( (coship_coitem_id=coitem_id)
@@ -107,7 +107,7 @@
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)
 )
 GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,
-         item_descrip1, item_descrip2, coitem_qtyord, coitem_qtyshipped,
+         item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
 ORDER BY coitem_linenumber;</sql>

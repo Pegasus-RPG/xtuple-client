@@ -35,7 +35,7 @@
                formatQty(coitem_qtyord) AS qtyordered,
                uom_name, item_number, item_descrip1, item_descrip2,
                formatPrice(coitem_price) AS unitprice,
-               formatExtPrice(coitem_price * cobill_qty) AS extprice
+               formatExtPrice((coitem_price / coitem_price_invuomratio) * (cobill_qty * coitem_qty_invuomratio)) AS extprice
 FROM cobmisc, cobill, coitem, itemsite, item, uom
 WHERE ((cobill_cobmisc_id=cobmisc_id)
  AND (cobill_coitem_id=coitem_id)
@@ -47,7 +47,7 @@ ORDER BY coitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>foot</name>
-  <sql>SELECT formatExtPrice(SUM((coitem_price * cobill_qty)::numeric(20,2))) AS extprice
+  <sql>SELECT formatExtPrice(SUM(((coitem_price / coitem_price_invuomratio) * (cobill_qty * coitem_qty_invuomratio))::numeric(20,2))) AS extprice
 FROM cobill, cobmisc, coitem
 WHERE ((cobill_cobmisc_id=cobmisc_id)
  AND (cobill_coitem_id=coitem_id)
@@ -67,7 +67,7 @@ WHERE (cobmisc_id=%1);</sql>
                formatExtPrice(payment) AS f_payment,
                formatExtPrice(totaldue - payment) AS f_balancedue
 FROM ( SELECT ( cobmisc_freight + cobmisc_misc + cobmisc_tax +
-                               ( SELECT COALESCE(SUM((coitem_price * cobill_qty)::numeric(20,2)), 0::numeric)
+                               ( SELECT COALESCE(SUM(((coitem_price / coitem_price_invuomratio) * (cobill_qty * coitem_qty_invuomratio))::numeric(20,2)), 0::numeric)
                                  FROM cobmisc, coitem, cobill
                                  WHERE ( (cobill_cobmisc_id=cobmisc_id)
                                   AND (cobill_coitem_id=coitem_id)

@@ -84,6 +84,9 @@ public slots:
     virtual void sLookupTaxCode();
     virtual void sPriceGroup();
     virtual void sTaxDetail();
+    virtual void sQtyUOMChanged();
+    virtual void sPriceUOMChanged();
+    virtual void sMiscSelected(bool);
 
 protected slots:
     virtual void languageChange();
@@ -101,6 +104,9 @@ private:
     double	_cachedRateB;
     double	_cachedRateC;
     int		_taxauthid;
+    int _invuomid;
+    double _qtyinvuomratio;
+    double _priceinvuomratio;
 };
 
 #endif // INVOICEITEM_H

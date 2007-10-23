@@ -55,15 +55,15 @@ SELECT
        
        formatQty(coitem_qtyord) AS f_qty,
        CASE WHEN coitem_status = 'C' THEN 'SO Line Closed - See Invoice'
-            WHEN coitem_status &lt;> 'C' THEN formatQty(coitem_qtyord * coitem_price)
+            WHEN coitem_status &lt;> 'C' THEN formatQty((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price * coitem_price_invuomratio))
        END AS f_value,
        
        CASE WHEN coitem_status = 'C' THEN 0
-            WHEN coitem_status &lt;> 'C' THEN coitem_qtyord * coitem_price 
+            WHEN coitem_status &lt;> 'C' THEN (coitem_qtyord * coitem_qty_invuomratio) * (coitem_price * coitem_price_invuomratio)
        END AS amt_value,
   
        CASE WHEN coitem_status = 'C' THEN 0
-            WHEN coitem_status &lt;> 'C' THEN coitem_qtyord * coitem_price 
+            WHEN coitem_status &lt;> 'C' THEN (coitem_qtyord * coitem_qty_invuomratio) * (coitem_price * coitem_price_invuomratio)
        END AS amt_report
 
   FROM cohead, coitem, itemsite, item 
@@ -87,9 +87,9 @@ SELECT invchead_id AS id,
              WHEN invcitem_id = '-1'  THEN invcitem_number
        END AS item,
        formatQty(invcitem_ordered) AS f_qty,
-       formatQty(invcitem_ordered * invcitem_price) AS f_value,
-       invcitem_ordered * invcitem_price AS amt_value,
-       invcitem_ordered * invcitem_price AS amt_report
+       formatQty((invcitem_ordered * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio)) AS f_value,
+       (invcitem_ordered * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_value,
+       (invcitem_ordered * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_report
 
   FROM invchead, invcitem, item
   WHERE ((invchead_prj_id= &lt;? value("prj_id") ?> )
@@ -135,9 +135,9 @@ SELECT invchead_id AS id,
               
        invcitem_number AS item,
        formatQty(invcitem_billed) AS f_qty,
-       formatQty(invcitem_billed * invcitem_price) AS f_value,
-       invcitem_billed * invcitem_price AS amt_value,
-       invcitem_billed * invcitem_price AS amt_report
+       formatQty((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio)) AS f_value,
+       (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_value,
+       (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_report
 
   FROM invchead, invcitem
   WHERE ((invchead_prj_id= &lt;? value("prj_id") ?>)
@@ -158,9 +158,9 @@ SELECT invchead_id AS id,
               
        invcitem_number AS item,
        formatQty(invcitem_billed) AS f_qty,
-       formatQty(invcitem_billed * invcitem_price) AS f_value,
-       invcitem_billed * invcitem_price AS amt_value,
-       invcitem_billed * invcitem_price AS amt_report
+       formatQty((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio)) AS f_value,
+       (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_value,
+       (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_report
 
   FROM invchead, invcitem
   WHERE ((invchead_prj_id= &lt;? value("prj_id") ?>)
@@ -183,9 +183,9 @@ SELECT invchead_id AS id,
              WHEN invcitem_id = '-1'  THEN invcitem_number
        END AS item,
        formatQty(invcitem_billed) AS f_qty,
-       formatQty(invcitem_billed * invcitem_price) AS f_value,
-       invcitem_billed * invcitem_price AS amt_value,
-       invcitem_billed * invcitem_price AS amt_report
+       formatQty((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio)) AS f_value,
+       (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_value,
+       (invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / invcitem_price_invuomratio) AS amt_report
 
   FROM invchead, invcitem, item
   WHERE ((invchead_prj_id= &lt;? value("prj_id") ?> )

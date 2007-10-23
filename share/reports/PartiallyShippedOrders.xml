@@ -25,14 +25,14 @@
        formatDate(MIN(coitem_scheddate)) AS f_scheddate,
        formatDate(cohead_packdate) AS f_packdate,
        &lt;? if exists(&quot;showPrices&quot;) ?>
-         formatExtPrice( SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-                            (coitem_price / iteminvpricerat(item_id)) ) )
+         formatExtPrice( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+                            (coitem_price / coitem_price_invuomratio) ) )
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_extprice,
-       SUM( noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) *
-            (coitem_price / iteminvpricerat(item_id)) ) AS backlog,
+       SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *
+            (coitem_price / coitem_price_invuomratio) ) AS backlog,
        MIN(coitem_scheddate) AS scheddate,
        COALESCE(MIN(coship_id), 0) AS shipped
   FROM cohead, itemsite, item, cust,

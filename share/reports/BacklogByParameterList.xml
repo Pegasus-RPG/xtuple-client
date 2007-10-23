@@ -77,12 +77,12 @@
        formatQty(coitem_qtyshipped) AS f_qtyship,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance, 
        &lt;? if exists(&quot;showPrices&quot;) ?>
-         formatMoney(round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2))
+         formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2))
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_ammount,
-       round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2) AS backlog 
+       round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2) AS backlog 
   FROM cohead, coitem, itemsite, item, cust, uom
  WHERE ((coitem_cohead_id=cohead_id)
    AND (cohead_cust_id=cust_id)

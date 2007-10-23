@@ -45,19 +45,19 @@ WHERE (cust_id=&lt;? value(&quot;cust_id&quot;) ?>);</sql>
        formatPrice(coitem_price) AS f_unitprice,
        formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,
        &lt;? if exists(&quot;showPrices&quot;) ?>
-         formatMoney(round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2))
+         formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2))
        &lt;? else ?>
          text('')
        &lt;? endif ?>
        AS f_amount,
        &lt;? if exists(&quot;showPrices&quot;) ?>
-         round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2)
+         round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)
        &lt;? else ?>
          0
        &lt;? endif ?>
        AS backlog,
        &lt;? if exists(&quot;showPrices&quot;) ?>
-         round(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * (coitem_price / iteminvpricerat(item_id)),2)
+         round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)
        &lt;? else ?>
          0
        &lt;? endif ?>

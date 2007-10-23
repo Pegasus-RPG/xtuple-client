@@ -21,7 +21,7 @@
   <sql>SELECT invchead_id, invchead_ponumber,
        formatDate(invchead_shipdate) AS f_shipdate,
        formatDate(invchead_invcdate) AS f_invcdate,
-       formatMoney((invchead_tax + invchead_misc_amount + invchead_freight + SUM(round(invcitem_billed * invcitem_price / COALESCE(iteminvpricerat(item_id),1),2)))) AS f_amount,
+       formatMoney((invchead_tax + invchead_misc_amount + invchead_freight + SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / COALESCE(invcitem_price_invuomratio,1)),2)))) AS f_amount,
        invchead_billto_name, invchead_billto_address1,
        invchead_billto_address2, invchead_billto_address3,
        ( invchead_billto_city || ' ' || invchead_billto_state || ', '
