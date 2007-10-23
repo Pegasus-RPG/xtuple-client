@@ -169,7 +169,8 @@ void dspIndentedBOM::sFillList()
   
   if (_item->isValid())
   {
-	q.prepare("SELECT * FROM indentedBOM(:item_id, :revision_id, :expired, :effective);");
+	q.prepare("SELECT * FROM indentedBOM(:item_id, :revision_id, :expired, :effective) "
+		      "WHERE (bomdata_item_id > 0);");
     q.bindValue(":item_id", _item->id());
     q.bindValue(":revision_id", _revision->id());
     if (!_showExpired->isChecked())

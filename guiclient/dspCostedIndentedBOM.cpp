@@ -61,6 +61,7 @@
 #include <QWorkspace>
 #include <QStatusBar>
 #include <QMenu>
+#include <QStack>
 #include <QMessageBox>
 #include <openreports.h>
 #include "dspItemCostSummary.h"
@@ -78,13 +79,17 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
 
   (void)statusBar();
 
+  _revision->setType("BOM");
+  _revision->setMode(RevisionLineEdit::View);
+
   QButtonGroup* _costsGroupInt = new QButtonGroup(this);
   _costsGroupInt->addButton(_useStandardCosts);
   _costsGroupInt->addButton(_useActualCosts);
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  //connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
   connect(_bomitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
@@ -104,6 +109,9 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
   _bomitem->addColumn(tr("Unit Cost"),     _costColumn,  Qt::AlignRight  );
   _bomitem->addColumn(tr("Ext'd Cost"),    _priceColumn, Qt::AlignRight  );
   _bomitem->setIndentation(10);
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 /*
@@ -130,7 +138,12 @@ enum SetResponse dspCostedIndentedBOM::set(const ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
+  {
     _item->setId(param.toInt());
+    param = pParams.value("revision_id", &valid);
+    if (valid)
+      _revision->setId(param.toInt());
+  }
 
   if (pParams.inList("run"))
   {
@@ -143,33 +156,23 @@ enum SetResponse dspCostedIndentedBOM::set(const ParameterList &pParams)
 
 void dspCostedIndentedBOM::sPrint()
 {
-  q.prepare("SELECT indentedBOM(:item_id) AS result;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
-  {
-    ParameterList params;
+  ParameterList params;
 
-    params.append("item_id", _item->id());
-    params.append("bomworkset_id", q.value("result").toInt());
+  params.append("item_id", _item->id());
+  params.append("revision_id", _revision->id());
 
-    if(_useStandardCosts->isChecked())
-      params.append("useStandardCosts");
+  if(_useStandardCosts->isChecked())
+    params.append("useStandardCosts");
 
-    if(_useActualCosts->isChecked())
-      params.append("useActualCosts");
+  if(_useActualCosts->isChecked())
+    params.append("useActualCosts");
 
-    orReport report("CostedIndentedBOM", params);
+  orReport report("CostedIndentedBOM", params);
 
-    if (report.isValid())
-      report.print();
-    else
-      report.reportError(this);
-  }
+  if (report.isValid())
+    report.print();
   else
-    QMessageBox::critical( this, tr("Error Executing Report"),
-                           tr( "Was unable to create/collect the required information to create this report." ) );
-
+    report.reportError(this);
 }
 
 void dspCostedIndentedBOM::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
@@ -210,144 +213,129 @@ void dspCostedIndentedBOM::sFillList()
 
   if (_item->isValid())
   {
-    q.prepare("SELECT indentedBOM(:item_id) AS bomwork_set_id;");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
-    {
-      int _worksetid = q.value("bomwork_set_id").toInt();
-
-      QString sql( "SELECT bomwork_id, item_id, bomwork_parent_id,"
-                   "       bomwork_seqnumber, item_number, uom_name,"
-                   "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       formatQtyPer(bomwork_qtyper) AS qtyper,"
-                   "       formatScrap(bomwork_scrap) AS scrap,"
-                   "       formatDate(bomwork_effective, 'Always') AS effective,"
-                   "       formatDate(bomwork_expires, 'Never') AS expires," );
+      QString sql( "SELECT 2 AS seqord, "
+		           "       bomdata_bomwork_id, bomdata_item_id, bomdata_bomwork_parent_id,"
+                   "       bomdata_bomwork_seqnumber, bomdata_item_number, bomdata_uom_name,"
+                   "       bomdata_itemdescription,"
+                   "       bomdata_qtyper,"
+                   "       bomdata_scrap,"
+                   "       bomdata_effective,"
+                   "       bomdata_expires," );
 
      if (_useStandardCosts->isChecked())
-       sql += " formatCost(bomwork_stdunitcost) AS f_unitcost,"
-              " formatCost(bomwork_qtyper * (1 + bomwork_scrap) * bomwork_stdunitcost) AS f_extendedcost,"
-              " (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_stdunitcost) AS extendedcost,";
+       sql += " formatCost(bomdata_stdunitcost) AS f_unitcost,"
+              " formatCost(bomdata_stdextendedcost) AS f_extendedcost,"
+              " bomdata_stdextendedcost AS extendedcost, ";
      else if (_useActualCosts->isChecked())
-       sql += " formatCost(bomwork_actunitcost) AS f_unitcost,"
-              " formatCost(bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost) AS f_extendedcost,"
-              " (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost) AS extendedcost,";
+       sql += " formatCost(bomdata_actunitcost) AS f_unitcost,"
+              " formatCost(bomdata_actextendedcost) AS f_extendedcost,"
+              " bomdata_actextendedcost AS extendedcost, ";
 
-      sql += " bomwork_level "
-             "FROM bomwork, item, uom "
-             "WHERE ((bomwork_item_id=item_id)"
-             " AND (item_inv_uom_id=uom_id)"
-             " AND (bomwork_set_id=:bomwork_set_id)"
-             " AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1))) "
-
-             "UNION SELECT -1 AS bomwork_id, -1 AS item_id, -1 AS bomwork_parent_id,"
-             "             99999 AS bomwork_seqnumber, costelem_type AS item_number, '' AS uom_name,"
-             "             '' AS itemdescription,"
-             "             '' AS qtyper, '' AS scrap, '' AS effective, '' AS expires,";
-
-     if (_useStandardCosts->isChecked())
-       sql += " formatCost(itemcost_stdcost) AS f_unitcost,"
-              " formatCost(itemcost_stdcost) AS f_extendedcost,"
-              " itemcost_stdcost AS extendedcost,";
-     else if (_useActualCosts->isChecked())
-       sql += " formatCost(currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE)) AS f_unitcost,"
-              " formatCost(currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE)) AS f_extendedcost,"
-              " currToBase(itemcost_curr_id, itemcost_actcost, CURRENT_DATE) AS extendedcost,";
-
-     sql += " -1 AS bomwork_level "
-            "FROM itemcost, costelem "
-            "WHERE ( (itemcost_costelem_id=costelem_id)"
-            " AND (NOT itemcost_lowlevel)"
-            " AND (itemcost_item_id=:item_id) ) "
-
-            "ORDER BY bomwork_level, bomwork_seqnumber, item_number;";
-
+	 sql += "bomdata_bomwork_level "
+		    "FROM indentedbom(:item_id,:revision_id,0,0) ";
       q.prepare(sql);
-      q.bindValue(":bomwork_set_id", _worksetid);
       q.bindValue(":item_id", _item->id());
+      q.bindValue(":revision_id", _revision->id());
       q.exec();
-      XTreeWidgetItem *last = NULL;
 
-      while (q.next())
+      QStack<XTreeWidgetItem*> parent;
+      XTreeWidgetItem *last = 0;
+      int level = 1;
+      while(q.next())
       {
-        if (q.value("bomwork_parent_id").toInt() == -1)
+        // If the level this item is on is lower than the last level we just did then we need
+        // to pop the stack a number of times till we are equal.
+        while(q.value("bomdata_bomwork_level").toInt() < level)
         {
-          if (q.value("bomwork_id").toInt() == -1)
-          {
-            last = new XTreeWidgetItem( _bomitem, last, -1, -1,
-                                      "", q.value("item_number"),
-                                      "", "", "", "", "" );
-            last->setText(7, "");
-            last->setText(8, q.value("f_unitcost").toString());
-            last->setText(9, q.value("f_extendedcost").toString());
-          }
-          else
-          {
-            last = new XTreeWidgetItem( _bomitem, last, q.value("bomwork_id").toInt(), q.value("item_id").toInt(),
-                                      q.value("bomwork_seqnumber"), q.value("item_number"),
-                                      q.value("itemdescription"), q.value("uom_name"),
-                                      q.value("qtyper"), q.value("scrap"),
-                                      q.value("effective"), q.value("expires"),
-                                      q.value("f_unitcost"), q.value("f_extendedcost") );
-          }
-
-          totalCosts += q.value("extendedcost").toDouble();
+          level--;
+          last = parent.pop();
         }
-        else
-        {
-          XTreeWidgetItem *cursor = 0;
-	  int i;
-	  for (i = 0; i < _bomitem->topLevelItemCount(); i++)
-	  {
-	    cursor = (XTreeWidgetItem*)(_bomitem->topLevelItem(i));
-	    if (cursor->id() == q.value("bomwork_parent_id").toInt())
-	      break;
-	  }
 
-          if (cursor && i < _bomitem->topLevelItemCount())
-          {
-	    cursor->addChild(new XTreeWidgetItem(cursor,
-						q.value("bomwork_id").toInt(),
-						q.value("item_id").toInt(),
-						q.value("bomwork_seqnumber"),
-						q.value("item_number"),
-						q.value("itemdescription"),
-						q.value("uom_name"),
-						q.value("qtyper"),
-						q.value("scrap"),
-						q.value("effective"),
-						q.value("expires"),
+        // If the level this item is on is higher than the last level we need to push the last
+        // item onto the stack a number of times till we are equal. (Should only ever be 1.)
+        while(q.value("bomdata_bomwork_level").toInt() > level)
+        {
+          level++;
+          parent.push(last);
+          last = 0;
+        }
+
+        // If there is an item in the stack use that as the parameter to the new xlistviewitem
+        // otherwise we'll just use the xlistview _layout
+       if(!parent.isEmpty() && parent.top())
+	   {
+	     last = new XTreeWidgetItem(parent.top(), last, q.value("bomwork_id").toInt(),
+						q.value("bomdata_item_id").toInt(),
+						q.value("bomdata_bomwork_seqnumber"),
+						q.value("bomdata_item_number"),
+						q.value("bomdata_itemdescription"),
+						q.value("bomdata_uom_name"),
+						q.value("bomdata_qtyper"),
+						q.value("bomdata_scrap"),
+						q.value("bomdata_effective"),
+						q.value("bomdata_expires"),
 						q.value("f_unitcost"),
-						q.value("f_extendedcost") ));
-	    cursor->setExpanded(TRUE);
-          }
-        }
-      }
- 
-      last = new XTreeWidgetItem(_bomitem, last, -1, -1);
-      last->setText(1, tr("Total Cost"));
-      last->setText(9, formatCost(totalCosts));
+						q.value("f_extendedcost") );
+	   }
+       else
+	   {
+         if (q.value("bomdata_bomwork_parent_id").toInt() == -1)
+         {
+           if (q.value("bomdata_bomwork_id").toInt() == -1)
+           {
+             last = new XTreeWidgetItem( _bomitem,last, -1, -1,
+                                      "", q.value("bomdata_item_number"),
+                                      "", "", "", "", "" );
+             last->setText(7, "");
+             last->setText(8, q.value("f_unitcost").toString());
+             last->setText(9, q.value("f_extendedcost").toString());
+           }
+           else
+           {
+             last = new XTreeWidgetItem( _bomitem, last, q.value("bomdata_bomwork_id").toInt(), q.value("bomdata_item_id").toInt(),
+                                      q.value("bomdata_bomwork_seqnumber"), q.value("bomdata_item_number"),
+                                      q.value("bomdata_itemdescription"), q.value("bomdata_uom_name"),
+                                      q.value("bomdata_qtyper"), q.value("bomdata_scrap"),
+                                      q.value("bomdata_effective"), q.value("bomdata_expires"),
+                                      q.value("f_unitcost"), q.value("f_extendedcost") );
+           }
+		 }
+		 else
+	     {
+            last = new XTreeWidgetItem(_bomitem, last, q.value("bomwork_id").toInt(),
+						q.value("bomdata_item_id").toInt(),
+						q.value("bomdata_bomwork_seqnumber"),
+						q.value("bomdata_item_number"),
+						q.value("bomdata_itemdescription"),
+						q.value("bomdata_uom_name"),
+						q.value("bomdata_qtyper"),
+						q.value("bomdata_scrap"),
+						q.value("bomdata_effective"),
+						q.value("bomdata_expires"),
+						q.value("f_unitcost"),
+						q.value("f_extendedcost") );
+         }
+	     totalCosts += q.value("extendedcost").toDouble();
+	  }
+	}
+    last = new XTreeWidgetItem(_bomitem, -1, -1);
+    last->setText(1, tr("Total Cost"));
+    last->setText(9, formatCost(totalCosts));
 
-      q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
+    q.prepare( "SELECT formatCost(actcost(:item_id)) AS actual,"
                  "       formatCost(stdcost(:item_id)) AS standard;" );
       q.bindValue(":item_id", _item->id());
       q.exec();
       if (q.first())
       {
-        last = new XTreeWidgetItem(_bomitem, last, -1, -1);
+        last = new XTreeWidgetItem(_bomitem, -1, -1);
         last->setText(1, tr("Actual Cost"));
         last->setText(9, q.value("actual").toString());
 
-        last = new XTreeWidgetItem( _bomitem, last, -1, -1);
+        last = new XTreeWidgetItem( _bomitem, -1, -1);
         last->setText(1, tr("Standard Cost"));
         last->setText(9, q.value("standard").toString());
       }
-
-      q.prepare( "DELETE FROM bomwork "
-                 "WHERE (bomwork_set_id=:bomwork_set_id);" );
-      q.bindValue(":bomwork_set_id", _worksetid);
-      q.exec();
-    }
+    _bomitem->expandAll();
   }
 }
