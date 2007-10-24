@@ -84,6 +84,8 @@ public slots:
     virtual void sLookupTaxCode();
     virtual void sPriceGroup();
     virtual void sTaxDetail();
+    virtual void sQtyUOMChanged();
+    virtual void sPriceUOMChanged();
 
 protected slots:
     virtual void languageChange();
@@ -104,6 +106,10 @@ private:
     double _qtyShippedCache;
     int		_taxauthid;
     taxCache	_taxCache;
+    int _invuomid;
+    double _qtyinvuomratio;
+    double _priceinvuomratio;
+
 };
 
 #endif // CREDITMEMOITEM_H

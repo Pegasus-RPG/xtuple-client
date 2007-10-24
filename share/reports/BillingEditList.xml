@@ -237,9 +237,9 @@ SELECT  cmhead_id 								AS orderid,
 	iteminvuom,
         formatQty(cmitem_qtycredit) 						AS qtytobill,
         formatPrice(cmitem_unitprice) 						AS price,
-        formatExtPrice(cmitem_qtycredit * (cmitem_unitprice / iteminvpricerat(item_id))) 	AS extprice,
-	(cmitem_qtycredit * (cmitem_unitprice / iteminvpricerat(item_id)) * -1)			AS subextprice,
-	(cmitem_qtycredit * (cmitem_unitprice / iteminvpricerat(item_id)) * -1)			AS runningextprice,
+        formatExtPrice((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) 	AS extprice,
+	((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) * -1)			AS subextprice,
+	((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) * -1)			AS runningextprice,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) 
                     FROM accnt, salesaccnt 
                     WHERE ((salesaccnt_sales_accnt_id=accnt_id) 

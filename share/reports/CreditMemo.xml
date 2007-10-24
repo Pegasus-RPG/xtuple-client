@@ -48,7 +48,7 @@ ORDER BY cmhead_number;</sql>
        item_descrip1,
        item_descrip2,
        formatSalesPrice(cmitem_unitprice) AS unitprice,
-       formatMoney(cmitem_qtycredit * cmitem_unitprice / iteminvpricerat(item_id)) AS extprice,
+       formatMoney((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) AS extprice,
        cmitem_comments
   FROM cmitem, itemsite, item, uom
  WHERE ((cmitem_itemsite_id=itemsite_id)
@@ -59,7 +59,7 @@ ORDER BY cmitem_linenumber;</sql>
  </querysource>
  <querysource>
   <name>GroupFoot</name>
-  <sql>SELECT formatExtPrice(SUM(cmitem_unitprice * cmitem_qtycredit / iteminvpricerat(item_id))) AS extprice
+  <sql>SELECT formatExtPrice(SUM((cmitem_qtycredit * cmitem_qty_invuomratio) * cmitem_unitprice / cmitem_price_invuomratio)) AS extprice
   FROM cmhead, cmitem, itemsite, item
  WHERE ((cmitem_cmhead_id=cmhead_id)
    AND (cmitem_itemsite_id=itemsite_id)
@@ -69,7 +69,7 @@ ORDER BY cmitem_linenumber;</sql>
  <querysource>
   <name>GroupExtended</name>
   <sql>SELECT formatExtPrice(COALESCE(cmhead_freight,0.0) + COALESCE(cmhead_tax,0.0) + COALESCE(cmhead_misc,0.0) +
-         ( SELECT COALESCE(SUM(cmitem_unitprice * cmitem_qtycredit / iteminvpricerat(item_id)), 0.0)
+         ( SELECT COALESCE(SUM((cmitem_qtycredit * cmitem_qty_invuomratio) * cmitem_unitprice / cmitem_price_invuomratio), 0.0)
              FROM cmitem, itemsite, item
             WHERE ((cmitem_cmhead_id=%1)
               AND (cmitem_itemsite_id=itemsite_id)

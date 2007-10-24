@@ -86,6 +86,8 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_taxCode,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTaxCode()));
+  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
 
   _mode = cNew;
   _cmitemid = -1;
@@ -97,6 +99,9 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _shiptoid = -1;
   _taxauthid	= -1;
   _taxCache.clear();
+  _qtyinvuomratio = 1.0;
+  _priceinvuomratio = 1.0;
+  _invuomid = -1;
 
   _qtyToCredit->setValidator(omfgThis->qtyVal());
   _qtyReturned->setValidator(omfgThis->qtyVal());
@@ -309,12 +314,16 @@ void creditMemoItem::sSave()
     q.prepare( "INSERT INTO cmitem "
                "( cmitem_id, cmitem_cmhead_id, cmitem_linenumber, cmitem_itemsite_id,"
                "  cmitem_qtyreturned, cmitem_qtycredit,"
+               "  cmitem_qty_uom_id, cmitem_qty_invuomratio,"
+               "  cmitem_price_uom_id, cmitem_price_invuomratio,"
                "  cmitem_unitprice, cmitem_tax_id, cmitem_taxtype_id,"
 	       "  cmitem_tax_pcta, cmitem_tax_pctb, cmitem_tax_pctc,"
 	       "  cmitem_tax_ratea, cmitem_tax_rateb, cmitem_tax_ratec,"
                "  cmitem_comments, cmitem_rsncode_id ) "
                "SELECT :cmitem_id, :cmhead_id, :cmitem_linenumber, itemsite_id,"
                "       :cmitem_qtyreturned, :cmitem_qtycredit,"
+               "       :qty_uom_id, :qty_invuomratio,"
+               "       :price_uom_id, :price_invuomratio,"
                "       :cmitem_unitprice, :cmitem_tax_id, :cmitem_taxtype_id,"
 	       "       :cmitem_tax_pcta, :cmitem_tax_pctb, :cmitem_tax_pctc,"
 	       "       :cmitem_tax_ratea, :cmitem_tax_rateb, :cmitem_tax_ratec,"
@@ -326,6 +335,10 @@ void creditMemoItem::sSave()
   else
     q.prepare( "UPDATE cmitem "
                "SET cmitem_qtyreturned=:cmitem_qtyreturned, cmitem_qtycredit=:cmitem_qtycredit,"
+               "    cmitem_qty_uom_id=:qty_uom_id,"
+               "    cmitem_qty_invuomratio=:qty_invuomratio,"
+               "    cmitem_price_uom_id=:price_uom_id,"
+               "    cmitem_price_invuomratio=:price_invuomratio,"
                "    cmitem_unitprice=:cmitem_unitprice,"
 	       "    cmitem_tax_id=:cmitem_tax_id,"
 	       "    cmitem_taxtype_id=:cmitem_taxtype_id,"
@@ -344,6 +357,10 @@ void creditMemoItem::sSave()
   q.bindValue(":cmitem_linenumber", _lineNumber->text().toInt());
   q.bindValue(":cmitem_qtyreturned", _qtyReturned->toDouble());
   q.bindValue(":cmitem_qtycredit", _qtyToCredit->toDouble());
+  q.bindValue(":qty_uom_id", _qtyUOM->id());
+  q.bindValue(":qty_invuomratio", _qtyinvuomratio);
+  q.bindValue(":price_uom_id", _pricingUOM->id());
+  q.bindValue(":price_invuomratio", _priceinvuomratio);
   q.bindValue(":cmitem_unitprice", _netUnitPrice->localValue());
   if (_taxCode->isValid())
     q.bindValue(":cmitem_tax_id",	_taxCode->id());
@@ -371,24 +388,52 @@ void creditMemoItem::sSave()
 
 void creditMemoItem::sPopulateItemInfo()
 {
+  XSqlQuery uom;
+  uom.prepare("SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN uom ON (item_inv_uom_id=uom_id)"
+              " WHERE(item_id=:item_id)"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+              " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " UNION "
+              "SELECT uom_id, uom_name"
+              "  FROM item"
+              "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
+              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+              " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
+              "   AND (item_id=:item_id))"
+              " ORDER BY uom_name;");
+  uom.bindValue(":item_id", _item->id());
+  uom.exec();
+  _qtyUOM->populate(uom);
+  _pricingUOM->populate(uom);
+
   XSqlQuery item;
-  item.prepare( "SELECT uom_name,"
+  item.prepare( "SELECT item_inv_uom_id, item_price_uom_id,"
                 "       iteminvpricerat(item_id) AS iteminvpricerat, formatUOMRatio(iteminvpricerat(item_id)) AS f_invpricerat,"
                 "       item_listprice, "
                 "       stdCost(item_id) AS f_cost,"
 		"       getItemTaxType(item_id, :taxauth) AS taxtype_id "
-                "FROM item JOIN uom ON (item_price_uom_id=uom_id)"
-                "WHERE (item_id=:item_id);" );
+                "  FROM item"
+                " WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _item->id());
   item.exec();
   if (item.first())
   {
-    // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
+    _qtyUOM->setId(item.value("item_inv_uom_id").toInt());
+    _pricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceRatio = item.value("iteminvpricerat").toDouble();
-    _listPrice->setBaseValue(item.value("item_listprice").toDouble());
-
-    _pricingUOM->setText(item.value("uom_name").toString());
+    _priceinvuomratio = item.value("iteminvpricerat").toDouble();
+    _qtyinvuomratio = 1.0;
     _ratio->setText(item.value("f_invpricerat").toString());
+    _invuomid = item.value("item_inv_uom_id").toInt();
+    // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
+    _listPrice->setBaseValue(item.value("item_listprice").toDouble());
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
     _taxType->setId(item.value("taxtype_id").toInt());
   }
@@ -402,10 +447,11 @@ void creditMemoItem::sPopulateItemInfo()
   {
     XSqlQuery cmitem;
     cmitem.prepare( "SELECT invcitem_warehous_id,"
-                    "       formatQty(invcitem_billed) AS f_billed,"
-                    "       invcitem_price,"
+                    "       invcitem_qty_uom_id, invcitem_qty_invuomratio,"
+                    "       invcitem_price_uom_id, invcitem_price_invuomratio,"
+                    "       invcitem_billed * invcitem_qty_invuomratio AS f_billed,"
                     "       currToCurr(invchead_curr_id, :curr_id, "
-		    "                  invcitem_price, invchead_invcdate) AS invcitem_price_local "
+		    "                  invcitem_price / invcitem_price_invuomratio, invchead_invcdate) AS invcitem_price_local "
                     "FROM invchead, invcitem "
                     "WHERE ( (invcitem_invchead_id=invchead_id)"
                     " AND (invchead_invcnumber=:invoiceNumber)"
@@ -417,14 +463,19 @@ void creditMemoItem::sPopulateItemInfo()
     cmitem.exec();
     if (cmitem.first())
     {
-      _salePrice->setLocalValue(cmitem.value("invcitem_price_local").toDouble());
+      _qtyUOM->setId(cmitem.value("invcitem_qty_uom_id").toInt());
+      _pricingUOM->setId(cmitem.value("invcitem_price_uom_id").toInt());
+      _priceRatio = cmitem.value("invcitem_price_invuomratio").toDouble();
+      _priceinvuomratio = cmitem.value("invcitem_price_invuomratio").toDouble();
+      _ratio->setText(formatUOMRatio(_priceinvuomratio));
+      _salePrice->setLocalValue(cmitem.value("invcitem_price_local").toDouble() * _priceinvuomratio);
 
       if (_mode == cNew)
-        _netUnitPrice->setLocalValue(cmitem.value("invcitem_price_local").toDouble());
+        _netUnitPrice->setLocalValue(cmitem.value("invcitem_price_local").toDouble() * _priceinvuomratio);
 
       _warehouse->setId(cmitem.value("invcitem_warehous_id").toInt());
-      _qtyShippedCache = cmitem.value("invcitem_price").toDouble();
-      _qtyShipped->setText(cmitem.value("f_billed").toString());
+      _qtyShippedCache = cmitem.value("f_billed").toDouble();
+      _qtyShipped->setText(formatQty(cmitem.value("f_billed").toDouble() / _qtyinvuomratio));
     }
     else if (cmitem.lastError().type() != QSqlError::None)
     {
@@ -483,7 +534,7 @@ void creditMemoItem::populate()
 
 void creditMemoItem::sCalculateExtendedPrice()
 {
-  _extendedPrice->setLocalValue(_qtyToCredit->toDouble() * _netUnitPrice->localValue() / _priceRatio);
+  _extendedPrice->setLocalValue(((_qtyToCredit->toDouble() * _qtyinvuomratio) / _priceinvuomratio) * _netUnitPrice->localValue());
   sLookupTax();
 }
 
@@ -599,25 +650,25 @@ void creditMemoItem::sListPrices()
   if (q.size() == 1)
   {
 	q.first();
-	_netUnitPrice->setLocalValue(q.value("price").toDouble());
+	_netUnitPrice->setLocalValue((q.value("price").toDouble() * _priceRatio) * _priceinvuomratio);
   }
   else
   {
-	ParameterList params;
-	params.append("cust_id", _custid);
-	params.append("shipto_id", _shiptoid);
-	params.append("item_id", _item->id());
-	// don't params.append("qty", ...) as we don't know how many were purchased
-	params.append("curr_id", _netUnitPrice->id());
-	params.append("effective", _netUnitPrice->effective());
+    ParameterList params;
+    params.append("cust_id", _custid);
+    params.append("shipto_id", _shiptoid);
+    params.append("item_id", _item->id());
+    // don't params.append("qty", ...) as we don't know how many were purchased
+    params.append("curr_id", _netUnitPrice->id());
+    params.append("effective", _netUnitPrice->effective());
 
-	priceList newdlg(this, "", TRUE);
-	newdlg.set(params);
-	if (newdlg.exec() == QDialog::Accepted)
-	{
-		_netUnitPrice->setLocalValue(newdlg._selectedPrice);
-		sCalculateDiscountPrcnt();
-	}
+    priceList newdlg(this, "", TRUE);
+    newdlg.set(params);
+    if (newdlg.exec() == QDialog::Accepted)
+    {
+      _netUnitPrice->setLocalValue((newdlg._selectedPrice * _priceRatio) * _priceinvuomratio);
+      sCalculateDiscountPrcnt();
+    }
   }
 }
 
@@ -707,3 +758,67 @@ void creditMemoItem::sLookupTaxCode()
   else
     _taxCode->setId(-1);
 }
+
+void creditMemoItem::sQtyUOMChanged()
+{
+  if(_qtyUOM->id() == _invuomid)
+    _qtyinvuomratio = 1.0;
+  else
+  {
+    XSqlQuery invuom;
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+                   "  FROM item"
+                   " WHERE(item_id=:item_id);");
+    invuom.bindValue(":item_id", _item->id());
+    invuom.bindValue(":uom_id", _qtyUOM->id());
+    invuom.exec();
+    if(invuom.first())
+      _qtyinvuomratio = invuom.value("ratio").toDouble();
+    else
+      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+  }
+
+  if(_qtyUOM->id() != _invuomid)
+  {
+    _pricingUOM->setId(_qtyUOM->id());
+    _pricingUOM->setEnabled(false);
+  }
+  else
+    _pricingUOM->setEnabled(true);
+  sCalculateExtendedPrice();
+}
+
+void creditMemoItem::sPriceUOMChanged()
+{
+  if(_pricingUOM->id() == -1 || _qtyUOM->id() == -1)
+    return;
+
+  if(_pricingUOM->id() == _invuomid)
+    _priceinvuomratio = 1.0;
+  else
+  {
+    XSqlQuery invuom;
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+                   "  FROM item"
+                   " WHERE(item_id=:item_id);");
+    invuom.bindValue(":item_id", _item->id());
+    invuom.bindValue(":uom_id", _pricingUOM->id());
+    invuom.exec();
+    if(invuom.first())
+      _priceinvuomratio = invuom.value("ratio").toDouble();
+    else
+      systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
+  }
+  _ratio->setText(formatUOMRatio(_priceinvuomratio));
+
+  XSqlQuery item;
+  item.prepare("SELECT item_listprice"
+               "  FROM item"
+               " WHERE(item_id=:item_id);");
+  item.bindValue(":item_id", _item->id());
+  item.exec();
+  item.first();
+  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
+  //sDeterminePrice();
+}
+
