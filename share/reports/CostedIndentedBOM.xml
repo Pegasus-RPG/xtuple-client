@@ -12,10 +12,10 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number,
-       uom_name,
+       item_invuom,
        item_descrip1,
        item_descrip2,
-       &lt;? if exists(&quot;useActualCosts&quot;) ?>
+       &lt;? if exists("useActualCosts") ?>
          text('Using Actual Costs')
        &lt;? else ?>
          text('Using Standard Costs')
@@ -23,249 +23,82 @@
        AS lbl_usecosts,
        formatCost(actcost(item_id)) AS f_actual,
        formatCost(stdcost(item_id)) AS f_standard
-  FROM item JOIN uom ON (item_inv_uom_id=uom_id)
- WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);
+  FROM item
+ WHERE (item_id=&lt;? value("item_id") ?>);
     </sql>
  </querysource>
  <querysource>
   <name>detail</name>
-  <sql>select (REPEAT(' ',(bomwork_level-1)*3) || bomwork_seqnumber) AS f_seqnumber,
-       bomworkSequence(bomwork_id) AS seq_ord,
-       item_number,
-       uom_name,
-       item_descrip1,
-       item_descrip2,
-       formatBoolYN(bomwork_createwo) as createchild,
-       CASE WHEN (bomwork_issuemethod='S') THEN 'Push'
-            WHEN (bomwork_issuemethod='L') THEN 'Pull'
-            WHEN (bomwork_issuemethod='M') THEN 'Mixed'
-            ELSE 'Special'
-       END AS issuemethod,
-       formatQtyPer(bomwork_qtyper) AS qtyper,
-       formatScrap(bomwork_scrap) AS scrap,
-       formatDate(bomwork_effective, 'Always') AS effective,
-       formatDate(bomwork_expires, 'Never') AS expires,
-&lt;? if exists(&quot;useActualCosts&quot;) ?>
-       formatCost(bomwork_actunitcost) AS f_unitcost,
-       formatCost(bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost) AS f_extendedcost,
-       CASE WHEN(bomwork_parent_id=-1) THEN (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_actunitcost)
+  <sql>select (REPEAT(' ',(bomdata_bomwork_level-1)*3) || bomdata_bomwork_seqnumber) AS f_seqnumber,
+       1 AS seq_ord,
+       bomdata_item_number AS item_number,
+       bomdata_uom_name AS item_invuom,
+       bomdata_item_descrip1 AS item_descrip1,
+       bomdata_item_descrip2 AS item_descrip2,
+       bomdata_createchild as createchild,
+       bomdata_issuemethod AS issuemethod,
+       bomdata_qtyper AS qtyper,
+       bomdata_scrap AS scrap,
+       bomdata_effective AS effective,
+       bomdata_expires AS expires,
+&lt;? if exists("useActualCosts") ?>
+       formatCost(bomdata_actunitcost) AS f_unitcost,
+       formatCost(bomdata_actextendedcost) AS f_extendedcost,
+       CASE WHEN(bomdata_bomwork_parent_id=-1) THEN bomdata_actextendedcost
             ELSE 0
        END AS extendedcost,
 &lt;? else ?>
-       formatCost(bomwork_stdunitcost) AS f_unitcost,
-       formatCost(bomwork_qtyper * (1 + bomwork_scrap) * bomwork_stdunitcost) AS f_extendedcost,
-       CASE WHEN(bomwork_parent_id=-1) THEN (bomwork_qtyper * (1 + bomwork_scrap) * bomwork_stdunitcost)
+       formatCost(bomdata_stdunitcost) AS f_unitcost,
+       formatCost(bomdata_stdextendedcost) AS f_extendedcost,
+       CASE WHEN(bomdata_parent_id=-1) THEN bomdata_stdextendedcost
             ELSE 0
        END AS extendedcost,
 &lt;? endif ?>
-       bomwork_level
-  FROM bomwork, item, uom
- WHERE ((bomwork_item_id=item_id)
-   AND (item_inv_uom_id=uom_id)
-   AND (bomwork_set_id=&lt;? value(&quot;bomworkset_id&quot;) ?>)
-   AND (CURRENT_DATE BETWEEN bomwork_effective AND (bomwork_expires - 1)) )
-
-UNION SELECT '',
-             '' AS seq_ord, costelem_type AS item_number, '' AS uom_name,
-             '' AS item_descrip1, '' AS item_descrip2,
-             '' AS createchild, '' AS issuemethod,
-             '' AS qtyper, '' AS scrap, '' AS effective, '' AS expires,
-&lt;? if exists(&quot;useActualCosts&quot;) ?>
-             formatCost(itemcost_actcost) AS f_unitcost,
-             formatCost(itemcost_actcost) AS f_extendedcost,
-             itemcost_actcost AS extendedcost,
-&lt;? else ?>
-             formatCost(itemcost_stdcost) AS f_unitcost,
-             formatCost(itemcost_stdcost) AS f_extendedcost,
-             itemcost_stdcost AS extendedcost,
-&lt;? endif ?>
-             -1 AS bomwork_level
-        FROM itemcost, costelem
-       WHERE ((itemcost_costelem_id=costelem_id)
-          AND (NOT itemcost_lowlevel)
-          AND (itemcost_item_id=&lt;? value(&quot;item_id&quot;) ?>))
-ORDER BY seq_ord, item_number;</sql>
+       bomdata_bomwork_level
+FROM indentedBOM(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>,0,0)
+ORDER BY seq_ord;</sql>
+ </querysource>
+ <querysource>
+  <name>bomhead</name>
+  <sql>SELECT bomhead_docnum, bomhead_revision,
+formatDate(bomhead_revisiondate) AS f_revisiondate
+FROM bomhead
+WHERE ((bomhead_item_id=&lt;? value("item_id") ?>)
+AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
  </querysource>
  <rpthead>
-  <height>241</height>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>105</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
+  <height>242</height>
   <label>
    <rect>
-    <x>10</x>
-    <y>204</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Seq. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>220</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issue Method</string>
-  </label>
-  <label>
-   <rect>
-    <x>15</x>
-    <y>105</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item:</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>235</ystart>
-   <xend>745</xend>
-   <yend>235</yend>
-   <weight>2</weight>
-  </line>
-  <field>
-   <rect>
-    <x>445</x>
+    <x>490</x>
     <y>145</y>
-    <width>300</width>
+    <width>90</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>lbl_usecosts</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>315</x>
-    <y>105</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>uom_name</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>420</x>
-    <y>204</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
     <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Scrap</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>125</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip1</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>260</x>
-    <y>10</y>
-    <width>465</width>
-    <height>37</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
    </font>
    <right/>
    <vcenter/>
-   <string>Costed Indented Bill of Materials</string>
+   <string>Revision:</string>
   </label>
   <label>
    <rect>
-    <x>665</x>
-    <y>220</y>
-    <width>80</width>
-    <height>15</height>
+    <x>490</x>
+    <y>125</y>
+    <width>90</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Ext'd Cost</string>
+   <string>Revision Date:</string>
   </label>
   <field>
    <rect>
@@ -288,86 +121,6 @@ ORDER BY seq_ord, item_number;</sql>
   </field>
   <label>
    <rect>
-    <x>114</x>
-    <y>220</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>204</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Expires</string>
-  </label>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>220</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Create W/O</string>
-  </label>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>204</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext. Qty. Per</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>204</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Unit Cost</string>
-  </label>
-  <label>
-   <rect>
     <x>500</x>
     <y>204</y>
     <width>75</width>
@@ -398,6 +151,48 @@ ORDER BY seq_ord, item_number;</sql>
    <vcenter/>
    <string>UOM</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>235</ystart>
+   <xend>745</xend>
+   <yend>235</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>104</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>bomhead</query>
+    <column>bomhead_docnum</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>220</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create W/O</string>
+  </label>
   <label>
    <rect>
     <x>114</x>
@@ -416,8 +211,263 @@ ORDER BY seq_ord, item_number;</sql>
   </label>
   <label>
    <rect>
+    <x>340</x>
+    <y>204</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ext. Qty. Per</string>
+  </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>220</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ext'd Cost</string>
+  </label>
+  <field>
+   <rect>
+    <x>100</x>
+    <y>104</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_number</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>15</x>
+    <y>104</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Item:</string>
+  </label>
+  <label>
+   <rect>
     <x>260</x>
-    <y>105</y>
+    <y>10</y>
+    <width>465</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Costed Indented Bill of Materials</string>
+  </label>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>125</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>bomhead</query>
+    <column>f_revisiondate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>419</x>
+    <y>204</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
+  </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>204</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Unit Cost</string>
+  </label>
+  <field>
+   <rect>
+    <x>100</x>
+    <y>125</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip1</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>220</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issue Method</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>204</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Seq. #</string>
+  </label>
+  <field>
+   <rect>
+    <x>350</x>
+    <y>60</y>
+    <width>205</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>lbl_usecosts</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>490</x>
+    <y>104</y>
+    <width>90</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Document #:</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>204</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Expires</string>
+  </label>
+  <field>
+   <rect>
+    <x>315</x>
+    <y>104</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_invuom</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>260</x>
+    <y>104</y>
     <width>50</width>
     <height>20</height>
    </rect>
@@ -430,6 +480,41 @@ ORDER BY seq_ord, item_number;</sql>
    <vcenter/>
    <string>UOM:</string>
   </label>
+  <label>
+   <rect>
+    <x>114</x>
+    <y>220</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <field>
+   <rect>
+    <x>585</x>
+    <y>145</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>bomhead</query>
+    <column>bomhead_revision</column>
+   </data>
+  </field>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -437,6 +522,102 @@ ORDER BY seq_ord, item_number;</sql>
  </pghead>
  <pghead>
   <height>36</height>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Unit Cost</string>
+  </label>
+  <label>
+   <rect>
+    <x>114</x>
+    <y>15</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>419</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
+  </label>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Effective</string>
+  </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>15</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ext'd Cost</string>
+  </label>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>15</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create W/O</string>
+  </label>
   <label>
    <rect>
     <x>275</x>
@@ -452,22 +633,6 @@ ORDER BY seq_ord, item_number;</sql>
    <hcenter/>
    <vcenter/>
    <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>114</x>
-    <y>0</y>
-    <width>165</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Component Item Number</string>
   </label>
   <label>
    <rect>
@@ -487,22 +652,6 @@ ORDER BY seq_ord, item_number;</sql>
   </label>
   <label>
    <rect>
-    <x>340</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext. Qty. Per</string>
-  </label>
-  <label>
-   <rect>
     <x>10</x>
     <y>0</y>
     <width>40</width>
@@ -517,34 +666,11 @@ ORDER BY seq_ord, item_number;</sql>
    <vcenter/>
    <string>Seq. #</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>114</x>
-    <y>15</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
+    <x>340</x>
     <y>0</y>
-    <width>80</width>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -554,8 +680,15 @@ ORDER BY seq_ord, item_number;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Unit Cost</string>
+   <string>Ext. Qty. Per</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>580</x>
@@ -574,25 +707,9 @@ ORDER BY seq_ord, item_number;</sql>
   </label>
   <label>
    <rect>
-    <x>500</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Create W/O</string>
-  </label>
-  <label>
-   <rect>
-    <x>500</x>
+    <x>114</x>
     <y>0</y>
-    <width>75</width>
+    <width>165</width>
     <height>15</height>
    </rect>
    <font>
@@ -600,41 +717,9 @@ ORDER BY seq_ord, item_number;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <left/>
    <vcenter/>
-   <string>Effective</string>
-  </label>
-  <label>
-   <rect>
-    <x>420</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Scrap</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>15</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ext'd Cost</string>
+   <string>Component Item Number</string>
   </label>
  </pghead>
  <section>
@@ -643,166 +728,7 @@ ORDER BY seq_ord, item_number;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>51</height>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>500</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>createchild</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>665</x>
-     <y>15</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_extendedcost</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>500</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>effective</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>420</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>scrap</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>665</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_unitcost</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>275</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>uom_name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>114</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>340</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qtyper</column>
-    </data>
-   </field>
+   <height>53</height>
    <field>
     <rect>
      <x>580</x>
@@ -820,25 +746,6 @@ ORDER BY seq_ord, item_number;</sql>
     <data>
      <query>detail</query>
      <column>expires</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>114</x>
-     <y>15</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip1</column>
     </data>
    </field>
    <field>
@@ -863,6 +770,184 @@ ORDER BY seq_ord, item_number;</sql>
    <field>
     <rect>
      <x>114</x>
+     <y>15</y>
+     <width>300</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>500</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>createchild</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>275</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_invuom</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>665</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_unitcost</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>665</x>
+     <y>15</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_extendedcost</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>500</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>effective</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>419</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>scrap</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>104</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_seqnumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>340</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyper</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>114</x>
      <y>0</y>
      <width>150</width>
      <height>15</height>
@@ -881,9 +966,9 @@ ORDER BY seq_ord, item_number;</sql>
    </field>
    <field>
     <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>105</width>
+     <x>114</x>
+     <y>30</y>
+     <width>300</width>
      <height>15</height>
     </rect>
     <font>
@@ -895,32 +980,13 @@ ORDER BY seq_ord, item_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_seqnumber</column>
+     <column>item_descrip2</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
+  <height>18</height>
   <field>
    <rect>
     <x>95</x>
@@ -942,22 +1008,6 @@ ORDER BY seq_ord, item_number;</sql>
   </field>
   <label>
    <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
     <y>0</y>
     <width>85</width>
@@ -972,79 +1022,44 @@ ORDER BY seq_ord, item_number;</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
  </pgfoot>
  <rptfoot>
-  <height>46</height>
-  <field>
-   <rect>
-    <x>665</x>
-    <y>30</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_standard</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Total Cost:</string>
-  </label>
-  <label>
-   <rect>
-    <x>500</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Acutal Cost:</string>
-  </label>
-  <field>
-   <rect>
-    <x>665</x>
-    <y>15</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_actual</column>
-   </data>
-  </field>
+  <height>47</height>
   <label>
    <rect>
     <x>484</x>
@@ -1060,6 +1075,22 @@ ORDER BY seq_ord, item_number;</sql>
    <right/>
    <vcenter/>
    <string>Standard Cost:</string>
+  </label>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Total Cost:</string>
   </label>
   <field>
    <rect>
@@ -1080,6 +1111,60 @@ ORDER BY seq_ord, item_number;</sql>
     <column>extendedcost</column>
    </data>
    <tracktotal builtin="true" >cost</tracktotal>
+  </field>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>15</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Acutal Cost:</string>
+  </label>
+  <field>
+   <rect>
+    <x>665</x>
+    <y>30</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_standard</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>665</x>
+    <y>15</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_actual</column>
+   </data>
   </field>
  </rptfoot>
 </report>
