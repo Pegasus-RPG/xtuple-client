@@ -94,6 +94,12 @@ dspCostedSummarizedBOM::dspCostedSummarizedBOM(QWidget* parent, const char* name
   _effectiveDays->setEnabled(_showFuture->isChecked());
 
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
+
+  _revision->setMode(RevisionLineEdit::View);
+  _revision->setType("BOM");
+
+  //If not Revision Control, hide control
+  _revision->setVisible(_metrics->boolean("RevControl"));
 }
 
 dspCostedSummarizedBOM::~dspCostedSummarizedBOM()
@@ -113,7 +119,12 @@ enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
+  {
     _item->setId(param.toInt());
+    param = pParams.value("revision_id", &valid);
+    if (valid)
+      _revision->setId(param.toInt());
+  }
 
   if (pParams.inList("run"))
   {
@@ -126,22 +137,19 @@ enum SetResponse dspCostedSummarizedBOM::set(const ParameterList &pParams)
 
 void dspCostedSummarizedBOM::sPrint()
 {
-  q.prepare("SELECT summarizedBOM(:item_id) AS workset_id;");
-  q.bindValue(":item_id", _item->id());
-  q.exec();
-  if (q.first())
-  {
-    int worksetid = q.value("workset_id").toInt();
-
     ParameterList params;
     params.append("item_id", _item->id());
-    params.append("bomworkset_id", worksetid);
+    params.append("revision_id", _revision->id());
 
     if(_showExpired->isChecked())
       params.append("expiredDays", _expiredDays->value());
+	else
+      params.append("expiredDays", 0);
 
     if(_showFuture->isChecked())
       params.append("futureDays", _effectiveDays->value());
+	else
+      params.append("futureDays", 0);
 
     if (_useStandardCosts->isChecked())
       params.append("useStandardCosts");
@@ -155,14 +163,6 @@ void dspCostedSummarizedBOM::sPrint()
       report.print();
     else
       report.reportError(this);
-
-    q.prepare("SELECT deleteBOMWorkset(:workset_id) AS result;");
-    q.bindValue(":workset_id", worksetid);
-    q.exec();
-  }
-  else
-    QMessageBox::critical( this, tr("Error Executing Report"),
-                           tr( "Was unable to create/collect the required information to create this report." ) );
 }
 
 void dspCostedSummarizedBOM::sFillList()
@@ -171,58 +171,29 @@ void dspCostedSummarizedBOM::sFillList()
 
   if (_item->isValid())
   {
-    q.prepare("SELECT summarizedBOM(:item_id) AS workset_id;");
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    if (q.first())
-    {
-      int worksetid = q.value("workset_id").toInt();
-
-      QString sql( "SELECT -1, item_number,"
-                   "       (item_descrip1 || ' ' || item_descrip2) AS itemdescription,"
-                   "       uom_name,"
-                   "       formatQtyPer(SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_qtyper," );
+      QString sql( "SELECT -1, bomdata_item_number,"
+                   "       bomdata_itemdescription,"
+                   "       bomdata_uom_name,"
+                   "       bomdata_qtyper," );
 
       if (_useActualCosts->isChecked())
-        sql += " formatCost(actCost(item_id)) AS f_cost,"
-               " formatCost(actCost(item_id) * SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_extcost ";
+        sql += " formatCost(bomdata_actunitcost) AS f_cost,"
+               " formatCost(bomdata_actextendedcost) AS f_extcost ";
       else if (_useStandardCosts->isChecked())
-        sql += " formatCost(stdCost(item_id)) AS f_cost,"
-               " formatCost(stdCost(item_id) * SUM(bomwork_qtyper * (1 + bomwork_scrap))) AS f_extcost ";
+        sql += " formatCost(bomdata_stdunitcost) AS f_cost,"
+               " formatCost(bomdata_stdextendedcost) AS f_extcost ";
 
-      sql += "FROM bomwork, item, uom "
-             "WHERE ( (bomwork_item_id=item_id)"
-             " AND (item_inv_uom_id=uom_id)"
-             " AND (bomwork_set_id=:bomwork_set_id)";
-
-      if (_showExpired->isChecked())
-        sql += " AND (bomwork_expires > (CURRENT_DATE - :expired))";
-      else
-        sql += " AND (bomwork_expires > CURRENT_DATE)";
-
-      if (_showFuture->isChecked())
-        sql += " AND (bomwork_effective <= (CURRENT_DATE + :effective))";
-      else
-        sql += " AND (bomwork_effective <= CURRENT_DATE)";
-
-      sql += ") "
-             "GROUP BY item_number, uom_name,"
-             "         item_descrip1, item_descrip2, item_id "
-             "ORDER BY item_number;";
+	  sql += "FROM summarizedBOM(:item_id, :revision_id, :expired, :effective) ";
 
       q.prepare(sql);
-      q.bindValue(":bomwork_set_id", worksetid);
+      q.bindValue(":item_id", _item->id());
+	  q.bindValue(":revision_id", _revision->id());
       q.bindValue(":expired", _expiredDays->value());
       q.bindValue(":effective", _effectiveDays->value());
       q.exec();
       _bomitem->populate(q);
       for (int i = 0; i < _bomitem->topLevelItemCount(); i++)
 	_bomitem->collapseItem(_bomitem->topLevelItem(i));
-
-      q.prepare("SELECT deleteBOMWorkset(:bomwork_set_id) AS result;");
-      q.bindValue(":bomwork_set_id", worksetid);
-      q.exec();
-    }
   }
 }
 
