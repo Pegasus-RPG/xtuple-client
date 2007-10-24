@@ -1,244 +1,378 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>dspCostedSingleLevelBOM</class>
-  <widget class="QMainWindow" name="dspCostedSingleLevelBOM" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>744</width>
-        <height>394</height>
-      </rect>
+<ui version="4.0" >
+ <class>dspCostedSingleLevelBOM</class>
+ <widget class="QMainWindow" name="dspCostedSingleLevelBOM" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Costed Single Level Bill of Materials</string>
+  </property>
+  <widget class="QWidget" name="widget" >
+   <layout class="QVBoxLayout" >
+    <property name="spacing" >
+     <number>5</number>
     </property>
-    <property name="windowTitle" >
-      <string>Costed Single Level Bill of Materials</string>
+    <property name="leftMargin" >
+     <number>5</number>
     </property>
-    <widget class="QWidget" >
-      <layout class="QVBoxLayout" >
-        <property name="margin" >
-          <number>5</number>
+    <property name="topMargin" >
+     <number>5</number>
+    </property>
+    <property name="rightMargin" >
+     <number>5</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>5</number>
+    </property>
+    <item>
+     <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>7</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="ItemCluster" name="_item" >
+        <property name="focusPolicy" >
+         <enum>Qt::TabFocus</enum>
         </property>
+       </widget>
+      </item>
+      <item>
+       <layout class="QVBoxLayout" >
         <property name="spacing" >
-          <number>5</number>
+         <number>0</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
         </property>
         <item>
-          <layout class="QHBoxLayout" >
-            <property name="margin" >
-              <number>0</number>
-            </property>
-            <property name="spacing" >
-              <number>7</number>
-            </property>
-            <item>
-              <widget class="ItemCluster" name="_item" />
-            </item>
-            <item>
-              <layout class="QVBoxLayout" >
-                <property name="margin" >
-                  <number>0</number>
-                </property>
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <widget class="QGroupBox" name="_costsGroup" >
-                    <property name="title" >
-                      <string/>
-                    </property>
-                    <layout class="QVBoxLayout" >
-                      <property name="margin" >
-                        <number>5</number>
-                      </property>
-                      <property name="spacing" >
-                        <number>0</number>
-                      </property>
-                      <item>
-                        <widget class="QRadioButton" name="_useStandardCosts" >
-                          <property name="text" >
-                            <string>Use Standard Costs</string>
-                          </property>
-                          <property name="checked" >
-                            <bool>true</bool>
-                          </property>
-                        </widget>
-                      </item>
-                      <item>
-                        <widget class="QRadioButton" name="_useActualCosts" >
-                          <property name="text" >
-                            <string>Use Actual Costs</string>
-                          </property>
-                        </widget>
-                      </item>
-                    </layout>
-                  </widget>
-                </item>
-                <item>
-                  <spacer name="Spacer38" >
-                    <property name="sizeHint" >
-                      <size>
-                        <width>20</width>
-                        <height>20</height>
-                      </size>
-                    </property>
-                    <property name="sizeType" >
-                      <enum>Preferred</enum>
-                    </property>
-                    <property name="orientation" >
-                      <enum>Vertical</enum>
-                    </property>
-                  </spacer>
-                </item>
-              </layout>
-            </item>
-            <item>
-              <layout class="QHBoxLayout" >
-                <property name="margin" >
-                  <number>0</number>
-                </property>
-                <property name="spacing" >
-                  <number>0</number>
-                </property>
-                <item>
-                  <spacer name="Spacer62" >
-                    <property name="sizeHint" >
-                      <size>
-                        <width>20</width>
-                        <height>20</height>
-                      </size>
-                    </property>
-                    <property name="sizeType" >
-                      <enum>Expanding</enum>
-                    </property>
-                    <property name="orientation" >
-                      <enum>Horizontal</enum>
-                    </property>
-                  </spacer>
-                </item>
-                <item>
-                  <layout class="QVBoxLayout" >
-                    <property name="margin" >
-                      <number>0</number>
-                    </property>
-                    <property name="spacing" >
-                      <number>0</number>
-                    </property>
-                    <item>
-                      <layout class="QVBoxLayout" >
-                        <property name="margin" >
-                          <number>0</number>
-                        </property>
-                        <property name="spacing" >
-                          <number>5</number>
-                        </property>
-                        <item>
-                          <widget class="QPushButton" name="_close" >
-                            <property name="text" >
-                              <string>&amp;Close</string>
-                            </property>
-                          </widget>
-                        </item>
-                        <item>
-                          <widget class="QPushButton" name="_print" >
-                            <property name="enabled" >
-                              <bool>false</bool>
-                            </property>
-                            <property name="text" >
-                              <string>&amp;Print</string>
-                            </property>
-                          </widget>
-                        </item>
-                      </layout>
-                    </item>
-                    <item>
-                      <spacer name="Spacer61" >
-                        <property name="sizeHint" >
-                          <size>
-                            <width>20</width>
-                            <height>20</height>
-                          </size>
-                        </property>
-                        <property name="sizeType" >
-                          <enum>Preferred</enum>
-                        </property>
-                        <property name="orientation" >
-                          <enum>Vertical</enum>
-                        </property>
-                      </spacer>
-                    </item>
-                  </layout>
-                </item>
-              </layout>
-            </item>
-          </layout>
+         <widget class="RevisionCluster" name="_revision" >
+          <property name="focusPolicy" >
+           <enum>Qt::TabFocus</enum>
+          </property>
+          <property name="readOnly" >
+           <bool>false</bool>
+          </property>
+          <property name="mode" >
+           <enum>RevisionLineEdit::View</enum>
+          </property>
+          <property name="type" >
+           <enum>RevisionLineEdit::BOM</enum>
+          </property>
+         </widget>
         </item>
         <item>
+         <widget class="QGroupBox" name="_costsGroup" >
+          <property name="title" >
+           <string/>
+          </property>
           <layout class="QVBoxLayout" >
-            <property name="margin" >
-              <number>0</number>
-            </property>
-            <property name="spacing" >
-              <number>0</number>
-            </property>
-            <item>
-              <widget class="QLabel" name="_costedBOMLit" >
-                <property name="text" >
-                  <string>Costed Bill of Materials:</string>
-                </property>
-              </widget>
-            </item>
-            <item>
-              <widget class="XTreeWidget" name="_bomitem" >
-                <property name="sizePolicy" >
-                  <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>7</vsizetype>
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                  </sizepolicy>
-                </property>
-              </widget>
-            </item>
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <property name="leftMargin" >
+            <number>5</number>
+           </property>
+           <property name="topMargin" >
+            <number>5</number>
+           </property>
+           <property name="rightMargin" >
+            <number>5</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>5</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_useStandardCosts" >
+             <property name="text" >
+              <string>Use Standard Costs</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_useActualCosts" >
+             <property name="text" >
+              <string>Use Actual Costs</string>
+             </property>
+            </widget>
+           </item>
           </layout>
+         </widget>
         </item>
-      </layout>
-    </widget>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="spacing" >
+         <number>0</number>
+        </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Expanding</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>0</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>5</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="_close" >
+              <property name="text" >
+               <string>&amp;Close</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_print" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>&amp;Print</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Preferred</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="_costedBOMLit" >
+        <property name="text" >
+         <string>Costed Bill of Materials:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="XTreeWidget" name="_bomitem" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
   </widget>
-  <layoutdefault spacing="6" margin="11" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <customwidgets>
-    <customwidget>
-      <class>XTreeWidget</class>
-      <extends>QTreeWidget</extends>
-      <header>xtreewidget.h</header>
-      <container>0</container>
-      <pixmap></pixmap>
-    </customwidget>
-  </customwidgets>
-  <tabstops>
-    <tabstop>_item</tabstop>
-    <tabstop>_useStandardCosts</tabstop>
-    <tabstop>_bomitem</tabstop>
-    <tabstop>_print</tabstop>
-    <tabstop>_close</tabstop>
-  </tabstops>
-  <includes>
-    <include location="global" >parameter.h</include>
-    <include location="local" >OpenMFGGUIClient.h</include>
-  </includes>
-  <connections>
-    <connection>
-      <sender>_close</sender>
-      <signal>clicked()</signal>
-      <receiver>dspCostedSingleLevelBOM</receiver>
-      <slot>close()</slot>
-    </connection>
-    <connection>
-      <sender>_item</sender>
-      <signal>valid(bool)</signal>
-      <receiver>_print</receiver>
-      <slot>setEnabled(bool)</slot>
-    </connection>
-  </connections>
+ </widget>
+ <layoutdefault spacing="6" margin="11" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>RevisionCluster</class>
+   <extends>QWidget</extends>
+   <header>revisioncluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_item</tabstop>
+  <tabstop>_revision</tabstop>
+  <tabstop>_useStandardCosts</tabstop>
+  <tabstop>_useActualCosts</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_bomitem</tabstop>
+ </tabstops>
+ <includes>
+  <include location="global" >parameter.h</include>
+  <include location="local" >OpenMFGGUIClient.h</include>
+ </includes>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>dspCostedSingleLevelBOM</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_revision</receiver>
+   <slot>setTargetId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>163</x>
+     <y>59</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>410</x>
+     <y>25</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

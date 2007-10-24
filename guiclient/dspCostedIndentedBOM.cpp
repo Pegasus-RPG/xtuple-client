@@ -88,7 +88,7 @@ dspCostedIndentedBOM::dspCostedIndentedBOM(QWidget* parent, const char* name, Qt
 
   // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  //connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_revision, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_costsGroupInt, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
