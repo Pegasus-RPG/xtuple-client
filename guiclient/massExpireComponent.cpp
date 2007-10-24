@@ -58,6 +58,7 @@
 #include "massExpireComponent.h"
 
 #include <qvariant.h>
+#include <QMessageBox>
 
 /*
  *  Constructs a massExpireComponent as a child of 'parent', with the
@@ -131,6 +132,21 @@ void massExpireComponent::sExpire()
 {
   if ( (_original->isValid()) && (_expireAsOf->isValid()) )
   {
+    if (_metrics->boolean("RevControl"))
+    {
+      q.prepare("SELECT * "
+	  	      "FROM bomitem, rev "
+	 		  "WHERE ( (bomitem_rev_id=rev_id) "
+			  "AND (rev_status='P') "
+			  "AND (bomitem_item_id=:item_id) ) "
+			  "LIMIT 1;");
+	  q.bindValue(":item_id", _original->id());
+	  q.exec();
+	  if (q.first())
+        QMessageBox::information( this, tr("Mass Expire"),
+                          tr("<p>This process will only affect active revisions. "
+						  "Items on pending revisions must be expired manually.")  );
+    }
     QSqlQuery expire;
 
     if (_expireAsOf->isNull())

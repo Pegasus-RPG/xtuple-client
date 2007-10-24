@@ -58,6 +58,7 @@
 #include "massReplaceComponent.h"
 
 #include <QSqlError>
+#include <QMessageBox>
 #include <QVariant>
 
 #include "storedProcErrorLookup.h"
@@ -110,6 +111,21 @@ void massReplaceComponent::sReplace()
 {
   if (_original->isValid() && _replacement->isValid() && _effective->isValid())
   {
+    if (_metrics->boolean("RevControl"))
+    {
+      q.prepare("SELECT * "
+	  	      "FROM bomitem, rev "
+	 		  "WHERE ( (bomitem_rev_id=rev_id) "
+			  "AND (rev_status='P') "
+			  "AND (bomitem_item_id=:item_id) ) "
+			  "LIMIT 1;");
+	  q.bindValue(":item_id", _original->id());
+	  q.exec();
+	  if (q.first())
+        QMessageBox::information( this, tr("Mass Replace"),
+                          tr("<p>This process will only affect active revisions. "
+						  "Items on pending revisions must be replaced manually.")  );
+    }
     q.prepare("SELECT massReplaceBomitem(:replacement_item_id,"
 	      "                          :original_item_id, :effective_date,"
 	      "                          :ecn) AS result;");
