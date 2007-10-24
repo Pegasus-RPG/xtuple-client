@@ -386,7 +386,20 @@ void initErrorLookupHash()
 								 	0, "" },
   { "deleteIncident",	-2, TR("This Incident cannot be deleted as there are "
 			       "Comments associated with it."), 	0, "" },
-
+  { "deleteIncident",	-1, TR("This Incident cannot be deleted as there are "
+			       "To-Do List Items associated with it."), 	0, "" },
+  { "deleteItem",	-1, TR("This Item cannot be deleted as it is used "
+			       "in one or more bills of materials."), 	0, "" },
+  { "deleteItem",	-2, TR("This Item cannot be deleted as there are "
+			       "Item Site records associated with it."), 	0, "" },
+  { "deleteItem",	-3, TR("This Item cannot be deleted as there are "
+			       "Substitute records associated with it."), 	0, "" },
+  { "deleteItem",	-4, TR("This Item cannot be deleted as there are "
+			       "Breeder BOM records associated with it."), 	0, "" },
+  { "deleteItem",	-5, TR("This Item cannot be deleted as there are "
+			       "assignement records associated with it."), 	0, "" },
+  { "deleteItem",	-6, TR("This Item cannot be deleted as there are "
+			       "Revision Control records associated with it."), 	0, "" },
   { "deleteItemSite",  -1, TR("The selected Item Site cannot be deleted as "
 			      "there is Inventory History posted against it. "
 			      "You may edit the Item Site and deactivate it."),	0, "" },
