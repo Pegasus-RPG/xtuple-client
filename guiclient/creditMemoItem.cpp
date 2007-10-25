@@ -425,9 +425,9 @@ void creditMemoItem::sPopulateItemInfo()
   item.exec();
   if (item.first())
   {
+    _priceRatio = item.value("iteminvpricerat").toDouble();
     _qtyUOM->setId(item.value("item_inv_uom_id").toInt());
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
-    _priceRatio = item.value("iteminvpricerat").toDouble();
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
     _ratio->setText(item.value("f_invpricerat").toString());
@@ -465,7 +465,6 @@ void creditMemoItem::sPopulateItemInfo()
     {
       _qtyUOM->setId(cmitem.value("invcitem_qty_uom_id").toInt());
       _pricingUOM->setId(cmitem.value("invcitem_price_uom_id").toInt());
-      _priceRatio = cmitem.value("invcitem_price_invuomratio").toDouble();
       _priceinvuomratio = cmitem.value("invcitem_price_invuomratio").toDouble();
       _ratio->setText(formatUOMRatio(_priceinvuomratio));
       _salePrice->setLocalValue(cmitem.value("invcitem_price_local").toDouble() * _priceinvuomratio);
@@ -811,6 +810,11 @@ void creditMemoItem::sPriceUOMChanged()
   }
   _ratio->setText(formatUOMRatio(_priceinvuomratio));
 
+  updatePriceInfo();
+}
+
+void creditMemoItem::updatePriceInfo()
+{
   XSqlQuery item;
   item.prepare("SELECT item_listprice"
                "  FROM item"
@@ -819,6 +823,4 @@ void creditMemoItem::sPriceUOMChanged()
   item.exec();
   item.first();
   _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
-  //sDeterminePrice();
 }
-
