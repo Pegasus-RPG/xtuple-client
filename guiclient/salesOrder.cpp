@@ -194,19 +194,21 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _soitem->addColumn(tr("Whs."),        _whsColumn,     Qt::AlignCenter );
   _soitem->addColumn(tr("Status"),      _statusColumn,  Qt::AlignCenter );
   _soitem->addColumn(tr("Sched. Date"), _dateColumn,    Qt::AlignCenter );
+  _soitem->addColumn(tr("Qty UOM"),     _uomColumn,     Qt::AlignLeft   );
   _soitem->addColumn(tr("Ordered"),     _qtyColumn,     Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),     _qtyColumn,     Qt::AlignRight  );
   _soitem->addColumn(tr("At Shipping"), _qtyColumn,     Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),     _qtyColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Price"),       _priceColumn,     Qt::AlignRight  );
-  _soitem->addColumn(tr("Extended"),    _priceColumn,     Qt::AlignRight  );
+  _soitem->addColumn(tr("Price UOM"),   _uomColumn,     Qt::AlignLeft   );
+  _soitem->addColumn(tr("Price"),       _priceColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Extended"),    _priceColumn,   Qt::AlignRight  );
 
-  _cc->addColumn(tr("Sequence"),          _itemColumn,  Qt::AlignLeft );
-  _cc->addColumn(tr("Type"),           _itemColumn,  Qt::AlignLeft );
-  _cc->addColumn(tr("Number"),             _itemColumn,          Qt::AlignRight );
-  _cc->addColumn(tr("Active"),          _itemColumn,          Qt::AlignLeft );
-  _cc->addColumn(tr("Name"),          _itemColumn,          Qt::AlignLeft );
-  _cc->addColumn(tr("Expiration Date"),          -1,          Qt::AlignLeft );
+  _cc->addColumn(tr("Sequence"),        _itemColumn,    Qt::AlignLeft );
+  _cc->addColumn(tr("Type"),            _itemColumn,    Qt::AlignLeft );
+  _cc->addColumn(tr("Number"),          _itemColumn,    Qt::AlignRight );
+  _cc->addColumn(tr("Active"),          _itemColumn,    Qt::AlignLeft );
+  _cc->addColumn(tr("Name"),            _itemColumn,    Qt::AlignLeft );
+  _cc->addColumn(tr("Expiration Date"),          -1,    Qt::AlignLeft );
 
   sPopulateFOB(_warehouse->id());
 
@@ -500,8 +502,8 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _issueLineBalance->hide();
     _amountAtShippingLit->hide();
     _amountAtShipping->hide();
-    _soitem->hideColumn(8);
     _soitem->hideColumn(9);
+    _soitem->hideColumn(10);
   }
   else
     _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
@@ -2185,10 +2187,12 @@ void salesOrder::sFillItemList()
                 "            ELSE coitem_status"
                 "       END AS coitem_status,"
                 "       formatDate(coitem_scheddate) AS f_scheddate,"
+                "       quom.uom_name AS qt_uom,"
                 "       formatQty(coitem_qtyord) AS f_ordered,"
                 "       formatQty(noNeg(coitem_qtyshipped - coitem_qtyreturned)) AS f_shipped,"
                 "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
                 "       formatQty(COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) AS f_atshipping,"
+                "       puom.uom_name AS price_uom,"
                 "       formatSalesPrice(coitem_price) AS f_unitprice,"
                 "       formatMoney(round((coitem_qtyord * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS f_extprice,"
                 "       round(((COALESCE(SUM(coship_qty),0)-coitem_qtyshipped) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2) AS shippingAmount,"
@@ -2196,11 +2200,13 @@ void salesOrder::sFillItemList()
                 "       CASE WHEN coitem_scheddate > current_date THEN 1"
                 "            ELSE 0"
                 "       END AS in_future "
-                "FROM itemsite, item, warehous,"
-                "     coitem LEFT OUTER JOIN coship ON (coship_coitem_id=coitem_id) "
-               "WHERE ( (coitem_itemsite_id=itemsite_id)"
-               " AND (itemsite_item_id=item_id)"
-                " AND (itemsite_warehous_id=warehous_id)";
+                "  FROM itemsite, item, warehous, uom AS quom, uom AS puom,"
+                "       coitem LEFT OUTER JOIN coship ON (coship_coitem_id=coitem_id) "
+                " WHERE ( (coitem_itemsite_id=itemsite_id)"
+                "   AND   (coitem_qty_uom_id=quom.uom_id)"
+                "   AND   (coitem_price_uom_id=puom.uom_id)"
+                "   AND   (itemsite_item_id=item_id)"
+                "   AND   (itemsite_warehous_id=warehous_id)";
 
     if (!_showCanceled->isChecked())
       sql += QString(" AND (coitem_status != 'X') ");
@@ -2209,6 +2215,7 @@ void salesOrder::sFillItemList()
                    "GROUP BY coitem_id, coitem_cohead_id, itemsite_id, itemsite_qtyonhand, coitem_qtyshipped,"
                    "         coitem_linenumber, item_id, item_number, item_descrip1, item_descrip2,"
                    "         warehous_id, warehous_code, coitem_status, coitem_qtyord, coitem_qtyreturned,"
+                   "         quom.uom_name, puom.uom_name,"
                    "         coitem_price, coitem_scheddate, coitem_qty_invuomratio, coitem_price_invuomratio "
                    "ORDER BY coitem_linenumber;" );
     q.prepare(sql);
@@ -2239,10 +2246,12 @@ void salesOrder::sFillItemList()
                            q.value("coitem_linenumber"), q.value("item_number"),
                            q.value("description"), q.value("warehous_code"),
                            q.value("coitem_status"), q.value("f_scheddate"),
+                           q.value("qty_uom"),
                            q.value("f_ordered"), q.value("f_shipped"),
-                           q.value("f_atshipping"), q.value("f_balance"),
-                           q.value("f_unitprice"));
-       last->setText(11, q.value("f_extprice"));
+                           q.value("f_atshipping"), q.value("f_balance"));
+       last->setText(11, q.value("price_uom"));
+       last->setText(12, q.value("f_unitprice"));
+       last->setText(13, q.value("f_extprice"));
 
         if ( (backOrderFlag) && (q.value("coitem_status").toString() != "C") && (q.value("coitem_status").toString() != "X") )
           last->setTextColor("red");
@@ -2269,12 +2278,17 @@ void salesOrder::sFillItemList()
                "       quitem_linenumber, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
                "       warehous_code, '',"
                "       formatDate(quitem_scheddate) AS f_scheddate,"
+               "       quom.uom_name AS qty_uom,"
                "       formatQty(quitem_qtyord) AS f_ordered,"
                "       formatQty(0) AS f_shipped,"
+               "       puom.uom_name AS price_uom,"
                "       formatSalesPrice(quitem_price) AS f_unitprice,"
                "       formatMoney(round((quitem_qtyord * quitem_qty_invuomratio) * (quitem_price / quitem_price_invuomratio),2)) AS f_extprice "
-               "  FROM item, quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
+               "  FROM item, uom AS quom, uom AS puom,"
+               "       quitem LEFT OUTER JOIN (itemsite JOIN warehous ON (itemsite_warehous_id=warehous_id)) ON (quitem_itemsite_id=itemsite_id) "
                " WHERE ( (quitem_item_id=item_id)"
+               "   AND   (quitem_qty_uom_id=quom.uom_id)"
+               "   AND   (quitem_price_uom_id=puom.uom_id)"
                "   AND   (quitem_quhead_id=:quhead_id) ) "
                "ORDER BY quitem_linenumber;" );
     q.bindValue(":quhead_id", _soheadid);
@@ -2287,10 +2301,12 @@ void salesOrder::sFillItemList()
                          q.value("quitem_linenumber"), q.value("item_number"),
                          q.value("description"), q.value("warehous_code"),
                          "", q.value("f_scheddate"),
+                         q.value("qty_uom"),
                          q.value("f_ordered"), q.value("f_shipped"),
-                         "", "",
-                         q.value("f_unitprice"));
-       last->setText(11, q.value("f_extprice"));
+                         "", "");
+       last->setText(11, q.value("price_uom"));
+       last->setText(12, q.value("f_unitprice"));
+       last->setText(13, q.value("f_extprice"));
     }
   }
 

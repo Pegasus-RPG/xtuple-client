@@ -960,7 +960,7 @@ void salesOrderItem::sSave()
                "    quitem_qtyord=:quitem_qtyord,"
                "    quitem_qty_uom_id=:qty_uom_id, quitem_qty_invuomratio=:qty_invuomratio,"
                "    quitem_price=:quitem_price,"
-               "    quitem_price_uom_id=:price_uom_id, quitem_price_invuomratio=:priceinvuomratio,"
+               "    quitem_price_uom_id=:price_uom_id, quitem_price_invuomratio=:price_invuomratio,"
                "    quitem_memo=:quitem_memo, quitem_createorder=:quitem_createorder,"
                "    quitem_order_warehous_id=:quitem_order_warehous_id,"
 	       "    quitem_prcost=:quitem_prcost, quitem_tax_id=:quitem_tax_id "
@@ -1214,34 +1214,44 @@ void salesOrderItem::sListPrices()
   newdlg.set(params);
   if (newdlg.exec() == QDialog::Accepted)
   {
-    _netUnitPrice->setLocalValue((newdlg._selectedPrice * _priceRatio) * _priceinvuomratio);
+    _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
     sCalculateDiscountPrcnt();
   }
 }
 
 void salesOrderItem::sDeterminePrice()
 {
+qDebug("a");
   if(cView == _mode || cViewQuote == _mode)
     return;
 
+qDebug("b");
   if ((_item->isValid()) && (_qtyOrdered->text().length()))
   {
+qDebug("c");
     if (_mode == cEditQuote || _mode == cEdit)
     {
+qDebug("d");
       if ((_qtyOrdered->toDouble() == _orderQtyChanged) || (_metrics->value("UpdatePriceLineEdit").toInt() == iDontUpdate))
         return;
 
+qDebug("e");
       if( _metrics->value("UpdatePriceLineEdit").toInt() != iJustUpdate )
       {
+qDebug("f");
         if (QMessageBox::question(this, tr("Update Price?"),
                 tr("<p>The Item qty. has changed. Do you want to update the Price?"),
                 QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
         {
+qDebug("g");
           _orderQtyChanged = _qtyOrdered->toDouble();
           return;
         }
+qDebug("h");
       }
+qDebug("i");
     }
+qDebug("j");
 
     XSqlQuery itemprice;
     itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, :shipto_id, :qty, "
@@ -1257,9 +1267,11 @@ void salesOrderItem::sDeterminePrice()
     itemprice.exec();
     if (itemprice.first())
     {
+qDebug("k");
     // This trap doesn't make sense.  -9999 is only returned if the item is exclusive and there is no price schedule
       if (itemprice.value("price").toDouble() == -9999.0)
       {
+qDebug("l");
         QMessageBox::critical(this, tr("Customer Cannot Buy at Quantity"),
                               tr("<p>Although the selected Customer may "
 			         "purchase the selected Item at some quantity "
@@ -1278,21 +1290,27 @@ void salesOrderItem::sDeterminePrice()
       }
       else
       {
+qDebug("m");
         double price = itemprice.value("price").toDouble();
-        price = (price * _priceRatio) * _priceinvuomratio;
+qDebug("1: price=%f * (%f / %f)", price, _priceinvuomratio, _priceRatio);
+        price = price * (_priceinvuomratio / _priceRatio);
         _customerPrice->setLocalValue(price);
         _netUnitPrice->setLocalValue(price);
 
         sCalculateDiscountPrcnt();
         _orderQtyChanged = _qtyOrdered->toDouble();
       }
+qDebug("n");
     }
     else if (itemprice.lastError().type() != QSqlError::None)
     {
+qDebug("o");
       systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+qDebug("p");
   }
+qDebug("q");
 }
 
 void salesOrderItem::sPopulateItemInfo(int pItemid)
@@ -2005,7 +2023,7 @@ void salesOrderItem::populate()
       _subItem->setId(item.value("coitem_substitute_item_id").toInt());
     }
     _customerPrice->setLocalValue(item.value("coitem_custprice").toDouble());
-    _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
+    _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
     _netUnitPrice->setLocalValue(item.value("coitem_price").toDouble());
     _leadTime = item.value("itemsite_leadtime").toInt();
     _cQtyOrdered = _qtyOrdered->toDouble();
@@ -2533,7 +2551,8 @@ void salesOrderItem::sPriceUOMChanged()
   item.bindValue(":item_id", _item->id());
   item.exec();
   item.first();
-  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
+qDebug("2: price=%f * (%f / %f)", item.value("item_listprice").toDouble(), _priceinvuomratio, _priceRatio);
+  _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
   sDeterminePrice();
 }
 
