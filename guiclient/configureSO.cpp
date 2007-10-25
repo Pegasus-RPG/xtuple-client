@@ -82,6 +82,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _nextSoNumber->setValidator(omfgThis->orderVal());
   _nextQuNumber->setValidator(omfgThis->orderVal());
+  _nextRaNumber->setValidator(omfgThis->orderVal());
   _nextCmNumber->setValidator(omfgThis->orderVal());
   _nextInNumber->setValidator(omfgThis->orderVal());
   _creditLimit->setValidator(omfgThis->moneyVal());
@@ -216,6 +217,46 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   {
     this->setCaption("Sales Configuration");
   }
+
+  //Set status of Returns Authorization based on context
+  if (_metrics->value("Application") != "OpenMFG")
+  {
+	_authNumGenerationLit->setVisible(false);
+    _returnAuthorizationNumGeneration->setVisible(false);
+	_nextRaNumberLit->setVisible(false);
+	_nextRaNumber->setVisible(false);
+	_enableReturns->setVisible(false);
+	_enableReturns->setChecked(false);
+  }
+  else
+  {
+    q.exec( "SELECT ranumber.orderseq_number AS ranumber "
+            "FROM orderseq AS ranumber "
+            "WHERE (ranumber.orderseq_name='RaNumber');" );
+    if (q.first())
+    {
+      _nextRaNumber->setText(q.value("ranumber"));
+    }
+    else
+      _nextRaNumber->setText("10000");
+
+    metric = _metrics->value("RANumberGeneration");
+    if (metric == "M")
+      _returnAuthorizationNumGeneration->setCurrentItem(0);
+    else if (metric == "A")
+      _returnAuthorizationNumGeneration->setCurrentItem(1);
+    else if (metric == "O")
+      _returnAuthorizationNumGeneration->setCurrentItem(2);
+
+    q.exec("SELECT rahead_id FROM rahead LIMIT 1;");
+    if (q.first())
+	{
+	  _enableReturns->setChecked(true);
+	  _enableReturns->setEnabled(false);
+	}
+	else
+	  _enableReturns->setChecked(_metrics->boolean("EnableReturnAuth"));
+  }
 }
 
 configureSO::~configureSO()
@@ -255,6 +296,7 @@ void configureSO::sSave()
   _metrics->set("DefaultFreeFormShiptos", _freeFormShiptos->isChecked());
   _metrics->set("DefaultPrintSOOnSave", _printSO->isChecked());
   _metrics->set("UsePromiseDate", _enablePromiseDate->isChecked());
+  _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
 
@@ -316,6 +358,20 @@ void configureSO::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+
+  if (_enableReturns->isChecked())
+  {
+    _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentItem()]));
+
+    q.prepare( "SELECT setNextRaNumber(:ranumber);" );
+	q.bindValue(":ranumber", _nextRaNumber->text().toInt());
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   _metrics->load();
