@@ -37,28 +37,105 @@
 
   -->
 
-<!--
-  The following elements are represented in the DTD but are not directly
-  importable through the API views:
-  -->
-<!ELEMENT xtupleimport (custchar |
-			custcomment |
-			custcreditcard |
-			customer |
-			custshipto |
-			custtax |
-			journalentry |
-			quote |
-			quotecomment |
-			quoteline |
-			quotelinechar |
-			quotelinecomment |
-			salesline |
-			saleslinechar |
-			saleslinecomment |
-			salesorder |
+<!ELEMENT xtupleimport (account			|
+			accountchar		|
+			accountcomment		|
+			address			|
+			addresschar		|
+			contact			|
+			contactchar		|
+			custchar		|
+			custcomment		|
+			custcreditcard		|
+			customer		|
+			custshipto		|
+			custtax			|
+			journalentry		|
+			quote			|
+			quotecomment		|
+			quoteline		|
+			quotelinechar		|
+			quotelinecomment	|
+			salesline		|
+			saleslinechar		|
+			saleslinecomment	|
+			salesorder		|
 			salesordercomment)+ >
 <!ATTLIST xtupleimport version	CDATA	#FIXED "development" >
+
+<!ELEMENT account ( account_number,
+		    parent_account?,
+		    account_name,
+		    active?,
+		    type?,
+		    (primary_contact_number?,
+		      primary_contact_honorific?,
+		      primary_contact_first?,
+		      primary_contact_last?,
+		      primary_contact_job_title?,
+		      primary_contact_voice?,
+		      primary_contact_fax?,
+		      primary_contact_email?)?,
+		    (secondary_contact_number?,
+		      secondary_contact_honorific?,
+		      secondary_contact_first?,
+		      secondary_contact_last?,
+		      secondary_contact_job_title?,
+		      secondary_contact_voice?,
+		      secondary_contact_fax?,
+		      secondary_contact_email?,
+		      secondary_contact_web?)?,
+		    notes? ) >
+<!ATTLIST account	id	CDATA	#IMPLIED >
+
+<!ELEMENT accountchar (account_number, characteristic, value ) >
+
+<!ELEMENT accountcomment (account_number, type, date?, username?, text) >
+
+<!ELEMENT address ( address_number?,
+		    address1?,
+		    address2?,
+		    address3?,
+		    city?,
+		    state?,
+		    postal_code?,
+		    country?,
+		    active?,
+		    notes?,
+		    change? ) >
+<!ATTLIST address	id	CDATA	#IMPLIED > <!-- should be same as address_number if supplied -->
+
+<!ELEMENT addresschar (address_number, characteristic, value ) >
+
+<!ELEMENT addresscomment (address_number, type, date?, username?, text) >
+
+<!ELEMENT contact ( contact_number?,
+		    honorific?,
+		    first?,
+		    last?,
+		    initials?,
+		    crm_account?,
+		    active?,
+		    job_title?,
+		    voice?,
+		    alternate?,
+		    fax?,
+		    email?,
+		    web?,
+		    address1?,
+		    address2?,
+		    address3?,
+		    city?,
+		    state?,
+		    postal_code?,
+		    country?,
+		    address_change?,
+		    notes? ) >
+<!ATTLIST contact	id	CDATA	#IMPLIED >
+
+<!ELEMENT contactchar (contact_number, characteristic, value ) >
+
+<!ELEMENT contactcomment (contact_number, type, date?, username?, text) >
 
 <!ELEMENT custchar (customer_number, characteristic, value ) >
 
@@ -374,28 +451,32 @@
 			      text
 			    ) >
 
+<!ELEMENT account_name			(#PCDATA) >
+<!ELEMENT account_number		(#PCDATA) >
+<!ELEMENT address_number		(#PCDATA) >
 <!ELEMENT address1			(#PCDATA) >
 <!ELEMENT address2			(#PCDATA) >
 <!ELEMENT address3			(#PCDATA) >
 <!ELEMENT addressline			(#PCDATA) >
-<!ELEMENT amount			(#PCDATA) >	<!-- money -->
+<!ELEMENT alternate			(#PCDATA) > <!-- telephone number -->
+<!ELEMENT amount			(#PCDATA) > <!-- money -->
 <!ELEMENT billing_contact_address1	(#PCDATA) >
 <!ELEMENT billing_contact_address2	(#PCDATA) >
 <!ELEMENT billing_contact_address3	(#PCDATA) >
-<!ELEMENT billing_contact_alternate	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT billing_contact_alternate	(#PCDATA) > <!-- phone number -->
 <!ELEMENT billing_contact_city		(#PCDATA) >
 <!ELEMENT billing_contact_country	(#PCDATA) >
-<!ELEMENT billing_contact_email		(#PCDATA) >	<!-- email address -->
-<!ELEMENT billing_contact_fax		(#PCDATA) >	<!-- phone number -->
+<!ELEMENT billing_contact_email		(#PCDATA) > <!-- email address -->
+<!ELEMENT billing_contact_fax		(#PCDATA) > <!-- phone number -->
 <!ELEMENT billing_contact_first		(#PCDATA) >
 <!ELEMENT billing_contact_honorific	(#PCDATA) >
-<!ELEMENT billing_contact_id		(#PCDATA) >	<!-- positive int -->
+<!ELEMENT billing_contact_id		(#PCDATA) > <!-- positive int -->
 <!ELEMENT billing_contact_job_title	(#PCDATA) >
 <!ELEMENT billing_contact_last		(#PCDATA) >
 <!ELEMENT billing_contact_postalcode	(#PCDATA) >
 <!ELEMENT billing_contact_state		(#PCDATA) >
-<!ELEMENT billing_contact_voice		(#PCDATA) >	<!-- phone number -->
-<!ELEMENT billing_contact_web		(#PCDATA) >	<!-- URL -->
+<!ELEMENT billing_contact_voice		(#PCDATA) > <!-- phone number -->
+<!ELEMENT billing_contact_web		(#PCDATA) > <!-- URL -->
 <!ELEMENT billto_address1		(#PCDATA) >
 <!ELEMENT billto_address2		(#PCDATA) >
 <!ELEMENT billto_address3		(#PCDATA) >
@@ -407,87 +488,108 @@
 <!ELEMENT characteristic		(#PCDATA) >
 <!ELEMENT city				(#PCDATA) >
 <!ELEMENT commission			(#PCDATA) >
-<!ELEMENT contact_id			(#PCDATA) >	<!-- positive int -->
+<!ELEMENT contact_id			(#PCDATA) > <!-- positive int -->
+<!ELEMENT contact_number		(#PCDATA) > <!-- positive int -->
 <!ELEMENT correspond_contact_address1	(#PCDATA) >
 <!ELEMENT correspond_contact_address2	(#PCDATA) >
 <!ELEMENT correspond_contact_address3	(#PCDATA) >
-<!ELEMENT correspond_contact_alternate	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT correspond_contact_alternate	(#PCDATA) > <!-- phone number -->
 <!ELEMENT correspond_contact_city	(#PCDATA) >
 <!ELEMENT correspond_contact_country	(#PCDATA) >
-<!ELEMENT correspond_contact_email	(#PCDATA) >	<!-- email address -->
-<!ELEMENT correspond_contact_fax	(#PCDATA) >	<!-- phone number -->
+<!ELEMENT correspond_contact_email	(#PCDATA) > <!-- email address -->
+<!ELEMENT correspond_contact_fax	(#PCDATA) > <!-- phone number -->
 <!ELEMENT correspond_contact_first	(#PCDATA) >
 <!ELEMENT correspond_contact_honorific	(#PCDATA) >
-<!ELEMENT correspond_contact_id		(#PCDATA) >	<!-- positive int -->
+<!ELEMENT correspond_contact_id		(#PCDATA) > <!-- positive int -->
 <!ELEMENT correspond_contact_job_title	(#PCDATA) >
 <!ELEMENT correspond_contact_last	(#PCDATA) >
 <!ELEMENT correspond_contact_postalcode	(#PCDATA) >
 <!ELEMENT correspond_contact_state	(#PCDATA) >
-<!ELEMENT correspond_contact_voice	(#PCDATA) >	<!-- phone number -->
-<!ELEMENT correspond_contact_web	(#PCDATA) >	<!-- URL -->
+<!ELEMENT correspond_contact_voice	(#PCDATA) > <!-- phone number -->
+<!ELEMENT correspond_contact_web	(#PCDATA) > <!-- URL -->
 <!ELEMENT country		(#PCDATA) >
-<!ELEMENT credit		(#PCDATA) >	<!-- 00-00-00-00 -->
+<!ELEMENT credit		(#PCDATA) > <!-- 00-00-00-00 -->
 <!ELEMENT credit_card_number	(#PCDATA) >
 <!ELEMENT credit_limit		(#PCDATA) >
 <!ELEMENT credit_limit_currency	(#PCDATA) >
 <!ELEMENT credit_rating		(#PCDATA) >
+<!ELEMENT crm_account		(#PCDATA) >
 <!ELEMENT currency		(#PCDATA) >
 <!ELEMENT cust_po_number	(#PCDATA) >
 <!ELEMENT customer_name		(#PCDATA) >
 <!ELEMENT customer_number	(#PCDATA) >
 <!ELEMENT customer_pn	 	(#PCDATA) >
 <!ELEMENT customer_type		(#PCDATA) >
-<!ELEMENT date			(#PCDATA) >	<!-- PostgreSQL timestamp -->
-<!ELEMENT debit			(#PCDATA) >	<!-- 00-00-00-00 -->
+<!ELEMENT date			(#PCDATA) > <!-- PostgreSQL timestamp -->
+<!ELEMENT debit			(#PCDATA) > <!-- 00-00-00-00 -->
 <!ELEMENT default_currency	(#PCDATA) >
 <!ELEMENT default_discount	(#PCDATA) >
 <!ELEMENT default_tax_authority	(#PCDATA) >
 <!ELEMENT default_terms		(#PCDATA) >
-<!ELEMENT discount_pct_from_list (#PCDATA) >	<!-- Numeric -->
-<!ELEMENT dist_date		(#PCDATA) >	<!-- PostgreSQL timestamp -->
+<!ELEMENT discount_pct_from_list (#PCDATA) > <!-- Numeric -->
+<!ELEMENT dist_date		(#PCDATA) > <!-- PostgreSQL timestamp -->
 <!ELEMENT doc_number		(#PCDATA) >
 <!ELEMENT edi_profile		(#PCDATA) >
-<!ELEMENT email			(#PCDATA) >	<!-- email address -->
+<!ELEMENT email			(#PCDATA) > <!-- email address -->
 <!ELEMENT expiration_month	(#PCDATA) >
 <!ELEMENT expiration_year	(#PCDATA) >
-<!ELEMENT fax			(#PCDATA) >	<!-- phone number -->
+<!ELEMENT fax			(#PCDATA) > <!-- phone number -->
 <!ELEMENT first			(#PCDATA) >
 <!ELEMENT fob			(#PCDATA) >
-<!ELEMENT freight		(#PCDATA) >	<!-- Numeric -->
+<!ELEMENT freight		(#PCDATA) > <!-- Numeric -->
 <!ELEMENT general_notes		(#PCDATA) >
 <!ELEMENT honorific		(#PCDATA) >
-<!ELEMENT invc_edi_cc		(#PCDATA) >	<!-- email address -->
-<!ELEMENT invc_edi_email	(#PCDATA) >	<!-- email address -->
+<!ELEMENT initials		(#PCDATA) >
+<!ELEMENT invc_edi_cc		(#PCDATA) > <!-- email address -->
+<!ELEMENT invc_edi_email	(#PCDATA) > <!-- email address -->
 <!ELEMENT invc_edi_emailbody	(#PCDATA) >
 <!ELEMENT invc_edi_filename	(#PCDATA) >
-<!ELEMENT invc_edi_profile	(#PCDATA) >	<!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
+<!ELEMENT invc_edi_profile	(#PCDATA) > <!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
 <!ELEMENT invc_edi_subject	(#PCDATA) >
 <!ELEMENT item_number	 	(#PCDATA) >
 <!ELEMENT job_title		(#PCDATA) >
 <!ELEMENT key			(#PCDATA) >
 <!ELEMENT last			(#PCDATA) >
-<!ELEMENT line_number	 	(#PCDATA) >	<!-- positive Integer -->
-<!ELEMENT misc_account_number	(#PCDATA) >	<!-- 00-00-00-00 -->
-<!ELEMENT misc_charge		(#PCDATA) >	<!-- Numeric -->
+<!ELEMENT line_number	 	(#PCDATA) > <!-- positive Integer -->
+<!ELEMENT misc_account_number	(#PCDATA) > <!-- 00-00-00-00 -->
+<!ELEMENT misc_charge		(#PCDATA) > <!-- Numeric -->
 <!ELEMENT misc_charge_description (#PCDATA) >
 <!ELEMENT name			(#PCDATA) >
-<!ELEMENT net_unit_price	(#PCDATA) >	<!-- Numeric -->
+<!ELEMENT net_unit_price	(#PCDATA) > <!-- Numeric -->
 <!ELEMENT notes			(#PCDATA) >
-<!ELEMENT order_date		(#PCDATA) >	<!-- PostgreSQL timestamp -->
+<!ELEMENT order_date		(#PCDATA) > <!-- PostgreSQL timestamp -->
 <!ELEMENT order_notes		(#PCDATA) >
-<!ELEMENT order_number		(#PCDATA) >	<!-- positive Integer -->
-<!ELEMENT overwrite_po_price	(#PCDATA) >	<!-- Numeric -->
-<!ELEMENT pack_date		(#PCDATA) >	<!-- PostgreSQL timestamp -->
-<!ELEMENT phone			(#PCDATA) >	<!-- phone number -->
+<!ELEMENT order_number		(#PCDATA) > <!-- positive Integer -->
+<!ELEMENT overwrite_po_price	(#PCDATA) > <!-- Numeric -->
+<!ELEMENT pack_date		(#PCDATA) > <!-- PostgreSQL timestamp -->
+<!ELEMENT parent_account	(#PCDATA) >
+<!ELEMENT phone			(#PCDATA) > <!-- phone number -->
 <!ELEMENT postal_code		(#PCDATA) >
 <!ELEMENT preferred_selling_whs	(#PCDATA) >
-<!ELEMENT project_number	(#PCDATA) >	<!-- positive Integer -->
-<!ELEMENT qty_ordered	 	(#PCDATA) >	<!-- Numeric -->
-<!ELEMENT quote_date		(#PCDATA) >	<!-- PostgreSQL timestamp -->
-<!ELEMENT quote_number		(#PCDATA) >	<!-- positive Integer -->
-<!ELEMENT registration_number	(#PCDATA) >
-<!ELEMENT sales_rep		(#PCDATA) >
-<!ELEMENT scheduled_date	(#PCDATA) >	<!-- PostgreSQL timestamp -->
+<!ELEMENT primary_contact_number	(#PCDATA) > <!-- positive int -->
+<!ELEMENT primary_contact_email		(#PCDATA) > <!-- email address -->
+<!ELEMENT primary_contact_fax		(#PCDATA) > <!-- phone number -->
+<!ELEMENT primary_contact_first		(#PCDATA) >
+<!ELEMENT primary_contact_honorific	(#PCDATA) >
+<!ELEMENT primary_contact_job_title	(#PCDATA) >
+<!ELEMENT primary_contact_last		(#PCDATA) >
+<!ELEMENT primary_contact_voice		(#PCDATA) > <!-- phone number -->
+<!ELEMENT project_number		(#PCDATA) > <!-- positive Integer -->
+<!ELEMENT qty_ordered	 		(#PCDATA) > <!-- Numeric -->
+<!ELEMENT quote_date			(#PCDATA) > <!-- PostgreSQL timestamp -->
+<!ELEMENT quote_number			(#PCDATA) > <!-- positive Integer -->
+<!ELEMENT registration_number		(#PCDATA) >
+<!ELEMENT sales_rep			(#PCDATA) >
+<!ELEMENT scheduled_date		(#PCDATA) > <!-- PostgreSQL timestamp -->
+<!ELEMENT secondary_contact_number	(#PCDATA) > <!-- positive int -->
+<!ELEMENT secondary_contact_email	(#PCDATA) > <!-- email address -->
+<!ELEMENT secondary_contact_fax		(#PCDATA) > <!-- phone number -->
+<!ELEMENT secondary_contact_first	(#PCDATA) >
+<!ELEMENT secondary_contact_honorific	(#PCDATA) >
+<!ELEMENT secondary_contact_job_title	(#PCDATA) >
+<!ELEMENT secondary_contact_last	(#PCDATA) >
+<!ELEMENT secondary_contact_voice	(#PCDATA) > <!-- phone number -->
+<!ELEMENT secondary_contact_web		(#PCDATA) > <!-- URL -->
 <!ELEMENT ship_form		(#PCDATA) >
 <!ELEMENT ship_via		(#PCDATA) >
 <!ELEMENT shipping_charges	(#PCDATA) >
@@ -501,14 +603,14 @@
 <!ELEMENT shipto_country	(#PCDATA) >
 <!ELEMENT shipto_name		(#PCDATA) >
 <!ELEMENT shipto_number		(#PCDATA) >
-<!ELEMENT shipto_phone		(#PCDATA) >
+<!ELEMENT shipto_phone		(#PCDATA) > <!-- telephone number -->
 <!ELEMENT shipto_postal_code	(#PCDATA) >
 <!ELEMENT shipto_state		(#PCDATA) >
-<!ELEMENT so_edi_cc		(#PCDATA) >	<!-- email address -->
-<!ELEMENT so_edi_email		(#PCDATA) >	<!-- email address -->
+<!ELEMENT so_edi_cc		(#PCDATA) > <!-- email address -->
+<!ELEMENT so_edi_email		(#PCDATA) > <!-- email address -->
 <!ELEMENT so_edi_emailbody	(#PCDATA) >
 <!ELEMENT so_edi_filename	(#PCDATA) >
-<!ELEMENT so_edi_profile	(#PCDATA) >	<!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
+<!ELEMENT so_edi_profile	(#PCDATA) > <!-- Custom Email|No EDI|Use Customer Master|[profile name] -->
 <!ELEMENT so_edi_subject	(#PCDATA) >
 <!ELEMENT sold_from_whs	 	(#PCDATA) >
 <!ELEMENT state			(#PCDATA) >
@@ -521,9 +623,10 @@
 <!ELEMENT tax_type		(#PCDATA) >
 <!ELEMENT terms			(#PCDATA) >
 <!ELEMENT text			(#PCDATA) >
-<!ELEMENT type			(#PCDATA) >
+<!ELEMENT type			(#PCDATA) > <!-- used different ways. could be generic text, could be limited (in api.account) to Organization or Individual -->
 <!ELEMENT username		(#PCDATA) >
 <!ELEMENT value		   	(#PCDATA) >
+<!ELEMENT voice			(#PCDATA) > <!-- telephone number -->
 <!ELEMENT warehouse		(#PCDATA) >
 <!ELEMENT web			(#PCDATA) >
 <!ELEMENT zone			(#PCDATA) >
@@ -554,6 +657,9 @@
 
 <!ELEMENT billing_contact_address_change EMPTY >
 <!ATTLIST billing_contact_address_change value (CHECK|CHANGEONE|CHANGEALL) #REQUIRED >
+
+<!ELEMENT change EMPTY >
+<!ATTLIST change value	(CHECK|CHANGEONE|CHANGEALL) #REQUIRED >
 
 <!ELEMENT correspond_contact_address_change EMPTY >
 <!ATTLIST correspond_contact_address_change value (CHECK|CHANGEONE|CHANGEALL) #REQUIRED >
