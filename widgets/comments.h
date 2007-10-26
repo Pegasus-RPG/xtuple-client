@@ -92,7 +92,7 @@ class OPENMFGWIDGETS_EXPORT Comments : public QWidget
       Location,		LotSerial,
       Opportunity,
       Project,		PurchaseOrder,	PurchaseOrderItem,
-      Quote,		QuoteItem,
+      ReturnAuth, ReturnAuthItem, Quote, QuoteItem,
       SalesOrder,	SalesOrderItem,
       TransferOrder,	TransferOrderItem,
       Vendor,

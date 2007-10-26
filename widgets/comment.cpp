@@ -218,6 +218,23 @@ void comment::set(ParameterList &pParams)
     _targetId = param.toInt();
   }
 
+//  Return Authorizations
+  param = pParams.value("rahead_id", &valid);
+  if (valid)
+  {
+    _source = Comments::ReturnAuth;
+    _cmnttype->setType(XComboBox::AllCommentTypes);
+    _targetId = param.toInt();
+  }
+
+  param = pParams.value("raitem_id", &valid);
+  if (valid)
+  {
+    _source = Comments::ReturnAuthItem;
+    _cmnttype->setType(XComboBox::AllCommentTypes);
+    _targetId = param.toInt();
+  }
+
 //  Purchase Orders
   param = pParams.value("pohead_id", &valid);
   if (valid)
