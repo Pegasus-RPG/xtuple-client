@@ -120,15 +120,17 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
     XSqlQuery soitem;
     soitem.prepare( "SELECT itemsite_item_id, cust_partialship,"
                     "       cohead_number, coitem_linenumber,"
+                    "       uom_name,"
                     "       formatQty(coitem_qtyord) AS f_qtyordered,"
                     "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
                     "       formatQty(coitem_qtyord - coitem_qtyshipped) AS f_qtybalance,"
                     "       (coitem_qtyord - coitem_qtyshipped) AS qtybalance,"
                     "       COALESCE(coitem_tax_id, -1) AS tax_id "
-                    "FROM coitem, itemsite, cohead, cust "
+                    "FROM coitem, itemsite, cohead, cust, uom "
                     "WHERE ( (coitem_itemsite_id=itemsite_id)"
                     " AND (coitem_cohead_id=cohead_id)"
                     " AND (coitem_status <> 'X')"
+                    " AND (coitem_qty_uom_id=uom_id)"
                     " AND (cohead_cust_id=cust_id)"
                     " AND (coitem_id=:soitem_id) )" );
     soitem.bindValue(":soitem_id", _soitemid);
@@ -140,6 +142,7 @@ enum SetResponse selectBillingQty::set(const ParameterList &pParams)
       _item->setId(soitem.value("itemsite_item_id").toInt());
       _salesOrderNumber->setText(soitem.value("cohead_number").toString());
       _lineNumber->setText(soitem.value("coitem_linenumber").toString());
+      _qtyUOM->setText(soitem.value("uom_name").toString());
       _ordered->setText(soitem.value("f_qtyordered").toString());
       _shipped->setText(soitem.value("f_qtyshipped").toString());
       _balance->setText(soitem.value("f_qtybalance").toString());

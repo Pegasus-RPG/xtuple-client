@@ -1221,37 +1221,27 @@ void salesOrderItem::sListPrices()
 
 void salesOrderItem::sDeterminePrice()
 {
-qDebug("a");
   if(cView == _mode || cViewQuote == _mode)
     return;
 
-qDebug("b");
   if ((_item->isValid()) && (_qtyOrdered->text().length()))
   {
-qDebug("c");
     if (_mode == cEditQuote || _mode == cEdit)
     {
-qDebug("d");
       if ((_qtyOrdered->toDouble() == _orderQtyChanged) || (_metrics->value("UpdatePriceLineEdit").toInt() == iDontUpdate))
         return;
 
-qDebug("e");
       if( _metrics->value("UpdatePriceLineEdit").toInt() != iJustUpdate )
       {
-qDebug("f");
         if (QMessageBox::question(this, tr("Update Price?"),
                 tr("<p>The Item qty. has changed. Do you want to update the Price?"),
                 QMessageBox::Yes | QMessageBox::Default, QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
         {
-qDebug("g");
           _orderQtyChanged = _qtyOrdered->toDouble();
           return;
         }
-qDebug("h");
       }
-qDebug("i");
     }
-qDebug("j");
 
     XSqlQuery itemprice;
     itemprice.prepare( "SELECT itemPrice(item_id, :cust_id, :shipto_id, :qty, "
@@ -1267,11 +1257,9 @@ qDebug("j");
     itemprice.exec();
     if (itemprice.first())
     {
-qDebug("k");
     // This trap doesn't make sense.  -9999 is only returned if the item is exclusive and there is no price schedule
       if (itemprice.value("price").toDouble() == -9999.0)
       {
-qDebug("l");
         QMessageBox::critical(this, tr("Customer Cannot Buy at Quantity"),
                               tr("<p>Although the selected Customer may "
 			         "purchase the selected Item at some quantity "
@@ -1290,9 +1278,7 @@ qDebug("l");
       }
       else
       {
-qDebug("m");
         double price = itemprice.value("price").toDouble();
-qDebug("1: price=%f * (%f / %f)", price, _priceinvuomratio, _priceRatio);
         price = price * (_priceinvuomratio / _priceRatio);
         _customerPrice->setLocalValue(price);
         _netUnitPrice->setLocalValue(price);
@@ -1300,17 +1286,13 @@ qDebug("1: price=%f * (%f / %f)", price, _priceinvuomratio, _priceRatio);
         sCalculateDiscountPrcnt();
         _orderQtyChanged = _qtyOrdered->toDouble();
       }
-qDebug("n");
     }
     else if (itemprice.lastError().type() != QSqlError::None)
     {
-qDebug("o");
       systemError(this, itemprice.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-qDebug("p");
   }
-qDebug("q");
 }
 
 void salesOrderItem::sPopulateItemInfo(int pItemid)
@@ -2031,6 +2013,11 @@ void salesOrderItem::populate()
     _cScheduledDate = _scheduledDate->date();
     if (! item.value("quitem_order_warehous_id").isNull())
       _supplyWarehouse->setId(item.value("quitem_order_warehous_id").toInt());
+    if(item.value("qtyshipped").toDouble() > 0)
+    {
+      _qtyUOM->setEnabled(false);
+      _priceUOM->setEnabled(false);
+    }
 
     _customerPN->setText(item.value("coitem_custpn").toString());
 
@@ -2551,7 +2538,6 @@ void salesOrderItem::sPriceUOMChanged()
   item.bindValue(":item_id", _item->id());
   item.exec();
   item.first();
-qDebug("2: price=%f * (%f / %f)", item.value("item_listprice").toDouble(), _priceinvuomratio, _priceRatio);
   _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
   sDeterminePrice();
 }

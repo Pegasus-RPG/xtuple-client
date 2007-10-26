@@ -2187,7 +2187,7 @@ void salesOrder::sFillItemList()
                 "            ELSE coitem_status"
                 "       END AS coitem_status,"
                 "       formatDate(coitem_scheddate) AS f_scheddate,"
-                "       quom.uom_name AS qt_uom,"
+                "       quom.uom_name AS qty_uom,"
                 "       formatQty(coitem_qtyord) AS f_ordered,"
                 "       formatQty(noNeg(coitem_qtyshipped - coitem_qtyreturned)) AS f_shipped,"
                 "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"

@@ -278,15 +278,17 @@ void issueLineToShipping::populate()
 		"SELECT cohead_number AS order_number,"
 		"       itemsite_item_id AS item_id,"
 		"       warehous_code,"
+                "       uom_name,"
 		"       formatQty(coitem_qtyord) AS qtyordered,"
 		"       formatQty(coitem_qtyshipped) AS qtyshipped,"
 		"       formatQty(coitem_qtyreturned) AS qtyreturned,"
 		"       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped +"
 		"                       coitem_qtyreturned)) AS balance "
-		"FROM cohead, coitem, itemsite, item, warehous "
+		"FROM cohead, coitem, itemsite, item, warehous, uom "
 		"WHERE ((coitem_cohead_id=cohead_id)"
 		"  AND  (coitem_itemsite_id=itemsite_id)"
 		"  AND  (coitem_status <> 'X')"
+                "  AND  (coitem_qty_uom_id=uom_id)"
 		"  AND  (itemsite_item_id=item_id)"
 		"  AND  (itemsite_warehous_id=warehous_id)"
 		"  AND  (coitem_id=<? value(\"soitem_id\") ?>) );"
@@ -294,12 +296,13 @@ void issueLineToShipping::populate()
 		"SELECT tohead_number AS order_number,"
 		"       toitem_item_id AS item_id,"
 		"       warehous_code,"
+                "       toitem_uom AS uom_name,"
 		"       formatQty(toitem_qty_ordered) AS qtyordered,"
 		"       formatQty(toitem_qty_shipped) AS qtyshipped,"
 		"       0 AS qtyreturned,"
 		"       formatQty(noNeg(toitem_qty_ordered -"
 		"                       toitem_qty_shipped)) AS balance "
-		"FROM tohead, toitem, warehous "
+		"FROM tohead, toitem, warehous, item "
 		"WHERE ((toitem_tohead_id=tohead_id)"
 		"  AND  (toitem_status <> 'X')"
 		"  AND  (tohead_src_warehous_id=warehous_id)"
@@ -314,6 +317,7 @@ void issueLineToShipping::populate()
     _orderNumber->setText(itemq.value("order_number").toString());
     _item->setId(itemq.value("item_id").toInt());
     _warehouse->setText(itemq.value("warehous_code").toString());
+    _shippingUOM->setText(itemq.value("uom_name").toString());
     _qtyOrdered->setText(itemq.value("qtyordered").toString());
     _qtyShipped->setText(itemq.value("qtyshipped").toString());
     _qtyReturned->setText(itemq.value("qtyreturned").toString());

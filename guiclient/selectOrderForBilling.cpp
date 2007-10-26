@@ -114,6 +114,7 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   _soitem->addColumn(tr("#"),          _seqColumn,   Qt::AlignCenter );
   _soitem->addColumn(tr("Item"),       -1,           Qt::AlignLeft   );
   _soitem->addColumn(tr("Whs."),       _whsColumn,   Qt::AlignCenter );
+  _soitem->addColumn(tr("UOM"),        _uomColumn,   Qt::AlignLeft   );
   _soitem->addColumn(tr("Ordered"),    _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),    _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Returned"),   _qtyColumn,   Qt::AlignRight  );
@@ -140,12 +141,12 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
 
 selectOrderForBilling::~selectOrderForBilling()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void selectOrderForBilling::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void selectOrderForBilling::set(const ParameterList &pParams)
@@ -576,6 +577,7 @@ void selectOrderForBilling::sFillList()
     QString sql( "SELECT coitem_id, coitem_linenumber,"
                  "       item_number, iteminvpricerat(item_id) AS invpricerat,"
                  "       warehous_code, coitem_price,"
+                 "       uom_name,"
                  "       formatQty(coitem_qtyord) AS f_qtyord,"
                  "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
                  "       formatQty(coitem_qtyreturned) AS f_qtyreturned,"
@@ -610,9 +612,10 @@ void selectOrderForBilling::sFillList()
                  "                        AND (NOT cobmisc_posted))"
                  "                       ORDER BY cobill_toclose DESC"
                  "                       LIMIT 1) ) AS toclose "
-                 "FROM coitem, itemsite, item, warehous "
+                 "FROM coitem, itemsite, item, warehous, uom "
                  "WHERE ( (coitem_itemsite_id=itemsite_id)"
                  " AND (coitem_status <> 'X')"
+                 " AND (coitem_qty_uom_id=uom_id)"
                  " AND (itemsite_item_id=item_id)"
                  " AND (itemsite_warehous_id=warehous_id)"
 		 " <? if exists(\"showOpenOnly\") ?>"
@@ -638,7 +641,7 @@ void selectOrderForBilling::sFillList()
 
         last = new XTreeWidgetItem(_soitem, last, q.value("coitem_id").toInt(),
                             q.value("coitem_linenumber"), q.value("item_number"),
-                            q.value("warehous_code"), q.value("f_qtyord"),
+                            q.value("warehous_code"), q.value("uom_name"), q.value("f_qtyord"),
                             q.value("f_qtyshipped"), q.value("f_qtyreturned"),
                             q.value("f_qtyatship"), formatQty(q.value("qtytobill").toDouble()),
                             q.value("f_extended"), q.value("toclose") );

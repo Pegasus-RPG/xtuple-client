@@ -74,56 +74,57 @@
 issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_so, SIGNAL(newId(int)), this, SLOT(sHandleSalesOrder(int)));
-    connect(_to, SIGNAL(newId(int)), this, SLOT(sHandleTransferOrder(int)));
-    connect(_ship, SIGNAL(clicked()), this, SLOT(sShip()));
-    connect(_issueLine, SIGNAL(clicked()), this, SLOT(sIssueLineBalance()));
-    connect(_issueAll, SIGNAL(clicked()), this, SLOT(sIssueAllBalance()));
-    connect(_issueStock, SIGNAL(clicked()), this, SLOT(sIssueStock()));
-    connect(_returnStock, SIGNAL(clicked()), this, SLOT(sReturnStock()));
-    connect(_bcFind, SIGNAL(clicked()), this, SLOT(sBcFind()));
+  connect(_so, SIGNAL(newId(int)), this, SLOT(sHandleSalesOrder(int)));
+  connect(_to, SIGNAL(newId(int)), this, SLOT(sHandleTransferOrder(int)));
+  connect(_ship, SIGNAL(clicked()), this, SLOT(sShip()));
+  connect(_issueLine, SIGNAL(clicked()), this, SLOT(sIssueLineBalance()));
+  connect(_issueAll, SIGNAL(clicked()), this, SLOT(sIssueAllBalance()));
+  connect(_issueStock, SIGNAL(clicked()), this, SLOT(sIssueStock()));
+  connect(_returnStock, SIGNAL(clicked()), this, SLOT(sReturnStock()));
+  connect(_bcFind, SIGNAL(clicked()), this, SLOT(sBcFind()));
 
-    _so->setType((cSoOpen && cSoReleased));
+  _so->setType((cSoOpen && cSoReleased));
 
-    _ship->setEnabled(_privleges->check("ShipOrders"));
+  _ship->setEnabled(_privleges->check("ShipOrders"));
 
-    omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
-    omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
-    omfgThis->inputManager()->notify(cBCSalesOrder, this, this, SLOT(sCatchSoheadid(int)));
-    omfgThis->inputManager()->notify(cBCSalesOrderLineItem, this, this, SLOT(sCatchSoitemid(int)));
-    omfgThis->inputManager()->notify(cBCTransferOrder, this, this, SLOT(sCatchToheadid(int)));
-    omfgThis->inputManager()->notify(cBCTransferOrderLineItem, this, this, SLOT(sCatchToitemid(int)));
-    omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
+  omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
+  omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));
+  omfgThis->inputManager()->notify(cBCSalesOrder, this, this, SLOT(sCatchSoheadid(int)));
+  omfgThis->inputManager()->notify(cBCSalesOrderLineItem, this, this, SLOT(sCatchSoitemid(int)));
+  omfgThis->inputManager()->notify(cBCTransferOrder, this, this, SLOT(sCatchToheadid(int)));
+  omfgThis->inputManager()->notify(cBCTransferOrderLineItem, this, this, SLOT(sCatchToitemid(int)));
+  omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
 
-    _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter );
-    _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-    _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-    _soitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-    _soitem->addColumn(tr("Scheduled Date"),     _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight  );
-    _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight  );
-    _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter );
+  _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
+  _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
+  _soitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _soitem->addColumn(tr("Scheduled Date"),_qtyColumn, Qt::AlignRight  );
+  _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft   );
+  _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight  );
+  _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    _so->setFocus();
+  _so->setFocus();
 
-    _bcQty->setValidator(omfgThis->qtyVal());
+  _bcQty->setValidator(omfgThis->qtyVal());
 
-    _to->setVisible(_metrics->boolean("MultiWhs"));
+  _to->setVisible(_metrics->boolean("MultiWhs"));
 }
 
 issueToShipping::~issueToShipping()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void issueToShipping::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse issueToShipping::set(const ParameterList &pParams)
@@ -681,6 +682,7 @@ void issueToShipping::sFillList()
              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 	     "       warehous_code,"
              "       formatDate(coitem_scheddate) AS f_scheddate,"
+             "       uom_name,"
              "       formatQty(coitem_qtyord) AS f_qtyord,"
              "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
              "       formatQty(coitem_qtyreturned) AS f_qtyreturned,"
@@ -690,19 +692,20 @@ void issueToShipping::sFillList()
              "       CASE WHEN coitem_scheddate > current_date THEN 1 "
              "            ELSE 0 "
              "       END AS in_future "
-             "FROM itemsite, item, whsinfo,"
+             "FROM itemsite, item, whsinfo, uom,"
              "     coitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
              "        ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
              "      ) ON  (shipitem_orderitem_id=coitem_id) "
              "WHERE ( (coitem_itemsite_id=itemsite_id)"
+             " AND (coitem_qty_uom_id=uom_id)"
              " AND (itemsite_item_id=item_id)"
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (coitem_status NOT IN ('C','X'))"
              " AND (coitem_cohead_id=<? value(\"sohead_id\") ?>) ) "
              "GROUP BY coitem_id, coitem_linenumber, item_number,"
              "         item_descrip1, item_descrip2, warehous_code,"
-             "         coitem_scheddate, "
+             "         coitem_scheddate, uom_name,"
              "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned "
              "ORDER BY coitem_scheddate, linenumber;"
 	     "<? elseif exists(\"tohead_id\") ?>"
@@ -711,6 +714,7 @@ void issueToShipping::sFillList()
              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 	     "       tohead_srcname AS warehous_code,"
              "       formatDate(toitem_schedshipdate) AS f_scheddate,"
+             "       uom_name,"
              "       formatQty(toitem_qty_ordered) AS f_qtyord,"
              "       formatQty(toitem_qty_shipped) AS f_qtyshipped,"
              "       formatQty(0) AS f_qtyreturned,"
@@ -720,7 +724,7 @@ void issueToShipping::sFillList()
              "       CASE WHEN toitem_schedshipdate > CURRENT_DATE THEN 1 "
              "            ELSE 0 "
              "       END AS in_future "
-             "FROM item, tohead,"
+             "FROM item, tohead, uom,"
              "     toitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
              "        ON ( (shipitem_shiphead_id=shiphead_id) AND (NOT shiphead_shipped) )"
@@ -728,10 +732,11 @@ void issueToShipping::sFillList()
              "WHERE ( (toitem_item_id=item_id)"
              " AND (toitem_status NOT IN ('C','X'))"
 	     " AND (toitem_tohead_id=tohead_id)"
+             " AND (item_inv_uom_id=uom_id)"
              " AND (tohead_id=<? value(\"tohead_id\") ?>) ) "
              "GROUP BY toitem_id, toitem_linenumber, item_number,"
              "         item_descrip1, item_descrip2, tohead_srcname,"
-             "         toitem_schedshipdate, "
+             "         toitem_schedshipdate, uom_name,"
              "         toitem_qty_ordered, toitem_qty_shipped "
              "ORDER BY toitem_schedshipdate, linenumber;"
 	     "<? endif ?>"
@@ -748,6 +753,7 @@ void issueToShipping::sFillList()
 			     listq.value("itemdescrip"),
 			     listq.value("warehous_code"),
 			     listq.value("f_scheddate"),
+                             listq.value("uom_name"),
 			     listq.value("f_qtyord"),
 			     listq.value("f_qtyshipped"),
 			     listq.value("f_qtyreturned"),
