@@ -113,6 +113,9 @@ class menuSales : public QObject
     void sPostInvoices();
     void sPurgeInvoices();
 
+	void sNewReturn();
+	void sOpenReturns();
+
     void sNewCreditMemo();
     void sUnpostedCreditMemos();
     void sCreditMemoEditList();
@@ -236,6 +239,7 @@ class menuSales : public QObject
     QMenu *billingInvoicesMenu;
     QMenu *billingCreditMemosMenu;
     QMenu *billingFormsMenu;
+	QMenu *returnsMenu;
     QMenu *pricingMenu;
     QMenu *pricingReportsMenu;
     QMenu *pricingUpdateMenu;

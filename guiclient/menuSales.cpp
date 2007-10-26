@@ -75,6 +75,9 @@
 #include "rescheduleSoLineItems.h"
 #include "quotes.h"
 
+#include "returnAuthorization.h"
+#include "openReturnAuthorizations.h"
+
 #include "packingListBatch.h"
 #include "printPackingList.h"
 
@@ -220,6 +223,7 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
   billingInvoicesMenu = new QMenu();
   billingCreditMemosMenu= new QMenu();
   billingFormsMenu= new QMenu();
+  returnsMenu= new QMenu();
   lookupMenu = new QMenu();
   lookupQuoteMenu = new QMenu();
   lookupSoMenu = new QMenu();
@@ -298,6 +302,11 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
     { "separator",	NULL,	NULL,	billingMenu,	true,	NULL,	NULL,	_metrics->boolean("EnableExternalAccountingInterface"), NULL },
     { "so.exportAROpenItemsAndDistributions", tr("Export Unposted A/R Open Items and Distributions..."), SLOT(sPostAROpenAndDist()), billingMenu, _privleges->check("PostARDocuments"), NULL, NULL, _metrics->boolean("EnableExternalAccountingInterface"), NULL },
 // END_RW
+
+    // Sales | Returns
+    { "menu",	tr("&Return"),	(char*)returnsMenu,	mainMenu,	true,	NULL, NULL, true, NULL },
+    { "so.newReturn", tr("&New..."),	SLOT(sNewReturn()), returnsMenu, _privleges->check("MaintainReturns"),	NULL, NULL, true, NULL },
+    { "so.openReturns", tr("&List Open..."),	SLOT(sOpenReturns()), returnsMenu, (_privleges->check("MaintainReturns") || _privleges->check("ViewReturns")),	NULL, NULL, true, NULL },
 
     { "separator",	NULL,	NULL,	mainMenu,	true,		NULL, NULL, true, NULL },
     
@@ -722,6 +731,20 @@ void menuSales::sPurgeCreditMemos()
   purgeCreditMemos(parent, "", TRUE).exec();
 }
 
+void menuSales::sNewReturn()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void menuSales::sOpenReturns()
+{
+  omfgThis->handleNewWindow(new openReturnAuthorizations());
+}
 
 //  S/O | Item Pricing
 void menuSales::sItemListPrice()

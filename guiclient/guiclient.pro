@@ -128,7 +128,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspMaterialUsageVarianceByBOMItem.ui dspMaterialUsageVarianceByItem.ui                 \
                dspMaterialUsageVarianceByComponentItem.ui                                             \
                dspMaterialUsageVarianceByWorkOrder.ui dspMaterialUsageVarianceByWarehouse.ui          \
-               dspMPSDetail.ui dspMRPDetail.ui                                                        \
+               dspMPSDetail.ui dspMRPDetail.ui openReturnAuthorizations.ui                            \
                openSalesOrders.ui openVouchers.ui dspOrders.ui dspPendingAvailability.ui              \
                dspPendingBOMChanges.ui dspPlannedOrdersByItem.ui dspPlannedOrdersByPlannerCode.ui     \
                dspPlannedRevenueExpensesByPlannerCode.ui dspPoHistory.ui                              \
@@ -265,7 +265,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                relativeCalendarItem.ui relocateInventory.ui                                           \
                reports.ui reprioritizeWo.ui                                                           \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
-               resetQOHBalances.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui                   \
+               resetQOHBalances.ui returnAuthorization.ui returnAuthorizationItem.ui                  \
+               returnWoMaterialBatch.ui returnWoMaterialItem.ui                                       \
                reverseGLSeries.ui                                                                     \
                runMPSByPlannerCode.ui                                                                 \
                sales.ui sale.ui salesAccount.ui salesAccounts.ui salesCategories.ui salesCategory.ui  \
@@ -426,7 +427,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspMaterialUsageVarianceByBOMItem.h dspMaterialUsageVarianceByItem.h                   \
                dspMaterialUsageVarianceByComponentItem.h                                              \
                dspMaterialUsageVarianceByWorkOrder.h dspMaterialUsageVarianceByWarehouse.h            \
-               dspMPSDetail.h dspMRPDetail.h                                                          \
+               dspMPSDetail.h dspMRPDetail.h openReturnAuthorizations.h                               \
                openSalesOrders.h openVouchers.h dspOrders.h dspPendingAvailability.h                  \
                dspPendingBOMChanges.h dspPlannedOrdersByItem.h dspPlannedOrdersByPlannerCode.h        \
                dspPlannedRevenueExpensesByPlannerCode.h dspPoHistory.h                                \
@@ -566,7 +567,8 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                relativeCalendarItem.h relocateInventory.h                                             \
                reports.h reprioritizeWo.h                                                             \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
-               resetQOHBalances.h returnWoMaterialBatch.h returnWoMaterialItem.h                      \
+               resetQOHBalances.h returnAuthorization.h returnAuthorizationItem.h                     \
+               returnWoMaterialBatch.h returnWoMaterialItem.h                                         \
                reverseGLSeries.h                                                                      \
                runMPSByPlannerCode.h                                                                  \
                sales.h sale.h salesAccount.h salesAccounts.h salesCategories.h salesCategory.h        \
@@ -728,7 +730,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspMaterialUsageVarianceByBOMItem.cpp dspMaterialUsageVarianceByItem.cpp               \
                dspMaterialUsageVarianceByComponentItem.cpp                                            \
                dspMaterialUsageVarianceByWorkOrder.cpp dspMaterialUsageVarianceByWarehouse.cpp        \
-               dspMPSDetail.cpp dspMRPDetail.cpp                                                      \
+               dspMPSDetail.cpp dspMRPDetail.cpp openReturnAuthorizations.cpp                         \
                openSalesOrders.cpp openVouchers.cpp dspOrders.cpp dspPendingAvailability.cpp          \
                dspPendingBOMChanges.cpp dspPlannedOrdersByItem.cpp dspPlannedOrdersByPlannerCode.cpp  \
                dspPlannedRevenueExpensesByPlannerCode.cpp dspPoHistory.cpp                            \
@@ -870,7 +872,8 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                relativeCalendarItem.cpp relocateInventory.cpp                                         \
                reports.cpp reprioritizeWo.cpp                                                         \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
-               resetQOHBalances.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp                \
+               resetQOHBalances.cpp returnAuthorization.cpp returnAuthorizationItem.cpp               \
+               returnWoMaterialBatch.cpp returnWoMaterialItem.cpp                                     \
                reverseGLSeries.cpp                                                                    \
                runMPSByPlannerCode.cpp                                                                \
                sales.cpp sale.cpp salesAccount.cpp salesAccounts.cpp salesCategories.cpp salesCategory.cpp \

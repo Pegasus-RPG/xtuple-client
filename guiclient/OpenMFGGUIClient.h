@@ -307,6 +307,7 @@ class OpenMFGGUIClient : public QMainWindow
     void sQOHChanged(int, bool);
     void sQuotesUpdated(int);
     void sReportsChanged(int, bool);
+	void sReturnAuthorizationsUpdated();
     void sSalesOrdersUpdated(int);
     void sStandardPeriodsUpdated();
     void sTaxAuthsUpdated(int);
@@ -351,6 +352,7 @@ class OpenMFGGUIClient : public QMainWindow
     void qohChanged(int, bool);
     void quotesUpdated(int, bool);
     void reportsChanged(int, bool);
+	void returnAuthorizationsUpdated();
     void salesOrdersUpdated(int, bool);
     void standardPeriodsUpdated();
     void taxAuthsUpdated(int);

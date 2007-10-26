@@ -821,6 +821,11 @@ void OpenMFGGUIClient::sProspectsUpdated()
   emit prospectsUpdated();
 }
 
+void OpenMFGGUIClient::sReturnAuthorizationsUpdated()
+{
+  emit returnAuthorizationsUpdated();
+}
+
 void OpenMFGGUIClient::sStandardPeriodsUpdated()
 {
   emit standardPeriodsUpdated();

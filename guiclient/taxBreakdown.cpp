@@ -150,6 +150,17 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 
     params.append("quhead_id", _orderid);
   }
+  else if (_ordertype == "RA")
+  {
+    _currencyLit->setText(tr("Return Authorization Currency:"));
+    _header->setText(tr("Tax Breakdown for Return:"));
+    _totalLit->setText(tr("Return Total:"));
+
+    _adjTaxLit->setVisible(false);
+    _adjTax->setVisible(false);
+
+    params.append("rahead_id", _orderid);
+  }
   else if (_ordertype == "B")
   {
     _currencyLit->setText(tr("Billing Currency:"));
@@ -376,6 +387,52 @@ SetResponse taxBreakdown::set(const ParameterList& pParams)
 	"  GROUP BY number, quhead_taxauth_id, curr_id, tax_curr_id,"
 	"         date, freight, freightTax,"
 	"         freightPcta, freightPctb, freightPctc;"
+
+	"<? elseif exists(\"rahead_id\") ?>"
+	"  SELECT rahead_number AS number,"
+	"         rahead_taxauth_id AS taxauth_id,"
+	"         rahead_curr_id AS curr_id,"
+	"         rahead_curr_id AS tax_curr_id,"
+	"         rahead_quotedate AS date,"
+	"         SUM(ROUND((raitem_qtyord * raitem_qty_invuomratio) * (raitem_price / raitem_price_invuomratio),"
+	"                    2)) AS line,"
+	"         SUM(ROUND((calculateTax(raitem_tax_id,"
+	"                        (ROUND((raitem_qtyord * raitem_qty_invuomratio) * (raitem_price /"
+	"                        raitem_price_invuomratio), 2)), 0, 'A')), 2)) AS linea,"
+	"         SUM(ROUND((calculateTax(raitem_tax_id,"
+	"                        (ROUND((raitem_qtyord * raitem_qty_invuomratio) * (raitem_price /"
+	"                        raitem_price_invuomratio), 2)), 0, 'B')), 2)) AS lineb,"
+	"         SUM(ROUND((calculateTax(raitem_tax_id,"
+	"                        (ROUND((raitem_qtyord * raitem_qty_invuomratio) * (raitem_price /"
+	"                        raitem_price_invuomratio), 2)), 0, 'C')), 2)) AS linec,"
+	"         rahead_freight AS freight,"
+	"         tax_id AS freightTax,"
+	"         tax_ratea AS freightPcta,"
+	"         tax_rateb AS freightPctb,"
+	"         tax_ratec AS freightPctc,"
+	"         ROUND(calculateTax(tax_id, ROUND(rahead_freight, 2),"
+	"                         0, 'A'), 2) AS freighta,"
+	"         ROUND(calculateTax(tax_id, ROUND(rahead_freight, 2),"
+	"                         0, 'B'), 2) AS freightb,"
+	"         ROUND(calculateTax(tax_id, ROUND(rahead_freight, 2),"
+	"                         0, 'C'), 2) AS freightc,"
+	"         NULL AS adjTax,"
+	"         NULL AS adjPcta,"
+	"         NULL AS adjPctb,"
+	"         NULL AS adjPctc,"
+	"         NULL AS adja,"
+	"         NULL AS adjb,"
+	"         NULL AS adjc"
+	"  FROM raitem, item, rahead LEFT OUTER JOIN"
+	"       taxauth ON (rahead_taxauth_id=taxauth_id) LEFT OUTER JOIN"
+	"       tax ON (tax_id=getFreightTaxSelection(taxauth_id))"
+	"  WHERE ((raitem_rahead_id=<? value(\"rahead_id\") ?>)"
+	"    AND  (raitem_rahead_id=rahead_id)"
+	"    AND  (raitem_item_id=item_id))"
+	"  GROUP BY number, rahead_taxauth_id, curr_id, tax_curr_id,"
+	"         date, freight, freightTax,"
+	"         freightPcta, freightPctb, freightPctc;"
+
 	"<? elseif exists(\"tohead_id\") ?>"
 	"  SELECT tohead_number AS number,"
 	"         tohead_taxauth_id AS taxauth_id,"
