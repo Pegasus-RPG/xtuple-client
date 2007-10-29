@@ -257,7 +257,7 @@ void itemUOM::sFillList()
             "           JOIN itemuom ON (itemuom_itemuomconv_id=itemuomconv_id)"
             "           JOIN uomtype ON (itemuom_uomtype_id=uomtype_id)"
             "          WHERE((itemuomconv_item_id=:item_id)"
-            "            AND (itemuomconv_id!=:itemuomconv_id)"
+            "            AND (itemuomconv_id != :itemuomconv_id)"
             "            AND (uomtype_multiple=false))))"
             " ORDER BY uomtype_name;");
   q.bindValue(":item_id", _itemid);
