@@ -446,7 +446,7 @@ void invoiceItem::populate()
     _billed->setText(formatQty(invcitem.value("invcitem_billed").toDouble()));
     _price->setLocalValue(invcitem.value("invcitem_price").toDouble());
     _custPrice->setLocalValue(invcitem.value("invcitem_custprice").toDouble());
-    _listPrice->setBaseValue((invcitem.value("f_listprice").toDouble() * _priceRatioCache) * _priceinvuomratio);
+    _listPrice->setBaseValue(invcitem.value("f_listprice").toDouble() * (_priceinvuomratio / _priceRatioCache));
 
     _custPn->setText(invcitem.value("invcitem_custpn").toString());
     _notes->setText(invcitem.value("invcitem_notes").toString());
@@ -587,7 +587,7 @@ void invoiceItem::sDeterminePrice()
 	return;
       }
       double price = itemprice.value("price").toDouble();
-      price = (price * _priceRatioCache) * _priceinvuomratio;
+      price = price * (_priceinvuomratio / _priceRatioCache);
       _custPrice->setLocalValue(price);
       _price->setLocalValue(price);
     }
@@ -756,7 +756,7 @@ void invoiceItem::sPriceUOMChanged()
   item.bindValue(":item_id", _item->id());
   item.exec();
   item.first();
-  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatioCache) * _priceinvuomratio);
+  _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatioCache));
   sDeterminePrice();
   sCalculateExtendedPrice();
 }
