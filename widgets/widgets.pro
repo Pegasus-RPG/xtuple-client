@@ -38,6 +38,7 @@ dynamic {
              plugins/dlineeditplugin.h \
              plugins/expenseclusterplugin.h \
              plugins/expenselineeditplugin.h \
+             plugins/fileclusterplugin.h \
              plugins/glclusterplugin.h \
              plugins/invoicelineeditplugin.h \
 	       plugins/incidentclusterplugin.h \
@@ -95,7 +96,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
               warehouseCluster.cpp warehousegroup.cpp \
               woCluster.cpp woList.cpp \
-              glCluster.cpp accountList.cpp accountSearch.cpp \
+              filecluster.cpp glCluster.cpp accountList.cpp accountSearch.cpp \
               invoiceLineEdit.cpp incidentCluster.cpp \
               opportunitycluster.cpp \
               poCluster.cpp purchaseOrderList.cpp \
@@ -128,7 +129,7 @@ HEADERS    += OpenMFGWidgets.h \
               itemcluster.h itemList.h itemSearch.h itemAliasList.h \
               warehouseCluster.h warehousegroup.h \
               woCluster.h woList.h \
-              glcluster.h accountList.h accountSearch.h \
+              filecluster.h glcluster.h accountList.h accountSearch.h \
               invoicelineedit.h incidentcluster.h \
               opportunitycluster.h \
               pocluster.h purchaseOrderList.h \
