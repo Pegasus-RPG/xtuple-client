@@ -101,6 +101,7 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _taxCache.clear();
   _qtyinvuomratio = 1.0;
   _priceinvuomratio = 1.0;
+qDebug("_invuomid changed from %d to %d at %s::%d", _invuomid, -1, __PRETTY_FUNCTION__, __LINE__);
   _invuomid = -1;
 
   _qtyToCredit->setValidator(omfgThis->qtyVal());
@@ -425,13 +426,15 @@ void creditMemoItem::sPopulateItemInfo()
   item.exec();
   if (item.first())
   {
+qDebug("_invuomid changed from %d to %d at %s::%d", _invuomid, item.value("item_inv_uom_id").toInt(), __PRETTY_FUNCTION__, __LINE__);
+    _invuomid = item.value("item_inv_uom_id").toInt();
     _priceRatio = item.value("iteminvpricerat").toDouble();
     _qtyUOM->setId(item.value("item_inv_uom_id").toInt());
+qDebug("_pricingUOM changed from %d to %d at %s::%d", _pricingUOM->id(), item.value("item_price_uom_id").toInt(), __PRETTY_FUNCTION__, __LINE__);
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
     _ratio->setText(item.value("f_invpricerat").toString());
-    _invuomid = item.value("item_inv_uom_id").toInt();
     // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
     _unitCost->setBaseValue(item.value("f_cost").toDouble());
@@ -464,6 +467,7 @@ void creditMemoItem::sPopulateItemInfo()
     if (cmitem.first())
     {
       _qtyUOM->setId(cmitem.value("invcitem_qty_uom_id").toInt());
+qDebug("_pricingUOM changed from %d to %d at %s::%d", _pricingUOM->id(), cmitem.value("invcitem_price_uom_id").toInt(), __PRETTY_FUNCTION__, __LINE__);
       _pricingUOM->setId(cmitem.value("invcitem_price_uom_id").toInt());
       _priceinvuomratio = cmitem.value("invcitem_price_invuomratio").toDouble();
       _ratio->setText(formatUOMRatio(_priceinvuomratio));
@@ -649,7 +653,7 @@ void creditMemoItem::sListPrices()
   if (q.size() == 1)
   {
 	q.first();
-	_netUnitPrice->setLocalValue((q.value("price").toDouble() * _priceRatio) * _priceinvuomratio);
+	_netUnitPrice->setLocalValue(q.value("price").toDouble() * (_priceinvuomratio / _priceRatio));
   }
   else
   {
@@ -665,7 +669,7 @@ void creditMemoItem::sListPrices()
     newdlg.set(params);
     if (newdlg.exec() == QDialog::Accepted)
     {
-      _netUnitPrice->setLocalValue((newdlg._selectedPrice * _priceRatio) * _priceinvuomratio);
+      _netUnitPrice->setLocalValue(newdlg._selectedPrice * (_priceinvuomratio / _priceRatio));
       sCalculateDiscountPrcnt();
     }
   }
@@ -779,6 +783,7 @@ void creditMemoItem::sQtyUOMChanged()
 
   if(_qtyUOM->id() != _invuomid)
   {
+qDebug("_pricingUOM changed from %d to %d at %s::%d", _pricingUOM->id(), _qtyUOM->id(), __PRETTY_FUNCTION__, __LINE__);
     _pricingUOM->setId(_qtyUOM->id());
     _pricingUOM->setEnabled(false);
   }
@@ -822,5 +827,5 @@ void creditMemoItem::updatePriceInfo()
   item.bindValue(":item_id", _item->id());
   item.exec();
   item.first();
-  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio) * _priceinvuomratio);
+  _listPrice->setBaseValue(item.value("item_listprice").toDouble() * (_priceinvuomratio / _priceRatio));
 }

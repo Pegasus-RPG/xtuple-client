@@ -111,8 +111,10 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
   _cmitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft   );
   _cmitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _cmitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
+  _cmitem->addColumn(tr("Qty UOM"),     _uomColumn,   Qt::AlignLeft   );
   _cmitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
   _cmitem->addColumn(tr("Credited"),    _qtyColumn,   Qt::AlignRight  );
+  _cmitem->addColumn(tr("Price UOM"),     _uomColumn,   Qt::AlignLeft   );
   _cmitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight  );
   _cmitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
 
@@ -120,12 +122,12 @@ creditMemo::creditMemo(QWidget* parent, const char* name, Qt::WFlags fl)
 
 creditMemo::~creditMemo()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void creditMemo::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse creditMemo::set(const ParameterList &pParams)
@@ -855,12 +857,16 @@ void creditMemo::sFillList()
 {
   q.prepare( "SELECT cmitem_id, cmitem_linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
+             "       quom.uom_name,"
              "       formatQty(cmitem_qtyreturned),"
              "       formatQty(cmitem_qtycredit),"
+             "       puom.uom_name,"
              "       formatSalesPrice(cmitem_unitprice),"
              "       formatMoney((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) "
-             "FROM cmitem, itemsite, item, warehous "
+             "FROM cmitem, itemsite, item, warehous, uom AS quom, uom AS puom "
              "WHERE ( (cmitem_itemsite_id=itemsite_id)"
+             " AND (cmitem_qty_uom_id=quom.uom_id)"
+             " AND (cmitem_price_uom_id=puom.uom_id)"
              " AND (itemsite_item_id=item_id)"
              " AND (itemsite_warehous_id=warehous_id)"
              " AND (cmitem_cmhead_id=:cmhead_id) ) "
