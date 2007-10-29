@@ -247,7 +247,11 @@
              </widget>
             </item>
             <item row="3" column="1" colspan="2" >
-             <widget class="XComboBox" name="_rsnCode" />
+             <widget class="XComboBox" name="_rsnCode" >
+              <property name="type" >
+               <enum>XComboBox::ReasonCodes</enum>
+              </property>
+             </widget>
             </item>
             <item row="0" column="1" colspan="2" >
              <widget class="XComboBox" name="_salesRep" >
@@ -503,7 +507,11 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="SoCluster" name="_salesOrder" />
+             <widget class="SoCluster" name="_so" >
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer>
@@ -536,7 +544,7 @@
           <item>
            <widget class="IncidentCluster" name="_incident" >
             <property name="focusPolicy" >
-             <enum>Qt::StrongFocus</enum>
+             <enum>Qt::TabFocus</enum>
             </property>
             <property name="label" >
              <string>Incident:</string>
@@ -574,7 +582,11 @@
              <number>0</number>
             </property>
             <item>
-             <widget class="ProjectCluster" name="_project" />
+             <widget class="ProjectCluster" name="_project" >
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
+              </property>
+             </widget>
             </item>
             <item>
              <spacer>
@@ -718,14 +730,14 @@
                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                 </property>
                 <property name="buddy" >
-                 <cstring>_billtoName</cstring>
+                 <cstring>_billToName</cstring>
                 </property>
                </widget>
               </item>
               <item>
-               <widget class="XLineEdit" name="_billtoName" >
+               <widget class="XLineEdit" name="_billToName" >
                 <property name="enabled" >
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                 <property name="text" >
                  <string/>
@@ -751,12 +763,19 @@
              </spacer>
             </item>
             <item row="3" column="0" colspan="4" >
-             <widget class="AddressCluster" name="_billToAddr" />
+             <widget class="AddressCluster" name="_billToAddr" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
+              </property>
+             </widget>
             </item>
             <item row="0" column="3" >
              <widget class="QPushButton" name="_copyToShipto" >
               <property name="enabled" >
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text" >
                <string>Copy to Ship-to -></string>
@@ -840,7 +859,7 @@
               <item>
                <widget class="XLineEdit" name="_shipToName" >
                 <property name="enabled" >
-                 <bool>false</bool>
+                 <bool>true</bool>
                 </property>
                </widget>
               </item>
@@ -893,7 +912,14 @@
              </widget>
             </item>
             <item row="3" column="0" colspan="4" >
-             <widget class="AddressCluster" name="_shipToAddr" />
+             <widget class="AddressCluster" name="_shipToAddr" >
+              <property name="enabled" >
+               <bool>true</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
+              </property>
+             </widget>
             </item>
             <item row="1" column="0" >
              <spacer>
@@ -1822,18 +1848,210 @@
    </hints>
   </connection>
   <connection>
-   <sender>_close</sender>
+   <sender>_cancel</sender>
    <signal>clicked()</signal>
    <receiver>returnAuthorization</receiver>
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>722</x>
-     <y>154</y>
+     <x>752</x>
+     <y>43</y>
     </hint>
     <hint type="destinationlabel" >
      <x>399</x>
      <y>299</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_miscCharge</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>184</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_total</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>184</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_tax</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>184</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_freight</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>184</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authDate</sender>
+   <signal>newDate(QDate)</signal>
+   <receiver>_subtotal</receiver>
+   <slot>setEffective(QDate)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>184</x>
+     <y>131</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_delete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_currency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_total</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_currency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_tax</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_currency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_subtotal</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_currency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_miscCharge</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_currency</sender>
+   <signal>newID(int)</signal>
+   <receiver>_freight</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>206</x>
+     <y>265</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>206</x>
+     <y>265</y>
     </hint>
    </hints>
   </connection>

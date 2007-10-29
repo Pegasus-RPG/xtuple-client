@@ -255,10 +255,10 @@ void openReturnAuthorizations::sPopulateMenu(QMenu *pMenu)
 void openReturnAuthorizations::sFillList()
 {
   QString sql( "SELECT DISTINCT rahead_id, rahead_number,"
-               "       COALESCE(cust_number, :error),"
+               "       COALESCE(cust_number, :undefined),"
                "       rahead_billtoname, rahead_custponumber,"
-               "       formatDate(rahead_authdate) AS f_ordered,"
-               "       formatDate(raitem_expiredate)) AS f_expires "
+               "       formatDate(rahead_authdate) AS f_authorized,"
+               "       formatDate(rahead_expiredate) AS f_expires "
                "FROM rahead LEFT OUTER JOIN cust ON (rahead_cust_id=cust_id) "
                "     LEFT OUTER JOIN raitem JOIN itemsite ON (raitem_itemsite_id=itemsite_id) "
                "     ON (raitem_rahead_id=rahead_id) "
@@ -269,16 +269,16 @@ void openReturnAuthorizations::sFillList()
 
   sql += " ) "
          "GROUP BY rahead_id, rahead_number, cust_number, rahead_billtoname,"
-         "         rahead_custponumber, rahead_orderdate "
+         "         rahead_custponumber, rahead_authdate, rahead_expiredate "
          "ORDER BY rahead_number ";
 
   q.prepare(sql);
   _warehouse->bindValue(q);
-  q.bindValue(":error", tr("Error"));
+  q.bindValue(":undefined", tr("Undefined"));
   q.exec();
 
   _ra->populate(q);
-  _ra->setDragString("soheadid=");
+  _ra->setDragString("raheadid=");
 }
 /*
 void openReturnAuthorizations::sDeliver()

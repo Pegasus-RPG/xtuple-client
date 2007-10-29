@@ -80,7 +80,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClick()));
   connect(_shipToList, SIGNAL(clicked()), this, SLOT(sShipToList()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
@@ -89,7 +89,9 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sFreightChanged()));
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
-  connect(_salesOrder, SIGNAL(newID(int)), this, SLOT(sSalesOrder()));
+  connect(_so, SIGNAL(newID(int)), this, SLOT(sSalesOrder()));
+  connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
+  connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
 /*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
@@ -104,6 +106,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _taxCache.clear();
   _shiptoid		= -1;
 
+  _so->setType((cSoOpen && cSoReleased && cSoClosed));
   _authNumber->setValidator(omfgThis->orderVal());
   _comments->setType(Comments::ReturnAuth);
 
@@ -113,8 +116,9 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Item"),        _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _raitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("Status"),      _statusColumn,Qt::AlignCenter );
+  _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
+  _raitem->addColumn(tr("Warranty"),    _statusColumn,Qt::AlignCenter );
   _raitem->addColumn(tr("Sold"),        _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
@@ -216,12 +220,12 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _uponReceipt->setEnabled(FALSE);
       _creditBy->setEnabled(FALSE);
 
-      _salesOrder->setEnabled(FALSE);
+      _so->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
       _project->setEnabled(FALSE);
 
       _cust->setReadOnly(TRUE);
-      _billtoName->setEnabled(FALSE);
+      _billToName->setEnabled(FALSE);
       _billToAddr->setEnabled(FALSE);
 
       _customerPO->setEnabled(FALSE);
@@ -279,7 +283,7 @@ void returnAuthorization::setNumber()
 
 void returnAuthorization::sSave()
 {
-  char *dispositionTypes[] = { "C", "R", "P", "S", "M" };
+  char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   char *creditMethods[] = { "N", "M", "K", "C" };
   //  Make sure that all of the required field have been populated
   /* if (!_cust->isValid())  User specifically wants to be able to save w/o this
@@ -316,12 +320,12 @@ void returnAuthorization::sSave()
   _shipToAddr->save(AddressCluster::CHANGEONE);
 
   q.prepare( "UPDATE rahead "
-	     "SET rahead_cust_id=:rahead_cust_id,rahead_number:=rahead_number,"
+	     "SET rahead_cust_id=:rahead_cust_id,rahead_number=:rahead_number,"
 		 "    rahead_authdate=:rahead_authdate,rahead_expiredate=:rahead_expiredate,"
 		 "    rahead_status=:rahead_status,"
  	     "    rahead_salesrep_id=:rahead_salesrep_id, rahead_commission=:rahead_commission,"
  	     "    rahead_taxauth_id=:rahead_taxauth_id,rahead_rsncode_id=:rahead_rsncode_id,"
-		 "    rahead_disposition=:rahead_disposition,rahead_timing:=rahead_timing,"
+		 "    rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
 		 "    rahead_creditmethod=:rahead_creditmethod,rahead_cohead_id=:rahead_cohead_id,"
 		 "    rahead_incdt_id=:rahead_incdt_id,rahead_prj_id=:rahead_prj_id,"
 	     "    rahead_billtoname=:rahead_billtoname, rahead_billtoaddress1=:rahead_billtoaddress1,"
@@ -336,7 +340,7 @@ void returnAuthorization::sSave()
 		 "    rahead_custponumber=:rahead_custponumber,rahead_notes=:rahead_notes, "
 	     "    rahead_misc_accnt_id=:rahead_misc_accnt_id,rahead_misc=:rahead_misc, "
 	     "    rahead_misc_descrip=:rahead_misc_descrip,"
- 	     "    rahead_curr_id=:rahead_curr_id "
+ 	     "    rahead_curr_id=:rahead_curr_id, "
 	     "    rahead_freight=:rahead_freight,"
 	     "    rahead_adjtax_id=:rahead_adjtax_id,"
 	     "    rahead_adjtaxtype_id=:rahead_adjtaxtype_id,"
@@ -355,7 +359,7 @@ void returnAuthorization::sSave()
 	     "    rahead_freighttax_ratea=:rahead_freighttax_ratea,"
 	     "    rahead_freighttax_rateb=:rahead_freighttax_rateb,"
 	     "    rahead_freighttax_ratec=:rahead_freighttax_ratec,"
-		 "    rahead_printed=:rahead_printed"
+		 "    rahead_printed=:rahead_printed "
 	     "WHERE (rahead_id=:rahead_id);" );
 
   q.bindValue(":rahead_id", _raheadid);
@@ -373,11 +377,14 @@ void returnAuthorization::sSave()
   else
 	  q.bindValue(":rahead_timing", "R");
   q.bindValue(":rahead_creditmethod", QString(creditMethods[_creditBy->currentItem()]));
-  q.bindValue(":rahead_cohead_id", _salesOrder->id());
-  q.bindValue(":rahead_incdt_id", _incident->id());
-  q.bindValue(":rahead_prj_id", _project->id());
+  if (_so->id() != -1)
+    q.bindValue(":rahead_cohead_id", _so->id());
+  if (_incident->id() != -1)
+    q.bindValue(":rahead_incdt_id", _incident->id());
+  if (_project->id() != -1)
+    q.bindValue(":rahead_prj_id", _project->id());
   q.bindValue(":rahead_cust_id", _cust->id());
-  q.bindValue(":rahead_billtoname", _billtoName->text().stripWhiteSpace());
+  q.bindValue(":rahead_billtoname", _billToName->text().stripWhiteSpace());
   q.bindValue(":rahead_billtoaddress1",	_billToAddr->line1());
   q.bindValue(":rahead_billtoaddress2",	_billToAddr->line2());
   q.bindValue(":rahead_billtoaddress3",	_billToAddr->line3());
@@ -398,7 +405,8 @@ void returnAuthorization::sSave()
   q.bindValue(":rahead_custponumber", _customerPO->text().stripWhiteSpace());
   q.bindValue(":rahead_notess", _notes->text());
   q.bindValue(":rahead_misc", _miscCharge->localValue());
-  q.bindValue(":rahead_misc_accnt_id", _miscChargeAccount->id());
+  if (_miscChargeAccount->id() != -1)
+    q.bindValue(":rahead_misc_accnt_id", _miscChargeAccount->id());
   q.bindValue(":rahead_misc_descrip", _miscChargeDescription->text());
   q.bindValue(":rahead_curr_id", _currency->id());
   q.bindValue(":rahead_freight", _freight->localValue());
@@ -434,8 +442,13 @@ void returnAuthorization::sSave()
 
   omfgThis->sReturnAuthorizationsUpdated();
 
-  _raheadid = -1;
   _comments->setId(_raheadid);
+}
+
+void returnAuthorization::sSaveClick()
+{
+  sSave();
+  _raheadid=-1;
   close();
 }
 
@@ -456,7 +469,7 @@ void returnAuthorization::sShipToList()
 
 void returnAuthorization::sSalesOrder()
 {
-  if (_salesOrder->id() != 0)
+  if (_so->id() != 0)
   {
 
     XSqlQuery sohead;
@@ -465,7 +478,7 @@ void returnAuthorization::sSalesOrder()
                     "FROM cohead "
 					"WHERE (cohead_id=:cohead_id) "
                     "LIMIT 1;" );
-    sohead.bindValue(":cohead_id", _salesOrder->id());
+    sohead.bindValue(":cohead_id", _so->id());
     sohead.exec();
     if (sohead.first())
     {
@@ -476,11 +489,11 @@ void returnAuthorization::sSalesOrder()
       _customerPO->setText(sohead.value("cohead_ponumber"));
 
       _cust->setEnabled(FALSE);
-      _billtoName->setEnabled(FALSE);
+      _billToName->setEnabled(FALSE);
       _billToAddr->setEnabled(FALSE);
 
       _cust->setId(sohead.value("cohead_cust_id").toInt());
-      _billtoName->setText(sohead.value("cohead_billto_name"));
+      _billToName->setText(sohead.value("cohead_billto_name"));
       _billToAddr->setLine1(sohead.value("cohead_billto_address1").toString());
       _billToAddr->setLine2(sohead.value("cohead_billto_address2").toString());
       _billToAddr->setLine3(sohead.value("cohead_billto_address3").toString());
@@ -536,17 +549,22 @@ void returnAuthorization::populateShipto(int pShiptoid)
   {
     XSqlQuery query;
     query.prepare( "SELECT shipto_num, shipto_name,"
-		   "       shipto_addr_id, shipto_taxauth_id "
+		           " shipto_addr_id, shipto_taxauth_id, "
+		           " shipto_salesrep_id, formatScrap(shipto_commission) AS commission "
                    "FROM shiptoinfo "
                    "WHERE (shipto_id=:shipto_id);" );
     query.bindValue(":shipto_id", pShiptoid);
     query.exec();
     if (query.first())
     {
+      _ignoreShiptoSignals = TRUE;
       _shipToNumber->setText(query.value("shipto_num"));
       _shipToName->setText(query.value("shipto_name"));
       _shipToAddr->setId(query.value("shipto_addr_id").toInt());
       _taxauth->setId(query.value("shipto_taxauth_id").toInt());
+      _salesRep->setId(query.value("shipto_salesrep_id").toInt());
+      _commission->setText(query.value("commission"));
+      _ignoreShiptoSignals = FALSE;
     }
     else if (query.lastError().type() != QSqlError::None)
     {
@@ -561,15 +579,13 @@ void returnAuthorization::populateShipto(int pShiptoid)
     _shipToAddr->clear();
   }
 
-  _shipToAddr->setEnabled(FALSE);
+
 
   _shiptoid = pShiptoid;
 }
 
 void returnAuthorization::sPopulateCustomerInfo()
 {
- // if (!_invoiceNumber->isValid())
-//  {
     if (_cust->isValid())
     {
       XSqlQuery query;
@@ -577,9 +593,12 @@ void returnAuthorization::sPopulateCustomerInfo()
                      "       formatScrap(cust_commprcnt) AS f_commission,"
                      "       cust_taxauth_id, cust_curr_id, "
                      "       cust_name, cntct_addr_id, "
-                     "       cust_ffshipto, cust_ffbillto "
-                     "FROM custinfo LEFT OUTER JOIN"
-		     "     cntct ON (cust_cntct_id=cntct_id) "
+                     "       cust_ffshipto, cust_ffbillto, "
+					 "        COALESCE(shipto_id, -1) AS shiptoid "
+                     "FROM custinfo "
+					 "  LEFT OUTER JOIN shiptoinfo ON ((cust_id=shipto_cust_id) "
+					 "                             AND (shipto_default)) "
+					 "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
                      "WHERE (cust_id=:cust_id);" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
@@ -587,6 +606,9 @@ void returnAuthorization::sPopulateCustomerInfo()
       {
         _ffShipto = query.value("cust_ffshipto").toBool();
         _copyToShipto->setEnabled(_ffShipto);
+		_shipToName->setEnabled(_ffShipto);
+		_shipToNumber->setEnabled(_ffShipto);
+		_shipToAddr->setEnabled(_ffShipto);
 
         _salesRep->setId(query.value("cust_salesrep_id").toInt());
         _commission->setText(query.value("f_commission"));
@@ -595,7 +617,7 @@ void returnAuthorization::sPopulateCustomerInfo()
         _taxauth->setId(query.value("cust_taxauth_id").toInt());
         _currency->setId(query.value("cust_curr_id").toInt());
 
-        _billtoName->setText(query.value("cust_name"));
+        _billToName->setText(query.value("cust_name"));
         _billToAddr->setId(query.value("cntct_addr_id").toInt());
 
         bool ffBillTo;
@@ -604,8 +626,9 @@ void returnAuthorization::sPopulateCustomerInfo()
         else
           ffBillTo = FALSE;
 
-        _billtoName->setEnabled(ffBillTo);
+        _billToName->setEnabled(ffBillTo);
         _billToAddr->setEnabled(ffBillTo);
+		populateShipto(query.value("shiptoid").toInt());
       }
       else if (query.lastError().type() != QSqlError::None)
       {
@@ -618,13 +641,17 @@ void returnAuthorization::sPopulateCustomerInfo()
       _salesRep->setCurrentItem(-1);
       _taxauth->setId(-1);
       _custtaxauthid	= -1;
+      _billToName->setEnabled(TRUE);
+	  _billToAddr->setEnabled(TRUE);
+      _billToName->clear();
+      _billToAddr->clear();
+	  _shipToNumber->setEnabled(TRUE);
+      _shipToName->setEnabled(TRUE);
+	  _shipToAddr->setEnabled(TRUE);
+      _shipToNumber->clear();
+      _shipToName->clear();
+      _shipToAddr->clear();
     }
-
-    _shipToName->setEnabled(_ffShipto);
-    _shipToNumber->clear();
-    _shipToName->clear();
-    _shipToAddr->clear();
-//  }
 }
 
 void returnAuthorization::sCheckAuthorizationNumber()
@@ -660,7 +687,7 @@ void returnAuthorization::sCheckAuthorizationNumber()
 		_immediately->setEnabled(FALSE);
 		_uponReceipt->setEnabled(FALSE);
 		_creditBy->setEnabled(FALSE);
-        _salesOrder->setEnabled(FALSE);
+        _so->setEnabled(FALSE);
         _incident->setEnabled(FALSE);
 		_project->setEnabled(FALSE);
         _customerPO->setEnabled(FALSE);
@@ -691,13 +718,12 @@ void returnAuthorization::sCheckAuthorizationNumber()
   }
 }
 
-void returnAuthorization::sConvertShipto()
+void returnAuthorization::sClearShiptoNumber()
 {
-  if ((!_shipToAddr->isEnabled()) && (!_ignoreShiptoSignals))
+  if (!_ignoreShiptoSignals)
   {
 //  Convert the captive shipto to a free-form shipto
     _shipToNumber->clear();
-    _shipToAddr->setEnabled(TRUE);
 
     _shiptoid = -1;
   }
@@ -707,7 +733,7 @@ void returnAuthorization::sCopyToShipto()
 {
   _shiptoid = -1;
   _shipToNumber->clear();
-  _shipToName->setText(_billtoName->text());
+  _shipToName->setText(_billToName->text());
   if (_billToAddr->id() > 0)
     _shipToAddr->setId(_billToAddr->id());
   else
@@ -726,16 +752,11 @@ void returnAuthorization::sCopyToShipto()
 
 void returnAuthorization::sNew()
 {
+  sSave();
+
   ParameterList params;
   params.append("mode", "new");
   params.append("rahead_id", _raheadid);
-  params.append("shipto_id", _shiptoid);
-  params.append("cust_id", _cust->id());
-  params.append("authNumber", _authNumber->text().toInt()); //To int?
-  params.append("cohead_id", _salesOrder->id());
-  params.append("rsncode_id", _rsnCode->id());
-  params.append("curr_id", _currency->id());
-  params.append("effective", _authDate->date());
 
   returnAuthorizationItem newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -748,11 +769,7 @@ void returnAuthorization::sEdit()
 {
   ParameterList params;
   params.append("item_id", _raitem->id());
-  params.append("cust_id", _cust->id());
-  params.append("cohead_id", _salesOrder->id());
-  params.append("authNumber", _authNumber->text().toInt());
-  params.append("curr_id", _currency->id());
-  params.append("effective", _authDate->date());
+
 
   if (_mode == cView)
     params.append("mode", "view");
@@ -813,13 +830,19 @@ void returnAuthorization::sFillList()
 {
   q.prepare( "SELECT raitem_id, raitem_linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
-			 "       coitem_status,formatboolyn(coitem_warranty),"
+			 "       coitem_status, "
+			 "       CASE WHEN (raitem_disposition='C') THEN 'Credit' "
+			 "            WHEN (raitem_disposition='R') THEN 'Return' "
+			 "            WHEN (raitem_disposition='P') THEN 'Replace' "
+			 "            WHEN (raitem_disposition='V') THEN 'Service' "
+			 "            WHEN (raitem_disposition='S') THEN 'Ship' "
+			 "            ELSE 'Error' END AS disposition, "
+			 "       formatboolyn(coitem_warranty),"
 			 "       formatQty(raitem_qtyauthorized),"
 			 "       formatQty(COALESCE(coitem_qtyshipped,0)),"
-			 "       formatQty(raitem_qtyreceived),formatQty(raitem_qtyshipped)"       
-             "       formatQty(raitem_qtycredit),"
+			 "       formatQty(raitem_qtyreceived),formatQty(raitem_qtyshipped),"       
              "       formatSalesPrice(raitem_unitprice),"
-             "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_price / raitem_price_invuomratio),2)),"
+             "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
 			 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded)"
              "FROM raitem "
 			 " LEFT OUTER JOIN coitem ON (raitem_coitem_id=coitem_id), itemsite, item, whsinfo "
@@ -935,10 +958,10 @@ void returnAuthorization::populate()
     _project->setId(rahead.value("rahead_prj_id").toInt());
 
     bool ffBillTo = rahead.value("cust_ffbillto").toBool();
-    _billtoName->setEnabled(ffBillTo);
+    _billToName->setEnabled(ffBillTo);
     _billToAddr->setEnabled(ffBillTo);
 
-    _billtoName->setText(rahead.value("rahead_billtoname"));
+    _billToName->setText(rahead.value("rahead_billtoname"));
     _billToAddr->setLine1(rahead.value("rahead_billtoaddress1").toString());
     _billToAddr->setLine2(rahead.value("rahead_billtoaddress2").toString());
     _billToAddr->setLine3(rahead.value("rahead_billtoaddress3").toString());
@@ -1124,7 +1147,7 @@ void returnAuthorization::sTaxAuthChanged()
     return;
   }
 
-  taxauthq.prepare("SELECT changeraheadTaxAuth(:rahead_id, :taxauth_id) AS result;");
+  taxauthq.prepare("SELECT changeraTaxAuth(:rahead_id, :taxauth_id) AS result;");
   taxauthq.bindValue(":rahead_id", _raheadid);
   taxauthq.bindValue(":taxauth_id", _taxauth->id());
   taxauthq.exec();
@@ -1134,7 +1157,7 @@ void returnAuthorization::sTaxAuthChanged()
     if (result < 0)
     {
       _taxauth->setId(_taxauthidCache);
-      systemError(this, storedProcErrorLookup("changeraheadTaxAuth", result),
+      systemError(this, storedProcErrorLookup("changeraTaxAuth", result),
 		  __FILE__, __LINE__);
       return;
     }

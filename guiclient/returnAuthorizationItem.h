@@ -101,7 +101,7 @@ private:
     int _raitemid;
     int _raheadid;
     int _custid;
-    int _coheadid;
+	int _coitemid;
     int _shiptoid;
     double _priceRatio;
     double _listPriceCache;
@@ -112,6 +112,7 @@ private:
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
+	double _qtySoldCache;
 	
 
 };

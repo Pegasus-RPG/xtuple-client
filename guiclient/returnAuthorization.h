@@ -80,13 +80,14 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void recalculateTax();
     virtual void sSave();
+	virtual void sSaveClick();
     virtual void sShipToList();
     virtual void sParseShipToNumber();
     virtual void populateShipto( int pShiptoid );
     virtual void sPopulateCustomerInfo();
   //  virtual void sPopulateBySalesOrder( int pInvoiceNumber );
     virtual void sCheckAuthorizationNumber();
-    virtual void sConvertShipto();
+	virtual void sClearShiptoNumber();
     virtual void sCopyToShipto();
     virtual void sNew();
     virtual void sEdit();
