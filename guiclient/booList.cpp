@@ -154,9 +154,24 @@ void booList::sCopy()
 
 void booList::sDelete()
 {
+
+  q.prepare("SELECT booitem_id "
+	        "FROM booitem "
+			"WHERE ((booitem_item_id=:item_id) "
+			"AND (booitem_rev_id > -1));");
+  q.bindValue(":item_id",_boo->id());
+  q.exec();
+  if (q.first())
+  {
+    QMessageBox::critical(  this, tr("Delete Bill of Operations"),
+                                tr("The selected Bill of Operations has revision control records and may not be deleted."));
+	return;
+  }
+
   if (  QMessageBox::critical(  this, tr("Delete Bill of Operations"),
                                 tr("Are you sure that you want to delete the selected BOO?"),
                                 tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0  )
+
   {
     q.prepare( "DELETE FROM boohead "
                "WHERE (boohead_item_id=:item_id);"

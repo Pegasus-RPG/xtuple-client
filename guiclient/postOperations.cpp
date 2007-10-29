@@ -435,9 +435,11 @@ void postOperations::sHandleQty()
     {
       XSqlQuery w;
       w.prepare("SELECT boohead_closewo, wooper_wo_id"
-                "  FROM wooper, booitem, boohead"
-                " WHERE((boohead_item_id=booitem_item_id)"
-                "   AND (wooper_booitem_id=booitem_id)"
+                "  FROM wo, wooper, itemsite, boohead"
+                " WHERE ((wo_id=wooper_wo_id)"
+				"   AND (wo_itemsite_id=itemsite_id)"
+				"   AND (itemsite_item_id=boohead_item_id)"
+				"   AND (boohead_rev_id=wo_boo_rev_id)"
                 "   AND (wooper_id=:wooper_id))"
                 " LIMIT 1;");
       w.bindValue(":wooper_id", _wooper->id());
@@ -587,7 +589,7 @@ void postOperations::sPost()
             "                   LIMIT 1), TRUE) AS prevcomplete,"
             "       wooper_wip_location_id "
             "  FROM wooper AS c LEFT OUTER JOIN booitem"
-            "    ON (wooper_booitem_id=booitem_id) "
+            "    ON (wooper_booitem_seq_id=booitem_seq_id) "
             " WHERE (wooper_id=:wooper_id);" );
   q.bindValue(":wooper_id", _wooper->id());
   q.exec();
@@ -661,9 +663,11 @@ void postOperations::sPost()
     {
       // We didn't find a next operation so lets look at the boohead
       q.prepare("SELECT boohead_final_location_id AS location_id"
-                "  FROM wooper, booitem, boohead"
-                " WHERE ((boohead_item_id=booitem_item_id)"
-                "   AND  (wooper_booitem_id=booitem_id)"
+                "  FROM wo, wooper, itemsite, boohead"
+				" WHERE ((boohead_rev_id=wo_boo_rev_id)"
+				"   AND  (wo_itemsite_id=itemsite_id)"
+				"   AND  (boohead_item_id=itemsite_item_id)"
+				"   AND  (wo_id=wooper_wo_id)"
                 "   AND  (wooper_id=:wooper_id))"
                 " LIMIT 1;");
       q.bindValue(":wooper_id", _wooper->id());
