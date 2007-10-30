@@ -446,9 +446,10 @@ void voucher::sDistributions()
               "       WHERE ( (voitem_poitem_id=:poitem_id) "
               "       AND (voitem_vohead_id=:vohead_id) ) ) ); "
 
-              "UPDATE porecv SET porecv_vohead_id=NULL,porecv_invoiced=false "
-              " WHERE ((porecv_vohead_id=:vohead_id) "
-              " AND (porecv_poitem_id=:poitem_id)  "
+              "UPDATE recv SET recv_vohead_id=NULL,recv_invoiced=false "
+              " WHERE ((recv_vohead_id=:vohead_id) "
+              " AND (recv_orderitem_id=:poitem_id)  "
+              " AND (recv_order_type = 'PO')"
               " AND NOT EXISTS "
               "       (SELECT * FROM voitem "
               "       WHERE ( (voitem_poitem_id=:poitem_id) "

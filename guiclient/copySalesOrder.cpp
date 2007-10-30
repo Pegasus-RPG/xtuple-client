@@ -214,8 +214,9 @@ void copySalesOrder::sCopy()
   if (_captive)
   {
     q.first();
-    omfgThis->sSalesOrdersUpdated(q.value("sohead_id").toInt());
-    done(q.value("sohead_id").toInt());
+    int soheadid = q.value("sohead_id").toInt();
+    omfgThis->sSalesOrdersUpdated(soheadid);
+    done(soheadid);
   }
   else
   {

@@ -370,9 +370,9 @@ void voucherItem::sSave()
     {
       if (cursor->altId() == 1)
         q.prepare( "UPDATE porecv "
-                   "SET porecv_vohead_id=NULL,porecv_voitem_id=NULL "
-                   "WHERE ((porecv_id=:target_id)"
-                   "  AND  (porecv_vohead_id=:vohead_id));" );
+                   "SET recv_vohead_id=NULL,recv_voitem_id=NULL "
+                   "WHERE ((recv_id=:target_id)"
+                   "  AND  (recv_vohead_id=:vohead_id));" );
       else if (cursor->altId() == 2)
         q.prepare( "UPDATE poreject "
                    "SET poreject_vohead_id=NULL,poreject_voitem_id=NULL "
