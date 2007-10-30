@@ -62,6 +62,7 @@
 #ifndef IMPORTXML_H
 #define IMPORTXML_H
 
+#include <QDOMDocument>
 #include <QMainWindow>
 #include <QMenu>
 
@@ -83,6 +84,7 @@ class importXML : public QMainWindow, public Ui::importXML
   protected slots:
     virtual void languageChange();
     virtual void sAdd();
+    virtual void sClearStatus();
     virtual void sDelete();
     virtual void sFillList();
     virtual void sImportAll();
@@ -90,9 +92,12 @@ class importXML : public QMainWindow, public Ui::importXML
     virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
 
   private:
-    QString	_defaultDir;
+    QString	_defaultXMLDir;
+    QString	_defaultXSLTDir;
+    QString	_externalCmd;
     QStringList	_filters;
-    bool	importOne(QTreeWidgetItem*);
+    bool	importOne(const QString &);
+    bool	openDomDocument(const QString &, QDomDocument &);
 };
 
 #endif

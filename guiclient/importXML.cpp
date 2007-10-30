@@ -60,7 +60,9 @@
 #include <QDirIterator>
 #include <QFile>
 #include <QMessageBox>
+#include <QProcess>
 #include <QSqlError>
+#include <QTemporaryFile>
 #include <QVariant>
 
 #include "configureIE.h"
@@ -118,21 +120,41 @@ importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
   (void)statusBar();
 
   connect(_add,            SIGNAL(clicked()), this, SLOT(sAdd()));
+  connect(_clearStatus,    SIGNAL(clicked()), this, SLOT(sClearStatus()));
   connect(_delete,         SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_file, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_importAll,      SIGNAL(clicked()), this, SLOT(sImportAll()));
   connect(_importSelected, SIGNAL(clicked()), this, SLOT(sImportSelected()));
+  connect(_resetList,	   SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _file->addColumn(tr("File Name"),     -1, Qt::AlignLeft   );
   _file->addColumn(tr("Status"), _ynColumn, Qt::AlignCenter );
 
-  _defaultDir = _metrics->value(
+  _defaultXMLDir = _metrics->value(
 #if defined Q_WS_MACX
 				      "XMLDefaultDirMac"
 #elif defined Q_WS_WIN
 				      "XMLDefaultDirWindows"
 #elif defined Q_WS_X11
 				      "XMLDefaultDirLinux"
+#endif
+      );
+  _defaultXSLTDir = _metrics->value(
+#if defined Q_WS_MACX
+				      "XSLTDefaultDirMac"
+#elif defined Q_WS_WIN
+				      "XSLTDefaultDirWindows"
+#elif defined Q_WS_X11
+				      "XSLTDefaultDirLinux"
+#endif
+      );
+  _externalCmd = _metrics->value(
+#if defined Q_WS_MACX
+				      "XSLTProcessorMac"
+#elif defined Q_WS_WIN
+				      "XSLTProcessorWindows"
+#elif defined Q_WS_X11
+				      "XSLTProcessorLinux"
 #endif
       );
 
@@ -151,11 +173,11 @@ void importXML::languageChange()
 
 void importXML::sFillList()
 {
-  if (! _defaultDir.isEmpty())
+  if (! _defaultXMLDir.isEmpty())
   {
     QStringList filters;
     filters << "*.xml" << "*.XML";
-    QDirIterator iterator(_defaultDir, filters);
+    QDirIterator iterator(_defaultXMLDir, filters);
     XTreeWidgetItem *last = 0;
     for (int i = 0; iterator.hasNext(); i++)
       last = new XTreeWidgetItem(_file, last, i, QVariant(iterator.next()));
@@ -164,7 +186,7 @@ void importXML::sFillList()
 
 void importXML::sAdd()
 {
-  QFileDialog newdlg(this, tr("Select File(s) to Import"), _defaultDir);
+  QFileDialog newdlg(this, tr("Select File(s) to Import"), _defaultXMLDir);
   newdlg.setFileMode(QFileDialog::ExistingFiles);
   QStringList filters;
   filters << tr("XML files (*.xml *.XML)") << tr("Any Files (*)");
@@ -178,6 +200,13 @@ void importXML::sAdd()
   }
 }
 
+void importXML::sClearStatus()
+{
+  QList<QTreeWidgetItem*> selected = _file->selectedItems();
+  for (int i = selected.size() - 1; i >= 0; i--)
+    _file->topLevelItem(i)->setData(1, Qt::DisplayRole, tr(""));
+}
+
 void importXML::sDelete()
 {
   QList<QTreeWidgetItem*> selected = _file->selectedItems();
@@ -189,43 +218,186 @@ void importXML::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* /* pItem */)
 {
   int menuItem;
 
-  menuItem = pMenu->insertItem(tr("Import Selected"), this, SLOT(sImportSelected()), 0);
+  menuItem = pMenu->insertItem(tr("Import Selected"),  this, SLOT(sImportSelected()), 0);
+  menuItem = pMenu->insertItem(tr("Clear Status"),     this, SLOT(sClearStatus()), 0);
   menuItem = pMenu->insertItem(tr("Delete From List"), this, SLOT(sDelete()), 0);
 }
 
 void importXML::sImportAll()
 {
   for (int i = 0; i < _file->topLevelItemCount(); i++)
-    importOne(_file->topLevelItem(i));
+  {
+    QTreeWidgetItem* pItem = _file->topLevelItem(i);
+    if (pItem->data(1, Qt::DisplayRole).toString().isEmpty())
+      if (importOne(pItem->data(0, Qt::DisplayRole).toString()))
+	pItem->setData(1, Qt::DisplayRole, tr("Done"));
+      else
+	pItem->setData(1, Qt::DisplayRole, tr("Error"));
+  }
 }
 
 void importXML::sImportSelected()
 {
   QList<QTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = 0; i < selected.size(); i++)
-    importOne(selected[i]);
+  {
+    QTreeWidgetItem* pItem = _file->topLevelItem(i);
+    if (pItem->data(1, Qt::DisplayRole).toString().isEmpty())
+      if (importOne(pItem->data(0, Qt::DisplayRole).toString()))
+	pItem->setData(1, Qt::DisplayRole, tr("Done"));
+      else
+	pItem->setData(1, Qt::DisplayRole, tr("Error"));
+  }
 }
 
-bool importXML::importOne(QTreeWidgetItem *pItem)
+bool importXML::openDomDocument(const QString &pFileName, QDomDocument &pDoc)
 {
+  QFile file(pFileName);
+  if (!file.open(QIODevice::ReadOnly))
+  {
+    systemError(this, tr("<p>Could not open file %1 (error %2)")
+		      .arg(pFileName).arg(file.error()));
+    return false;
+  }
+
+  QString errMsg;
+  int errLine;
+  int errColumn;
+  if (!pDoc.setContent(&file, false, &errMsg, &errLine, &errColumn))
+  {
+    file.close();
+    systemError(this, tr("Problem reading %1, line %2 column %3:<br>%4")
+		      .arg(pFileName).arg(errLine).arg(errColumn).arg(errMsg));
+    return false;
+  }
+
+  file.close();
+
+  return true;
+}
+
+bool importXML::importOne(const QString &pFileName)
+{
+
   QString suffix = _metrics->value("XMLSuccessSuffix");
   if (suffix.isEmpty())
     suffix = ".done";
-  bool remove = (_metrics->value("XMLSuccessTreatment") == "Delete");
 
-  QString filename = pItem->data(0, Qt::DisplayRole).toString();
-
-  if ( QMessageBox::information(this, "", tr("import %1").arg(filename)) )
-  {
-    pItem->setData(1, Qt::DisplayRole, tr("Done"));
-    if (remove)
-      return QFile::remove(filename);
-    else
-      return QFile::rename(filename, filename + suffix);
-  }
-  else
-  {
-    pItem->setData(1, Qt::DisplayRole, tr("Error"));
+  QDomDocument doc(pFileName);
+  if (!openDomDocument(pFileName, doc))
     return false;
+
+  if (doc.doctype().name() != "xtupleimport")
+  {
+    QString xsltfile;
+    q.prepare("SELECT * FROM xsltmap "
+	      "WHERE ((xsltmap_doctype=:doctype OR xsltmap_doctype='')"
+	      "   AND (xsltmap_system=:system   OR xsltmap_system=''));");
+    q.bindValue(":doctype", doc.doctype().name());
+    q.bindValue(":system", doc.doctype().systemId());
+    q.exec();
+    if (q.first())
+    {
+      xsltfile = q.value("xsltmap_import").toString();
+      //TODO: what if more than one row is found?
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+    else
+    {
+      systemError(this,
+		  tr("<p>Could not find a map for doctype %1 and system id %2. "
+		     "Write an XSLT stylesheet to convert this to valid xtuple"
+		     "import XML and add it to the Map of XSLT Import Filters.")
+		      .arg(doc.doctype().name()).arg(doc.doctype().systemId()));
+      return false;
+    }
+
+    QTemporaryFile tmpfile(doc.doctype().name() + "TOxtupleimport");
+    tmpfile.setAutoRemove(false);
+    if (! tmpfile.open())
+    {
+      systemError(this, tr("<p>Could not create a temporary file."));
+      return false;
+    }
+    QString tmpfileName = tmpfile.fileName();
+    tmpfile.close();
+
+    if (_metrics->boolean("XSLTLibrary"))
+    {
+      systemError(this, "XSLT via internal library not yet supported");
+      return false;
+    }
+    else
+    {
+      QStringList args = _externalCmd.split(" ", QString::SkipEmptyParts);
+      QString command = args[0];
+      args.removeFirst();
+      args.replaceInStrings("%f", pFileName);
+      if (QFile::exists(xsltfile))
+	args.replaceInStrings("%x", xsltfile);
+      else if (QFile::exists(_defaultXSLTDir + "/" + xsltfile))
+	args.replaceInStrings("%x", _defaultXSLTDir + "/" + xsltfile);
+      else
+      {
+	systemError(this, tr("Cannot find the XSLT file as either %1 or %2")
+			  .arg(xsltfile)
+			  .arg(_defaultXSLTDir + "/" + xsltfile));
+	return false;
+      }
+
+      QProcess xslt(this);
+      xslt.setStandardOutputFile(tmpfileName);
+      qDebug("%s %s", command.toAscii().data(), args.join(" ").toAscii().data());
+      xslt.start(command, args);
+      QString errOutput;
+      if (! xslt.waitForStarted())
+	errOutput = tr("Error starting XSLT Processing: %1")
+			  .arg(QString(xslt.readAllStandardError()));
+      if (! xslt.waitForFinished())
+	errOutput = tr("The XSLT Processor encountered an error: %1")
+			  .arg(QString(xslt.readAllStandardError()));
+      if (xslt.exitStatus() !=  QProcess::NormalExit)
+	errOutput = tr("The XSLT Processor did not exit normally: %1")
+			  .arg(QString(xslt.readAllStandardError()));
+      if (xslt.exitCode() != 0)
+	errOutput = tr("The XSLT Processor returned an error code: %1\n%2")
+			  .arg(xslt.exitCode())
+			  .arg(QString(xslt.readAllStandardError()));
+
+      if (! errOutput.isEmpty())
+      {
+	systemError(this, errOutput);
+	return false;
+      }
+
+      if (! openDomDocument(tmpfileName, doc))
+	return false;
+    }
   }
+
+  QDomElement docElem = doc.documentElement();
+  QDomNode n = docElem.firstChild();
+  while (!n.isNull())
+  {
+    QDomElement e = n.toElement();
+    if (!e.isNull())
+    {
+      qDebug(e.tagName());
+    }
+    n = n.nextSibling();
+  }
+
+
+  if (_metrics->value("XMLSuccessTreatment") == "Delete")
+    return QFile::remove(pFileName);
+  else if (_metrics->value("XMLSuccessTreatment") == "Rename")
+    return QFile::rename(pFileName, pFileName + suffix);
+  else if (_metrics->value("XMLSuccessTreatment") == "None")
+    return true;
+
+  return false;	// should never reach here
 }
