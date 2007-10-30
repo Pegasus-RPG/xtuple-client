@@ -589,7 +589,7 @@ void postOperations::sPost()
             "                   LIMIT 1), TRUE) AS prevcomplete,"
             "       wooper_wip_location_id "
             "  FROM wooper AS c LEFT OUTER JOIN booitem"
-            "    ON (wooper_booitem_seq_id=booitem_seq_id) "
+            "    ON (wooper_booitem_id=booitem_id) "
             " WHERE (wooper_id=:wooper_id);" );
   q.bindValue(":wooper_id", _wooper->id());
   q.exec();
