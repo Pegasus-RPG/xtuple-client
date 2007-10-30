@@ -171,12 +171,11 @@ void dspPendingAvailability::sFillList()
                "              noNeg(itemsite_qtyonhand) AS qoh,"
                "              qtyOrdered(itemsite_id, DATE(:buildDate)) AS ordered,"
                "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel"
-               "       FROM itemsite, item, bomitem, uom "
+			   "       FROM itemsite, item, bomitem(:item_id), uom "
                "       WHERE ( (bomitem_item_id=itemsite_item_id)"
                "        AND (itemsite_item_id=item_id)"
                "        AND (item_inv_uom_id=uom_id)"
-               "        AND (itemsite_warehous_id=:warehous_id)"
-               "        AND (bomitem_parent_item_id=:item_id)" );
+               "        AND (itemsite_warehous_id=:warehous_id)" );
 
   if (_effective->isNull())
     sql += " AND (CURRENT_DATE BETWEEN bomitem_effective AND (bomitem_expires-1))) ) AS data ";
