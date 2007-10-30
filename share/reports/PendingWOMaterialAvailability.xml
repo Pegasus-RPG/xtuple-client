@@ -12,16 +12,16 @@
  <querysource>
   <name>head</name>
   <sql>SELECT item_number, item_descrip1, item_descrip2,
-       &lt;? if exists(&quot;warehous_id&quot;) ?>
+       &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Warehouses')
        &lt;? endif ?>
        AS warehouse
   FROM item
-WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
+WHERE (item_id=&lt;? value("item_id") ?>);</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -32,24 +32,196 @@ WHERE (item_id=&lt;? value(&quot;item_id&quot;) ?>);</sql>
        formatQty(qoh + ordered - (totalalloc + pendalloc)) AS totalavail
 FROM ( SELECT bomitem_seqnumber, item_number,
               item_descrip1, item_descrip2, uom_name,
-              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * &lt;? value(&quot;buildQty&quot;) ?>) AS pendalloc,
-              qtyAllocated(itemsite_id, date(&lt;? value(&quot;buildDate&quot;) ?>)) AS totalalloc,
+              ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * &lt;? value("buildQty") ?>) AS pendalloc,
+              qtyAllocated(itemsite_id, date(&lt;? value("buildDate") ?>)) AS totalalloc,
               noNeg(itemsite_qtyonhand) AS qoh,
-              qtyOrdered(itemsite_id, date(&lt;? value(&quot;buildDate&quot;) ?>)) AS ordered
-   FROM itemsite, item, bomitem, uom
+              qtyOrdered(itemsite_id, date(&lt;? value("buildDate") ?>)) AS ordered
+   FROM itemsite, item, bomitem(&lt;? value("item_id") ?>), uom
        WHERE ((bomitem_item_id=itemsite_item_id)
         AND (itemsite_item_id=item_id)
         AND (item_inv_uom_id=uom_id)
-        AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
-        AND (bomitem_parent_item_id=&lt;? value(&quot;item_id&quot;) ?>)
-        AND (&lt;? value(&quot;effectiveDate&quot;) ?> BETWEEN bomitem_effective AND (bomitem_expires-1)) ) ) AS data
-&lt;? if exists(&quot;showShortages&quot;) ?>
+        AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
+        AND (&lt;? value("effectiveDate") ?> BETWEEN bomitem_effective AND (bomitem_expires-1)) ) ) AS data
+&lt;? if exists("showShortages") ?>
 WHERE ((qoh + ordered - (totalalloc + pendalloc)) &lt; 0.0)
 &lt;? endif ?>
 ORDER BY bomitem_seqnumber;</sql>
  </querysource>
  <rpthead>
-  <height>236</height>
+  <height>234</height>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>140</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip2</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>275</x>
+    <y>10</y>
+    <width>450</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Pending W/O Material Availability</string>
+  </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>160</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>160</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Warehouse:</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>229</ystart>
+   <xend>745</xend>
+   <yend>229</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>290</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>200</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Seq. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>200</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>575</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH</string>
+  </label>
+  <label>
+   <rect>
+    <x>490</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Total Alloc.</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Available</string>
+  </label>
   <field>
    <rect>
     <x>140</x>
@@ -85,18 +257,11 @@ ORDER BY bomitem_seqnumber;</sql>
    <vcenter/>
    <string>Description</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>229</ystart>
-   <xend>745</xend>
-   <yend>229</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
     <x>30</x>
     <y>100</y>
-    <width>105</width>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
@@ -107,140 +272,6 @@ ORDER BY bomitem_seqnumber;</sql>
    <right/>
    <vcenter/>
    <string>Item Number:</string>
-  </label>
-  <label>
-   <rect>
-    <x>405</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Pend. Alloc.</string>
-  </label>
-  <label>
-   <rect>
-    <x>290</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>200</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>140</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip2</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>160</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Warehouse:</string>
-  </label>
-  <label>
-   <rect>
-    <x>660</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Available</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>160</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>575</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH</string>
   </label>
   <field>
    <rect>
@@ -263,9 +294,25 @@ ORDER BY bomitem_seqnumber;</sql>
   </field>
   <label>
    <rect>
+    <x>405</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Pend. Alloc.</string>
+  </label>
+  <label>
+   <rect>
     <x>30</x>
     <y>120</y>
-    <width>105</width>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
@@ -277,54 +324,6 @@ ORDER BY bomitem_seqnumber;</sql>
    <vcenter/>
    <string>Description:</string>
   </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>200</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Seq. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>490</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Total Alloc.</string>
-  </label>
-  <label>
-   <rect>
-    <x>275</x>
-    <y>10</y>
-    <width>450</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Pending W/O Material Availability</string>
-  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -332,65 +331,10 @@ ORDER BY bomitem_seqnumber;</sql>
  </pghead>
  <pghead>
   <height>36</height>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>10</x>
-    <y>0</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Seq. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>660</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Available</string>
-  </label>
-  <label>
-   <rect>
-    <x>575</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH</string>
-  </label>
-  <label>
-   <rect>
-    <x>290</x>
-    <y>0</y>
+    <x>60</x>
+    <y>15</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -399,9 +343,9 @@ ORDER BY bomitem_seqnumber;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <left/>
    <vcenter/>
-   <string>UOM</string>
+   <string>Description</string>
   </label>
   <label>
    <rect>
@@ -421,7 +365,7 @@ ORDER BY bomitem_seqnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>490</x>
+    <x>575</x>
     <y>0</y>
     <width>80</width>
     <height>15</height>
@@ -433,7 +377,55 @@ ORDER BY bomitem_seqnumber;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Total Alloc.</string>
+   <string>QOH</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Available</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>0</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Seq. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>290</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
   </label>
   <label>
    <rect>
@@ -453,9 +445,9 @@ ORDER BY bomitem_seqnumber;</sql>
   </label>
   <label>
    <rect>
-    <x>60</x>
-    <y>15</y>
-    <width>100</width>
+    <x>490</x>
+    <y>0</y>
+    <width>80</width>
     <height>15</height>
    </rect>
    <font>
@@ -463,10 +455,17 @@ ORDER BY bomitem_seqnumber;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Description</string>
+   <string>Total Alloc.</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
  </pghead>
  <section>
   <name>detail</name>
@@ -474,7 +473,7 @@ ORDER BY bomitem_seqnumber;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>51</height>
+   <height>53</height>
    <field>
     <rect>
      <x>290</x>
@@ -492,6 +491,108 @@ ORDER BY bomitem_seqnumber;</sql>
     <data>
      <query>detail</query>
      <column>uom_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>405</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>pendalloc</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>60</x>
+     <y>0</y>
+     <width>150</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>575</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qoh</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>60</x>
+     <y>15</y>
+     <width>300</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip1</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>60</x>
+     <y>30</y>
+     <width>300</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip2</column>
     </data>
    </field>
    <field>
@@ -534,82 +635,6 @@ ORDER BY bomitem_seqnumber;</sql>
    </field>
    <field>
     <rect>
-     <x>60</x>
-     <y>0</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>405</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>pendalloc</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>575</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qoh</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>60</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>10</x>
      <y>0</y>
      <width>35</width>
@@ -627,68 +652,10 @@ ORDER BY bomitem_seqnumber;</sql>
      <column>bomitem_seqnumber</column>
     </data>
    </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>60</x>
-     <y>15</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip1</column>
-    </data>
-   </field>
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
+  <height>18</height>
   <field>
    <rect>
     <x>705</x>
@@ -727,5 +694,37 @@ ORDER BY bomitem_seqnumber;</sql>
     <column>report_date</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
  </pgfoot>
 </report>
