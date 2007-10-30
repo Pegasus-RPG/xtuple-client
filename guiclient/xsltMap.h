@@ -55,140 +55,44 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  moduleSys.h
-//  Created 12/11/2000 JSL
-//  Copyright (c) 2000-2007, OpenMFG, LLC
+#ifndef XSLTMAP_H
+#define XSLTMAP_H
 
-#ifndef moduleSys_h
-#define moduleSys_h
+#include "OpenMFGGUIClient.h"
+#include <QDialog>
+#include "ui_xsltMap.h"
 
-#include <QObject>
+#include <parameter.h>
 
-class QMenu;
-class QPixmap;
-class QToolBar;
-class OpenMFGGUIClient;
-class Action;
-
-class moduleSys : public QObject
+class xsltMap : public QDialog, public Ui::xsltMap
 {
-  Q_OBJECT
-
-  struct actionProperties {
-    const char*		actionName;
-    const QString	actionTitle;
-    const char*		slot;
-    QMenu*		menu;
-    bool		priv;
-    QPixmap*		pixmap;
-    QToolBar*		toolBar;
-    bool		visible;
-  };
+    Q_OBJECT
 
   public:
-    moduleSys(OpenMFGGUIClient *);
+    xsltMap(QWidget* parent = 0, Qt::WFlags fl = 0);
+    ~xsltMap();
+
+    static bool userHasPriv();
 
   public slots:
-    void sPrepareWindowMenu();
-    void sHideWindowMenu();
-    void sActivateWindow(int);
-    void sCloseAll();
-    void sCloseActive();
-    void sRememberPositionToggle();
-    void sRememberSizeToggle();
+    virtual int              exec();
+    virtual enum SetResponse set(const ParameterList&);
+    virtual void             sPopulate();
 
-    void sConfigureIE();
-    void sConfigureIM();
-    void sConfigurePD();
-    void sConfigureMS();
-    void sConfigureWO();
-    void sConfigureSR();
-    void sConfigureSO();
-    void sConfigurePO();
-    void sConfigureAP();
-    void sConfigureAR();
-    void sConfigureGL();
-    void sConfigureCC();
-    void sConfigurePM();
-    void sConfigureCRM();
+  protected slots:
+    virtual void languageChange();
 
-    void sScheduleSystemMessage();
-    void sEventManager();
-    void sBatchManager();
-    void sPreferences();
-    void sRescanPrivileges();
-    void sMaintainUsers();
-    void sScheduleServerMaintenance();
-    void sScheduleServerBackup();
-    void sErrorLog();
-
-    void sDatabaseInformation();
-    void sConfigureBackup();
-
-    void sImages();
-    void sReports();
-    void sForms();
-    void sLabelForms();
-    void sCalendars();
-    void sCurrencies();
-    void sExchangeRates();
-    void sCountries();
-    void sLocales();
-    void sCommentTypes();
-    void sAccountNumbers();
-    void sEDIProfiles();
-    void sDepartments();
-    void sShifts();
-    void sCustomCommands();
-
-    void sFixSerial();
-    void sImportXML();
-
-    void sPrintAlignment();
-
-    void sExit();
-
-    void sAbout();
-    void sTOC();
-
-    void sCommunityHome();
-    void sCommunityNewAccount();
-    void sCommunityEditAccount();
-    void sCommunityForums();
-    void sCommunityBlogs();
-    void sCommunityIssues();
-    void sCommunityDownloads();
-
-// START_RW
-    void sConfigureAccountingSystemInterface();
-// END_RW
+    virtual void sHandleExport();
+    virtual void sHandleImport();
+    virtual void sSave();
 
   private:
-    OpenMFGGUIClient *parent;
-
-    QToolBar *toolBar;
-
-    QMenu *windowMenu;
-    QMenu *systemMenu;
-    QMenu *configModulesMenu;
-    QMenu *masterInfoMenu;
-    QMenu *sysUtilsMenu;
-    QMenu *helpMenu;
-    QMenu *communityMenu;
-
-    QMenu *geometryMenu;
-
-    Action *cascade;
-    Action *tile;
-    Action *closeActive;
-    Action *closeAll;
-    Action *_rememberPos;
-    Action *_rememberSize;
-
-    QWidget *_lastActive;
-
-    void	addActionsToMenu(actionProperties [], unsigned int);
+    int		_mode;
+    int		_xsltmapId;
+    QString	_xsltLinuxDir;
+    QString	_xsltMacDir;
+    QString	_xsltWindowsDir;
 
 };
 
-#endif
+#endif // XSLTMAP_H

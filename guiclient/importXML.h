@@ -55,140 +55,44 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  moduleSys.h
-//  Created 12/11/2000 JSL
-//  Copyright (c) 2000-2007, OpenMFG, LLC
+//  importXML.h
+//  Created 10/29/2007 GJM
+//  Copyright (c) 2007, OpenMFG, LLC
 
-#ifndef moduleSys_h
-#define moduleSys_h
+#ifndef IMPORTXML_H
+#define IMPORTXML_H
 
-#include <QObject>
+#include <QMainWindow>
+#include <QMenu>
 
-class QMenu;
-class QPixmap;
-class QToolBar;
-class OpenMFGGUIClient;
-class Action;
+#include "ui_importXML.h"
 
-class moduleSys : public QObject
+class importXML : public QMainWindow, public Ui::importXML
 {
   Q_OBJECT
-
-  struct actionProperties {
-    const char*		actionName;
-    const QString	actionTitle;
-    const char*		slot;
-    QMenu*		menu;
-    bool		priv;
-    QPixmap*		pixmap;
-    QToolBar*		toolBar;
-    bool		visible;
-  };
-
+  
   public:
-    moduleSys(OpenMFGGUIClient *);
+    importXML(QWidget* = 0, Qt::WindowFlags = 0);
+    ~importXML();
+
+    static bool userHasPriv();
 
   public slots:
-    void sPrepareWindowMenu();
-    void sHideWindowMenu();
-    void sActivateWindow(int);
-    void sCloseAll();
-    void sCloseActive();
-    void sRememberPositionToggle();
-    void sRememberSizeToggle();
+    virtual void setVisible(bool);
 
-    void sConfigureIE();
-    void sConfigureIM();
-    void sConfigurePD();
-    void sConfigureMS();
-    void sConfigureWO();
-    void sConfigureSR();
-    void sConfigureSO();
-    void sConfigurePO();
-    void sConfigureAP();
-    void sConfigureAR();
-    void sConfigureGL();
-    void sConfigureCC();
-    void sConfigurePM();
-    void sConfigureCRM();
-
-    void sScheduleSystemMessage();
-    void sEventManager();
-    void sBatchManager();
-    void sPreferences();
-    void sRescanPrivileges();
-    void sMaintainUsers();
-    void sScheduleServerMaintenance();
-    void sScheduleServerBackup();
-    void sErrorLog();
-
-    void sDatabaseInformation();
-    void sConfigureBackup();
-
-    void sImages();
-    void sReports();
-    void sForms();
-    void sLabelForms();
-    void sCalendars();
-    void sCurrencies();
-    void sExchangeRates();
-    void sCountries();
-    void sLocales();
-    void sCommentTypes();
-    void sAccountNumbers();
-    void sEDIProfiles();
-    void sDepartments();
-    void sShifts();
-    void sCustomCommands();
-
-    void sFixSerial();
-    void sImportXML();
-
-    void sPrintAlignment();
-
-    void sExit();
-
-    void sAbout();
-    void sTOC();
-
-    void sCommunityHome();
-    void sCommunityNewAccount();
-    void sCommunityEditAccount();
-    void sCommunityForums();
-    void sCommunityBlogs();
-    void sCommunityIssues();
-    void sCommunityDownloads();
-
-// START_RW
-    void sConfigureAccountingSystemInterface();
-// END_RW
+  protected slots:
+    virtual void languageChange();
+    virtual void sAdd();
+    virtual void sDelete();
+    virtual void sFillList();
+    virtual void sImportAll();
+    virtual void sImportSelected();
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
 
   private:
-    OpenMFGGUIClient *parent;
-
-    QToolBar *toolBar;
-
-    QMenu *windowMenu;
-    QMenu *systemMenu;
-    QMenu *configModulesMenu;
-    QMenu *masterInfoMenu;
-    QMenu *sysUtilsMenu;
-    QMenu *helpMenu;
-    QMenu *communityMenu;
-
-    QMenu *geometryMenu;
-
-    Action *cascade;
-    Action *tile;
-    Action *closeActive;
-    Action *closeAll;
-    Action *_rememberPos;
-    Action *_rememberSize;
-
-    QWidget *_lastActive;
-
-    void	addActionsToMenu(actionProperties [], unsigned int);
-
+    QString	_defaultDir;
+    QStringList	_filters;
+    bool	importOne(QTreeWidgetItem*);
 };
 
 #endif

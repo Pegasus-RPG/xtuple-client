@@ -105,7 +105,9 @@
 #include "countries.h"
 
 #include "fixSerial.h"
+#include "importXML.h"
 
+#include "configureIE.h"
 #include "configureIM.h"
 #include "configurePD.h"
 #include "configureMS.h"
@@ -204,29 +206,30 @@ menuSystem::menuSystem(OpenMFGGUIClient *Pparent) :
     { "separator",		NULL,			NULL,			masterInfoMenu,	true,					NULL,	NULL,	true	},
     { "sys.images",		tr("&Images..."),	SLOT(sImages()),	masterInfoMenu,	_privleges->check("MaintainImages"),	NULL,	NULL,	true	},
     { "sys.reports",		tr("&Reports..."),	SLOT(sReports()),	masterInfoMenu,	_privleges->check("MaintainReports"),	NULL,	NULL,	true	},
-    { "sys.forms",		tr("&Forms..."),		SLOT(sForms()),		masterInfoMenu,	_privleges->check("MaintainForms"),	NULL,	NULL,	true	},
+    { "sys.forms",		tr("&Forms..."),	SLOT(sForms()),		masterInfoMenu,	_privleges->check("MaintainForms"),	NULL,	NULL,	true	},
     { "sys.labelForms",		tr("&Label Forms..."),	SLOT(sLabelForms()),	masterInfoMenu,	_privleges->check("MaintainForms"),	NULL,	NULL,	true	},
     { "sys.calendars",		tr("C&alendars..."),	SLOT(sCalendars()),	masterInfoMenu,	_privleges->check("MaintainCalendars"),	NULL,	NULL,	true	},
     { "sys.currencies",		tr("Curre&ncies..."),	SLOT(sCurrencies()),	masterInfoMenu,	_privleges->check("CreateNewCurrency"),	NULL,	NULL,	true	},
-    { "sys.exchangeRates",	tr("&Exchange Rates..."),SLOT(sExchangeRates()),	masterInfoMenu,	_privleges->check("MaintainCurrencyRates") || _privleges->check("ViewCurrencyRates"),
-																					NULL,	NULL,	true	},
-    { "sys.configureCC",	tr("&Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	_privleges->check("ConfigureCC"),					NULL,	NULL,	true	},
-    { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	_privleges->check("MaintainCountries"),					NULL,	NULL,	true	},
-    { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	_privleges->check("MaintainLocales"),					NULL,	NULL,	true	},
-    { "sys.commentTypes",	tr("Comment &Types..."),	SLOT(sCommentTypes()),	masterInfoMenu,	_privleges->check("MaintainCommentTypes"),				NULL,	NULL,	true	},
-    { "sys.ediProfiles",	tr("EDI &Profiles..."),	SLOT(sEDIProfiles()),	masterInfoMenu,	_privleges->check("MaintainEDIProfiles"),				NULL,	NULL,	 _metrics->boolean("EnableBatchManager")	},
-    { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	_privleges->check("ViewDepartments") || _privleges->check("MaintainDepartments"),
-																					NULL,	NULL,	true	},
+    { "sys.exchangeRates",	tr("&Exchange Rates..."),SLOT(sExchangeRates()),masterInfoMenu,	_privleges->check("MaintainCurrencyRates") || _privleges->check("ViewCurrencyRates"),
+																	NULL,	NULL,	true	},
+    { "sys.configureCC",	tr("&Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	_privleges->check("ConfigureCC"),	NULL,	NULL,	true	},
+    { "sys.countries",		tr("Co&untries..."),	SLOT(sCountries()),	masterInfoMenu,	_privleges->check("MaintainCountries"),	NULL,	NULL,	true	},
+    { "sys.locales",		tr("L&ocales..."),	SLOT(sLocales()),	masterInfoMenu,	_privleges->check("MaintainLocales"),	NULL,	NULL,	true	},
+    { "sys.commentTypes",	tr("Comment &Types..."),SLOT(sCommentTypes()),	masterInfoMenu,	_privleges->check("MaintainCommentTypes"), NULL, NULL,	true	},
+    { "sys.ediProfiles",	tr("EDI &Profiles..."),	SLOT(sEDIProfiles()),	masterInfoMenu,	_privleges->check("MaintainEDIProfiles"), NULL,	NULL,	 _metrics->boolean("EnableBatchManager")	},
+    { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	_privleges->check("ViewDepartments") || _privleges->check("MaintainDepartments"),	NULL,	NULL,	true	},
     { "sys.shifts",		tr("S&hifts..."),	SLOT(sShifts()),	masterInfoMenu,	(_privleges->check("ViewShifts") || _privleges->check("MaintainShifts")) ,	NULL,	NULL, _metrics->boolean("Routings")	},
-    { "sys.customCommands",   tr("Custom Command&s..."),	SLOT(sCustomCommands()),masterInfoMenu,	_privleges->check("MaintainCustomCommands"),				NULL,	NULL,	true	},
+    { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, configureIE::userHasPriv(),	NULL, NULL, true },
+    { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), masterInfoMenu, _privleges->check("MaintainCustomCommands"),	NULL, NULL, true },
 
     { "menu",			tr("&System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
     { "sys.fixSerial",		tr("&Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privleges->check("FixSerial"), NULL, NULL, true	},
+    { "sys.importXML",		tr("&Import XML"),	SLOT(sImportXML()),	sysUtilsMenu,	importXML::userHasPriv(),	NULL, NULL, true	},
 
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	TRUE,	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
-    { "sys.exitOpenMFG",	tr("E&xit " + _appname + "..."),		SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	}
+    { "sys.exitOpenMFG",	tr("E&xit " + _appname + "..."), SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	}
 
   };
 
@@ -541,6 +544,11 @@ void menuSystem::sShifts()
   omfgThis->handleNewWindow(new shifts());
 }
 
+void menuSystem::sConfigureIE()
+{
+  configureIE(parent, "", TRUE).exec();
+}
+
 void menuSystem::sCustomCommands()
 {
   omfgThis->handleNewWindow(new customCommands());
@@ -679,6 +687,11 @@ void menuSystem::sConfigureAccountingSystemInterface()
 void menuSystem::sFixSerial()
 {
   omfgThis->handleNewWindow(new fixSerial());
+}
+
+void menuSystem::sImportXML()
+{
+  omfgThis->handleNewWindow(new importXML());
 }
 
 void menuSystem::sCommunityHome()

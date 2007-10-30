@@ -55,140 +55,37 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  moduleSys.h
-//  Created 12/11/2000 JSL
-//  Copyright (c) 2000-2007, OpenMFG, LLC
+#ifndef CONFIGUREIE_H
+#define CONFIGUREIE_H
 
-#ifndef moduleSys_h
-#define moduleSys_h
+#include "OpenMFGGUIClient.h"
+#include <QDialog>
 
-#include <QObject>
+#include "ui_configureIE.h"
 
-class QMenu;
-class QPixmap;
-class QToolBar;
-class OpenMFGGUIClient;
-class Action;
-
-class moduleSys : public QObject
+class configureIE : public QDialog, public Ui::configureIE
 {
-  Q_OBJECT
+    Q_OBJECT
 
-  struct actionProperties {
-    const char*		actionName;
-    const QString	actionTitle;
-    const char*		slot;
-    QMenu*		menu;
-    bool		priv;
-    QPixmap*		pixmap;
-    QToolBar*		toolBar;
-    bool		visible;
-  };
+public:
+    configureIE(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~configureIE();
 
-  public:
-    moduleSys(OpenMFGGUIClient *);
+    static bool userHasPriv();
 
-  public slots:
-    void sPrepareWindowMenu();
-    void sHideWindowMenu();
-    void sActivateWindow(int);
-    void sCloseAll();
-    void sCloseActive();
-    void sRememberPositionToggle();
-    void sRememberSizeToggle();
+public slots:
+    virtual int  exec();
+    virtual void sDeleteMap();
+    virtual void sEditMap();
+    virtual void sFillList();
+    virtual void sNewMap();
+    virtual void sPopulate();
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
+    virtual void sSave();
 
-    void sConfigureIE();
-    void sConfigureIM();
-    void sConfigurePD();
-    void sConfigureMS();
-    void sConfigureWO();
-    void sConfigureSR();
-    void sConfigureSO();
-    void sConfigurePO();
-    void sConfigureAP();
-    void sConfigureAR();
-    void sConfigureGL();
-    void sConfigureCC();
-    void sConfigurePM();
-    void sConfigureCRM();
-
-    void sScheduleSystemMessage();
-    void sEventManager();
-    void sBatchManager();
-    void sPreferences();
-    void sRescanPrivileges();
-    void sMaintainUsers();
-    void sScheduleServerMaintenance();
-    void sScheduleServerBackup();
-    void sErrorLog();
-
-    void sDatabaseInformation();
-    void sConfigureBackup();
-
-    void sImages();
-    void sReports();
-    void sForms();
-    void sLabelForms();
-    void sCalendars();
-    void sCurrencies();
-    void sExchangeRates();
-    void sCountries();
-    void sLocales();
-    void sCommentTypes();
-    void sAccountNumbers();
-    void sEDIProfiles();
-    void sDepartments();
-    void sShifts();
-    void sCustomCommands();
-
-    void sFixSerial();
-    void sImportXML();
-
-    void sPrintAlignment();
-
-    void sExit();
-
-    void sAbout();
-    void sTOC();
-
-    void sCommunityHome();
-    void sCommunityNewAccount();
-    void sCommunityEditAccount();
-    void sCommunityForums();
-    void sCommunityBlogs();
-    void sCommunityIssues();
-    void sCommunityDownloads();
-
-// START_RW
-    void sConfigureAccountingSystemInterface();
-// END_RW
-
-  private:
-    OpenMFGGUIClient *parent;
-
-    QToolBar *toolBar;
-
-    QMenu *windowMenu;
-    QMenu *systemMenu;
-    QMenu *configModulesMenu;
-    QMenu *masterInfoMenu;
-    QMenu *sysUtilsMenu;
-    QMenu *helpMenu;
-    QMenu *communityMenu;
-
-    QMenu *geometryMenu;
-
-    Action *cascade;
-    Action *tile;
-    Action *closeActive;
-    Action *closeAll;
-    Action *_rememberPos;
-    Action *_rememberSize;
-
-    QWidget *_lastActive;
-
-    void	addActionsToMenu(actionProperties [], unsigned int);
+protected slots:
+    virtual void languageChange();
 
 };
 
-#endif
+#endif // CONFIGUREIE_H

@@ -97,6 +97,7 @@ class menuSystem : public QObject
     void sRememberPositionToggle();
     void sRememberSizeToggle();
 
+    void sConfigureIE();
     void sConfigureIM();
     void sConfigurePD();
     void sConfigureMS();
@@ -141,6 +142,7 @@ class menuSystem : public QObject
     void sCustomCommands();
 
     void sFixSerial();
+    void sImportXML();
 
     void sPrintAlignment();
 

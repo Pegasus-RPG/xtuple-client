@@ -105,7 +105,9 @@
 #include "countries.h"
 
 #include "fixSerial.h"
+#include "importXML.h"
 
+#include "configureIE.h"
 #include "configureIM.h"
 #include "configurePD.h"
 #include "configureMS.h"
@@ -226,15 +228,17 @@ moduleSys::moduleSys(OpenMFGGUIClient *Pparent) :
     { "sys.departments",	tr("Departments..."),	SLOT(sDepartments()),	masterInfoMenu,	_privleges->check("ViewDepartments") || _privleges->check("MaintainDepartments"),
 																					NULL,	NULL,	true	},
     { "sys.shifts",		tr("Shifts..."),	SLOT(sShifts()),	masterInfoMenu,	_privleges->check("ViewShifts") || _privleges->check("MaintainShifts"),	NULL,	NULL,	true	},
-    { "sys.customCommands",   tr("Custom Commands..."),	SLOT(sCustomCommands()),masterInfoMenu,	_privleges->check("MaintainCustomCommands"),				NULL,	NULL,	true	},
+    { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu,	configureIE::userHasPriv(),		NULL,	NULL,	true },
+    { "sys.customCommands",	tr("Custom Commands..."),	SLOT(sCustomCommands()), masterInfoMenu,	_privleges->check("MaintainCustomCommands"),		NULL,	NULL,	true	},
 
     { "menu",			tr("System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
     { "sys.fixSerial",		tr("Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privleges->check("FixSerial"), NULL, NULL, true	},
+    { "sys.importXML",		tr("Import XML"),	SLOT(sImportXML()),	sysUtilsMenu,	importXML::userHasPriv(),	NULL, NULL, true	},
 
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
     { "sys.printAlignmentPage",	tr("Print Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	TRUE,	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
-    { "sys.exitOpenMFG",	tr("Exit " + _appname + "..."),		SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	}
+    { "sys.exitOpenMFG",	tr("Exit " + _appname + "..."),	SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	}
 
   };
 
@@ -551,6 +555,11 @@ void moduleSys::sCustomCommands()
   omfgThis->handleNewWindow(new customCommands());
 }
 
+void moduleSys::sConfigureIE()
+{
+  configureIE(parent, "", TRUE).exec();
+}
+
 void moduleSys::sConfigureIM()
 {
   configureIM(parent, "", TRUE).exec();
@@ -684,6 +693,11 @@ void moduleSys::sConfigureAccountingSystemInterface()
 void moduleSys::sFixSerial()
 {
   omfgThis->handleNewWindow(new fixSerial());
+}
+
+void moduleSys::sImportXML()
+{
+  omfgThis->handleNewWindow(new importXML());
 }
 
 void moduleSys::sCommunityHome()

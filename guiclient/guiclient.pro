@@ -58,6 +58,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                configureAP.ui configureAR.ui configureCC.ui configureSO.ui configureIM.ui             \
                configureGL.ui configureMS.ui configurePD.ui configurePM.ui configurePO.ui             \
                configureSR.ui configureWO.ui configureBackup.ui configureCRM.ui                       \
+	       configureIE.ui                                                                         \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
                copyBOM.ui copyBOO.ui copyItem.ui copyPlannedSchedule.ui copySalesOrder.ui             \
 	       copyTransferOrder.ui                                                                   \
@@ -203,6 +204,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                honorific.ui honorifics.ui                                                             \
 	       hotkey.ui hotkeys.ui image.ui imageList.ui implodeWo.ui                                \
                images.ui invoiceList.ui issueWoMaterialBatch.ui                                       \
+	       importXML.ui                                                                           \
                incident.ui incidentWorkbench.ui                                                       \
                incidentCategory.ui incidentCategories.ui incidentPriority.ui incidentPriorities.ui    \
 	       incidentSeverity.ui incidentSeverities.ui incidentResolution.ui incidentResolutions.ui \
@@ -321,7 +323,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                workOrder.ui workOrderMaterials.ui woTimeClock.ui wotc.ui                              \
                woOperation.ui workOrderOperations.ui                                                  \
                zeroUncountedCountTagsByWarehouse.ui                                                   \
-               idleShutdown.ui xdateinputdialog.ui 
+               idleShutdown.ui xdateinputdialog.ui xsltMap.ui
 
 HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwInterface.h             \
                ../common/format.h                                                                     \
@@ -358,6 +360,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                configureAP.h configureAR.h configureCC.h configureSO.h configureIM.h                  \
                configureGL.h configureMS.h configurePD.h configurePM.h configurePO.h                  \
                configureSR.h configureWO.h configureBackup.h configureCRM.h                           \
+	       configureIE.h                                                                          \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
                copyBOM.h copyBOO.h copyItem.h copyPlannedSchedule.h copySalesOrder.h                  \
 	       copyTransferOrder.h                                                                    \
@@ -502,6 +505,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                honorific.h honorifics.h                                                               \
 	       hotkey.h hotkeys.h image.h imageList.h implodeWo.h                                     \
                images.h invoiceList.h issueWoMaterialBatch.h                                          \
+	       importXML.h                                                                            \
                incident.h incidentWorkbench.h                                                         \
                incidentCategory.h incidentCategories.h incidentPriority.h incidentPriorities.h        \
 	       incidentSeverity.h incidentSeverities.h incidentResolution.h incidentResolutions.h     \
@@ -623,7 +627,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                workOrder.h workOrderMaterials.h woTimeClock.h wotc.h                                  \
                woOperation.h workOrderOperations.h                                                    \
                zeroUncountedCountTagsByWarehouse.h                                                    \
-               idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h
+               idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h xsltMap.h
 
 
 SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp rwInterface.cpp      \
@@ -661,6 +665,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                configureAP.cpp configureAR.cpp configureCC.cpp configureSO.cpp configureIM.cpp        \
                configureGL.cpp configureMS.cpp configurePD.cpp configurePM.cpp configurePO.cpp        \
                configureSR.cpp configureWO.cpp configureBackup.cpp configureCRM.cpp                   \
+	       configureIE.cpp                                                                        \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \
                copyBOM.cpp copyBOO.cpp copyItem.cpp copyPlannedSchedule.cpp copySalesOrder.cpp        \
 	       copyTransferOrder.cpp                                                                  \
@@ -806,6 +811,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                honorific.cpp honorifics.cpp                                                           \
 	       hotkey.cpp hotkeys.cpp image.cpp imageList.cpp implodeWo.cpp                           \
                images.cpp invoiceList.cpp issueWoMaterialBatch.cpp                                    \
+	       importXML.cpp                                                                          \
                incident.cpp incidentWorkbench.cpp                                                     \
                incidentCategory.cpp incidentCategories.cpp incidentPriority.cpp incidentPriorities.cpp \
 	       incidentSeverity.cpp incidentSeverities.cpp                                            \
@@ -928,7 +934,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                workOrder.cpp workOrderMaterials.cpp woTimeClock.cpp wotc.cpp                          \
                woOperation.cpp workOrderOperations.cpp                                                \
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
-               idleShutdown.cpp storedProcErrorLookup.cpp xdateinputdialog.cpp
+               idleShutdown.cpp storedProcErrorLookup.cpp xdateinputdialog.cpp xsltMap.cpp
 
 QT += xml  assistant sql
 
