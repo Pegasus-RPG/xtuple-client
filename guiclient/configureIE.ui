@@ -366,11 +366,18 @@
            </property>
            <layout class="QVBoxLayout" >
             <item>
+             <widget class="QRadioButton" name="_doNothing" >
+              <property name="text" >
+               <string>Do nothing after successful import</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <layout class="QHBoxLayout" >
               <item>
                <widget class="QRadioButton" name="_renameFiles" >
                 <property name="text" >
-                 <string>Rename XML Files After Successful Import. Append:</string>
+                 <string>Rename XML files after successful import. Append:</string>
                 </property>
                </widget>
               </item>
@@ -399,7 +406,7 @@
             <item>
              <widget class="QRadioButton" name="_deleteFiles" >
               <property name="text" >
-               <string>Delete XML Files After Successful Import</string>
+               <string>Delete XML files after successful import</string>
               </property>
              </widget>
             </item>

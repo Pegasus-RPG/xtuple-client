@@ -116,13 +116,11 @@ void configureIE::languageChange()
 void configureIE::sSave()
 {
   if (_renameFiles->isChecked())
-  {
     _metrics->set("XMLSuccessTreatment",  QString("Rename"));
-  }
   else if (_deleteFiles->isChecked())
-  {
     _metrics->set("XMLSuccessTreatment",  QString("Delete"));
-  }
+  else if (_doNothing->isChecked())
+    _metrics->set("XMLSuccessTreatment",  QString("None"));
   else
   {
     QMessageBox::critical(this, tr("Incomplete Data"),
@@ -203,6 +201,8 @@ void configureIE::sPopulate()
     _renameFiles->setChecked(true);
   else if (_metrics->value("XMLSuccessTreatment") == "Delete")
     _deleteFiles->setChecked(true);
+  else if (_metrics->value("XMLSuccessTreatment") == "None")
+    _doNothing->setChecked(true);
 
   _renameSuffix->setText(_metrics->value("XMLSuccessSuffix"));
 
