@@ -225,7 +225,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
-
+ 
+	  populate();
       _save->setFocus();
     }
     else if (param.toString() == "view")
@@ -458,7 +459,7 @@ void returnAuthorizationItem::populate()
 {
   XSqlQuery raitem;
   raitem.prepare("SELECT raitem.*, "
-                 "       formatQty(raitem_qtyauth) AS qtyauth,"
+                 "       formatQty(raitem_qtyauthorized) AS qtyauth,"
 				 "       formatQty(coitem_qtyshipped) AS qtshipped,"
 		         "       rahead_taxauth_id,"
 		         "       COALESCE(rahead_tax_curr_id, rahead_curr_id) AS taxcurr "

@@ -111,7 +111,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
     connect(_ra, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillList()));
 
   sFillList();
 }

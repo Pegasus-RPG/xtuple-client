@@ -89,7 +89,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sFreightChanged()));
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
-  connect(_so, SIGNAL(newID(int)), this, SLOT(sSalesOrder()));
+  connect(_so, SIGNAL(newId(int)), this, SLOT(sSalesOrder()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
 /*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -105,8 +105,12 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _taxauthidCache	= -1;
   _taxCache.clear();
   _shiptoid		= -1;
+  _ignoreShiptoSignals = false;
+  _ignoreSoSignals = false;
+  _ffBillto = TRUE;
+  _ffShipto = TRUE;
 
-  _so->setType((cSoOpen && cSoReleased && cSoClosed));
+  _so->setType((cSoReleased));
   _authNumber->setValidator(omfgThis->orderVal());
   _comments->setType(Comments::ReturnAuth);
 
@@ -441,6 +445,7 @@ void returnAuthorization::sSave()
   }
 
   omfgThis->sReturnAuthorizationsUpdated();
+  omfgThis->sProjectsUpdated(_project->id());
 
   _comments->setId(_raheadid);
 }
@@ -469,14 +474,18 @@ void returnAuthorization::sShipToList()
 
 void returnAuthorization::sSalesOrder()
 {
-  if (_so->id() != 0)
+  if (!_ignoreSoSignals && (_so->id() != 0))
   {
-
     XSqlQuery sohead;
-    sohead.prepare( "SELECT cohead.*, "
-                    "       formatScrap(cohead_commission) AS f_commission "
+    sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
+                    "       formatScrap(cohead_commission) AS f_commission, "
+					"       shipto_num "
                     "FROM cohead "
-					"WHERE (cohead_id=:cohead_id) "
+					"  LEFT OUTER JOIN shiptoinfo ON (cohead_shipto_id=shipto_id), "
+					"  custinfo, custtype "
+					"WHERE ((cohead_id=:cohead_id) "
+					"AND (cohead_cust_id=cust_id) "
+					"AND (cust_custtype_id=custtype_id) ) "
                     "LIMIT 1;" );
     sohead.bindValue(":cohead_id", _so->id());
     sohead.exec();
@@ -489,31 +498,43 @@ void returnAuthorization::sSalesOrder()
       _customerPO->setText(sohead.value("cohead_ponumber"));
 
       _cust->setEnabled(FALSE);
-      _billToName->setEnabled(FALSE);
-      _billToAddr->setEnabled(FALSE);
 
       _cust->setId(sohead.value("cohead_cust_id").toInt());
-      _billToName->setText(sohead.value("cohead_billto_name"));
-      _billToAddr->setLine1(sohead.value("cohead_billto_address1").toString());
-      _billToAddr->setLine2(sohead.value("cohead_billto_address2").toString());
-      _billToAddr->setLine3(sohead.value("cohead_billto_address3").toString());
-      _billToAddr->setCity(sohead.value("cohead_billto_city").toString());
-      _billToAddr->setState(sohead.value("cohead_billto_state").toString());
-      _billToAddr->setPostalCode(sohead.value("cohead_billto_zipcode").toString());
-      _billToAddr->setCountry(sohead.value("cohead_billto_country").toString());
+  	  _custType->setText(sohead.value("custtype_code").toString());
+      _billToName->setText(sohead.value("cohead_billtoname"));
+      _billToAddr->setLine1(sohead.value("cohead_billtoaddress1").toString());
+      _billToAddr->setLine2(sohead.value("cohead_billtoaddress2").toString());
+      _billToAddr->setLine3(sohead.value("cohead_billtoaddress3").toString());
+      _billToAddr->setCity(sohead.value("cohead_billtocity").toString());
+      _billToAddr->setState(sohead.value("cohead_billtostate").toString());
+      _billToAddr->setPostalCode(sohead.value("cohead_billtozipcode").toString());
+      _billToAddr->setCountry(sohead.value("cohead_billtocountry").toString());
+      if ( (_mode == cNew) || (_mode == cEdit) )
+        _ffBillto = sohead.value("cust_ffbillto").toBool();
+      else
+        _ffBillto = FALSE;
+      _billToName->setEnabled(_ffBillto);
+      _billToAddr->setEnabled(_ffBillto);
 
-      _shipToNumber->setEnabled(FALSE);
-      _shipToName->setEnabled(FALSE);
-      _shipToAddr->setEnabled(FALSE);
       _ignoreShiptoSignals = TRUE;
-      _shipToName->setText(sohead.value("cohead_shipto_name"));
-      _shipToAddr->setLine1(sohead.value("cohead_shipto_address1").toString());
-      _shipToAddr->setLine2(sohead.value("cohead_shipto_address2").toString());
-      _shipToAddr->setLine3(sohead.value("cohead_shipto_address3").toString());
-      _shipToAddr->setCity(sohead.value("cohead_shipto_city").toString());
-      _shipToAddr->setState(sohead.value("cohead_shipto_state").toString());
-      _shipToAddr->setPostalCode(sohead.value("cohead_shipto_zipcode").toString());
-      _shipToAddr->setCountry(sohead.value("cohead_shipto_country").toString());
+	  _shiptoid = sohead.value("cohead_shipto_id").toInt();
+	  _shipToNumber->setText(sohead.value("shipto_num").toString());
+      _shipToName->setText(sohead.value("cohead_shiptoname"));
+      _shipToAddr->setLine1(sohead.value("cohead_shiptoaddress1").toString());
+      _shipToAddr->setLine2(sohead.value("cohead_shiptoaddress2").toString());
+      _shipToAddr->setLine3(sohead.value("cohead_shiptoaddress3").toString());
+      _shipToAddr->setCity(sohead.value("cohead_shiptocity").toString());
+      _shipToAddr->setState(sohead.value("cohead_shiptostate").toString());
+      _shipToAddr->setPostalCode(sohead.value("cohead_shiptozipcode").toString());
+      _shipToAddr->setCountry(sohead.value("cohead_shiptocountry").toString());
+      if ( (_mode == cNew) || (_mode == cEdit) )
+        _ffShipto = sohead.value("cust_ffshipto").toBool();
+	  else
+	    _ffShipto = FALSE;
+      _copyToShipto->setEnabled(_ffShipto);
+	  _shipToName->setEnabled(_ffShipto);
+	  _shipToNumber->setEnabled(_ffShipto);
+	  _shipToAddr->setEnabled(_ffShipto);
       _ignoreShiptoSignals = FALSE;
     }
     else if (sohead.lastError().type() != QSqlError::None)
@@ -557,6 +578,7 @@ void returnAuthorization::populateShipto(int pShiptoid)
     query.exec();
     if (query.first())
     {
+	  _shiptoid = pShiptoid;
       _ignoreShiptoSignals = TRUE;
       _shipToNumber->setText(query.value("shipto_num"));
       _shipToName->setText(query.value("shipto_name"));
@@ -589,7 +611,7 @@ void returnAuthorization::sPopulateCustomerInfo()
     if (_cust->isValid())
     {
       XSqlQuery query;
-      query.prepare( "SELECT cust_salesrep_id,"
+      query.prepare( "SELECT custtype_code, cust_salesrep_id,"
                      "       formatScrap(cust_commprcnt) AS f_commission,"
                      "       cust_taxauth_id, cust_curr_id, "
                      "       cust_name, cntct_addr_id, "
@@ -598,18 +620,15 @@ void returnAuthorization::sPopulateCustomerInfo()
                      "FROM custinfo "
 					 "  LEFT OUTER JOIN shiptoinfo ON ((cust_id=shipto_cust_id) "
 					 "                             AND (shipto_default)) "
-					 "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id) "
-                     "WHERE (cust_id=:cust_id);" );
+					 "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id), "
+					 "  custtype "
+                     "WHERE ( (cust_id=:cust_id) "
+					 "AND (custtype_id=cust_custtype_id) );" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
       {
-        _ffShipto = query.value("cust_ffshipto").toBool();
-        _copyToShipto->setEnabled(_ffShipto);
-		_shipToName->setEnabled(_ffShipto);
-		_shipToNumber->setEnabled(_ffShipto);
-		_shipToAddr->setEnabled(_ffShipto);
-
+       	_custType->setText(query.value("custtype_code").toString());
         _salesRep->setId(query.value("cust_salesrep_id").toInt());
         _commission->setText(query.value("f_commission"));
 
@@ -620,14 +639,21 @@ void returnAuthorization::sPopulateCustomerInfo()
         _billToName->setText(query.value("cust_name"));
         _billToAddr->setId(query.value("cntct_addr_id").toInt());
 
-        bool ffBillTo;
         if ( (_mode == cNew) || (_mode == cEdit) )
-          ffBillTo = query.value("cust_ffbillto").toBool();
+          _ffBillto = query.value("cust_ffbillto").toBool();
         else
-          ffBillTo = FALSE;
+          _ffBillto = FALSE;
+        _billToName->setEnabled(_ffBillto);
+        _billToAddr->setEnabled(_ffBillto);
 
-        _billToName->setEnabled(ffBillTo);
-        _billToAddr->setEnabled(ffBillTo);
+        if ( (_mode == cNew) || (_mode == cEdit) )
+          _ffShipto = query.value("cust_ffshipto").toBool();
+		else
+		  _ffShipto = FALSE;
+        _copyToShipto->setEnabled(_ffShipto);
+		_shipToName->setEnabled(_ffShipto);
+		_shipToNumber->setEnabled(_ffShipto);
+		_shipToAddr->setEnabled(_ffShipto);
 		populateShipto(query.value("shiptoid").toInt());
       }
       else if (query.lastError().type() != QSqlError::None)
@@ -838,8 +864,8 @@ void returnAuthorization::sFillList()
 			 "            WHEN (raitem_disposition='S') THEN 'Ship' "
 			 "            ELSE 'Error' END AS disposition, "
 			 "       formatboolyn(coitem_warranty),"
-			 "       formatQty(raitem_qtyauthorized),"
 			 "       formatQty(COALESCE(coitem_qtyshipped,0)),"
+			 "       formatQty(raitem_qtyauthorized),"
 			 "       formatQty(raitem_qtyreceived),formatQty(raitem_qtyshipped),"       
              "       formatSalesPrice(raitem_unitprice),"
              "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
@@ -862,13 +888,22 @@ void returnAuthorization::sFillList()
   recalculateTax();
 
   _currency->setEnabled(_raitem->topLevelItemCount() == 0);
+
+  q.prepare("SELECT raitem_id "
+		    "FROM raitem "
+			"WHERE ( (raitem_rahead_id=:rahead_id) "
+			"AND (raitem_coitem_id IS NOT NULL) "
+			"AND (raitem_qtyauthorized > 0 ) );");
+  q.bindValue(":rahead_id", _raheadid);
+  q.exec();
+  _so->setEnabled(!q.first());
 }
 
 void returnAuthorization::sCalculateSubtotal()
 {
 //  Determine the subtotal and line item tax
   XSqlQuery query;
-  query.prepare( "SELECT (SUM((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_price / raitem_price_invuomratio)) AS subtotal,"
+  query.prepare( "SELECT SUM((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio)) AS subtotal,"
                  "       SUM(raitem_tax_ratea) AS taxa,"
                  "       SUM(raitem_tax_rateb) AS taxb,"
                  "       SUM(raitem_tax_ratec) AS taxc "
@@ -899,12 +934,14 @@ void returnAuthorization::sCalculateTotal()
 void returnAuthorization::populate()
 {
   XSqlQuery rahead;
-  rahead.prepare( "SELECT rahead.*,"
-                  "       cust_name, cust_ffbillto, cust_ffshipto,"
+  rahead.prepare( "SELECT rahead.*, custtype_code, "
+                  "       cust_name, cust_ffbillto, cust_ffshipto, shipto_num, "
                   "       formatScrap(rahead_commission) AS f_commission "
-                  "FROM cust, rahead "
+                  "FROM cust, custtype, rahead "
+				  "  LEFT OUTER JOIN shiptoinfo ON (rahead_shipto_id=shipto_id)"
                   "WHERE ( (rahead_cust_id=cust_id)"
-                  " AND (rahead_id=:rahead_id) );" );
+                  " AND (rahead_id=:rahead_id) "
+				  " AND (cust_custtype_id=custtype_id) );" );
   rahead.bindValue(":rahead_id", _raheadid);
   rahead.exec();
   if (rahead.first())
@@ -934,7 +971,7 @@ void returnAuthorization::populate()
 	  _disposition->setCurrentItem(1);
 	else if (rahead.value("rahead_disposition").toString() == "P")
 	  _disposition->setCurrentItem(2);
-	else if (rahead.value("rahead_disposition").toString() == "S")
+	else if (rahead.value("rahead_disposition").toString() == "V")
 	  _disposition->setCurrentItem(3);
     else if (rahead.value("rahead_disposition").toString() == "M")
 	  _disposition->setCurrentItem(4);
@@ -954,12 +991,16 @@ void returnAuthorization::populate()
 	  _creditBy->setCurrentItem(3);
 
     _cust->setId(rahead.value("rahead_cust_id").toInt());
+	_custType->setText(rahead.value("custtype_code").toString());
+	_ignoreSoSignals = TRUE;
+	_so->setId(rahead.value("rahead_cohead_id").toInt());
+	_ignoreSoSignals = FALSE;
     _incident->setId(rahead.value("rahead_incdt_id").toInt());
     _project->setId(rahead.value("rahead_prj_id").toInt());
 
-    bool ffBillTo = rahead.value("cust_ffbillto").toBool();
-    _billToName->setEnabled(ffBillTo);
-    _billToAddr->setEnabled(ffBillTo);
+    _ffBillto = rahead.value("cust_ffbillto").toBool();
+    _billToName->setEnabled(_ffBillto);
+    _billToAddr->setEnabled(_ffBillto);
 
     _billToName->setText(rahead.value("rahead_billtoname"));
     _billToAddr->setLine1(rahead.value("rahead_billtoaddress1").toString());
@@ -970,14 +1011,13 @@ void returnAuthorization::populate()
     _billToAddr->setPostalCode(rahead.value("rahead_billtozip").toString());
     _billToAddr->setCountry(rahead.value("rahead_billtocountry").toString());
 
-    if (_mode == cEdit)
-      _ffShipto = rahead.value("cust_ffshipto").toBool();
-    else
-      _ffShipto = FALSE;
-
+    _ffShipto = rahead.value("cust_ffshipto").toBool();
     _shipToName->setEnabled(_ffShipto);
+	_shipToAddr->setEnabled(_ffShipto);
 
+	_ignoreShiptoSignals = TRUE;
     _shiptoid = rahead.value("rahead_shipto_id").toInt();
+	_shipToNumber->setText(rahead.value("shipto_num").toString());
     _shipToName->setText(rahead.value("rahead_shipto_name"));
     _shipToAddr->setLine1(rahead.value("rahead_shipto_address1").toString());
     _shipToAddr->setLine2(rahead.value("rahead_shipto_address2").toString());
@@ -986,6 +1026,7 @@ void returnAuthorization::populate()
     _shipToAddr->setState(rahead.value("rahead_shipto_state").toString());
     _shipToAddr->setPostalCode(rahead.value("rahead_shipto_zipcode").toString());
     _shipToAddr->setCountry(rahead.value("rahead_shipto_country").toString());
+	_ignoreShiptoSignals = FALSE;
 	_customerPO->setText(rahead.value("rahead_custponumber"));
 
     _currency->setId(rahead.value("rahead_curr_id").toInt());
@@ -1014,14 +1055,14 @@ void returnAuthorization::populate()
     _notes->setText(rahead.value("rahead_notes").toString());
 
     recalculateTax();
+
+    sFillList();
   }
   else if (rahead.lastError().type() != QSqlError::None)
   {
     systemError(this, rahead.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  sFillList();
 }
 
 void returnAuthorization::closeEvent(QCloseEvent *pEvent)
@@ -1065,7 +1106,7 @@ void returnAuthorization::sTaxDetail()
 	       "  rahead_freighttax_ratea=:freighta,"
 	       "  rahead_freighttax_rateb=:freightb,"
 	       "  rahead_freighttax_ratec=:freightc,"
-	       "  rahead_docdate=:docdate "
+	       "  rahead_authdate=:docdate "
 	       "WHERE (rahead_id=:rahead_id);");
   if (_taxauth->isValid())
     taxq.bindValue(":taxauth",	_taxauth->id());

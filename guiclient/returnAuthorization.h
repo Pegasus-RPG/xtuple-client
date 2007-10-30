@@ -85,7 +85,6 @@ public slots:
     virtual void sParseShipToNumber();
     virtual void populateShipto( int pShiptoid );
     virtual void sPopulateCustomerInfo();
-  //  virtual void sPopulateBySalesOrder( int pInvoiceNumber );
     virtual void sCheckAuthorizationNumber();
 	virtual void sClearShiptoNumber();
     virtual void sCopyToShipto();
@@ -113,6 +112,7 @@ private:
     bool _ffBillto;
     bool _ffShipto;
     bool _ignoreShiptoSignals;
+	bool _ignoreSoSignals;
     double _subtotalCache;
     int _taxauthidCache;
     int _taxcurrid;
