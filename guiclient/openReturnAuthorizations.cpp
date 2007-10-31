@@ -61,6 +61,7 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QWorkspace>
+#include <QSqlError>
 #include <openreports.h>
 #include "returnAuthorization.h"
 #include "openReturnAuthorizations.h"
@@ -179,50 +180,20 @@ void openReturnAuthorizations::sView()
 
 void openReturnAuthorizations::sDelete()
 {
-	/*
+
   if ( QMessageBox::warning( this, tr("Delete Return Authorization?"),
-                             tr("Are you sure that you want to completely delete the selected Sales Order?"),
+                             tr("Are you sure that you want to completely delete the selected Return Authorization?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
   {
-    q.prepare("SELECT deleteSo(:sohead_id) AS result;");
-    q.bindValue(":sohead_id", _so->id());
+	q.prepare("DELETE FROM rahead WHERE (rahead_id=:rahead_id);");
+    q.bindValue(":rahead_id", _ra->id());
     q.exec();
-    if (q.first())
+    if (q.lastError().type() != QSqlError::None)
     {
-      switch (q.value("result").toInt())
-      {
-        case 0:
-          omfgThis->sSalesOrdersUpdated(-1);
-          omfgThis->sProjectsUpdated(-1);
-          break;
-
-        case -1:
-          if ( QMessageBox::information( this, tr("Cannot Delete Sales Order"),
-                                         tr( "The selected Sales Order cannot be deleted as there have been shipments posted against it.\n"
-                                             "Would you like to Close the selected Sales Order instead?" ),
-                                         tr("Yes"), tr("No"), QString::null, 0, 1 ) == 0 )
-          {
-            q.prepare( "UPDATE raitem "
-                       "SET raitem_status='C' "
-                       "WHERE ((raitem_status <> 'X') AND (raitem_cohead_id=:sohead_id));" );
-            q.bindValue(":sohead_id", _so->id());
-            q.exec();
-      
-            sFillList();
-          }
-
-          break;
-
-        case -2:
-          QMessageBox::information( this, tr("Cannot Delete Sales Order"),
-                                    tr( "The selected Sales Order cannot be deleted as shipping stock has been posted against one or\n"
-                                        "more of its line items.  You must return this stock before you may delete this Sales Order." ) );
-          break;
-//  ToDo
-      }
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     }
   }
-  */
+  omfgThis->sReturnAuthorizationsUpdated();
 }
 
 void openReturnAuthorizations::sPopulateMenu(QMenu *pMenu)

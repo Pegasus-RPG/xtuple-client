@@ -181,9 +181,9 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _authDate->setDate(omfgThis->dbDate(), true);
 
       q.prepare("INSERT INTO rahead ("
-		        "    rahead_id, rahead_number, rahead_authdate"
+		        "    rahead_id, rahead_number, rahead_status, rahead_authdate"
 		        ") VALUES ("
-		        "    :rahead_id, :rahead_number, :rahead_authdate"
+		        "    :rahead_id, :rahead_number, 'O', :rahead_authdate"
 		        ");");
       q.bindValue(":rahead_id",		_raheadid);
       q.bindValue(":rahead_number",	_authNumber->text().toInt());
@@ -538,12 +538,18 @@ void returnAuthorization::sSalesOrder()
       _ignoreShiptoSignals = FALSE;
 
 	  sSave();
+	  sFillList();
     }
     else if (sohead.lastError().type() != QSqlError::None)
     {
       systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+  }
+  if (!_ignoreSoSignals)
+  {
+    sSave();
+	sFillList();
   }
 }
 
@@ -813,27 +819,6 @@ void returnAuthorization::sEdit()
 
 void returnAuthorization::sDelete()
 {
-  q.prepare( "SELECT raitem_qtyreceived+raitem_qtyshipped+raitem_qtycredited AS result "
-             "FROM raitem "
-             "WHERE (raitem_id=:raitem_id);" );
-  q.bindValue(":raitem_id", _raitem->id());
-  q.exec();
-  if (q.first())
-  {
-    if (q.value("result").toDouble() > 0)
-    {
-      QMessageBox::information(this, "Line Item cannot be deleted",
-                               tr("<p>This line item has transaction history and"
-				                  " cannot be modified.") );
-      return;
-    }
-  }
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-
   if (QMessageBox::question(this, "Delete current Line Item?",
                             tr("<p>Are you sure that you want to delete the "
 			       "current Line Item?"),
