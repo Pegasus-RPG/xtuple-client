@@ -838,7 +838,7 @@ void item::sFormatItemNumber()
 void item::populate()
 {
   XSqlQuery item;
-  item.prepare( "SELECT *, formatCost(item_maxcost) AS f_maxcost,"
+  item.prepare( "SELECT *,"
                 "       ( (item_type IN ('P', 'M', 'C', 'Y', 'R', 'A')) AND (item_sold) ) AS sold "
                 "FROM item "
                 "WHERE (item_id=:item_id);" );
@@ -886,7 +886,7 @@ void item::populate()
     _fractional->setChecked(item.value("item_fractional").toBool());
     _prodWeight->setText(formatWeight(item.value("item_prodweight").toDouble()));
     _packWeight->setText(formatWeight(item.value("item_packweight").toDouble()));
-    _maximumDesiredCost->setLocalValue(item.value("f_maxcost").toDouble());
+    _maximumDesiredCost->setLocalValue(item.value("item_maxcost").toDouble());
     _notes->setText(item.value("item_comments").toString());
     _extDescription->setText(item.value("item_extdescrip").toString());
     _sold->setChecked(item.value("item_sold").toBool());
