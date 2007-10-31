@@ -465,7 +465,7 @@ void returnAuthorizationItem::populate()
 {
   XSqlQuery raitem;
   raitem.prepare("SELECT rahead_number, raitem.*,cohead_number,coitem_linenumber, "
-	             "       COALESCE(raitem_coitem_id,-1) AS ra_coitem_id, "
+	             "       COALESCE(raitem_coitem_id,-1) AS ra_coitem_id, coitem_price, "
 				 "       formatQty(coitem_qtyshipped) AS qtysold,"   
                  "       formatQty(raitem_qtyauthorized) AS qtyauth,"
 				 "       formatQty(raitem_qtyreceived) AS qtyrcvd,"
@@ -493,6 +493,7 @@ void returnAuthorizationItem::populate()
 	  _orderNumberLit->hide();
 	  _orderLineNumberLit->hide();
 	}
+	_salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
     // do _item and _taxauth before other tax stuff because of signal cascade
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
@@ -542,14 +543,13 @@ void returnAuthorizationItem::populate()
    //   _ratio->setText(formatUOMRatio(_priceinvuomratio));
       _salePrice->setLocalValue(raitem.value("coitem_price_local").toDouble() * _priceinvuomratio);
 	}
-
-    sCalculateDiscountPrcnt();
   }
   else if (raitem.lastError().type() != QSqlError::None)
   {
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
+  sCalculateDiscountPrcnt();
 }
 
 void returnAuthorizationItem::sCalculateExtendedPrice()

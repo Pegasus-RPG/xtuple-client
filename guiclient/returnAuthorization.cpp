@@ -536,6 +536,8 @@ void returnAuthorization::sSalesOrder()
 	  _shipToNumber->setEnabled(_ffShipto);
 	  _shipToAddr->setEnabled(_ffShipto);
       _ignoreShiptoSignals = FALSE;
+
+	  sSave();
     }
     else if (sohead.lastError().type() != QSqlError::None)
     {
@@ -856,7 +858,7 @@ void returnAuthorization::sFillList()
 {
   q.prepare( "SELECT raitem_id, raitem_linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
-			 "       coitem_status, "
+			 "       raitem_status, "
 			 "       CASE WHEN (raitem_disposition='C') THEN 'Credit' "
 			 "            WHEN (raitem_disposition='R') THEN 'Return' "
 			 "            WHEN (raitem_disposition='P') THEN 'Replace' "
@@ -903,24 +905,17 @@ void returnAuthorization::sCalculateSubtotal()
 {
 //  Determine the subtotal and line item tax
   XSqlQuery query;
-  query.prepare( "SELECT SUM((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio)) AS subtotal,"
-                 "       SUM(raitem_tax_ratea) AS taxa,"
-                 "       SUM(raitem_tax_rateb) AS taxb,"
-                 "       SUM(raitem_tax_ratec) AS taxc "
-                 "FROM raitem, itemsite, item "
-                 "WHERE ( (raitem_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (raitem_rahead_id=:rahead_id) );" );
+  query.prepare( "SELECT SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)) AS subtotal,"
+               "       SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * stdCost(item_id),2)) AS totalcost "
+               "FROM raitem, itemsite, item "
+               "WHERE ( (raitem_rahead_id=:rahead_id)"
+               " AND (raitem_itemsite_id=itemsite_id)"
+               " AND (raitem_status <> 'X')"
+               " AND (itemsite_item_id=item_id) );" );
   query.bindValue(":rahead_id", _raheadid);
   query.exec();
   if (query.first())
-  {
     _subtotal->setLocalValue(query.value("subtotal").toDouble());
-
-    _taxCache.setLine(query.value("taxa").toDouble(),
-		      query.value("taxb").toDouble(),
-		      query.value("taxc").toDouble());
-  }
 }
 
 void returnAuthorization::sCalculateTotal()
@@ -1140,21 +1135,28 @@ void returnAuthorization::sTaxDetail()
 
 void returnAuthorization::recalculateTax()
 {
+  enum Rate { A = 0, B = 1, C = 2 };
+  enum Part { Line = 0, Freight = 1, Adj = 2, Total = 3 };
+  double _ttaxCache[3][4];	// [Rate] vs. [Part]
+
   XSqlQuery itemq;
 
   //  Determine the line item tax
-  itemq.prepare( "SELECT SUM(raitem_tax_ratea) AS itemtaxa,"
-		 "       SUM(raitem_tax_rateb) AS itemtaxb,"
-		 "       SUM(raitem_tax_ratec) AS itemtaxc "
-		 "FROM raitem "
-		 "WHERE (raitem_rahead_id=:rahead_id);" );
+  itemq.prepare( "SELECT SUM(ROUND(calculateTax(raitem_tax_id, ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2), 0, 'A'), 2)) AS itemtaxa,"
+                 "       SUM(ROUND(calculateTax(raitem_tax_id, ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2), 0, 'B'), 2)) AS itemtaxb,"
+                 "       SUM(ROUND(calculateTax(raitem_tax_id, ROUND((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio), 2), 0, 'C'), 2)) AS itemtaxc "
+                 "FROM raitem, itemsite, item "
+                 "WHERE ((raitem_rahead_id=:rahead_id)"
+                 "  AND  (raitem_itemsite_id=itemsite_id)"
+                 "  AND  (itemsite_item_id=item_id));" );
+
   itemq.bindValue(":rahead_id", _raheadid);
   itemq.exec();
   if (itemq.first())
   {
-    _taxCache.setLine(itemq.value("itemtaxa").toDouble(),
-		      itemq.value("itemtaxb").toDouble(),
-		      itemq.value("itemtaxc").toDouble());
+    _ttaxCache[A][Line] = itemq.value("itemtaxa").toDouble();
+    _ttaxCache[B][Line] = itemq.value("itemtaxb").toDouble();
+    _ttaxCache[C][Line] = itemq.value("itemtaxc").toDouble();
   }
   else if (itemq.lastError().type() != QSqlError::NoError)
   {
@@ -1162,9 +1164,11 @@ void returnAuthorization::recalculateTax()
     return;
   }
 
-  if (_taxcurrid > 0)
-    _tax->setLocalValue(CurrDisplay::convert(_taxcurrid, _tax->id(),
-			_taxCache.total(), _tax->effective()));
+  _ttaxCache[A][Total] = _ttaxCache[A][Line] + _ttaxCache[A][Freight] + _ttaxCache[A][Adj];
+  _ttaxCache[B][Total] = _ttaxCache[B][Line] + _ttaxCache[B][Freight] + _ttaxCache[B][Adj];
+  _ttaxCache[C][Total] = _ttaxCache[C][Line] + _ttaxCache[C][Freight] + _ttaxCache[C][Adj];
+
+  _tax->setLocalValue(_ttaxCache[A][Total] + _ttaxCache[B][Total] + _ttaxCache[C][Total]);
 }
 
 void returnAuthorization::sTaxAuthChanged()

@@ -116,6 +116,7 @@ private:
     double _subtotalCache;
     int _taxauthidCache;
     int _taxcurrid;
+
     taxCache _taxCache;
 };
 

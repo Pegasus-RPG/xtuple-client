@@ -434,7 +434,7 @@
            <string>Unit Cost:</string>
           </property>
           <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -454,7 +454,7 @@
            <string>List Price:</string>
           </property>
           <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
@@ -474,7 +474,7 @@
            <string>Sale Price:</string>
           </property>
           <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
