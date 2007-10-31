@@ -332,7 +332,11 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _comments->setEnabled(FALSE);
       _orderStatusLit->hide();
       _orderStatus->hide();
-      _createOrder->hide();
+      //_createOrder->hide();
+      _orderQtyLit->hide();
+      _orderQty->hide();
+      _orderDueDateLit->hide();
+      _orderDueDate->hide();
       _cancel->hide();
       _sub->hide();
       _subItem->hide();
@@ -390,7 +394,13 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _listPrices->setEnabled(TRUE);
       _comments->setType(Comments::QuoteItem);
-      _createOrder->hide();
+      //_createOrder->hide();
+      _orderQtyLit->hide();
+      _orderQty->hide();
+      _orderDueDateLit->hide();
+      _orderDueDate->hide();
+      _orderStatusLit->hide();
+      _orderStatus->hide();
       _cancel->hide();
       _sub->hide();
       _subItem->hide();
@@ -419,7 +429,13 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
 
       setCaption(tr("Quote Item"));
 
-      _createOrder->hide();
+      //_createOrder->hide();
+      _orderQtyLit->hide();
+      _orderQty->hide();
+      _orderDueDateLit->hide();
+      _orderDueDate->hide();
+      _orderStatusLit->hide();
+      _orderStatus->hide();
       _cancel->hide();
       _sub->hide();
       _subItem->hide();
@@ -762,6 +778,7 @@ void salesOrderItem::sSave()
                "    coitem_qtyord=:soitem_qtyord, coitem_qty_uom_id=:qty_uom_id, coitem_qty_invuomratio=:qty_invuomratio,"
                "    coitem_price=:soitem_price, coitem_price_uom_id=:price_uom_id, coitem_price_invuomratio=:price_invuomratio,"
                "    coitem_memo=:soitem_memo,"
+               "    coitem_order_type=:soitem_order_type,"
                "    coitem_order_id=:soitem_order_id, coitem_substitute_item_id=:soitem_substitute_item_id,"
                "    coitem_prcost=:soitem_prcost,"
                "    coitem_tax_id=:soitem_tax_id "
@@ -776,6 +793,13 @@ void salesOrderItem::sSave()
     q.bindValue(":price_invuomratio", _priceinvuomratio);
     q.bindValue(":soitem_prcost", _overridePoPrice->localValue());
     q.bindValue(":soitem_memo", _notes->text());
+    if(_orderId != -1)
+    {
+      if (_item->itemType() == "M")
+        q.bindValue(":soitem_order_type", "W");
+      else if (_item->itemType() == "P")
+        q.bindValue(":soitem_order_type", "R");
+    }
     q.bindValue(":soitem_order_id", _orderId);
     q.bindValue(":soitem_id", _soitemid);
     if(_sub->isChecked())
@@ -1746,9 +1770,9 @@ void salesOrderItem::sHandleWo(bool pCreate)
 				     "Order created for this Sales Order Item."
 				     "Are you sure you want to do this?"),
 				  QMessageBox::Yes | QMessageBox::Default,
-				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
+				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
         {
-          query.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+          query.prepare("SELECT deleteWo(:wo_id, TRUE) AS result;");
           query.bindValue(":wo_id", _orderId);
           query.exec();
 	  if (query.first())
@@ -1756,7 +1780,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
 	    int result = query.value("result").toInt();
 	    if (result < 0)
 	    {
-	      systemError(this, storedProcErrorLookup("changeWoDates", result),
+	      systemError(this, storedProcErrorLookup("deleteWo", result),
 			  __FILE__, __LINE__);
 	      _createOrder->setChecked(true); // if (pCreate) => won't recurse
 	      return;
@@ -1785,7 +1809,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
 				     "Order Item. Are you sure you want to do "
 				     "this?"),
 				  QMessageBox::Yes | QMessageBox::Default,
-				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::No)
+				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
         {
           query.prepare("SELECT deletePr(:pr_id) AS result;");
           query.bindValue(":pr_id", _orderId);
