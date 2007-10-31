@@ -139,6 +139,9 @@ importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
 				      "XMLDefaultDirLinux"
 #endif
       );
+  if (_defaultXMLDir.isEmpty())
+    _defaultXMLDir = ".";
+
   _defaultXSLTDir = _metrics->value(
 #if defined Q_WS_MACX
 				      "XSLTDefaultDirMac"
@@ -287,6 +290,7 @@ bool importXML::importOne(const QString &pFileName)
   if (!openDomDocument(pFileName, doc))
     return false;
 
+  QString tmpfileName; // only set if we translate the file with XSLT
   if (doc.doctype().name() != "xtupleimport")
   {
     QString xsltfile;
@@ -316,14 +320,14 @@ bool importXML::importOne(const QString &pFileName)
       return false;
     }
 
-    QTemporaryFile tmpfile(doc.doctype().name() + "TOxtupleimport");
+    QTemporaryFile tmpfile(_defaultXMLDir + "/" + doc.doctype().name() + "TOxtupleimport");
     tmpfile.setAutoRemove(false);
     if (! tmpfile.open())
     {
       systemError(this, tr("<p>Could not create a temporary file."));
       return false;
     }
-    QString tmpfileName = tmpfile.fileName();
+    tmpfileName = tmpfile.fileName();
     tmpfile.close();
 
     if (_metrics->boolean("XSLTLibrary"))
@@ -379,18 +383,82 @@ bool importXML::importOne(const QString &pFileName)
     }
   }
 
-  QDomElement docElem = doc.documentElement();
-  QDomNode n = docElem.firstChild();
-  while (!n.isNull())
+  /* xtupleimport format is very straightforward:
+      top level element is xtupleimport
+	second level elements are all api view names
+	  third level elements are all column names
+     and there are no text nodes until third level
+  */
+  /*
+     for now wrap the import of an entire file in a single transaction.
+     at least we'll know which files succeeded and which files failed.
+  */
+
+  q.exec("BEGIN;");
+  if (q.lastError().type() != QSqlError::None)
   {
-    QDomElement e = n.toElement();
-    if (!e.isNull())
-    {
-      qDebug(e.tagName());
-    }
-    n = n.nextSibling();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  for (QDomElement viewElem = doc.documentElement().firstChildElement();
+       ! viewElem.isNull();
+       viewElem = viewElem.nextSiblingElement())
+  {
+    QStringList columnNameList;
+    QStringList columnValueList;
+    bool update = ! viewElem.attribute("id").isEmpty();
+
+    for (QDomElement columnElem = viewElem.firstChildElement();
+	 ! columnElem.isNull();
+	 columnElem = columnElem.nextSiblingElement())
+    {
+      qDebug(columnElem.tagName().toAscii().data());
+      columnNameList.append(columnElem.tagName());
+      if (! columnElem.attribute("value").isEmpty())
+	columnValueList.append("'" + columnElem.attribute("value") + "'");
+      else if (columnElem.text().stripWhiteSpace().startsWith("SELECT"))
+	columnValueList.append("(" + columnElem.text() + ")");
+      else if (columnElem.text().contains("'"))
+	columnValueList.append(columnElem.text());
+      else
+	columnValueList.append("'" + columnElem.text() + "'");
+    }
+
+    QString sql;
+    if (update)
+    {
+      for (int i = 0; i < columnNameList.size(); i++)
+	columnNameList[i].append("=" + columnValueList[i]);
+      sql = "UPDATE api." + viewElem.tagName() + " SET " +
+	    columnNameList.join(", ") +
+	    " WHERE (" + viewElem.tagName() +
+	    "_id='" + viewElem.attribute("id") + "');" ;
+    }
+    else
+      sql = "INSERT INTO api." + viewElem.tagName() + " (" +
+	    columnNameList.join(", ") +
+	    " ) SELECT " +
+	    columnValueList.join(", ") + ";" ;
+    q.exec(sql);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      rollback.exec();
+      systemError(this, tr("Error importing %1 %2\n\n").arg(pFileName).arg(tmpfileName) + q.lastError().databaseText(), __FILE__, __LINE__);
+      return false;
+    }
+  }
+
+  q.exec("COMMIT;");
+  if (q.lastError().type() != QSqlError::None)
+  {
+    rollback.exec();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return false;
+  }
 
   if (_metrics->value("XMLSuccessTreatment") == "Delete")
     return QFile::remove(pFileName);
