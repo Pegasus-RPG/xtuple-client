@@ -62,7 +62,7 @@
 #ifndef IMPORTXML_H
 #define IMPORTXML_H
 
-#include <QDOMDocument>
+#include <QDomDocument>
 #include <QMainWindow>
 #include <QMenu>
 
