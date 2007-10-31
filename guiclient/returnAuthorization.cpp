@@ -794,7 +794,7 @@ void returnAuthorization::sNew()
 void returnAuthorization::sEdit()
 {
   ParameterList params;
-  params.append("item_id", _raitem->id());
+  params.append("raitem_id", _raitem->id());
 
 
   if (_mode == cView)
@@ -1014,6 +1014,7 @@ void returnAuthorization::populate()
     _ffShipto = rahead.value("cust_ffshipto").toBool();
     _shipToName->setEnabled(_ffShipto);
 	_shipToAddr->setEnabled(_ffShipto);
+	_copyToShipto->setEnabled(_ffShipto);
 
 	_ignoreShiptoSignals = TRUE;
     _shiptoid = rahead.value("rahead_shipto_id").toInt();

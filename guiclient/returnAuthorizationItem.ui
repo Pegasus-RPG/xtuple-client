@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>611</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -188,13 +188,6 @@
      <layout class="QGridLayout" >
       <item row="0" column="0" colspan="3" >
        <widget class="ItemCluster" name="_item" />
-      </item>
-      <item row="1" column="0" colspan="3" >
-       <widget class="Line" name="line" >
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-       </widget>
       </item>
       <item row="2" column="0" >
        <widget class="QLabel" name="_warehouseLit" >
@@ -404,29 +397,6 @@
         </property>
        </widget>
       </item>
-      <item row="9" column="0" >
-       <widget class="QLabel" name="_invuomLit" >
-        <property name="text" >
-         <string>Inventory Units:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item row="9" column="1" >
-       <widget class="QLabel" name="_ratio" >
-        <property name="minimumSize" >
-         <size>
-          <width>80</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
       <item row="10" column="0" colspan="3" >
        <spacer>
         <property name="orientation" >
@@ -440,13 +410,20 @@
         </property>
        </spacer>
       </item>
+      <item row="1" column="0" colspan="3" >
+       <widget class="Line" name="line" >
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
    <item row="1" column="1" >
     <widget class="QGroupBox" name="_priceGroup" >
      <property name="title" >
-      <string/>
+      <string>Amount</string>
      </property>
      <layout class="QGridLayout" >
       <item row="0" column="0" >
@@ -865,7 +842,7 @@
      </layout>
     </widget>
    </item>
-   <item row="3" column="0" colspan="3" >
+   <item row="3" column="0" colspan="2" >
     <widget class="QTabWidget" name="_tab" >
      <property name="currentIndex" >
       <number>0</number>
@@ -898,29 +875,54 @@
        </item>
       </layout>
      </widget>
+     <widget class="QWidget" name="_accounts" >
+      <attribute name="title" >
+       <string>Accounts</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QLabel" name="_altcosAccntidLit" >
+         <property name="text" >
+          <string>Alternate Cost of Sales Account:</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="GLCluster" name="_altcosAccntid" />
+       </item>
+       <item row="0" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
      <widget class="QWidget" name="_lotserial" >
       <attribute name="title" >
        <string>Lot/Serial</string>
       </attribute>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
        <item row="0" column="0" >
         <widget class="QGroupBox" name="_authorizeLotSerial" >
          <property name="title" >
@@ -1027,120 +1029,6 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="_costofReturns" >
-      <attribute name="title" >
-       <string>Cost of Returns</string>
-      </attribute>
-      <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" >
-        <widget class="QGroupBox" name="_altCostofReturns" >
-         <property name="title" >
-          <string>Use Alternate Cost of Returns Account</string>
-         </property>
-         <property name="checkable" >
-          <bool>true</bool>
-         </property>
-         <property name="checked" >
-          <bool>false</bool>
-         </property>
-         <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>5</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>5</number>
-          </property>
-          <item row="0" column="2" >
-           <widget class="XComboBox" name="_altSalescatid" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2" >
-           <widget class="QRadioButton" name="_altSalescatidSelected" >
-            <property name="text" >
-             <string>From Sales Category:</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0" >
-           <widget class="QRadioButton" name="_altAccntidSelected" >
-            <property name="text" >
-             <string>Account Number:</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" colspan="2" >
-           <widget class="GLCluster" name="_altAccntid" />
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>40</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="0" column="1" >
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
-         </property>
-         <property name="sizeHint" >
-          <size>
-           <width>40</width>
-           <height>20</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-      </layout>
-     </widget>
     </widget>
    </item>
   </layout>
@@ -1207,9 +1095,6 @@
   <tabstop>_delete</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_authls</tabstop>
-  <tabstop>_altSalescatid</tabstop>
-  <tabstop>_altSalescatidSelected</tabstop>
-  <tabstop>_altAccntidSelected</tabstop>
   <tabstop>_tax</tabstop>
   <tabstop>_taxCode</tabstop>
   <tabstop>_taxType</tabstop>

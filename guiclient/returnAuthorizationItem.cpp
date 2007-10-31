@@ -114,6 +114,9 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
     _warehouseLit->hide();
     _warehouse->hide();
   } 
+
+  //Remove lot/serial for now until we get to advanced warranty tracking
+  _tab->removePage(_tab->page(2));
 }
 
 returnAuthorizationItem::~returnAuthorizationItem()
@@ -285,7 +288,7 @@ void returnAuthorizationItem::sSave()
                "  raitem_unitprice, raitem_tax_id, raitem_taxtype_id,"
 	           "  raitem_tax_pcta, raitem_tax_pctb, raitem_tax_pctc,"
 	           "  raitem_tax_ratea, raitem_tax_rateb, raitem_tax_ratec,"
-               "  raitem_notes, raitem_rsncode_id ) "
+               "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id) "
 			   "SELECT :raitem_id, :rahead_id, :raitem_linenumber, itemsite_id,"
 			   "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
@@ -293,14 +296,14 @@ void returnAuthorizationItem::sSave()
                "       :raitem_unitprice, :raitem_tax_id, :raitem_taxtype_id,"
 	           "       :raitem_tax_pcta, :raitem_tax_pctb, :raitem_tax_pctc,"
 	           "       :raitem_tax_ratea, :raitem_tax_rateb, :raitem_tax_ratec,"
-	           "       :raitem_notes, :raitem_rsncode_id "
+	           "       :raitem_notes, :raitem_rsncode_id, raitem_cos_accnt_id "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
   }
   else
     q.prepare( "UPDATE raitem "
-               "SET raitem_disposition, "
+	           "SET raitem_disposition=:raitem_disposition, "
 			   "    raitem_qtyauthorized=:raitem_qtyauthorized, "
                "    raitem_qty_uom_id=:qty_uom_id,"
                "    raitem_qty_invuomratio=:qty_invuomratio,"
@@ -316,7 +319,8 @@ void returnAuthorizationItem::sSave()
 	           "    raitem_tax_rateb=:raitem_tax_rateb,"
 	           "    raitem_tax_ratec=:raitem_tax_ratec,"
 	           "    raitem_notes=:raitem_notes,"
-               "    raitem_rsncode_id=:raitem_rsncode_id "
+               "    raitem_rsncode_id=:raitem_rsncode_id, "
+			   "    raitem_cos_accnt_id=:raitem_cos_accnt_id "
                "WHERE (raitem_id=:raitem_id);" );
 
   q.bindValue(":raitem_id", _raitemid);
@@ -343,6 +347,8 @@ void returnAuthorizationItem::sSave()
   q.bindValue(":raitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
+  if (_altcosAccntid->id() != -1)
+    q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -397,7 +403,7 @@ void returnAuthorizationItem::sPopulateItemInfo()
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
-    _ratio->setText(item.value("f_invpricerat").toString());
+    //_ratio->setText(item.value("f_invpricerat").toString());
     _invuomid = item.value("item_inv_uom_id").toInt();
     // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
@@ -436,7 +442,7 @@ void returnAuthorizationItem::sPopulateItemInfo()
       _pricingUOM->setId(raitem.value("coitem_price_uom_id").toInt());
 	  _pricingUOM->setEnabled(FALSE);
       _priceinvuomratio = raitem.value("coitem_price_invuomratio").toDouble();
-      _ratio->setText(formatUOMRatio(_priceinvuomratio));
+    //  _ratio->setText(formatUOMRatio(_priceinvuomratio));
       _salePrice->setLocalValue(raitem.value("coitem_price_local").toDouble() * _priceinvuomratio);
 
       if (_mode == cNew)
@@ -458,9 +464,12 @@ void returnAuthorizationItem::sPopulateItemInfo()
 void returnAuthorizationItem::populate()
 {
   XSqlQuery raitem;
-  raitem.prepare("SELECT raitem.*, "
+  raitem.prepare("SELECT rahead_number, raitem.*,cohead_number,coitem_linenumber, "
+	             "       COALESCE(raitem_coitem_id,-1) AS ra_coitem_id, "
+				 "       formatQty(coitem_qtyshipped) AS qtysold,"   
                  "       formatQty(raitem_qtyauthorized) AS qtyauth,"
-				 "       formatQty(coitem_qtyshipped) AS qtshipped,"
+				 "       formatQty(raitem_qtyreceived) AS qtyrcvd,"
+				 "       formatQty(raitem_qtyshipped) AS qtyshipd,"
 		         "       rahead_taxauth_id,"
 		         "       COALESCE(rahead_tax_curr_id, rahead_curr_id) AS taxcurr "
                  "FROM raitem "
@@ -473,13 +482,27 @@ void returnAuthorizationItem::populate()
   raitem.exec();
   if (raitem.first())
   {
+    _authNumber->setText(raitem.value("rahead_number").toString());
+	if (raitem.value("cohead_number").toInt() > 0)
+	{
+      _orderNumber->setText(raitem.value("cohead_number").toString());
+	  _orderLineNumber->setText(raitem.value("coitem_linenumber").toString());
+	}
+	else
+	{
+	  _orderNumberLit->hide();
+	  _orderLineNumberLit->hide();
+	}
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
     // do _item and _taxauth before other tax stuff because of signal cascade
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _tax->setId(raitem.value("taxcurr").toInt());
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
     _lineNumber->setText(raitem.value("raitem_linenumber").toString());
+    _qtySold->setText(raitem.value("qtysold").toString());
     _qtyAuth->setText(raitem.value("qtyauth").toString());
+    _qtyReceived->setText(raitem.value("qtyrcvd").toString());
+    _qtyShipped->setText(raitem.value("qtyshipd").toString());
     _notes->setText(raitem.value("raitem_notes").toString());
     _taxCode->setId(raitem.value("raitem_tax_id").toInt());
     _taxType->setId(raitem.value("raitem_taxtype_id").toInt());
@@ -502,8 +525,10 @@ void returnAuthorizationItem::populate()
 	  _disposition->setCurrentItem(3);
     else if (raitem.value("raitem_disposition").toString() == "S")
 	  _disposition->setCurrentItem(4);
+    _altcosAccntid->setId(raitem.value("raitem_cos_accnt_id").toInt());
 
-    _coitemid = raitem.value("coitem_id").toInt();
+
+    _coitemid = raitem.value("ra_coitem_id").toInt();
 	if (_coitemid != -1)
 	{
 	  _orderNumber->setText(raitem.value("cohead_number").toString());
@@ -514,7 +539,7 @@ void returnAuthorizationItem::populate()
       _pricingUOM->setId(raitem.value("coitem_price_uom_id").toInt());
 	  _pricingUOM->setEnabled(FALSE);
       _priceinvuomratio = raitem.value("coitem_price_invuomratio").toDouble();
-      _ratio->setText(formatUOMRatio(_priceinvuomratio));
+   //   _ratio->setText(formatUOMRatio(_priceinvuomratio));
       _salePrice->setLocalValue(raitem.value("coitem_price_local").toDouble() * _priceinvuomratio);
 	}
 
@@ -804,7 +829,7 @@ void returnAuthorizationItem::sPriceUOMChanged()
     else
       systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
   }
-  _ratio->setText(formatUOMRatio(_priceinvuomratio));
+  //_ratio->setText(formatUOMRatio(_priceinvuomratio));
 
   updatePriceInfo(); 
 }
