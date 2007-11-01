@@ -504,6 +504,23 @@ void AddressCluster::sSearch()
 			      tr("Could not instantiate a Search Dialog"));
 }
 
+void AddressCluster::setActiveVisible(const bool p)
+{
+  _active->setHidden(!p);
+  if (p)
+  {
+    _grid->removeWidget(_country);
+    _grid->addWidget(_active,	5, 4);
+    _grid->addWidget(_country,	5, 1, 1, 3);
+  }
+  else
+  {
+    _grid->removeWidget(_active);
+    _grid->removeWidget(_country);
+    _grid->addWidget(_country,	5, 1, 1, 4);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////////
 
 AddressList::AddressList(QWidget* pParent, const char* pName, bool, Qt::WFlags)

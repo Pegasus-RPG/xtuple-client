@@ -155,7 +155,7 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
     public slots:
 	inline virtual void clearExtraClause()	{ };
 	inline virtual void setExtraClause(const QString&)  { };
-	inline virtual void setActiveVisible(const bool p) { _active->setHidden(!p); };
+	virtual void        setActiveVisible(const bool p);
 	inline virtual void setCity(const QString& p)	{ _city->setText(p); };
 	inline virtual void setCountry(const QString& p) { _country->setEditText(p); };
 	inline virtual void setDescription(const QString&) { };
