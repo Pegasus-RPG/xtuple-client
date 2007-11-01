@@ -88,6 +88,9 @@ public slots:
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
 
+private slots:
+	void connectAll();
+
 protected slots:
     virtual void languageChange();
 
@@ -113,7 +116,6 @@ private:
     double _qtyinvuomratio;
     double _priceinvuomratio;
 	double _qtySoldCache;
-	
 
 };
 

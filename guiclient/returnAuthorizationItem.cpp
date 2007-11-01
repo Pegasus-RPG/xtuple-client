@@ -74,21 +74,6 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _listPrices->setMaximumWidth(25);
 #endif
 
-  connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-  connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
-  connect(_item,	  SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
-  connect(_listPrices,	  SIGNAL(clicked()),      this, SLOT(sListPrices()));
-  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateDiscountPrcnt()));
-  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
-  connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
-  connect(_qtyAuth,	  SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
-  connect(_save,	  SIGNAL(clicked()),      this, SLOT(sSave()));
-  connect(_taxCode,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTax()));
-  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
-  connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTaxCode()));
-  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
-  connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
-
   _mode = cNew;
   _raitemid = -1;
   _raheadid = -1;
@@ -104,7 +89,6 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
 
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
-
   _taxType->setEnabled(_privleges->check("OverrideTax"));
   _taxCode->setEnabled(_privleges->check("OverrideTax"));
   
@@ -116,7 +100,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   } 
 
   //Remove lot/serial for now until we get to advanced warranty tracking
-  _tab->removePage(_tab->page(2));
+  _tab->removePage(_tab->page(4));
 }
 
 returnAuthorizationItem::~returnAuthorizationItem()
@@ -216,6 +200,16 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
+	  _orderNumber->hide();
+	  _orderNumberLit->hide();
+	  _orderLineNumber->hide();
+	  _orderLineNumberLit->hide();
+	  _qtySold->hide();
+	  _qtySoldLit->hide();
+      _discountFromSalePrcntLit->hide();
+      _discountFromSale->hide();
+	  _salePrice->hide();
+	  _salePriceLit->hide();
       _item->setFocus();
     }
     else if (param.toString() == "edit")
@@ -263,6 +257,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
                               "ORDER BY item_number;" )
                      .arg(_custid).arg(_shiptoid) );
 
+  connectAll();
+
   return NoError; 
 }
 
@@ -285,18 +281,14 @@ void returnAuthorizationItem::sSave()
                "  raitem_disposition, raitem_qtyauthorized, "
                "  raitem_qty_uom_id, raitem_qty_invuomratio,"
                "  raitem_price_uom_id, raitem_price_invuomratio,"
-               "  raitem_unitprice, raitem_tax_id, raitem_taxtype_id,"
-	           "  raitem_tax_pcta, raitem_tax_pctb, raitem_tax_pctc,"
-	           "  raitem_tax_ratea, raitem_tax_rateb, raitem_tax_ratec,"
+               "  raitem_unitprice, raitem_tax_id,"
                "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id) "
 			   "SELECT :raitem_id, :rahead_id, :raitem_linenumber, itemsite_id,"
 			   "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
-               "       :raitem_unitprice, :raitem_tax_id, :raitem_taxtype_id,"
-	           "       :raitem_tax_pcta, :raitem_tax_pctb, :raitem_tax_pctc,"
-	           "       :raitem_tax_ratea, :raitem_tax_rateb, :raitem_tax_ratec,"
-	           "       :raitem_notes, :raitem_rsncode_id, raitem_cos_accnt_id "
+               "       :raitem_unitprice, :raitem_tax_id,"
+			   "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -311,13 +303,6 @@ void returnAuthorizationItem::sSave()
                "    raitem_price_invuomratio=:price_invuomratio,"
                "    raitem_unitprice=:raitem_unitprice,"
     	       "    raitem_tax_id=:raitem_tax_id,"
-	           "    raitem_taxtype_id=:raitem_taxtype_id,"
-	           "    raitem_tax_pcta=:raitem_tax_pcta,"
-	           "    raitem_tax_pctb=:raitem_tax_pctb,"
-	           "    raitem_tax_pctc=:raitem_tax_pctc,"
-	           "    raitem_tax_ratea=:raitem_tax_ratea,"
-	           "    raitem_tax_rateb=:raitem_tax_rateb,"
-	           "    raitem_tax_ratec=:raitem_tax_ratec,"
 	           "    raitem_notes=:raitem_notes,"
                "    raitem_rsncode_id=:raitem_rsncode_id, "
 			   "    raitem_cos_accnt_id=:raitem_cos_accnt_id "
@@ -335,14 +320,6 @@ void returnAuthorizationItem::sSave()
   q.bindValue(":raitem_unitprice", _netUnitPrice->localValue());
   if (_taxCode->isValid())
     q.bindValue(":raitem_tax_id",	_taxCode->id());
-  if (_taxType->isValid())
-    q.bindValue(":raitem_taxtype_id",	_taxType->id());
-  q.bindValue(":raitem_tax_pcta",	_taxCache.linePct(0));
-  q.bindValue(":raitem_tax_pctb",	_taxCache.linePct(1));
-  q.bindValue(":raitem_tax_pctc",	_taxCache.linePct(2));
-  q.bindValue(":raitem_tax_ratea",	_taxCache.line(0));
-  q.bindValue(":raitem_tax_rateb",	_taxCache.line(1));
-  q.bindValue(":raitem_tax_ratec",	_taxCache.line(2));
   q.bindValue(":raitem_notes", _notes->text());
   q.bindValue(":raitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
@@ -499,8 +476,9 @@ void returnAuthorizationItem::populate()
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _tax->setId(raitem.value("taxcurr").toInt());
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
+    _qtyUOM->setId(raitem.value("raitem_qty_uom_id").toInt());
+    _pricingUOM->setId(raitem.value("raitem_price_uom_id").toInt());
     _lineNumber->setText(raitem.value("raitem_linenumber").toString());
-    _qtySold->setText(raitem.value("qtysold").toString());
     _qtyAuth->setText(raitem.value("qtyauth").toString());
     _qtyReceived->setText(raitem.value("qtyrcvd").toString());
     _qtyShipped->setText(raitem.value("qtyshipd").toString());
@@ -534,14 +512,25 @@ void returnAuthorizationItem::populate()
 	{
 	  _orderNumber->setText(raitem.value("cohead_number").toString());
 	  _orderLineNumber->setText(raitem.value("coitem_linenumber").toString());
-	  _qtySold->setText(raitem.value("qtyshipped").toString());
-      _qtyUOM->setId(raitem.value("coitem_qty_uom_id").toInt());
-	  _qtyUOM->setEnabled(FALSE);
-      _pricingUOM->setId(raitem.value("coitem_price_uom_id").toInt());
+	  _qtySold->setText(raitem.value("qtysold").toString());
+      _qtyUOM->setEnabled(FALSE);
 	  _pricingUOM->setEnabled(FALSE);
       _priceinvuomratio = raitem.value("coitem_price_invuomratio").toDouble();
    //   _ratio->setText(formatUOMRatio(_priceinvuomratio));
-      _salePrice->setLocalValue(raitem.value("coitem_price_local").toDouble() * _priceinvuomratio);
+      _salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
+	}
+	else
+	{
+	  _orderNumber->hide();
+	  _orderNumberLit->hide();
+	  _orderLineNumber->hide();
+	  _orderLineNumberLit->hide();
+      _discountFromSalePrcntLit->hide();
+      _discountFromSale->hide();
+	  _qtySold->hide();
+	  _qtySoldLit->hide();
+	  _salePrice->hide();
+	  _salePriceLit->hide();
 	}
   }
   else if (raitem.lastError().type() != QSqlError::None)
@@ -549,13 +538,18 @@ void returnAuthorizationItem::populate()
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
+  sPopulateItemInfo();
+  sPriceGroup();
+  sQtyUOMChanged();
+  sPriceUOMChanged();
   sCalculateDiscountPrcnt();
+  sLookupTaxCode();
+  sLookupTax();
 }
 
 void returnAuthorizationItem::sCalculateExtendedPrice()
 {
   _extendedPrice->setLocalValue(((_qtyAuth->toDouble() * _qtyinvuomratio) / _priceinvuomratio) * _netUnitPrice->localValue());
-  sLookupTax(); 
 }
 
 void returnAuthorizationItem::sCalculateDiscountPrcnt()
@@ -843,5 +837,24 @@ void returnAuthorizationItem::updatePriceInfo()
   item.bindValue(":item_id", _item->id());
   item.exec();
   item.first();
-  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio)  * _priceinvuomratio); 
+  _listPrice->setBaseValue((item.value("item_listprice").toDouble() * _priceRatio)  * _priceinvuomratio);
+  sCalculateExtendedPrice();
 } 
+
+void returnAuthorizationItem::connectAll()
+{
+  connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+  connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
+  connect(_item,	  SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
+  connect(_listPrices,	  SIGNAL(clicked()),      this, SLOT(sListPrices()));
+  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateDiscountPrcnt()));
+  connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
+  connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
+  connect(_qtyAuth,	  SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
+  connect(_save,	  SIGNAL(clicked()),      this, SLOT(sSave()));
+  connect(_taxCode,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTax()));
+  connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
+  connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTaxCode()));
+  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+}

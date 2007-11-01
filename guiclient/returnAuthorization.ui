@@ -61,7 +61,7 @@
       <item>
        <widget class="QPushButton" name="_cancel" >
         <property name="text" >
-         <string>Cancel</string>
+         <string>&amp;Cancel</string>
         </property>
        </widget>
       </item>
@@ -74,7 +74,7 @@
       </property>
       <widget class="QWidget" name="_headerPage" >
        <attribute name="title" >
-        <string>Header Informaton</string>
+        <string>&amp;Header Informaton</string>
        </attribute>
        <layout class="QVBoxLayout" >
         <property name="spacing" >
@@ -660,6 +660,12 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
+              </property>
+              <property name="type" >
+               <enum>CLineEdit::ActiveCustomers</enum>
+              </property>
              </widget>
             </item>
             <item row="1" column="1" colspan="2" >
@@ -1007,7 +1013,7 @@
       </widget>
       <widget class="QWidget" name="_lineItemsPage" >
        <attribute name="title" >
-        <string>Line Items</string>
+        <string>&amp;Line Items</string>
        </attribute>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
@@ -1017,6 +1023,9 @@
             <horstretch>0</horstretch>
             <verstretch>1</verstretch>
            </sizepolicy>
+          </property>
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
           </property>
          </widget>
         </item>
@@ -1064,7 +1073,7 @@
             <item>
              <widget class="QPushButton" name="_edit" >
               <property name="text" >
-               <string>Edit</string>
+               <string>&amp;Edit</string>
               </property>
              </widget>
             </item>
@@ -1456,7 +1465,7 @@
       </widget>
       <widget class="QWidget" name="_creditPage" >
        <attribute name="title" >
-        <string>Credit</string>
+        <string>C&amp;redit</string>
        </attribute>
        <layout class="QGridLayout" >
         <property name="leftMargin" >

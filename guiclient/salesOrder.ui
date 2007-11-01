@@ -11,8 +11,8 @@
   </property>
   <property name="minimumSize" >
    <size>
-    <width>800</width>
-    <height>600</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -20,10 +20,22 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <property name="margin" >
+    <property name="leftMargin" >
      <number>9</number>
     </property>
-    <property name="spacing" >
+    <property name="topMargin" >
+     <number>9</number>
+    </property>
+    <property name="rightMargin" >
+     <number>9</number>
+    </property>
+    <property name="bottomMargin" >
+     <number>9</number>
+    </property>
+    <property name="horizontalSpacing" >
+     <number>6</number>
+    </property>
+    <property name="verticalSpacing" >
      <number>6</number>
     </property>
     <item row="1" column="0" >
@@ -36,26 +48,56 @@
         <string>&amp;Header Information</string>
        </attribute>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>9</number>
-        </property>
         <property name="spacing" >
          <number>6</number>
         </property>
+        <property name="leftMargin" >
+         <number>9</number>
+        </property>
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="0" column="1" >
@@ -111,6 +153,9 @@
               <property name="enabled" >
                <bool>false</bool>
               </property>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
              </widget>
             </item>
             <item row="2" column="0" >
@@ -127,21 +172,37 @@
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="3" column="1" colspan="2" >
              <widget class="XComboBox" name="_terms" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="allowNull" >
                <bool>true</bool>
@@ -167,12 +228,16 @@
             <item row="0" column="1" colspan="2" >
              <widget class="XComboBox" name="_salesRep" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="allowNull" >
                <bool>true</bool>
@@ -192,12 +257,16 @@
             <item row="2" column="1" colspan="2" >
              <widget class="XComboBox" name="_taxAuth" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>7</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="allowNull" >
                <bool>true</bool>
@@ -226,9 +295,7 @@
             <item row="1" column="1" >
              <widget class="XLineEdit" name="_commission" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -280,14 +347,32 @@
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="0" column="1" >
              <widget class="WComboBox" name="_warehouse" >
+              <property name="maximumSize" >
+               <size>
+                <width>200</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="type" >
                <enum>WComboBox::Shipping</enum>
               </property>
@@ -346,11 +431,20 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="QLabel" name="_originatedByLit" >
@@ -371,9 +465,7 @@
           <item>
            <widget class="XComboBox" name="_origin" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -421,7 +513,11 @@
            </spacer>
           </item>
           <item>
-           <widget class="ProjectCluster" name="_project" />
+           <widget class="ProjectCluster" name="_project" >
+            <property name="focusPolicy" >
+             <enum>Qt::StrongFocus</enum>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -434,18 +530,39 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>6</number>
           </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="3" column="0" >
@@ -463,11 +580,20 @@
             </item>
             <item row="1" column="0" colspan="2" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="QLabel" name="_custTypeLit" >
@@ -516,11 +642,20 @@
             </item>
             <item row="0" column="0" colspan="2" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>6</number>
+              </property>
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>0</number>
               </property>
               <item>
                <widget class="CustInfo" name="_cust" >
@@ -529,6 +664,9 @@
                   <width>250</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="focusPolicy" >
+                 <enum>Qt::StrongFocus</enum>
                 </property>
                </widget>
               </item>
@@ -548,6 +686,12 @@
              <widget class="AddressCluster" name="_billToAddr" >
               <property name="enabled" >
                <bool>false</bool>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
               </property>
               <property name="focusPolicy" >
                <enum>Qt::TabFocus</enum>
@@ -572,10 +716,22 @@
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>6</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>6</number>
             </property>
             <item row="2" column="0" >
@@ -593,6 +749,12 @@
             </item>
             <item row="4" column="0" colspan="2" >
              <widget class="AddressCluster" name="_shipToAddr" >
+              <property name="maximumSize" >
+               <size>
+                <width>16777215</width>
+                <height>16777215</height>
+               </size>
+              </property>
               <property name="focusPolicy" >
                <enum>Qt::TabFocus</enum>
               </property>
@@ -603,10 +765,19 @@
             </item>
             <item row="0" column="0" colspan="2" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
+              <property name="spacing" >
                <number>0</number>
               </property>
-              <property name="spacing" >
+              <property name="leftMargin" >
+               <number>0</number>
+              </property>
+              <property name="topMargin" >
+               <number>0</number>
+              </property>
+              <property name="rightMargin" >
+               <number>0</number>
+              </property>
+              <property name="bottomMargin" >
                <number>0</number>
               </property>
               <item>
@@ -692,10 +863,22 @@
         </item>
         <item>
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>6</number>
+          </property>
+          <property name="verticalSpacing" >
            <number>6</number>
           </property>
           <item row="0" column="0" >
@@ -720,9 +903,7 @@
           <item row="0" column="1" >
            <widget class="XLineEdit" name="_fob" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -745,16 +926,14 @@
           <item row="0" column="3" >
            <widget class="XComboBox" name="_shipVia" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="maximumSize" >
              <size>
-              <width>32767</width>
+              <width>200</width>
               <height>32767</height>
              </size>
             </property>
@@ -805,9 +984,7 @@
           <item row="0" column="5" >
            <widget class="XComboBox" name="_shippingCharges" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -829,9 +1006,7 @@
           <item row="1" column="5" >
            <widget class="XComboBox" name="_shippingForm" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -866,16 +1041,14 @@
           <item row="1" column="3" >
            <widget class="XComboBox" name="_holdType" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
             <property name="maximumSize" >
              <size>
-              <width>32767</width>
+              <width>200</width>
               <height>32767</height>
              </size>
             </property>
@@ -904,9 +1077,7 @@
           <item row="1" column="1" >
            <widget class="XLineEdit" name="_custPONumber" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -934,183 +1105,232 @@
        <attribute name="title" >
         <string>&amp;Line Items</string>
        </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="XTreeWidget" name="_soitem" >
+          <property name="focusPolicy" >
+           <enum>Qt::NoFocus</enum>
           </property>
+         </widget>
+        </item>
+        <item rowspan="2" row="0" column="1" >
+         <layout class="QVBoxLayout" >
           <property name="spacing" >
            <number>5</number>
           </property>
-          <item>
-           <widget class="XTreeWidget" name="_soitem" />
-          </item>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>0</number>
             </property>
-            <property name="spacing" >
-             <number>5</number>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
+             <widget class="QPushButton" name="_new" >
+              <property name="enabled" >
+               <bool>false</bool>
               </property>
-              <property name="spacing" >
-               <number>0</number>
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
               </property>
-              <item>
-               <widget class="QPushButton" name="_new" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>&amp;New</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+N</string>
-                </property>
-                <property name="autoDefault" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="_edit" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>&amp;Edit</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+E</string>
-                </property>
-                <property name="autoDefault" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="_action" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>Close</string>
-                </property>
-                <property name="shortcut" >
-                 <string/>
-                </property>
-                <property name="autoDefault" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="_delete" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>&amp;Delete</string>
-                </property>
-                <property name="shortcut" >
-                 <string>Alt+D</string>
-                </property>
-                <property name="autoDefault" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-             </layout>
+              <property name="text" >
+               <string>&amp;New</string>
+              </property>
+              <property name="shortcut" >
+               <string>Alt+N</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
+             <widget class="QPushButton" name="_edit" >
+              <property name="enabled" >
+               <bool>false</bool>
               </property>
-              <property name="spacing" >
-               <number>0</number>
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
               </property>
-              <item>
-               <widget class="QPushButton" name="_issueStock" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>Issue Stock</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="_issueLineBalance" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>Issue Line Bal.</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
+              <property name="text" >
+               <string>&amp;Edit</string>
+              </property>
+              <property name="shortcut" >
+               <string>Alt+E</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
+             <widget class="QPushButton" name="_action" >
+              <property name="enabled" >
+               <bool>false</bool>
               </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
               </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>20</height>
-               </size>
+              <property name="text" >
+               <string>Close</string>
               </property>
-             </spacer>
+              <property name="shortcut" >
+               <string/>
+              </property>
+              <property name="autoDefault" >
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_delete" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text" >
+               <string>&amp;Delete</string>
+              </property>
+              <property name="shortcut" >
+               <string>Alt+D</string>
+              </property>
+              <property name="autoDefault" >
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="_issueStock" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text" >
+               <string>Issue Stock</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_issueLineBalance" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text" >
+               <string>Issue Line Bal.</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeType" >
+             <enum>QSizePolicy::Expanding</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
          </layout>
         </item>
-        <item>
+        <item row="1" column="0" >
          <layout class="QGridLayout" >
-          <property name="margin" >
+          <property name="leftMargin" >
            <number>0</number>
           </property>
-          <property name="spacing" >
+          <property name="topMargin" >
            <number>0</number>
           </property>
-          <item row="1" column="5" >
-           <widget class="CurrDisplay" name="_subtotal" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <property name="horizontalSpacing" >
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing" >
+           <number>0</number>
+          </property>
+          <item row="0" column="0" colspan="2" >
+           <widget class="QCheckBox" name="_requireInventory" >
+            <property name="text" >
+             <string>Require sufficient Inventory</string>
             </property>
            </widget>
           </item>
           <item row="0" column="2" >
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <widget class="QLabel" name="_orderCurrencyLit" >
@@ -1134,155 +1354,6 @@
             </item>
            </layout>
           </item>
-          <item row="2" column="1" colspan="2" >
-           <widget class="XLineEdit" name="_miscChargeDescription" />
-          </item>
-          <item row="6" column="1" >
-           <widget class="CurrDisplay" name="_authCC" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>100</width>
-              <height>32767</height>
-             </size>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="5" >
-           <widget class="CurrCluster" name="_miscCharge" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="allowNegative" >
-             <bool>true</bool>
-            </property>
-            <property name="baseVisible" >
-             <bool>false</bool>
-            </property>
-            <property name="currencyEditable" stdset="0" >
-             <bool>false</bool>
-            </property>
-            <property name="currencyVisible" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="0" >
-           <widget class="QLabel" name="_outstandingCMLit" >
-            <property name="text" >
-             <string>Outstanding C/Ms:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
-           <widget class="QLabel" name="_allocatedCMLit" >
-            <property name="text" >
-             <string>Allocated C/Ms:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="4" >
-           <widget class="XURLLabel" name="_taxLit" >
-            <property name="text" >
-             <string>Tax:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="5" >
-           <widget class="CurrDisplay" name="_amountAtShipping" />
-          </item>
-          <item row="0" column="0" colspan="2" >
-           <widget class="QCheckBox" name="_requireInventory" >
-            <property name="text" >
-             <string>Require sufficient Inventory</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="4" >
-           <widget class="QLabel" name="_subtotalLit" >
-            <property name="text" >
-             <string>Subtotal:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="0" >
-           <widget class="QLabel" name="_authCCLit" >
-            <property name="text" >
-             <string>Authorized CC Payments:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2" >
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QLabel" name="_weightLit" >
-              <property name="text" >
-               <string>Freight Weight:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="XLineEdit" name="_weight" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>5</hsizetype>
-                <vsizetype>0</vsizetype>
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="maximumSize" >
-               <size>
-                <width>100</width>
-                <height>32767</height>
-               </size>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight</set>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="0" column="4" >
            <widget class="QLabel" name="_amountAtShippingLit" >
             <property name="text" >
@@ -1293,71 +1364,8 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="_miscChargeDescriptionLit" >
-            <property name="text" >
-             <string>Misc. Charge Description:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="4" >
-           <widget class="QLabel" name="_miscChargeAmountLit" >
-            <property name="text" >
-             <string>Misc. Charge:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="4" >
-           <widget class="QLabel" name="_totalLit" >
-            <property name="text" >
-             <string>Total:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="_miscChargeAccountLit" >
-            <property name="text" >
-             <string>Misc. Charge Sales Account:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="5" >
-           <widget class="CurrCluster" name="_balance" >
-            <property name="currencyEditable" stdset="0" >
-             <bool>false</bool>
-            </property>
-            <property name="currencyVisible" >
-             <bool>false</bool>
-            </property>
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="5" >
-           <widget class="CurrCluster" name="_total" >
-            <property name="currencyEditable" stdset="0" >
-             <bool>false</bool>
-            </property>
-            <property name="currencyVisible" >
-             <bool>false</bool>
-            </property>
-            <property name="enabled" >
-             <bool>false</bool>
-            </property>
-           </widget>
+          <item row="0" column="5" >
+           <widget class="CurrDisplay" name="_amountAtShipping" />
           </item>
           <item row="1" column="0" colspan="2" >
            <widget class="QCheckBox" name="_showCanceled" >
@@ -1366,65 +1374,22 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="4" >
-           <widget class="QLabel" name="_freightLit" >
-            <property name="text" >
-             <string>Freight:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="5" >
-           <widget class="CurrCluster" name="_freight" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="baseVisible" >
-             <bool>false</bool>
-            </property>
-            <property name="currencyEditable" stdset="0" >
-             <bool>false</bool>
-            </property>
-            <property name="currencyVisible" >
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" colspan="2" >
-           <widget class="GLCluster" name="_miscChargeAccount" />
-          </item>
-          <item row="5" column="1" >
-           <widget class="CurrDisplay" name="_outstandingCM" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="maximumSize" >
-             <size>
-              <width>100</width>
-              <height>32767</height>
-             </size>
-            </property>
-           </widget>
-          </item>
           <item row="1" column="2" >
            <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>5</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
             </property>
             <item>
              <spacer>
@@ -1464,35 +1429,38 @@
             </item>
            </layout>
           </item>
-          <item row="4" column="1" >
-           <widget class="CurrDisplay" name="_allocatedCM" >
-            <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
+          <item row="1" column="4" >
+           <widget class="QLabel" name="_subtotalLit" >
+            <property name="text" >
+             <string>Subtotal:</string>
             </property>
-            <property name="maximumSize" >
-             <size>
-              <width>100</width>
-              <height>32767</height>
-             </size>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
            </widget>
           </item>
-          <item row="5" column="5" >
-           <widget class="CurrDisplay" name="_tax" >
+          <item row="1" column="5" >
+           <widget class="CurrDisplay" name="_subtotal" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
            </widget>
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_miscChargeDescriptionLit" >
+            <property name="text" >
+             <string>Misc. Charge Description:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" colspan="2" >
+           <widget class="XLineEdit" name="_miscChargeDescription" />
           </item>
           <item row="2" column="3" >
            <spacer>
@@ -1507,6 +1475,252 @@
             </property>
            </spacer>
           </item>
+          <item row="2" column="4" >
+           <widget class="QLabel" name="_miscChargeAmountLit" >
+            <property name="text" >
+             <string>Misc. Charge:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="5" >
+           <widget class="CurrCluster" name="_miscCharge" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="allowNegative" >
+             <bool>true</bool>
+            </property>
+            <property name="baseVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyVisible" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="_miscChargeAccountLit" >
+            <property name="text" >
+             <string>Misc. Charge Sales Account:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" colspan="2" >
+           <widget class="GLCluster" name="_miscChargeAccount" />
+          </item>
+          <item row="4" column="0" >
+           <widget class="QLabel" name="_allocatedCMLit" >
+            <property name="text" >
+             <string>Allocated C/Ms:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="CurrDisplay" name="_allocatedCM" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2" >
+           <layout class="QHBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
+            <property name="leftMargin" >
+             <number>0</number>
+            </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QLabel" name="_weightLit" >
+              <property name="text" >
+               <string>Freight Weight:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="XLineEdit" name="_weight" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="sizePolicy" >
+               <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize" >
+               <size>
+                <width>100</width>
+                <height>32767</height>
+               </size>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight</set>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="4" column="4" >
+           <widget class="QLabel" name="_freightLit" >
+            <property name="text" >
+             <string>Freight:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="5" >
+           <widget class="CurrCluster" name="_freight" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="baseVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyVisible" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" >
+           <widget class="QLabel" name="_outstandingCMLit" >
+            <property name="text" >
+             <string>Outstanding C/Ms:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" >
+           <widget class="CurrDisplay" name="_outstandingCM" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="4" >
+           <widget class="XURLLabel" name="_taxLit" >
+            <property name="text" >
+             <string>Tax:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="5" >
+           <widget class="CurrDisplay" name="_tax" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" >
+           <widget class="QLabel" name="_authCCLit" >
+            <property name="text" >
+             <string>Authorized CC Payments:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" >
+           <widget class="CurrDisplay" name="_authCC" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="maximumSize" >
+             <size>
+              <width>100</width>
+              <height>32767</height>
+             </size>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="4" >
+           <widget class="QLabel" name="_totalLit" >
+            <property name="text" >
+             <string>Total:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="5" >
+           <widget class="CurrCluster" name="_total" >
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
           <item row="7" column="4" >
            <widget class="QLabel" name="_balanceLit" >
             <property name="text" >
@@ -1514,6 +1728,19 @@
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="5" >
+           <widget class="CurrCluster" name="_balance" >
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -1526,14 +1753,27 @@
         <string>Order Notes</string>
        </attribute>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
         <item>
-         <widget class="QTextEdit" name="_orderComments" />
+         <widget class="QTextEdit" name="_orderComments" >
+          <property name="focusPolicy" >
+           <enum>Qt::NoFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1542,10 +1782,19 @@
         <string>Comments</string>
        </attribute>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
+        <property name="spacing" >
          <number>5</number>
         </property>
-        <property name="spacing" >
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
          <number>5</number>
         </property>
         <item>
@@ -1558,14 +1807,27 @@
         <string>Shipping Notes</string>
        </attribute>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>5</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
         <item>
-         <widget class="QTextEdit" name="_shippingComments" />
+         <widget class="QTextEdit" name="_shippingComments" >
+          <property name="focusPolicy" >
+           <enum>Qt::NoFocus</enum>
+          </property>
+         </widget>
         </item>
        </layout>
       </widget>
@@ -1574,22 +1836,44 @@
         <string>Payment</string>
        </attribute>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
+        <property name="leftMargin" >
+         <number>0</number>
+        </property>
+        <property name="topMargin" >
+         <number>0</number>
+        </property>
+        <property name="rightMargin" >
+         <number>0</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>0</number>
+        </property>
         <item>
-         <widget class="XTreeWidget" name="_cc" />
+         <widget class="XTreeWidget" name="_cc" >
+          <property name="focusPolicy" >
+           <enum>Qt::NoFocus</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
+          </property>
+          <property name="leftMargin" >
+           <number>0</number>
+          </property>
+          <property name="topMargin" >
+           <number>0</number>
+          </property>
+          <property name="rightMargin" >
+           <number>0</number>
+          </property>
+          <property name="bottomMargin" >
+           <number>0</number>
           </property>
           <item>
            <widget class="QPushButton" name="_newCC" >
@@ -1619,6 +1903,9 @@
             <property name="enabled" >
              <bool>false</bool>
             </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="text" >
              <string>View</string>
             </property>
@@ -1632,6 +1919,9 @@
             <property name="enabled" >
              <bool>false</bool>
             </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="text" >
              <string>Move Up</string>
             </property>
@@ -1644,6 +1934,9 @@
            <widget class="QPushButton" name="_downCC" >
             <property name="enabled" >
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="text" >
              <string>Move Down</string>
@@ -1674,6 +1967,9 @@
             <property name="enabled" >
              <bool>false</bool>
             </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
             <property name="text" >
              <string>Authorize</string>
             </property>
@@ -1683,6 +1979,9 @@
            <widget class="QPushButton" name="_charge" >
             <property name="enabled" >
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
             </property>
             <property name="text" >
              <string>Charge</string>
@@ -1707,10 +2006,22 @@
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
+            <property name="leftMargin" >
              <number>0</number>
             </property>
-            <property name="spacing" >
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <property name="rightMargin" >
+             <number>0</number>
+            </property>
+            <property name="bottomMargin" >
+             <number>0</number>
+            </property>
+            <property name="horizontalSpacing" >
+             <number>5</number>
+            </property>
+            <property name="verticalSpacing" >
              <number>5</number>
             </property>
             <item row="0" column="0" >
@@ -1726,9 +2037,7 @@
             <item row="1" column="0" colspan="2" >
              <widget class="CurrCluster" name="_CCAmount" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>4</hsizetype>
-                <vsizetype>5</vsizetype>
+               <sizepolicy vsizetype="Preferred" hsizetype="Maximum" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1748,9 +2057,7 @@
             <item row="2" column="1" >
              <widget class="XLineEdit" name="_CCCVV" >
               <property name="sizePolicy" >
-               <sizepolicy>
-                <hsizetype>4</hsizetype>
-                <vsizetype>0</vsizetype>
+               <sizepolicy vsizetype="Fixed" hsizetype="Maximum" >
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
@@ -1767,11 +2074,20 @@
     </item>
     <item row="0" column="0" >
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>5</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
       </property>
       <item>
        <widget class="QPushButton" name="_clear" >
@@ -1858,44 +2174,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ProjectCluster</class>
-   <extends>QWidget</extends>
-   <header>projectcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XURLLabel</class>
-   <extends>QLabel</extends>
-   <header>xurllabel.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>AddressCluster</class>
    <extends>QWidget</extends>
    <header>addresscluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CurrDisplay</class>
-   <extends>QWidget</extends>
-   <header>currcluster.h</header>
   </customwidget>
   <customwidget>
    <class>Comments</class>
@@ -1903,9 +2184,19 @@
    <header>comments.h</header>
   </customwidget>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CurrDisplay</class>
+   <extends>QWidget</extends>
+   <header>currcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CustInfo</class>
+   <extends>QWidget</extends>
+   <header>custcluster.h</header>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
@@ -1918,24 +2209,50 @@
    <header>glcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustInfo</class>
+   <class>ProjectCluster</class>
    <extends>QWidget</extends>
-   <header>custcluster.h</header>
+   <header>projectcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XURLLabel</class>
+   <extends>QLabel</extends>
+   <header>xurllabel.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_orderNumber</tabstop>
   <tabstop>_orderDate</tabstop>
-  <tabstop>_shipDate</tabstop>
   <tabstop>_packDate</tabstop>
-  <tabstop>_warehouse</tabstop>
-  <tabstop>_origin</tabstop>
-  <tabstop>_shipComplete</tabstop>
-  <tabstop>_printSO</tabstop>
   <tabstop>_salesRep</tabstop>
   <tabstop>_commission</tabstop>
   <tabstop>_taxAuth</tabstop>
   <tabstop>_terms</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_shipComplete</tabstop>
+  <tabstop>_printSO</tabstop>
+  <tabstop>_origin</tabstop>
+  <tabstop>_project</tabstop>
+  <tabstop>_cust</tabstop>
   <tabstop>_copyToShipto</tabstop>
   <tabstop>_billToName</tabstop>
   <tabstop>_billToPhone</tabstop>
@@ -1950,39 +2267,26 @@
   <tabstop>_custPONumber</tabstop>
   <tabstop>_holdType</tabstop>
   <tabstop>_shippingForm</tabstop>
-  <tabstop>_saveAndAdd</tabstop>
-  <tabstop>_save</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_clear</tabstop>
   <tabstop>_salesOrderInformation</tabstop>
   <tabstop>_new</tabstop>
   <tabstop>_edit</tabstop>
-  <tabstop>_action</tabstop>
-  <tabstop>_delete</tabstop>
-  <tabstop>_issueStock</tabstop>
-  <tabstop>_issueLineBalance</tabstop>
   <tabstop>_requireInventory</tabstop>
-  <tabstop>_orderCurrency</tabstop>
   <tabstop>_showCanceled</tabstop>
+  <tabstop>_orderCurrency</tabstop>
   <tabstop>_miscChargeDescription</tabstop>
   <tabstop>_weight</tabstop>
   <tabstop>_miscCharge</tabstop>
   <tabstop>_freight</tabstop>
   <tabstop>_total</tabstop>
   <tabstop>_balance</tabstop>
-  <tabstop>_downCC</tabstop>
-  <tabstop>_authorize</tabstop>
-  <tabstop>_charge</tabstop>
+  <tabstop>_newCC</tabstop>
+  <tabstop>_editCC</tabstop>
   <tabstop>_CCAmount</tabstop>
   <tabstop>_CCCVV</tabstop>
-  <tabstop>_newCC</tabstop>
-  <tabstop>_orderComments</tabstop>
-  <tabstop>_soitem</tabstop>
-  <tabstop>_shippingComments</tabstop>
-  <tabstop>_editCC</tabstop>
-  <tabstop>_viewCC</tabstop>
-  <tabstop>_upCC</tabstop>
-  <tabstop>_cc</tabstop>
+  <tabstop>_clear</tabstop>
+  <tabstop>_saveAndAdd</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
  </tabstops>
  <includes>
   <include location="global" >parameter.h</include>
@@ -1999,12 +2303,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>122</y>
     </hint>
    </hints>
   </connection>
@@ -2015,12 +2319,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>122</y>
     </hint>
    </hints>
   </connection>
@@ -2031,12 +2335,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>94</y>
     </hint>
    </hints>
   </connection>
@@ -2047,12 +2351,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>150</y>
     </hint>
    </hints>
   </connection>
@@ -2063,12 +2367,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>178</y>
     </hint>
    </hints>
   </connection>
@@ -2079,12 +2383,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>331</y>
     </hint>
    </hints>
   </connection>
@@ -2095,12 +2399,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>11</x>
+     <y>65</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>584</x>
+     <y>359</y>
     </hint>
    </hints>
   </connection>
@@ -2111,8 +2415,8 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>735</x>
+     <y>31</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -2127,12 +2431,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>23</x>
+     <y>234</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>587</x>
+     <y>234</y>
     </hint>
    </hints>
   </connection>
@@ -2143,12 +2447,12 @@
    <slot>setText(QString)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>76</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>149</x>
+     <y>30</y>
     </hint>
    </hints>
   </connection>
@@ -2160,11 +2464,11 @@
    <hints>
     <hint type="sourcelabel" >
      <x>20</x>
-     <y>20</y>
+     <y>74</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>699</x>
+     <y>101</y>
     </hint>
    </hints>
   </connection>
@@ -2175,12 +2479,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>420</y>
     </hint>
    </hints>
   </connection>
@@ -2191,12 +2495,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>511</y>
     </hint>
    </hints>
   </connection>
@@ -2207,12 +2511,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>444</y>
     </hint>
    </hints>
   </connection>
@@ -2223,12 +2527,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -2239,12 +2543,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>533</y>
     </hint>
    </hints>
   </connection>
@@ -2255,12 +2559,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2271,12 +2575,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>398</y>
     </hint>
    </hints>
   </connection>
@@ -2287,12 +2591,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>157</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -2303,12 +2607,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>157</x>
+     <y>511</y>
     </hint>
    </hints>
   </connection>
@@ -2319,12 +2623,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>585</x>
+     <y>538</y>
     </hint>
    </hints>
   </connection>
@@ -2335,12 +2639,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>353</x>
+     <y>399</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>157</x>
+     <y>533</y>
     </hint>
    </hints>
   </connection>
@@ -2351,12 +2655,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>420</y>
     </hint>
    </hints>
   </connection>
@@ -2367,12 +2671,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>511</y>
     </hint>
    </hints>
   </connection>
@@ -2383,12 +2687,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>444</y>
     </hint>
    </hints>
   </connection>
@@ -2399,12 +2703,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -2415,12 +2719,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>533</y>
     </hint>
    </hints>
   </connection>
@@ -2431,12 +2735,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>555</y>
     </hint>
    </hints>
   </connection>
@@ -2447,12 +2751,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>570</x>
+     <y>398</y>
     </hint>
    </hints>
   </connection>
@@ -2463,12 +2767,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>585</x>
+     <y>538</y>
     </hint>
    </hints>
   </connection>
@@ -2479,12 +2783,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>157</x>
+     <y>489</y>
     </hint>
    </hints>
   </connection>
@@ -2495,12 +2799,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>157</x>
+     <y>511</y>
     </hint>
    </hints>
   </connection>
@@ -2511,12 +2815,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>107</x>
+     <y>102</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>157</x>
+     <y>533</y>
     </hint>
    </hints>
   </connection>

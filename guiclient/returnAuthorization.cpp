@@ -196,6 +196,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
+
+	  _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
