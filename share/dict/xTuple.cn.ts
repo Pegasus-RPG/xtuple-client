@@ -2301,7 +2301,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7371,7 +7371,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
