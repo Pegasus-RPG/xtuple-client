@@ -897,6 +897,7 @@ void returnAuthorization::sFillList()
 
   _currency->setEnabled(_raitem->topLevelItemCount() == 0);
 
+  //Disable order changes if any order qty authorized
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
@@ -905,14 +906,39 @@ void returnAuthorization::sFillList()
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   _so->setEnabled(!q.first());
+
+  //Disable changes if any transactions
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
 			"AND ((raitem_qtyreceived + raitem_qtyshipped + "
-			" raitem_amtcredited+raitem_amtrefunded) > 0 ) );");
+			" raitem_amtcredited + raitem_amtrefunded) > 0 ) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
-  _disposition->setEnabled(!q.first());
+  if (q.first())
+  {
+    _salesRep->setEnabled(false);
+	_commission->setEnabled(false);
+	_taxauth->setEnabled(false);
+    _disposition->setEnabled(false);
+	_immediately->setEnabled(false);
+	_uponReceipt->setEnabled(false);
+	_cust->setEnabled(false);
+	_billToName->setEnabled(false);
+	_billToAddr->setEnabled(false);
+  }
+  else
+  {
+    _salesRep->setEnabled(true);
+	_commission->setEnabled(true);
+	_taxauth->setEnabled(true);
+    _disposition->setEnabled(true);
+	_immediately->setEnabled(true);
+	_uponReceipt->setEnabled(true);
+	_cust->setEnabled(true);
+	_billToName->setEnabled(true);
+	_billToAddr->setEnabled(true);
+  }
   _comments->setId(_raheadid);
 }
 
