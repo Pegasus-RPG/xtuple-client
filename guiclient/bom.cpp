@@ -555,6 +555,7 @@ void BOM::sFillList(int pItemid, bool)
       
       q.prepare(sql);
       q.bindValue(":item_id", _item->id());
+      q.bindValue(":revision_id", _revision->id());
       q.exec();
       if (q.first())
       {
