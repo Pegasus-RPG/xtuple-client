@@ -325,7 +325,7 @@ void dspSummarizedBacklogByWarehouse::sFillList()
                  "       formatDate(cohead_orderdate) AS f_orderdate,"
                  "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
                  "       formatDate(cohead_packdate) AS f_packdate,"
-                 "       formatMoney( SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomration) *"
+                 "       formatMoney( SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
                  "                         (coitem_price / coitem_price_invuomratio), 2) ) ) AS f_sales,"
                  "       formatCost(SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) ) AS f_cost,"
                  "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"

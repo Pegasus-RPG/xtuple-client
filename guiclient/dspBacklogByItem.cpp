@@ -91,6 +91,7 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _soitem->addColumn(tr("Customer"),  -1,           Qt::AlignLeft   );
   _soitem->addColumn(tr("Ordered"),   _dateColumn,  Qt::AlignCenter );
   _soitem->addColumn(tr("Scheduled"), _dateColumn,  Qt::AlignCenter );
+  _soitem->addColumn(tr("Qty. UOM"),  _uomColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Ordered"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),   _qtyColumn,   Qt::AlignRight  );
@@ -230,16 +231,18 @@ void dspBacklogByItem::sFillList()
     QString sql( "SELECT cohead_id, coitem_id, cohead_number, coitem_linenumber, cust_name, "
                  "       formatDate(cohead_orderdate) AS f_orderdate,"
                  "       formatDate(coitem_scheddate) AS f_scheddate,"
+                 "       uom_name,"
                  "       formatQty(coitem_qtyord) AS f_qtyord,"
                  "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
                  "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
                  "       formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS f_amount,"
                  "       round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2) AS backlog "
-                 "FROM cohead, coitem, cust, itemsite, item "
+                 "FROM cohead, coitem, cust, itemsite, item, uom "
                  "WHERE ( (coitem_cohead_id=cohead_id)"
                  " AND (cohead_cust_id=cust_id)"
                  " AND (coitem_status NOT IN ('C','X'))"
                  " AND (coitem_itemsite_id=itemsite_id)"
+                 " AND (coitem_qty_uom_id=uom_id)"
                  " AND (itemsite_item_id=item_id)"
                  " AND (itemsite_item_id=:item_id)"
                  " AND (coitem_scheddate BETWEEN :startDate AND :endDate)" );
@@ -267,6 +270,7 @@ void dspBacklogByItem::sFillList()
 				 q.value("cust_name"),
 				 q.value("f_orderdate"),
 				 q.value("f_scheddate"),
+                                 q.value("uom_name"),
 				 q.value("f_qtyord"),
 				 q.value("f_qtyshipped"),
 				 q.value("f_balance"),

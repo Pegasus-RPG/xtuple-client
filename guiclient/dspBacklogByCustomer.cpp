@@ -90,6 +90,7 @@ dspBacklogByCustomer::dspBacklogByCustomer(QWidget* parent, const char* name, Qt
   _soitem->addColumn(tr("Cust. P/O #/Item Number"),   -1, Qt::AlignLeft   );
   _soitem->addColumn(tr("Order"),            _dateColumn, Qt::AlignCenter );
   _soitem->addColumn(tr("Ship/Sched."),      _dateColumn, Qt::AlignCenter );
+  _soitem->addColumn(tr("Qty. UOM"),         _uomColumn,  Qt::AlignRight  );
   _soitem->addColumn(tr("Ordered"),           _qtyColumn, Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),           _qtyColumn, Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),           _qtyColumn, Qt::AlignRight  );
@@ -283,14 +284,16 @@ void dspBacklogByCustomer::sFillList()
                "       formatDate((SELECT MIN(coitem_scheddate) FROM coitem WHERE (coitem_cohead_id=cohead_id))) AS f_shipdate,"
                "       formatDate(coitem_scheddate) AS f_scheddate,"
                "       item_number, cohead_custponumber,"
+               "       uom_name,"
                "       formatQty(coitem_qtyord) AS f_ordered,"
                "       formatQty(coitem_qtyshipped) AS f_shipped,"
                "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
                "       formatMoney(round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2)) AS f_backlog,"
                "       round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio),2) AS backlog "
-               "FROM cohead, coitem, itemsite, item "
+               "FROM cohead, coitem, itemsite, item, uom "
                "WHERE ( (coitem_cohead_id=cohead_id)"
                " AND (coitem_itemsite_id=itemsite_id)"
+               " AND (coitem_qty_uom_id=uom_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (coitem_status NOT IN ('C','X'))"
                " AND (cohead_cust_id=:cust_id)"
@@ -327,7 +330,7 @@ void dspBacklogByCustomer::sFillList()
       new XTreeWidgetItem( head, soheadid, q.value("coitem_id").toInt(),
                          q.value("coitem_linenumber"), q.value("item_number"),
                          q.value("f_orderdate"), q.value("f_scheddate"),
-                         q.value("f_ordered"), q.value("f_shipped"),
+                         q.value("uom_name"), q.value("f_ordered"), q.value("f_shipped"),
                          q.value("f_balance"), q.value("f_backlog") );
       totalBacklog += q.value("backlog").toDouble();
     }

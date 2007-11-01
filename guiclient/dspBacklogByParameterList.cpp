@@ -382,7 +382,7 @@ void dspBacklogByParameterList::sFillList()
                  " AND (cohead_cust_id=cust_id)"
                  " AND (coitem_itemsite_id=itemsite_id)"
                  " AND (itemsite_item_id=item_id)"
-                 " AND (item_inv_uom_id=uom_id)"
+                 " AND (coitem_qty_uom_id=uom_id)"
                  " AND (coitem_status NOT IN ('C','X'))"
                  " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
 		 "                             AND <? value(\"endDate\") ?>)"

@@ -227,9 +227,10 @@ void dspItemsByClassCode::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='T') THEN :tooling"
                "            WHEN (item_type='O') THEN :outside"
                "            ELSE :error"
-               "       END "
-               "FROM item, classcode "
-               "WHERE ( (item_classcode_id=classcode_id)" );
+               "       END,"
+               "       uom_name "
+               "FROM item, classcode, uom "
+               "WHERE ( (item_inv_uom_id=uom_id) AND (item_classcode_id=classcode_id) " );
 
   if (_classCode->isSelected())
     sql += " AND (classcode_id=:classcode_id)";
