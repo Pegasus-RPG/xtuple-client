@@ -304,7 +304,7 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
 // END_RW
 
     // Sales | Returns
-    { "menu",	tr("&Return"),	(char*)returnsMenu,	mainMenu,	true,	NULL, NULL, true, NULL },
+    { "menu",	tr("&Return"),	(char*)returnsMenu,	mainMenu, true,	NULL, NULL,  _metrics->boolean("EnableReturnAuth"), NULL },
     { "so.newReturn", tr("&New..."),	SLOT(sNewReturn()), returnsMenu, _privleges->check("MaintainReturns"),	NULL, NULL, true, NULL },
     { "so.openReturns", tr("&List Open..."),	SLOT(sOpenReturns()), returnsMenu, (_privleges->check("MaintainReturns") || _privleges->check("ViewReturns")),	NULL, NULL, true, NULL },
 

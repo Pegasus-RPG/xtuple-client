@@ -79,7 +79,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void recalculateTax();
-    virtual void sSave();
+    virtual bool sSave();
 	virtual void sSaveClick();
     virtual void sShipToList();
     virtual void sParseShipToNumber();
@@ -100,6 +100,7 @@ public slots:
     virtual void sTaxAuthChanged();
     virtual void sTaxDetail();
 	virtual void sSalesOrder();
+	virtual void sUpdateTiming();
 
 protected slots:
     virtual void languageChange();

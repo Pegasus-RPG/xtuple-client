@@ -225,7 +225,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _returnAuthorizationNumGeneration->setVisible(false);
 	_nextRaNumberLit->setVisible(false);
 	_nextRaNumber->setVisible(false);
-	_enableReturns->setVisible(false);
+	_tab->removePage(_tab->page(3));
 	_enableReturns->setChecked(false);
   }
   else
@@ -247,6 +247,21 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
       _returnAuthorizationNumGeneration->setCurrentItem(1);
     else if (metric == "O")
       _returnAuthorizationNumGeneration->setCurrentItem(2);
+
+    metric = _metrics->value("DefaultRaDisposition");
+    if (metric == "C")
+      _disposition->setCurrentItem(0);
+    else if (metric == "R")
+      _disposition->setCurrentItem(1);
+    else if (metric == "P")
+      _disposition->setCurrentItem(2);
+    else if (metric == "V")
+      _disposition->setCurrentItem(3);
+    else if (metric == "M")
+      _disposition->setCurrentItem(4);
+
+    _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
+
 
     q.exec("SELECT rahead_id FROM rahead LIMIT 1;");
     if (q.first())
@@ -272,6 +287,7 @@ void configureSO::languageChange()
 void configureSO::sSave()
 {
   char *numberGenerationTypes[] = { "M", "A", "O", "S" };
+  char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
 
   _metrics->set("AllowDiscounts", _allowDiscounts->isChecked());
   _metrics->set("AllowASAPShipSchedules", _allowASAP->isChecked());
@@ -362,6 +378,8 @@ void configureSO::sSave()
 
   if (_enableReturns->isChecked())
   {
+    _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentItem()]));
+    _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentItem()]));
 
     q.prepare( "SELECT setNextRaNumber(:ranumber);" );
@@ -373,6 +391,7 @@ void configureSO::sSave()
       return;
     }
   }
+  _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
 
   _metrics->load();
 

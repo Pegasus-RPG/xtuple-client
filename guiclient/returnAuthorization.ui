@@ -9,6 +9,12 @@
     <height>600</height>
    </rect>
   </property>
+  <property name="sizePolicy" >
+   <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
   <property name="windowTitle" >
    <string>Return Authorization</string>
   </property>
@@ -439,6 +445,9 @@
               <property name="text" >
                <string>Immediately</string>
               </property>
+              <property name="checked" >
+               <bool>true</bool>
+              </property>
              </widget>
             </item>
             <item row="0" column="0" >
@@ -453,11 +462,14 @@
             </item>
             <item row="2" column="1" >
              <widget class="QRadioButton" name="_uponReceipt" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Upon Receipt</string>
               </property>
               <property name="checked" >
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
              </widget>
             </item>
@@ -1079,6 +1091,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_close" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Close</string>
               </property>
@@ -1112,6 +1127,9 @@
             </property>
             <item>
              <widget class="QPushButton" name="_authorizeLine" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Authorize Line</string>
               </property>
@@ -1119,6 +1137,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_clearline" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Clear Line</string>
               </property>
@@ -1126,6 +1147,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_authorizeAll" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Authorize All</string>
               </property>
@@ -1152,6 +1176,9 @@
             </property>
             <item>
              <widget class="QPushButton" name="_enterReceipt" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Enter Receipt...</string>
               </property>
@@ -1159,6 +1186,9 @@
             </item>
             <item>
              <widget class="QPushButton" name="_receiveAll" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>Receive All</string>
               </property>
@@ -1199,6 +1229,9 @@
               </item>
               <item>
                <widget class="QCheckBox" name="_postOnSave" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
                 <property name="text" >
                  <string>Post on Save</string>
                 </property>

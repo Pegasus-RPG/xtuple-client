@@ -223,7 +223,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
  
-	  populate();
       _save->setFocus();
     }
     else if (param.toString() == "view")
@@ -492,13 +491,12 @@ void returnAuthorizationItem::populate()
 		      raitem.value("raitem_tax_rateb").toDouble(),
 		      raitem.value("raitem_tax_ratec").toDouble());
     _tax->setLocalValue(_taxCache.total());
-
     _rsnCode->setId(raitem.value("raitem_rsncode_id").toInt());
     if (raitem.value("raitem_disposition").toString() == "C")
 	  _disposition->setCurrentItem(0);
 	else if (raitem.value("raitem_disposition").toString() == "R")
 	  _disposition->setCurrentItem(1);
-	else if (raitem.value("raitm_disposition").toString() == "P")
+	else if (raitem.value("raitem_disposition").toString() == "P")
 	  _disposition->setCurrentItem(2);
 	else if (raitem.value("raitem_disposition").toString() == "V")
 	  _disposition->setCurrentItem(3);

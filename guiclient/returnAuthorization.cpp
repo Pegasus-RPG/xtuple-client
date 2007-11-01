@@ -92,6 +92,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_so, SIGNAL(newId(int)), this, SLOT(sSalesOrder()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
+  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateTiming()));
 /*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
@@ -122,7 +123,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
   _raitem->addColumn(tr("Status"),      _statusColumn,Qt::AlignCenter );
   _raitem->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
-  _raitem->addColumn(tr("Warranty"),    _statusColumn,Qt::AlignCenter );
+  _raitem->addColumn(tr("Warranty"),    _qtyColumn,Qt::AlignCenter );
   _raitem->addColumn(tr("Sold"),        _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
@@ -131,6 +132,14 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Refunded"),    _moneyColumn, Qt::AlignRight  );
+
+  //Remove Credit Card related options if Credit Card not enabled
+  QString key = omfgThis->_key;
+  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+  {
+    _returnAuthInformation->removePage(_returnAuthInformation->page(4));
+	_creditBy->removeItem(3);
+  }
 
 }
 
@@ -148,6 +157,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
+  QString metric;
 
   param = pParams.value("rahead_id", &valid);
   if (valid)
@@ -193,6 +203,18 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	    return UndefinedError;
       }
+
+      metric = _metrics->value("DefaultRaDisposition");
+      if (metric == "C")
+        _disposition->setCurrentItem(0);
+      else if (metric == "R")
+        _disposition->setCurrentItem(1);
+      else if (metric == "P")
+        _disposition->setCurrentItem(2);
+      else if (metric == "V")
+        _disposition->setCurrentItem(3);
+      else if (metric == "M")
+        _disposition->setCurrentItem(4);
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
@@ -287,7 +309,7 @@ void returnAuthorization::setNumber()
     _authNumber->setFocus();
 }
 
-void returnAuthorization::sSave()
+bool returnAuthorization::sSave()
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   char *creditMethods[] = { "N", "M", "K", "C" };
@@ -309,7 +331,7 @@ void returnAuthorization::sSave()
 			    "or select a Misc. Charge Sales Account." ) );
     _returnAuthInformation->setCurrentPage(1);
     _miscChargeAccount->setFocus();
-    return;
+    return false;
   }
   
   if (_total->localValue() < 0 )
@@ -317,7 +339,7 @@ void returnAuthorization::sSave()
     QMessageBox::information(this, tr("Total Less than Zero"),
                              tr("<p>The Total must be a positive value.") );
     _cust->setFocus();
-    return;
+    return false;
   }
 
   // save address info in case someone wants to use 'em again later
@@ -443,20 +465,24 @@ void returnAuthorization::sSave()
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    return false;
   }
 
   omfgThis->sReturnAuthorizationsUpdated();
   omfgThis->sProjectsUpdated(_project->id());
 
   _comments->setId(_raheadid);
+
+  return true;
 }
 
 void returnAuthorization::sSaveClick()
 {
-  sSave();
-  _raheadid=-1;
-  close();
+  if (sSave())
+  {
+    _raheadid=-1;
+    close();
+  }
 }
 
 void returnAuthorization::sShipToList()
@@ -708,7 +734,8 @@ void returnAuthorization::sCheckAuthorizationNumber()
     {
       _raheadid = query.value("rahead_id").toInt();
 
-      _cust->setReadOnly(TRUE);
+      if (_cust->id() > 0)
+	    _cust->setReadOnly(TRUE);
 
       populate();
      
@@ -886,6 +913,7 @@ void returnAuthorization::sFillList()
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   _so->setEnabled(!q.first());
+  _comments->setId(_raheadid);
 }
 
 void returnAuthorization::sCalculateSubtotal()
@@ -1249,4 +1277,15 @@ void returnAuthorization::sFreightChanged()
     return;
   }
   recalculateTax();
+}
+
+void returnAuthorization::sUpdateTiming()
+{
+  if (_disposition->currentItem() == 0)
+  {
+    _immediately->setChecked(TRUE);
+	_uponReceipt->setEnabled(FALSE);
+  }
+  else
+    _uponReceipt->setEnabled(TRUE);
 }
