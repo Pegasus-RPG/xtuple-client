@@ -100,7 +100,7 @@ public slots:
     virtual void sTaxAuthChanged();
     virtual void sTaxDetail();
 	virtual void sSalesOrder();
-	virtual void sUpdateTiming();
+	virtual void sUpdateDisposition();
 
 protected slots:
     virtual void languageChange();
@@ -119,6 +119,8 @@ private:
     int _taxcurrid;
 
     taxCache _taxCache;
+	char *dispositionTypes[];
+    char *creditMethods[];
 };
 
 #endif // RETURNAUTHORIZATION_H

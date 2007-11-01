@@ -92,7 +92,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_so, SIGNAL(newId(int)), this, SLOT(sSalesOrder()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
-  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateTiming()));
+  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateDisposition()));
 /*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
@@ -313,14 +313,6 @@ bool returnAuthorization::sSave()
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   char *creditMethods[] = { "N", "M", "K", "C" };
-  //  Make sure that all of the required field have been populated
-  /* if (!_cust->isValid())  User specifically wants to be able to save w/o this
-  {
-    QMessageBox::information(this, tr("Select a Customer"),
-                             tr("Please select a Customer before continuing.") );
-    _cust->setFocus();
-    return;
-  } */
 
   if ( ! _miscCharge->isZero() && (!_miscChargeAccount->isValid()) )
   {
@@ -913,6 +905,14 @@ void returnAuthorization::sFillList()
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   _so->setEnabled(!q.first());
+  q.prepare("SELECT raitem_id "
+		    "FROM raitem "
+			"WHERE ( (raitem_rahead_id=:rahead_id) "
+			"AND ((raitem_qtyreceived + raitem_qtyshipped + "
+			" raitem_amtcredited+raitem_amtrefunded) > 0 ) );");
+  q.bindValue(":rahead_id", _raheadid);
+  q.exec();
+  _disposition->setEnabled(!q.first());
   _comments->setId(_raheadid);
 }
 
@@ -1279,8 +1279,47 @@ void returnAuthorization::sFreightChanged()
   recalculateTax();
 }
 
-void returnAuthorization::sUpdateTiming()
+void returnAuthorization::sUpdateDisposition()
 {
+  char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
+  if (_disposition->currentItem() != 4)
+  {
+    q.prepare("SELECT raitem_id FROM raitem, rahead "
+		      "WHERE ((raitem_rahead_id=rahead_id) "
+			  "AND (rahead_id=:rahead_id) "
+			  "AND (rahead_disposition <> :rahead_disposition));");
+	q.bindValue(":rahead_id",_raheadid);
+    q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
+	q.exec();
+    if (q.first())
+	{
+      if ( QMessageBox::question( this, tr("Disposition Changed"),
+                             tr("Would you like to update the disposition of all existing line items?"),
+                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
+      {
+	    q.prepare("UPDATE raitem SET raitem_disposition=:rahead_disposition "
+		    	  "WHERE (raitem_rahead_id=:rahead_id);");
+		q.bindValue(":rahead_id", _raheadid);
+	    q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
+		q.exec();
+        if (q.lastError().type() != QSqlError::NoError)
+        {
+           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+           return;
+        }
+		else
+		{
+		  sSave();
+		  sFillList();
+		}
+	  }
+	}
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
   if (_disposition->currentItem() == 0)
   {
     _immediately->setChecked(TRUE);
