@@ -3,6 +3,15 @@
   <xsl:import href="utility.xsl"/>
   <xsl:output indent="yes" method="xml" doctype-system="xtupleapi.dtd" />
 
+  <!-- parameters supply default values for mandatory fields that we can't
+       derive from the data. param name = (view-name)_(column-name)
+    -->
+  <xsl:param name="customer_sales_rep"		   select="'Yahoo'"/>
+  <xsl:param name="customer_default_terms"	   select="'Yahoo'"/>
+  <xsl:param name="customer_default_tax_authority" select="'Yahoo'"/>
+  <xsl:param name="customer_corresp_type" select="'bill'" />   <!-- bill|ship -->
+  <xsl:param name="salesline_sched_offset"	   select="'1 day'" />
+
   <xsl:template match="/">
     <xsl:element name="xtupleimport">
       <xsl:apply-templates/>
@@ -20,19 +29,24 @@
 
   <xsl:template name="customerNumberFromAddress">
     <xsl:param name="address"/>
-      <xsl:choose>
-	<xsl:when test="$address/Company">
-	  getCustNumberForCompany('<xsl:value-of select="$address/Company"/>')
-	</xsl:when>
-	<xsl:when test="$address/Name/First
-		    and $address/Name/Last">
-	  getCustNumberForName('<xsl:value-of select="$address/Name/First"/>',
-			       '<xsl:value-of select="$address/Name/Last"/>')
-	</xsl:when>
-	<xsl:otherwise>
-	  getCustNumberForName('<xsl:value-of select="$address/Name/Full"/>')
-	</xsl:otherwise>
-      </xsl:choose>
+    <xsl:param name="generate" select="'false'"/>
+    getCustNumberFromInfo('<xsl:value-of select="$address/Email"/>',
+			  '<xsl:value-of select="$address/Company"/>',
+			  '<xsl:value-of select="$address/Name/First"/>',
+			  '<xsl:value-of select="$address/Name/Last"/>',
+			  '<xsl:value-of select="$address/Name/Full"/>',
+			  '<xsl:value-of select="$generate"/>')
+  </xsl:template>
+
+  <xsl:template name="customerNameFromAddress">
+    <xsl:param name="address"/>
+    <xsl:param name="generate" select="'false'"/>
+    getCustNameFromInfo('<xsl:value-of select="$address/Email"/>',
+			'<xsl:value-of select="$address/Company"/>',
+			'<xsl:value-of select="$address/Name/First"/>',
+			'<xsl:value-of select="$address/Name/Last"/>',
+			'<xsl:value-of select="$address/Name/Full"/>',
+			'<xsl:value-of select="$generate"/>')
   </xsl:template>
 
   <xsl:template match="OrderList">
@@ -40,6 +54,300 @@
   </xsl:template>
 
   <xsl:template match="Order">
+    <!-- try to make a new customer record but ignore errors 'cause it might
+         already exist
+     -->
+    <customer ignore="true">
+      <customer_number quote="false">
+	<xsl:choose>
+	  <xsl:when test="AddressInfo[@type = 'bill']">
+	    <xsl:call-template name="customerNumberFromAddress">
+	      <xsl:with-param name="address"
+			      select="AddressInfo[@type = 'bill']"/>
+	      <xsl:with-param name="generate" select="'true'"/>
+	    </xsl:call-template>
+	  </xsl:when>
+	  <xsl:when test="AddressInfo[@type = 'ship']">
+	    <xsl:call-template name="customerNumberFromAddress">
+	      <xsl:with-param name="address"
+			      select="AddressInfo[@type = 'ship']"/>
+	      <xsl:with-param name="generate" select="'true'"/>
+	    </xsl:call-template>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:message terminate="yes">
+	      Cannot find Customer Number for Order
+	      <xsl:value-of select="number"/>
+	    </xsl:message>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </customer_number>
+
+      <!-- customer_type -->
+
+      <customer_name quote="false">
+	<xsl:choose>
+	  <xsl:when test="AddressInfo[@type = 'bill']">
+	    <xsl:call-template name="customerNameFromAddress">
+	      <xsl:with-param name="address"
+			      select="AddressInfo[@type = 'bill']"/>
+	      <xsl:with-param name="generate" select="'true'"/>
+	    </xsl:call-template>
+	  </xsl:when>
+	  <xsl:when test="AddressInfo[@type = 'ship']">
+	    <xsl:call-template name="customerNameFromAddress">
+	      <xsl:with-param name="address"
+			      select="AddressInfo[@type = 'ship']"/>
+	      <xsl:with-param name="generate" select="'true'"/>
+	    </xsl:call-template>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    <xsl:message terminate="yes">
+	      Cannot find Customer Name for Order
+	      <xsl:value-of select="number"/>
+	    </xsl:message>
+	  </xsl:otherwise>
+	</xsl:choose>
+      </customer_name>
+
+      <!-- active -->
+
+      <sales_rep><xsl:value-of select="$customer_sales_rep"/></sales_rep>
+
+      <!-- commission -->
+
+      <xsl:if test="Shipping">
+	<ship_via>
+	  <xsl:value-of select="Shipping"/>
+	</ship_via>
+      </xsl:if>
+
+      <!-- ship_form -->
+      <!-- shipping_charges -->
+      <!-- accepts_backorders -->
+      <!-- accepts_partial_shipments -->
+      <!-- allow_free_form_shipto -->
+      <!-- allow_free_form_billto -->
+      <!-- preferred_selling_whs -->
+      <default_tax_authority><xsl:value-of select="$customer_default_tax_authority"/></default_tax_authority>
+      <default_terms><xsl:value-of select="$customer_default_terms"/></default_terms>
+      <!-- balance_method -->
+      <!-- default_discount -->
+
+      <xsl:if test="@currency">
+	<default_currency><xsl:value-of select="@currency"/></default_currency>
+      </xsl:if>
+
+      <!-- credit_limit_currency -->
+      <!-- credit_limit -->
+      <!-- credit_rating -->
+      <!-- credit_status -->
+      <!-- credit_status_exceed_warn -->
+      <!-- credit_status_exceed_hold -->
+      <!-- uses_purchase_orders -->
+      <!-- uses_blanket_pos -->
+
+      <xsl:if test="AddressInfo[@type = 'bill']">
+	<!-- billing_contact_id -->
+	<!-- billing_contact_honorific -->
+	<xsl:if test="AddressInfo[@type = 'bill']/Name/First">
+	  <billing_contact_first>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Name/First"/>
+	  </billing_contact_first>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = 'bill']/Name/Last">
+	  <billing_contact_last>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Name/Last"/>
+	  </billing_contact_last>
+	</xsl:if>
+	<!-- billing_contact_job_title -->
+	<xsl:if test="AddressInfo[@type = 'bill']/Phone">
+	  <billing_contact_voice>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Phone"/>
+	  </billing_contact_voice>
+	</xsl:if>
+	<!-- billing_contact_alternate -->
+	<!-- billing_contact_fax -->
+	<xsl:if test="AddressInfo[@type = 'bill']/Email">
+	  <billing_contact_email>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Email"/>
+	  </billing_contact_email>
+	</xsl:if>
+	<!-- billing_contact_web -->
+	<!-- billing_contact_address_change -->
+	<xsl:if test="AddressInfo[@type = 'bill']/Address1">
+	  <billing_contact_address1>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Address1"/>
+	  </billing_contact_address1>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = 'bill']/Address2">
+	  <billing_contact_address2>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Address2"/>
+	  </billing_contact_address2>
+	</xsl:if>
+	<!-- billing_contact_address3 -->
+	<xsl:if test="AddressInfo[@type = 'bill']/City">
+	  <billing_contact_city>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/City"/>
+	  </billing_contact_city>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = 'bill']/State">
+	  <billing_contact_state>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/State"/>
+	  </billing_contact_state>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = 'bill']/Zip">
+	  <billing_contact_postalcode>
+	    <xsl:value-of select="AddressInfo[@type = 'bill']/Zip"/>
+	  </billing_contact_postalcode>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = 'bill']/Country">
+	  <billing_contact_country quote="false">
+	    <xsl:call-template name="YahooCountry">
+	      <xsl:with-param name="country"
+			      select="AddressInfo[@type='bill']/Country"/>
+	    </xsl:call-template>
+	  </billing_contact_country>
+	</xsl:if>
+      </xsl:if>
+
+      <xsl:if test="$customer_corresp_type != 'bill' and
+		    $customer_corresp_type != 'ship'">
+	<xsl:message terminate="yes">
+	  The customer_corresp_type parameter has the value
+	  '<xsl:value-of select="$customer_corresp_type"/>' but must be either
+	  'bill' or 'ship'.
+	</xsl:message>
+      </xsl:if>
+      <xsl:if test="AddressInfo[@type = $customer_corresp_type]">
+	<!-- correspond_contact_id -->
+	<!-- correspond_contact_honorific -->
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Name/First">
+	  <correspond_contact_first>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Name/First"/>
+	  </correspond_contact_first>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Name/Last">
+	  <correspond_contact_last>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Name/Last"/>
+	  </correspond_contact_last>
+	</xsl:if>
+	<!-- correspond_contact_job_title -->
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Phone">
+	  <correspond_contact_voice>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Phone"/>
+	  </correspond_contact_voice>
+	</xsl:if>
+	<!-- correspond_contact_alternate -->
+	<!-- correspond_contact_fax -->
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Email">
+	  <correspond_contact_email>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Email"/>
+	  </correspond_contact_email>
+	</xsl:if>
+	<!-- correspond_contact_web -->
+	<!-- correspond_contact_address_change -->
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Address1">
+	  <correspond_contact_address1>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Address1"/>
+	  </correspond_contact_address1>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Address2">
+	  <correspond_contact_address2>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Address2"/>
+	  </correspond_contact_address2>
+	</xsl:if>
+	<!-- correspond_contact_address3 -->
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/City">
+	  <correspond_contact_city>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/City"/>
+	  </correspond_contact_city>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/State">
+	  <correspond_contact_state>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/State"/>
+	  </correspond_contact_state>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Zip">
+	  <correspond_contact_postalcode>
+	    <xsl:value-of select="AddressInfo[@type = $customer_corresp_type]/Zip"/>
+	  </correspond_contact_postalcode>
+	</xsl:if>
+	<xsl:if test="AddressInfo[@type = $customer_corresp_type]/Country">
+	  <correspond_contact_country quote="false">
+	    <xsl:call-template name="YahooCountry">
+	      <xsl:with-param name="country"
+			      select="AddressInfo[@type=$customer_corresp_type]/Country"/>
+	    </xsl:call-template>
+	  </correspond_contact_country>
+	</xsl:if>
+      </xsl:if>
+
+      <notes>
+	<xsl:if test="Comments">
+	  <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="Comments"/>
+	  </xsl:call-template>
+	  <xsl:text>
+</xsl:text>
+	</xsl:if>
+	<xsl:if test="CreditCard">
+	  <xsl:value-of select="CreditCard"/>
+	  type <xsl:value-of select="CreditCard/@type"/>
+	  expiration <xsl:value-of select="CreditCard/@expiration"/>
+	  <xsl:text>
+</xsl:text>
+	</xsl:if>
+	<xsl:for-each select="AddressInfo/Custom">
+	  <xsl:value-of select="concat(name(), '-', @name)"/>:
+	  <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="text()"/>
+	  </xsl:call-template>
+	  <xsl:text>
+</xsl:text>
+	</xsl:for-each>
+	<xsl:for-each select="NumericTime		|
+			      Referer			|
+			      Entry-Point		|
+			      IPAddress			|
+			      YahooLogin		|
+			      Cookie			|
+			      Trackable-Link		|
+			      Warning			|
+			      Suspect			|
+			      Store-Status		|
+			      HTTP-User-Agent" >
+	  <xsl:sort select="name()"/>
+	  <xsl:variable name="name" select="name()"/>
+	  <xsl:value-of select="name()"/>:
+	  <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="text()"/>
+	  </xsl:call-template>
+	  <xsl:for-each select="@*">
+	    <xsl:value-of select="name()"/>=
+	    <xsl:call-template name="cleanSQLChars">
+	      <xsl:with-param name="inputStr" select="text()"/>
+	    </xsl:call-template>
+	  </xsl:for-each>
+	  <xsl:text>
+</xsl:text>
+	</xsl:for-each>
+      </notes>
+
+      <!-- so_edi_profile -->
+      <!-- so_edi_email -->
+      <!-- so_edi_cc -->
+      <!-- so_edi_subject -->
+      <!-- so_edi_filename -->
+      <!-- so_edi_emailbody -->
+      <!-- invc_edi_profile -->
+      <!-- invc_edi_email -->
+      <!-- invc_edi_cc -->
+      <!-- invc_edi_subject -->
+      <!-- invc_edi_filename -->
+      <!-- invc_edi_emailbody -->
+    </customer>
+
     <salesorder>
       <order_number>
 	<xsl:call-template name="stripAlpha">
@@ -63,7 +371,7 @@
       <!-- terms -->
       <!-- project_number -->
 
-      <customer_number>
+      <customer_number quote="false">
 	<xsl:choose>
 	  <xsl:when test="AddressInfo[@type = 'bill']">
 	    <xsl:call-template name="customerNumberFromAddress">
@@ -119,7 +427,7 @@
 	  </billto_postal_code>
 	</xsl:if>
 	<xsl:if test="AddressInfo[@type = 'bill']/Country">
-	  <billto_country>
+	  <billto_country quote="false">
 	    <xsl:call-template name="YahooCountry">
 	      <xsl:with-param name="country"
 			      select="AddressInfo[@type='bill']/Country"/>
@@ -162,7 +470,7 @@
 	  </shipto_postal_code>
 	</xsl:if>
 	<xsl:if test="AddressInfo[@type = 'ship']/Country">
-	  <shipto_country>
+	  <shipto_country quote="false">
 	    <xsl:call-template name="YahooCountry">
 	      <xsl:with-param name="country"
 			      select="AddressInfo[@type='ship']/Country"/>
@@ -192,7 +500,14 @@
       <!-- ship_complete -->
 
       <currency>
-	<xsl:value-of select="@currency"/>
+	<xsl:choose>
+	  <xsl:when test="@currency">
+	    <xsl:value-of select="@currency"/>
+	  </xsl:when>
+	  <xsl:otherwise>
+	    SELECT curr_abbr FROM curr_symbol WHERE (curr_id=basecurrid())
+	  </xsl:otherwise>
+	</xsl:choose>
       </currency>
 
       <!-- misc_charge_description -->
@@ -202,7 +517,9 @@
 
       <order_notes>
 	<xsl:if test="Comments">
-	  <xsl:value-of select="Comments"/>
+	  <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="Comments"/>
+	  </xsl:call-template>
 	  <xsl:text>
 </xsl:text>
 	</xsl:if>
@@ -223,12 +540,16 @@
 </xsl:text>
 	</xsl:for-each>
 	<xsl:for-each select="AddressInfo/Custom">
-	  <xsl:value-of select="concat(name(), '-', @name)"/>: <xsl:value-of select="text()"/>
+	  <xsl:value-of select="concat(name(), '-', @name)"/>: <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="text()"/>
+	  </xsl:call-template>
 	  <xsl:text>
 </xsl:text>
 	</xsl:for-each>
 	<xsl:if test="Coupon">
-	  Coupon: <xsl:value-of select="Coupon/*"/>
+	  Coupon: <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="Coupon/*"/>
+	  </xsl:call-template>
 	  <xsl:text>
 </xsl:text>
 	</xsl:if>
@@ -250,16 +571,18 @@
 			      GiftWrapMessage		|
 			      CardEvents">
 	  <xsl:sort select="name()"/>
-	  <xsl:value-of select="name()"/>: <xsl:value-of select="text()"/>
+	  <xsl:variable name="name" select="name()"/>
+	  <xsl:value-of select="name()"/>: <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="text()"/>
+	  </xsl:call-template>
+	  <xsl:for-each select="@*">
+	    <xsl:value-of select="name()"/>=<xsl:call-template name="cleanSQLChars">
+	      <xsl:with-param name="inputStr" select="text()"/>
+	    </xsl:call-template>
+	  </xsl:for-each>
 	  <xsl:text>
 </xsl:text>
 	</xsl:for-each>
-	<xsl:if test="Cookie">
-	  Cookie B=<xsl:value-of select="Cookie/@B"/>
-		 Y=<xsl:value-of select="Cookie/@Y"/>
-	  <xsl:text>
-</xsl:text>
-	</xsl:if>
       </order_notes>
 
       <!-- shipping_notes -->
@@ -297,7 +620,10 @@
 	<xsl:value-of select="Unit-Price"/>
       </net_unit_price>
 
-      <!-- scheduled_date -->
+      <scheduled_date quote="false">
+	DATE '<xsl:value-of select="../Time"/>' + INTERVAL '<xsl:value-of select="$salesline_sched_offset"/>'
+      </scheduled_date>
+
       <!-- tax_code -->
       <!-- discount_pct_from_list -->
       <!-- create_order -->
@@ -306,11 +632,13 @@
       <notes>
 	<!-- ignore Thumb -->
 	<xsl:for-each select="Code		|
-			      Description		|
-			      Url			|
+			      Description	|
+			      Url		|
 			      Taxable">
 	  <xsl:sort select="name()"/>
-	  <xsl:value-of select="name()"/>: <xsl:value-of select="text()"/>
+	  <xsl:value-of select="name()"/>: <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="text()"/>
+	  </xsl:call-template>
 	  <xsl:text>
   </xsl:text>
 	</xsl:for-each>

@@ -22,11 +22,19 @@
   - Space characters have been replaced by _ in attribute values that the
     API expects to contain spaces.
 
-  - If an element has an id attribute then the corresponding underlying
-    table has an id. By passing the id attribute for this record, the
-    user is telling us to update an existing record with this internal id.
-    All id attributes in this file should have positive integer values,
-    *not* ID or IDREF values.
+  - If an API view element has an id attribute then the
+    corresponding underlying table has an id. By passing the id
+    attribute for this record, the user is telling us to update an
+    existing record with this internal id.  All id attributes in
+    this file should have positive integer values, *not* ID or IDREF
+    values.
+
+  - If an API view element has an ignore attribute then the import
+    program should be written so that it will ignore errors if this
+    record couldn't be imported but not ignore errors if other records
+    fail. This might be used, for example, when importing orders: try
+    to create a customer record from the order description but ignore
+    errors creating the customer because it might already exist.
 
   Significant differences between this DTD and the import API views:
 
@@ -86,11 +94,14 @@
 		      secondary_contact_email?,
 		      secondary_contact_web?)?,
 		    notes? ) >
-<!ATTLIST account	id	CDATA	#IMPLIED >
+<!ATTLIST account	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' >
 
 <!ELEMENT accountchar (account_number, characteristic, value ) >
+<!ATTLIST accountchar	ignore 	(true|false)	'false' >
 
 <!ELEMENT accountcomment (account_number, type, date?, username?, text) >
+<!ATTLIST accountcomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT address ( address_number?,
 		    address1?,
@@ -103,11 +114,14 @@
 		    active?,
 		    notes?,
 		    change? ) >
-<!ATTLIST address	id	CDATA	#IMPLIED > <!-- should be same as address_number if supplied -->
+<!ATTLIST address	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' > <!-- should be same as address_number if supplied -->
 
 <!ELEMENT addresschar (address_number, characteristic, value ) >
+<!ATTLIST addresschar	ignore 	(true|false)	'false' >
 
 <!ELEMENT addresscomment (address_number, type, date?, username?, text) >
+<!ATTLIST addresscomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT contact ( contact_number?,
 		    honorific?,
@@ -131,15 +145,20 @@
 		    country?,
 		    address_change?,
 		    notes? ) >
-<!ATTLIST contact	id	CDATA	#IMPLIED >
+<!ATTLIST contact	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' >
 
 <!ELEMENT contactchar (contact_number, characteristic, value ) >
+<!ATTLIST contactchar	ignore 	(true|false)	'false' >
 
 <!ELEMENT contactcomment (contact_number, type, date?, username?, text) >
+<!ATTLIST contactcomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT custchar (customer_number, characteristic, value ) >
+<!ATTLIST custchar	ignore 	(true|false)	'false' >
 
 <!ELEMENT custcomment (customer_number, type, date?, username?, text) >
+<!ATTLIST custcomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT custcreditcard (customer_number,
 			  credit_card_type,
@@ -156,11 +175,12 @@
 			  expiration_year,
 			  key
 			 ) >
+<!ATTLIST custcreditcard	ignore 	(true|false)	'false' >
 
 <!ELEMENT customer (  customer_number,
 		      customer_type?,
 		      customer_name?,
-		      active? ,
+		      active?,
 		      sales_rep,
 		      commission?,
 		      ship_via?,
@@ -234,7 +254,8 @@
 		      invc_edi_filename?,
 		      invc_edi_emailbody?
 		   ) >
-<!ATTLIST customer	id	CDATA	#IMPLIED >
+<!ATTLIST customer	id	CDATA		#IMPLIED
+			ignore	(true|false)	'false' >
 
 <!ELEMENT custshipto ( customer_number,
 		       shipto_number?,
@@ -268,9 +289,11 @@
 		       general_notes?,
 		       shipping_notes?
 		     ) >
-<!ATTLIST custshipto	id	CDATA	#IMPLIED >
+<!ATTLIST custshipto	id	CDATA		#IMPLIED
+			ignore	(true|false)	'false' >
 
 <!ELEMENT custtax (customer_number, tax_authority, registration_number) >
+<!ATTLIST custtax	ignore 	(true|false)	'false' >
 
 <!ELEMENT journalentry ( currency,
 			 amount,
@@ -279,6 +302,7 @@
 			 debit,
 			 credit,
 			 notes ) >
+<!ATTLIST journalentry	ignore 	(true|false)	'false' >
 
 <!ELEMENT quote (  quote_number,
 		   warehouse?,
@@ -321,7 +345,8 @@
 		   shipping_notes?,
 		   add_to_packing_list_batch?
 		) >
-<!ATTLIST quote	id	CDATA	#IMPLIED >
+<!ATTLIST quote	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' >
 
 <!ELEMENT quotecomment ( quote_number,
 			 type,
@@ -329,6 +354,7 @@
 			 username?,
 			 text
 			) >
+<!ATTLIST quotecomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT quoteline ( quote_number,
 		      line_number?,
@@ -346,13 +372,15 @@
 		      overwrite_po_price?,
 		      notes?
 		    ) >
-<!ATTLIST quoteline	id	CDATA	#IMPLIED >
+<!ATTLIST quoteline	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' >
 
 <!ELEMENT quotelinechar ( quote_number,
 			  line_number,
 			  characteristic,
 			  value?
 			) >
+<!ATTLIST quotelinechar	ignore 	(true|false)	'false' >
 
 <!ELEMENT quotelinecomment ( quote_number,
 			     line_number,
@@ -361,6 +389,7 @@
 			     username?,
 			     text
 			   ) >
+<!ATTLIST quotelinecomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT salesline	( order_number,
 			  line_number?,
@@ -380,13 +409,15 @@
 			  overwrite_po_price?,
 			  notes?
 			) >
-<!ATTLIST salesline	id	CDATA	#IMPLIED >
+<!ATTLIST salesline	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' >
 
 <!ELEMENT saleslinechar ( order_number,
 			  line_number,
 			  characteristic,
 			  value?
 			) >
+<!ATTLIST saleslinechar	ignore 	(true|false)	'false' >
 
 <!ELEMENT saleslinecomment ( order_number,
 			     line_number,
@@ -395,6 +426,7 @@
 			     username?,
 			     text
 			   ) >
+<!ATTLIST saleslinecomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT salesorder (	order_number,
 			warehouse?,
@@ -442,7 +474,8 @@
 			shipping_notes?,
 			add_to_packing_list_batch?
 		      )>
-<!ATTLIST salesorder	id	CDATA	#IMPLIED >
+<!ATTLIST salesorder	id	CDATA		#IMPLIED
+			ignore 	(true|false)	'false' >
 
 <!ELEMENT salesordercomment ( order_number,
 			      type,
@@ -450,6 +483,7 @@
 			      username?,
 			      text
 			    ) >
+<!ATTLIST salesordercomment	ignore 	(true|false)	'false' >
 
 <!ELEMENT account_name			(#PCDATA) >
 <!ELEMENT account_number		(#PCDATA) >
@@ -630,6 +664,186 @@
 <!ELEMENT warehouse		(#PCDATA) >
 <!ELEMENT web			(#PCDATA) >
 <!ELEMENT zone			(#PCDATA) >
+
+<!ATTLIST account_name			quote	(true|false)	'true' >
+<!ATTLIST account_number		quote	(true|false)	'true' >
+<!ATTLIST address_number		quote	(true|false)	'true' >
+<!ATTLIST address1			quote	(true|false)	'true' >
+<!ATTLIST address2			quote	(true|false)	'true' >
+<!ATTLIST address3			quote	(true|false)	'true' >
+<!ATTLIST addressline			quote	(true|false)	'true' >
+<!ATTLIST alternate			quote	(true|false)	'true' >
+<!ATTLIST amount			quote	(true|false)	'true' >
+<!ATTLIST billing_contact_address1	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_address2	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_address3	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_alternate	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_city		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_country	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_email		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_fax		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_first		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_honorific	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_id		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_job_title	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_last		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_postalcode	quote	(true|false)	'true' >
+<!ATTLIST billing_contact_state		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_voice		quote	(true|false)	'true' >
+<!ATTLIST billing_contact_web		quote	(true|false)	'true' >
+<!ATTLIST billto_address1		quote	(true|false)	'true' >
+<!ATTLIST billto_address2		quote	(true|false)	'true' >
+<!ATTLIST billto_address3		quote	(true|false)	'true' >
+<!ATTLIST billto_city			quote	(true|false)	'true' >
+<!ATTLIST billto_country		quote	(true|false)	'true' >
+<!ATTLIST billto_name			quote	(true|false)	'true' >
+<!ATTLIST billto_postal_code		quote	(true|false)	'true' >
+<!ATTLIST billto_state			quote	(true|false)	'true' >
+<!ATTLIST characteristic		quote	(true|false)	'true' >
+<!ATTLIST city				quote	(true|false)	'true' >
+<!ATTLIST commission			quote	(true|false)	'true' >
+<!ATTLIST contact_id			quote	(true|false)	'true' >
+<!ATTLIST contact_number		quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_address1	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_address2	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_address3	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_alternate	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_city	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_country	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_email	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_fax	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_first	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_honorific	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_id		quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_job_title	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_last	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_postalcode	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_state	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_voice	quote	(true|false)	'true' >
+<!ATTLIST correspond_contact_web	quote	(true|false)	'true' >
+<!ATTLIST country		quote	(true|false)	'true' >
+<!ATTLIST credit		quote	(true|false)	'true' >
+<!ATTLIST credit_card_number	quote	(true|false)	'true' >
+<!ATTLIST credit_limit		quote	(true|false)	'true' >
+<!ATTLIST credit_limit_currency	quote	(true|false)	'true' >
+<!ATTLIST credit_rating		quote	(true|false)	'true' >
+<!ATTLIST crm_account		quote	(true|false)	'true' >
+<!ATTLIST currency		quote	(true|false)	'true' >
+<!ATTLIST cust_po_number	quote	(true|false)	'true' >
+<!ATTLIST customer_name		quote	(true|false)	'true' >
+<!ATTLIST customer_number	quote	(true|false)	'true' >
+<!ATTLIST customer_pn	 	quote	(true|false)	'true' >
+<!ATTLIST customer_type		quote	(true|false)	'true' >
+<!ATTLIST date			quote	(true|false)	'true' >
+<!ATTLIST debit			quote	(true|false)	'true' >
+<!ATTLIST default_currency	quote	(true|false)	'true' >
+<!ATTLIST default_discount	quote	(true|false)	'true' >
+<!ATTLIST default_tax_authority	quote	(true|false)	'true' >
+<!ATTLIST default_terms		quote	(true|false)	'true' >
+<!ATTLIST discount_pct_from_list quote	(true|false)	'true' >
+<!ATTLIST dist_date		quote	(true|false)	'true' >
+<!ATTLIST doc_number		quote	(true|false)	'true' >
+<!ATTLIST edi_profile		quote	(true|false)	'true' >
+<!ATTLIST email			quote	(true|false)	'true' >
+<!ATTLIST expiration_month	quote	(true|false)	'true' >
+<!ATTLIST expiration_year	quote	(true|false)	'true' >
+<!ATTLIST fax			quote	(true|false)	'true' >
+<!ATTLIST first			quote	(true|false)	'true' >
+<!ATTLIST fob			quote	(true|false)	'true' >
+<!ATTLIST freight		quote	(true|false)	'true' >
+<!ATTLIST general_notes		quote	(true|false)	'true' >
+<!ATTLIST honorific		quote	(true|false)	'true' >
+<!ATTLIST initials		quote	(true|false)	'true' >
+<!ATTLIST invc_edi_cc		quote	(true|false)	'true' >
+<!ATTLIST invc_edi_email	quote	(true|false)	'true' >
+<!ATTLIST invc_edi_emailbody	quote	(true|false)	'true' >
+<!ATTLIST invc_edi_filename	quote	(true|false)	'true' >
+<!ATTLIST invc_edi_profile	quote	(true|false)	'true' >
+<!ATTLIST invc_edi_subject	quote	(true|false)	'true' >
+<!ATTLIST item_number	 	quote	(true|false)	'true' >
+<!ATTLIST job_title		quote	(true|false)	'true' >
+<!ATTLIST key			quote	(true|false)	'true' >
+<!ATTLIST last			quote	(true|false)	'true' >
+<!ATTLIST line_number	 	quote	(true|false)	'true' >
+<!ATTLIST misc_account_number	quote	(true|false)	'true' >
+<!ATTLIST misc_charge		quote	(true|false)	'true' >
+<!ATTLIST misc_charge_description quote	(true|false)	'true' >
+<!ATTLIST name			quote	(true|false)	'true' >
+<!ATTLIST net_unit_price	quote	(true|false)	'true' >
+<!ATTLIST notes			quote	(true|false)	'true' >
+<!ATTLIST order_date		quote	(true|false)	'true' >
+<!ATTLIST order_notes		quote	(true|false)	'true' >
+<!ATTLIST order_number		quote	(true|false)	'true' >
+<!ATTLIST overwrite_po_price	quote	(true|false)	'true' >
+<!ATTLIST pack_date		quote	(true|false)	'true' >
+<!ATTLIST parent_account	quote	(true|false)	'true' >
+<!ATTLIST phone			quote	(true|false)	'true' >
+<!ATTLIST postal_code		quote	(true|false)	'true' >
+<!ATTLIST preferred_selling_whs	quote	(true|false)	'true' >
+<!ATTLIST primary_contact_number	quote	(true|false)	'true' >
+<!ATTLIST primary_contact_email		quote	(true|false)	'true' >
+<!ATTLIST primary_contact_fax		quote	(true|false)	'true' >
+<!ATTLIST primary_contact_first		quote	(true|false)	'true' >
+<!ATTLIST primary_contact_honorific	quote	(true|false)	'true' >
+<!ATTLIST primary_contact_job_title	quote	(true|false)	'true' >
+<!ATTLIST primary_contact_last		quote	(true|false)	'true' >
+<!ATTLIST primary_contact_voice		quote	(true|false)	'true' >
+<!ATTLIST project_number		quote	(true|false)	'true' >
+<!ATTLIST qty_ordered	 		quote	(true|false)	'true' >
+<!ATTLIST quote_date			quote	(true|false)	'true' >
+<!ATTLIST quote_number			quote	(true|false)	'true' >
+<!ATTLIST registration_number		quote	(true|false)	'true' >
+<!ATTLIST sales_rep			quote	(true|false)	'true' >
+<!ATTLIST scheduled_date		quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_number	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_email	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_fax		quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_first	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_honorific	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_job_title	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_last	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_voice	quote	(true|false)	'true' >
+<!ATTLIST secondary_contact_web		quote	(true|false)	'true' >
+<!ATTLIST ship_form		quote	(true|false)	'true' >
+<!ATTLIST ship_via		quote	(true|false)	'true' >
+<!ATTLIST shipping_charges	quote	(true|false)	'true' >
+<!ATTLIST shipping_chgs		quote	(true|false)	'true' >
+<!ATTLIST shipping_form		quote	(true|false)	'true' >
+<!ATTLIST shipping_notes	quote	(true|false)	'true' >
+<!ATTLIST shipto_address1	quote	(true|false)	'true' >
+<!ATTLIST shipto_address2	quote	(true|false)	'true' >
+<!ATTLIST shipto_address3	quote	(true|false)	'true' >
+<!ATTLIST shipto_city		quote	(true|false)	'true' >
+<!ATTLIST shipto_country	quote	(true|false)	'true' >
+<!ATTLIST shipto_name		quote	(true|false)	'true' >
+<!ATTLIST shipto_number		quote	(true|false)	'true' >
+<!ATTLIST shipto_phone		quote	(true|false)	'true' >
+<!ATTLIST shipto_postal_code	quote	(true|false)	'true' >
+<!ATTLIST shipto_state		quote	(true|false)	'true' >
+<!ATTLIST so_edi_cc		quote	(true|false)	'true' >
+<!ATTLIST so_edi_email		quote	(true|false)	'true' >
+<!ATTLIST so_edi_emailbody	quote	(true|false)	'true' >
+<!ATTLIST so_edi_filename	quote	(true|false)	'true' >
+<!ATTLIST so_edi_profile	quote	(true|false)	'true' >
+<!ATTLIST so_edi_subject	quote	(true|false)	'true' >
+<!ATTLIST sold_from_whs	 	quote	(true|false)	'true' >
+<!ATTLIST state			quote	(true|false)	'true' >
+<!ATTLIST street_address1	quote	(true|false)	'true' >
+<!ATTLIST street_address2	quote	(true|false)	'true' >
+<!ATTLIST substitute_for 	quote	(true|false)	'true' >
+<!ATTLIST supplying_whs 	quote	(true|false)	'true' >
+<!ATTLIST tax_authority		quote	(true|false)	'true' >
+<!ATTLIST tax_code		quote	(true|false)	'true' >
+<!ATTLIST tax_type		quote	(true|false)	'true' >
+<!ATTLIST terms			quote	(true|false)	'true' >
+<!ATTLIST text			quote	(true|false)	'true' >
+<!ATTLIST type			quote	(true|false)	'true' >
+<!ATTLIST username		quote	(true|false)	'true' >
+<!ATTLIST value		   	quote	(true|false)	'true' >
+<!ATTLIST voice			quote	(true|false)	'true' >
+<!ATTLIST warehouse		quote	(true|false)	'true' >
+<!ATTLIST web			quote	(true|false)	'true' >
+<!ATTLIST zone			quote	(true|false)	'true' >
 
 <!ELEMENT add_to_packing_list_batch	EMPTY	>
 <!ATTLIST add_to_packing_list_batch	value (true|false)	'true' >

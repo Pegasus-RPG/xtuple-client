@@ -422,7 +422,7 @@ bool importXML::importOne(const QString &pFileName)
 	columnValueList.append("'" + columnElem.attribute("value") + "'");
       else if (columnElem.text().stripWhiteSpace().startsWith("SELECT"))
 	columnValueList.append("(" + columnElem.text() + ")");
-      else if (columnElem.text().contains("'"))
+      else if (columnElem.attribute("quote") == "false")
 	columnValueList.append(columnElem.text());
       else
 	columnValueList.append("'" + columnElem.text() + "'");
