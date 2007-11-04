@@ -227,7 +227,7 @@ menuSchedule::menuSchedule(OpenMFGGUIClient *Pparent) :
     { "ms.dspMRPDetail", tr("&MRP Detail..."), SLOT(sDspMRPDetail()), reportsMenu, _privleges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true , NULL },
     { "ms.dspExpediteExceptionsByPlannerCode", tr("E&xpedite Exceptions..."), SLOT(sDspExpediteExceptionsByPlannerCode()), reportsMenu, _privleges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
-    {" ms.dspReorderExceptionsByPlannerCode", tr("Reorder &Exceptions..."), SLOT(sDspReorderExceptionsByPlannerCode()),reportsMenu, _privleges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
+    { "ms.dspReorderExceptionsByPlannerCode", tr("Reorder &Exceptions..."), SLOT(sDspReorderExceptionsByPlannerCode()),reportsMenu, _privleges->check("ViewInventoryAvailability"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, _metrics->boolean("Routings") , NULL },
     { "ms.dspRoughCutByWorkCenter", tr("Rough &Cut Capacity Plan..."), SLOT(sDspRoughCutByWorkCenter()), reportsMenu, _privleges->check("ViewRoughCut"), NULL, NULL,  _metrics->boolean("Routings") , NULL },
     { "ms.dspTimePhasedRoughCutByWorkCenter", tr("Time-P&hased Rough Cut Capacity Plan..."), SLOT(sDspTimePhasedRoughCutByWorkCenter()), reportsMenu, _privleges->check("ViewRoughCut"), NULL, NULL,  _metrics->boolean("Routings") , NULL },

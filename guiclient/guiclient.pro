@@ -32,7 +32,7 @@ UI_DIR      = ui
 FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui                             \
                accountingPeriod.ui accountingPeriods.ui accountingYearPeriod.ui                       \
                accountingYearPeriods.ui addPoComment.ui                                               \
-	       address.ui addresses.ui                                                                \
+	           address.ui addresses.ui                                                                \
                adjustmentTrans.ui assignClassCodeToPlannerCode.ui assignItemToPlannerCode.ui          \
                apAccountAssignment.ui apAccountAssignments.ui                                         \
                applyAPCreditMemo.ui apOpenItem.ui apCreditMemoApplication.ui                          \
@@ -58,10 +58,10 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                configureAP.ui configureAR.ui configureCC.ui configureSO.ui configureIM.ui             \
                configureGL.ui configureMS.ui configurePD.ui configurePM.ui configurePO.ui             \
                configureSR.ui configureWO.ui configureBackup.ui configureCRM.ui                       \
-	       configureIE.ui                                                                         \
+	           configureIE.ui                                                                         \
                contact.ui contacts.ui copyPurchaseOrder.ui copyBudget.ui                              \
                copyBOM.ui copyBOO.ui copyItem.ui copyPlannedSchedule.ui copySalesOrder.ui             \
-	       copyTransferOrder.ui                                                                   \
+	           copyTransferOrder.ui                                                                   \
                costCategory.ui costCategories.ui countries.ui country.ui                              \
                countTagList.ui correctOperationsPosting.ui correctProductionPosting.ui                \
                createBufferStatusByItem.ui createBufferStatusByPlannerCode.ui                         \
@@ -71,9 +71,9 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                createPlannedOrdersByItem.ui createPlannedOrdersByPlannerCode.ui                       \
                woMaterialItem.ui createLotSerial.ui creditMemo.ui                                     \
                creditMemoItem.ui creditMemoEditList.ui                                                \
-	       crmaccount.ui crmaccounts.ui                                                           \
+	           crmaccount.ui crmaccounts.ui                                                           \
                currencies.ui currency.ui currencyConversion.ui currencyConversions.ui                 \
-	       currencySelect.ui                                                                      \
+	           currencySelect.ui                                                                      \
                customCommands.ui customCommand.ui customCommandArgument.ui                            \
                customer.ui customerGroups.ui customerGroup.ui creditCard.ui                           \
                customerFormAssignment.ui customerFormAssignments.ui                                   \
@@ -175,7 +175,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspTimePhasedSalesByCustomerByItem.ui dspTimePhasedSalesByItem.ui                      \
                dspTimePhasedSalesByProductCategory.ui                                                 \
                dspTimePhasedUsageStatisticsByItem.ui dspTrialBalances.ui                              \
-	       dspTodoByUserAndIncident.ui                                                            \
+	           dspTodoByUserAndIncident.ui                                                            \
                dspUnbalancedQOHByClassCode.ui                                                         \
                dspUsageStatisticsByItem.ui dspUsageStatisticsByClassCode.ui                           \
                dspUsageStatisticsByItemGroup.ui dspUsageStatisticsByWarehouse.ui                      \
@@ -199,15 +199,15 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                financialLayout.ui financialLayoutItem.ui financialLayoutGroup.ui financialLayouts.ui  \
                financialLayoutSpecial.ui financialLayoutLabels.ui financialLayoutColumns.ui           \
                firmPlannedOrder.ui firmPlannedOrdersByPlannerCode.ui fixSerial.ui                     \
-	       getGLDistDate.ui                                                                       \
+	           getGLDistDate.ui                                                                       \
                getLotInfo.ui glSeries.ui glSeriesItem.ui glTransaction.ui glTransactionDetail.ui      \
                honorific.ui honorifics.ui                                                             \
-	       hotkey.ui hotkeys.ui image.ui imageList.ui implodeWo.ui                                \
+	           hotkey.ui image.ui imageList.ui implodeWo.ui                                           \
                images.ui invoiceList.ui issueWoMaterialBatch.ui                                       \
-	       importXML.ui                                                                           \
+	           importXML.ui                                                                           \
                incident.ui incidentWorkbench.ui                                                       \
                incidentCategory.ui incidentCategories.ui incidentPriority.ui incidentPriorities.ui    \
-	       incidentSeverity.ui incidentSeverities.ui incidentResolution.ui incidentResolutions.ui \
+	           incidentSeverity.ui incidentSeverities.ui incidentResolution.ui incidentResolutions.ui \
                issueWoMaterialItem.ui issueToShipping.ui issueLineToShipping.ui                       \
                item.ui itemAlias.ui itemAttribute.ui itemCost.ui itemAvailabilityWorkbench.ui         \
                itemFile.ui itemGroups.ui itemGroup.ui itemImage.ui itemImages.ui                      \
@@ -255,7 +255,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printJournal.ui                                                                        \
                productCategory.ui productCategories.ui profitCenter.ui profitCenters.ui               \
                project.ui projects.ui purchaseOrder.ui purchaseOrderItem.ui                           \
-	       prospect.ui prospects.ui                                                               \
+	           prospect.ui prospects.ui                                                               \
                purchaseRequest.ui purgeClosedWorkOrders.ui purgeCreditMemos.ui purgeInvoices.ui       \
                purgePostedCounts.ui purgePostedCountSlips.ui                                          \
                purgeShippingRecords.ui quotes.ui                                                      \
@@ -275,7 +275,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                salesOrder.ui salesOrderInformation.ui salesOrderItem.ui                               \
                salesReps.ui salesRep.ui                                                               \
                salesHistoryInformation.ui scrapTrans.ui scrapWoMaterialFromWIP.ui                     \
-	       searchForCRMAccount.ui searchForContact.ui searchForItem.ui                            \
+	           searchForCRMAccount.ui searchForContact.ui searchForItem.ui                            \
                selectBankAccount.ui selectBillingQty.ui selectOrderForBilling.ui                      \
                selectedPayments.ui selectPayment.ui selectPayments.ui                                 \
                selectShippedOrders.ui shift.ui shifts.ui shipOrder.ui shippingInformation.ui          \
@@ -289,20 +289,20 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                submitAction.ui submitReport.ui substituteList.ui summarizeInvTransByClassCode.ui      \
                systemMessage.ui                                                                       \
                taxAuthorities.ui taxAuthority.ui taxCodes.ui taxCode.ui taxDetail.ui                  \
-	       taxBreakdown.ui                                                                        \
-	       taxRegistration.ui taxRegistrations.ui                                                 \
-	       taxSelection.ui taxSelections.ui                                                       \
+	           taxBreakdown.ui                                                                        \
+	           taxRegistration.ui taxRegistrations.ui                                                 \
+	           taxSelection.ui taxSelections.ui                                                       \
                taxType.ui taxTypes.ui                                                                 \
                task.ui thawItemSitesByClassCode.ui                                                    \
                termses.ui terms.ui todoList.ui todoItem.ui                                            \
-	       transactionInformation.ui transferOrder.ui transferOrders.ui                           \
-	       transferOrderItem.ui                                                                   \
-	       transferTrans.ui                                                                       \
+	           transactionInformation.ui transferOrder.ui transferOrders.ui                           \
+	           transferOrderItem.ui                                                                   \
+	           transferTrans.ui                                                                       \
                transformTrans.ui                                                                      \
                unappliedARCreditMemos.ui unappliedAPCreditMemos.ui                                    \
                unpostedCreditMemos.ui                                                                 \
-	       unpostedGLTransactions.ui unpostedInvoices.ui                                          \
-	       unpostedPoReceipts.ui unpostedGlSeries.ui                                              \
+	           unpostedGLTransactions.ui unpostedInvoices.ui                                          \
+	           unpostedPoReceipts.ui unpostedGlSeries.ui                                              \
                uom.ui uoms.ui uomConv.ui                                                              \
                updateABCClass.ui updateActualCostsByClassCode.ui updateActualCostsByItem.ui           \
                updateCreditStatusByCustomer.ui updateCycleCountFrequency.ui                           \
@@ -311,7 +311,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updatePricesByProductCategory.ui  updatePricesByPricingSchedule.ui                     \
                updateReorderLevelByItem.ui updateReorderLevels.ui updateReorderLevelsByClassCode.ui   \
                users.ui user.ui userList.ui userPreferences.ui                                        \
-               userCostingElement.ui costingElements.ui userEventNotification.ui                      \
+               userCostingElement.ui costingElements.ui                                               \
                vendor.ui vendors.ui                                                                   \
                vendorAddress.ui vendorAddressList.ui                                                  \
                vendorType.ui vendorTypes.ui viewCheckRun.ui voidChecks.ui                             \
@@ -328,7 +328,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
 HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwInterface.h             \
                ../common/format.h                                                                     \
                menuProducts.h menuInventory.h menuSchedule.h menuPurchase.h                           \
-	       menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
+	           menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
                moduleAP.h moduleAR.h moduleSO.h moduleCP.h moduleGL.h moduleIM.h                      \
                moduleMS.h modulePD.h modulePM.h modulePO.h moduleSA.h moduleWO.h                      \
                moduleSR.h moduleSys.h moduleCRM.h taxCache.h xmessagebox.h                            \
@@ -360,10 +360,10 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                configureAP.h configureAR.h configureCC.h configureSO.h configureIM.h                  \
                configureGL.h configureMS.h configurePD.h configurePM.h configurePO.h                  \
                configureSR.h configureWO.h configureBackup.h configureCRM.h                           \
-	       configureIE.h                                                                          \
+	           configureIE.h                                                                          \
                contact.h contacts.h copyPurchaseOrder.h copyBudget.h                                  \
                copyBOM.h copyBOO.h copyItem.h copyPlannedSchedule.h copySalesOrder.h                  \
-	       copyTransferOrder.h                                                                    \
+	           copyTransferOrder.h                                                                    \
                costCategory.h costCategories.h countries.h country.h                                  \
                countTagList.h correctOperationsPosting.h correctProductionPosting.h                   \
                createBufferStatusByItem.h createBufferStatusByPlannerCode.h                           \
@@ -373,9 +373,9 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                createPlannedOrdersByItem.h createPlannedOrdersByPlannerCode.h                         \
                woMaterialItem.h createLotSerial.h creditMemo.h                                        \
                creditMemoItem.h creditMemoEditList.h                                                  \
-	       crmaccount.h crmaccounts.h                                                             \
+	           crmaccount.h crmaccounts.h                                                             \
                currencies.h currency.h currencyConversion.h currencyConversions.h                     \
-	       currencySelect.h                                                                       \
+	           currencySelect.h                                                                       \
                customCommands.h customCommand.h customCommandArgument.h                               \
                customer.h custCharacteristicDelegate.h  customerGroups.h customerGroup.h creditCard.h \
                customerFormAssignment.h customerFormAssignments.h                                     \
@@ -475,7 +475,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspTimePhasedSalesByCustomerByItem.h dspTimePhasedSalesByItem.h                        \
                dspTimePhasedSalesByProductCategory.h                                                  \
                dspTimePhasedUsageStatisticsByItem.h dspTrialBalances.h                                \
-	       dspTodoByUserAndIncident.h                                                             \
+	           dspTodoByUserAndIncident.h                                                             \
                dspUnbalancedQOHByClassCode.h                                                          \
                dspUsageStatisticsByItem.h dspUsageStatisticsByClassCode.h                             \
                dspUsageStatisticsByItemGroup.h dspUsageStatisticsByWarehouse.h                        \
@@ -500,15 +500,15 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                financialLayout.h financialLayoutItem.h financialLayoutGroup.h financialLayouts.h      \
                financialLayoutSpecial.h financialLayoutLabels.h financialLayoutColumns.h              \
                firmPlannedOrder.h firmPlannedOrdersByPlannerCode.h fixSerial.h                        \
-	       getGLDistDate.h                                                                        \
+	           getGLDistDate.h                                                                        \
                getLotInfo.h glSeries.h glSeriesItem.h glTransaction.h glTransactionDetail.h           \
                honorific.h honorifics.h                                                               \
-	       hotkey.h hotkeys.h image.h imageList.h implodeWo.h                                     \
+	           hotkey.h image.h imageList.h implodeWo.h                                               \
                images.h invoiceList.h issueWoMaterialBatch.h                                          \
-	       importXML.h                                                                            \
+	           importXML.h                                                                            \
                incident.h incidentWorkbench.h                                                         \
                incidentCategory.h incidentCategories.h incidentPriority.h incidentPriorities.h        \
-	       incidentSeverity.h incidentSeverities.h incidentResolution.h incidentResolutions.h     \
+	           incidentSeverity.h incidentSeverities.h incidentResolution.h incidentResolutions.h     \
                issueWoMaterialItem.h issueToShipping.h issueLineToShipping.h                          \
                item.h itemAlias.h itemAttribute.h itemCost.h itemAvailabilityWorkbench.h              \
                itemCharacteristicDelegate.h                                                           \
@@ -559,7 +559,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                printJournal.h                                                                         \
                productCategory.h productCategories.h profitCenter.h profitCenters.h                   \
                project.h projects.h purchaseOrder.h purchaseOrderItem.h                               \
-	       prospect.h prospects.h                                                                 \
+	           prospect.h prospects.h                                                                 \
                purchaseRequest.h purgeClosedWorkOrders.h purgeCreditMemos.h purgeInvoices.h           \
                purgePostedCounts.h purgePostedCountSlips.h                                            \
                purgeShippingRecords.h quotes.h                                                        \
@@ -579,7 +579,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                salesOrder.h salesOrderInformation.h salesOrderItem.h                                  \
                salesReps.h salesRep.h                                                                 \
                salesHistoryInformation.h scrapTrans.h scrapWoMaterialFromWIP.h                        \
-	       searchForCRMAccount.h searchForContact.h searchForItem.h                               \
+	           searchForCRMAccount.h searchForContact.h searchForItem.h                               \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
                selectedPayments.h selectPayment.h selectPayments.h                                    \
                selectShippedOrders.h shift.h shifts.h shipOrder.h shippingInformation.h               \
@@ -593,21 +593,21 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                submitAction.h submitReport.h substituteList.h summarizeInvTransByClassCode.h          \
                systemMessage.h                                                                        \
                taxAuthorities.h taxAuthority.h taxCodes.h taxCode.h taxDetail.h                       \
-	       taxBreakdown.h                                                                         \
-	       taxRegistration.h taxRegistrations.h                                                   \
-	       taxSelection.h taxSelections.h                                                         \
+	           taxBreakdown.h                                                                         \
+	           taxRegistration.h taxRegistrations.h                                                   \
+	           taxSelection.h taxSelections.h                                                         \
                taxType.h taxTypes.h                                                                   \
                task.h thawItemSitesByClassCode.h                                                      \
                termses.h terms.h todoList.h todoItem.h                                                \
-	       toitemTableModel.h toitemTableView.h                                                   \
-	       transactionInformation.h transferOrder.h transferOrders.h                              \
-	       transferOrderItem.h                                                                    \
-	       transferTrans.h                                                                        \
+	           toitemTableModel.h toitemTableView.h                                                   \
+	           transactionInformation.h transferOrder.h transferOrders.h                              \
+	           transferOrderItem.h                                                                    \
+	           transferTrans.h                                                                        \
                transformTrans.h                                                                       \
                unappliedARCreditMemos.h unappliedAPCreditMemos.h                                      \
                unpostedCreditMemos.h                                                                  \
-	       unpostedGLTransactions.h unpostedInvoices.h                                            \
-	       unpostedPoReceipts.h unpostedGlSeries.h                                                \
+	           unpostedGLTransactions.h unpostedInvoices.h                                            \
+	           unpostedPoReceipts.h unpostedGlSeries.h                                                \
                uom.h uoms.h uomConv.h                                                                 \
                updateABCClass.h updateActualCostsByClassCode.h updateActualCostsByItem.h              \
                updateCreditStatusByCustomer.h updateCycleCountFrequency.h                             \
@@ -616,7 +616,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                updatePricesByProductCategory.h  updatePricesByPricingSchedule.h                       \
                updateReorderLevelByItem.h updateReorderLevels.h updateReorderLevelsByClassCode.h      \
                users.h user.h userList.h userPreferences.h                                            \
-               userCostingElement.h costingElements.h userEventNotification.h                         \
+               userCostingElement.h costingElements.h                                                 \
                vendor.h vendors.h                                                                     \
                vendorAddress.h vendorAddressList.h                                                    \
                vendorType.h vendorTypes.h viewCheckRun.h voidChecks.h                                 \
@@ -632,14 +632,14 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
 
 SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp rwInterface.cpp      \
                menuProducts.cpp menuInventory.cpp menuSchedule.cpp menuPurchase.cpp                   \
-	       menuManufacture.cpp menuCRM.cpp menuSales.cpp menuAccounting.cpp menuSystem.cpp        \
+	           menuManufacture.cpp menuCRM.cpp menuSales.cpp menuAccounting.cpp menuSystem.cpp        \
                moduleAP.cpp moduleAR.cpp moduleSO.cpp moduleCP.cpp moduleGL.cpp                       \
                moduleIM.cpp moduleMS.cpp modulePD.cpp modulePM.cpp modulePO.cpp                       \
                moduleSA.cpp moduleWO.cpp moduleSR.cpp moduleSys.cpp moduleCRM.cpp                     \
-	       taxCache.cpp xmessagebox.cpp                                                           \
+	           taxCache.cpp xmessagebox.cpp                                                           \
                absoluteCalendarItem.cpp accountNumber.cpp accountNumbers.cpp                          \
                accountingPeriod.cpp accountingPeriods.cpp accountingYearPeriod.cpp accountingYearPeriods.cpp \
-	       addPoComment.cpp address.cpp addresses.cpp                                             \
+	           addPoComment.cpp address.cpp addresses.cpp                                             \
                adjustmentTrans.cpp assignClassCodeToPlannerCode.cpp assignItemToPlannerCode.cpp       \
                apAccountAssignment.cpp apAccountAssignments.cpp                                       \
                applyAPCreditMemo.cpp apOpenItem.cpp apCreditMemoApplication.cpp                       \
@@ -665,10 +665,10 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                configureAP.cpp configureAR.cpp configureCC.cpp configureSO.cpp configureIM.cpp        \
                configureGL.cpp configureMS.cpp configurePD.cpp configurePM.cpp configurePO.cpp        \
                configureSR.cpp configureWO.cpp configureBackup.cpp configureCRM.cpp                   \
-	       configureIE.cpp                                                                        \
+	           configureIE.cpp                                                                        \
                contact.cpp contacts.cpp copyPurchaseOrder.cpp copyBudget.cpp                          \
                copyBOM.cpp copyBOO.cpp copyItem.cpp copyPlannedSchedule.cpp copySalesOrder.cpp        \
-	       copyTransferOrder.cpp                                                                  \
+	           copyTransferOrder.cpp                                                                  \
                costCategory.cpp costCategories.cpp countries.cpp country.cpp                          \
                countTagList.cpp correctOperationsPosting.cpp correctProductionPosting.cpp             \
                createBufferStatusByItem.cpp createBufferStatusByPlannerCode.cpp                       \
@@ -678,9 +678,9 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                createPlannedOrdersByItem.cpp createPlannedOrdersByPlannerCode.cpp                     \
                woMaterialItem.cpp createLotSerial.cpp creditMemo.cpp                                  \
                creditMemoItem.cpp creditMemoEditList.cpp                                              \
-	       crmaccount.cpp crmaccounts.cpp                                                         \
+	           crmaccount.cpp crmaccounts.cpp                                                         \
                currencies.cpp currency.cpp currencyConversion.cpp currencyConversions.cpp             \
-	       currencySelect.cpp                                                                     \
+	           currencySelect.cpp                                                                     \
                customCommands.cpp customCommand.cpp customCommandArgument.cpp                         \
                customer.cpp custCharacteristicDelegate.cpp  customerGroups.cpp customerGroup.cpp      \
                creditCard.cpp                                                                         \
@@ -780,7 +780,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspTimePhasedSalesByCustomerByItem.cpp dspTimePhasedSalesByItem.cpp                    \
                dspTimePhasedSalesByProductCategory.cpp                                                \
                dspTimePhasedUsageStatisticsByItem.cpp dspTrialBalances.cpp                            \
-	       dspTodoByUserAndIncident.cpp                                                           \
+	           dspTodoByUserAndIncident.cpp                                                           \
                dspUnbalancedQOHByClassCode.cpp                                                        \
                dspUsageStatisticsByItem.cpp dspUsageStatisticsByClassCode.cpp                         \
                dspUsageStatisticsByItemGroup.cpp dspUsageStatisticsByWarehouse.cpp                    \
@@ -806,16 +806,16 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                financialLayout.cpp financialLayoutItem.cpp financialLayoutGroup.cpp financialLayouts.cpp \
                financialLayoutSpecial.cpp financialLayoutLabels.cpp financialLayoutColumns.cpp        \
                firmPlannedOrder.cpp firmPlannedOrdersByPlannerCode.cpp fixSerial.cpp                  \
-	       getGLDistDate.cpp                                                                      \
+	           getGLDistDate.cpp                                                                      \
                getLotInfo.cpp glSeries.cpp glSeriesItem.cpp glTransaction.cpp glTransactionDetail.cpp \
                honorific.cpp honorifics.cpp                                                           \
-	       hotkey.cpp hotkeys.cpp image.cpp imageList.cpp implodeWo.cpp                           \
+	           hotkey.cpp image.cpp imageList.cpp implodeWo.cpp                                       \
                images.cpp invoiceList.cpp issueWoMaterialBatch.cpp                                    \
-	       importXML.cpp                                                                          \
+	           importXML.cpp                                                                          \
                incident.cpp incidentWorkbench.cpp                                                     \
                incidentCategory.cpp incidentCategories.cpp incidentPriority.cpp incidentPriorities.cpp \
-	       incidentSeverity.cpp incidentSeverities.cpp                                            \
-	       incidentResolution.cpp incidentResolutions.cpp                                         \
+	           incidentSeverity.cpp incidentSeverities.cpp                                            \
+	           incidentResolution.cpp incidentResolutions.cpp                                         \
                issueWoMaterialItem.cpp issueToShipping.cpp issueLineToShipping.cpp                    \
                item.cpp itemAlias.cpp itemAttribute.cpp itemCost.cpp itemAvailabilityWorkbench.cpp    \
                itemCharacteristicDelegate.cpp                                                         \
@@ -866,7 +866,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                printJournal.cpp                                                                       \
                productCategory.cpp productCategories.cpp profitCenter.cpp profitCenters.cpp           \
                project.cpp projects.cpp purchaseOrder.cpp purchaseOrderItem.cpp                       \
-	       prospect.cpp prospects.cpp                                                             \
+	           prospect.cpp prospects.cpp                                                             \
                purchaseRequest.cpp purgeClosedWorkOrders.cpp purgeCreditMemos.cpp purgeInvoices.cpp   \
                purgePostedCounts.cpp purgePostedCountSlips.cpp                                        \
                purgeShippingRecords.cpp quotes.cpp                                                    \
@@ -886,7 +886,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                salesOrder.cpp salesOrderInformation.cpp salesOrderItem.cpp                            \
                salesReps.cpp salesRep.cpp                                                             \
                salesHistoryInformation.cpp scrapTrans.cpp scrapWoMaterialFromWIP.cpp                  \
-	       searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp                         \
+	           searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp                         \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
                selectedPayments.cpp selectPayment.cpp selectPayments.cpp                              \
                selectShippedOrders.cpp shift.cpp shifts.cpp shipOrder.cpp shippingInformation.cpp     \
@@ -900,21 +900,21 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                submitAction.cpp submitReport.cpp substituteList.cpp summarizeInvTransByClassCode.cpp  \
                systemMessage.cpp                                                                      \
                taxAuthorities.cpp taxAuthority.cpp taxCodes.cpp taxCode.cpp taxDetail.cpp             \
-	       taxBreakdown.cpp                                                                       \
-	       taxRegistration.cpp taxRegistrations.cpp                                               \
-	       taxSelection.cpp taxSelections.cpp                                                     \
+	           taxBreakdown.cpp                                                                       \
+	           taxRegistration.cpp taxRegistrations.cpp                                               \
+	           taxSelection.cpp taxSelections.cpp                                                     \
                taxType.cpp taxTypes.cpp                                                               \
                task.cpp thawItemSitesByClassCode.cpp                                                  \
                termses.cpp terms.cpp todoList.cpp todoItem.cpp                                        \
-	       toitemTableModel.cpp toitemTableView.cpp                                               \
-	       transactionInformation.cpp transferOrder.cpp transferOrders.cpp                        \
-	       transferOrderItem.cpp                                                                  \
-	       transferTrans.cpp                                                                      \
+	           toitemTableModel.cpp toitemTableView.cpp                                               \
+	           transactionInformation.cpp transferOrder.cpp transferOrders.cpp                        \
+	           transferOrderItem.cpp                                                                  \
+	           transferTrans.cpp                                                                      \
                transformTrans.cpp                                                                     \
                unappliedARCreditMemos.cpp unappliedAPCreditMemos.cpp                                  \
                unpostedCreditMemos.cpp                                                                \
-	       unpostedGLTransactions.cpp unpostedInvoices.cpp                                        \
-	       unpostedPoReceipts.cpp unpostedGlSeries.cpp                                            \
+	           unpostedGLTransactions.cpp unpostedInvoices.cpp                                        \
+	           unpostedPoReceipts.cpp unpostedGlSeries.cpp                                            \
                uom.cpp uoms.cpp uomConv.cpp                                                           \
                updateABCClass.cpp updateActualCostsByClassCode.cpp updateActualCostsByItem.cpp        \
                updateCreditStatusByCustomer.cpp updateCycleCountFrequency.cpp                         \
@@ -923,7 +923,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                updatePricesByProductCategory.cpp  updatePricesByPricingSchedule.cpp                   \
                updateReorderLevelByItem.cpp updateReorderLevels.cpp updateReorderLevelsByClassCode.cpp \
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
-               userCostingElement.cpp costingElements.cpp userEventNotification.cpp                   \
+               userCostingElement.cpp costingElements.cpp                                              \
                version.cpp vendor.cpp vendors.cpp                                                     \
                vendorAddress.cpp vendorAddressList.cpp                                                \
                vendorType.cpp vendorTypes.cpp viewCheckRun.cpp voidChecks.cpp                         \

@@ -59,10 +59,6 @@
 
 #include <QMessageBox>
 #include <QVariant>
-#include "userEventNotification.h"
-#include "hotkeys.h"
-#include "imageList.h"
-#include "timeoutHandler.h"
 
 /*
  *  Constructs a whseWeek as a child of 'parent', with the

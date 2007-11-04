@@ -59,13 +59,13 @@
 
 #include <QSqlError>
 #include <QVariant>
+#include <QSqlError>
 
 #include <parameter.h>
 
-#include "hotkeys.h"
+#include "hotkey.h"
 #include "imageList.h"
 #include "timeoutHandler.h"
-#include "userEventNotification.h"
 
 userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
@@ -77,12 +77,40 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 
   connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
   connect(_close,         SIGNAL(clicked()),     this, SLOT(sClose()));
-  connect(_events,        SIGNAL(clicked()),     this, SLOT(sEvents()));
-  connect(_hotkeys,       SIGNAL(clicked()),     this, SLOT(sHotkeys()));
   connect(_neo,           SIGNAL(toggled(bool)), this, SLOT(sStyleChanged()));
   connect(_save,          SIGNAL(clicked()),     this, SLOT(sSave()));
   connect(_selectedUser,  SIGNAL(toggled(bool)), this, SLOT(sPopulate()));
   connect(_user,          SIGNAL(newID(int)),    this, SLOT(sPopulate()));
+    //hot key signals and slots connections
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_hotkey, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+  connect(_hotkey, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+  connect(_hotkey, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+
+  _hotkey->addColumn(tr("Keystroke"), _itemColumn, Qt::AlignLeft );
+  _hotkey->addColumn(tr("Action"),    -1,          Qt::AlignLeft );
+  _hotkey->addColumn("key",           0,           Qt::AlignLeft );
+
+  connect(_warehouses, SIGNAL(itemClicked(QTreeWidgetItem*,int)), this, SLOT(sWarehouseToggled(QTreeWidgetItem*)));
+  connect(_event, SIGNAL(itemSelected(int)), this, SLOT(sAllWarehousesToggled(int)));
+  connect(_event, SIGNAL(itemSelectionChanged()), this, SLOT(sFillWarehouseList()));
+
+  _event->addColumn(tr("Module"),      50,   Qt::AlignCenter );
+  _event->addColumn(tr("Name"),        150,  Qt::AlignLeft   );
+  _event->addColumn(tr("Description"), -1,   Qt::AlignLeft   );
+  _event->populate( "SELECT evnttype_id, evnttype_module, evnttype_name, evnttype_descrip "
+                    "FROM evnttype "
+                    "ORDER BY evnttype_module, evnttype_name" );
+
+  _warehouses->addColumn(tr("Notify"),    50,         Qt::AlignCenter );
+  _warehouses->addColumn(tr("Whs."),      _whsColumn, Qt::AlignCenter );
+  _warehouses->addColumn(tr("Warehouse"), -1,         Qt::AlignLeft   );
+  _warehouses->populate( "SELECT warehous_id, TEXT('-'), warehous_code, warehous_descrip "
+                        "FROM warehous "
+                        "ORDER BY warehous_code" );
 
   _dirty = FALSE;
 
@@ -257,6 +285,9 @@ void userPreferences::sPopulate()
   
   if (!_metrics->boolean("MultiWhs"))
     _warehouseGroup->hide();
+
+  sFillList();
+  sFillWarehouseList();
 }
 
 void userPreferences::sSave()
@@ -361,35 +392,6 @@ void userPreferences::sClose()
   reject();
 }
 
-void userPreferences::sEvents()
-{
-  ParameterList params;
-
-  if (_currentUser->isChecked())
-    params.append("username", omfgThis->username());
-  else
-    params.append("username", _user->currentText());
-
-  userEventNotification newdlg(this, "", TRUE);
-  newdlg.set(params);
-  newdlg.exec();
-}
-
-void userPreferences::sHotkeys()
-{
-  ParameterList params;
-
-  if (_currentUser->isChecked())
-    params.append("currentUser");
-  else
-    params.append("username", _user->currentText());
-
-  hotkeys newdlg(this, "", TRUE);
-  newdlg.set(params);
-  if (newdlg.exec() == QDialog::Accepted)
-    _dirty = TRUE;
-}
-
 void userPreferences::sStyleChanged()
 {
   if(!_neo->isChecked())
@@ -399,5 +401,226 @@ void userPreferences::sStyleChanged()
   else
   {
     _widgetStack->setCurrentIndex(1);
+  }
+}
+
+void userPreferences::sFillList()
+{
+  _hotkey->clear();
+
+  QString hotkey;
+  QString action;
+  char    key;
+
+  XTreeWidgetItem *last = 0;
+  if (_currentUser->isChecked())
+  {
+    for (key = '1'; key <= '9'; key++)
+    {
+      hotkey = QString("F%1").arg(key);
+      action = _preferences->value(hotkey);
+      if (!action.isNull())
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(tr("F%1").arg(key)), action, hotkey);
+    }
+
+    for (key = 'A'; key <= 'Z'; key++)
+    {
+      hotkey = QString("C%1").arg(key);
+      action = _preferences->value(hotkey);
+      if (!action.isNull())
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
+    }
+
+    for (key = '0'; key <= '9'; key++)
+    {
+      hotkey = QString("C%1").arg(key);
+      action = _preferences->value(hotkey);
+      if (!action.isNull())
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
+    }
+  }
+  else
+  {
+    Preferences pref(_user->currentText());
+
+    for (key = '1'; key <= '9'; key++)
+    {
+      hotkey = QString("F%1").arg(key);
+      action = pref.value(hotkey);
+      if (!action.isNull())
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(tr("F%1").arg(key)), action, hotkey);
+    }
+
+    for (key = 'A'; key <= 'Z'; key++)
+    {
+      hotkey = QString("C%1").arg(key);
+      action = pref.value(hotkey);
+      if (!action.isNull())
+        last = new XTreeWidgetItem(_hotkey, last, -1,QVariant( QString("Ctrl+%1").arg(key)), action, hotkey);
+    }
+
+    for (key = '0'; key <= '9'; key++)
+    {
+      hotkey = QString("C%1").arg(key);
+      action = pref.value(hotkey);
+      if (!action.isNull())
+        last = new XTreeWidgetItem(_hotkey, last, -1, QVariant(QString("Ctrl+%1").arg(key)), action, hotkey);
+    }
+  }
+}
+
+void userPreferences::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  if (_currentUser->isChecked())
+    params.append("currentUser");
+  else
+    params.append("username", _user->currentText());
+
+  hotkey newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != QDialog::Rejected)
+  {
+    _dirty = TRUE;
+    sFillList();
+  }
+}
+
+void userPreferences::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("hotkey", _hotkey->currentItem()->text(2));
+
+  if (_currentUser->isChecked())
+    params.append("currentUser");
+  else
+    params.append("username", _user->currentText());
+
+  hotkey newdlg(this, "", TRUE);
+  newdlg.set(params);
+  
+  if (newdlg.exec() != QDialog::Rejected)
+  {
+    _dirty = TRUE;
+    sFillList();
+  }
+}
+
+void userPreferences::sDelete()
+{
+  if (_currentUser->isChecked())
+  {
+    _preferences->remove(_hotkey->currentItem()->text(2));
+    _preferences->load();
+  }
+  else
+  {
+    q.prepare("SELECT deleteUserPreference(:username, :name) AS _result;");
+    if (_currentUser->isChecked())
+      q.bindValue(":username", omfgThis->username());
+    else
+      q.bindValue(":username", _user->currentText());
+    q.bindValue(":name", _hotkey->currentItem()->text(2));
+    q.exec();
+  }
+
+  _dirty = TRUE;
+  sFillList();
+}
+
+void userPreferences::sAllWarehousesToggled(int pEvnttypeid)
+{
+  if(!_warehouses->topLevelItemCount() > 0)
+    return;
+
+  if (_warehouses->topLevelItem(0)->text(0) == tr("Yes"))
+    q.prepare( "DELETE FROM evntnot "
+               "WHERE ( (evntnot_username=:username)"
+               " AND (evntnot_evnttype_id=:evnttype_id) );" );
+  else
+    q.prepare( "DELETE FROM evntnot "
+               "WHERE ( (evntnot_username=:username)"
+               " AND (evntnot_evnttype_id=:evnttype_id) ); "
+               "INSERT INTO evntnot "
+               "(evntnot_username, evntnot_evnttype_id, evntnot_warehous_id) "
+               "SELECT :username, :evnttype_id, warehous_id "
+               "FROM warehous;" );
+
+  if (_currentUser->isChecked())
+	q.bindValue(":username", omfgThis->username());
+  else
+    q.bindValue(":username", _user->currentText());
+  q.bindValue(":evnttype_id", pEvnttypeid);
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillWarehouseList();
+}
+
+void userPreferences::sWarehouseToggled(QTreeWidgetItem *selected)
+{
+  if(!selected)
+    return;
+
+  if (selected->text(0) == tr("Yes"))
+    q.prepare( "DELETE FROM evntnot "
+               "WHERE ( (evntnot_username=:username)"
+               " AND (evntnot_evnttype_id=:evnttype_id)"
+               " AND (evntnot_warehous_id=:warehous_id) );" );
+  else
+    q.prepare( "INSERT INTO evntnot "
+               "(evntnot_username, evntnot_evnttype_id, evntnot_warehous_id) "
+               "VALUES "
+               "(:username, :evnttype_id, :warehous_id);" );
+
+  if (_currentUser->isChecked())
+	q.bindValue(":username", omfgThis->username());
+  else
+    q.bindValue(":username", _user->currentText());
+  q.bindValue(":evnttype_id", _event->id());
+  q.bindValue(":warehous_id", ((XTreeWidgetItem *)selected)->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillWarehouseList();
+}
+
+void userPreferences::sFillWarehouseList()
+{
+  for (int i = 0; i < _warehouses->topLevelItemCount(); i++)
+  {
+    q.prepare( "SELECT evntnot_id "
+               "FROM evntnot "
+               "WHERE ( (evntnot_username=:username)"
+               " AND (evntnot_warehous_id=:warehous_id)"
+               " AND (evntnot_evnttype_id=:evnttype_id) );" );
+    if (_currentUser->isChecked())
+	  q.bindValue(":username", omfgThis->username());
+    else
+      q.bindValue(":username", _user->currentText());
+    q.bindValue(":warehous_id", ((XTreeWidgetItem *)(_warehouses->topLevelItem(i)))->id());
+    q.bindValue(":evnttype_id", _event->id());
+    q.exec();
+    if (q.first())
+      _warehouses->topLevelItem(i)->setText(0, tr("Yes"));
+    else
+      _warehouses->topLevelItem(i)->setText(0, tr("No"));
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }

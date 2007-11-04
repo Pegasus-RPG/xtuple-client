@@ -77,9 +77,16 @@ public slots:
     virtual void sPopulate();
     virtual void sSave();
     virtual void sClose();
-    virtual void sEvents();
-    virtual void sHotkeys();
     virtual void sStyleChanged();
+
+    virtual void sFillList();
+    virtual void sNew();
+    virtual void sEdit();
+    virtual void sDelete();
+
+    virtual void sAllWarehousesToggled( int pEvnttypeid );
+    virtual void sWarehouseToggled( QTreeWidgetItem * selected );
+    virtual void sFillWarehouseList();
 
 protected slots:
     virtual void languageChange();
