@@ -92,6 +92,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
+  connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
   statusBar()->hide();
   
@@ -228,6 +229,14 @@ void openSalesOrders::sDelete()
       }
     }
   }
+}
+
+void openSalesOrders::sHandleAutoUpdate(bool pAutoUpdate)
+{
+  if (pAutoUpdate)
+    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  else
+    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }
 
 void openSalesOrders::sPrintPackingList()

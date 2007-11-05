@@ -86,6 +86,7 @@ public slots:
     virtual void sFillList();
     virtual void sDeliver();
     virtual void sPrintForms(); 
+    virtual void sHandleAutoUpdate( bool pAutoUpdate );
 
 protected slots:
     virtual void languageChange();
