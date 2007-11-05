@@ -5,51 +5,45 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
-    <height>134</height>
+    <width>610</width>
+    <height>136</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Release Planned Orders by Planner Code</string>
   </property>
   <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
+   <property name="leftMargin" >
+    <number>6</number>
    </property>
-   <property name="spacing" >
-    <number>7</number>
+   <property name="topMargin" >
+    <number>6</number>
+   </property>
+   <property name="rightMargin" >
+    <number>6</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>6</number>
    </property>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>0</number>
-     </property>
+     <item>
+      <widget class="ParameterGroup" name="_plannerCode" >
+       <property name="focusPolicy" >
+        <enum>Qt::StrongFocus</enum>
+       </property>
+       <property name="title" >
+        <string/>
+       </property>
+      </widget>
+     </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <widget class="ParameterGroup" name="_plannerCode" >
-         <property name="title" >
-          <string/>
-         </property>
-        </widget>
-       </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
          <item>
           <widget class="QLabel" name="_cutoffDateLit" >
            <property name="text" >
@@ -61,66 +55,59 @@
           </widget>
          </item>
          <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
+          <widget class="DLineEdit" name="_cutoffDate" />
+         </item>
+         <item>
+          <widget class="QCheckBox" name="_firmedOnly" >
+           <property name="text" >
+            <string>Only Release Firmed</string>
            </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="DLineEdit" name="_cutoffDate" />
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+          </widget>
          </item>
         </layout>
        </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Expanding</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>314</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
       </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>16</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
+     <property name="spacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
       <widget class="WarehouseGroup" name="_warehouse" >
+       <property name="focusPolicy" >
+        <enum>Qt::StrongFocus</enum>
+       </property>
        <property name="title" >
         <string/>
        </property>
@@ -143,19 +130,37 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
+     <property name="spacing" >
       <number>0</number>
      </property>
-     <property name="spacing" >
+     <property name="leftMargin" >
+      <number>0</number>
+     </property>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
       <number>0</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>6</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="QPushButton" name="_close" >
@@ -226,6 +231,7 @@
   <tabstop>_plannerCode</tabstop>
   <tabstop>_warehouse</tabstop>
   <tabstop>_cutoffDate</tabstop>
+  <tabstop>_firmedOnly</tabstop>
   <tabstop>_release</tabstop>
   <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>

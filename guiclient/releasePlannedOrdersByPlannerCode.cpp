@@ -120,6 +120,9 @@ void releasePlannedOrdersByPlannerCode::sRelease()
   if (_warehouse->isChecked())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 
+  if (_firmedOnly->isChecked())
+    sql += " AND (planord_firm)";
+
   if (_plannerCode->isSelected())
     sql += " AND (itemsite_plancode_id=:plancode_id)";
   else if (_plannerCode->isPattern())
@@ -153,6 +156,9 @@ void releasePlannedOrdersByPlannerCode::sSubmit()
 
   _plannerCode->appendValue(params);
   _warehouse->appendValue(params);
+
+  if(_firmedOnly->isChecked())
+    params.append("firmedOnly", QVariant(true,0));
 
   params.append("cutoff_offset", QDate::currentDate().daysTo(_cutoffDate->date()));
 
