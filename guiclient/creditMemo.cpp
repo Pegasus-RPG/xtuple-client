@@ -888,7 +888,7 @@ void creditMemo::sCalculateSubtotal()
 {
 //  Determine the subtotal and line item tax
   XSqlQuery query;
-  query.prepare( "SELECT (SUM((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio))) AS subtotal,"
+  query.prepare( "SELECT SUM(round((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio), 2)) AS subtotal,"
                  "       SUM(cmitem_tax_ratea) AS taxa,"
                  "       SUM(cmitem_tax_rateb) AS taxb,"
                  "       SUM(cmitem_tax_ratec) AS taxc "
