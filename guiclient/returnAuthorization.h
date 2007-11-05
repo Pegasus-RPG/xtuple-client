@@ -101,6 +101,9 @@ public slots:
     virtual void sTaxDetail();
 	virtual void sSalesOrder();
 	virtual void sUpdateDisposition();
+	virtual void sAuthorizeLine();
+	virtual void sClearAuthorization();
+	virtual void sAuthorizeAll();
 
 protected slots:
     virtual void languageChange();

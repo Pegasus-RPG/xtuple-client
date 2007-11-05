@@ -1039,6 +1039,9 @@
           <property name="focusPolicy" >
            <enum>Qt::StrongFocus</enum>
           </property>
+          <property name="selectionMode" >
+           <enum>QAbstractItemView::ExtendedSelection</enum>
+          </property>
          </widget>
         </item>
         <item rowspan="2" row="0" column="1" >
@@ -1084,23 +1087,19 @@
             </item>
             <item>
              <widget class="QPushButton" name="_edit" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>&amp;Edit</string>
               </property>
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_close" >
+             <widget class="QPushButton" name="_delete" >
               <property name="enabled" >
                <bool>false</bool>
               </property>
-              <property name="text" >
-               <string>Close</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_delete" >
               <property name="text" >
                <string>&amp;Delete</string>
               </property>
@@ -1136,22 +1135,22 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_clearline" >
+             <widget class="QPushButton" name="_clearAuthorization" >
               <property name="enabled" >
                <bool>false</bool>
               </property>
               <property name="text" >
-               <string>Clear Line</string>
+               <string>Clear Authorization</string>
               </property>
              </widget>
             </item>
             <item>
              <widget class="QPushButton" name="_authorizeAll" >
               <property name="enabled" >
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text" >
-               <string>Authorize All</string>
+               <string>&amp;Authorize All</string>
               </property>
              </widget>
             </item>
@@ -1187,7 +1186,7 @@
             <item>
              <widget class="QPushButton" name="_receiveAll" >
               <property name="enabled" >
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text" >
                <string>Receive All</string>
@@ -2030,6 +2029,54 @@
     <hint type="destinationlabel" >
      <x>206</x>
      <y>265</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_authorizeLine</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>345</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>727</x>
+     <y>207</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_clearAuthorization</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>345</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>727</x>
+     <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_enterReceipt</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>345</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>727</x>
+     <y>284</y>
     </hint>
    </hints>
   </connection>

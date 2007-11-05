@@ -93,6 +93,9 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateDisposition()));
+  connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
+  connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
+  connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
 /*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
@@ -132,6 +135,10 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Refunded"),    _moneyColumn, Qt::AlignRight  );
+
+  _authorizeLine->hide();
+  _clearAuthorization->hide();
+  _authorizeAll->hide();
 
   //Remove Credit Card related options if Credit Card not enabled
   QString key = omfgThis->_key;
@@ -191,9 +198,9 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _authDate->setDate(omfgThis->dbDate(), true);
 
       q.prepare("INSERT INTO rahead ("
-		        "    rahead_id, rahead_number, rahead_status, rahead_authdate"
+		        "    rahead_id, rahead_number, rahead_authdate"
 		        ") VALUES ("
-		        "    :rahead_id, :rahead_number, 'O', :rahead_authdate"
+		        "    :rahead_id, :rahead_number, :rahead_authdate"
 		        ");");
       q.bindValue(":rahead_id",		_raheadid);
       q.bindValue(":rahead_number",	_authNumber->text().toInt());
@@ -274,7 +281,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _delete->hide();
       _edit->setText(tr("&View"));
 
-      _close->setFocus();
+      _cancel->setFocus();
     }
   }
 
@@ -342,7 +349,6 @@ bool returnAuthorization::sSave()
   q.prepare( "UPDATE rahead "
 	     "SET rahead_cust_id=:rahead_cust_id,rahead_number=:rahead_number,"
 		 "    rahead_authdate=:rahead_authdate,rahead_expiredate=:rahead_expiredate,"
-		 "    rahead_status=:rahead_status,"
  	     "    rahead_salesrep_id=:rahead_salesrep_id, rahead_commission=:rahead_commission,"
  	     "    rahead_taxauth_id=:rahead_taxauth_id,rahead_rsncode_id=:rahead_rsncode_id,"
 		 "    rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
@@ -397,13 +403,14 @@ bool returnAuthorization::sSave()
   else
 	  q.bindValue(":rahead_timing", "R");
   q.bindValue(":rahead_creditmethod", QString(creditMethods[_creditBy->currentItem()]));
-  if (_so->id() != -1)
+  if (_so->isValid())
     q.bindValue(":rahead_cohead_id", _so->id());
-  if (_incident->id() != -1)
+  if (_incident->isValid())
     q.bindValue(":rahead_incdt_id", _incident->id());
-  if (_project->id() != -1)
+  if (_project->isValid())
     q.bindValue(":rahead_prj_id", _project->id());
-  q.bindValue(":rahead_cust_id", _cust->id());
+  if (_cust->isValid())
+    q.bindValue(":rahead_cust_id", _cust->id());
   q.bindValue(":rahead_billtoname", _billToName->text().stripWhiteSpace());
   q.bindValue(":rahead_billtoaddress1",	_billToAddr->line1());
   q.bindValue(":rahead_billtoaddress2",	_billToAddr->line2());
@@ -494,82 +501,106 @@ void returnAuthorization::sShipToList()
 
 void returnAuthorization::sSalesOrder()
 {
-  if (!_ignoreSoSignals && (_so->id() != 0))
+  if (_so->id() != 0)
   {
-    XSqlQuery sohead;
-    sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
-                    "       formatScrap(cohead_commission) AS f_commission, "
-					"       shipto_num "
-                    "FROM cohead "
-					"  LEFT OUTER JOIN shiptoinfo ON (cohead_shipto_id=shipto_id), "
-					"  custinfo, custtype "
-					"WHERE ((cohead_id=:cohead_id) "
-					"AND (cohead_cust_id=cust_id) "
-					"AND (cust_custtype_id=custtype_id) ) "
-                    "LIMIT 1;" );
-    sohead.bindValue(":cohead_id", _so->id());
-    sohead.exec();
-    if (sohead.first())
-    {
-      _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
-      _commission->setText(sohead.value("f_commission"));
-
-      _taxauth->setId(sohead.value("cohead_taxauth_id").toInt());
-      _customerPO->setText(sohead.value("cohead_ponumber"));
-
-      _cust->setEnabled(FALSE);
-
-      _cust->setId(sohead.value("cohead_cust_id").toInt());
-  	  _custType->setText(sohead.value("custtype_code").toString());
-      _billToName->setText(sohead.value("cohead_billtoname"));
-      _billToAddr->setLine1(sohead.value("cohead_billtoaddress1").toString());
-      _billToAddr->setLine2(sohead.value("cohead_billtoaddress2").toString());
-      _billToAddr->setLine3(sohead.value("cohead_billtoaddress3").toString());
-      _billToAddr->setCity(sohead.value("cohead_billtocity").toString());
-      _billToAddr->setState(sohead.value("cohead_billtostate").toString());
-      _billToAddr->setPostalCode(sohead.value("cohead_billtozipcode").toString());
-      _billToAddr->setCountry(sohead.value("cohead_billtocountry").toString());
-      if ( (_mode == cNew) || (_mode == cEdit) )
-        _ffBillto = sohead.value("cust_ffbillto").toBool();
-      else
-        _ffBillto = FALSE;
-      _billToName->setEnabled(_ffBillto);
-      _billToAddr->setEnabled(_ffBillto);
-
-      _ignoreShiptoSignals = TRUE;
-	  _shiptoid = sohead.value("cohead_shipto_id").toInt();
-	  _shipToNumber->setText(sohead.value("shipto_num").toString());
-      _shipToName->setText(sohead.value("cohead_shiptoname"));
-      _shipToAddr->setLine1(sohead.value("cohead_shiptoaddress1").toString());
-      _shipToAddr->setLine2(sohead.value("cohead_shiptoaddress2").toString());
-      _shipToAddr->setLine3(sohead.value("cohead_shiptoaddress3").toString());
-      _shipToAddr->setCity(sohead.value("cohead_shiptocity").toString());
-      _shipToAddr->setState(sohead.value("cohead_shiptostate").toString());
-      _shipToAddr->setPostalCode(sohead.value("cohead_shiptozipcode").toString());
-      _shipToAddr->setCountry(sohead.value("cohead_shiptocountry").toString());
-      if ( (_mode == cNew) || (_mode == cEdit) )
-        _ffShipto = sohead.value("cust_ffshipto").toBool();
-	  else
-	    _ffShipto = FALSE;
-      _copyToShipto->setEnabled(_ffShipto);
-	  _shipToName->setEnabled(_ffShipto);
-	  _shipToNumber->setEnabled(_ffShipto);
-	  _shipToAddr->setEnabled(_ffShipto);
-      _ignoreShiptoSignals = FALSE;
-
-	  sSave();
-	  sFillList();
-    }
-    else if (sohead.lastError().type() != QSqlError::None)
-    {
-      systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    _authorizeLine->show();
+    _clearAuthorization->show();
+    _authorizeAll->show();
   }
-  if (!_ignoreSoSignals)
+  else
   {
-    sSave();
-	sFillList();
+    _authorizeLine->hide();
+    _clearAuthorization->hide();
+    _authorizeAll->hide();
+  }
+  if (!_ignoreSoSignals) 
+  {
+    if (_so->id() != 0)
+    {
+      XSqlQuery sohead;
+      sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
+                      "       formatScrap(cohead_commission) AS f_commission, "
+	  				  "       shipto_num "
+                      "FROM cohead "
+					  "  LEFT OUTER JOIN shiptoinfo ON (cohead_shipto_id=shipto_id), "
+					  "  custinfo, custtype "
+					  "WHERE ((cohead_id=:cohead_id) "
+					  "AND (cohead_cust_id=cust_id) "
+					  "AND (cust_custtype_id=custtype_id) ) "
+                      "LIMIT 1;" );
+      sohead.bindValue(":cohead_id", _so->id());
+      sohead.exec();
+      if (sohead.first())
+      {
+		q.prepare("UPDATE rahead SET rahead_cohead_id=:cohead_id "
+			      "WHERE (rahead_id=:rahead_id)");
+		q.bindValue(":rahead_id", _raheadid);
+        q.bindValue(":cohead_id", _so->id());
+		q.exec();
+        if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+		  _so->setId(0);
+          return;
+	    }
+		else
+		{
+          _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
+          _commission->setText(sohead.value("f_commission"));
+  
+          _taxauth->setId(sohead.value("cohead_taxauth_id").toInt());
+          _customerPO->setText(sohead.value("cohead_ponumber"));
+
+          _cust->setEnabled(FALSE);
+
+          _cust->setId(sohead.value("cohead_cust_id").toInt());
+    	  _custType->setText(sohead.value("custtype_code").toString());
+          _billToName->setText(sohead.value("cohead_billtoname"));
+          _billToAddr->setLine1(sohead.value("cohead_billtoaddress1").toString());
+          _billToAddr->setLine2(sohead.value("cohead_billtoaddress2").toString());
+          _billToAddr->setLine3(sohead.value("cohead_billtoaddress3").toString());
+          _billToAddr->setCity(sohead.value("cohead_billtocity").toString());
+          _billToAddr->setState(sohead.value("cohead_billtostate").toString());
+          _billToAddr->setPostalCode(sohead.value("cohead_billtozipcode").toString());
+          _billToAddr->setCountry(sohead.value("cohead_billtocountry").toString());
+          if ( (_mode == cNew) || (_mode == cEdit) )
+            _ffBillto = sohead.value("cust_ffbillto").toBool();
+          else
+            _ffBillto = FALSE;
+          _billToName->setEnabled(_ffBillto);
+          _billToAddr->setEnabled(_ffBillto);
+
+          _ignoreShiptoSignals = TRUE;
+          _shiptoid = sohead.value("cohead_shipto_id").toInt();
+	      _shipToNumber->setText(sohead.value("shipto_num").toString());
+          _shipToName->setText(sohead.value("cohead_shiptoname"));
+          _shipToAddr->setLine1(sohead.value("cohead_shiptoaddress1").toString());
+          _shipToAddr->setLine2(sohead.value("cohead_shiptoaddress2").toString());
+          _shipToAddr->setLine3(sohead.value("cohead_shiptoaddress3").toString());
+          _shipToAddr->setCity(sohead.value("cohead_shiptocity").toString());
+          _shipToAddr->setState(sohead.value("cohead_shiptostate").toString());
+          _shipToAddr->setPostalCode(sohead.value("cohead_shiptozipcode").toString());
+          _shipToAddr->setCountry(sohead.value("cohead_shiptocountry").toString());
+          if ( (_mode == cNew) || (_mode == cEdit) )
+            _ffShipto = sohead.value("cust_ffshipto").toBool();
+  	      else
+	        _ffShipto = FALSE;
+          _copyToShipto->setEnabled(_ffShipto);
+	      _shipToName->setEnabled(_ffShipto);
+	      _shipToNumber->setEnabled(_ffShipto);
+	      _shipToAddr->setEnabled(_ffShipto);
+          _ignoreShiptoSignals = FALSE;
+	      sSave();
+          sFillList();
+        }
+	  }
+      else if (sohead.lastError().type() != QSqlError::None)
+      {
+        systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
+		_so->setId(0);
+        return;
+	  }
+    }
   }
 }
 
@@ -822,19 +853,27 @@ void returnAuthorization::sNew()
 
 void returnAuthorization::sEdit()
 {
-  ParameterList params;
-  params.append("raitem_id", _raitem->id());
+  bool fill;
+  fill = FALSE;
+  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
 
 
-  if (_mode == cView)
-    params.append("mode", "view");
-  else
-    params.append("mode", "edit");
+    if (_mode == cView)
+      params.append("mode", "view");
+    else
+      params.append("mode", "edit");
 
-  returnAuthorizationItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+    returnAuthorizationItem newdlg(this, "", TRUE);
+    newdlg.set(params);
   
-  if (newdlg.exec() != QDialog::Rejected)
+    if (newdlg.exec() != QDialog::Rejected)
+      fill = TRUE;
+  }
+  if (fill)
     sFillList();
 }
 
@@ -842,20 +881,23 @@ void returnAuthorization::sDelete()
 {
   if (QMessageBox::question(this, "Delete current Line Item?",
                             tr("<p>Are you sure that you want to delete the "
-			       "current Line Item?"),
+			       "the selected Line Item(s)?"),
 			    QMessageBox::Yes | QMessageBox::Default,
 			    QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
   {
-    q.prepare( "DELETE FROM raitem "
-               "WHERE (raitem_id=:raitem_id);" );
-    q.bindValue(":raitem_id", _raitem->id());
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+    for (int i = 0; i < selected.size(); i++)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-
+      q.prepare( "DELETE FROM raitem "
+                 "WHERE (raitem_id=:raitem_id);" );
+      q.bindValue(":raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+      q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+	}
     sFillList();
   }
 }
@@ -939,7 +981,7 @@ void returnAuthorization::sFillList()
 	_billToName->setEnabled(true);
 	_billToAddr->setEnabled(true);
   }
-  _comments->setId(_raheadid);
+  _comments->refresh();
 }
 
 void returnAuthorization::sCalculateSubtotal()
@@ -1118,10 +1160,8 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
       return;
     }
 
-    q.prepare( "DELETE FROM raitem "
-               "WHERE (raitem_rahead_id=:rahead_id);"
-
-               "DELETE FROM rahead "
+	q.prepare( "SELECT importcoitemstora(:rahead_id,NULL);"
+		       "DELETE FROM rahead "
                "WHERE (rahead_id=:rahead_id);" );
     q.bindValue(":rahead_id", _raheadid);
     q.exec();
@@ -1130,6 +1170,11 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+	else
+	{
+      omfgThis->sReturnAuthorizationsUpdated();
+      omfgThis->sProjectsUpdated(_project->id());
+	}
   }
 
   QMainWindow::closeEvent(pEvent);
@@ -1353,4 +1398,66 @@ void returnAuthorization::sUpdateDisposition()
   }
   else
     _uponReceipt->setEnabled(TRUE);
+}
+
+void returnAuthorization::sAuthorizeLine()
+{
+  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+        QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
+			          "FROM coitem "
+					  "WHERE ((coitem_id=raitem_coitem_id) "
+					  "AND (raitem_id=:raitem_id));" );
+        q.prepare(sql);
+        q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
+        q.exec();
+        if (q.lastError().type() != QSqlError::NoError)
+        {
+           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+           return;
+        }
+  }
+  sFillList();
+}
+void returnAuthorization::sClearAuthorization()
+{
+  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+        QString sql ( "UPDATE raitem SET raitem_qtyauthorized=0 "
+			          "FROM coitem "
+					  "WHERE ((coitem_id=raitem_coitem_id) "
+					  "AND (raitem_id=:raitem_id));" );
+        q.prepare(sql);
+        q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
+        q.exec();
+        if (q.lastError().type() != QSqlError::NoError)
+        {
+           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+           return;
+        }
+  }
+  sFillList();
+}
+
+void returnAuthorization::sAuthorizeAll()
+{
+  QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
+			    "FROM coitem "
+				"WHERE ((coitem_id=raitem_coitem_id) "
+				"AND (raitem_status = 'O') "
+				"AND (raitem_qtyauthorized < coitem_qtyshipped) "
+				"AND (coitem_qtyshipped >= raitem_qtyreceived) "
+				"AND (coitem_qtyshipped >= raitem_qtyshipped) "
+				"AND (raitem_rahead_id=:raitem_rahead_id));" );
+  q.prepare(sql);
+  q.bindValue(":raitem_rahead_id",  _raheadid);
+  q.exec();
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
 }
