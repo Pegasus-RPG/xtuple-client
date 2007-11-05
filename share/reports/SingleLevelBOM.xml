@@ -32,7 +32,12 @@ WHERE (item_id=&lt;? value("item_id") ?>);
        formatDate(bomitem_effective, 'Always') AS effective,
        formatDate(bomitem_expires, 'Never') AS expires,
        bomitem_ecn
-FROM bomitem(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>), item
+&lt;? if exists("revision_id") ?>
+  FROM bomitem(&lt;? value("item_id") ?>,&lt;? value("revision_id") ?>)
+&lt;? else ?>
+  FROM bomitem(&lt;? value("item_id") ?>)
+&lt;? endif ?>
+, item
 WHERE ((bomitem_item_id=item_id)
 
 &lt;? if exists("expiredDays") ?>
@@ -57,68 +62,15 @@ ORDER BY bomitem_seqnumber, bomitem_effective;
        formatDate(bomhead_revisiondate) AS f_revisiondate
 FROM bomhead
 WHERE ((bomhead_item_id=&lt;? value("item_id") ?>)
-AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
+&lt;? if exists("revision_id") ?>
+AND (bomhead_rev_id=&lt;? value("revision_id") ?>)
+&lt;? else ?>
+AND (bomhead_rev_id=getActiveRevId('BOM',&lt;? value("item_id") ?>))
+&lt;? endif ?>
+);</sql>
  </querysource>
  <rpthead>
   <height>209</height>
-  <label>
-   <rect>
-    <x>405</x>
-    <y>190</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>ECN #</string>
-  </label>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>110</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_descrip1</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>525</x>
-    <y>175</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Required</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>204</ystart>
-   <xend>745</xend>
-   <yend>204</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
     <x>400</x>
@@ -137,41 +89,6 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
   </label>
   <label>
    <rect>
-    <x>675</x>
-    <y>190</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issue Method</string>
-  </label>
-  <field>
-   <rect>
-    <x>484</x>
-    <y>90</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>bomhead</query>
-    <column>bomhead_docnum</column>
-   </data>
-  </field>
-  <label>
-   <rect>
     <x>380</x>
     <y>90</y>
     <width>100</width>
@@ -186,74 +103,10 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <string>Document #:</string>
   </label>
-  <label>
-   <rect>
-    <x>70</x>
-    <y>190</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>675</x>
-    <y>175</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Expires</string>
-  </label>
-  <label>
-   <rect>
-    <x>380</x>
-    <y>110</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Revision Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>35</x>
-    <y>90</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item:</string>
-  </label>
   <field>
    <rect>
-    <x>484</x>
-    <y>110</y>
+    <x>120</x>
+    <y>90</y>
     <width>200</width>
     <height>20</height>
    </rect>
@@ -265,75 +118,8 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <left/>
    <vcenter/>
    <data>
-    <query>bomhead</query>
-    <column>f_revisiondate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>175</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Effective</string>
-  </label>
-  <label>
-   <rect>
-    <x>380</x>
-    <y>130</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Revision:</string>
-  </label>
-  <label>
-   <rect>
-    <x>375</x>
-    <y>10</y>
-    <width>350</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Single Level Bill of Materials</string>
-  </label>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>130</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
     <query>head</query>
-    <column>item_descrip2</column>
+    <column>item_number</column>
    </data>
   </field>
   <label>
@@ -373,9 +159,9 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
   </field>
   <label>
    <rect>
-    <x>70</x>
-    <y>175</y>
-    <width>229</width>
+    <x>675</x>
+    <y>190</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -383,9 +169,25 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Component Item Number</string>
+   <string>Issue Method</string>
+  </label>
+  <label>
+   <rect>
+    <x>375</x>
+    <y>10</y>
+    <width>350</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Single Level Bill of Materials</string>
   </label>
   <label>
    <rect>
@@ -403,40 +205,21 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <string>Create W/O</string>
   </label>
-  <field>
+  <label>
    <rect>
-    <x>120</x>
+    <x>35</x>
     <y>90</y>
-    <width>200</width>
+    <width>80</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>item_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>320</x>
-    <y>175</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Qty. Per</string>
+   <string>Item:</string>
   </label>
   <label>
    <rect>
@@ -454,6 +237,233 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <string>Seq. #</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>204</ystart>
+   <xend>745</xend>
+   <yend>204</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>484</x>
+    <y>90</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>bomhead</query>
+    <column>bomhead_docnum</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>675</x>
+    <y>175</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Expires</string>
+  </label>
+  <field>
+   <rect>
+    <x>120</x>
+    <y>130</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip2</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>175</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Component Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>525</x>
+    <y>175</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Required</string>
+  </label>
+  <label>
+   <rect>
+    <x>380</x>
+    <y>130</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Revision:</string>
+  </label>
+  <field>
+   <rect>
+    <x>120</x>
+    <y>110</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>item_descrip1</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>175</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Effective</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>190</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>405</x>
+    <y>190</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>ECN #</string>
+  </label>
+  <label>
+   <rect>
+    <x>380</x>
+    <y>110</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Revision Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>320</x>
+    <y>175</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Per</string>
+  </label>
+  <field>
+   <rect>
+    <x>484</x>
+    <y>110</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>bomhead</query>
+    <column>f_revisiondate</column>
+   </data>
+  </field>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -461,6 +471,22 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
  </pghead>
  <pghead>
   <height>37</height>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>0</y>
+    <width>229</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Component Item Number</string>
+  </label>
   <label>
    <rect>
     <x>405</x>
@@ -479,109 +505,6 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
   </label>
   <label>
    <rect>
-    <x>525</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Required</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>30</ystart>
-   <xend>745</xend>
-   <yend>30</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>444</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Scrap</string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Effective</string>
-  </label>
-  <label>
-   <rect>
-    <x>70</x>
-    <y>15</y>
-    <width>229</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Seq. #</string>
-  </label>
-  <label>
-   <rect>
-    <x>675</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issue Method</string>
-  </label>
-  <label>
-   <rect>
     <x>320</x>
     <y>0</y>
     <width>75</width>
@@ -595,22 +518,6 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <hcenter/>
    <vcenter/>
    <string>Qty. Per</string>
-  </label>
-  <label>
-   <rect>
-    <x>600</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Create W/O</string>
   </label>
   <label>
    <rect>
@@ -630,8 +537,56 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
   </label>
   <label>
    <rect>
-    <x>70</x>
+    <x>675</x>
+    <y>15</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issue Method</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>15</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Create W/O</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
     <y>0</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Seq. #</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>15</y>
     <width>229</width>
     <height>15</height>
    </rect>
@@ -642,7 +597,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Component Item Number</string>
+   <string>Item Description</string>
   </label>
   <label>
    <rect>
@@ -660,6 +615,61 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <vcenter/>
    <string>UOM</string>
   </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Effective</string>
+  </label>
+  <label>
+   <rect>
+    <x>525</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Required</string>
+  </label>
+  <label>
+   <rect>
+    <x>444</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Scrap</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>30</ystart>
+   <xend>745</xend>
+   <yend>30</yend>
+   <weight>2</weight>
+  </line>
  </pghead>
  <section>
   <name>detail</name>
@@ -670,7 +680,45 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <height>57</height>
    <field>
     <rect>
-     <x>315</x>
+     <x>70</x>
+     <y>0</y>
+     <width>229</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>70</x>
+     <y>30</y>
+     <width>229</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip2</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>525</x>
      <y>0</y>
      <width>75</width>
      <height>15</height>
@@ -684,7 +732,45 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qtyper</column>
+     <column>qtyreq</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>405</x>
+     <y>15</y>
+     <width>190</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>bomitem_ecn</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>600</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>createchild</column>
     </data>
    </field>
    <field>
@@ -727,7 +813,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </field>
    <field>
     <rect>
-     <x>600</x>
+     <x>675</x>
      <y>15</y>
      <width>75</width>
      <height>15</height>
@@ -741,7 +827,26 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>createchild</column>
+     <column>issuemethod</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>315</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtyper</column>
     </data>
    </field>
    <line>
@@ -753,9 +858,9 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </line>
    <field>
     <rect>
-     <x>405</x>
+     <x>600</x>
      <y>0</y>
-     <width>38</width>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -767,26 +872,7 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_invuom</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>70</x>
-     <y>30</y>
-     <width>229</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
+     <column>effective</column>
     </data>
    </field>
    <field>
@@ -810,6 +896,25 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    </field>
    <field>
     <rect>
+     <x>405</x>
+     <y>0</y>
+     <width>38</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_invuom</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>70</x>
      <y>15</y>
      <width>229</width>
@@ -827,105 +932,29 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
      <column>item_descrip1</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>405</x>
-     <y>15</y>
-     <width>190</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>bomitem_ecn</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>675</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>issuemethod</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>525</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qtyreq</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>600</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>effective</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>70</x>
-     <y>0</y>
-     <width>229</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
-    </data>
-   </field>
   </detail>
  </section>
  <pgfoot>
   <height>21</height>
+  <field>
+   <rect>
+    <x>95</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>5</x>
@@ -959,25 +988,6 @@ AND (bomhead_rev_id=&lt;? value("revision_id") ?>));</sql>
    <data>
     <query>Context Query</query>
     <column>page_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>95</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
    </data>
   </field>
   <label>
