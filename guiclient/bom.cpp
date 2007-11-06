@@ -203,20 +203,22 @@ void BOM::sSave()
   
   q.prepare( "SELECT bomhead_id "
              "FROM bomhead "
-             "WHERE (bomhead_item_id=:item_id);" );
+             "WHERE ((bomhead_item_id=:item_id) "
+			 "AND (bomhead_rev_id=:bomhead_rev_id));" );
   q.bindValue(":item_id", _item->id());
+  q.bindValue(":bomhead_rev_id", _revision->id());
   q.exec();
   if (q.first())
-  {
-    int bomheadid = q.value("bomhead_id").toInt();
-    
+  {   
     q.prepare( "UPDATE bomhead "
                "SET bomhead_docnum=:bomhead_docnum,"
                "    bomhead_revision=:bomhead_revision, bomhead_revisiondate=:bomhead_revisiondate,"
                "    bomhead_batchsize=:bomhead_batchsize,"
                "    bomhead_requiredqtyper=:bomhead_requiredqtyper "
-               "WHERE (bomhead_id=:bomhead_id);" );
-    q.bindValue(":bomhead_id", bomheadid);
+               "WHERE ((bomhead_item_id=:bomhead_item_id) "
+			   "AND (bomhead_rev_id=:bomhead_rev_id));" );
+    q.bindValue(":bomhead_item_id", _item->id());
+    q.bindValue(":bomhead_rev_id", _revision->id());
   }
   else
   {
@@ -362,7 +364,7 @@ void BOM::sFillList(int pItemid, bool)
 {
   if (_item->isValid() && (pItemid == _item->id()))
   {
-    q.prepare( "SELECT bomhead_docnum, bomhead_rev_id,"
+    q.prepare( "SELECT bomhead_id, bomhead_docnum, bomhead_rev_id,"
                "       bomhead_revision, bomhead_revisiondate,"
                "       formatQty(bomhead_batchsize) AS f_batchsize,"
                "       bomhead_requiredqtyper "
