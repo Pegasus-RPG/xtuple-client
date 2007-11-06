@@ -513,7 +513,7 @@
          </size>
         </property>
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight</set>
@@ -693,7 +693,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>1</number>
+      <number>0</number>
      </property>
      <widget class="QWidget" name="supplyTab" >
       <attribute name="title" >
