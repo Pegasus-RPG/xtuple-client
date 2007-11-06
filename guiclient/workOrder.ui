@@ -8,14 +8,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>500</height>
+    <width>511</width>
+    <height>494</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>600</width>
-    <height>500</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -23,178 +23,119 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <property name="leftMargin" >
-     <number>9</number>
-    </property>
-    <property name="topMargin" >
-     <number>9</number>
-    </property>
-    <property name="rightMargin" >
-     <number>9</number>
-    </property>
-    <property name="bottomMargin" >
-     <number>9</number>
-    </property>
-    <property name="horizontalSpacing" >
-     <number>6</number>
-    </property>
-    <property name="verticalSpacing" >
-     <number>6</number>
-    </property>
-    <item row="1" column="0" colspan="3" >
+    <item row="0" column="0" >
+     <widget class="QLabel" name="_woNumberLit" >
+      <property name="text" >
+       <string>Work Order #:</string>
+      </property>
+      <property name="alignment" >
+       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1" >
+     <widget class="XLineEdit" name="_woNumber" />
+    </item>
+    <item row="0" column="2" colspan="2" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeType" >
+       <enum>QSizePolicy::Expanding</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>171</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="0" column="4" colspan="2" >
+     <widget class="QPushButton" name="_create" >
+      <property name="enabled" >
+       <bool>false</bool>
+      </property>
+      <property name="text" >
+       <string>C&amp;reate</string>
+      </property>
+      <property name="shortcut" >
+       <string>Alt+R</string>
+      </property>
+      <property name="autoDefault" >
+       <bool>true</bool>
+      </property>
+      <property name="default" >
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="6" >
+     <widget class="QPushButton" name="_close" >
+      <property name="text" >
+       <string>&amp;Cancel</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="0" colspan="7" >
      <widget class="QGroupBox" name="_itemGroup" >
       <property name="title" >
        <string/>
       </property>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
-       <item row="0" column="0" colspan="2" >
-        <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>0</number>
-         </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
-         <item row="1" column="0" >
-          <widget class="QLabel" name="_warehouseLit" >
-           <property name="text" >
-            <string>  Warehouse:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="2" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>301</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="0" colspan="3" >
-          <widget class="ItemCluster" name="_item" >
-           <property name="minimumSize" >
-            <size>
-             <width>0</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="focusPolicy" >
-            <enum>Qt::StrongFocus</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1" >
-          <widget class="WComboBox" name="_warehouse" >
-           <property name="type" >
-            <enum>WComboBox::Supply</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QGroupBox" name="_booGroup" >
-         <property name="title" >
-          <string>Bill of Operations</string>
-         </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="RevisionCluster" name="_booRevision" >
-            <property name="focusPolicy" >
-             <enum>Qt::TabFocus</enum>
-            </property>
-            <property name="readOnly" >
-             <bool>false</bool>
-            </property>
-            <property name="mode" >
-             <enum>RevisionLineEdit::Use</enum>
-            </property>
-            <property name="type" >
-             <enum>RevisionLineEdit::BOO</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QGroupBox" name="_bomGroup" >
+       <item row="0" column="0" colspan="3" >
+        <widget class="ItemCluster" name="_item" >
          <property name="minimumSize" >
           <size>
            <width>0</width>
            <height>0</height>
           </size>
          </property>
-         <property name="title" >
-          <string>Bill of Materials</string>
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
          </property>
-         <layout class="QGridLayout" >
-          <item row="0" column="0" >
-           <widget class="RevisionCluster" name="_bomRevision" >
-            <property name="focusPolicy" >
-             <enum>Qt::TabFocus</enum>
-            </property>
-            <property name="readOnly" >
-             <bool>false</bool>
-            </property>
-            <property name="mode" >
-             <enum>RevisionLineEdit::Use</enum>
-            </property>
-            <property name="type" >
-             <enum>RevisionLineEdit::BOM</enum>
-            </property>
-           </widget>
-          </item>
-         </layout>
         </widget>
        </item>
-       <item row="0" column="2" >
+       <item row="0" column="3" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Horizontal</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>0</width>
-           <height>0</height>
+           <width>20</width>
+           <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_warehouseLit" >
+         <property name="text" >
+          <string>  Warehouse:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="WComboBox" name="_warehouse" >
+         <property name="type" >
+          <enum>WComboBox::Supply</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>287</width>
+           <height>20</height>
           </size>
          </property>
         </spacer>
@@ -202,121 +143,66 @@
       </layout>
      </widget>
     </item>
-    <item row="2" column="0" >
-     <widget class="QGroupBox" name="_qtyGroup" >
+    <item row="2" column="0" colspan="2" >
+     <widget class="QGroupBox" name="_bomGroup" >
+      <property name="minimumSize" >
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="title" >
-       <string/>
+       <string>Bill of Materials</string>
       </property>
       <layout class="QGridLayout" >
-       <property name="leftMargin" >
-        <number>9</number>
-       </property>
-       <property name="topMargin" >
-        <number>9</number>
-       </property>
-       <property name="rightMargin" >
-        <number>9</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>9</number>
-       </property>
-       <property name="horizontalSpacing" >
-        <number>6</number>
-       </property>
-       <property name="verticalSpacing" >
-        <number>6</number>
-       </property>
        <item row="0" column="0" >
-        <widget class="QLabel" name="_qtyLit" >
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
+        <widget class="RevisionCluster" name="_bomRevision" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
          </property>
-         <property name="text" >
-          <string>Qty. Ordered:</string>
+         <property name="readOnly" >
+          <bool>false</bool>
          </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="mode" >
+          <enum>RevisionLineEdit::Use</enum>
          </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_qtyReceivedLit" >
-         <property name="text" >
-          <string>Qty. Received:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="margin" >
-          <number>0</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="XLineEdit" name="_qty" >
-         <property name="maximumSize" >
-          <size>
-           <width>80</width>
-           <height>20</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="QLabel" name="_wipValue" >
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QLabel" name="_qtyReceived" >
-         <property name="minimumSize" >
-          <size>
-           <width>0</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_wipValueLit" >
-         <property name="text" >
-          <string>WIP Value:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="type" >
+          <enum>RevisionLineEdit::BOM</enum>
          </property>
         </widget>
        </item>
       </layout>
      </widget>
     </item>
-    <item row="2" column="2" colspan="2" >
+    <item row="2" column="2" >
+     <widget class="QGroupBox" name="_booGroup" >
+      <property name="title" >
+       <string>Bill of Operations</string>
+      </property>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="RevisionCluster" name="_booRevision" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+         <property name="readOnly" >
+          <bool>false</bool>
+         </property>
+         <property name="mode" >
+          <enum>RevisionLineEdit::Use</enum>
+         </property>
+         <property name="type" >
+          <enum>RevisionLineEdit::BOO</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="3" colspan="4" >
      <widget class="QGroupBox" name="_infoGroup" >
       <property name="title" >
-       <string/>
+       <string>Other</string>
       </property>
       <layout class="QGridLayout" >
        <property name="leftMargin" >
@@ -427,290 +313,125 @@
       </layout>
      </widget>
     </item>
-    <item rowspan="2" row="0" column="3" >
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
+    <item row="3" column="0" colspan="2" >
+     <widget class="QGroupBox" name="_qtyGroup" >
+      <property name="title" >
+       <string/>
       </property>
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <property name="leftMargin" >
-         <number>0</number>
-        </property>
-        <property name="topMargin" >
-         <number>0</number>
-        </property>
-        <property name="rightMargin" >
-         <number>0</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QPushButton" name="_close" >
-          <property name="text" >
-           <string>&amp;Cancel</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_create" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
-          <property name="text" >
-           <string>C&amp;reate</string>
-          </property>
-          <property name="shortcut" >
-           <string>Alt+R</string>
-          </property>
-          <property name="autoDefault" >
-           <bool>true</bool>
-          </property>
-          <property name="default" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-    <item row="0" column="0" colspan="3" >
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <property name="leftMargin" >
-       <number>3</number>
-      </property>
-      <property name="topMargin" >
-       <number>3</number>
-      </property>
-      <property name="rightMargin" >
-       <number>3</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>3</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <property name="leftMargin" >
-         <number>3</number>
-        </property>
-        <property name="topMargin" >
-         <number>3</number>
-        </property>
-        <property name="rightMargin" >
-         <number>3</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>3</number>
-        </property>
-        <item>
-         <widget class="QLabel" name="_woNumberLit" >
-          <property name="text" >
-           <string>Work Order #:</string>
-          </property>
-          <property name="alignment" >
-           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="XLineEdit" name="_woNumber" />
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>102</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-     </layout>
-    </item>
-    <item row="4" column="0" colspan="4" >
-     <layout class="QHBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <property name="leftMargin" >
-       <number>0</number>
-      </property>
-      <property name="topMargin" >
-       <number>0</number>
-      </property>
-      <property name="rightMargin" >
-       <number>0</number>
-      </property>
-      <property name="bottomMargin" >
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="XCheckBox" name="_printTraveler" >
-        <property name="text" >
-         <string>&amp;Print Traveler</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QLabel" name="_bottomSpacer" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="text" >
-         <string/>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item row="3" column="0" colspan="4" >
-     <widget class="QTabWidget" name="_tabs" >
-      <property name="currentIndex" >
-       <number>0</number>
-      </property>
-      <widget class="QWidget" name="tab" >
-       <attribute name="title" >
-        <string>Production Notes</string>
-       </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <property name="leftMargin" >
-         <number>5</number>
-        </property>
-        <property name="topMargin" >
-         <number>5</number>
-        </property>
-        <property name="rightMargin" >
-         <number>5</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>5</number>
-        </property>
-        <item>
-         <widget class="QTextEdit" name="_productionNotes" />
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="itemchar" >
-       <attribute name="title" >
-        <string>Characteristics</string>
-       </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>6</number>
-        </property>
-        <property name="leftMargin" >
-         <number>9</number>
-        </property>
-        <property name="topMargin" >
-         <number>9</number>
-        </property>
-        <property name="rightMargin" >
-         <number>9</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>9</number>
-        </property>
-        <item>
-         <widget class="QTreeView" name="_itemcharView" >
-          <property name="editTriggers" >
-           <set>QAbstractItemView::AllEditTriggers</set>
-          </property>
-          <property name="rootIsDecorated" >
-           <bool>false</bool>
-          </property>
-          <property name="itemsExpandable" >
-           <bool>false</bool>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="TabPage" >
-       <attribute name="title" >
-        <string>Comments</string>
-       </attribute>
-       <layout class="QVBoxLayout" >
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <property name="leftMargin" >
-         <number>5</number>
-        </property>
-        <property name="topMargin" >
-         <number>5</number>
-        </property>
-        <property name="rightMargin" >
-         <number>5</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>5</number>
-        </property>
-        <item>
-         <widget class="Comments" name="_comments" >
-          <property name="focusPolicy" >
-           <enum>Qt::StrongFocus</enum>
-          </property>
-          <property name="type" >
-           <enum>Comments::WorkOrder</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </widget>
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>9</number>
+       </property>
+       <property name="topMargin" >
+        <number>9</number>
+       </property>
+       <property name="rightMargin" >
+        <number>9</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>9</number>
+       </property>
+       <property name="horizontalSpacing" >
+        <number>6</number>
+       </property>
+       <property name="verticalSpacing" >
+        <number>6</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="_qtyLit" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string>Qty. Ordered:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_qtyReceivedLit" >
+         <property name="text" >
+          <string>Qty. Received:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="margin" >
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="XLineEdit" name="_qty" >
+         <property name="maximumSize" >
+          <size>
+           <width>80</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLabel" name="_wipValue" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLabel" name="_qtyReceived" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string/>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_wipValueLit" >
+         <property name="text" >
+          <string>WIP Value:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="2" column="1" >
+    <item row="3" column="2" colspan="3" >
      <widget class="QGroupBox" name="_schedGroup" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="title" >
        <string/>
       </property>
@@ -744,7 +465,14 @@
         </widget>
        </item>
        <item row="1" column="1" >
-        <widget class="DLineEdit" name="_dueDate" />
+        <widget class="DLineEdit" name="_dueDate" >
+         <property name="minimumSize" >
+          <size>
+           <width>80</width>
+           <height>0</height>
+          </size>
+         </property>
+        </widget>
        </item>
        <item row="2" column="0" >
         <widget class="QLabel" name="_startDateLit" >
@@ -799,6 +527,164 @@
       </layout>
      </widget>
     </item>
+    <item row="3" column="5" colspan="2" >
+     <spacer>
+      <property name="orientation" >
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="sizeHint" >
+       <size>
+        <width>40</width>
+        <height>20</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item row="4" column="0" colspan="7" >
+     <widget class="QTabWidget" name="_tabs" >
+      <property name="currentIndex" >
+       <number>0</number>
+      </property>
+      <widget class="QWidget" name="tab" >
+       <attribute name="title" >
+        <string>Production Notes</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>5</number>
+        </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="QTextEdit" name="_productionNotes" >
+          <property name="focusPolicy" >
+           <enum>Qt::ClickFocus</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="itemchar" >
+       <attribute name="title" >
+        <string>Characteristics</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>6</number>
+        </property>
+        <property name="leftMargin" >
+         <number>9</number>
+        </property>
+        <property name="topMargin" >
+         <number>9</number>
+        </property>
+        <property name="rightMargin" >
+         <number>9</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>9</number>
+        </property>
+        <item>
+         <widget class="QTreeView" name="_itemcharView" >
+          <property name="focusPolicy" >
+           <enum>Qt::ClickFocus</enum>
+          </property>
+          <property name="editTriggers" >
+           <set>QAbstractItemView::AllEditTriggers</set>
+          </property>
+          <property name="rootIsDecorated" >
+           <bool>false</bool>
+          </property>
+          <property name="itemsExpandable" >
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="TabPage" >
+       <attribute name="title" >
+        <string>Comments</string>
+       </attribute>
+       <layout class="QVBoxLayout" >
+        <property name="spacing" >
+         <number>5</number>
+        </property>
+        <property name="leftMargin" >
+         <number>5</number>
+        </property>
+        <property name="topMargin" >
+         <number>5</number>
+        </property>
+        <property name="rightMargin" >
+         <number>5</number>
+        </property>
+        <property name="bottomMargin" >
+         <number>5</number>
+        </property>
+        <item>
+         <widget class="Comments" name="_comments" >
+          <property name="focusPolicy" >
+           <enum>Qt::ClickFocus</enum>
+          </property>
+          <property name="type" >
+           <enum>Comments::WorkOrder</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item row="5" column="0" colspan="7" >
+     <layout class="QHBoxLayout" >
+      <property name="spacing" >
+       <number>0</number>
+      </property>
+      <property name="leftMargin" >
+       <number>0</number>
+      </property>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="XCheckBox" name="_printTraveler" >
+        <property name="text" >
+         <string>&amp;Print Traveler</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="_bottomSpacer" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
    </layout>
   </widget>
  </widget>
@@ -850,19 +736,21 @@
   <tabstop>_woNumber</tabstop>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_bomRevision</tabstop>
+  <tabstop>_booRevision</tabstop>
+  <tabstop>_priority</tabstop>
+  <tabstop>_project</tabstop>
   <tabstop>_qty</tabstop>
   <tabstop>_leadTime</tabstop>
   <tabstop>_dueDate</tabstop>
   <tabstop>_startDate</tabstop>
-  <tabstop>_priority</tabstop>
-  <tabstop>_project</tabstop>
+  <tabstop>_tabs</tabstop>
+  <tabstop>_productionNotes</tabstop>
+  <tabstop>_itemcharView</tabstop>
+  <tabstop>_comments</tabstop>
   <tabstop>_printTraveler</tabstop>
   <tabstop>_create</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_tabs</tabstop>
-  <tabstop>_productionNotes</tabstop>
-  <tabstop>_comments</tabstop>
-  <tabstop>_itemcharView</tabstop>
  </tabstops>
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>

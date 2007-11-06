@@ -200,7 +200,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                   "       formatQty(wo_qtyrcv) AS f_received,"
                   "       wo_startdate, wo_duedate,"
                   "       formatMoney(wo_wipvalue) AS f_wipvalue,"
-                  "       wo_prodnotes, wo_prj_id "
+                  "       wo_prodnotes, wo_prj_id, "
+				  "       wo_bom_rev_id, wo_boo_rev_id "
                   "FROM wo "
                   "WHERE (wo_id=:wo_id);" );
       wo.bindValue(":wo_id", _woid);
@@ -223,6 +224,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _productionNotes->setText(wo.value("wo_prodnotes").toString());
         _comments->setId(_woid);
         _project->setId(wo.value("wo_prj_id").toInt());
+		_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
+		_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
 
         // If the W/O is closed or Released don't allow changing some items.
         if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "R")
@@ -236,8 +239,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _startDate->setEnabled(true);
         _woNumber->setEnabled(false);
         _item->setReadOnly(true);
-	    _bomRevision->setReadOnly(true);
-        _booRevision->setReadOnly(true);
+	    _bomRevision->setEnabled(wo.value("wo_status").toString() == "O");
+        _booRevision->setEnabled(wo.value("wo_status").toString() == "O");
         _warehouse->setEnabled(false);
         _comments->setReadOnly(false);
         _leadTimeLit->hide();
@@ -295,8 +298,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
  
         _woNumber->setEnabled(FALSE);
         _item->setReadOnly(TRUE);
-        _bomRevision->setReadOnly(TRUE);
-        _booRevision->setReadOnly(TRUE);
+        _bomRevision->setEnabled(FALSE);
+        _booRevision->setEnabled(FALSE);
         _warehouse->setEnabled(FALSE);
         _priority->setEnabled(FALSE);
         _qty->setEnabled(FALSE);
@@ -568,11 +571,15 @@ void workOrder::sCreate()
 
     q.prepare("UPDATE wo"
               "   SET wo_prodnotes=:productionNotes,"
-              "       wo_prj_id=:prj_id"
+              "       wo_prj_id=:prj_id,"
+			  "       wo_bom_rev_id=:bom_rev_id,"
+			  "       wo_boo_rev_id=:boo_rev_id"
               " WHERE (wo_id=:wo_id); ");
     q.bindValue(":wo_id", _woid);
     q.bindValue(":productionNotes", _productionNotes->text());
     q.bindValue(":prj_id", _project->id());
+	q.bindValue(":bom_rev_id", _bomRevision->id());
+	q.bindValue(":boo_rev_id", _booRevision->id());
     q.exec();
 
     q.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");
