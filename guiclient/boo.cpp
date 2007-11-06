@@ -108,6 +108,7 @@ boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
   
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
 
+  _activate->hide();
   _revision->setMode(RevisionLineEdit::Maintain);
   _revision->setType("BOO");
 }
