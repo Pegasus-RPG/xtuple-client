@@ -368,23 +368,6 @@ bool returnAuthorization::sSave()
 	     "    rahead_misc_descrip=:rahead_misc_descrip,"
  	     "    rahead_curr_id=:rahead_curr_id, "
 	     "    rahead_freight=:rahead_freight,"
-	     "    rahead_adjtax_id=:rahead_adjtax_id,"
-	     "    rahead_adjtaxtype_id=:rahead_adjtaxtype_id,"
- 	     "    rahead_tax_curr_id=:rahead_tax_curr_id,"
- 	     "    rahead_adjtax_ratea=:rahead_adjtax_ratea,"
-	     "    rahead_adjtax_rateb=:rahead_adjtax_rateb,"
-	     "    rahead_adjtax_ratec=:rahead_adjtax_ratec,"
-	     "    rahead_adjtax_pcta=:rahead_adjtax_pcta,"
-	     "    rahead_adjtax_pctb=:rahead_adjtax_pctb,"
-	     "    rahead_adjtax_pctc=:rahead_adjtax_pctc,"
-	     "    rahead_freighttax_id=:rahead_freighttax_id,"
-	     "    rahead_freighttaxtype_id=:rahead_freighttaxtype_id,"
-	     "    rahead_freighttax_pcta=:rahead_freighttax_pcta,"
-	     "    rahead_freighttax_pctb=:rahead_freighttax_pctb,"
-	     "    rahead_freighttax_pctc=:rahead_freighttax_pctc,"
-	     "    rahead_freighttax_ratea=:rahead_freighttax_ratea,"
-	     "    rahead_freighttax_rateb=:rahead_freighttax_rateb,"
-	     "    rahead_freighttax_ratec=:rahead_freighttax_ratec,"
 		 "    rahead_printed=:rahead_printed "
 	     "WHERE (rahead_id=:rahead_id);" );
 
@@ -437,28 +420,6 @@ bool returnAuthorization::sSave()
   q.bindValue(":rahead_misc_descrip", _miscChargeDescription->text());
   q.bindValue(":rahead_curr_id", _currency->id());
   q.bindValue(":rahead_freight", _freight->localValue());
-  if (_taxCache.adjId() > 0)
-    q.bindValue(":rahead_adjtax_id",	_taxCache.adjId());
-  if (_taxCache.adjType() > 0)
-    q.bindValue(":rahead_adjtaxtype_id",_taxCache.adjType());
-  if (_taxcurrid > 0)
-    q.bindValue(":rahead_tax_curr_id",	_taxcurrid);
-  q.bindValue(":rahead_adjtax_ratea",	_taxCache.adj(0));
-  q.bindValue(":rahead_adjtax_rateb",	_taxCache.adj(1));
-  q.bindValue(":rahead_adjtax_ratec",	_taxCache.adj(2));
-  q.bindValue(":rahead_adjtax_pcta",	_taxCache.adjPct(0));
-  q.bindValue(":rahead_adjtax_pctb",	_taxCache.adjPct(1));
-  q.bindValue(":rahead_adjtax_pctc",	_taxCache.adjPct(2));
-  if (_taxCache.freightId() > 0)
-    q.bindValue(":rahead_freighttax_id",	_taxCache.freightId());
-  if (_taxCache.freightType() > 0)
-    q.bindValue(":rahead_freighttaxtype_id",	_taxCache.freightType());
-  q.bindValue(":rahead_freighttax_pcta",	_taxCache.freightPct(0));
-  q.bindValue(":rahead_freighttax_pctb",	_taxCache.freightPct(1));
-  q.bindValue(":rahead_freighttax_pctc",	_taxCache.freightPct(2));
-  q.bindValue(":rahead_freighttax_ratea",	_taxCache.freight(0));
-  q.bindValue(":rahead_freighttax_rateb",	_taxCache.freight(1));
-  q.bindValue(":rahead_freighttax_ratec",	_taxCache.freight(2));
 
   q.exec();
   if (q.lastError().type() != QSqlError::None)
@@ -501,7 +462,7 @@ void returnAuthorization::sShipToList()
 
 void returnAuthorization::sSalesOrder()
 {
-  if (_so->id() != 0)
+  if (_so->isValid())
   {
     _authorizeLine->show();
     _clearAuthorization->show();
@@ -515,8 +476,11 @@ void returnAuthorization::sSalesOrder()
   }
   if (!_ignoreSoSignals) 
   {
-    if (_so->id() != 0)
-    {
+	sSave();
+	sFillList();
+
+    if (_so->isValid())
+	{
       XSqlQuery sohead;
       sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
                       "       formatScrap(cohead_commission) AS f_commission, "
@@ -531,20 +495,7 @@ void returnAuthorization::sSalesOrder()
       sohead.bindValue(":cohead_id", _so->id());
       sohead.exec();
       if (sohead.first())
-      {
-		q.prepare("UPDATE rahead SET rahead_cohead_id=:cohead_id "
-			      "WHERE (rahead_id=:rahead_id)");
-		q.bindValue(":rahead_id", _raheadid);
-        q.bindValue(":cohead_id", _so->id());
-		q.exec();
-        if (q.lastError().type() != QSqlError::None)
-        {
-          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-		  _so->setId(0);
-          return;
-	    }
-		else
-		{
+	  {
           _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
           _commission->setText(sohead.value("f_commission"));
   
@@ -591,16 +542,14 @@ void returnAuthorization::sSalesOrder()
 	      _shipToAddr->setEnabled(_ffShipto);
           _ignoreShiptoSignals = FALSE;
 	      sSave();
-          sFillList();
         }
-	  }
       else if (sohead.lastError().type() != QSqlError::None)
       {
         systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
-		_so->setId(0);
+		_so->setId(-1);
         return;
 	  }
-    }
+  	}
   }
 }
 
@@ -1109,23 +1058,7 @@ void returnAuthorization::populate()
 	_customerPO->setText(rahead.value("rahead_custponumber"));
 
     _currency->setId(rahead.value("rahead_curr_id").toInt());
-    _taxCache.setAdjId(rahead.value("rahead_adjtax_id").toInt());
-    _taxCache.setAdjType(rahead.value("rahead_adjtaxtype_id").toInt());
-    _taxCache.setAdj(rahead.value("rahead_adjtax_ratea").toDouble(),
-		      rahead.value("rahead_adjtax_rateb").toDouble(),
-		      rahead.value("rahead_adjtax_ratec").toDouble());
-    _taxCache.setAdjPct(rahead.value("rahead_adjtax_pcta").toDouble(),
-			 rahead.value("rahead_adjtax_pctb").toDouble(),
-			 rahead.value("rahead_adjtax_pctc").toDouble());
     _freight->setLocalValue(rahead.value("rahead_freight").toDouble());
-    _taxCache.setFreightId(rahead.value("rahead_freighttax_id").toInt());
-    _taxCache.setFreightType(rahead.value("rahead_freighttaxtype_id").toInt());
-    _taxCache.setFreight(rahead.value("rahead_freighttax_ratea").toDouble(),
-		      rahead.value("rahead_freighttax_rateb").toDouble(),
-		      rahead.value("rahead_freighttax_ratec").toDouble());
-    _taxCache.setFreightPct(rahead.value("rahead_freighttax_pcta").toDouble(),
-			 rahead.value("rahead_freighttax_pctb").toDouble(),
-			 rahead.value("rahead_freighttax_pctc").toDouble());
 
     _miscCharge->setLocalValue(rahead.value("rahead_misc").toDouble());
     _miscChargeDescription->setText(rahead.value("rahead_misc_descrip"));
@@ -1160,7 +1093,9 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
       return;
     }
 
-	q.prepare( "SELECT importcoitemstora(:rahead_id,NULL);"
+	q.prepare( "UPDATE raitem SET raitem_qtyauthorized=0 "
+		       "WHERE (raitem_rahead_id=:rahead_id); "
+		       "SELECT importcoitemstora(:rahead_id,NULL);"
 		       "DELETE FROM rahead "
                "WHERE (rahead_id=:rahead_id);" );
     q.bindValue(":rahead_id", _raheadid);
@@ -1219,12 +1154,31 @@ void returnAuthorization::sTaxDetail()
     populate();
 }
 
+void returnAuthorization::sFreightChanged()
+{
+  XSqlQuery freightq;
+  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
+		   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
+		   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
+  freightq.bindValue(":tax_id", _taxCache.freightId());
+  freightq.bindValue(":freight", _freight->localValue());
+  freightq.exec();
+  if (freightq.first())
+  {
+    _taxCache.setFreight(freightq.value("freighta").toDouble(),
+			 freightq.value("freightb").toDouble(),
+			 freightq.value("freightc").toDouble());
+  }
+  else if (freightq.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  recalculateTax();
+}
+
 void returnAuthorization::recalculateTax()
 {
-  enum Rate { A = 0, B = 1, C = 2 };
-  enum Part { Line = 0, Freight = 1, Adj = 2, Total = 3 };
-  double _ttaxCache[3][4];	// [Rate] vs. [Part]
-
   XSqlQuery itemq;
 
   //  Determine the line item tax
@@ -1240,9 +1194,9 @@ void returnAuthorization::recalculateTax()
   itemq.exec();
   if (itemq.first())
   {
-    _ttaxCache[A][Line] = itemq.value("itemtaxa").toDouble();
-    _ttaxCache[B][Line] = itemq.value("itemtaxb").toDouble();
-    _ttaxCache[C][Line] = itemq.value("itemtaxc").toDouble();
+    _taxCache.setLine(itemq.value("itemtaxa").toDouble(),
+		      itemq.value("itemtaxb").toDouble(),
+		      itemq.value("itemtaxc").toDouble());
   }
   else if (itemq.lastError().type() != QSqlError::NoError)
   {
@@ -1250,11 +1204,9 @@ void returnAuthorization::recalculateTax()
     return;
   }
 
-  _ttaxCache[A][Total] = _ttaxCache[A][Line] + _ttaxCache[A][Freight] + _ttaxCache[A][Adj];
-  _ttaxCache[B][Total] = _ttaxCache[B][Line] + _ttaxCache[B][Freight] + _ttaxCache[B][Adj];
-  _ttaxCache[C][Total] = _ttaxCache[C][Line] + _ttaxCache[C][Freight] + _ttaxCache[C][Adj];
-
-  _tax->setLocalValue(_ttaxCache[A][Total] + _ttaxCache[B][Total] + _ttaxCache[C][Total]);
+  if (_taxcurrid > 0)
+    _tax->setLocalValue(CurrDisplay::convert(_taxcurrid, _tax->id(),
+			_taxCache.total(), _tax->effective()));
 }
 
 void returnAuthorization::sTaxAuthChanged()
@@ -1302,21 +1254,12 @@ void returnAuthorization::sTaxAuthChanged()
   }
   _taxauthidCache = _taxauth->id();
 
-  taxauthq.prepare("SELECT rahead_freighttax_id, rahead_adjtax_ratea,"
-		   "       rahead_adjtax_rateb, rahead_adjtax_ratec "
-		   "FROM rahead "
-		   "WHERE (rahead_id=:rahead_id);");
-  taxauthq.bindValue(":rahead_id", _raheadid);
+  taxauthq.prepare("SELECT COALESCE(getFreightTaxSelection(:taxauth), -1) AS result;");
+  taxauthq.bindValue(":taxauth", _taxauth->id());
   taxauthq.exec();
   if (taxauthq.first())
   {
-    if (taxauthq.value("rahead_freighttax_id").isNull())
-      _taxCache.setFreightId(-1);
-    else
-      _taxCache.setFreightId(taxauthq.value("rahead_freighttax_id").toInt());
-    _taxCache.setAdj(taxauthq.value("rahead_adjtax_ratea").toDouble(),
-		     taxauthq.value("rahead_adjtax_rateb").toDouble(),
-		     taxauthq.value("rahead_adjtax_ratec").toDouble());
+    _taxCache.setFreightId(taxauthq.value("result").toInt());
   }
   else if (taxauthq.lastError().type() != QSqlError::None)
   {
@@ -1325,29 +1268,6 @@ void returnAuthorization::sTaxAuthChanged()
   }
 
   sFreightChanged();
-}
-
-void returnAuthorization::sFreightChanged()
-{
-  XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
-		   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
-		   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
-  freightq.bindValue(":tax_id", _taxCache.freightId());
-  freightq.bindValue(":freight", _freight->localValue());
-  freightq.exec();
-  if (freightq.first())
-  {
-    _taxCache.setFreight(freightq.value("freighta").toDouble(),
-			 freightq.value("freightb").toDouble(),
-			 freightq.value("freightc").toDouble());
-  }
-  else if (freightq.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, freightq.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  recalculateTax();
 }
 
 void returnAuthorization::sUpdateDisposition()

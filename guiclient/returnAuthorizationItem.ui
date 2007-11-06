@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>594</width>
-    <height>546</height>
+    <height>552</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -908,7 +908,7 @@
           </sizepolicy>
          </property>
          <property name="focusPolicy" >
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::ClickFocus</enum>
          </property>
         </widget>
        </item>

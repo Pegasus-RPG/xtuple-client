@@ -123,7 +123,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
   {
     _raheadid = param.toInt();
     q.prepare("SELECT *,"
-	      "       COALESCE(rahead_tax_curr_id, rahead_curr_id) AS taxcurr, "
+	      "       rahead_curr_id AS taxcurr, "
 		  "       COALESCE(rahead_cohead_id,-1) AS cohead_id "
 	      "FROM rahead "
 	      "WHERE (rahead_id=:rahead_id);");
@@ -320,7 +320,8 @@ void returnAuthorizationItem::sSave()
   if (_taxCode->isValid())
     q.bindValue(":raitem_tax_id",	_taxCode->id());
   q.bindValue(":raitem_notes", _notes->text());
-  q.bindValue(":raitem_rsncode_id", _rsnCode->id());
+  if (_rsnCode->isValid())
+    q.bindValue(":raitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   if (_altcosAccntid->id() != -1)
@@ -447,7 +448,7 @@ void returnAuthorizationItem::populate()
 				 "       formatQty(raitem_qtyreceived) AS qtyrcvd,"
 				 "       formatQty(raitem_qtyshipped) AS qtyshipd,"
 		         "       rahead_taxauth_id,"
-		         "       COALESCE(rahead_tax_curr_id, rahead_curr_id) AS taxcurr "
+		         "       rahead_curr_id AS taxcurr "
                  "FROM raitem "
 				 "  LEFT OUTER JOIN coitem ON (raitem_coitem_id=coitem_id) "
 				 "  LEFT OUTER JOIN cohead ON (coitem_cohead_id=cohead_id),"
