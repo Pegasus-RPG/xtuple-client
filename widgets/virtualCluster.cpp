@@ -88,6 +88,8 @@ void VirtualCluster::init()
     _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
     _info->setMaximumWidth(25);
+#else
+    _info->setMinimumWidth(60);
 #endif
 
     _name = new QLabel(this, "_name");

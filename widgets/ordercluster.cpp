@@ -1,0 +1,535 @@
+/*
+ * Common Public Attribution License Version 1.0. 
+ * 
+ * The contents of this file are subject to the Common Public Attribution 
+ * License Version 1.0 (the "License"); you may not use this file except 
+ * in compliance with the License. You may obtain a copy of the License 
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
+ * Public License Version 1.1 but Sections 14 and 15 have been added to 
+ * cover use of software over a computer network and provide for limited 
+ * attribution for the Original Developer. In addition, Exhibit A has 
+ * been modified to be consistent with Exhibit B.
+ * 
+ * Software distributed under the License is distributed on an "AS IS" 
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
+ * the License for the specific language governing rights and limitations 
+ * under the License. 
+ * 
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
+ * 
+ * The Original Developer is not the Initial Developer and is __________. 
+ * If left blank, the Original Developer is the Initial Developer. 
+ * The Initial Developer of the Original Code is OpenMFG, LLC, 
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * 
+ * Contributor(s): ______________________.
+ * 
+ * Alternatively, the contents of this file may be used under the terms 
+ * of the xTuple End-User License Agreeement (the xTuple License), in which 
+ * case the provisions of the xTuple License are applicable instead of 
+ * those above.  If you wish to allow use of your version of this file only 
+ * under the terms of the xTuple License and not to allow others to use 
+ * your version of this file under the CPAL, indicate your decision by 
+ * deleting the provisions above and replace them with the notice and other 
+ * provisions required by the xTuple License. If you do not delete the 
+ * provisions above, a recipient may use your version of this file under 
+ * either the CPAL or the xTuple License.
+ * 
+ * EXHIBIT B.  Attribution Information
+ * 
+ * Attribution Copyright Notice: 
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * 
+ * Attribution Phrase: 
+ * Powered by PostBooks, an open source solution from xTuple
+ * 
+ * Attribution URL: www.xtuple.org 
+ * (to be included in the "Community" menu of the application if possible)
+ * 
+ * Graphic Image as provided in the Covered Code, if any. 
+ * (online at www.xtuple.com/poweredby)
+ * 
+ * Display of Attribution Information is required in Larger Works which 
+ * are defined in the CPAL as a work which combines Covered Code or 
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+// ordercluster.cpp
+// Created 11/05/2007 GJM
+// Copyright (c) 2007, OpenMFG, LLC
+
+#include <QMessageBox>
+#include <QSqlError>
+
+#include "ordercluster.h"
+
+// TODO: handle number select returning multiple rows
+
+OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
+  VirtualCluster(pParent, pName)
+{
+  addNumberWidget(new OrderLineEdit(this, pName));
+
+  _name->setVisible(true);
+  _grid->removeWidget(_number);
+  _grid->removeWidget(_list);
+  _grid->removeWidget(_info);
+  _grid->removeWidget(_description);
+  _grid->removeWidget(_name);
+
+  _grid->addWidget(_number,		0, 1, 1, 2);
+  _grid->addWidget(_list,		0, 3);
+  _grid->addWidget(_info,		0, 4);
+  _grid->addWidget(_description,	1, 1);
+  _grid->addWidget(_name,		1, 2);
+
+  _fromLit	= new QLabel(this);	_fromLit->setObjectName("_fromLit");
+  _from		= new QLabel(this);	_from->setObjectName("_from");
+  _toLit	= new QLabel(this);	_toLit->setObjectName("_toLit");
+  _to		= new QLabel(this);	_to->setObjectName("_to");
+
+  _grid->addWidget(_fromLit,	2, 1);
+  _grid->addWidget(_from,	2, 2);
+  _grid->addWidget(_toLit,	2, 3);
+  _grid->addWidget(_to,		2, 4);
+
+  connect(_number, SIGNAL(newId(const int, const QString &)), this, SIGNAL(newId(const int, const QString &)));
+  connect(_number, SIGNAL(numberChanged(const QString &, const QString &)), this, SIGNAL(numberChanged(const QString &, const QString &)));
+
+  setAllowedStatuses(OrderLineEdit::AnyStatus);
+  setAllowedTypes(OrderLineEdit::AnyType);
+}
+
+OrderLineEdit::OrderStatuses OrderCluster::allowedStatuses() const
+{
+  return ((OrderLineEdit*)_number)->allowedStatuses();
+}
+
+OrderLineEdit::OrderTypes OrderCluster::allowedTypes() const
+{
+  return ((OrderLineEdit*)_number)->allowedTypes();
+}
+
+QString OrderCluster::from() const
+{
+  return ((OrderLineEdit*)_number)->from();
+}
+
+bool OrderCluster::isClosed() const
+{
+  return ((OrderLineEdit*)_number)->isClosed();
+}
+
+bool OrderCluster::isOpen() const
+{
+  return ((OrderLineEdit*)_number)->isOpen();
+}
+
+bool OrderCluster::isPO() const
+{
+  return ((OrderLineEdit*)_number)->isPO();
+}
+
+bool OrderCluster::isRA() const
+{
+  return ((OrderLineEdit*)_number)->isRA();
+}
+
+bool OrderCluster::isSO() const
+{
+  return ((OrderLineEdit*)_number)->isSO();
+}
+
+bool OrderCluster::isTO() const
+{
+  return ((OrderLineEdit*)_number)->isTO();
+}
+
+bool OrderCluster::isUnposted() const
+{
+  return ((OrderLineEdit*)_number)->isUnposted();
+}
+
+void OrderCluster::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
+{
+  ((OrderLineEdit*)_number)->setAllowedStatuses(p);
+}
+
+OrderLineEdit::OrderStatus  OrderCluster::status() const
+{
+  return ((OrderLineEdit*)_number)->status();
+}
+
+QString OrderCluster::to() const
+{
+  return ((OrderLineEdit*)_number)->to();
+}
+
+QString OrderCluster::type() const
+{
+  return ((OrderLineEdit*)_number)->type();
+}
+
+void OrderCluster::setAllowedType(const QString &p)
+{
+  ((OrderLineEdit*)_number)->setAllowedType(p);
+}
+
+void OrderCluster::setAllowedTypes(const OrderLineEdit::OrderTypes p)
+{
+  ((OrderLineEdit*)_number)->setAllowedTypes(p);
+
+  switch (p)
+  {
+    case OrderLineEdit::Purchase:	setLabel(tr("P/O #:")); break;
+    case OrderLineEdit::Sales:		setLabel(tr("S/O #:")); break;
+    case OrderLineEdit::Transfer:	setLabel(tr("T/O #:")); break;
+    case OrderLineEdit::Return:		setLabel(tr("R/A #:")); break;
+    default:				setLabel(tr("Order #:")); break;
+  }
+}
+
+void OrderCluster::setId(const int pId, const QString &pType)
+{
+  ((OrderLineEdit*)_number)->setId(pId, pType);
+}
+
+void OrderCluster::sRefresh()
+{
+  VirtualCluster::sRefresh();
+
+  _grid->removeWidget(_fromLit);
+  _grid->removeWidget(_toLit);
+  _grid->removeWidget(_from);
+  _grid->removeWidget(_to);
+
+  if (type() == "PO")
+  {
+    _grid->addWidget(_fromLit,	2, 1);
+    _grid->addWidget(_from,	2, 2, 1, -1);
+    _grid->addWidget(_toLit,	2, 0);
+    _grid->addWidget(_to,	2, 0);
+
+    _fromLit->setText("Vendor:");
+    _toLit->setText("");
+  }
+  else if (type() == "RA")
+  {
+    _grid->addWidget(_fromLit,	2, 1);
+    _grid->addWidget(_from,	2, 2, 1, -1);
+    _grid->addWidget(_toLit,	2, 0);
+    _grid->addWidget(_to,	2, 0);
+
+    _fromLit->setText("Customer:");
+    _toLit->setText("");
+  }
+  else if (type() == "SO")
+  {
+    _grid->addWidget(_fromLit,	2, 0);
+    _grid->addWidget(_from,	2, 0);
+    _grid->addWidget(_toLit,	2, 1);
+    _grid->addWidget(_to,	2, 2, 1, -1);
+
+    _fromLit->setText("");
+    _toLit->setText("Customer:");
+  }
+  else if (type() == "TO")
+  {
+    _grid->addWidget(_fromLit,	2, 1);
+    _grid->addWidget(_from,	2, 2);
+    _grid->addWidget(_toLit,	2, 3);
+    _grid->addWidget(_to,	2, 4);
+
+    _fromLit->setText(tr("From:"));
+    _toLit->setText(tr("To:"));
+  }
+  else
+  {
+    _grid->addWidget(_fromLit,	2, 1);
+    _grid->addWidget(_from,	2, 2);
+    _grid->addWidget(_toLit,	2, 3);
+    _grid->addWidget(_to,	2, 4);
+
+    _fromLit->setText("");
+    _toLit->setText("");
+  }
+
+  _from->setText(((OrderLineEdit*)_number)->from());
+  _to->setText(((OrderLineEdit*)_number)->to());
+}
+
+// LineEdit ///////////////////////////////////////////////////////////////////
+
+OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
+  VirtualClusterLineEdit(pParent, "orderhead", "orderhead_id",
+			 "orderhead_number", "orderhead_type",
+			 "orderhead_status", pName)
+{
+  setTitles(tr("Order"), tr("Orders"));
+
+  connect(this, SIGNAL(newId(int)), this, SLOT(sNewId(int)));
+  connect(this, SIGNAL(textChanged(const QString &)), this, SLOT(sNumberChanged(const QString &)));
+
+  _query = "SELECT orderhead_id AS id, orderhead_number AS number,"
+	   "       orderhead_type AS name, orderhead_status AS description,"
+	   "       orderhead_from, orderhead_to "
+	   "FROM orderhead ";
+}
+
+void OrderLineEdit::sNewId(const int p)
+{
+  emit newId(p, _name);
+  emit numberChanged(text(), _name);
+}
+
+void OrderLineEdit::sNumberChanged(const QString &p)
+{
+  emit newId(id(), _name);
+  emit numberChanged(p, _name);
+}
+
+OrderLineEdit::OrderStatuses OrderLineEdit::allowedStatuses() const
+{
+  return _allowedStatuses;
+}
+
+OrderLineEdit::OrderTypes OrderLineEdit::allowedTypes() const
+{
+  return _allowedTypes;
+}
+
+QString OrderLineEdit::from() const
+{
+  return _from;
+}
+
+bool OrderLineEdit::isClosed() const
+{
+  return _description == "C";
+}
+
+bool OrderLineEdit::isOpen() const
+{
+  return _description == "O";
+}
+
+bool OrderLineEdit::isPO() const
+{
+  return _name == "PO";
+}
+
+bool OrderLineEdit::isRA() const
+{
+  return _name == "RA";
+}
+
+bool OrderLineEdit::isSO() const
+{
+  return _name == "SO";
+}
+
+bool OrderLineEdit::isTO() const
+{
+  return _name == "TO";
+}
+
+bool OrderLineEdit::isUnposted() const
+{
+  return _description == "U";
+}
+
+OrderLineEdit::OrderStatus  OrderLineEdit::status()
+{
+  if (_description.isEmpty())	return OrderLineEdit::AnyStatus;
+  else if (_description == "O")	return OrderLineEdit::Open;
+  else if (_description == "C")	return OrderLineEdit::Closed;
+  else
+  {
+    QMessageBox::critical(this, tr("Invalid Order Status"),
+			  tr("Order %1 has an invalid status %2.")
+			    .arg(text()).arg(_description));
+    return AnyStatus;
+  }
+}
+
+QString OrderLineEdit::to() const
+{
+  return _to;
+}
+
+QString OrderLineEdit::type()
+{
+  return _name;
+}
+
+void OrderLineEdit::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
+{
+  if (p && (p != Unposted + Open + Closed))
+  {
+    QStringList statusList;
+
+    if (p & Unposted)	statusList << "'U'";
+    if (p & Open)	statusList << "'O'";
+    if (p & Closed)	statusList << "'C'";
+
+    _statusClause = "(orderhead_status IN (" +
+		    statusList.join(", ") +
+		    "))";
+  }
+  else
+    _statusClause = "";
+
+  QStringList clauses;
+  if (! _statusClause.isEmpty()) clauses << _statusClause;
+  if (! _typeClause.isEmpty())   clauses << _typeClause;
+  setExtraClause(clauses.join(" AND "));
+
+  _allowedStatuses = p;
+}
+
+void OrderLineEdit::setAllowedType(const QString &p)
+{
+  if (p == "PO")	setAllowedTypes(Purchase);
+  else if (p == "RA")	setAllowedTypes(Return);
+  else if (p == "SO")	setAllowedTypes(Sales);
+  else if (p == "TO")	setAllowedTypes(Transfer);
+  else			setAllowedTypes(AnyType);
+}
+
+void OrderLineEdit::setAllowedTypes(const OrderLineEdit::OrderTypes p)
+{
+  if (p == Purchase + Return + Sales + Transfer ||
+      (p == Purchase + Return + Sales && _x_metrics->boolean("MultiWhs")))
+  {
+    _typeClause = "";
+    _allowedTypes = AnyType;
+  }
+
+  else if (p)
+  {
+    QStringList typeList;
+
+    if (p & Purchase)
+      typeList << "'PO'";
+
+    if (p & Sales)
+      typeList << "'SO'";
+
+    if (p & Transfer && _x_metrics->boolean("MultiWhs"))
+      typeList << "'TO'";
+
+    if (p & Return)
+      typeList << "'RA'";
+
+    _typeClause = "(orderhead_type IN (" + typeList.join(", ") + "))" ;
+    _allowedTypes = p;
+  }
+  else
+  {
+    _typeClause = "";
+    _allowedTypes = AnyType;
+  }
+
+  QStringList clauses;
+  if (! _statusClause.isEmpty()) clauses << _statusClause;
+  if (! _typeClause.isEmpty())   clauses << _typeClause;
+  setExtraClause(clauses.join(" AND "));
+}
+
+void OrderLineEdit::setId(const int pId, const QString &pType)
+{
+  OrderTypes oldTypes = _allowedTypes;
+  setAllowedType(pType);
+  VirtualClusterLineEdit::setId(pId);
+  setAllowedTypes(oldTypes);
+}
+
+void OrderLineEdit::silentSetId(const int pId)
+{
+  if (pId == -1)
+    XLineEdit::clear();
+  else
+  {
+    int id = pId;
+    QString type;
+    QString oldExtraClause = _extraClause;
+
+    XSqlQuery countQ;
+    countQ.prepare("SELECT COUNT(*) AS count FROM orderhead " + _idClause +
+		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+		    QString(";"));
+    countQ.bindValue(":id", id);
+    countQ.exec();
+    if (countQ.first())
+    {
+      int result = countQ.value("count").toInt();
+      if (result <= 0)
+	id = -1;
+      else if (result > 1)
+      {
+	_extraClause += _idClause;
+
+	OrderList newdlg(this);
+	newdlg.setWindowModality(Qt::WindowModal); // Qt::ApplicationModal ?
+	id = newdlg.exec();
+	type = newdlg.type();
+
+	_extraClause += "AND (order_type='" + type + "')";
+      }
+    }
+    else if (countQ.lastError().type() != QSqlError::None)
+    {
+      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+				    .arg(__FILE__)
+				    .arg(__LINE__),
+			    countQ.lastError().databaseText());
+    }
+
+    XSqlQuery idQ;
+    idQ.prepare(_query + _idClause +
+		(_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+		QString(";"));
+    idQ.bindValue(":id", id);
+    idQ.exec();
+    if (idQ.first())
+    {
+      _id = id;
+      _valid = true;
+      setText(idQ.value("number").toString());
+      _name		= (idQ.value("name").toString());
+      _description	= idQ.value("description").toString();
+      _from		= idQ.value("orderhead_from").toString();
+      _to		= idQ.value("orderhead_to").toString();
+    }
+    else if (idQ.lastError().type() != QSqlError::None)
+      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+				    .arg(__FILE__)
+				    .arg(__LINE__),
+			    idQ.lastError().databaseText());
+  }
+
+  _parsed = TRUE;
+  emit parsed();
+}
+
+// List ///////////////////////////////////////////////////////////////////////
+
+OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
+  VirtualList(pParent, pFlags)
+{
+  _listTab->headerItem()->setData(1, Qt::DisplayRole, tr("Disposition"));
+  _listTab->headerItem()->setData(2, Qt::DisplayRole, tr("Status"));
+}
+
+QString OrderList::type() const
+{
+  QList<QTreeWidgetItem*> items = _listTab->selectedItems();
+  if(items.count() > 0)
+  {
+    XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
+    return item->text(1);
+  }
+
+  return "";
+}

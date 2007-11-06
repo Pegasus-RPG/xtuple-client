@@ -81,6 +81,7 @@
 #include "plugins/itemclusterplugin.h"
 #include "plugins/itemlineeditplugin.h"
 #include "plugins/lotserialclusterplugin.h"
+#include "plugins/orderclusterplugin.h"
 #include "plugins/opportunityclusterplugin.h"
 #include "plugins/parametergroupplugin.h"
 #include "plugins/periodslistviewplugin.h"
@@ -90,6 +91,7 @@
 #include "plugins/polineeditplugin.h"
 #include "plugins/projectclusterplugin.h"
 #include "plugins/projectlineeditplugin.h"
+#include "plugins/raclusterplugin.h"
 #include "plugins/revisionclusterplugin.h"
 #include "plugins/shiftclusterplugin.h"
 #include "plugins/shipmentclusterplugin.h"
@@ -145,6 +147,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new ItemClusterPlugin(this));
   m_plugins.append(new ItemLineEditPlugin(this));
   m_plugins.append(new LotserialClusterPlugin(this));
+  m_plugins.append(new OrderClusterPlugin(this));
   m_plugins.append(new OpportunityClusterPlugin(this));
   m_plugins.append(new ParameterGroupPlugin(this));
   m_plugins.append(new PeriodsListViewPlugin(this));
@@ -154,6 +157,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new PoLineEditPlugin(this));
   m_plugins.append(new ProjectClusterPlugin(this));
   m_plugins.append(new ProjectLineEditPlugin(this));
+  m_plugins.append(new RaClusterPlugin(this));
   m_plugins.append(new RevisionClusterPlugin(this));
   m_plugins.append(new ShiftClusterPlugin(this));
   m_plugins.append(new ShipmentClusterPlugin(this));

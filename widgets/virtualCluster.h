@@ -245,8 +245,6 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
 	bool	_hasDescription;
 	bool	_hasName;
         bool    _strict;
-
-    private:
 	virtual void silentSetId(const int);
 };
 
@@ -317,6 +315,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 
     protected:
 	virtual void addNumberWidget(VirtualClusterLineEdit* pNumberWidget);
+	virtual void sRefresh();
 
 	QGridLayout*	_grid;
 	QLabel*		_label;
@@ -329,9 +328,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 
     private:
 	virtual void init();
-
-    private slots:
-	virtual void sRefresh();
 };
 
 #endif

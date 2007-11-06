@@ -41,11 +41,12 @@ dynamic {
              plugins/fileclusterplugin.h \
              plugins/glclusterplugin.h \
              plugins/invoicelineeditplugin.h \
-	       plugins/incidentclusterplugin.h \
+             plugins/incidentclusterplugin.h \
              plugins/itemclusterplugin.h \
              plugins/itemlineeditplugin.h \
              plugins/lotserialclusterplugin.h \
-	       plugins/opportunityclusterplugin.h \
+             plugins/orderclusterplugin.h \
+             plugins/opportunityclusterplugin.h \
              plugins/parametergroupplugin.h \
              plugins/periodslistviewplugin.h \
              plugins/planordclusterplugin.h \
@@ -54,6 +55,7 @@ dynamic {
              plugins/polineeditplugin.h \
              plugins/projectclusterplugin.h \
              plugins/projectlineeditplugin.h \
+             plugins/raclusterplugin.h\
              plugins/revisionclusterplugin.h\
              plugins/shiftclusterplugin.h \
              plugins/shipmentclusterplugin.h \
@@ -89,7 +91,7 @@ dynamic {
 }
 
 SOURCES    += OpenMFGWidgets.cpp \
-	      addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
+              addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
               xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
               custCluster.cpp \
@@ -98,31 +100,33 @@ SOURCES    += OpenMFGWidgets.cpp \
               woCluster.cpp woList.cpp \
               filecluster.cpp glCluster.cpp accountList.cpp accountSearch.cpp \
               invoiceLineEdit.cpp incidentCluster.cpp \
+              ordercluster.cpp \
               opportunitycluster.cpp \
               poCluster.cpp purchaseOrderList.cpp \
               plCluster.cpp plannedOrderList.cpp \
               vendorcluster.cpp \
               soCluster.cpp salesOrderList.cpp \
               shiptoCluster.cpp shipToList.cpp \
-	        toCluster.cpp \
-	        transferOrderList.cpp \
+              toCluster.cpp \
+              transferOrderList.cpp \
               calendarTools.cpp \
               parametergroup.cpp \
               comment.cpp comments.cpp \
               xurllabel.cpp \
-	        currCluster.cpp usernameCluster.cpp usernameList.cpp \
+              currCluster.cpp usernameCluster.cpp usernameList.cpp \
               workcenterCluster.cpp \
               projectCluster.cpp projectList.cpp \
               expensecluster.cpp \
               datecluster.cpp \
-	        virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
+              virtualCluster.cpp deptCluster.cpp shiftCluster.cpp \
               xtreewidget.cpp \
-	        lotserialCluster.cpp \
-	        shipmentCluster.cpp \
+              lotserialCluster.cpp \
+              shipmentCluster.cpp \
+              racluster.cpp \
               revisionCluster.cpp
 
 HEADERS    += OpenMFGWidgets.h \
-	      addresscluster.h contactcluster.h crmacctcluster.h \
+              addresscluster.h contactcluster.h crmacctcluster.h \
               xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \
               custcluster.h \
@@ -131,27 +135,29 @@ HEADERS    += OpenMFGWidgets.h \
               woCluster.h woList.h \
               filecluster.h glcluster.h accountList.h accountSearch.h \
               invoicelineedit.h incidentcluster.h \
+              ordercluster.h \
               opportunitycluster.h \
               pocluster.h purchaseOrderList.h \
               plCluster.h plannedOrderList.h \
               vendorcluster.h \
               socluster.h salesOrderList.h \
               shiptocluster.h shipToList.h \
-	      tocluster.h \
-	      transferOrderList.h \
+              tocluster.h \
+              transferOrderList.h \
               calendarTools.h \
               parametergroup.h \
               comment.h comments.h \
               xurllabel.h \
-	      currcluster.h usernamecluster.h usernameList.h \
+              currcluster.h usernamecluster.h usernameList.h \
               workcentercluster.h \
               projectcluster.h projectList.h \
               expensecluster.h \
               datecluster.h \
-	      virtualCluster.h deptcluster.h shiftcluster.h \
+              virtualCluster.h deptcluster.h shiftcluster.h \
               xtreewidget.h \
-	      lotserialCluster.h \
-	      shipmentcluster.h \
+              lotserialCluster.h \
+              shipmentcluster.h \
+              racluster.h \
               revisioncluster.h
 
 FORMS += accountSearch.ui
