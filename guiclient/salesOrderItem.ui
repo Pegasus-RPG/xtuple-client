@@ -693,7 +693,7 @@
       </sizepolicy>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="supplyTab" >
       <attribute name="title" >
@@ -1375,7 +1375,7 @@
        <item>
         <widget class="QTextEdit" name="_notes" >
          <property name="focusPolicy" >
-          <enum>Qt::NoFocus</enum>
+          <enum>Qt::ClickFocus</enum>
          </property>
         </widget>
        </item>
