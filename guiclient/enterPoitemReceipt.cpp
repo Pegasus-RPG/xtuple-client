@@ -282,6 +282,7 @@ void enterPoitemReceipt::sReceive()
   else if (_mode == cEdit)
   {
     q.prepare("UPDATE recv SET recv_notes = :notes WHERE (recv_id=:recv_id);" );
+    q.bindValue(":notes",	_notes->text());
     q.bindValue(":recv_id",	_recvid);
     q.exec();
     if (q.lastError().type() != QSqlError::None)
