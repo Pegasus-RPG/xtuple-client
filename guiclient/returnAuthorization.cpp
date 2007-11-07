@@ -89,13 +89,14 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sFreightChanged()));
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
-  connect(_origso, SIGNAL(newId(int)), this, SLOT(sSalesOrder()));
+  connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateDisposition()));
   connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
   connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
   connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
+  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
 /*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
@@ -233,9 +234,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _authNumber->setEnabled(FALSE);
-      _cust->setReadOnly(TRUE);
-
-      _new->setEnabled(TRUE);
 
       _save->setFocus();
     }
@@ -463,7 +461,7 @@ void returnAuthorization::sShipToList()
     populateShipto(shiptoid);
 }
 
-void returnAuthorization::sSalesOrder()
+void returnAuthorization::sOrigSoChanged()
 {
   if (_origso->isValid())
   {
@@ -883,15 +881,23 @@ void returnAuthorization::sFillList()
              "ORDER BY raitem_linenumber;" );
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
+  if ((q.first()) && (_mode == cEdit))
+  {
+    _cust->setDisabled(_cust->isValid());
+    _disposition->setEnabled(_cust->isValid());
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
   _raitem->populate(q);
 
   sCalculateSubtotal();
   recalculateTax();
 
-  _currency->setEnabled(_raitem->topLevelItemCount() == 0);
+  _currency->setEnabled((_raitem->topLevelItemCount() == 0) && (_mode == cEdit));
 
   //Disable order changes if any order qty authorized
   q.prepare("SELECT raitem_id "
@@ -901,7 +907,7 @@ void returnAuthorization::sFillList()
 			"AND (raitem_qtyauthorized > 0 ) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
-  _origso->setEnabled(!q.first());
+  _origso->setEnabled((!q.first()) && (_mode == cEdit));
 
   //Disable changes if any transactions
   q.prepare("SELECT raitem_id "
@@ -932,7 +938,7 @@ void returnAuthorization::sFillList()
     _disposition->setEnabled(true);
 	_immediately->setEnabled(true);
 	_uponReceipt->setEnabled(true);
-	_cust->setEnabled(true);
+	_cust->setEnabled(!_origso->isValid());
 	_billToName->setEnabled(true);
 	_billToAddr->setEnabled(true);
   }
@@ -969,11 +975,11 @@ void returnAuthorization::populate()
   rahead.prepare( "SELECT rahead.*, custtype_code, "
                   "       cust_name, cust_ffbillto, cust_ffshipto, shipto_num, "
                   "       formatScrap(rahead_commission) AS f_commission "
-                  "FROM cust, custtype, rahead "
-				  "  LEFT OUTER JOIN shiptoinfo ON (rahead_shipto_id=shipto_id)"
-                  "WHERE ( (rahead_cust_id=cust_id)"
-                  " AND (rahead_id=:rahead_id) "
-				  " AND (cust_custtype_id=custtype_id) );" );
+                  "FROM rahead "
+				  "  LEFT OUTER JOIN shiptoinfo ON (rahead_shipto_id=shipto_id) "
+				  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
+				  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id) "
+                  "WHERE (rahead_id=:rahead_id);" );
   rahead.bindValue(":rahead_id", _raheadid);
   rahead.exec();
   if (rahead.first())
@@ -1279,6 +1285,7 @@ void returnAuthorization::sTaxAuthChanged()
 void returnAuthorization::sUpdateDisposition()
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
+  _new->setEnabled(_cust->isValid() || _disposition->currentIndex() < 2);
   if (_disposition->currentItem() != 4)
   {
     q.prepare("SELECT raitem_id FROM raitem, rahead "
@@ -1385,4 +1392,19 @@ void returnAuthorization::sAuthorizeAll()
     return;
   }
   sFillList();
+}
+
+void returnAuthorization::sCustChanged()
+{
+  if (_mode == cEdit)
+  {
+    _new->setEnabled(_cust->isValid() || _disposition->currentIndex() < 2);
+    if (_cust->isValid())
+      _creditBy->setEnabled(TRUE);
+	else
+	{
+	  _creditBy->setCurrentIndex(0);
+	  _creditBy->setEnabled(FALSE);
+	}
+  }
 }

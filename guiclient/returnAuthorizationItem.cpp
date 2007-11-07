@@ -124,7 +124,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     _raheadid = param.toInt();
     q.prepare("SELECT *,"
 	      "       rahead_curr_id AS taxcurr, "
-		  "       COALESCE(rahead_cohead_id,-1) AS cohead_id "
+		  "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id "
 	      "FROM rahead "
 	      "WHERE (rahead_id=:rahead_id);");
     q.bindValue(":rahead_id", _raheadid);

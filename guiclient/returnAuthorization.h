@@ -88,6 +88,7 @@ public slots:
     virtual void sCheckAuthorizationNumber();
 	virtual void sClearShiptoNumber();
     virtual void sCopyToShipto();
+	virtual void sCustChanged();
     virtual void sNew();
     virtual void sEdit();
     virtual void sDelete();
@@ -99,7 +100,7 @@ public slots:
     virtual void sFreightChanged();
     virtual void sTaxAuthChanged();
     virtual void sTaxDetail();
-	virtual void sSalesOrder();
+	virtual void sOrigSoChanged();
 	virtual void sUpdateDisposition();
 	virtual void sAuthorizeLine();
 	virtual void sClearAuthorization();
