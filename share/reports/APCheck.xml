@@ -11,187 +11,158 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>Head</name>
-  <sql>SELECT -- just vendors
+  <sql>SELECT
+apchk_number,
+apchk_id,
+vend_number,
+vendaddr_code,
+CASE  
+WHEN vendaddr_code = 'REMIT' or vendaddr_code = 'Remit' or vendaddr_code = 'remit' THEN 
+formatAddr(
+addr.addr_line1,
+addr.addr_line2,
+addr.addr_line3,
+(addr.addr_city || ', ' || 
+addr.addr_state || ', ' || 
+addr.addr_postalcode),
+addr.addr_country)
+ELSE 
+formatAddr(vend_address1, vend_address2, vend_address3, 
+( vend_city || ', ' || vend_state || ' ' || vend_zip ), vend_country)
+END 
+AS check_address,
 
-  CASE WHEN UPPER(vendaddr_code) = 'REMIT' THEN
-    formatAddr(
-    addr.addr_line1,
-    addr.addr_line2,
-    addr.addr_line3,
-    (addr.addr_city || ', ' || 
-    addr.addr_state || ', ' || 
-    addr.addr_postalcode),
-    addr.addr_country)
-  ELSE 
-    formatAddr(vend_address1, vend_address2, vend_address3, 
-    ( vend_city || ', ' || vend_state || ' ' || vend_zip ), vend_country)
-  END 
-  AS check_address,
+CASE  
+WHEN vendaddr_code = 'REMIT' or vendaddr_code = 'Remit' or vendaddr_code = 'remit' THEN 
+vendaddrinfo.vendaddr_name
+ELSE 
+vend.vend_name
+END 
+AS vend_name, 
+vend_address1, 
+vend_address2, vend_address3,
+vend_city || ', ' || vend_state || ' ' || vend_zip AS address4,
+formatDate(apchk_checkdate) AS f_checkdate,
+formatMoney(apchk_amount) AS f_amount,
+initcap(spellAmount(apchk_amount, curr_id)) AS f_words,
+CASE WHEN(apchk_void) THEN text('V O I D')
+else text('')
+END AS f_void,
+apchk_number,
+apchk_for AS memo,
+vend_number,
+apchk_for,
+curr_symbol,
+curr_abbr,
+curr_name
+FROM apchk, vend 
+--note, the original version was missing ()'s and looked and looked like this:
+--LEFT JOIN vendaddrinfo ON vend.vend_id = vendaddrinfo.vendaddr_vend_id 
+--and vendaddrinfo.vendaddr_code = 'REMIT' or vendaddrinfo.vendaddr_code = 'Remit' or --vendaddrinfo.vendaddr_code = 'remit'
+--with the ()'s it will look like this
+LEFT JOIN vendaddrinfo ON (vend.vend_id = vendaddrinfo.vendaddr_vend_id) 
+and (vendaddrinfo.vendaddr_code = 'REMIT' or vendaddrinfo.vendaddr_code = 'Remit' or vendaddrinfo.vendaddr_code = 'remit') 
+LEFT JOIN addr ON addr_id = vendaddr_addr_id,
+bankaccnt, curr_symbol
+WHERE ( (apchk_vend_id=vend_id)
 
-  CASE WHEN UPPER(vendaddr_code) = 'REMIT' THEN
-    vendaddrinfo.vendaddr_name
-  ELSE 
-    vend.vend_name
-  END AS checkrecip_name, 
-  vend_address1, 
-  vend_address2, vend_address3,
-  vend_city || ', ' || vend_state || ' ' || vend_zip AS address4,
-  formatDate(checkhead_checkdate) AS f_checkdate,
-  formatMoney(checkhead_amount) AS f_amount,
-  initcap(spellAmount(checkhead_amount, curr_id)) AS f_words,
-  CASE WHEN(checkhead_void) THEN text('V O I D')
-  else text('')
-  END AS f_void,
-  checkhead_number,
-  checkhead_for AS memo,
-  vend_number AS checkrecip_number,
-  checkhead_for,
-  curr_symbol,
-  curr_abbr,
-  curr_name
-FROM checkhead, vend LEFT JOIN
-     vendaddrinfo ON ((vend.vend_id=vendaddrinfo.vendaddr_vend_id)
-		  AND (UPPER(vendaddr_code)='REMIT')) LEFT JOIN
-     addr ON (addr_id=vendaddr_addr_id),
-     bankaccnt, curr_symbol
-WHERE ( (checkhead_recip_id=vend_id)
-  AND (checkhead_recip_type='V')
-  AND (checkhead_curr_id = curr_id)
-  AND (checkhead_id=&lt;? value("checkhead_id") ?>) )
-
-UNION
-
-SELECT	-- everyone other than vendors
-  formatAddr(
-  addr.addr_line1,
-  addr.addr_line2,
-  addr.addr_line3,
-  (addr.addr_city || ', ' || 
-  addr.addr_state || ', ' || 
-  addr.addr_postalcode),
-  addr.addr_country) AS check_address,
-  checkrecip_name, 
-  addr.addr_line1,
-  addr.addr_line2,
-  addr.addr_line3,
-  (addr.addr_city || ', ' ||
-  addr.addr_state || ', ' || addr.addr_postalcode) AS address4,
-  formatDate(checkhead_checkdate) AS f_checkdate,
-  formatMoney(checkhead_amount) AS f_amount,
-  initcap(spellAmount(checkhead_amount, curr_id)) AS f_words,
-  CASE WHEN(checkhead_void) THEN text('V O I D') else text('') END AS f_void,
-  checkhead_number,
-  checkhead_for AS memo,
-  checkrecip_number,
-  checkhead_for,
-  curr_symbol,
-  curr_abbr,
-  curr_name
-FROM checkhead LEFT JOIN
-     checkrecip ON ((checkhead_recip_id=checkrecip_id)
-		AND (checkhead_recip_type=checkrecip_type)) LEFT JOIN
-     addr ON (addr_id = checkrecip_addr_id),
-     bankaccnt, curr_symbol
-WHERE ((checkhead_recip_type != 'V')
-  AND  (checkhead_curr_id = curr_id)
-  AND  (checkhead_id=&lt;? value("checkhead_id") ?>) )
-
+AND (apchk_curr_id = curr_id)
+AND (apchk_id=&lt;? value("apchk_id") ?>) )
 LIMIT 1;</sql>
  </querysource>
  <querysource>
   <name>TopDetail2</name>
-  <sql>SELECT&#xd; -- only have top part for vendors?
---VOUCHER-------------&#xd;
- 1 as sequence_value, &#xd;
-  1 as ord, &#xd;
-  checkitem_invcnumber, &#xd;
-  checkitem_ponumber, &#xd;
-  formatMoney(checkitem_amount) as f_amount, &#xd;
-  'Invoice#: ' || vohead_invcnumber AS vohead_invcnumber, &#xd;
-  formatDate(vohead_docdate), &#xd;
-  vohead_reference, &#xd;
-  formatMoney(checkitem_amount),&#xd;
-  'Voucher: ' || checkitem_vouchernumber AS vouchernumber,&#xd;
-  formatMoney(apopen_amount) as amount,&#xd;
-  formatMoney(checkitem_discount) AS disc_cred&#xd;
-FROM checkitem, vohead, apopen &#xd;
-WHERE (&#xd;
-(checkitem_checkhead_id= &lt;? value("checkhead_id") ?>) &#xd;
-AND checkitem_vouchernumber = vohead_number&#xd;
-AND apopen_docnumber = checkitem_vouchernumber&#xd;
-AND apopen_doctype = 'V')&#xd;
-&#xd;
-UNION&#xd;
-&#xd;
-SELECT&#xd;
---DEBIT MEMO -------------------------&#xd;
- 1 as sequence_value, &#xd;
-  2 as ord, &#xd;
-  checkitem_invcnumber, &#xd;
-  checkitem_ponumber, &#xd;
-  formatMoney(checkitem_amount) as f_amount, &#xd;
- 'Debit Memo PO#: ' || checkitem_ponumber AS vohead_invcnumber, &#xd;
- '' as vohead_docdate, &#xd;
- 'Debit Memo: ' || checkitem_vouchernumber as vohead_reference, &#xd;
-  formatMoney(checkitem_amount),&#xd;
-  checkitem_vouchernumber AS vouchernumber,&#xd;
-  formatMoney(apopen_amount) as amount,&#xd;
-  formatMoney(checkitem_discount) AS disc_cred&#xd;
-FROM checkhead, checkitem, apopen &#xd;
-WHERE (&#xd;
-(checkitem_checkhead_id= &lt;? value("checkhead_id") ?>) &#xd;
-and checkitem_checkhead_id = checkhead_id&#xd;
-AND (checkhead_recip_type='V')
-and checkitem_vouchernumber = apopen_docnumber&#xd;
-AND apopen_doctype = 'D')&#xd;
-&#xd;
-UNION&#xd;
-&#xd;
-SELECT &#xd;
---CREDITs--------------------------&#xd;
- 1 as sequence_value, &#xd;
- 3 as ord, &#xd;
- checkitem_invcnumber, &#xd;
- checkitem_ponumber, &#xd;
- formatMoney(checkitem_amount) as f_amount, &#xd;
- 'Invoice#: ' || vohead_invcnumber AS vohead_invcnumber, &#xd;
- formatDate(vohead_docdate), &#xd;
- 'Credit Applied: ' || apapply_source_doctype || ' ' || apapply_source_docnumber  AS vohead_reference, &#xd;
- '' as checkitem_amount,&#xd;
- 'Voucher ' || checkitem_vouchernumber AS vouchernumber,&#xd;
- '' AS amount,&#xd;
- formatMoney((apapply_amount)) as disc_cred&#xd;
-FROM checkitem, vohead, apapply &#xd;
-WHERE (&#xd;
-(checkitem_checkhead_id=&lt;? value("checkhead_id") ?>) &#xd;
-AND checkitem_vouchernumber = vohead_number &#xd;
-AND apapply_target_docnumber = checkitem_vouchernumber )&#xd;
-&#xd;
-&#xd;
-UNION &#xd;
---BLANK LINES FOR SPACING------------------&#xd;
-select &#xd;
- sequence_value, &#xd;
- 4 as ord, &#xd;
- '' as checkitem_invcnumber, &#xd;
- '' as checkitem_ponumber, &#xd;
- '' as f_amount, &#xd;
- '' as vohead_invcnumber, &#xd;
- '' as vohead_docdate, &#xd;
- '' as vohead_reference, &#xd;
- '' as checkitem_amount,&#xd;
- '' as vouchernumber,&#xd;
- '' as amount,&#xd;
- '' as disc_cred&#xd;
-FROM sequence &#xd;
-&#xd;
-ORDER BY ord &#xd;
-LIMIT 16;&#xd;
-&#xd;
+  <sql>SELECT
+--VOUCHER-------------
+ 1 as sequence_value, 
+  1 as ord, 
+  apchkitem_invcnumber, 
+  apchkitem_ponumber, 
+  formatMoney(apchkitem_amount) as f_amount, 
+  'Invoice#: ' || vohead_invcnumber AS vohead_invcnumber, 
+  formatDate(vohead_docdate), 
+  vohead_reference, 
+  formatMoney(apchkitem_amount),
+  'Voucher: ' || apchkitem_vouchernumber AS vouchernumber,
+  formatMoney(apopen_amount) as amount,
+  formatMoney(apchkitem_discount) AS disc_cred
+FROM apchkitem, vohead, apopen 
+WHERE (
+(apchkitem_apchk_id= &lt;? value("apchk_id") ?>) 
+AND apchkitem_vouchernumber = vohead_number
+AND apopen_docnumber = apchkitem_vouchernumber
+AND apopen_doctype = 'V')
+
+UNION
+
+SELECT
+--DEBIT MEMO -------------------------
+ 1 as sequence_value, 
+  2 as ord, 
+  apchkitem_invcnumber, 
+  apchkitem_ponumber, 
+  formatMoney(apchkitem_amount) as f_amount, 
+ 'Debit Memo PO#: ' || apchkitem_ponumber AS vohead_invcnumber, 
+ '' as vohead_docdate, 
+ 'Debit Memo: ' || apchkitem_vouchernumber as vohead_reference, 
+  formatMoney(apchkitem_amount),
+  apchkitem_vouchernumber AS vouchernumber,
+  formatMoney(apopen_amount) as amount,
+  formatMoney(apchkitem_discount) AS disc_cred
+FROM apchk, apchkitem, apopen 
+WHERE (
+(apchkitem_apchk_id= &lt;? value("apchk_id") ?>) 
+and apchkitem_apchk_id = apchk_id
+and apchkitem_vouchernumber = apopen_docnumber
+AND apopen_doctype = 'D')
+
+UNION
+
+SELECT 
+--CREDITs--------------------------
+ 1 as sequence_value, 
+ 3 as ord, 
+ apchkitem_invcnumber, 
+ apchkitem_ponumber, 
+ formatMoney(apchkitem_amount) as f_amount, 
+ 'Invoice#: ' || vohead_invcnumber AS vohead_invcnumber, 
+ formatDate(vohead_docdate), 
+ 'Credit Applied: ' || apapply_source_doctype || ' ' || apapply_source_docnumber  AS vohead_reference, 
+ '' as apchkitem_amount,
+ 'Voucher ' || apchkitem_vouchernumber AS vouchernumber,
+ '' AS amount,
+ formatMoney((apapply_amount)) as disc_cred
+FROM apchkitem, vohead, apapply 
+WHERE (
+(apchkitem_apchk_id=&lt;? value("apchk_id") ?>) 
+AND apchkitem_vouchernumber = vohead_number 
+AND apapply_target_docnumber = apchkitem_vouchernumber )
+
+
+UNION 
+--BLANK LINES FOR SPACING------------------
+select 
+ sequence_value, 
+ 4 as ord, 
+ '' as apchkitem_invcnumber, 
+ '' as apchkitem_ponumber, 
+ '' as f_amount, 
+ '' as vohead_invcnumber, 
+ '' as vohead_docdate, 
+ '' as vohead_reference, 
+ '' as apchkitem_amount,
+ '' as vouchernumber,
+ '' as amount,
+ '' as disc_cred
+FROM sequence 
+
+ORDER BY ord 
+LIMIT 16;
+
 </sql>
  </querysource>
  <pghead>
-  <height>12</height>
+  <height>15</height>
  </pghead>
  <section>
   <name>Top Detail Header</name>
@@ -199,42 +170,7 @@ LIMIT 16;&#xd;
    <key>
     <query>Head</query>
    </key>
-   <height>52</height>
-   <label>
-    <rect>
-     <x>600</x>
-     <y>30</y>
-     <width>85</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Discount / Credit:</string>
-   </label>
-   <field>
-    <rect>
-     <x>305</x>
-     <y>30</y>
-     <width>147</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>Context Query</query>
-     <column>report_date</column>
-    </data>
-   </field>
+   <height>47</height>
    <field>
     <rect>
      <x>305</x>
@@ -251,35 +187,25 @@ LIMIT 16;&#xd;
     <bottom/>
     <data>
      <query>Head</query>
-     <column>checkrecip_name</column>
+     <column>vend_name</column>
     </data>
    </field>
-   <field>
+   <label>
     <rect>
-     <x>495</x>
-     <y>15</y>
-     <width>104</width>
-     <height>15</height>
+     <x>175</x>
+     <y>30</y>
+     <width>75</width>
+     <height>14</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
     <left/>
-    <bottom/>
-    <data>
-     <query>Head</query>
-     <column>checkrecip_number</column>
-    </data>
-   </field>
-   <line>
-    <xstart>51</xstart>
-    <ystart>7</ystart>
-    <xend>51</xend>
-    <yend>7</yend>
-    <weight>0</weight>
-   </line>
+    <top/>
+    <string>Reference:</string>
+   </label>
    <label>
     <rect>
      <x>5</x>
@@ -319,6 +245,67 @@ LIMIT 16;&#xd;
     <top/>
     <string>Amount:</string>
    </label>
+   <line>
+    <xstart>51</xstart>
+    <ystart>7</ystart>
+    <xend>51</xend>
+    <yend>7</yend>
+    <weight>0</weight>
+   </line>
+   <label>
+    <rect>
+     <x>600</x>
+     <y>30</y>
+     <width>85</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Discount / Credit:</string>
+   </label>
+   <field>
+    <rect>
+     <x>305</x>
+     <y>30</y>
+     <width>147</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>Context Query</query>
+     <column>report_date</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>494</x>
+     <y>15</y>
+     <width>104</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <bottom/>
+    <data>
+     <query>Head</query>
+     <column>vend_number</column>
+    </data>
+   </field>
    <label>
     <rect>
      <x>640</x>
@@ -334,22 +321,6 @@ LIMIT 16;&#xd;
     <left/>
     <top/>
     <string>Check #</string>
-   </label>
-   <label>
-    <rect>
-     <x>175</x>
-     <y>30</y>
-     <width>75</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Reference:</string>
    </label>
    <field>
     <rect>
@@ -367,7 +338,7 @@ LIMIT 16;&#xd;
     <top/>
     <data>
      <query>Head</query>
-     <column>checkhead_number</column>
+     <column>apchk_number</column>
     </data>
    </field>
   </detail>
@@ -378,7 +349,7 @@ LIMIT 16;&#xd;
    <key>
     <query>TopDetail2</query>
    </key>
-   <height>21</height>
+   <height>18</height>
    <field>
     <rect>
      <x>5</x>
@@ -396,25 +367,6 @@ LIMIT 16;&#xd;
     <data>
      <query>TopDetail2</query>
      <column>vohead_invcnumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>175</x>
-     <y>0</y>
-     <width>120</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>TopDetail2</query>
-     <column>vohead_reference</column>
     </data>
    </field>
    <field>
@@ -457,6 +409,25 @@ LIMIT 16;&#xd;
    </field>
    <field>
     <rect>
+     <x>175</x>
+     <y>0</y>
+     <width>120</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>TopDetail2</query>
+     <column>vohead_reference</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>469</x>
      <y>0</y>
      <width>100</width>
@@ -482,61 +453,7 @@ LIMIT 16;&#xd;
    <key>
     <query>Head</query>
    </key>
-   <height>42</height>
-   <label>
-    <rect>
-     <x>20</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Memo:</string>
-   </label>
-   <field>
-    <rect>
-     <x>469</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <data>
-     <query>Head</query>
-     <column>f_amount</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>395</x>
-     <y>0</y>
-     <width>56</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <data>
-     <query>Head</query>
-     <column>curr_symbol</column>
-    </data>
-   </field>
+   <height>31</height>
    <field>
     <rect>
      <x>70</x>
@@ -572,32 +489,86 @@ LIMIT 16;&#xd;
     <top/>
     <string>Check Total:</string>
    </label>
-  </detail>
- </section>
- <section>
-  <name>checkitem</name>
-  <detail>
-   <key>
-    <query>Head</query>
-   </key>
-   <height>352</height>
-   <field>
+   <label>
     <rect>
-     <x>35</x>
-     <y>80</y>
-     <width>560</width>
-     <height>24</height>
+     <x>20</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
-     <size>12</size>
+     <face>Arial</face>
+     <size>8</size>
      <weight>normal</weight>
     </font>
     <left/>
     <top/>
+    <string>Memo:</string>
+   </label>
+   <field>
+    <rect>
+     <x>395</x>
+     <y>0</y>
+     <width>56</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
     <data>
      <query>Head</query>
-     <column>f_words</column>
+     <column>curr_symbol</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>469</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>f_amount</column>
+    </data>
+   </field>
+  </detail>
+ </section>
+ <section>
+  <name>Apchkitem</name>
+  <detail>
+   <key>
+    <query>Head</query>
+   </key>
+   <height>353</height>
+   <field>
+    <rect>
+     <x>620</x>
+     <y>125</y>
+     <width>125</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>f_amount</column>
     </data>
    </field>
    <field>
@@ -617,25 +588,6 @@ LIMIT 16;&#xd;
     <data>
      <query>Head</query>
      <column>memo</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>425</x>
-     <y>125</y>
-     <width>121</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>Head</query>
-     <column>f_checkdate</column>
     </data>
    </field>
    <text>
@@ -674,14 +626,14 @@ LIMIT 16;&#xd;
     <top/>
     <data>
      <query>Head</query>
-     <column>checkrecip_name</column>
+     <column>vend_name</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>620</x>
+     <x>425</x>
      <y>125</y>
-     <width>125</width>
+     <width>121</width>
      <height>20</height>
     </rect>
     <font>
@@ -689,29 +641,32 @@ LIMIT 16;&#xd;
      <size>10</size>
      <weight>normal</weight>
     </font>
-    <right/>
+    <left/>
     <top/>
     <data>
      <query>Head</query>
-     <column>f_amount</column>
+     <column>f_checkdate</column>
     </data>
    </field>
-   <label>
+   <field>
     <rect>
-     <x>30</x>
-     <y>335</y>
-     <width>75</width>
-     <height>15</height>
+     <x>35</x>
+     <y>80</y>
+     <width>560</width>
+     <height>24</height>
     </rect>
     <font>
-     <face>Arial</face>
-     <size>8</size>
+     <face>Helvetica</face>
+     <size>12</size>
      <weight>normal</weight>
     </font>
     <left/>
     <top/>
-    <string>Memo:</string>
-   </label>
+    <data>
+     <query>Head</query>
+     <column>f_words</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>565</x>
@@ -731,6 +686,22 @@ LIMIT 16;&#xd;
      <column>curr_symbol</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>30</x>
+     <y>335</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Memo:</string>
+   </label>
   </detail>
  </section>
  <section>
@@ -739,7 +710,131 @@ LIMIT 16;&#xd;
    <key>
     <query>Head</query>
    </key>
-   <height>42</height>
+   <height>41</height>
+   <label>
+    <rect>
+     <x>600</x>
+     <y>20</y>
+     <width>85</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Discount / Credit:</string>
+   </label>
+   <label>
+    <rect>
+     <x>5</x>
+     <y>20</y>
+     <width>110</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Invoice / Document:</string>
+   </label>
+   <field>
+    <rect>
+     <x>320</x>
+     <y>15</y>
+     <width>147</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>Context Query</query>
+     <column>report_date</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>320</x>
+     <y>0</y>
+     <width>155</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <bottom/>
+    <data>
+     <query>Head</query>
+     <column>vend_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>520</x>
+     <y>0</y>
+     <width>104</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <bottom/>
+    <data>
+     <query>Head</query>
+     <column>vend_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>710</x>
+     <y>0</y>
+     <width>90</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>apchk_number</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>530</x>
+     <y>20</y>
+     <width>45</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <string>Amount:</string>
+   </label>
    <line>
     <xstart>0</xstart>
     <ystart>35</ystart>
@@ -765,111 +860,6 @@ LIMIT 16;&#xd;
    </label>
    <label>
     <rect>
-     <x>600</x>
-     <y>20</y>
-     <width>85</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Discount / Credit:</string>
-   </label>
-   <field>
-    <rect>
-     <x>710</x>
-     <y>0</y>
-     <width>90</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>Head</query>
-     <column>checkhead_number</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>530</x>
-     <y>20</y>
-     <width>45</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <string>Amount:</string>
-   </label>
-   <label>
-    <rect>
-     <x>5</x>
-     <y>20</y>
-     <width>110</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Invoice / Document:</string>
-   </label>
-   <field>
-    <rect>
-     <x>320</x>
-     <y>0</y>
-     <width>155</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <bottom/>
-    <data>
-     <query>Head</query>
-     <column>checkrecip_name</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>320</x>
-     <y>15</y>
-     <width>147</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <data>
-     <query>Context Query</query>
-     <column>report_date</column>
-    </data>
-   </field>
-   <label>
-    <rect>
      <x>645</x>
      <y>0</y>
      <width>61</width>
@@ -884,25 +874,6 @@ LIMIT 16;&#xd;
     <top/>
     <string>Check #</string>
    </label>
-   <field>
-    <rect>
-     <x>520</x>
-     <y>0</y>
-     <width>104</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <bottom/>
-    <data>
-     <query>Head</query>
-     <column>checkrecip_number</column>
-    </data>
-   </field>
   </detail>
  </section>
  <section>
@@ -911,26 +882,7 @@ LIMIT 16;&#xd;
    <key>
     <query>TopDetail2</query>
    </key>
-   <height>17</height>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>160</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>TopDetail2</query>
-     <column>vohead_invcnumber</column>
-    </data>
-   </field>
+   <height>18</height>
    <field>
     <rect>
      <x>175</x>
@@ -952,9 +904,9 @@ LIMIT 16;&#xd;
    </field>
    <field>
     <rect>
-     <x>610</x>
+     <x>340</x>
      <y>0</y>
-     <width>75</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -962,11 +914,30 @@ LIMIT 16;&#xd;
      <size>8</size>
      <weight>normal</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>TopDetail2</query>
-     <column>disc_cred</column>
+     <column>vohead_docdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>TopDetail2</query>
+     <column>vohead_invcnumber</column>
     </data>
    </field>
    <field>
@@ -990,9 +961,9 @@ LIMIT 16;&#xd;
    </field>
    <field>
     <rect>
-     <x>340</x>
+     <x>610</x>
      <y>0</y>
-     <width>100</width>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -1000,11 +971,11 @@ LIMIT 16;&#xd;
      <size>8</size>
      <weight>normal</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>TopDetail2</query>
-     <column>vohead_docdate</column>
+     <column>disc_cred</column>
     </data>
    </field>
   </detail>
@@ -1015,26 +986,7 @@ LIMIT 16;&#xd;
    <key>
     <query>Head</query>
    </key>
-   <height>32</height>
-   <field>
-    <rect>
-     <x>469</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <data>
-     <query>Head</query>
-     <column>f_amount</column>
-    </data>
-   </field>
+   <height>31</height>
    <field>
     <rect>
      <x>409</x>
@@ -1056,9 +1008,9 @@ LIMIT 16;&#xd;
    </field>
    <field>
     <rect>
-     <x>70</x>
-     <y>15</y>
-     <width>690</width>
+     <x>469</x>
+     <y>0</y>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -1066,11 +1018,11 @@ LIMIT 16;&#xd;
      <size>8</size>
      <weight>normal</weight>
     </font>
-    <left/>
+    <right/>
     <top/>
     <data>
      <query>Head</query>
-     <column>memo</column>
+     <column>f_amount</column>
     </data>
    </field>
    <label>
@@ -1105,6 +1057,25 @@ LIMIT 16;&#xd;
     <top/>
     <string>Memo:</string>
    </label>
+   <field>
+    <rect>
+     <x>70</x>
+     <y>15</y>
+     <width>690</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>memo</column>
+    </data>
+   </field>
   </detail>
  </section>
 </report>
