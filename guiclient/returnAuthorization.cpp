@@ -89,7 +89,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sCalculateTotal()));
   connect(_freight,	SIGNAL(valueChanged()),	this, SLOT(sFreightChanged()));
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
-  connect(_so, SIGNAL(newId(int)), this, SLOT(sSalesOrder()));
+  connect(_origso, SIGNAL(newId(int)), this, SLOT(sSalesOrder()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateDisposition()));
@@ -114,7 +114,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _ffBillto = TRUE;
   _ffShipto = TRUE;
 
-  _so->setType((cSoReleased));
+  _origso->setType((cSoReleased));
   _authNumber->setValidator(omfgThis->orderVal());
   _comments->setType(Comments::ReturnAuth);
 
@@ -255,7 +255,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _uponReceipt->setEnabled(FALSE);
       _creditBy->setEnabled(FALSE);
 
-      _so->setEnabled(FALSE);
+      _origso->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
       _project->setEnabled(FALSE);
 
@@ -352,7 +352,8 @@ bool returnAuthorization::sSave()
  	     "    rahead_salesrep_id=:rahead_salesrep_id, rahead_commission=:rahead_commission,"
  	     "    rahead_taxauth_id=:rahead_taxauth_id,rahead_rsncode_id=:rahead_rsncode_id,"
 		 "    rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
-		 "    rahead_creditmethod=:rahead_creditmethod,rahead_cohead_id=:rahead_cohead_id,"
+		 "    rahead_creditmethod=:rahead_creditmethod,rahead_orig_cohead_id=:rahead_orig_cohead_id,"
+		 "    rahead_new_cohead_id=:rahead_new_cohead_id, "
 		 "    rahead_incdt_id=:rahead_incdt_id,rahead_prj_id=:rahead_prj_id,"
 	     "    rahead_billtoname=:rahead_billtoname, rahead_billtoaddress1=:rahead_billtoaddress1,"
 	     "    rahead_billtoaddress2=:rahead_billtoaddress2, rahead_billtoaddress3=:rahead_billtoaddress3,"
@@ -386,8 +387,10 @@ bool returnAuthorization::sSave()
   else
 	  q.bindValue(":rahead_timing", "R");
   q.bindValue(":rahead_creditmethod", QString(creditMethods[_creditBy->currentItem()]));
-  if (_so->isValid())
-    q.bindValue(":rahead_cohead_id", _so->id());
+  if (_origso->isValid())
+    q.bindValue(":rahead_orig_cohead_id", _origso->id());
+  if (_newso->isValid())
+    q.bindValue(":rahead_new_cohead_id", _newso->id());
   if (_incident->isValid())
     q.bindValue(":rahead_incdt_id", _incident->id());
   if (_project->isValid())
@@ -462,7 +465,7 @@ void returnAuthorization::sShipToList()
 
 void returnAuthorization::sSalesOrder()
 {
-  if (_so->isValid())
+  if (_origso->isValid())
   {
     _authorizeLine->show();
     _clearAuthorization->show();
@@ -479,7 +482,7 @@ void returnAuthorization::sSalesOrder()
 	sSave();
 	sFillList();
 
-    if (_so->isValid())
+    if (_origso->isValid())
 	{
       XSqlQuery sohead;
       sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
@@ -492,7 +495,7 @@ void returnAuthorization::sSalesOrder()
 					  "AND (cohead_cust_id=cust_id) "
 					  "AND (cust_custtype_id=custtype_id) ) "
                       "LIMIT 1;" );
-      sohead.bindValue(":cohead_id", _so->id());
+      sohead.bindValue(":cohead_id", _origso->id());
       sohead.exec();
       if (sohead.first())
 	  {
@@ -546,7 +549,7 @@ void returnAuthorization::sSalesOrder()
       else if (sohead.lastError().type() != QSqlError::None)
       {
         systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
-		_so->setId(-1);
+		_origso->setId(-1);
         return;
 	  }
   	}
@@ -722,7 +725,7 @@ void returnAuthorization::sCheckAuthorizationNumber()
 		_immediately->setEnabled(FALSE);
 		_uponReceipt->setEnabled(FALSE);
 		_creditBy->setEnabled(FALSE);
-        _so->setEnabled(FALSE);
+        _origso->setEnabled(FALSE);
         _incident->setEnabled(FALSE);
 		_project->setEnabled(FALSE);
         _customerPO->setEnabled(FALSE);
@@ -862,15 +865,17 @@ void returnAuthorization::sFillList()
 			 "            WHEN (raitem_disposition='V') THEN 'Service' "
 			 "            WHEN (raitem_disposition='S') THEN 'Ship' "
 			 "            ELSE 'Error' END AS disposition, "
-			 "       formatboolyn(coitem_warranty),"
-			 "       formatQty(COALESCE(coitem_qtyshipped,0)),"
+			 "       formatboolyn(raitem_warranty),"
+			 "       formatQty(COALESCE(oc.coitem_qtyshipped,0)),"
 			 "       formatQty(raitem_qtyauthorized),"
-			 "       formatQty(raitem_qtyreceived),formatQty(raitem_qtyshipped),"       
+			 "       formatQty(raitem_qtyreceived),formatQty(COALESCE(nc.coitem_qtyshipped,0)),"       
              "       formatSalesPrice(raitem_unitprice),"
              "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
 			 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded)"
              "FROM raitem "
-			 " LEFT OUTER JOIN coitem ON (raitem_coitem_id=coitem_id), itemsite, item, whsinfo "
+			 " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
+			 " LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id),"
+			 " itemsite, item, whsinfo "
              "WHERE ( (raitem_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
              " AND (itemsite_warehous_id=warehous_id)"
@@ -892,17 +897,18 @@ void returnAuthorization::sFillList()
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
-			"AND (raitem_coitem_id IS NOT NULL) "
+			"AND (raitem_orig_coitem_id IS NOT NULL) "
 			"AND (raitem_qtyauthorized > 0 ) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
-  _so->setEnabled(!q.first());
+  _origso->setEnabled(!q.first());
 
   //Disable changes if any transactions
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
+			"  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id) "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
-			"AND ((raitem_qtyreceived + raitem_qtyshipped + "
+			"AND ((raitem_qtyreceived + COALESCE(coitem_qtyshipped,0) + "
 			" raitem_amtcredited + raitem_amtrefunded) > 0 ) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
@@ -942,7 +948,6 @@ void returnAuthorization::sCalculateSubtotal()
                "FROM raitem, itemsite, item "
                "WHERE ( (raitem_rahead_id=:rahead_id)"
                " AND (raitem_itemsite_id=itemsite_id)"
-               " AND (raitem_status <> 'X')"
                " AND (itemsite_item_id=item_id) );" );
   query.bindValue(":rahead_id", _raheadid);
   query.exec();
@@ -1020,7 +1025,8 @@ void returnAuthorization::populate()
     _cust->setId(rahead.value("rahead_cust_id").toInt());
 	_custType->setText(rahead.value("custtype_code").toString());
 	_ignoreSoSignals = TRUE;
-	_so->setId(rahead.value("rahead_cohead_id").toInt());
+	_origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
+	_newso->setId(rahead.value("rahead_new_cohead_id").toInt());
 	_ignoreSoSignals = FALSE;
     _incident->setId(rahead.value("rahead_incdt_id").toInt());
     _project->setId(rahead.value("rahead_prj_id").toInt());
@@ -1327,7 +1333,7 @@ void returnAuthorization::sAuthorizeLine()
   {
         QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
 			          "FROM coitem "
-					  "WHERE ((coitem_id=raitem_coitem_id) "
+					  "WHERE ((coitem_id=raitem_orig_coitem_id) "
 					  "AND (raitem_id=:raitem_id));" );
         q.prepare(sql);
         q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
@@ -1347,7 +1353,7 @@ void returnAuthorization::sClearAuthorization()
   {
         QString sql ( "UPDATE raitem SET raitem_qtyauthorized=0 "
 			          "FROM coitem "
-					  "WHERE ((coitem_id=raitem_coitem_id) "
+					  "WHERE ((coitem_id=raitem_orig_coitem_id) "
 					  "AND (raitem_id=:raitem_id));" );
         q.prepare(sql);
         q.bindValue(":raitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
@@ -1365,11 +1371,10 @@ void returnAuthorization::sAuthorizeAll()
 {
   QString sql ( "UPDATE raitem SET raitem_qtyauthorized=coitem_qtyshipped "
 			    "FROM coitem "
-				"WHERE ((coitem_id=raitem_coitem_id) "
+				"WHERE ((coitem_id=raitem_orig_coitem_id) "
 				"AND (raitem_status = 'O') "
 				"AND (raitem_qtyauthorized < coitem_qtyshipped) "
 				"AND (coitem_qtyshipped >= raitem_qtyreceived) "
-				"AND (coitem_qtyshipped >= raitem_qtyshipped) "
 				"AND (raitem_rahead_id=:raitem_rahead_id));" );
   q.prepare(sql);
   q.bindValue(":raitem_rahead_id",  _raheadid);

@@ -441,17 +441,18 @@ void returnAuthorizationItem::sPopulateItemInfo()
 void returnAuthorizationItem::populate()
 {
   XSqlQuery raitem;
-  raitem.prepare("SELECT rahead_number, raitem.*,cohead_number,coitem_linenumber, "
-	             "       COALESCE(raitem_coitem_id,-1) AS ra_coitem_id, coitem_price, "
-				 "       formatQty(coitem_qtyshipped) AS qtysold,"   
+  raitem.prepare("SELECT rahead_number, raitem.*,cohead_number,oc.coitem_linenumber, "
+	             "       COALESCE(raitem_orig_coitem_id,-1) AS ra_coitem_id, oc.coitem_price, "
+				 "       formatQty(oc.coitem_qtyshipped) AS qtysold,"   
                  "       formatQty(raitem_qtyauthorized) AS qtyauth,"
 				 "       formatQty(raitem_qtyreceived) AS qtyrcvd,"
-				 "       formatQty(raitem_qtyshipped) AS qtyshipd,"
+				 "       formatQty(nc.coitem_qtyshipped) AS qtyshipd,"
 		         "       rahead_taxauth_id,"
 		         "       rahead_curr_id AS taxcurr "
                  "FROM raitem "
-				 "  LEFT OUTER JOIN coitem ON (raitem_coitem_id=coitem_id) "
-				 "  LEFT OUTER JOIN cohead ON (coitem_cohead_id=cohead_id),"
+				 "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
+				 "  LEFT OUTER JOIN cohead ON (coitem_cohead_id=cohead_id) "
+				 "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id),"
 				 "  rahead "
                  "WHERE ((raitem_rahead_id=rahead_id)"
 		 "  AND  (raitem_id=:raitem_id));" );

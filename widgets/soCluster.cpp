@@ -208,7 +208,8 @@ void SoCluster::constructor()
   _layoutOrderNumber->setMargin(0);
   _layoutOrderNumber->setSpacing(5);
 
-  QLabel *_soNumberLit = new QLabel(tr("Sales Order #:"), _layoutOrderNumberWidget, "_soNumberLit");
+  //QLabel *_soNumberLit = new QLabel(tr("Sales Order #:"), _layoutOrderNumberWidget, "_soNumberLit");
+  _soNumberLit = new QLabel(tr("Sales Order #:"), _layoutOrderNumberWidget, "_soNumberLit");
   _soNumberLit->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
   _soNumberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
   _layoutOrderNumber->addWidget(_soNumberLit);

@@ -65,6 +65,7 @@
 #include "xlineedit.h"
 
 #include "OpenMFGWidgets.h"
+#include <QLabel>
 
 class QLabel;
 class QPushButton;
@@ -110,6 +111,7 @@ friend class SoCluster;
 class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QString label       READ label       WRITE setLabel);
 
   public:
     SoCluster(QWidget *, const char * = 0);
@@ -120,9 +122,11 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     inline bool isValid()          { return _soNumber->_valid;   }
     inline int  number()	   { return _soNumber->text().toInt();  }
     inline void setType(int pType) { _soNumber->_type = pType;   }
+	inline virtual QString label() const { return _soNumberLit->text(); };
 
   public slots:
     void setId(int);
+	inline virtual void setLabel(const QString& p)  { _soNumberLit->setText(p); };
 
   signals:
     void newId(int);
@@ -131,6 +135,9 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
 
   private slots:
     void sList();
+
+  protected:
+    QLabel*	_soNumberLit;
 
   private:
     void constructor();

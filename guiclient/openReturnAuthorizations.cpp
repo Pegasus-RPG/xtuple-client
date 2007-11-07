@@ -96,7 +96,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   _ra->addColumn(tr("S/O #"),            _orderColumn, Qt::AlignLeft   );
   _ra->addColumn(tr("Cust. #"),          _orderColumn, Qt::AlignLeft   );
   _ra->addColumn(tr("Customer"),         -1,           Qt::AlignLeft   );
-  _ra->addColumn(tr("Cust. P/O Number"), _itemColumn,  Qt::AlignLeft   );
+  _ra->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
   _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter );
   _ra->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter );
   
@@ -227,7 +227,19 @@ void openReturnAuthorizations::sFillList()
 {
   QString sql( "SELECT DISTINCT rahead_id, rahead_number,"
                "       COALESCE(cust_number, :undefined),"
-               "       rahead_billtoname, rahead_custponumber,"
+               "       rahead_billtoname, "
+			   "       CASE "
+			   "       WHEN rahead_disposition = 'C' THEN "
+			   "         'Credit' "
+			   "       WHEN rahead_disposition = 'R' THEN "
+			   "         'Return' "
+			   "       WHEN rahead_disposition = 'P' THEN "
+			   "         'Replace' "
+			   "       WHEN rahead_disposition = 'V' THEN "
+			   "         'Service' "
+			   "       WHEN rahead_disposition = 'M' THEN "
+			   "         'Mixed' "
+			   "       END AS disposition, "
                "       formatDate(rahead_authdate) AS f_authorized,"
                "       formatDate(rahead_expiredate) AS f_expires "
                "FROM rahead LEFT OUTER JOIN cust ON (rahead_cust_id=cust_id) "
@@ -240,7 +252,7 @@ void openReturnAuthorizations::sFillList()
 
   sql += " ) "
          "GROUP BY rahead_id, rahead_number, cust_number, rahead_billtoname,"
-         "         rahead_custponumber, rahead_authdate, rahead_expiredate "
+         "         rahead_disposition, rahead_authdate, rahead_expiredate "
          "ORDER BY rahead_number ";
 
   q.prepare(sql);
