@@ -64,8 +64,6 @@
 
 #include "ordercluster.h"
 
-// TODO: handle number select returning multiple rows
-
 OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)
 {
@@ -81,8 +79,8 @@ OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   _grid->addWidget(_number,		0, 1, 1, 2);
   _grid->addWidget(_list,		0, 3);
   _grid->addWidget(_info,		0, 4);
-  _grid->addWidget(_description,	1, 1);
-  _grid->addWidget(_name,		1, 2);
+  _grid->addWidget(_name,		1, 1);
+  _grid->addWidget(_description,	1, 2);
 
   _fromLit	= new QLabel(this);	_fromLit->setObjectName("_fromLit");
   _from		= new QLabel(this);	_from->setObjectName("_from");
@@ -269,7 +267,6 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
   setTitles(tr("Order"), tr("Orders"));
 
   connect(this, SIGNAL(newId(int)), this, SLOT(sNewId(int)));
-  connect(this, SIGNAL(textChanged(const QString &)), this, SLOT(sNumberChanged(const QString &)));
 
   _query = "SELECT orderhead_id AS id, orderhead_number AS number,"
 	   "       orderhead_type AS name, orderhead_status AS description,"
@@ -283,10 +280,84 @@ void OrderLineEdit::sNewId(const int p)
   emit numberChanged(text(), _name);
 }
 
-void OrderLineEdit::sNumberChanged(const QString &p)
+void OrderLineEdit::sParse()
 {
-  emit newId(id(), _name);
-  emit numberChanged(p, _name);
+  if (! _parsed)
+  {
+    QString stripped = text().stripWhiteSpace().upper();
+    if (stripped.length() == 0)
+    {
+      _parsed = true;
+      setId(-1);
+    }
+    else
+    {
+      QString oldExtraClause = _extraClause;
+
+      XSqlQuery countQ;
+      countQ.prepare("SELECT COUNT(*) AS count FROM orderhead " +
+		      _numClause +
+		      (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+		      QString(";"));
+      countQ.bindValue(":number", text());
+      countQ.exec();
+      if (countQ.first())
+      {
+	int result = countQ.value("count").toInt();
+	if (result <= 0)
+	{
+	  _id = -1;
+	  XLineEdit::clear();
+	}
+	else if (result == 1)
+	{
+	  XSqlQuery numQ;
+	  numQ.prepare(_query + _numClause +
+		      (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+		      QString(";"));
+	  numQ.bindValue(":number", text());
+	  numQ.exec();
+	  if (numQ.first())
+	  {
+	    _valid = true;
+	    /*
+	    _id		= numQ.value("id").toInt();
+	    _name		= numQ.value("name").toString();
+	    */
+	    setId(numQ.value("id").toInt(), numQ.value("name").toString());
+	    _description	= numQ.value("description").toString();
+	    _from		= numQ.value("orderhead_from").toString();
+	    _to		= numQ.value("orderhead_to").toString();
+	  }
+	  else if (numQ.lastError().type() != QSqlError::None)
+	    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+					  .arg(__FILE__)
+					  .arg(__LINE__),
+				  numQ.lastError().databaseText());
+	}
+	else
+	{
+	  _extraClause += "AND (orderhead_number=" + text() + ")";
+	  sEllipses();
+	  _extraClause += "AND (orderhead_type='" + type() + "')";
+	}
+      }
+      else if (countQ.lastError().type() != QSqlError::None)
+      {
+	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+				      .arg(__FILE__)
+				      .arg(__LINE__),
+			      countQ.lastError().databaseText());
+      }
+
+      _extraClause = oldExtraClause;
+    }
+  }
+
+  _parsed = true;
+  emit valid(_valid);
+  emit parsed();
+  emit numberChanged(text(), _name);
 }
 
 OrderLineEdit::OrderStatuses OrderLineEdit::allowedStatuses() const
@@ -297,6 +368,13 @@ OrderLineEdit::OrderStatuses OrderLineEdit::allowedStatuses() const
 OrderLineEdit::OrderTypes OrderLineEdit::allowedTypes() const
 {
   return _allowedTypes;
+}
+
+void OrderLineEdit::clear()
+{
+  _from = "";
+  _to = "";
+  VirtualClusterLineEdit::clear();
 }
 
 QString OrderLineEdit::from() const
@@ -337,6 +415,22 @@ bool OrderLineEdit::isTO() const
 bool OrderLineEdit::isUnposted() const
 {
   return _description == "U";
+}
+
+void OrderLineEdit::sList()
+{
+  OrderList newdlg(this);
+  int id = newdlg.exec();
+  QString type = newdlg.type();
+  setId(id, type);
+}
+
+void OrderLineEdit::sSearch()
+{
+  OrderSearch newdlg(this);
+  int id = newdlg.exec();
+  QString type = newdlg.type();
+  setId(id, type);
 }
 
 OrderLineEdit::OrderStatus  OrderLineEdit::status()
@@ -439,10 +533,20 @@ void OrderLineEdit::setAllowedTypes(const OrderLineEdit::OrderTypes p)
 
 void OrderLineEdit::setId(const int pId, const QString &pType)
 {
-  OrderTypes oldTypes = _allowedTypes;
-  setAllowedType(pType);
-  VirtualClusterLineEdit::setId(pId);
-  setAllowedTypes(oldTypes);
+  qDebug("setId(%d, %s) with old (%d, %s)", pId, pType.toAscii().data(), _id, _name.toAscii().data());
+  if (pId == -1)
+    clear();
+  else if (pId == _id && pType == _name)
+    return;
+  else
+  {
+    OrderTypes oldTypes = _allowedTypes;
+    setAllowedType(pType);
+    silentSetId(pId);
+    setAllowedTypes(oldTypes);
+    emit newId(pId, pType);
+    emit valid(_valid);
+  }
 }
 
 void OrderLineEdit::silentSetId(const int pId)
@@ -451,31 +555,29 @@ void OrderLineEdit::silentSetId(const int pId)
     XLineEdit::clear();
   else
   {
-    int id = pId;
-    QString type;
     QString oldExtraClause = _extraClause;
 
     XSqlQuery countQ;
     countQ.prepare("SELECT COUNT(*) AS count FROM orderhead " + _idClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
 		    QString(";"));
-    countQ.bindValue(":id", id);
+    countQ.bindValue(":id", pId);
     countQ.exec();
     if (countQ.first())
     {
       int result = countQ.value("count").toInt();
       if (result <= 0)
-	id = -1;
-      else if (result > 1)
       {
-	_extraClause += _idClause;
-
-	OrderList newdlg(this);
-	newdlg.setWindowModality(Qt::WindowModal); // Qt::ApplicationModal ?
-	id = newdlg.exec();
-	type = newdlg.type();
-
-	_extraClause += "AND (order_type='" + type + "')";
+	_id = -1;
+	XLineEdit::clear();
+      }
+      else if (result == 1)
+	_id = pId;
+      else
+      {
+	_extraClause += "AND (orderhead_id=" + QString::number(pId) + ")";
+	sEllipses();
+	_extraClause += "AND (orderhead_type='" + type() + "')";
       }
     }
     else if (countQ.lastError().type() != QSqlError::None)
@@ -486,27 +588,30 @@ void OrderLineEdit::silentSetId(const int pId)
 			    countQ.lastError().databaseText());
     }
 
-    XSqlQuery idQ;
-    idQ.prepare(_query + _idClause +
-		(_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
-		QString(";"));
-    idQ.bindValue(":id", id);
-    idQ.exec();
-    if (idQ.first())
+    if (_id > 0)
     {
-      _id = id;
-      _valid = true;
-      setText(idQ.value("number").toString());
-      _name		= (idQ.value("name").toString());
-      _description	= idQ.value("description").toString();
-      _from		= idQ.value("orderhead_from").toString();
-      _to		= idQ.value("orderhead_to").toString();
+      XSqlQuery idQ;
+      idQ.prepare(_query + _idClause +
+		  (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
+		  QString(";"));
+      idQ.bindValue(":id", pId);
+      idQ.exec();
+      if (idQ.first())
+      {
+	_id = pId;
+	_valid = true;
+	setText(idQ.value("number").toString());
+	_name		= idQ.value("name").toString();
+	_description	= idQ.value("description").toString();
+	_from		= idQ.value("orderhead_from").toString();
+	_to		= idQ.value("orderhead_to").toString();
+      }
+      else if (idQ.lastError().type() != QSqlError::None)
+	QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+				      .arg(__FILE__)
+				      .arg(__LINE__),
+			      idQ.lastError().databaseText());
     }
-    else if (idQ.lastError().type() != QSqlError::None)
-      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-				    .arg(__FILE__)
-				    .arg(__LINE__),
-			    idQ.lastError().databaseText());
   }
 
   _parsed = TRUE;
@@ -518,13 +623,48 @@ void OrderLineEdit::silentSetId(const int pId)
 OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
   VirtualList(pParent, pFlags)
 {
-  _listTab->headerItem()->setData(1, Qt::DisplayRole, tr("Disposition"));
-  _listTab->headerItem()->setData(2, Qt::DisplayRole, tr("Status"));
+  QTreeWidgetItem *headerItem = _listTab->headerItem();
+  headerItem->setText(1, tr("Order Type"));
+  headerItem->setText(2, tr("Status"));
+
+  _listTab->addColumn(tr("From"), -1, Qt::AlignLeft);
+  _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft);
 }
 
 QString OrderList::type() const
 {
-  QList<QTreeWidgetItem*> items = _listTab->selectedItems();
+  if(selectedAtDone.count() > 0)
+  {
+    XTreeWidgetItem * item = (XTreeWidgetItem*)selectedAtDone.at(0);
+    return item->text(1);
+  }
+
+  return "";
+}
+
+void OrderList::done(int p)
+{
+  selectedAtDone = _listTab->selectedItems();
+  VirtualList::done(p);
+}
+
+// Search /////////////////////////////////////////////////////////////////////
+
+OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
+  VirtualSearch(pParent, pFlags)
+{
+  QTreeWidgetItem *headerItem = _listTab->headerItem();
+  headerItem->setText(1, tr("Order Type"));
+  headerItem->setText(2, tr("Status"));
+
+  _listTab->addColumn(tr("From"), -1, Qt::AlignLeft);
+  _listTab->addColumn(tr("To"),   -1, Qt::AlignLeft);
+}
+
+QString OrderSearch::type() const
+{
+  QList<QTreeWidgetItem*> items = (selectedAtDone.size() > 0) ? selectedAtDone :
+						      _listTab->selectedItems();
   if(items.count() > 0)
   {
     XTreeWidgetItem * item = (XTreeWidgetItem*)items.at(0);
@@ -532,4 +672,10 @@ QString OrderList::type() const
   }
 
   return "";
+}
+
+void OrderSearch::done(int p)
+{
+  selectedAtDone = _listTab->selectedItems();
+  VirtualSearch::done(p);
 }

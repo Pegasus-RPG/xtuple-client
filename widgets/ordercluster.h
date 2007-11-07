@@ -88,6 +88,7 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 
     virtual OrderStatuses allowedStatuses()	const;
     virtual OrderTypes	  allowedTypes()	const;
+    virtual void	  clear();
     virtual QString	  from()		const;
     virtual bool	  isClosed()		const;
     virtual bool	  isOpen()		const;
@@ -96,6 +97,8 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual bool	  isSO()		const;
     virtual bool	  isTO()		const;
     virtual bool	  isUnposted()		const;
+    virtual void	  sList();
+    virtual void	  sSearch();
     virtual OrderStatus	  status();
     virtual QString	  to()			const;
     virtual QString	  type();
@@ -104,7 +107,7 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual void	  setAllowedStatuses(const OrderStatuses);
     virtual void	  setAllowedType(const QString &);
     virtual void	  setAllowedTypes(const OrderTypes);
-    virtual void	  setId(const int, const QString &);
+    virtual void	  setId(const int, const QString & = "");
 
   signals:
     void newId(const int, const QString &);
@@ -121,7 +124,7 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
 
   protected slots:
     virtual void	sNewId(const int);
-    virtual void	sNumberChanged(const QString &);
+    virtual void	sParse();
 
   private:
     QString	_statusClause;
@@ -155,7 +158,7 @@ class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
     virtual void	setAllowedStatuses(const OrderLineEdit::OrderStatuses);
     virtual void	setAllowedType(const QString &);
     virtual void	setAllowedTypes(const OrderLineEdit::OrderTypes);
-    virtual void	setId(const int, const QString&);
+    virtual void	setId(const int, const QString& = "");
     virtual void	sRefresh();
 
   signals:
@@ -177,6 +180,28 @@ class OPENMFGWIDGETS_EXPORT OrderList : public VirtualList
     OrderList(QWidget*, Qt::WindowFlags = 0);
 
     QString	type() const;
+
+  protected:
+    QList<QTreeWidgetItem*> selectedAtDone;
+
+  protected slots:
+    virtual void	  done(int);
+};
+
+class OPENMFGWIDGETS_EXPORT OrderSearch : public VirtualSearch
+{
+  Q_OBJECT
+
+  public:
+    OrderSearch(QWidget*, Qt::WindowFlags = 0);
+
+    QString	type() const;
+
+  protected:
+   QList<QTreeWidgetItem*> selectedAtDone;
+
+  protected slots:
+    virtual void	  done(int);
 };
 
 #endif
