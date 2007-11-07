@@ -230,6 +230,12 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
   else
   {
+    q.exec("SELECT rahead_id FROM rahead LIMIT 1;");
+    if (q.first())
+	  _enableReturns->setCheckable(false);
+	else
+	  _enableReturns->setChecked(_metrics->boolean("EnableReturnAuth"));
+
     q.exec( "SELECT ranumber.orderseq_number AS ranumber "
             "FROM orderseq AS ranumber "
             "WHERE (ranumber.orderseq_name='RaNumber');" );
@@ -260,17 +266,29 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     else if (metric == "M")
       _disposition->setCurrentItem(4);
 
+    if (_metrics->value("DefaultRaTiming") == "R")
+      _uponReceipt->setChecked(TRUE);
+
+    metric = _metrics->value("DefaultRaCreditMethod");
+    if (metric == "N")
+      _creditBy->setCurrentItem(0);
+    else if (metric == "M")
+      _creditBy->setCurrentItem(1);
+    else if (metric == "K")
+      _creditBy->setCurrentItem(2);
+    else if (metric == "C")
+      _creditBy->setCurrentItem(3);
+
+ 	if (_metrics->boolean("DefaultRaItemsiteLeadtime"))
+	  _useItemsite->setChecked(true);
+ 	else
+	{
+	  _useDays->setChecked(true);
+	  _days->setValue(_metrics->value("DefaultRaLeadtime").toInt()); 
+	}
+
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
 
-
-    q.exec("SELECT rahead_id FROM rahead LIMIT 1;");
-    if (q.first())
-	{
-	  _enableReturns->setChecked(true);
-	  _enableReturns->setEnabled(false);
-	}
-	else
-	  _enableReturns->setChecked(_metrics->boolean("EnableReturnAuth"));
   }
 }
 
@@ -288,6 +306,7 @@ void configureSO::sSave()
 {
   char *numberGenerationTypes[] = { "M", "A", "O", "S" };
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
+  char *creditMethodTypes[] = { "N", "M", "K", "C" };
 
   _metrics->set("AllowDiscounts", _allowDiscounts->isChecked());
   _metrics->set("AllowASAPShipSchedules", _allowASAP->isChecked());
@@ -376,9 +395,16 @@ void configureSO::sSave()
     return;
   }
 
-  if (_enableReturns->isChecked())
+  if (_enableReturns->isChecked() || !_enableReturns->isCheckable())
   {
     _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentItem()]));
+    if (_immediately->isChecked())
+	  _metrics->set("DefaultRaTiming", QString("I"));
+	else
+	  _metrics->set("DefaultRaTiming", QString("R"));
+    _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentItem()]));
+    _metrics->set("DefaultRaItemsiteLeadtime", _useItemsite->isChecked());
+    _metrics->set("DefaultRaLeadtime", _days->value());
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentItem()]));
 
@@ -391,7 +417,7 @@ void configureSO::sSave()
       return;
     }
   }
-  _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
+  _metrics->set("EnableReturnAuth", (_enableReturns->isChecked() || !_enableReturns->isCheckable()));
 
   _metrics->load();
 

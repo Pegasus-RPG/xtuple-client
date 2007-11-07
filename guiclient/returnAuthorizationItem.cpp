@@ -200,10 +200,10 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
-	  _orderNumber->hide();
-	  _orderNumberLit->hide();
-	  _orderLineNumber->hide();
-	  _orderLineNumberLit->hide();
+	  _origSoNumber->hide();
+	  _origSoNumberLit->hide();
+	  _origSoLineNumber->hide();
+	  _origSoLineNumberLit->hide();
 	  _qtySold->hide();
 	  _qtySoldLit->hide();
       _discountFromSalePrcntLit->hide();
@@ -463,13 +463,13 @@ void returnAuthorizationItem::populate()
     _authNumber->setText(raitem.value("rahead_number").toString());
 	if (raitem.value("cohead_number").toInt() > 0)
 	{
-      _orderNumber->setText(raitem.value("cohead_number").toString());
-	  _orderLineNumber->setText(raitem.value("coitem_linenumber").toString());
+      _origSoNumber->setText(raitem.value("cohead_number").toString());
+	  _origSoLineNumber->setText(raitem.value("coitem_linenumber").toString());
 	}
 	else
 	{
-	  _orderNumberLit->hide();
-	  _orderLineNumberLit->hide();
+	  _origSoNumberLit->hide();
+	  _origSoLineNumberLit->hide();
 	}
 	_salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
@@ -510,8 +510,8 @@ void returnAuthorizationItem::populate()
     _coitemid = raitem.value("ra_coitem_id").toInt();
 	if (_coitemid != -1)
 	{
-	  _orderNumber->setText(raitem.value("cohead_number").toString());
-	  _orderLineNumber->setText(raitem.value("coitem_linenumber").toString());
+	  _origSoNumber->setText(raitem.value("cohead_number").toString());
+	  _origSoLineNumber->setText(raitem.value("coitem_linenumber").toString());
 	  _qtySold->setText(raitem.value("qtysold").toString());
       _qtyUOM->setEnabled(FALSE);
 	  _pricingUOM->setEnabled(FALSE);
@@ -521,10 +521,10 @@ void returnAuthorizationItem::populate()
 	}
 	else
 	{
-	  _orderNumber->hide();
-	  _orderNumberLit->hide();
-	  _orderLineNumber->hide();
-	  _orderLineNumberLit->hide();
+	  _origSoNumber->hide();
+	  _origSoNumberLit->hide();
+	  _origSoLineNumber->hide();
+	  _origSoLineNumberLit->hide();
       _discountFromSalePrcntLit->hide();
       _discountFromSale->hide();
 	  _qtySold->hide();
