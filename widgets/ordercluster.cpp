@@ -282,6 +282,7 @@ void OrderLineEdit::sNewId(const int p)
 
 void OrderLineEdit::sParse()
 {
+  bool oldvalid = _valid;
   if (! _parsed)
   {
     QString stripped = text().stripWhiteSpace().upper();
@@ -320,10 +321,6 @@ void OrderLineEdit::sParse()
 	  if (numQ.first())
 	  {
 	    _valid = true;
-	    /*
-	    _id		= numQ.value("id").toInt();
-	    _name		= numQ.value("name").toString();
-	    */
 	    setId(numQ.value("id").toInt(), numQ.value("name").toString());
 	    _description	= numQ.value("description").toString();
 	    _from		= numQ.value("orderhead_from").toString();
@@ -355,7 +352,8 @@ void OrderLineEdit::sParse()
   }
 
   _parsed = true;
-  emit valid(_valid);
+  if (_valid != oldvalid)
+    emit valid(_valid);
   emit parsed();
   emit numberChanged(text(), _name);
 }
