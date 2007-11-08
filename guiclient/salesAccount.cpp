@@ -57,58 +57,47 @@
 
 #include "salesAccount.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a salesAccount as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-salesAccount::~salesAccount()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void salesAccount::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void salesAccount::init()
-{
   _warehouse->populate( "SELECT -1, 'Any'::text AS warehous_code, 0 AS sort "
-                        "UNION SELECT warehous_id, warehous_code, 1 AS sort "
-                        "FROM warehous "
-                        "ORDER BY sort, warehous_code" );
+			"UNION SELECT warehous_id, warehous_code, 1 AS sort "
+			"FROM warehous "
+			"ORDER BY sort, warehous_code" );
 
   _customerTypes->setType(CustomerType);
   _productCategories->setType(ProductCategory);
+
+  if (! _metrics->boolean("EnableReturnAuth"))
+  {
+    _returnsLit->setVisible(false);
+    _returns->setVisible(false);
+    _corLit->setVisible(false);
+    _cor->setVisible(false);
+    _cowLit->setVisible(false);
+    _cow->setVisible(false);
+  }
 }
 
-enum SetResponse salesAccount::set(ParameterList &pParams)
+salesAccount::~salesAccount()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void salesAccount::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse salesAccount::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -141,6 +130,9 @@ enum SetResponse salesAccount::set(ParameterList &pParams)
       _sales->setReadOnly(TRUE);
       _credit->setReadOnly(TRUE);
       _cos->setReadOnly(TRUE);
+      _returns->setReadOnly(TRUE);
+      _cor->setReadOnly(TRUE);
+      _cow->setReadOnly(TRUE);
       _save->hide();
       _close->setText(tr("&Close"));
 
@@ -177,16 +169,42 @@ void salesAccount::sSave()
     return;
   }
 
+  if (_metrics->value("Application") == "OpenMFG")
+  {
+
+    if (!_returns->isValid())
+    {
+      QMessageBox::warning( this, tr("Select Returns Account"), 
+			    tr("You must select a Returns Account for this Assignment.") );
+      _returns->setFocus();
+      return;
+    }
+
+    if (!_cor->isValid())
+    {
+      QMessageBox::warning( this, tr("Select Cost of Returns Account"), 
+			    tr("You must select a Cost of Returns Account for this Assignment.") );
+      _cor->setFocus();
+      return;
+    }
+
+    if (!_cow->isValid())
+    {
+      QMessageBox::warning( this, tr("Select Cost of Warranty Account"), 
+			    tr("You must select a Cost of Warranty Account for this Assignment.") );
+      _cow->setFocus();
+      return;
+    }
+  }
+
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('salesaccnt_salesaccnt_id_seq') AS salesaccnt_id;");
     if (q.first())
       _salesaccntid = q.value("salesaccnt_id").toInt();
-    else
+    else if (q.lastError().type() != QSqlError::None)
     {
-      systemError(this, tr("A System Error occurred at %1::%2.")
-                        .arg(__FILE__)
-                        .arg(__LINE__) );
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
  
@@ -196,14 +214,20 @@ void salesAccount::sSave()
                "  salesaccnt_prodcat, salesaccnt_prodcat_id,"
                "  salesaccnt_sales_accnt_id,"
                "  salesaccnt_credit_accnt_id,"
-               "  salesaccnt_cos_accnt_id ) "
+               "  salesaccnt_cos_accnt_id,"
+	       "  salesaccnt_returns_accnt_id,"
+	       "  salesaccnt_cor_accnt_id,"
+	       "  salesaccnt_cow_accnt_id) "
                "VALUES "
                "( :salesaccnt_warehous_id,"
                "  :salesaccnt_custtype, :salesaccnt_custtype_id,"
                "  :salesaccnt_prodcat, :salesaccnt_prodcat_id,"
                "  :salesaccnt_sales_accnt_id,"
                "  :salesaccnt_credit_accnt_id,"
-               "  :salesaccnt_cos_accnt_id );" );
+               "  :salesaccnt_cos_accnt_id,"
+	       "  :salesaccnt_returns_accnt_id,"
+	       "  :salesaccnt_cor_accnt_id,"
+	       "  :salesaccnt_cow_accnt_id);" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE salesaccnt "
@@ -214,13 +238,23 @@ void salesAccount::sSave()
                "    salesaccnt_prodcat_id=:salesaccnt_prodcat_id,"
                "    salesaccnt_sales_accnt_id=:salesaccnt_sales_accnt_id,"
                "    salesaccnt_credit_accnt_id=:salesaccnt_credit_accnt_id,"
-               "    salesaccnt_cos_accnt_id=:salesaccnt_cos_accnt_id "
+               "    salesaccnt_cos_accnt_id=:salesaccnt_cos_accnt_id,"
+               "    salesaccnt_returns_accnt_id=:salesaccnt_returns_accnt_id,"
+               "    salesaccnt_cor_accnt_id=:salesaccnt_cor_accnt_id,"
+               "    salesaccnt_cow_accnt_id=:salesaccnt_cow_accnt_id "
                "WHERE (salesaccnt_id=:salesaccnt_id);" );
 
   q.bindValue(":salesaccnt_id", _salesaccntid);
   q.bindValue(":salesaccnt_sales_accnt_id", _sales->id());
   q.bindValue(":salesaccnt_credit_accnt_id", _credit->id());
   q.bindValue(":salesaccnt_cos_accnt_id", _cos->id());
+  if (_returns->isValid())
+    q.bindValue(":salesaccnt_returns_accnt_id",	_returns->id());
+  if (_cor->isValid())
+    q.bindValue(":salesaccnt_cor_accnt_id",	_cor->id());
+  if (_cow->isValid())
+    q.bindValue(":salesaccnt_cow_accnt_id",	_cow->id());
+
   q.bindValue(":salesaccnt_warehous_id", _warehouse->id());
 
   if (_customerTypes->isAll())
@@ -266,7 +300,10 @@ void salesAccount::populate()
              "       salesaccnt_custtype, salesaccnt_custtype_id,"
              "       salesaccnt_prodcat, salesaccnt_prodcat_id,"
              "       salesaccnt_sales_accnt_id, salesaccnt_credit_accnt_id,"
-             "       salesaccnt_cos_accnt_id "
+             "       salesaccnt_cos_accnt_id,"
+             "       salesaccnt_returns_accnt_id,"
+             "       salesaccnt_cor_accnt_id,"
+             "       salesaccnt_cow_accnt_id "
              "FROM salesaccnt "
              "WHERE (salesaccnt_id=:salesaccnt_id);" );
   q.bindValue(":salesaccnt_id", _salesaccntid);
@@ -288,6 +325,17 @@ void salesAccount::populate()
     _sales->setId(q.value("salesaccnt_sales_accnt_id").toInt());
     _credit->setId(q.value("salesaccnt_credit_accnt_id").toInt());
     _cos->setId(q.value("salesaccnt_cos_accnt_id").toInt());
+
+    if (!q.value("salesaccnt_returns_accnt_id").isNull())
+      _returns->setId(q.value("salesaccnt_returns_accnt_id").toInt());
+    if (!q.value("salesaccnt_cor_accnt_id").isNull())
+      _cor->setId(q.value("salesaccnt_cor_accnt_id").toInt());
+    if (!q.value("salesaccnt_cow_accnt_id").isNull())
+      _cow->setId(q.value("salesaccnt_cow_accnt_id").toInt());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-

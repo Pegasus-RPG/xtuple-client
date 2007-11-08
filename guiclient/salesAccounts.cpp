@@ -57,65 +57,42 @@
 
 #include "salesAccounts.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
+#include <QMessageBox>
+#include <QSqlError>
+
 #include <parameter.h>
 #include <openreports.h>
+
 #include "salesAccount.h"
 #include "OpenMFGGUIClient.h"
 
-/*
- *  Constructs a salesAccounts as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 salesAccounts::salesAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-    connect(_salesaccnt, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-salesAccounts::~salesAccounts()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void salesAccounts::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void salesAccounts::init()
-{
-  statusBar()->hide();
-  
   _salesaccnt->addColumn(tr("Whs."),            -1,          Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Cust. Type"),      _itemColumn, Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Prod. Cat."),      _itemColumn, Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Sales Accnt. #"),  _itemColumn, Qt::AlignCenter );
   _salesaccnt->addColumn(tr("Credit Accnt. #"), _itemColumn, Qt::AlignCenter );
   _salesaccnt->addColumn(tr("COS Accnt. #"),    _itemColumn, Qt::AlignCenter );
+  _salesaccnt->addColumn(tr("Returns Accnt. #"), _itemColumn, Qt::AlignCenter );
+  _salesaccnt->addColumn(tr("Cost of Returns Accnt. #"),  _itemColumn, Qt::AlignCenter );
+  _salesaccnt->addColumn(tr("Cost of Warranty Accnt. #"), _itemColumn, Qt::AlignCenter );
+
+  if (! _metrics->boolean("EnableReturnAuth"))
+  {
+    _salesaccnt->hideColumn(6);
+    _salesaccnt->hideColumn(7);
+    _salesaccnt->hideColumn(8);
+  }
 
   if (_privleges->check("MaintainSalesAccount"))
   {
@@ -130,6 +107,16 @@ void salesAccounts::init()
   }
 
   sFillList();
+}
+
+salesAccounts::~salesAccounts()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void salesAccounts::languageChange()
+{
+  retranslateUi(this);
 }
 
 void salesAccounts::sPrint()
@@ -183,27 +170,41 @@ void salesAccounts::sDelete()
              "WHERE (salesaccnt_id=:salesaccnt_id);" );
   q.bindValue(":salesaccnt_id", _salesaccnt->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
 
 void salesAccounts::sFillList()
 {
-  _salesaccnt->populate( "SELECT salesaccnt_id,"
-                         "       CASE WHEN (salesaccnt_warehous_id=-1) THEN TEXT('Any')"
-                         "            ELSE (SELECT warehous_code FROM warehous WHERE (warehous_id=salesaccnt_warehous_id))"
-                         "       END AS warehouscode,"
-                         "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
-                         "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"
-                         "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=salesaccnt_custtype_id))"
-                         "       END AS custtypecode,"
-                         "       CASE WHEN ((salesaccnt_prodcat_id=-1) AND (salesaccnt_prodcat='.*')) THEN 'All'"
-                         "            WHEN (salesaccnt_prodcat_id=-1) THEN salesaccnt_prodcat"
-                         "            ELSE (SELECT prodcat_code FROM prodcat WHERE (prodcat_id=salesaccnt_prodcat_id))"
-                         "       END AS prodcatcode,"
-                         "       formatGLAccount(salesaccnt_sales_accnt_id),"
-                         "       formatGLAccount(salesaccnt_credit_accnt_id),"
-                         "       formatGLAccount(salesaccnt_cos_accnt_id) "
-                         "FROM salesaccnt "
-                         "ORDER BY warehouscode, custtypecode, prodcatcode;" );
+  q.exec("SELECT salesaccnt_id,"
+	 "       CASE WHEN (salesaccnt_warehous_id=-1) THEN TEXT('Any')"
+	 "            ELSE (SELECT warehous_code FROM warehous WHERE (warehous_id=salesaccnt_warehous_id))"
+	 "       END AS warehouscode,"
+	 "       CASE WHEN ((salesaccnt_custtype_id=-1) AND (salesaccnt_custtype='.*')) THEN 'All'"
+	 "            WHEN (salesaccnt_custtype_id=-1) THEN salesaccnt_custtype"
+	 "            ELSE (SELECT custtype_code FROM custtype WHERE (custtype_id=salesaccnt_custtype_id))"
+	 "       END AS custtypecode,"
+	 "       CASE WHEN ((salesaccnt_prodcat_id=-1) AND (salesaccnt_prodcat='.*')) THEN 'All'"
+	 "            WHEN (salesaccnt_prodcat_id=-1) THEN salesaccnt_prodcat"
+	 "            ELSE (SELECT prodcat_code FROM prodcat WHERE (prodcat_id=salesaccnt_prodcat_id))"
+	 "       END AS prodcatcode,"
+	 "       formatGLAccount(salesaccnt_sales_accnt_id),"
+	 "       formatGLAccount(salesaccnt_credit_accnt_id),"
+	 "       formatGLAccount(salesaccnt_cos_accnt_id),"
+	 "       formatGLAccount(salesaccnt_returns_accnt_id),"
+	 "       formatGLAccount(salesaccnt_cor_accnt_id),"
+	 "       formatGLAccount(salesaccnt_cow_accnt_id) "
+	 "FROM salesaccnt "
+	 "ORDER BY warehouscode, custtypecode, prodcatcode;" );
+  _salesaccnt->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

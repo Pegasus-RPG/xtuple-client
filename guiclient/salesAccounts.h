@@ -58,7 +58,7 @@
 #ifndef SALESACCOUNTS_H
 #define SALESACCOUNTS_H
 
-#include <qmainwindow.h>
+#include <QMainWindow>
 #include "ui_salesAccounts.h"
 
 class salesAccounts : public QMainWindow, public Ui::salesAccounts
@@ -68,8 +68,6 @@ class salesAccounts : public QMainWindow, public Ui::salesAccounts
 public:
     salesAccounts(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~salesAccounts();
-
-    virtual void init();
 
 public slots:
     virtual void sPrint();
