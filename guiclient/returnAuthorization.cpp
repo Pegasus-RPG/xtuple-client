@@ -92,12 +92,12 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
   connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
-  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sUpdateDisposition()));
+  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
   connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
   connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
   connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
-/*  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
+/*  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
+  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
 
@@ -136,6 +136,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Refunded"),    _moneyColumn, Qt::AlignRight  );
+  _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft   );
+  _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft   );
 
   _authorizeLine->hide();
   _clearAuthorization->hide();
@@ -811,7 +813,7 @@ void returnAuthorization::sNew()
   newdlg.set(params);
   
   if (newdlg.exec() != QDialog::Rejected)
-    sFillList();
+    populate();
 }
 
 void returnAuthorization::sEdit()
@@ -837,7 +839,7 @@ void returnAuthorization::sEdit()
       fill = TRUE;
   }
   if (fill)
-    sFillList();
+    populate();
 }
 
 void returnAuthorization::sDelete()
@@ -861,7 +863,7 @@ void returnAuthorization::sDelete()
         return;
       }
 	}
-    sFillList();
+    populate();
   }
 }
 
@@ -882,10 +884,14 @@ void returnAuthorization::sFillList()
 			 "       formatQty(raitem_qtyreceived),formatQty(COALESCE(nc.coitem_qtyshipped,0)),"       
              "       formatSalesPrice(raitem_unitprice),"
              "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
-			 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded)"
+			 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded),"
+			 "       och.cohead_number::text || '-' || oc.coitem_linenumber::text, "
+			 "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text "
              "FROM raitem "
 			 " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
-			 " LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id),"
+ 			 " LEFT OUTER JOIN cohead och ON (och.cohead_id=oc.coitem_cohead_id) "
+			 " LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
+			 " LEFT OUTER JOIN cohead nch ON (nch.cohead_id=nc.coitem_cohead_id),"
 			 " itemsite, item, whsinfo "
              "WHERE ( (raitem_itemsite_id=itemsite_id)"
              " AND (itemsite_item_id=item_id)"
@@ -925,7 +931,7 @@ void returnAuthorization::sFillList()
   //Disable changes if any transactions
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
-			"  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id) "
+			"  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
 			"AND ((raitem_qtyreceived + COALESCE(coitem_qtyshipped,0) + "
 			" raitem_amtcredited + raitem_amtrefunded) > 0 ) );");
@@ -956,6 +962,9 @@ void returnAuthorization::sFillList()
 	_billToAddr->setEnabled(true);
   }
   _comments->refresh();
+  
+  if (_newso->isValid())
+    omfgThis->sSalesOrdersUpdated(_newso->id());
 }
 
 void returnAuthorization::sCalculateSubtotal()
@@ -1295,7 +1304,7 @@ void returnAuthorization::sTaxAuthChanged()
   sFreightChanged();
 }
 
-void returnAuthorization::sUpdateDisposition()
+void returnAuthorization::sDispositionChanged()
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   _new->setEnabled(_cust->isValid() || _disposition->currentIndex() < 2);
@@ -1406,7 +1415,7 @@ void returnAuthorization::sAuthorizeAll()
   }
   sFillList();
 }
-
+/*
 void returnAuthorization::sCustChanged()
 {
   if (_mode == cEdit)
@@ -1421,3 +1430,5 @@ void returnAuthorization::sCustChanged()
 	}
   }
 }
+*/
+

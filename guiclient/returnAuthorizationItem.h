@@ -87,6 +87,7 @@ public slots:
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
+	virtual void sDispositionChanged();
 
 private slots:
 	void connectAll();

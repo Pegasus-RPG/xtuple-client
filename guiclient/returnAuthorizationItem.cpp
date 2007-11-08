@@ -441,7 +441,9 @@ void returnAuthorizationItem::sPopulateItemInfo()
 void returnAuthorizationItem::populate()
 {
   XSqlQuery raitem;
-  raitem.prepare("SELECT rahead_number, raitem.*,cohead_number,oc.coitem_linenumber, "
+  raitem.prepare("SELECT rahead_number, raitem.*, "
+	             "       och.cohead_number AS orig_number, oc.coitem_linenumber AS orig_linenumber, "
+ 				 "       nch.cohead_number AS new_number, nc.coitem_linenumber AS new_linenumber, "
 	             "       COALESCE(raitem_orig_coitem_id,-1) AS ra_coitem_id, oc.coitem_price, "
 				 "       formatQty(oc.coitem_qtyshipped) AS qtysold,"   
                  "       formatQty(raitem_qtyauthorized) AS qtyauth,"
@@ -451,8 +453,9 @@ void returnAuthorizationItem::populate()
 		         "       rahead_curr_id AS taxcurr "
                  "FROM raitem "
 				 "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
-				 "  LEFT OUTER JOIN cohead ON (coitem_cohead_id=cohead_id) "
-				 "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id),"
+				 "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
+				 "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
+				 "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id),"
 				 "  rahead "
                  "WHERE ((raitem_rahead_id=rahead_id)"
 		 "  AND  (raitem_id=:raitem_id));" );
@@ -461,10 +464,20 @@ void returnAuthorizationItem::populate()
   if (raitem.first())
   {
     _authNumber->setText(raitem.value("rahead_number").toString());
-	if (raitem.value("cohead_number").toInt() > 0)
+	if (raitem.value("orig_number").toInt() > 0)
 	{
-      _origSoNumber->setText(raitem.value("cohead_number").toString());
-	  _origSoLineNumber->setText(raitem.value("coitem_linenumber").toString());
+      _origSoNumber->setText(raitem.value("orig_number").toString());
+	  _origSoLineNumber->setText(raitem.value("orig_linenumber").toString());
+	}
+	else
+	{
+	  _origSoNumberLit->hide();
+	  _origSoLineNumberLit->hide();
+	}
+	if (raitem.value("new_number").toInt() > 0)
+	{
+      _newSoNumber->setText(raitem.value("new_number").toString());
+	  _newSoLineNumber->setText(raitem.value("new_linenumber").toString());
 	}
 	else
 	{
@@ -538,6 +551,7 @@ void returnAuthorizationItem::populate()
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
+  sDispositionChanged();
   sPopulateItemInfo();
   sPriceGroup();
   sQtyUOMChanged();
@@ -857,4 +871,21 @@ void returnAuthorizationItem::connectAll()
   connect(_taxType,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTaxCode()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
+}
+
+void returnAuthorizationItem::sDispositionChanged()
+{
+  if (_disposition->currentIndex() >= 2)
+  {
+    _netUnitPrice->setLocalValue(0);
+	_netUnitPrice->setEnabled(FALSE);
+	_discountFromSale->setEnabled(FALSE);
+  }
+  else
+  {
+    _netUnitPrice->setLocalValue(_salePrice->localValue());
+	_netUnitPrice->setEnabled(TRUE);
+	_discountFromSale->setEnabled(TRUE);
+  }
 }
