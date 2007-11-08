@@ -64,6 +64,7 @@
 
 #include "priceList.h"
 #include "taxDetail.h"
+#include "storedProcErrorLookup.h"
 
 returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
@@ -86,11 +87,13 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _qtyinvuomratio = 1.0;
   _priceinvuomratio = 1.0;
   _invuomid = -1;
+  _orderId = -1;
 
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
   _taxType->setEnabled(_privleges->check("OverrideTax"));
   _taxCode->setEnabled(_privleges->check("OverrideTax"));
+  _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -199,6 +202,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
+      connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
 
 	  _origSoNumber->hide();
 	  _origSoNumberLit->hide();
@@ -222,6 +226,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
+      connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
  
       _save->setFocus();
     }
@@ -281,13 +286,15 @@ void returnAuthorizationItem::sSave()
                "  raitem_qty_uom_id, raitem_qty_invuomratio,"
                "  raitem_price_uom_id, raitem_price_invuomratio,"
                "  raitem_unitprice, raitem_tax_id,"
-               "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id) "
+               "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id "
+			   "  raitem_scheddate) "
 			   "SELECT :raitem_id, :rahead_id, :raitem_linenumber, itemsite_id,"
 			   "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
                "       :raitem_unitprice, :raitem_tax_id,"
 			   "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id "
+			   "       :raitem_scheddate "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -304,7 +311,8 @@ void returnAuthorizationItem::sSave()
     	       "    raitem_tax_id=:raitem_tax_id,"
 	           "    raitem_notes=:raitem_notes,"
                "    raitem_rsncode_id=:raitem_rsncode_id, "
-			   "    raitem_cos_accnt_id=:raitem_cos_accnt_id "
+			   "    raitem_cos_accnt_id=:raitem_cos_accnt_id, "
+			   "    raitem_scheddate=:raitem_scheddate "
                "WHERE (raitem_id=:raitem_id);" );
 
   q.bindValue(":raitem_id", _raitemid);
@@ -326,6 +334,7 @@ void returnAuthorizationItem::sSave()
   q.bindValue(":warehous_id", _warehouse->id());
   if (_altcosAccntid->id() != -1)
     q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
+  q.bindValue(":raitem_scheddate", _scheduledDate->date());
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -458,7 +467,7 @@ void returnAuthorizationItem::populate()
 				 "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id),"
 				 "  rahead "
                  "WHERE ((raitem_rahead_id=rahead_id)"
-		 "  AND  (raitem_id=:raitem_id));" );
+		         " AND  (raitem_id=:raitem_id));" );
   raitem.bindValue(":raitem_id", _raitemid);
   raitem.exec();
   if (raitem.first())
@@ -518,6 +527,7 @@ void returnAuthorizationItem::populate()
     else if (raitem.value("raitem_disposition").toString() == "S")
 	  _disposition->setCurrentItem(4);
     _altcosAccntid->setId(raitem.value("raitem_cos_accnt_id").toInt());
+	_scheduledDate->setDate(raitem.value("raitem_scheddate").toDate());
 
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
@@ -529,7 +539,6 @@ void returnAuthorizationItem::populate()
       _qtyUOM->setEnabled(FALSE);
 	  _pricingUOM->setEnabled(FALSE);
       _priceinvuomratio = raitem.value("coitem_price_invuomratio").toDouble();
-   //   _ratio->setText(formatUOMRatio(_priceinvuomratio));
       _salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
 	}
 	else
@@ -545,6 +554,7 @@ void returnAuthorizationItem::populate()
 	  _salePrice->hide();
 	  _salePriceLit->hide();
 	}
+	sDetermineAvailability();
   }
   else if (raitem.lastError().type() != QSqlError::None)
   {
@@ -865,6 +875,7 @@ void returnAuthorizationItem::connectAll()
   connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
   connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_qtyAuth,	  SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
+  connect(_qtyAuth,   SIGNAL(textChanged(const QString&)), this, SLOT(sDispositionChanged()));
   connect(_save,	  SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_taxCode,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
@@ -872,6 +883,9 @@ void returnAuthorizationItem::connectAll()
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
+  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
+  connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
+  connect(_qtyAuth, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
 }
 
 void returnAuthorizationItem::sDispositionChanged()
@@ -881,11 +895,208 @@ void returnAuthorizationItem::sDispositionChanged()
     _netUnitPrice->setLocalValue(0);
 	_netUnitPrice->setEnabled(FALSE);
 	_discountFromSale->setEnabled(FALSE);
+    _tab->setTabEnabled(0,(_qtyAuth->toDouble() > 0));
+	_scheduledDate->setEnabled(TRUE);
   }
   else
   {
     _netUnitPrice->setLocalValue(_salePrice->localValue());
 	_netUnitPrice->setEnabled(TRUE);
 	_discountFromSale->setEnabled(TRUE);
+    _tab->setTabEnabled(0,FALSE);
+	_scheduledDate->clear();
+	_scheduledDate->setEnabled(FALSE);
+  }
+}
+
+void returnAuthorizationItem::sHandleWo(bool pCreate)
+{
+  if (pCreate)
+  {
+    if (_orderId == -1)
+      sPopulateOrderInfo();
+  }
+
+  else
+  {
+    if (_orderId != -1)
+    {
+      XSqlQuery query;
+
+      if (_item->itemType() == "M")
+      {
+        if (QMessageBox::question(this, tr("Delete Work Order"),
+                                  tr("<p>You are requesting to delete the Work "
+				     "Order created for the Sales Order Item linked to this Return."
+				     "Are you sure you want to do this?"),
+				  QMessageBox::Yes | QMessageBox::Default,
+				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+        {
+          query.prepare("SELECT deleteWo(:wo_id, TRUE) AS result;");
+          query.bindValue(":wo_id", _orderId);
+          query.exec();
+	  if (query.first())
+	  {
+	    int result = query.value("result").toInt();
+	    if (result < 0)
+	    {
+	      systemError(this, storedProcErrorLookup("deleteWo", result),
+			  __FILE__, __LINE__);
+	      _createOrder->setChecked(true); // if (pCreate) => won't recurse
+	      return;
+	    }
+	  }
+	  else if (query.lastError().type() != QSqlError::NoError)
+	  {
+	    systemError(this, query.lastError().databaseText(),
+			__FILE__, __LINE__);
+	    _createOrder->setChecked(true); // if (pCreate) => won't recurse
+	    return;
+	  }
+
+          omfgThis->sWorkOrdersUpdated(-1, TRUE);
+
+          _supplyWarehouse->clear();
+          _supplyWarehouse->findItemsites(_item->id());
+          _supplyWarehouse->setId(_warehouse->id());
+        }
+      }
+      else if (_item->itemType() == "P")
+      {
+        if (QMessageBox::question(this, tr("Delete Purchase Request"),
+				  tr("<p>You are requesting to delete the "
+				     "Purchase Request created for the Sales "
+				     "Order Item linked to this return. Are you sure you want to do "
+				     "this?"),
+				  QMessageBox::Yes | QMessageBox::Default,
+				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
+        {
+          query.prepare("SELECT deletePr(:pr_id) AS result;");
+          query.bindValue(":pr_id", _orderId);
+          query.exec();
+	  if (q.first())
+	  {
+	    bool result = q.value("result").toBool();
+	    if (! result)
+	    {
+	      systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
+	      return;
+	    }
+	  }
+	  else
+	  if (query.lastError().type() != QSqlError::None)
+	  {
+	    systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+	    return;
+	  }
+        }
+        else
+        {
+          _createOrder->setChecked(TRUE);
+          return;
+        }
+      }
+    }
+
+    _orderId = -1;
+    _orderQty->clear();
+    _orderDueDate->clear();
+    _orderStatus->clear();
+
+    _createOrder->setChecked(FALSE);
+  }
+}
+
+void returnAuthorizationItem::sPopulateOrderInfo()
+{
+  if (_createOrder->isChecked())
+  {
+    _orderDueDate->setDate(_scheduledDate->date());
+
+    if (_createOrder->isChecked())
+    {
+      XSqlQuery qty;
+      qty.prepare( "SELECT validateOrderQty(itemsite_id, :qty, TRUE) AS qty "
+                   "FROM itemsite "
+                   "WHERE ((itemsite_item_id=:item_id)"
+                   " AND (itemsite_warehous_id=:warehous_id));" );
+      qty.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
+      qty.bindValue(":item_id", _item->id());
+      qty.bindValue(":warehous_id", (_item->itemType() == "M" ? _supplyWarehouse->id() : _warehouse->id()));
+      qty.exec();
+      if (qty.first())
+        _orderQty->setText(qty.value("qty").toString());
+
+      else if (qty.lastError().type() != QSqlError::None)
+      {
+	    systemError(this, qty.lastError().databaseText(), __FILE__, __LINE__);
+	    return;
+      }
+    }
+  }
+}
+
+void returnAuthorizationItem::sDetermineAvailability()
+{
+  if(  (_item->id()==_availabilityLastItemid)
+    && (_warehouse->id()==_availabilityLastWarehousid)
+    && (_scheduledDate->date()==_availabilityLastSchedDate)
+    && (_showAvailability->isChecked()==_availabilityLastShow)
+    && ((_qtyAuth->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered) )
+    return;
+
+  _availabilityLastItemid = _item->id();
+  _availabilityLastWarehousid = _warehouse->id();
+  _availabilityLastSchedDate = _scheduledDate->date();
+  _availabilityLastShow = _showAvailability->isChecked();
+  _availabilityQtyOrdered = (_qtyAuth->toDouble() * _qtyinvuomratio);
+
+  if ((_item->isValid()) && (_scheduledDate->isValid()) && (_showAvailability->isChecked()) )
+  {
+    XSqlQuery availability;
+    availability.prepare( "SELECT itemsite_id,"
+                          "       formatQty(qoh) AS f_qoh,"
+                          "       formatQty(allocated) AS f_allocated,"
+                          "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
+                          "       formatQty(ordered) AS f_ordered,"
+                          "       (qoh - allocated + ordered) AS available,"
+                          "       formatQty(qoh - allocated + ordered) AS f_available "
+                          "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
+                          "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
+                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered "
+                          "       FROM itemsite, item "
+                          "       WHERE ((itemsite_item_id=item_id)"
+                          "        AND (item_id=:item_id)"
+                          "        AND (itemsite_warehous_id=:warehous_id)) ) AS data;" );
+    availability.bindValue(":date", _scheduledDate->date());
+    availability.bindValue(":item_id", _item->id());
+    availability.bindValue(":warehous_id", _warehouse->id());
+    availability.exec();
+    if (availability.first())
+    {
+      _onHand->setText(availability.value("f_qoh").toString());
+      _allocated->setText(availability.value("f_allocated").toString());
+      _unallocated->setText(availability.value("f_unallocated").toString());
+      _onOrder->setText(availability.value("f_ordered").toString());
+      _available->setText(availability.value("f_available").toString());
+
+      if (availability.value("available").toDouble() < _availabilityQtyOrdered)
+        _available->setPaletteForegroundColor(QColor("red"));
+      else
+        _available->setPaletteForegroundColor(QColor("black"));
+    }
+    else if (availability.lastError().type() != QSqlError::None)
+    {
+      systemError(this, availability.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else
+  {
+    _onHand->clear();
+    _allocated->clear();
+    _unallocated->clear();
+    _onOrder->clear();
+    _available->clear();
   }
 }

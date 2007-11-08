@@ -279,14 +279,6 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     else if (metric == "C")
       _creditBy->setCurrentItem(3);
 
- 	if (_metrics->boolean("DefaultRaItemsiteLeadtime"))
-	  _useItemsite->setChecked(true);
- 	else
-	{
-	  _useDays->setChecked(true);
-	  _days->setValue(_metrics->value("DefaultRaLeadtime").toInt()); 
-	}
-
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
 
   }
@@ -403,8 +395,6 @@ void configureSO::sSave()
 	else
 	  _metrics->set("DefaultRaTiming", QString("R"));
     _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentItem()]));
-    _metrics->set("DefaultRaItemsiteLeadtime", _useItemsite->isChecked());
-    _metrics->set("DefaultRaLeadtime", _days->value());
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
     _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentItem()]));
 

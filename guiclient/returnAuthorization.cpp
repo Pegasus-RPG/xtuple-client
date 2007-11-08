@@ -249,7 +249,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _authNumber->setEnabled(FALSE);
-
+      sDispositionChanged();
       _save->setFocus();
     }
     else if (param.toString() == "view")

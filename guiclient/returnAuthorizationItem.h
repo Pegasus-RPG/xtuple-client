@@ -88,6 +88,9 @@ public slots:
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
 	virtual void sDispositionChanged();
+    virtual void sDetermineAvailability();
+    virtual void sHandleWo( bool pCreate );
+    virtual void sPopulateOrderInfo();
 
 private slots:
 	void connectAll();
@@ -117,6 +120,13 @@ private:
     double _qtyinvuomratio;
     double _priceinvuomratio;
 	double _qtySoldCache;
+	int _orderId;
+
+    int _availabilityLastItemid;
+    int _availabilityLastWarehousid;
+    QDate _availabilityLastSchedDate;
+    bool _availabilityLastShow;
+    double _availabilityQtyOrdered;
 
 };
 
