@@ -408,7 +408,6 @@ void BOM::sFillList(int pItemid, bool)
     else
     {
       _documentNum->clear();
-      _revision->clear();
       _revisionDate->clear();
       _batchSize->clear();
     }
