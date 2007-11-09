@@ -230,6 +230,9 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _shippingWhseLit->hide();
     _warehouse->hide();
   }
+
+  if (!_metrics->boolean("EnableReturnAuth"))
+    _holdType->removeItem(4);
 }
 
 salesOrder::~salesOrder()
@@ -303,14 +306,6 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
         _salesOrderInformation->removePage(_salesOrderInformation->page(5));
       }
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
-
-	  if (_metrics->boolean("EnableReturnAuth"))
-	  {
-	  }
-	  else
-	  {
-	    _holdType->removeItem(4);
-	  }
     }
     else if (param.toString() == "editQuote")
     {
@@ -1967,6 +1962,8 @@ void salesOrder::populate()
         _holdType->setCurrentItem(2);
       else if (so.value("cohead_holdtype").toString() == "P")
         _holdType->setCurrentItem(3);
+      else if (so.value("cohead_holdtype").toString() == "R")
+        _holdType->setCurrentItem(4);
 
       _miscCharge->setLocalValue(so.value("cohead_misc").toDouble());
       _miscChargeDescription->setText(so.value("cohead_misc_descrip"));
@@ -1980,6 +1977,22 @@ void salesOrder::populate()
       _shipComplete->setChecked(so.value("cohead_shipcomplete").toBool());
 
       _comments->setId(_soheadid);
+
+	  //Check for link to Return Authorization
+	  if (_metrics->boolean("EnableReturnAuth"))
+	  {
+	    q.prepare("SELECT rahead_number "
+			      "FROM rahead "
+				  "WHERE (rahead_new_cohead_id=:sohead_id);");
+		q.bindValue(":sohead_id",_soheadid);
+		q.exec();
+		if (q.first())
+		{
+			_fromQuoteLit->setText(tr("From Return Authorization:"));
+			_fromQuote->setText(q.value("rahead_number").toString());
+		}
+	  }
+
       sFillItemList();
     }
     else if (so.lastError().type() != QSqlError::None)
@@ -2548,6 +2561,7 @@ void salesOrder::clear()
   _CCAmount->clear();
   _CCCVV->clear();
   _project->setId(-1);
+  _fromQuoteLit->setText(tr("From Quote:"));
 
   _fromQuote->setText(tr("No"));
 
