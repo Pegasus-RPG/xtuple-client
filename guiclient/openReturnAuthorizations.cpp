@@ -230,15 +230,15 @@ void openReturnAuthorizations::sFillList()
                "       rahead_billtoname, "
 			   "       CASE "
 			   "       WHEN rahead_disposition = 'C' THEN "
-			   "         'Credit' "
+			   "         :credit "
 			   "       WHEN rahead_disposition = 'R' THEN "
-			   "         'Return' "
+			   "         :return "
 			   "       WHEN rahead_disposition = 'P' THEN "
-			   "         'Replace' "
+			   "         :replace "
 			   "       WHEN rahead_disposition = 'V' THEN "
-			   "         'Service' "
+			   "         :service "
 			   "       WHEN rahead_disposition = 'M' THEN "
-			   "         'Mixed' "
+			   "         :mixed "
 			   "       END AS disposition, "
                "       formatDate(rahead_authdate) AS f_authorized,"
                "       formatDate(rahead_expiredate) AS f_expires "
@@ -258,6 +258,11 @@ void openReturnAuthorizations::sFillList()
   q.prepare(sql);
   _warehouse->bindValue(q);
   q.bindValue(":undefined", tr("Undefined"));
+  q.bindValue(":credit", tr("Credit"));
+  q.bindValue(":return", tr("Return"));
+  q.bindValue(":replace", tr("Replace"));
+  q.bindValue(":service", tr("Service"));
+  q.bindValue(":ship", tr("Ship"));
   q.exec();
 
   _ra->populate(q);

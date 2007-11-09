@@ -208,6 +208,10 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 	  _origSoNumberLit->hide();
 	  _origSoLineNumber->hide();
 	  _origSoLineNumberLit->hide();
+	  _newSoNumber->hide();
+	  _newSoNumberLit->hide();
+	  _newSoLineNumber->hide();
+	  _newSoLineNumberLit->hide();
 	  _qtySold->hide();
 	  _qtySoldLit->hide();
       _discountFromSalePrcntLit->hide();
@@ -340,6 +344,19 @@ void returnAuthorizationItem::sSave()
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
+  }
+  
+  //If this save has resulted in a link to an shipping S/O, we need to signal that
+  if (_disposition->currentItem() > 1)
+  {
+    q.prepare("SELECT rahead_new_cohead_id "
+		      "FROM rahead "
+			  "WHERE ((rahead_id=:rahead_id) "
+			  "AND (rahead_new_cohead_id IS NOT NULL));");
+	q.bindValue(":rahead_id", _raheadid);
+	q.exec();
+	if (q.first())
+      omfgThis->sSalesOrdersUpdated(q.value("rahead_new_cohead_id").toInt());
   }
 
   done(_raitemid); 
@@ -490,8 +507,8 @@ void returnAuthorizationItem::populate()
 	}
 	else
 	{
-	  _origSoNumberLit->hide();
-	  _origSoLineNumberLit->hide();
+	  _newSoNumberLit->hide();
+	  _newSoLineNumberLit->hide();
 	}
 	_salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());

@@ -96,6 +96,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
   connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
   connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
+  connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
 /*  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
@@ -138,6 +139,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Refunded"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft   );
+  _raitem->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignLeft   );
 
   _authorizeLine->hide();
   _clearAuthorization->hide();
@@ -269,6 +271,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _creditBy->setEnabled(FALSE);
 
       _origso->setEnabled(FALSE);
+	  _newso->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
       _project->setEnabled(FALSE);
 
@@ -825,7 +828,7 @@ void returnAuthorization::sEdit()
   {
     ParameterList params;
     params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
-
+    params.append("rahead_id", _raheadid);
 
     if (_mode == cView)
       params.append("mode", "view");
@@ -872,11 +875,11 @@ void returnAuthorization::sFillList()
   q.prepare( "SELECT raitem_id, raitem_linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
 			 "       raitem_status, "
-			 "       CASE WHEN (raitem_disposition='C') THEN 'Credit' "
-			 "            WHEN (raitem_disposition='R') THEN 'Return' "
-			 "            WHEN (raitem_disposition='P') THEN 'Replace' "
-			 "            WHEN (raitem_disposition='V') THEN 'Service' "
-			 "            WHEN (raitem_disposition='S') THEN 'Ship' "
+			 "       CASE WHEN (raitem_disposition='C') THEN :credit "
+			 "            WHEN (raitem_disposition='R') THEN :return "
+			 "            WHEN (raitem_disposition='P') THEN :replace "
+			 "            WHEN (raitem_disposition='V') THEN :service "
+			 "            WHEN (raitem_disposition='S') THEN :ship "
 			 "            ELSE 'Error' END AS disposition, "
 			 "       formatboolyn(raitem_warranty),"
 			 "       formatQty(COALESCE(oc.coitem_qtyshipped,0)),"
@@ -886,7 +889,12 @@ void returnAuthorization::sFillList()
              "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
 			 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded),"
 			 "       och.cohead_number::text || '-' || oc.coitem_linenumber::text, "
-			 "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text "
+			 "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text, "
+			 "       CASE WHEN raitem_disposition IN ('P','V','S') THEN "
+			 "         formatdate(raitem_scheddate) "
+			 "       ELSE "
+			 "         'N/A' "
+			 "       END "
              "FROM raitem "
 			 " LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
  			 " LEFT OUTER JOIN cohead och ON (och.cohead_id=oc.coitem_cohead_id) "
@@ -899,6 +907,11 @@ void returnAuthorization::sFillList()
              " AND (raitem_rahead_id=:rahead_id) ) "
              "ORDER BY raitem_linenumber;" );
   q.bindValue(":rahead_id", _raheadid);
+  q.bindValue(":credit", tr("Credit"));
+  q.bindValue(":return", tr("Return"));
+  q.bindValue(":replace", tr("Replace"));
+  q.bindValue(":service", tr("Service"));
+  q.bindValue(":ship", tr("Ship"));
   q.exec();
   if ((q.first()) && (_mode == cEdit))
   {
@@ -962,9 +975,6 @@ void returnAuthorization::sFillList()
 	_billToAddr->setEnabled(true);
   }
   _comments->refresh();
-  
-  if (_newso->isValid())
-    omfgThis->sSalesOrdersUpdated(_newso->id());
 }
 
 void returnAuthorization::sCalculateSubtotal()
@@ -1373,7 +1383,11 @@ void returnAuthorization::sAuthorizeLine()
            return;
         }
   }
-  sFillList();
+
+  if (_newso->isValid())
+    omfgThis->sSalesOrdersUpdated(_newso->id());
+  else
+    sFillList();
 }
 void returnAuthorization::sClearAuthorization()
 {
@@ -1393,7 +1407,11 @@ void returnAuthorization::sClearAuthorization()
            return;
         }
   }
-  sFillList();
+
+  if (_newso->isValid())
+    omfgThis->sSalesOrdersUpdated(_newso->id());
+  else
+    sFillList();
 }
 
 void returnAuthorization::sAuthorizeAll()
@@ -1413,22 +1431,16 @@ void returnAuthorization::sAuthorizeAll()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  sFillList();
+
+  if (_newso->isValid())
+    omfgThis->sSalesOrdersUpdated(_newso->id());
+  else
+    sFillList();
 }
-/*
-void returnAuthorization::sCustChanged()
+
+void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
 {
-  if (_mode == cEdit)
-  {
-    _new->setEnabled(_cust->isValid() || _disposition->currentIndex() < 2);
-    if (_cust->isValid())
-      _creditBy->setEnabled(TRUE);
-	else
-	{
-	  _creditBy->setCurrentIndex(0);
-	  _creditBy->setEnabled(FALSE);
-	}
-  }
+  if ((pSoheadid == _origso->id()) || (pSoheadid == _newso->id()))
+    sFillList();
 }
-*/
 
