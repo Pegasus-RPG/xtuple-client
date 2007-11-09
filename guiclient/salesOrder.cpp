@@ -303,6 +303,14 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
         _salesOrderInformation->removePage(_salesOrderInformation->page(5));
       }
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
+
+	  if (_metrics->boolean("EnableReturnAuth"))
+	  {
+	  }
+	  else
+	  {
+	    _holdType->removeItem(4);
+	  }
     }
     else if (param.toString() == "editQuote")
     {
@@ -922,6 +930,8 @@ bool salesOrder::save(bool partial)
     q.bindValue(":holdtype", "S");
   else if (_holdType->currentItem() == 3)
     q.bindValue(":holdtype", "P");
+  else if (_holdType->currentItem() == 4)
+    q.bindValue(":holdtype", "R");
 
   if (_origin->currentItem() == 0)
     q.bindValue(":origin", "C");

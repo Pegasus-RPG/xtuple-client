@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>592</width>
-    <height>585</height>
+    <height>621</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -33,21 +33,6 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" colspan="2" >
     <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>6</number>
-     </property>
-     <property name="leftMargin" >
-      <number>0</number>
-     </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
      <item>
       <widget class="QLabel" name="_orderNumberLit" >
        <property name="text" >
@@ -95,9 +80,67 @@
        <property name="orientation" >
         <enum>Qt::Horizontal</enum>
        </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
        <property name="sizeHint" >
         <size>
-         <width>40</width>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="_authNumberLit" >
+       <property name="text" >
+        <string>Return Auth. #:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="_authNumber" />
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeType" >
+        <enum>QSizePolicy::Fixed</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="QLabel" name="_authLineNumberLit" >
+       <property name="text" >
+        <string>Line #:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QLabel" name="_authLineNumber" />
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>61</width>
          <height>20</height>
         </size>
        </property>
@@ -736,34 +779,6 @@
           <bool>true</bool>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>3</number>
-          </property>
-          <property name="topMargin" >
-           <number>3</number>
-          </property>
-          <property name="rightMargin" >
-           <number>3</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>3</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>6</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>6</number>
-          </property>
-          <item row="3" column="0" >
-           <widget class="QLabel" name="_onOrderLit" >
-            <property name="text" >
-             <string>On Order:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="0" >
            <widget class="QLabel" name="_onHandLit" >
             <property name="text" >
@@ -774,31 +789,8 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="0" >
-           <widget class="QLabel" name="_availableLit" >
-            <property name="text" >
-             <string>Available:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="1" >
-           <widget class="QLabel" name="_unallocated" >
-            <property name="minimumSize" >
-             <size>
-              <width>80</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1" >
-           <widget class="QLabel" name="_allocated" >
+          <item row="0" column="1" >
+           <widget class="QLabel" name="_onHand" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -820,44 +812,8 @@
             </property>
            </widget>
           </item>
-          <item row="3" column="1" >
-           <widget class="QLabel" name="_onOrder" >
-            <property name="minimumSize" >
-             <size>
-              <width>80</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="_unallocatedLit" >
-            <property name="text" >
-             <string>Unallocated:</string>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1" >
-           <widget class="QLabel" name="_available" >
-            <property name="minimumSize" >
-             <size>
-              <width>80</width>
-              <height>0</height>
-             </size>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="1" >
-           <widget class="QLabel" name="_onHand" >
+          <item row="1" column="1" >
+           <widget class="QLabel" name="_allocated" >
             <property name="minimumSize" >
              <size>
               <width>80</width>
@@ -882,7 +838,99 @@
             </property>
            </spacer>
           </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_unallocatedLit" >
+            <property name="text" >
+             <string>Unallocated:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QLabel" name="_unallocated" >
+            <property name="minimumSize" >
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QLabel" name="_onOrderLit" >
+            <property name="text" >
+             <string>On Order:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QLabel" name="_onOrder" >
+            <property name="minimumSize" >
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QLabel" name="_availableLit" >
+            <property name="text" >
+             <string>Available:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QLabel" name="_available" >
+            <property name="minimumSize" >
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" >
+           <widget class="QLabel" name="_leadtimeLit" >
+            <property name="text" >
+             <string>Leadtime:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
           <item row="5" column="1" >
+           <widget class="QLabel" name="_leadtime" >
+            <property name="minimumSize" >
+             <size>
+              <width>80</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" >
            <spacer>
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
@@ -890,7 +938,7 @@
             <property name="sizeHint" >
              <size>
               <width>20</width>
-              <height>0</height>
+              <height>40</height>
              </size>
             </property>
            </spacer>
@@ -907,37 +955,6 @@
           <bool>true</bool>
          </property>
          <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>3</number>
-          </property>
-          <property name="topMargin" >
-           <number>3</number>
-          </property>
-          <property name="rightMargin" >
-           <number>3</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>3</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>6</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>6</number>
-          </property>
-          <item row="2" column="2" >
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
           <item row="0" column="0" >
            <widget class="QLabel" name="_orderQtyLit" >
             <property name="text" >
@@ -951,46 +968,19 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="1" >
-           <widget class="QLabel" name="_orderStatus" >
-            <property name="sizePolicy" >
-             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="alignment" >
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
-           <widget class="QLabel" name="_overridePoPriceLit" >
-            <property name="text" >
-             <string>Override P/O Price:</string>
-            </property>
-            <property name="buddy" >
-             <cstring>_overridePoPrice</cstring>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1" >
-           <widget class="WComboBox" name="_supplyWarehouse" >
+          <item row="0" column="1" >
+           <widget class="XLineEdit" name="_orderQty" >
             <property name="enabled" >
              <bool>false</bool>
             </property>
-            <property name="type" >
-             <enum>WComboBox::Supply</enum>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
-           <widget class="QLabel" name="_orderStatusLit" >
-            <property name="text" >
-             <string>W/O Status:</string>
+            <property name="maximumSize" >
+             <size>
+              <width>80</width>
+              <height>32767</height>
+             </size>
             </property>
             <property name="alignment" >
-             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             <set>Qt::AlignRight</set>
             </property>
            </widget>
           </item>
@@ -1014,6 +1004,42 @@
             </property>
            </widget>
           </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_orderStatusLit" >
+            <property name="text" >
+             <string>W/O Status:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QLabel" name="_orderStatus" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
           <item row="3" column="0" >
            <widget class="QLabel" name="_supplyWarehouseLit" >
             <property name="enabled" >
@@ -1030,19 +1056,23 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="1" >
-           <widget class="XLineEdit" name="_orderQty" >
+          <item row="3" column="1" >
+           <widget class="WComboBox" name="_supplyWarehouse" >
             <property name="enabled" >
              <bool>false</bool>
             </property>
-            <property name="maximumSize" >
-             <size>
-              <width>80</width>
-              <height>32767</height>
-             </size>
+            <property name="type" >
+             <enum>WComboBox::Supply</enum>
             </property>
-            <property name="alignment" >
-             <set>Qt::AlignRight</set>
+           </widget>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QLabel" name="_overridePoPriceLit" >
+            <property name="text" >
+             <string>Override P/O Price:</string>
+            </property>
+            <property name="buddy" >
+             <cstring>_overridePoPrice</cstring>
             </property>
            </widget>
           </item>
@@ -1472,7 +1502,7 @@
          <item>
           <widget class="GLCluster" name="_altCosAccnt" >
            <property name="enabled" >
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="focusPolicy" >
             <enum>Qt::StrongFocus</enum>

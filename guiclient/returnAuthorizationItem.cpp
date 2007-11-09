@@ -298,7 +298,7 @@ void returnAuthorizationItem::sSave()
                "       :price_uom_id, :price_invuomratio,"
                "       :raitem_unitprice, :raitem_tax_id,"
 			   "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id "
-			   "       :raitem_scheddate "
+			   "       :raitem_scheddate, :raitem_warranty "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -316,7 +316,8 @@ void returnAuthorizationItem::sSave()
 	           "    raitem_notes=:raitem_notes,"
                "    raitem_rsncode_id=:raitem_rsncode_id, "
 			   "    raitem_cos_accnt_id=:raitem_cos_accnt_id, "
-			   "    raitem_scheddate=:raitem_scheddate "
+			   "    raitem_scheddate=:raitem_scheddate, "
+			   "    raitem_warranty=:raitem_warranty "
                "WHERE (raitem_id=:raitem_id);" );
 
   q.bindValue(":raitem_id", _raitemid);
@@ -339,6 +340,7 @@ void returnAuthorizationItem::sSave()
   if (_altcosAccntid->id() != -1)
     q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
   q.bindValue(":raitem_scheddate", _scheduledDate->date());
+  q.bindValue(":raitem_warranty",QVariant(_warranty->isChecked(), 0));
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -418,50 +420,6 @@ void returnAuthorizationItem::sPopulateItemInfo()
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
-
-  /*
-  if (_coitem != -1)
-  {
-    XSqlQuery raitem;
-    raitem.prepare( "SELECT coitem_warehous_id,"
-                    "       coietm_qty_uom_id, coitem_qty_invuomratio,"
-                    "       coitem_price_uom_id, coitem_price_invuomratio,"
-                    "       coitem_shipped * coitem_qty_invuomratio AS f_sold,"
-                    "       currToCurr(invchead_curr_id, :curr_id, "
-		            "                  coitem_price / coitem_price_invuomratio, invchead_invcdate) AS coitem_price_local "
-                    "FROM invchead, coitem "
-                    "WHERE ( (coitem_invchead_id=invchead_id)"
-                    " AND (invchead_invcnumber=:invoiceNumber)"
-                    " AND (coitem_item_id=:item_id) ) "
-                    "LIMIT 1;" );
-    raitem.bindValue(":coitem", _coitemid);
-    raitem.bindValue(":item_id", _item->id());
-    raitem.bindValue(":curr_id", _netUnitPrice->id());
-    raitem.exec();
-    if (raitem.first())
-    {
-      _qtyUOM->setId(raitem.value("coitem_qty_uom_id").toInt());
-	  _qtyUOM->setEnabled(FALSE);
-      _pricingUOM->setId(raitem.value("coitem_price_uom_id").toInt());
-	  _pricingUOM->setEnabled(FALSE);
-      _priceinvuomratio = raitem.value("coitem_price_invuomratio").toDouble();
-    //  _ratio->setText(formatUOMRatio(_priceinvuomratio));
-      _salePrice->setLocalValue(raitem.value("coitem_price_local").toDouble() * _priceinvuomratio);
-
-      if (_mode == cNew)
-        _netUnitPrice->setLocalValue(raitem.value("coitem_price_local").toDouble() * _priceinvuomratio);
-
-      _warehouse->setId(raitem.value("coitem_warehous_id").toInt());
-      _qtySoldCache = raitem.value("f_billed").toDouble();
-      _qtySold->setText(formatQty(raitem.value("f_sold").toDouble() / _qtyinvuomratio));
-    }
-    else if (raitem.lastError().type() != QSqlError::None)
-    {
-      systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
-      _salePrice->clear();
-      return;
-    } 
-  }*/
 }
 
 void returnAuthorizationItem::populate()
@@ -490,16 +448,7 @@ void returnAuthorizationItem::populate()
   if (raitem.first())
   {
     _authNumber->setText(raitem.value("rahead_number").toString());
-	if (raitem.value("orig_number").toInt() > 0)
-	{
-      _origSoNumber->setText(raitem.value("orig_number").toString());
-	  _origSoLineNumber->setText(raitem.value("orig_linenumber").toString());
-	}
-	else
-	{
-	  _origSoNumberLit->hide();
-	  _origSoLineNumberLit->hide();
-	}
+
 	if (raitem.value("new_number").toInt() > 0)
 	{
       _newSoNumber->setText(raitem.value("new_number").toString());
@@ -524,7 +473,6 @@ void returnAuthorizationItem::populate()
     _qtyShipped->setText(raitem.value("qtyshipd").toString());
     _notes->setText(raitem.value("raitem_notes").toString());
     _taxCode->setId(raitem.value("raitem_tax_id").toInt());
-    _taxType->setId(raitem.value("raitem_taxtype_id").toInt());
     _taxCache.setLinePct(raitem.value("raitem_tax_pcta").toDouble(),
 			 raitem.value("raitem_tax_pctb").toDouble(),
 			 raitem.value("raitem_tax_pctc").toDouble());
@@ -545,13 +493,14 @@ void returnAuthorizationItem::populate()
 	  _disposition->setCurrentItem(4);
     _altcosAccntid->setId(raitem.value("raitem_cos_accnt_id").toInt());
 	_scheduledDate->setDate(raitem.value("raitem_scheddate").toDate());
+	_warranty->setChecked(raitem.value("raitem_warranty").toBool());
 
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
 	if (_coitemid != -1)
 	{
-	  _origSoNumber->setText(raitem.value("cohead_number").toString());
-	  _origSoLineNumber->setText(raitem.value("coitem_linenumber").toString());
+      _origSoNumber->setText(raitem.value("orig_number").toString());
+	  _origSoLineNumber->setText(raitem.value("orig_linenumber").toString());
 	  _qtySold->setText(raitem.value("qtysold").toString());
       _qtyUOM->setEnabled(FALSE);
 	  _pricingUOM->setEnabled(FALSE);
@@ -584,7 +533,6 @@ void returnAuthorizationItem::populate()
   sQtyUOMChanged();
   sPriceUOMChanged();
   sCalculateDiscountPrcnt();
-  sLookupTaxCode();
   sLookupTax();
 }
 
@@ -1077,10 +1025,12 @@ void returnAuthorizationItem::sDetermineAvailability()
                           "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
                           "       formatQty(ordered) AS f_ordered,"
                           "       (qoh - allocated + ordered) AS available,"
-                          "       formatQty(qoh - allocated + ordered) AS f_available "
+                          "       formatQty(qoh - allocated + ordered) AS f_available, "
+						  "       itemsite_leadtime "
                           "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
                           "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
-                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered "
+                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered, "
+						  "              itemsite_leadtime "
                           "       FROM itemsite, item "
                           "       WHERE ((itemsite_item_id=item_id)"
                           "        AND (item_id=:item_id)"
@@ -1096,6 +1046,7 @@ void returnAuthorizationItem::sDetermineAvailability()
       _unallocated->setText(availability.value("f_unallocated").toString());
       _onOrder->setText(availability.value("f_ordered").toString());
       _available->setText(availability.value("f_available").toString());
+	  _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)
         _available->setPaletteForegroundColor(QColor("red"));
@@ -1115,5 +1066,6 @@ void returnAuthorizationItem::sDetermineAvailability()
     _unallocated->clear();
     _onOrder->clear();
     _available->clear();
+	_leadtime->clear();
   }
 }

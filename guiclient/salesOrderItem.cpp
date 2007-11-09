@@ -143,6 +143,11 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _priceRatio = 1.0;
   _invuomid = -1;
 
+  _authNumber->hide();
+  _authNumberLit->hide();
+  _authLineNumber->hide();
+  _authLineNumberLit->hide();
+
   _availabilityLastItemid = -1;
   _availabilityLastWarehousid = -1;
   _availabilityLastSchedDate = QDate();
@@ -345,6 +350,8 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _warehouse->setEnabled(true);
       _item->setFocus();
       _orderId = -1;
+	  _warranty->hide();
+      _tabs->removePage(_tabs->page(6));
 
       _item->addExtraClause( QString("(NOT item_exclusive OR customerCanPurchase(item_id, %1, %2))").arg(_custid).arg(_shiptoid) );
 
@@ -406,6 +413,8 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _subItem->hide();
       _subItemList->hide();
       _qtyOrdered->setFocus();
+	  _warranty->hide();
+      _tabs->removePage(_tabs->page(6));
 
       connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sCalculateExtendedPrice()));
       connect(_netUnitPrice, SIGNAL(lostFocus()), this, SLOT(sCalculateDiscountPrcnt()));
@@ -440,6 +449,8 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       _sub->hide();
       _subItem->hide();
       _comments->setType(Comments::QuoteItem);
+	  _warranty->hide();
+      _tabs->removePage(_tabs->page(6));
     }
   }
 
@@ -522,6 +533,31 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
+	  
+	//See if this is linked to a Return Authorization and handle
+    if ((ISORDER(_mode)) && (_metrics->boolean("EnableReturnAuth")))
+	{
+      q.prepare("SELECT rahead_number,raitem_linenumber " 
+			    "FROM raitem,rahead "
+				"WHERE ((raitem_new_coitem_id=:coitem_id) "
+				"AND (rahead_id=raitem_rahead_id));");
+	  q.bindValue(":coitem_id",_soitemid);
+      q.exec();
+	  if (q.first())
+	  {
+        _authNumber->show();
+        _authNumberLit->show();
+        _authLineNumber->show();
+        _authLineNumberLit->show();
+		_authNumber->setText(q.value("rahead_number").toString());
+		_authLineNumber->setText(q.value("raitem_linenumber").toString());
+		_netUnitPrice->setEnabled(FALSE);
+		_qtyOrdered->setEnabled(FALSE);
+		_discountFromCust->setEnabled(FALSE);
+		_qtyUOM->setEnabled(FALSE);
+		_priceUOM->setEnabled(FALSE);
+	  }
+	}
   }
 
   param = pParams.value("item_id", &valid);
@@ -636,6 +672,7 @@ void salesOrderItem::clear()
   _unallocated->clear();
   _onOrder->clear();
   _available->clear();
+  _leadtime->clear();
   _itemchar->removeRows(0, _itemchar->rowCount());
   _notes->clear();
   _sub->setChecked(false);
@@ -731,7 +768,7 @@ void salesOrderItem::sSave()
                "  coitem_price, coitem_price_uom_id, coitem_price_invuomratio,"
                "  coitem_order_type, coitem_order_id,"
                "  coitem_custpn, coitem_memo, coitem_substitute_item_id,"
-	       "  coitem_prcost, coitem_tax_id ) "
+	           "  coitem_prcost, coitem_tax_id, coitem_cos_accnt_id, coitem_warranty ) "
                "SELECT :soitem_id, :soitem_sohead_id, :soitem_linenumber, itemsite_id,"
                "       'O', :soitem_scheddate, :soitem_promdate,"
                "       :soitem_qtyord, :qty_uom_id, :qty_invuomratio, 0, 0,"
@@ -739,7 +776,7 @@ void salesOrderItem::sSave()
                "       :soitem_price, :price_uom_id, :price_invuomratio,"
                "       '', -1,"
                "       :soitem_custpn, :soitem_memo, :soitem_substitute_item_id,"
-	       "       :soitem_prcost, :soitem_tax_id "
+			   "       :soitem_prcost, :soitem_tax_id, :soitem_cost_accnt_id, :soitem_warranty "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -764,6 +801,9 @@ void salesOrderItem::sSave()
     q.bindValue(":warehous_id", _warehouse->id());
     if (_taxcode->isValid())
       q.bindValue(":soitem_tax_id", _taxcode->id());
+	if (_altCosAccnt->isValid())
+	  q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
+	q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked(), 0));
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
@@ -781,7 +821,9 @@ void salesOrderItem::sSave()
                "    coitem_order_type=:soitem_order_type,"
                "    coitem_order_id=:soitem_order_id, coitem_substitute_item_id=:soitem_substitute_item_id,"
                "    coitem_prcost=:soitem_prcost,"
-               "    coitem_tax_id=:soitem_tax_id "
+               "    coitem_tax_id=:soitem_tax_id, "
+			   "    coitem_cos_accnt_id=:soitem_cos_accnt_id, "
+			   "    coitem_warranty=:soitem_warranty "
                "WHERE (coitem_id=:soitem_id);" );
     q.bindValue(":soitem_scheddate", _scheduledDate->date());
     q.bindValue(":soitem_promdate", promiseDate);
@@ -806,6 +848,10 @@ void salesOrderItem::sSave()
       q.bindValue(":soitem_substitute_item_id", _subItem->id());
     if (_taxcode->isValid())
       q.bindValue(":soitem_tax_id", _taxcode->id());
+	if (_altCosAccnt->isValid())
+	  q.bindValue(":soitem_cos_accnt_id", _altCosAccnt->id());
+	q.bindValue(":soitem_warranty",QVariant(_warranty->isChecked(), 0));
+
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
@@ -1502,10 +1548,12 @@ void salesOrderItem::sDetermineAvailability()
                           "       formatQty(noNeg(qoh - allocated)) AS f_unallocated,"
                           "       formatQty(ordered) AS f_ordered,"
                           "       (qoh - allocated + ordered) AS available,"
-                          "       formatQty(qoh - allocated + ordered) AS f_available "
+                          "       formatQty(qoh - allocated + ordered) AS f_available, "
+						  "       itemsite_leadtime "
                           "FROM ( SELECT itemsite_id, itemsite_qtyonhand AS qoh,"
                           "              qtyAllocated(itemsite_id, DATE(:date)) AS allocated,"
-                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered "
+                          "              qtyOrdered(itemsite_id, DATE(:date)) AS ordered, "
+						  "              itemsite_leadtime "
                           "       FROM itemsite, item "
                           "       WHERE ((itemsite_item_id=item_id)"
                           "        AND (item_id=:item_id)"
@@ -1521,6 +1569,7 @@ void salesOrderItem::sDetermineAvailability()
       _unallocated->setText(availability.value("f_unallocated").toString());
       _onOrder->setText(availability.value("f_ordered").toString());
       _available->setText(availability.value("f_available").toString());
+	  _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)
         _available->setPaletteForegroundColor(QColor("red"));
@@ -1716,6 +1765,7 @@ void salesOrderItem::sDetermineAvailability()
     _unallocated->clear();
     _onOrder->clear();
     _available->clear();
+	_leadtime->clear();
   }
 }
 
@@ -1949,7 +1999,8 @@ void salesOrderItem::populate()
 	"          FROM coship"
 	"         WHERE (coship_coitem_id=coitem_id)) AS coship_qty,"
 	"       coitem_tax_id,"
-	"       getItemTaxType(item_id, cohead_taxauth_id) AS coitem_taxtype_id "
+		"       getItemTaxType(item_id, cohead_taxauth_id) AS coitem_taxtype_id, "
+		"       coitem_cos_accnt_id, coitem_warranty "
 	"FROM coitem, warehous, itemsite, item, uom, cohead "
 	"WHERE ( (coitem_itemsite_id=itemsite_id)"
 	" AND (itemsite_warehous_id=warehous_id)"
@@ -2046,6 +2097,9 @@ void salesOrderItem::populate()
     _customerPN->setText(item.value("coitem_custpn").toString());
 
     _overridePoPrice->setLocalValue(item.value("coitem_prcost").toDouble());
+ 
+    _warranty->setChecked(item.value("coitem_warranty").toBool());
+	_altCosAccnt->setId(item.value("coitem_cos_accnt_id").toInt());
 
     sCalculateDiscountPrcnt();
     sLookupTax();
