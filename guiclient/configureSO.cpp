@@ -227,6 +227,8 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 	_nextRaNumber->setVisible(false);
 	_tab->removePage(_tab->page(3));
 	_enableReturns->setChecked(false);
+    _enableReservations->hide();
+    _enableReservations->setChecked(false);
   }
   else
   {
@@ -281,6 +283,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
 
+    _enableReservations->setChecked(_metrics->boolean("EnableSOReservations"));
   }
 }
 
@@ -324,6 +327,7 @@ void configureSO::sSave()
   _metrics->set("DefaultPrintSOOnSave", _printSO->isChecked());
   _metrics->set("UsePromiseDate", _enablePromiseDate->isChecked());
   _metrics->set("EnableReturnAuth", _enableReturns->isChecked());
+  _metrics->set("EnableSOReservations", _enableReservations->isChecked());
   _metrics->set("SOCreditLimit", _creditLimit->text());
   _metrics->set("SOCreditRate", _creditRating->text());
 
