@@ -493,80 +493,97 @@ void returnAuthorization::sOrigSoChanged()
     _clearAuthorization->hide();
     _authorizeAll->hide();
   }
-  if (!_ignoreSoSignals) 
+  if (!_ignoreSoSignals && _origso->isValid()) 
   {
-	sSave();
-	sFillList();
-
-    if (_origso->isValid())
+	q.prepare("SELECT rahead_number FROM rahead "
+		      "WHERE ((rahead_orig_cohead_id=:cohead_id) "
+		      "AND (rahead_id != :rahead_id) "
+		      "AND (rahead_status = 'O')); ");
+	q.bindValue(":cohead_id",_origso->id());
+	q.bindValue(":rahead_id",_raheadid);
+	q.exec();
+	if (q.first())
 	{
-      XSqlQuery sohead;
-      sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
-                      "       formatScrap(cohead_commission) AS f_commission, "
-	  				  "       shipto_num "
-                      "FROM cohead "
-					  "  LEFT OUTER JOIN shiptoinfo ON (cohead_shipto_id=shipto_id), "
-					  "  custinfo, custtype "
-					  "WHERE ((cohead_id=:cohead_id) "
-					  "AND (cohead_cust_id=cust_id) "
-					  "AND (cust_custtype_id=custtype_id) ) "
-                      "LIMIT 1;" );
-      sohead.bindValue(":cohead_id", _origso->id());
-      sohead.exec();
-      if (sohead.first())
+      QMessageBox::critical(this, tr("Invalid Sales Order"),
+                           tr("This sales order is already linked to open return authorization %1.").arg(q.value("rahead_number").toString())  );
+	   _origso->setId(-1);
+	   return;
+	}
+	else
+	{
+   	  sSave();
+	  sFillList();
+
+      if (_origso->isValid())
 	  {
-          _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
-          _commission->setText(sohead.value("f_commission"));
+        XSqlQuery sohead;
+        sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
+                        "       formatScrap(cohead_commission) AS f_commission, "
+	    				"       shipto_num "
+                        "FROM cohead "
+					    "  LEFT OUTER JOIN shiptoinfo ON (cohead_shipto_id=shipto_id), "
+					    "  custinfo, custtype "
+	  				    "WHERE ((cohead_id=:cohead_id) "
+					    "AND (cohead_cust_id=cust_id) "
+					    "AND (cust_custtype_id=custtype_id) ) "
+                        "LIMIT 1;" );
+        sohead.bindValue(":cohead_id", _origso->id());
+        sohead.exec();
+        if (sohead.first())
+  	    {
+            _salesRep->setId(sohead.value("cohead_salesrep_id").toInt());
+            _commission->setText(sohead.value("f_commission"));
   
-          _taxauth->setId(sohead.value("cohead_taxauth_id").toInt());
-          _customerPO->setText(sohead.value("cohead_ponumber"));
+            _taxauth->setId(sohead.value("cohead_taxauth_id").toInt());
+            _customerPO->setText(sohead.value("cohead_ponumber"));
 
-          _cust->setEnabled(FALSE);
+            _cust->setEnabled(FALSE);
 
-          _cust->setId(sohead.value("cohead_cust_id").toInt());
-    	  _custType->setText(sohead.value("custtype_code").toString());
-          _billToName->setText(sohead.value("cohead_billtoname"));
-          _billToAddr->setLine1(sohead.value("cohead_billtoaddress1").toString());
-          _billToAddr->setLine2(sohead.value("cohead_billtoaddress2").toString());
-          _billToAddr->setLine3(sohead.value("cohead_billtoaddress3").toString());
-          _billToAddr->setCity(sohead.value("cohead_billtocity").toString());
-          _billToAddr->setState(sohead.value("cohead_billtostate").toString());
-          _billToAddr->setPostalCode(sohead.value("cohead_billtozipcode").toString());
-          _billToAddr->setCountry(sohead.value("cohead_billtocountry").toString());
-          if ( (_mode == cNew) || (_mode == cEdit) )
-            _ffBillto = sohead.value("cust_ffbillto").toBool();
-          else
-            _ffBillto = FALSE;
-          _billToName->setEnabled(_ffBillto);
-          _billToAddr->setEnabled(_ffBillto);
+            _cust->setId(sohead.value("cohead_cust_id").toInt());
+    	    _custType->setText(sohead.value("custtype_code").toString());
+            _billToName->setText(sohead.value("cohead_billtoname"));
+            _billToAddr->setLine1(sohead.value("cohead_billtoaddress1").toString());
+            _billToAddr->setLine2(sohead.value("cohead_billtoaddress2").toString());
+            _billToAddr->setLine3(sohead.value("cohead_billtoaddress3").toString());
+            _billToAddr->setCity(sohead.value("cohead_billtocity").toString());
+            _billToAddr->setState(sohead.value("cohead_billtostate").toString());
+            _billToAddr->setPostalCode(sohead.value("cohead_billtozipcode").toString());
+            _billToAddr->setCountry(sohead.value("cohead_billtocountry").toString());
+            if ( (_mode == cNew) || (_mode == cEdit) )
+              _ffBillto = sohead.value("cust_ffbillto").toBool();
+            else
+              _ffBillto = FALSE;
+            _billToName->setEnabled(_ffBillto);
+            _billToAddr->setEnabled(_ffBillto);
 
-          _ignoreShiptoSignals = TRUE;
-          _shiptoid = sohead.value("cohead_shipto_id").toInt();
-	      _shipToNumber->setText(sohead.value("shipto_num").toString());
-          _shipToName->setText(sohead.value("cohead_shiptoname"));
-          _shipToAddr->setLine1(sohead.value("cohead_shiptoaddress1").toString());
-          _shipToAddr->setLine2(sohead.value("cohead_shiptoaddress2").toString());
-          _shipToAddr->setLine3(sohead.value("cohead_shiptoaddress3").toString());
-          _shipToAddr->setCity(sohead.value("cohead_shiptocity").toString());
-          _shipToAddr->setState(sohead.value("cohead_shiptostate").toString());
-          _shipToAddr->setPostalCode(sohead.value("cohead_shiptozipcode").toString());
-          _shipToAddr->setCountry(sohead.value("cohead_shiptocountry").toString());
-          if ( (_mode == cNew) || (_mode == cEdit) )
-            _ffShipto = sohead.value("cust_ffshipto").toBool();
-  	      else
-	        _ffShipto = FALSE;
-          _copyToShipto->setEnabled(_ffShipto);
-	      _shipToName->setEnabled(_ffShipto);
-	      _shipToNumber->setEnabled(_ffShipto);
-	      _shipToAddr->setEnabled(_ffShipto);
-          _ignoreShiptoSignals = FALSE;
-	      sSave();
-      }
-      else if (sohead.lastError().type() != QSqlError::None)
-      {
-        systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
-		_origso->setId(-1);
-        return;
+            _ignoreShiptoSignals = TRUE;
+            _shiptoid = sohead.value("cohead_shipto_id").toInt();
+	        _shipToNumber->setText(sohead.value("shipto_num").toString());
+            _shipToName->setText(sohead.value("cohead_shiptoname"));
+            _shipToAddr->setLine1(sohead.value("cohead_shiptoaddress1").toString());
+            _shipToAddr->setLine2(sohead.value("cohead_shiptoaddress2").toString());
+            _shipToAddr->setLine3(sohead.value("cohead_shiptoaddress3").toString());
+            _shipToAddr->setCity(sohead.value("cohead_shiptocity").toString());
+            _shipToAddr->setState(sohead.value("cohead_shiptostate").toString());
+            _shipToAddr->setPostalCode(sohead.value("cohead_shiptozipcode").toString());
+            _shipToAddr->setCountry(sohead.value("cohead_shiptocountry").toString());
+            if ( (_mode == cNew) || (_mode == cEdit) )
+              _ffShipto = sohead.value("cust_ffshipto").toBool();
+    	    else
+	          _ffShipto = FALSE;
+            _copyToShipto->setEnabled(_ffShipto);
+	        _shipToName->setEnabled(_ffShipto);
+	        _shipToNumber->setEnabled(_ffShipto);
+	        _shipToAddr->setEnabled(_ffShipto);
+            _ignoreShiptoSignals = FALSE;
+	        sSave();
+        }
+        else if (sohead.lastError().type() != QSqlError::None)
+        {
+          systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
+		  _origso->setId(-1);
+          return;
+		}
 	  }
   	}
   }
