@@ -128,6 +128,9 @@ public slots:
     virtual void sReturnStock();
     virtual void sIssueStock();
     virtual void sIssueLineBalance();
+    virtual void sReserveStock();
+    virtual void sReserveLineBalance();
+    virtual void sUnreserveStock();
 
 protected:
     virtual void keyPressEvent( QKeyEvent * e );

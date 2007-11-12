@@ -1235,6 +1235,42 @@
             <property name="spacing" >
              <number>0</number>
             </property>
+            <property name="topMargin" >
+             <number>0</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="_reserveStock" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text" >
+               <string>Reserve Stock</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_reserveLineBalance" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
+              <property name="text" >
+               <string>Res. Line Bal.</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <layout class="QVBoxLayout" >
+            <property name="spacing" >
+             <number>0</number>
+            </property>
             <property name="leftMargin" >
              <number>0</number>
             </property>
@@ -2308,12 +2344,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>122</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2324,12 +2360,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>122</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2340,12 +2376,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>94</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2356,12 +2392,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>150</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2372,12 +2408,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>178</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2388,12 +2424,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>331</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2404,12 +2440,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>11</x>
-     <y>65</y>
+     <x>22</x>
+     <y>98</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>584</x>
-     <y>359</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2436,12 +2472,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>23</x>
-     <y>234</y>
+     <x>37</x>
+     <y>288</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>587</x>
-     <y>234</y>
+     <x>662</x>
+     <y>288</y>
     </hint>
    </hints>
   </connection>
@@ -2452,12 +2488,12 @@
    <slot>setText(QString)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>76</y>
+     <x>217</x>
+     <y>104</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>149</x>
-     <y>30</y>
+     <x>147</x>
+     <y>36</y>
     </hint>
    </hints>
   </connection>
@@ -2468,12 +2504,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>74</y>
+     <x>40</x>
+     <y>152</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>699</x>
-     <y>101</y>
+     <x>785</x>
+     <y>133</y>
     </hint>
    </hints>
   </connection>
@@ -2484,8 +2520,8 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
      <x>570</x>
@@ -2500,12 +2536,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>511</y>
+     <x>669</x>
+     <y>546</y>
     </hint>
    </hints>
   </connection>
@@ -2516,8 +2552,8 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
      <x>570</x>
@@ -2532,12 +2568,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>489</y>
+     <x>669</x>
+     <y>519</y>
     </hint>
    </hints>
   </connection>
@@ -2548,12 +2584,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>533</y>
+     <x>669</x>
+     <y>573</y>
     </hint>
    </hints>
   </connection>
@@ -2564,12 +2600,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>555</y>
+     <x>669</x>
+     <y>600</y>
     </hint>
    </hints>
   </connection>
@@ -2580,8 +2616,8 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
      <x>570</x>
@@ -2596,12 +2632,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>489</y>
+     <x>276</x>
+     <y>519</y>
     </hint>
    </hints>
   </connection>
@@ -2612,12 +2648,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>511</y>
+     <x>276</x>
+     <y>546</y>
     </hint>
    </hints>
   </connection>
@@ -2628,12 +2664,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>585</x>
-     <y>538</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2644,12 +2680,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>353</x>
-     <y>399</y>
+     <x>431</x>
+     <y>408</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>533</y>
+     <x>276</x>
+     <y>573</y>
     </hint>
    </hints>
   </connection>
@@ -2660,8 +2696,8 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
      <x>570</x>
@@ -2676,12 +2712,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>511</y>
+     <x>669</x>
+     <y>546</y>
     </hint>
    </hints>
   </connection>
@@ -2692,8 +2728,8 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
      <x>570</x>
@@ -2708,12 +2744,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>489</y>
+     <x>669</x>
+     <y>519</y>
     </hint>
    </hints>
   </connection>
@@ -2724,12 +2760,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>533</y>
+     <x>669</x>
+     <y>573</y>
     </hint>
    </hints>
   </connection>
@@ -2740,12 +2776,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>570</x>
-     <y>555</y>
+     <x>669</x>
+     <y>600</y>
     </hint>
    </hints>
   </connection>
@@ -2756,8 +2792,8 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
      <x>570</x>
@@ -2772,12 +2808,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>585</x>
-     <y>538</y>
+     <x>110</x>
+     <y>98</y>
     </hint>
    </hints>
   </connection>
@@ -2788,12 +2824,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>489</y>
+     <x>276</x>
+     <y>519</y>
     </hint>
    </hints>
   </connection>
@@ -2804,12 +2840,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>511</y>
+     <x>276</x>
+     <y>546</y>
     </hint>
    </hints>
   </connection>
@@ -2820,12 +2856,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>107</x>
-     <y>102</y>
+     <x>217</x>
+     <y>135</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>157</x>
-     <y>533</y>
+     <x>276</x>
+     <y>573</y>
     </hint>
    </hints>
   </connection>

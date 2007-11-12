@@ -141,6 +141,8 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateFOB(int)));
   connect(_issueStock, SIGNAL(clicked()), this, SLOT(sIssueStock()));
   connect(_issueLineBalance, SIGNAL(clicked()), this, SLOT(sIssueLineBalance()));
+  connect(_reserveStock, SIGNAL(clicked()), this, SLOT(sReserveStock()));
+  connect(_reserveLineBalance, SIGNAL(clicked()), this, SLOT(sReserveLineBalance()));
   connect(_subtotal, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_miscCharge, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal()));
   connect(_freight, SIGNAL(valueChanged()), this, SLOT(sFreightChanged()));
@@ -341,6 +343,9 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
       _issueStock->hide();
       _issueLineBalance->hide();
+
+      _reserveStock->hide();
+      _reserveLineBalance->hide();
     }
     else if (param.toString() == "viewQuote")
     {
@@ -510,6 +515,12 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
   }
   else
     _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
+
+  if(ISQUOTE(_mode) || !_metrics->boolean("EnableSOReservations"))
+  {
+    _reserveStock->hide();
+    _reserveLineBalance->hide();
+  }
 
   param = pParams.value("cust_id", &valid);
   if (valid)
@@ -1043,8 +1054,11 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
 {
   if ((_mode == cNew) || (_mode == cEdit))
   {
+    int menuid = 0;
+    bool didsomething = false;
     if(_numSelected == 1)
     {
+      didsomething = true;
       if (_lineMode == cClosed)
         pMenu->insertItem(tr("Open Line..."), this, SLOT(sAction()), 0);
       else if (_lineMode == cActiveOpen)
@@ -1058,16 +1072,38 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
         pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
         pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
       }
+      else
+        didsomething = false;
+    }
+
+    if(_metrics->boolean("EnableSOReservations"))
+    {
+      if(didsomething)
+        pMenu->insertSeparator();
+
+      menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      menuid = pMenu->insertItem(tr("Reserve Stock..."), this, SLOT(sReserveStock()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      menuid = pMenu->insertItem(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+
+      didsomething = true;
     }
 
     if(_metrics->boolean("EnableSOShipping"))
     {
-      if(_numSelected == 1)
+      if(didsomething)
         pMenu->insertSeparator();
 
-      pMenu->insertItem(tr("Return Stock"), this, SLOT(sReturnStock()), 0);
-      pMenu->insertItem(tr("Issue Stock..."), this, SLOT(sIssueStock()), 0);
-      pMenu->insertItem(tr("Issue Line Balance"), this, SLOT(sIssueLineBalance()), 0);
+      menuid = pMenu->insertItem(tr("Return Stock"), this, SLOT(sReturnStock()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("IssueStockToShipping"));
+      menuid = pMenu->insertItem(tr("Issue Stock..."), this, SLOT(sIssueStock()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("IssueStockToShipping"));
+      menuid = pMenu->insertItem(tr("Issue Line Balance"), this, SLOT(sIssueLineBalance()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("IssueStockToShipping"));
+
+      didsomething = true;
     }
   }
 }
@@ -1614,6 +1650,8 @@ void salesOrder::sHandleButtons()
   {
     _issueStock->setEnabled(_privleges->check("IssueStockToShipping"));
     _issueLineBalance->setEnabled(_privleges->check("IssueStockToShipping"));
+    _reserveStock->setEnabled(_privleges->check("MaintainReservations"));
+    _reserveLineBalance->setEnabled(_privleges->check("MaintainReservations"));
 
     if(_numSelected == 1)
     {
@@ -1669,6 +1707,8 @@ void salesOrder::sHandleButtons()
         {
           _issueStock->setEnabled(FALSE);
           _issueLineBalance->setEnabled(FALSE);
+          _reserveStock->setEnabled(FALSE);
+          _reserveLineBalance->setEnabled(FALSE);
         }
       }
     }
@@ -1686,6 +1726,8 @@ void salesOrder::sHandleButtons()
     _delete->setEnabled(FALSE);
     _issueStock->setEnabled(FALSE);
     _issueLineBalance->setEnabled(FALSE);
+    _reserveStock->setEnabled(FALSE);
+    _reserveLineBalance->setEnabled(FALSE);
   }
 }
 
@@ -4408,5 +4450,58 @@ void salesOrder::sTaxAuthChanged()
   }
 
   recalculateTax();
+}
+
+void salesOrder::sReserveStock()
+{
+}
+
+void salesOrder::sReserveLineBalance()
+{
+  q.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("reserveSoLineBalance", result) +
+                          tr("<br>Line Item %1").arg(selected[i]->text(0)),
+                    __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
+                        q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  sFillItemList();
+}
+
+void salesOrder::sUnreserveStock()
+{
+  q.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    q.bindValue(":soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
+                        q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  sFillItemList();
 }
 
