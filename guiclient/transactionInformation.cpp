@@ -57,61 +57,37 @@
 
 #include "transactionInformation.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a transactionInformation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 transactionInformation::transactionInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_item, SIGNAL(newId(int)), _warehouse, SLOT(findItemsites(int)));
-    connect(_item, SIGNAL(warehouseIdChanged(int)), _warehouse, SLOT(setId(int)));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  _item->setReadOnly(TRUE);
 
-    //If not multi-warehouse hide whs control
-    if (!_metrics->boolean("MultiWhs"))
-    {
-      _warehouseLit->hide();
-      _warehouse->hide();
-    }
+  if (!_metrics->boolean("MultiWhs"))
+  {
+    _warehouseLit->hide();
+    _warehouse->hide();
+  }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 transactionInformation::~transactionInformation()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void transactionInformation::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void transactionInformation::init()
-{
-  _item->setReadOnly(TRUE);
-}
-
-enum SetResponse transactionInformation::set(ParameterList &pParams)
+enum SetResponse transactionInformation::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -143,10 +119,11 @@ enum SetResponse transactionInformation::set(ParameterList &pParams)
       _qohAfter->setText(q.value("f_after").toString());
       _notes->setText(q.value("invhist_comments").toString());
     }
-    else
-      systemError( this, tr("A System Error occurred at transactionInformation::%1, invhist_id=%2.")
-                         .arg(__LINE__)
-                         .arg(_invhistid) );
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
+    }
   }
 
   param = pParams.value("mode", &valid);
@@ -177,7 +154,11 @@ void transactionInformation::sSave()
   q.bindValue(":invhist_analyze", QVariant(_analyze->isChecked(), 0));
   q.bindValue(":invhist_id", _invhistid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }
-

@@ -59,7 +59,7 @@
 #define TRANSACTIONINFORMATION_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_transactionInformation.h"
 
@@ -72,7 +72,7 @@ public:
     ~transactionInformation();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSave();
 
 protected slots:
@@ -81,8 +81,6 @@ protected slots:
 private:
     int _mode;
     int _invhistid;
-
-    void init();
 
 };
 
