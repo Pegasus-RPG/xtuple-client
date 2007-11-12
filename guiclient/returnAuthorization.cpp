@@ -105,6 +105,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
   connect(_enterReceipt, SIGNAL(clicked()), this, SLOT(sEnterReceipt()));
   connect(_receiveAll,   SIGNAL(clicked()), this, SLOT(sReceiveAll()));
+  connect(_raitem,     SIGNAL(valid(bool)), this, SLOT(sHandleEnterReceipt(bool)));
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
 /*  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -163,7 +164,6 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
     _creditBy->removeItem(3);
   }
 
-  _enterReceipt->setEnabled(_privleges->check("EnterReceipts"));
   _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
   _postOnSave->setEnabled(_privleges->check("EnterReceipts"));
 }
@@ -915,7 +915,14 @@ void returnAuthorization::sDelete()
 
 void returnAuthorization::sFillList()
 {
-  q.prepare( "SELECT raitem_id, raitem_linenumber, item_number,"
+  q.prepare( "SELECT raitem_id, "
+	     "       CASE WHEN (raitem_disposition='C') THEN 0"
+	     "            WHEN (raitem_disposition='R') THEN 1"
+	     "            WHEN (raitem_disposition='P') THEN 2"
+	     "            WHEN (raitem_disposition='V') THEN 3"
+	     "            WHEN (raitem_disposition='S') THEN 4"
+	     "            ELSE -1 END AS disposition_code,"
+	     "       raitem_linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2), warehous_code,"
 			 "       raitem_status, "
 			 "       CASE WHEN (raitem_disposition='C') THEN :credit "
@@ -969,7 +976,7 @@ void returnAuthorization::sFillList()
     return;
   }
   
-  _raitem->populate(q);
+  _raitem->populate(q, true);
 
   sCalculateSubtotal();
   recalculateTax();
@@ -1363,6 +1370,13 @@ void returnAuthorization::sDispositionChanged()
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   _new->setEnabled(_cust->isValid() || _disposition->currentIndex() < 2);
+  
+  bool enableReceipt = _privleges->check("EnterReceipts") &&
+		      (_disposition->currentItem() != 0);
+
+  _receiveAll->setEnabled(enableReceipt);
+  _postOnSave->setEnabled(enableReceipt);
+
   if (_disposition->currentItem() != 4)
   {
     q.prepare("SELECT raitem_id FROM raitem, rahead "
@@ -1549,9 +1563,18 @@ void returnAuthorization::sReceiveAll()
   sFillList();
 }
 
+void returnAuthorization::sHandleEnterReceipt(bool p)
+{
+  if (p)
+    _enterReceipt->setEnabled(_raitem->altId() == 1 ||
+			      _raitem->altId() == 2 ||
+			      _raitem->altId() == 3);
+  else
+    _enterReceipt->setEnabled(false);
+}
+
 void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
 {
   if ((pSoheadid == _origso->id()) || (pSoheadid == _newso->id()))
     sFillList();
 }
-

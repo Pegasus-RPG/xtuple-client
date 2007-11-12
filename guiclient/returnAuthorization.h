@@ -107,6 +107,7 @@ public slots:
 	virtual void sAuthorizeAll();
     virtual void sEnterReceipt();
     virtual void sReceiveAll();
+    virtual void sHandleEnterReceipt(bool);
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
 
 protected slots:

@@ -2035,21 +2035,5 @@
     </hint>
    </hints>
   </connection>
-  <connection>
-   <sender>_raitem</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_enterReceipt</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>345</x>
-     <y>241</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>727</x>
-     <y>284</y>
-    </hint>
-   </hints>
-  </connection>
  </connections>
 </ui>
