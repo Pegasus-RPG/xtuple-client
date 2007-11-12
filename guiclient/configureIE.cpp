@@ -100,6 +100,10 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   _map->addColumn(tr("Import XSLT File"),	-1, Qt::AlignLeft );
   _map->addColumn(tr("Export XSLT File"),	-1, Qt::AlignLeft );
 
+  // TODO: fix these when support for an internal XSLT processor is enabled
+  _internal->setEnabled(false);
+  _internal->setVisible(false);
+
   sPopulate();
 }
 
