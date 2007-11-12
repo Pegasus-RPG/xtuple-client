@@ -561,7 +561,7 @@ void returnAuthorization::sOrigSoChanged()
 	      _shipToAddr->setEnabled(_ffShipto);
           _ignoreShiptoSignals = FALSE;
 	      sSave();
-        }
+      }
       else if (sohead.lastError().type() != QSqlError::None)
       {
         systemError(this, sohead.lastError().databaseText(), __FILE__, __LINE__);
@@ -939,7 +939,7 @@ void returnAuthorization::sFillList()
 			"AND (raitem_qtyauthorized > 0 ) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
-  _origso->setEnabled((!q.first()) && (_mode == cEdit));
+  _origso->setEnabled((!q.first()) && (_mode == cEdit || _mode == cNew));
 
   //Disable changes if any transactions
   q.prepare("SELECT raitem_id "
