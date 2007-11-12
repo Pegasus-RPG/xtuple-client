@@ -308,6 +308,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 	virtual void setEnabled(const bool p);
         virtual void setStrict(const bool b);
 	virtual void setReadOnly(const bool b);
+	virtual void sRefresh();
 
     signals:
 	void newId(int);
@@ -315,7 +316,6 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 
     protected:
 	virtual void addNumberWidget(VirtualClusterLineEdit* pNumberWidget);
-	virtual void sRefresh();
 
 	QGridLayout*	_grid;
 	QLabel*		_label;
