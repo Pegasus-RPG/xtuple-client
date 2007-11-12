@@ -531,7 +531,6 @@ void OrderLineEdit::setAllowedTypes(const OrderLineEdit::OrderTypes p)
 
 void OrderLineEdit::setId(const int pId, const QString &pType)
 {
-  qDebug("setId(%d, %s) with old (%d, %s)", pId, pType.toAscii().data(), _id, _name.toAscii().data());
   if (pId == -1)
     clear();
   else if (pId == _id && pType == _name)
