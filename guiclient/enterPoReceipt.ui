@@ -14,33 +14,33 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
+    <property name="spacing" >
      <number>5</number>
     </property>
-    <property name="spacing" >
+    <property name="leftMargin" >
+     <number>5</number>
+    </property>
+    <property name="topMargin" >
+     <number>5</number>
+    </property>
+    <property name="rightMargin" >
+     <number>5</number>
+    </property>
+    <property name="bottomMargin" >
      <number>5</number>
     </property>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>5</number>
       </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
         <item>
-         <widget class="PoCluster" name="_po" />
-        </item>
-        <item>
-         <widget class="ToCluster" name="_to" />
+         <widget class="OrderCluster" name="_order" />
         </item>
         <item>
          <spacer>
@@ -69,9 +69,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
@@ -93,9 +90,6 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -165,9 +159,6 @@
     </item>
     <item>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>0</number>
       </property>
@@ -180,9 +171,6 @@
       </item>
       <item>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
@@ -191,9 +179,6 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -255,14 +240,9 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ToCluster</class>
+   <class>OrderCluster</class>
    <extends>QWidget</extends>
-   <header>tocluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <header>ordercluster.h</header>
   </customwidget>
   <customwidget>
    <class>XCheckBox</class>
@@ -270,15 +250,13 @@
    <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
-   <class>PoCluster</class>
-   <extends>QWidget</extends>
-   <header>pocluster.h</header>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
-  <tabstop>_po</tabstop>
   <tabstop>_singleLot</tabstop>
-  <tabstop>_to</tabstop>
   <tabstop>_orderitem</tabstop>
   <tabstop>_enter</tabstop>
   <tabstop>_all</tabstop>
@@ -341,50 +319,66 @@
    </hints>
   </connection>
   <connection>
-   <sender>_po</sender>
+   <sender>_order</sender>
    <signal>valid(bool)</signal>
    <receiver>_print</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>171</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>683</x>
+     <y>88</y>
     </hint>
    </hints>
   </connection>
   <connection>
-   <sender>_po</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_all</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>166</x>
-     <y>31</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>568</x>
-     <y>179</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_po</sender>
+   <sender>_order</sender>
    <signal>valid(bool)</signal>
    <receiver>_save</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>166</x>
-     <y>34</y>
+     <x>171</x>
+     <y>28</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>684</x>
-     <y>119</y>
+     <x>683</x>
+     <y>178</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_order</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_all</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>171</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>691</x>
+     <y>282</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_order</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_post</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>171</x>
+     <y>28</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>683</x>
+     <y>133</y>
     </hint>
    </hints>
   </connection>

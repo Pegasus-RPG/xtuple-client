@@ -119,19 +119,14 @@ enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
     }
   }
 
-  param = pParams.value("poitem_id", &valid);
+  param = pParams.value("order_type", &valid);
   if (valid)
-  {
-    _orderitemid = param.toInt();
-    _ordertype = "PO";
-    populate();
-  }
+    _ordertype = param.toString();
 
-  param = pParams.value("toitem_id", &valid);
+  param = pParams.value("lineitem_id", &valid);
   if (valid)
   {
     _orderitemid = param.toInt();
-    _ordertype = "TO";
     populate();
   }
 
@@ -164,11 +159,8 @@ void enterPoitemReceipt::populate()
   {
     MetaSQLQuery popm = mqlLoad(":/sr/enterItemReceipt/PopulateNew.mql");
 
-    params.append("ordertype", _ordertype);
-    if (_ordertype == "PO")
-      params.append("poitem_id", _orderitemid);
-    else if (_ordertype == "TO")
-      params.append("toitem_id", _orderitemid);
+    params.append("ordertype",    _ordertype);
+    params.append("orderitem_id", _orderitemid);
 
     q = popm.toQuery(params);
   }

@@ -97,7 +97,7 @@ unpostedPoReceipts::unpostedPoReceipts(QWidget* parent, const char* name, Qt::WF
 
   _recv->addColumn(tr("Order #"),       _orderColumn, Qt::AlignRight  );
   _recv->addColumn(tr("Type"),          50,           Qt::AlignCenter );
-  _recv->addColumn(tr("Vendor"),        -1,           Qt::AlignLeft   );
+  _recv->addColumn(tr("From"),          -1,           Qt::AlignLeft   );
   _recv->addColumn(tr("Line #"),        50,           Qt::AlignRight  );
   _recv->addColumn(tr("Due Date"),      _dateColumn,  Qt::AlignCenter );
   _recv->addColumn(tr("Item Number"),   _itemColumn,  Qt::AlignRight  );
@@ -350,7 +350,7 @@ void unpostedPoReceipts::sFillList()
 			       fillq.value("recv_orderitem_id").toInt(),
 			       fillq.value("recv_order_number"),
 			       fillq.value("recv_order_type"),
-			       fillq.value("vend_number"),
+			       fillq.value("orderhead_from"),
 			       fillq.value("orderitem_linenumber"),
 			       fillq.value("recv_duedate"),
 			       fillq.value("item_number"),

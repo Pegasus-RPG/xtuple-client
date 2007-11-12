@@ -76,11 +76,9 @@ public:
 
 public slots:
     virtual void close();
-    virtual enum SetResponse set(const ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams);
     virtual void sEnter();
     virtual void sFillList();
-    virtual void sHandlePo();
-    virtual void sHandleTo();
     virtual void sPost();
     virtual void sPrint();
     virtual void sReceiveAll();

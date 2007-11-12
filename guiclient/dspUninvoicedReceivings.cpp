@@ -172,7 +172,7 @@ void dspUninvoicedReceivings::sCorrectReceiving()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("porecv_id", _porecv->id());
+  params.append("recv_id", _porecv->id());
 
   enterPoitemReceipt newdlg(this, "", TRUE);
   newdlg.set(params);

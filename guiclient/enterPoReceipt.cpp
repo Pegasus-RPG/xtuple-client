@@ -76,18 +76,18 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_all,		SIGNAL(clicked()),	this,	SLOT(sReceiveAll()));
-  connect(_enter,	SIGNAL(clicked()),	this,	SLOT(sEnter()));
-  connect(_po,		SIGNAL(valid(bool)),	this,	SLOT(sHandlePo()));
-  connect(_post,	SIGNAL(clicked()),	this,	SLOT(sPost()));
-  connect(_print,	SIGNAL(clicked()),	this,	SLOT(sPrint()));
-  connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
-  connect(_to,		SIGNAL(valid(bool)),	this,	SLOT(sHandleTo()));
+  connect(_all,		SIGNAL(clicked()),	this, SLOT(sReceiveAll()));
+  connect(_enter,	SIGNAL(clicked()),	this, SLOT(sEnter()));
+  connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
+  connect(_post,	SIGNAL(clicked()),	this, SLOT(sPost()));
+  connect(_print,	SIGNAL(clicked()),	this, SLOT(sPrint()));
+  connect(_save,	SIGNAL(clicked()),	this, SLOT(sSave()));
 
-  _po->setType(cPOOpen);
-  _po->setFocus();
-
-  _to->setVisible(_metrics->boolean("MultiWhs"));
+  _order->setAllowedStatuses(OrderLineEdit::Open);
+  _order->setAllowedTypes(OrderLineEdit::Purchase |
+			  OrderLineEdit::Return |
+			  OrderLineEdit::Transfer);
+  _order->setFocus();
 
   _orderitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
   _orderitem->addColumn(tr("Due Date"),     _dateColumn, Qt::AlignLeft   );
@@ -121,9 +121,7 @@ enum SetResponse enterPoReceipt::set(const ParameterList &pParams)
   if (valid)
   {
     _captive = TRUE;
-
-    _po->setId(param.toInt());
-
+    _order->setId(param.toInt(), "PO");
     _orderitem->setFocus();
   }
 
@@ -131,9 +129,15 @@ enum SetResponse enterPoReceipt::set(const ParameterList &pParams)
   if (valid)
   {
     _captive = TRUE;
+    _order->setId(param.toInt(), "TO");
+    _orderitem->setFocus();
+  }
 
-    _to->setId(param.toInt());
-
+  param = pParams.value("rahead_id", &valid);
+  if (valid)
+  {
+    _captive = TRUE;
+    _order->setId(param.toInt(), "RA");
     _orderitem->setFocus();
   }
 
@@ -144,17 +148,18 @@ void enterPoReceipt::setParams(ParameterList & params)
 {
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
-  if (_po->isValid())
+
+  if (_order->isValid())
   {
-    params.append("pohead_id", _po->id());
-    params.append("orderid",   _po->id());
-    params.append("ordertype", "PO");
-  }
-  else if (_to->isValid())
-  {
-    params.append("tohead_id", _to->id());
-    params.append("orderid",   _to->id());
-    params.append("ordertype", "TO");
+    if (_order->isPO())
+      params.append("pohead_id", _order->id());
+    else if (_order->isRA())
+      params.append("rahead_id", _order->id());
+    else if (_order->isTO())
+      params.append("tohead_id", _order->id());
+
+    params.append("orderid",   _order->id());
+    params.append("ordertype", _order->type());
   }
 
   params.append("nonInventory",	tr("Non-Inventory"));
@@ -178,18 +183,10 @@ void enterPoReceipt::sPost()
 
   QString checks = "SELECT SUM(qtyToReceive(recv_order_type,"
 		   "                        recv_orderitem_id)) AS qtyToRecv "
-		   "FROM recv "
+		   "FROM recv, orderitem "
 		   "WHERE ((recv_order_type=<? value(\"ordertype\") ?>)"
-		   "  AND  (recv_orderitem_id IN (SELECT"
-		   "          <? if exists(\"pohead_id\") ?>"
-		   "            poitem_id FROM poitem"
-		   "            WHERE poitem_pohead_id=<? value(\"orderid\") ?>"
-		   "          <? elseif exists(\"tohead_id\") ?>"
-		   "            toitem_id FROM toitem"
-		   "            WHERE toitem_tohead_id=<? value(\"orderid\") ?>"
-		   "          <? endif ?>"
-		   "          )"
-		   "       ));";
+		   "  AND  (recv_orderitem_id=orderitem_id)"
+		   "  AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>));";
   MetaSQLQuery checkm(checks);
   q = checkm.toQuery(params);
   if (q.first())
@@ -289,8 +286,7 @@ void enterPoReceipt::sPost()
     }
     else
     {
-      _po->setId(-1);
-      _to->setId(-1);
+      _order->setId(-1);
       _close->setText(tr("&Close"));
     }
   }
@@ -314,11 +310,9 @@ void enterPoReceipt::sSave()
 void enterPoReceipt::sEnter()
 {
   ParameterList params;
+  params.append("lineitem_id", _orderitem->id());
+  params.append("order_type", _order->type());
   params.append("mode", "new");
-  if (_po->isValid())
-    params.append("poitem_id", _orderitem->id());
-  else if (_to->isValid())
-    params.append("toitem_id", _orderitem->id());
 
   enterPoitemReceipt newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -331,7 +325,8 @@ void enterPoReceipt::sFillList()
 {
   _orderitem->clear();
 
-  if (_po->isValid() || _to->isValid())
+  disconnect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
+  if (_order->isValid())
   {
     ParameterList params;
     setParams(params);
@@ -341,45 +336,17 @@ void enterPoReceipt::sFillList()
     if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
       return;
     }
   }
-}
-
-void enterPoReceipt::sHandlePo()
-{
-  if (_po->isValid() || _to->isValid())
-    sFillList();
-  else
-    _orderitem->clear();
-
-  _all->setEnabled(  _po->isValid() || _to->isValid());
-  _post->setEnabled( _po->isValid() || _to->isValid());
-  _print->setEnabled(_po->isValid() || _to->isValid());
-  _save->setEnabled( _po->isValid() || _to->isValid());
-
-  _to->setEnabled(! _po->isValid());
-}
-
-void enterPoReceipt::sHandleTo()
-{
-  if (_po->isValid() || _to->isValid())
-    sFillList();
-  else
-    _orderitem->clear();
-
-  _all->setEnabled(  _po->isValid() || _to->isValid());
-  _post->setEnabled( _po->isValid() || _to->isValid());
-  _print->setEnabled(_po->isValid() || _to->isValid());
-  _save->setEnabled( _po->isValid() || _to->isValid());
-
-  _po->setEnabled(! _to->isValid());
+  connect(_order,	SIGNAL(valid(bool)),	this, SLOT(sFillList()));
 }
 
 void enterPoReceipt::close()
 {
   QList<QTreeWidgetItem*> zeroItems = _orderitem->findItems("^[0.]*$", Qt::MatchRegExp, 8);
-  if ((_po->isValid() || _to->isValid()) &&
+  if (_order->isValid() &&
       zeroItems.size() != _orderitem->topLevelItemCount())
   {
     if (QMessageBox::question(this, tr("Cancel Receipts?"),

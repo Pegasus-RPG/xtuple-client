@@ -15,6 +15,24 @@ FROM poitem LEFT OUTER JOIN
 WHERE ( (poitem_status <> 'C')
  AND (poitem_pohead_id=<? value("pohead_id") ?>) )
 ORDER BY poitem_linenumber;
+<? elseif exists("rahead_id") ?>
+SELECT raitem_id, raitem_linenumber,
+       formatDate(rahead_expiredate),
+       COALESCE(item_number, <? value("nonInventory") ?>),
+       COALESCE(uom_name, <? value("na") ?>),
+       '' AS vend_item_number,
+       '' AS vend_uom,
+       formatQty(raitem_qtyauthorized),
+       formatQty(raitem_qtyreceived),
+       formatQty(qtyToReceive(<? value("ordertype") ?>, raitem_id))
+FROM rahead, raitem LEFT OUTER JOIN 
+     ( itemsite JOIN item 
+       ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)
+     ) ON (raitem_itemsite_id=itemsite_id) 
+WHERE ( (raitem_status <> 'C')
+ AND (raitem_rahead_id=rahead_id)
+ AND (rahead_id=<? value("rahead_id") ?>) )
+ORDER BY raitem_linenumber;
 <? elseif exists("tohead_id") ?>
 SELECT toitem_id, toitem_linenumber,
        formatDate(toitem_duedate),
