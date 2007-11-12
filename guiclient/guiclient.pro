@@ -268,7 +268,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                reports.ui reprioritizeWo.ui                                                           \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                resetQOHBalances.ui returnAuthorization.ui returnAuthorizationItem.ui                  \
-               returnWoMaterialBatch.ui returnWoMaterialItem.ui                                       \
+               returnAuthorizationWorkbench.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui       \
                reverseGLSeries.ui                                                                     \
                runMPSByPlannerCode.ui                                                                 \
                sales.ui sale.ui salesAccount.ui salesAccounts.ui salesCategories.ui salesCategory.ui  \
@@ -572,7 +572,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                reports.h reprioritizeWo.h                                                             \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                resetQOHBalances.h returnAuthorization.h returnAuthorizationItem.h                     \
-               returnWoMaterialBatch.h returnWoMaterialItem.h                                         \
+               returnAuthorizationWorkbench.h returnWoMaterialBatch.h returnWoMaterialItem.h          \
                reverseGLSeries.h                                                                      \
                runMPSByPlannerCode.h                                                                  \
                sales.h sale.h salesAccount.h salesAccounts.h salesCategories.h salesCategory.h        \
@@ -879,7 +879,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                reports.cpp reprioritizeWo.cpp                                                         \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                resetQOHBalances.cpp returnAuthorization.cpp returnAuthorizationItem.cpp               \
-               returnWoMaterialBatch.cpp returnWoMaterialItem.cpp                                     \
+               returnAuthorizationWorkbench.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp    \
                reverseGLSeries.cpp                                                                    \
                runMPSByPlannerCode.cpp                                                                \
                sales.cpp sale.cpp salesAccount.cpp salesAccounts.cpp salesCategories.cpp salesCategory.cpp \

@@ -77,6 +77,7 @@
 
 #include "returnAuthorization.h"
 #include "openReturnAuthorizations.h"
+#include "returnAuthorizationWorkbench.h"
 
 #include "packingListBatch.h"
 #include "printPackingList.h"
@@ -307,6 +308,8 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
     { "menu",	tr("&Return"),	(char*)returnsMenu,	mainMenu, true,	NULL, NULL,  _metrics->boolean("EnableReturnAuth"), NULL },
     { "so.newReturn", tr("&New..."),	SLOT(sNewReturn()), returnsMenu, _privleges->check("MaintainReturns"),	NULL, NULL, true, NULL },
     { "so.openReturns", tr("&List Open..."),	SLOT(sOpenReturns()), returnsMenu, (_privleges->check("MaintainReturns") || _privleges->check("ViewReturns")),	NULL, NULL, true, NULL },
+    { "separator",	NULL,	NULL,	returnsMenu,	true,		NULL, NULL, true , NULL },
+    { "so.returnsWorkbench", tr("&Workbench..."),	SLOT(sReturnsWorkbench()), returnsMenu, (_privleges->check("MaintainReturns") || _privleges->check("ViewReturns")),	NULL, NULL, true, NULL },
 
     { "separator",	NULL,	NULL,	mainMenu,	true,		NULL, NULL, true, NULL },
     
@@ -744,6 +747,11 @@ void menuSales::sNewReturn()
 void menuSales::sOpenReturns()
 {
   omfgThis->handleNewWindow(new openReturnAuthorizations());
+}
+
+void menuSales::sReturnsWorkbench()
+{
+  omfgThis->handleNewWindow(new returnAuthorizationWorkbench());
 }
 
 //  S/O | Item Pricing

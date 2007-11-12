@@ -115,6 +115,7 @@ class menuSales : public QObject
 
 	void sNewReturn();
 	void sOpenReturns();
+	void sReturnsWorkbench();
 
     void sNewCreditMemo();
     void sUnpostedCreditMemos();
