@@ -266,6 +266,7 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
       _compDescription1->setText(q.value("item_descrip1").toString());
       _compDescription2->setText(q.value("item_descrip2").toString());
       _compUOM->setText(q.value("uom_name").toString());
+      _uomQty->setText(q.value("uom_name").toString());
       _qtyRequired->setText(q.value("qtyreq").toString());
       _qtyIssued->setText(q.value("qtyiss").toString());
       _qtyToIssue->setText(q.value("qtybalance").toString());
@@ -285,6 +286,7 @@ void issueWoMaterialItem::sPopulateCompInfo(int pWomatlid)
     _compDescription1->clear();
     _compDescription2->clear();
     _compUOM->clear();
+    _uomQty->clear();
     _qtyRequired->clear();
     _qtyIssued->clear();
     _qtyToIssue->clear();
