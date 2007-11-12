@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>709</width>
-    <height>572</height>
+    <width>850</width>
+    <height>696</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -80,7 +80,7 @@
       </property>
       <widget class="QWidget" name="_headerPage" >
        <attribute name="title" >
-        <string>&amp;Header Informaton</string>
+        <string>&amp;Header Information</string>
        </attribute>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
@@ -1193,7 +1193,7 @@
                </spacer>
               </item>
               <item>
-               <widget class="QCheckBox" name="_postOnSave" >
+               <widget class="XCheckBox" name="_postOnSave" >
                 <property name="enabled" >
                  <bool>false</bool>
                 </property>
@@ -1693,7 +1693,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>709</width>
+     <width>850</width>
      <height>22</height>
     </rect>
    </property>
@@ -1750,6 +1750,11 @@
    <class>SoCluster</class>
    <extends>QWidget</extends>
    <header>socluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

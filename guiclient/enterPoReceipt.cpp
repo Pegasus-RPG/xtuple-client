@@ -176,6 +176,21 @@ void enterPoReceipt::sPrint()
   newdlg.exec();
 }
 
+void enterPoReceipt::post(const QString pType, const int pId)
+{
+  enterPoReceipt w(0, "enterPoReceipt");
+  w.setWindowModality(Qt::WindowModal);
+  ParameterList params;
+  if (pType == "PO")
+    params.append("pohead_id", pId);
+  else if (pType == "RA")
+    params.append("rahead_id", pId);
+  else if (pType == "TO")
+    params.append("tohead_id", pId);
+  w.set(params);
+  w.sPost();
+}
+
 void enterPoReceipt::sPost()
 {
   ParameterList params;	// shared by several queries

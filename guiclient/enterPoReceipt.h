@@ -74,6 +74,8 @@ public:
     enterPoReceipt(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~enterPoReceipt();
 
+    static  void post(const QString, const int);
+
 public slots:
     virtual void close();
     virtual enum SetResponse set(const ParameterList & pParams);

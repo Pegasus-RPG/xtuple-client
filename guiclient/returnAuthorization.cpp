@@ -64,10 +64,17 @@
 #include <QValidator>
 #include <QVariant>
 
+#include <metasql.h>
+
+#include "enterPoitemReceipt.h"
+#include "enterPoReceipt.h"
+#include "mqlutil.h"
 #include "returnAuthorizationItem.h"
 #include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
+
+#define TO_RECEIVE_COL	10
 
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -96,6 +103,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
   connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
   connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
+  connect(_enterReceipt, SIGNAL(clicked()), this, SLOT(sEnterReceipt()));
+  connect(_receiveAll,   SIGNAL(clicked()), this, SLOT(sReceiveAll()));
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
 /*  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -132,6 +141,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Sold"),        _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
+  _raitem->addColumn(tr("To Receive"),  _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
   _raitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
@@ -150,9 +160,12 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
   {
     _returnAuthInformation->removePage(_returnAuthInformation->page(4));
-	_creditBy->removeItem(3);
+    _creditBy->removeItem(3);
   }
 
+  _enterReceipt->setEnabled(_privleges->check("EnterReceipts"));
+  _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
+  _postOnSave->setEnabled(_privleges->check("EnterReceipts"));
 }
 
 returnAuthorization::~returnAuthorization()
@@ -449,6 +462,19 @@ bool returnAuthorization::sSave()
 
   omfgThis->sReturnAuthorizationsUpdated();
   omfgThis->sProjectsUpdated(_project->id());
+
+  if (_postOnSave->isChecked())
+  {
+    for (int i = 0; i < _raitem->topLevelItemCount(); i++)
+    {
+      if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
+      {
+	enterPoReceipt::post("RA", _raheadid);
+	break;
+      }
+    }
+  }
+
 
   _comments->setId(_raheadid);
 
@@ -901,7 +927,9 @@ void returnAuthorization::sFillList()
 			 "       formatboolyn(raitem_warranty),"
 			 "       formatQty(COALESCE(oc.coitem_qtyshipped,0)),"
 			 "       formatQty(raitem_qtyauthorized),"
-			 "       formatQty(raitem_qtyreceived),formatQty(COALESCE(nc.coitem_qtyshipped,0)),"       
+			 "       formatQty(raitem_qtyreceived),"
+			 "       formatQty(qtyToReceive('RA', raitem_id)),"
+			 "       formatQty(COALESCE(nc.coitem_qtyshipped,0)),"
              "       formatSalesPrice(raitem_unitprice),"
              "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
 			 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded),"
@@ -1453,6 +1481,72 @@ void returnAuthorization::sAuthorizeAll()
     omfgThis->sSalesOrdersUpdated(_newso->id());
   else
     sFillList();
+}
+
+void returnAuthorization::sEnterReceipt()
+{
+  ParameterList params;
+  q.prepare("SELECT * "
+	    "FROM recv "
+	    "WHERE ((recv_orderitem_id=:id)"
+	    "  AND  (recv_order_type = 'RA')"
+	    "  AND  (NOT recv_posted));");
+  q.bindValue(":id", _raitem->id());
+  q.exec();
+  if (q.first())
+  {
+    params.append("recv_id", q.value("recv_id"));
+    params.append("mode", "edit");
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+  {
+    params.append("lineitem_id", _raitem->id());
+    params.append("order_type",  "RA");
+    params.append("mode", "new");
+  }
+
+  enterPoitemReceipt newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sFillList();
+}
+
+void returnAuthorization::sReceiveAll()
+{
+  ParameterList params;
+  params.append("orderid",   _raheadid);
+  params.append("ordertype", "RA");
+  params.append("nonInventory",	tr("Non-Inventory"));
+  params.append("na",		tr("N/A"));
+  if (_metrics->boolean("MultiWhs"))
+    params.append("MultiWhs");
+  MetaSQLQuery recvm = mqlLoad(":/sr/enterReceipt/ReceiveAll.mql");
+  q = recvm.toQuery(params);
+
+  while (q.next())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("enterReceipt", result),
+		  __FILE__, __LINE__);
+      return;
+    }
+    omfgThis->sPurchaseOrderReceiptsUpdated();
+  }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
 }
 
 void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
