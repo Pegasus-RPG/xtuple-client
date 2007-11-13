@@ -60,37 +60,40 @@
 #include <QMenu>
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
+#include <openreports.h>
 #include <metasql.h>
-
 #include "mqlutil.h"
+#include "returnAuthorization.h"
 
 returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-//  connect(_raopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+//  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 //  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_editopn, SIGNAL(clicked()), this, SLOT(sEditOpen()));
-  connect(_viewopn, SIGNAL(clicked()), this, SLOT(sViewOpen()));
-  connect(_printopn, SIGNAL(clicked()), this, SLOT(sPrintOpen()));
-  connect(_editdue, SIGNAL(clicked()), this, SLOT(sEditDue()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEditOpen()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sViewOpen()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrintOpen()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
 
-  _raopen->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
-  _raopen->addColumn(tr("Customer"),     -1,             Qt::AlignLeft   );
-  _raopen->addColumn(tr("Auth. Date"),   _dateColumn,     Qt::AlignRight  );
-  _raopen->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
-  _raopen->addColumn(tr("Amount"),       _moneyColumn,     Qt::AlignRight  );
-  _raopen->addColumn(tr("Payment"),      _itemColumn,     Qt::AlignRight  );
-  _raopen->addColumn(tr("Status"),       _itemColumn,    Qt::AlignCenter );
+  _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
+  _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
+  _ra->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
+  _ra->addColumn(tr("Expires"),      _dateColumn,     Qt::AlignRight  );
+  _ra->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
+  _ra->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
+  _ra->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
+  _ra->addColumn(tr("Awaiting"),     _itemColumn,     Qt::AlignCenter );
 
   if (!_privleges->check("MaintainReturns"))
   {
-    _editopn->hide();
+    _edit->hide();
 	_editdue->hide();
   }
 }
@@ -134,16 +137,30 @@ void returnAuthorizationWorkbench::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *
 }
 */
 
-void returnAuthorizationWorkbench::sPrintOpen()
+void returnAuthorizationWorkbench::sPrint()
 {
 }
 
-void returnAuthorizationWorkbench::sEditOpen()
+void returnAuthorizationWorkbench::sEdit()
 {
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("rahead_id", _ra->id());
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
-void returnAuthorizationWorkbench::sViewOpen()
+void returnAuthorizationWorkbench::sView()
 {
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("rahead_id", _ra->id());
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void returnAuthorizationWorkbench::sPrintDue()
@@ -160,21 +177,34 @@ void returnAuthorizationWorkbench::sViewDue()
 
 void returnAuthorizationWorkbench::sFillList()
 { 
-	q.prepare("SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
-		      "rahead_authdate, "
-		  	  "CASE "
-			  "  WHEN rahead_disposition = 'C' THEN "
+  if (_closed->isChecked() && !_dates->allValid())
+  {
+    QMessageBox::information( this, tr("Invalid Dates"),
+			      tr("<p>Invalid dates specified. Please specify a "
+				 "valid date range.") );
+    _dates->setFocus();
+    return;
+  }
+  else if ((_receipts->isChecked()) || (_shipments->isChecked()) || (_payment->isChecked()))
+  {
+	bool bw;
+	bw = false;
+	QString sql (" SELECT * FROM ( "
+			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
+			  "formatDate(rahead_authdate), formatDate(rahead_expiredate), "
+	  		  "CASE "
+			  "  WHEN raitem_disposition = 'C' THEN "
 			  "    :credit "
-			  "  WHEN rahead_disposition = 'R' THEN "
+			  "  WHEN raitem_disposition = 'R' THEN "
 			  "    :return "
-			  "  WHEN rahead_disposition = 'P' THEN "
+			  "  WHEN raitem_disposition = 'P' THEN "
 			  "    :replace "
-			  "  WHEN rahead_disposition = 'V' THEN "
+			  "  WHEN raitem_disposition = 'V' THEN "
 			  "    :service "
-			  "  WHEN rahead_disposition = 'M' THEN "
+			  "  WHEN raitem_disposition = 'M' THEN "
 			  "    :mixed "
 			  "  END AS disposition, "
-              "  formatMoney(SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
+			  "  formatMoney(SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
 			  "     (raitem_unitprice / raitem_price_invuomratio),2)-raitem_amtcredited)) AS subtotal, "
 			  "CASE "
 			  "  WHEN rahead_creditmethod = 'N' THEN "
@@ -185,17 +215,92 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :check "
 			  "  WHEN rahead_creditmethod = 'C' THEN "
 			  "    :creditcard "
-			  "END AS creditmethod "
-              "FROM rahead "
+			  "END AS creditmethod, "
+			  "CASE "
+			  "  WHEN raitem_disposition = 'C' THEN "
+			  "    :payment "
+			  "  WHEN raitem_disposition = 'R' "
+			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 "
+			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
+			  "    :receipt || ',' || :payment "
+			  "  WHEN raitem_disposition = 'R' "
+			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
+			  "    :payment "
+			  "  WHEN raitem_disposition = 'R' "
+			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
+			  "    :receipt "
+			  "  WHEN raitem_disposition IN ('P','V') "
+			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 "
+			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
+			  "    :receipt || ',' || :ship "
+			  "  WHEN raitem_disposition IN ('P','V') "
+			  "    AND SUM(raitem_qtyauthorized-COALESCE(coitem_qtyshipped,0)) > 0 THEN "
+			  "    :ship "
+			  "  WHEN raitem_disposition IN ('P','V') "
+			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
+			  "    :receipt "
+			  "  WHEN raitem_disposition = 'S' THEN "
+			  "    :ship "
+			  "  WHEN rahead_status = 'C' THEN "
+			  "    :closed "
+			  "  ELSE :unknown "
+			  "END AS awaiting "
+			  "FROM rahead "
 			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id), "
-			  " raitem, itemsite, item "
-              "WHERE ( (rahead_id=raitem_rahead_id) "
-              " AND (raitem_itemsite_id=itemsite_id)"
-              " AND (itemsite_item_id=item_id) "
-			  " AND (rahead_status = 'O') ) "
-			  " GROUP BY rahead_id,rahead_number,cust_name, "
-			  " rahead_authdate,rahead_disposition,rahead_creditmethod "
-			  " ORDER BY rahead_authdate,rahead_number ;"); 
+			  " raitem "
+			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id), "
+			  " itemsite, item "
+			  "WHERE ( (rahead_id=raitem_rahead_id) "
+			  " AND (raitem_itemsite_id=itemsite_id) "
+			  " AND (itemsite_item_id=item_id) ");
+	if (!_expired->isChecked())
+	  sql +=  " AND (COALESCE(rahead_expiredate,current_date) >= current_date)";
+	if (_closed->isChecked())
+	  sql +=  " AND (rahead_status='O' OR rahead_authdate BETWEEN :startDate AND :endDate)";
+	else
+      sql +=  " AND (raitem_status = 'O') ";
+
+  	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name,rahead_expiredate, "
+			  " rahead_authdate,rahead_status,raitem_disposition,rahead_creditmethod "
+			  " ORDER BY rahead_authdate,rahead_number "
+			  ") as data ";
+
+	if (_receipts->isChecked())
+	{
+	  sql +=  " WHERE ((disposition IN (:return,:replace,:service)) "
+			  " AND (awaiting ~ :receipt)) "; 
+	  bw = true;
+	}
+	if (_shipments->isChecked())
+	{
+	  if (bw)
+		sql += "OR (";
+	  else
+		sql += "WHERE (";
+	  sql +=  " (disposition IN (:replace,:service,:ship))"
+			  " AND (awaiting ~ :ship)) ";  
+	  bw = true;
+	}
+	if (_payment->isChecked())
+	{
+	  if (bw)
+		sql += "OR (";
+	  else
+		sql += "WHERE (";
+	  sql +=  " (disposition IN (:credit,:return))"
+			  " AND (awaiting ~ :payment)) "; 
+	  bw = true;
+	}
+	if (_closed->isChecked())
+	{
+	  if (bw)
+		sql += "OR (";
+	  else
+		sql += "WHERE (";
+	  sql +=  " AND (awaiting = :closed)) "; 
+	}
+    
+	q.prepare(sql);
 	q.bindValue(":undefined",tr("Undefined"));
 	q.bindValue(":credit",tr("Credit"));
 	q.bindValue(":return",tr("Return"));
@@ -203,11 +308,20 @@ void returnAuthorizationWorkbench::sFillList()
 	q.bindValue(":service",tr("Service"));
 	q.bindValue(":mixed",tr("Mixed"));
 	q.bindValue(":none",tr("None"));
-	q.bindValue(":creditmemo",tr("Credit Memo"));
+	q.bindValue(":creditmemo",tr("Memo"));
 	q.bindValue(":check",tr("Check"));
-	q.bindValue(":creditcard",tr("Credit Card"));
+	q.bindValue(":creditcard",tr("Card"));
+	q.bindValue(":payment",tr("Payment"));
+	q.bindValue(":receipt",tr("Receipt"));
+	q.bindValue(":ship",tr("Shipment"));
+	q.bindValue(":unknown",tr("Unknown"));
+	q.bindValue(":closed",tr("Closed"));
+    _dates->bindValue(q);
 	q.exec();
 	if (q.first())
-		_raopen->populate(q);
+		_ra->populate(q);
+  }
+  else
+    _ra->clear();
 }
 

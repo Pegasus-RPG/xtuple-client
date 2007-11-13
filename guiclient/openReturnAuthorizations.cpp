@@ -90,6 +90,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_expired, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   statusBar()->hide();
   
@@ -170,7 +171,7 @@ void openReturnAuthorizations::sEdit()
 void openReturnAuthorizations::sView()
 {  
   ParameterList params;
-  params.append("mode", "edit");
+  params.append("mode", "view");
   params.append("rahead_id", _ra->id());
 
   returnAuthorization *newdlg = new returnAuthorization();
@@ -247,6 +248,8 @@ void openReturnAuthorizations::sFillList()
                "     ON (raitem_rahead_id=rahead_id) "
                "WHERE (((raitem_status = 'O') OR (raitem_status IS NULL)) ");
 
+  if (!_expired->isChecked())
+    sql += " AND (COALESCE(rahead_expiredate,current_date)>=current_date)";
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
 

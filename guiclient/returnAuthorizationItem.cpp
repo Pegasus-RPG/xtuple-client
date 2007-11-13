@@ -191,8 +191,10 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 	      _disposition->setCurrentItem(1);
 	    else if (q.value("rahead_disposition").toString() == "P")
 	      _disposition->setCurrentItem(2);
-	    else if (q.value("rahead_disposition").toString() == "S")
+	    else if (q.value("rahead_disposition").toString() == "V")
 	      _disposition->setCurrentItem(3);
+	    else if (q.value("rahead_disposition").toString() == "M")
+	      _disposition->setCurrentItem(4);
 	  }
       else if (q.lastError().type() == QSqlError::None)
       {

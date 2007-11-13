@@ -73,9 +73,9 @@ public:
     ~returnAuthorizationWorkbench();
 
 public slots:
-	virtual void sPrintOpen();
-    virtual void sEditOpen();
-	virtual void sViewOpen();
+	virtual void sPrint();
+    virtual void sEdit();
+	virtual void sView();
 	virtual void sPrintDue();
     virtual void sEditDue();
 	virtual void sViewDue();

@@ -23,7 +23,7 @@
     <item row="0" column="0" >
      <widget class="QGroupBox" name="_type" >
       <property name="title" >
-       <string/>
+       <string>Filter Type</string>
       </property>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
@@ -49,7 +49,7 @@
     <item row="0" column="1" >
      <widget class="ParameterGroup" name="_parameter" >
       <property name="title" >
-       <string/>
+       <string>Filter</string>
       </property>
      </widget>
     </item>
@@ -60,8 +60,8 @@
       </property>
       <property name="sizeHint" >
        <size>
-        <width>51</width>
-        <height>82</height>
+        <width>40</width>
+        <height>20</height>
        </size>
       </property>
      </spacer>
@@ -134,31 +134,13 @@
       </property>
       <widget class="QWidget" name="_open" >
        <attribute name="title" >
-        <string>Open</string>
+        <string>Review</string>
        </attribute>
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>5</number>
-        </property>
-        <property name="topMargin" >
-         <number>5</number>
-        </property>
-        <property name="rightMargin" >
-         <number>5</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>5</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>5</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>5</number>
-        </property>
-        <item row="0" column="1" >
-         <widget class="QGroupBox" name="_show" >
+        <item row="0" column="0" >
+         <widget class="QGroupBox" name="_showpending" >
           <property name="title" >
-           <string>Show</string>
+           <string>Returns Awaiting</string>
           </property>
           <layout class="QGridLayout" >
            <property name="leftMargin" >
@@ -180,68 +162,61 @@
             <number>5</number>
            </property>
            <item row="0" column="0" >
-            <widget class="XCheckBox" name="_expired" >
+            <widget class="XCheckBox" name="_receipts" >
              <property name="text" >
-              <string>Show Expired</string>
+              <string>Receipt</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="XCheckBox" name="_shipments" >
+             <property name="text" >
+              <string>Shipment</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="2" >
+            <widget class="XCheckBox" name="_payment" >
+             <property name="text" >
+              <string>Payment</string>
              </property>
             </widget>
            </item>
           </layout>
          </widget>
         </item>
-        <item row="0" column="0" >
-         <widget class="QGroupBox" name="_showpending" >
+        <item row="0" column="1" >
+         <widget class="QGroupBox" name="_include" >
           <property name="title" >
-           <string>Show Pending</string>
+           <string>Include</string>
           </property>
           <layout class="QGridLayout" >
-           <property name="leftMargin" >
-            <number>5</number>
-           </property>
-           <property name="topMargin" >
-            <number>5</number>
-           </property>
-           <property name="rightMargin" >
-            <number>5</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>5</number>
-           </property>
-           <property name="horizontalSpacing" >
-            <number>5</number>
-           </property>
-           <property name="verticalSpacing" >
-            <number>5</number>
-           </property>
-           <item row="0" column="1" >
-            <widget class="XCheckBox" name="_shipments" >
-             <property name="text" >
-              <string>Shipments</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="2" >
-            <widget class="XCheckBox" name="_credits" >
-             <property name="text" >
-              <string>Credits</string>
-             </property>
-            </widget>
-           </item>
-           <item row="0" column="3" >
-            <widget class="XCheckBox" name="_refunds" >
-             <property name="text" >
-              <string>Refunds</string>
-             </property>
-            </widget>
-           </item>
            <item row="0" column="0" >
-            <widget class="XCheckBox" name="_receipts" >
+            <widget class="XCheckBox" name="_expired" >
              <property name="text" >
-              <string>Receipts</string>
+              <string>Expired</string>
              </property>
             </widget>
            </item>
-           <item row="0" column="4" >
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <widget class="QGroupBox" name="_closed" >
+          <property name="title" >
+           <string>Include Closed</string>
+          </property>
+          <property name="checkable" >
+           <bool>true</bool>
+          </property>
+          <property name="checked" >
+           <bool>false</bool>
+          </property>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="DateCluster" name="_dates" />
+           </item>
+           <item row="0" column="1" >
             <spacer>
              <property name="orientation" >
               <enum>Qt::Horizontal</enum>
@@ -257,7 +232,7 @@
           </layout>
          </widget>
         </item>
-        <item row="1" column="0" colspan="2" >
+        <item row="1" column="0" colspan="3" >
          <layout class="QGridLayout" >
           <property name="leftMargin" >
            <number>5</number>
@@ -295,7 +270,10 @@
              <number>5</number>
             </property>
             <item>
-             <widget class="QPushButton" name="_printopn" >
+             <widget class="QPushButton" name="_print" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
               <property name="text" >
                <string>&amp;Print</string>
               </property>
@@ -308,9 +286,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_editopn" >
+             <widget class="QPushButton" name="_edit" >
               <property name="enabled" >
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="text" >
                <string>Edit</string>
@@ -324,9 +302,9 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_viewopn" >
+             <widget class="QPushButton" name="_view" >
               <property name="enabled" >
-               <bool>true</bool>
+               <bool>false</bool>
               </property>
               <property name="text" >
                <string>View</string>
@@ -336,6 +314,16 @@
               </property>
               <property name="default" >
                <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_chgstatus" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="text" >
+               <string>Close</string>
               </property>
              </widget>
             </item>
@@ -358,12 +346,12 @@
            </layout>
           </item>
           <item row="1" column="0" >
-           <widget class="XTreeWidget" name="_raopen" />
+           <widget class="XTreeWidget" name="_ra" />
           </item>
           <item row="0" column="0" colspan="2" >
            <widget class="QLabel" name="_raopenLit" >
             <property name="text" >
-             <string>Open Returns:</string>
+             <string>Return Authorizations:</string>
             </property>
            </widget>
           </item>
@@ -462,6 +450,9 @@
           </property>
           <item>
            <widget class="QPushButton" name="_printdue" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
             <property name="text" >
              <string>&amp;Print</string>
             </property>
@@ -476,7 +467,7 @@
           <item>
            <widget class="QPushButton" name="_editdue" >
             <property name="enabled" >
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="text" >
              <string>Edit</string>
@@ -492,7 +483,7 @@
           <item>
            <widget class="QPushButton" name="_viewdue" >
             <property name="enabled" >
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="text" >
              <string>View</string>
@@ -508,7 +499,7 @@
           <item>
            <widget class="QPushButton" name="_post" >
             <property name="enabled" >
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
             <property name="text" >
              <string>Post</string>
@@ -603,6 +594,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>DateCluster</class>
+   <extends>QWidget</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
@@ -636,6 +632,134 @@
     <hint type="destinationlabel" >
      <x>302</x>
      <y>223</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ra</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_view</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>540</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ra</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_print</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>540</x>
+     <y>216</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ra</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>540</x>
+     <y>239</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ra</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_chgstatus</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>312</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>540</x>
+     <y>285</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_radue</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_printdue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>545</x>
+     <y>195</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_radue</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_editdue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>545</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_radue</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_viewdue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>286</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>545</x>
+     <y>241</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ra</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_edit</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>330</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>536</x>
+     <y>279</y>
     </hint>
    </hints>
   </connection>
