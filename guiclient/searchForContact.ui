@@ -63,27 +63,21 @@
          </layout>
         </item>
         <item row="3" column="1" >
-         <widget class="QCheckBox" name="_searchPhone" >
+         <widget class="XCheckBox" name="_searchPhone" >
           <property name="text" >
            <string>Contact Phone #</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="3" column="0" >
-         <widget class="QCheckBox" name="_searchName" >
+         <widget class="XCheckBox" name="_searchName" >
           <property name="text" >
            <string>CRM Account Name</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="6" column="3" >
-         <widget class="QCheckBox" name="_showInactive" >
+         <widget class="XCheckBox" name="_showInactive" >
           <property name="text" >
            <string>Show &amp;Inactive Contacts</string>
           </property>
@@ -93,62 +87,44 @@
          </widget>
         </item>
         <item row="3" column="2" >
-         <widget class="QCheckBox" name="_searchCity" >
+         <widget class="XCheckBox" name="_searchCity" >
           <property name="text" >
            <string>City</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="4" column="2" >
-         <widget class="QCheckBox" name="_searchState" >
+         <widget class="XCheckBox" name="_searchState" >
           <property name="text" >
            <string>State</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="2" column="1" >
-         <widget class="QCheckBox" name="_searchContact" >
+         <widget class="XCheckBox" name="_searchContact" >
           <property name="text" >
            <string>Contact Name</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="5" column="2" >
-         <widget class="QCheckBox" name="_searchPostalCode" >
+         <widget class="XCheckBox" name="_searchPostalCode" >
           <property name="text" >
            <string>Postal Code</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="2" column="2" >
-         <widget class="QCheckBox" name="_searchStreet" >
+         <widget class="XCheckBox" name="_searchStreet" >
           <property name="text" >
            <string>Street Address</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item row="2" column="0" >
-         <widget class="QCheckBox" name="_searchNumber" >
+         <widget class="XCheckBox" name="_searchNumber" >
           <property name="text" >
            <string>CRM Account Number</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -160,12 +136,9 @@
          </widget>
         </item>
         <item row="6" column="2" >
-         <widget class="QCheckBox" name="_searchCountry" >
+         <widget class="XCheckBox" name="_searchCountry" >
           <property name="text" >
            <string>Country</string>
-          </property>
-          <property name="checked" >
-           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -351,6 +324,11 @@
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

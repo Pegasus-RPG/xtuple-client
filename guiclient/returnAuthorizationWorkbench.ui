@@ -180,12 +180,9 @@
             <number>5</number>
            </property>
            <item row="0" column="0" >
-            <widget class="QCheckBox" name="_expired" >
+            <widget class="XCheckBox" name="_expired" >
              <property name="text" >
               <string>Show Expired</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -217,42 +214,30 @@
             <number>5</number>
            </property>
            <item row="0" column="1" >
-            <widget class="QCheckBox" name="_shipments" >
+            <widget class="XCheckBox" name="_shipments" >
              <property name="text" >
               <string>Shipments</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item row="0" column="2" >
-            <widget class="QCheckBox" name="_credits" >
+            <widget class="XCheckBox" name="_credits" >
              <property name="text" >
               <string>Credits</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item row="0" column="3" >
-            <widget class="QCheckBox" name="_refunds" >
+            <widget class="XCheckBox" name="_refunds" >
              <property name="text" >
               <string>Refunds</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
              </property>
             </widget>
            </item>
            <item row="0" column="0" >
-            <widget class="QCheckBox" name="_receipts" >
+            <widget class="XCheckBox" name="_receipts" >
              <property name="text" >
               <string>Receipts</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
              </property>
             </widget>
            </item>
@@ -440,7 +425,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QCheckBox" name="_printonpost" >
+           <widget class="XCheckBox" name="_printonpost" >
             <property name="text" >
              <string>Print Credit Memo after Post</string>
             </property>
@@ -572,32 +557,23 @@
            <number>5</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_creditmemo" >
+           <widget class="XCheckBox" name="_creditmemo" >
             <property name="text" >
              <string>Credit Memo</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_check" >
+           <widget class="XCheckBox" name="_check" >
             <property name="text" >
              <string>Check</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_creditcard" >
+           <widget class="XCheckBox" name="_creditcard" >
             <property name="text" >
              <string>Credit Card</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -632,6 +608,11 @@
    <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
@@ -641,5 +622,22 @@
   <include location="local" >OpenMFGGUIClient.h</include>
  </includes>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>returnAuthorizationWorkbench</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>554</x>
+     <y>25</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>302</x>
+     <y>223</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

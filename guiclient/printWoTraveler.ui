@@ -134,7 +134,7 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="_releaseWo" >
+        <widget class="XCheckBox" name="_releaseWo" >
          <property name="text" >
           <string>Release &amp;Work Order</string>
          </property>
@@ -179,42 +179,30 @@
            <number>0</number>
           </property>
           <item>
-           <widget class="QCheckBox" name="_pickList" >
+           <widget class="XCheckBox" name="_pickList" >
             <property name="text" >
              <string>Print P&amp;ick List</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_routing" >
+           <widget class="XCheckBox" name="_routing" >
             <property name="text" >
              <string>Print &amp;Routing</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_packingList" >
+           <widget class="XCheckBox" name="_packingList" >
             <property name="text" >
              <string>Print Packing List</string>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
            </widget>
           </item>
           <item>
-           <widget class="QCheckBox" name="_woLabel" >
+           <widget class="XCheckBox" name="_woLabel" >
             <property name="text" >
              <string>Print Work Order Label</string>
-            </property>
-            <property name="checked" >
-             <bool>false</bool>
             </property>
            </widget>
           </item>
@@ -268,6 +256,11 @@
    <header>wocluster.h</header>
    <container>0</container>
    <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

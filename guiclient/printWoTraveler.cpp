@@ -92,9 +92,6 @@ printWoTraveler::printWoTraveler(QWidget* parent, const char* name, bool modal, 
 
     _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 
-    _pickList->setChecked(TRUE);
-    _routing->setChecked(TRUE);
-
     if (!_privleges->check("ReleaseWorkOrders"))
       _releaseWo->setEnabled(FALSE);
       

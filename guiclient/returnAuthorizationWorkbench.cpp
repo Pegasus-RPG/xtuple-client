@@ -73,15 +73,26 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 //  connect(_raopen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 //  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_editopn, SIGNAL(clicked()), this, SLOT(sEditOpen()));
+  connect(_viewopn, SIGNAL(clicked()), this, SLOT(sViewOpen()));
+  connect(_printopn, SIGNAL(clicked()), this, SLOT(sPrintOpen()));
+  connect(_editdue, SIGNAL(clicked()), this, SLOT(sEditDue()));
+  connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
+  connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
 
   _raopen->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
   _raopen->addColumn(tr("Customer"),     -1,             Qt::AlignLeft   );
-  _raopen->addColumn(tr("Auth. Date"),  _dateColumn,     Qt::AlignRight  );
+  _raopen->addColumn(tr("Auth. Date"),   _dateColumn,     Qt::AlignRight  );
   _raopen->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
   _raopen->addColumn(tr("Amount"),       _moneyColumn,     Qt::AlignRight  );
   _raopen->addColumn(tr("Payment"),      _itemColumn,     Qt::AlignRight  );
   _raopen->addColumn(tr("Status"),       _itemColumn,    Qt::AlignCenter );
 
+  if (!_privleges->check("MaintainReturns"))
+  {
+    _editopn->hide();
+	_editdue->hide();
+  }
 }
 
 returnAuthorizationWorkbench::~returnAuthorizationWorkbench()
@@ -148,8 +159,8 @@ void returnAuthorizationWorkbench::sViewDue()
 }
 
 void returnAuthorizationWorkbench::sFillList()
-{ /*
-	q.prepare("SELECT rahead_id, rahead_number, customer_name, "
+{ 
+	q.prepare("SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
 		      "rahead_authdate, "
 		  	  "CASE "
 			  "  WHEN rahead_disposition = 'C' THEN "
@@ -159,15 +170,44 @@ void returnAuthorizationWorkbench::sFillList()
 			  "  WHEN rahead_disposition = 'P' THEN "
 			  "    :replace "
 			  "  WHEN rahead_disposition = 'V' THEN "
-			  "    :Service "
+			  "    :service "
 			  "  WHEN rahead_disposition = 'M' THEN "
 			  "    :mixed "
 			  "  END AS disposition, "
-              "  SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
-			  "     (raitem_unitprice / raitem_price_invuomratio),2)-raitem_amt_credited) AS subtotal,"
-              "FROM raitem, itemsite, item "
-              "WHERE ( (raitem_rahead_id=:rahead_id)"
+              "  formatMoney(SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
+			  "     (raitem_unitprice / raitem_price_invuomratio),2)-raitem_amtcredited)) AS subtotal, "
+			  "CASE "
+			  "  WHEN rahead_creditmethod = 'N' THEN "
+			  "    :none "
+			  "  WHEN rahead_creditmethod = 'M' THEN "
+			  "    :creditmemo "
+			  "  WHEN rahead_creditmethod = 'K' THEN "
+			  "    :check "
+			  "  WHEN rahead_creditmethod = 'C' THEN "
+			  "    :creditcard "
+			  "END AS creditmethod "
+              "FROM rahead "
+			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id), "
+			  " raitem, itemsite, item "
+              "WHERE ( (rahead_id=raitem_rahead_id) "
               " AND (raitem_itemsite_id=itemsite_id)"
-              " AND (itemsite_item_id=item_id) );"); */
+              " AND (itemsite_item_id=item_id) "
+			  " AND (rahead_status = 'O') ) "
+			  " GROUP BY rahead_id,rahead_number,cust_name, "
+			  " rahead_authdate,rahead_disposition,rahead_creditmethod "
+			  " ORDER BY rahead_authdate,rahead_number ;"); 
+	q.bindValue(":undefined",tr("Undefined"));
+	q.bindValue(":credit",tr("Credit"));
+	q.bindValue(":return",tr("Return"));
+	q.bindValue(":replace",tr("Replace"));
+	q.bindValue(":service",tr("Service"));
+	q.bindValue(":mixed",tr("Mixed"));
+	q.bindValue(":none",tr("None"));
+	q.bindValue(":creditmemo",tr("Credit Memo"));
+	q.bindValue(":check",tr("Check"));
+	q.bindValue(":creditcard",tr("Credit Card"));
+	q.exec();
+	if (q.first())
+		_raopen->populate(q);
 }
 
