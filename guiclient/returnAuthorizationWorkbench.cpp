@@ -75,12 +75,14 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 //  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 //  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEditOpen()));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sViewOpen()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrintOpen()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
+ // connect(_ra, SIGNAL(valid(bool)), this, SLOT(sHandleStatusButton()));
+  connect(_chgstatus, SIGNAL(clicked()), this, SLOT(sChangeStatus()));
 
   _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
   _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
@@ -163,6 +165,47 @@ void returnAuthorizationWorkbench::sView()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void returnAuthorizationWorkbench::sHandleStatusButton()
+{
+  if (_closed->isChecked())
+  {
+    q.prepare("SELECT rahead_status "
+		      "FROM rahead "
+			  "WHERE (rahead_id=:rahead_id);");
+	q.bindValue(":rahead_id",_ra->id());
+	q.exec();
+	if (q.first())
+	{
+	  if (q.value("rahead_status").toString() == "O")
+		  _chgstatus->setText("Open");
+	  else
+		  _chgstatus->setText("Close");
+	}
+	else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }	
+  }
+  else
+  {
+    _chgstatus->setText("Close");
+  }
+}
+
+void returnAuthorizationWorkbench::sChangeStatus()
+{
+  q.prepare("UPDATE rahead SET rahead_status = :status "
+		    "WHERE (rahead_id=:rahead_id);");
+  q.bindValue(":rahead_id",_ra->id());
+  if (_chgstatus->text() == "Close")
+	  q.bindValue(":status",QString("C"));
+  else
+	  q.bindValue(":status",QString("O"));
+  q.exec();
+  sFillList();
+}
+
 void returnAuthorizationWorkbench::sPrintDue()
 {
 }
@@ -217,6 +260,8 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :creditcard "
 			  "END AS creditmethod, "
 			  "CASE "
+			  "  WHEN rahead_status = 'C' THEN "
+			  "    :closed "
 			  "  WHEN raitem_disposition = 'C' THEN "
 			  "    :payment "
 			  "  WHEN raitem_disposition = 'R' "
@@ -241,8 +286,6 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :receipt "
 			  "  WHEN raitem_disposition = 'S' THEN "
 			  "    :ship "
-			  "  WHEN rahead_status = 'C' THEN "
-			  "    :closed "
 			  "  ELSE :unknown "
 			  "END AS awaiting "
 			  "FROM rahead "
@@ -297,7 +340,7 @@ void returnAuthorizationWorkbench::sFillList()
 		sql += "OR (";
 	  else
 		sql += "WHERE (";
-	  sql +=  " AND (awaiting = :closed)) "; 
+	  sql +=  "(awaiting = :closed)) "; 
 	}
     
 	q.prepare(sql);
@@ -320,6 +363,12 @@ void returnAuthorizationWorkbench::sFillList()
 	q.exec();
 	if (q.first())
 		_ra->populate(q);
+	else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  _ra->clear();
+      return;
+    }
   }
   else
     _ra->clear();

@@ -242,13 +242,21 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
+	  _disposition->setEnabled(FALSE);
       _qtyAuth->setEnabled(FALSE);
+	  _qtyUOM->setEnabled(FALSE);
       _netUnitPrice->setEnabled(FALSE);
+	  _pricingUOM->setEnabled(FALSE);
       _discountFromSale->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
       _taxType->setEnabled(FALSE);
       _taxCode->setEnabled(FALSE);
       _rsnCode->setEnabled(FALSE);
+      _altcosAccntid->setEnabled(FALSE);
+	  _showAvailability->setEnabled(FALSE);
+      _createOrder->setEnabled(FALSE);
+	  _scheduledDate->setEnabled(FALSE);
+	  _warranty->setEnabled(FALSE);
 
       _save->hide();
       _close->setText(tr("&Close"));

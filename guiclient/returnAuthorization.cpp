@@ -271,9 +271,10 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
     {
       _mode = cView;
 
+	  _clear->hide();
       _authNumber->setEnabled(FALSE);
       _authDate->setEnabled(FALSE);
-      _expireDate->setReadOnly(TRUE);
+      _expireDate->setEnabled(FALSE);
       _salesRep->setEnabled(FALSE);
       _commission->setEnabled(FALSE);
       _taxauth->setEnabled(FALSE);
@@ -300,6 +301,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _freight->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
 	  _comments->setEnabled(FALSE);
+	  _copyToShipto->setEnabled(FALSE);
       _shipToNumber->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
@@ -309,6 +311,12 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _new->hide();
       _delete->hide();
       _edit->setText(tr("&View"));
+	  _authorizeLine->hide();
+	  _clearAuthorization->hide();
+	  _authorizeAll->hide();
+	  _enterReceipt->hide();
+	  _receiveAll->hide();
+	  _postOnSave->hide();
 
       _cancel->setFocus();
     }
