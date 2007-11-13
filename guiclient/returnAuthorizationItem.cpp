@@ -458,6 +458,8 @@ void returnAuthorizationItem::populate()
 	{
 	  _newSoNumberLit->hide();
 	  _newSoLineNumberLit->hide();
+	  _newSoNumber->hide();
+	  _newSoLineNumber->hide();
 	}
 	_salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());

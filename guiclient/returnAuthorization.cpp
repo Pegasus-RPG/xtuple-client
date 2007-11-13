@@ -519,7 +519,7 @@ void returnAuthorization::sOrigSoChanged()
     _clearAuthorization->hide();
     _authorizeAll->hide();
   }
-  if (!_ignoreSoSignals && _origso->isValid()) 
+  if (_origso->isValid())
   {
 	q.prepare("SELECT rahead_number FROM rahead "
 		      "WHERE ((rahead_orig_cohead_id=:cohead_id) "
@@ -535,8 +535,9 @@ void returnAuthorization::sOrigSoChanged()
 	   _origso->setId(-1);
 	   return;
 	}
-	else
-	{
+  }
+  if (!_ignoreSoSignals) 
+  {
    	  sSave();
 	  sFillList();
 
@@ -610,7 +611,6 @@ void returnAuthorization::sOrigSoChanged()
 		  _origso->setId(-1);
           return;
 		}
-	  }
   	}
   }
 }
