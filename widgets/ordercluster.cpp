@@ -149,6 +149,17 @@ bool OrderCluster::isUnposted() const
   return ((OrderLineEdit*)_number)->isUnposted();
 }
 
+void OrderCluster::setExtraClause(const QString &pType, const QString &pClause)
+{
+  ((OrderLineEdit*)_number)->setExtraClause(pType, pClause);
+}
+
+void OrderCluster::setExtraClause(const OrderLineEdit::OrderTypes pTypes,
+				  const QString &pClause)
+{
+  ((OrderLineEdit*)_number)->setExtraClause(pTypes, pClause);
+}
+
 void OrderCluster::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
 {
   ((OrderLineEdit*)_number)->setAllowedStatuses(p);
@@ -415,6 +426,52 @@ bool OrderLineEdit::isUnposted() const
   return _description == "U";
 }
 
+void OrderLineEdit::setExtraClause(const QString &pType, const QString &pClause)
+{
+  if (pType == "" || pType.compare("All", Qt::CaseInsensitive) == 0 ||
+	   pType.compare("Any", Qt::CaseInsensitive) == 0)
+  {
+    _poClause = _raClause = _soClause = _toClause = "";
+    _allClause = pClause;
+  }
+  else if (pType == "PO")
+    _poClause = " (((orderhead_type='PO') AND (" + pClause + ")) OR (orderhead_type != 'PO'))";
+  else if (pType == "RA")
+    _raClause = " (((orderhead_type='RA') AND (" + pClause + ")) OR (orderhead_type != 'RA'))";
+  else if (pType == "SO")
+    _soClause = " (((orderhead_type='SO') AND (" + pClause + ")) OR (orderhead_type != 'SO'))";
+  else if (pType == "TO")
+    _toClause = " (((orderhead_type='TO') AND (" + pClause + ")) OR (orderhead_type != 'TO'))";
+  else
+  {
+    QMessageBox::critical(this, tr("Invalid Order Type"),
+			  tr("%1 is not a valid Order Type.").arg(pType));
+    _allClause = _poClause = _raClause = _soClause = _toClause = "";
+  }
+
+  VirtualClusterLineEdit::setExtraClause(buildExtraClause());
+}
+
+void OrderLineEdit::setExtraClause(const OrderTypes pTypes, const QString &pClause)
+{
+  if (pTypes == AnyType ||
+      ((pTypes & Purchase) &&
+       ((pTypes & Return) || ! _x_metrics->boolean("EnableReturnAuth")) &&
+       (pTypes & Sales) &&
+       ((pTypes & Transfer) || ! _x_metrics->boolean("MultiWhs"))))
+    _allClause = pClause;
+  else
+  {
+    // not else if because multiple flags can be set
+    if (pTypes | Purchase)	setExtraClause("PO", pClause);
+    if (pTypes | Return)		setExtraClause("RA", pClause);
+    if (pTypes | Sales)		setExtraClause("SO", pClause);
+    if (pTypes | Transfer)	setExtraClause("TO", pClause);
+  }
+
+  VirtualClusterLineEdit::setExtraClause(buildExtraClause());
+}
+
 void OrderLineEdit::sList()
 {
   OrderList newdlg(this);
@@ -472,10 +529,7 @@ void OrderLineEdit::setAllowedStatuses(const OrderLineEdit::OrderStatuses p)
   else
     _statusClause = "";
 
-  QStringList clauses;
-  if (! _statusClause.isEmpty()) clauses << _statusClause;
-  if (! _typeClause.isEmpty())   clauses << _typeClause;
-  setExtraClause(clauses.join(" AND "));
+  VirtualClusterLineEdit::setExtraClause(buildExtraClause());
 
   _allowedStatuses = p;
 }
@@ -489,10 +543,12 @@ void OrderLineEdit::setAllowedType(const QString &p)
   else			setAllowedTypes(AnyType);
 }
 
-void OrderLineEdit::setAllowedTypes(const OrderLineEdit::OrderTypes p)
+void OrderLineEdit::setAllowedTypes(const OrderTypes p)
 {
-  if (p == Purchase + Return + Sales + Transfer ||
-      (p == Purchase + Return + Sales && _x_metrics->boolean("MultiWhs")))
+  if ((p & Purchase) &&
+      ((p & Return) || ! _x_metrics->boolean("EnableReturnAuth")) &&
+      (p & Sales) &&
+      ((p & Transfer) || ! _x_metrics->boolean("MultiWhs")))
   {
     _typeClause = "";
     _allowedTypes = AnyType;
@@ -523,10 +579,7 @@ void OrderLineEdit::setAllowedTypes(const OrderLineEdit::OrderTypes p)
     _allowedTypes = AnyType;
   }
 
-  QStringList clauses;
-  if (! _statusClause.isEmpty()) clauses << _statusClause;
-  if (! _typeClause.isEmpty())   clauses << _typeClause;
-  setExtraClause(clauses.join(" AND "));
+  VirtualClusterLineEdit::setExtraClause(buildExtraClause());
 }
 
 void OrderLineEdit::setId(const int pId, const QString &pType)
@@ -544,6 +597,20 @@ void OrderLineEdit::setId(const int pId, const QString &pType)
     emit newId(pId, pType);
     emit valid(_valid);
   }
+}
+
+QString OrderLineEdit::buildExtraClause()
+{
+  QStringList clauses;
+  if (! _statusClause.isEmpty()) clauses << _statusClause;
+  if (! _typeClause.isEmpty())   clauses << _typeClause;
+  if (! _allClause.isEmpty())	 clauses << _allClause;
+  if (! _poClause.isEmpty())	 clauses << _poClause;
+  if (! _raClause.isEmpty())	 clauses << _raClause;
+  if (! _soClause.isEmpty())	 clauses << _soClause;
+  if (! _toClause.isEmpty())	 clauses << _toClause;
+
+  return clauses.join(" AND ");
 }
 
 void OrderLineEdit::silentSetId(const int pId)

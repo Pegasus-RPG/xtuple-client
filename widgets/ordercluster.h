@@ -97,6 +97,8 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual bool	  isSO()		const;
     virtual bool	  isTO()		const;
     virtual bool	  isUnposted()		const;
+    virtual void	  setExtraClause(const QString &, const QString &);
+    virtual void	  setExtraClause(const OrderTypes, const QString &);
     virtual void	  sList();
     virtual void	  sSearch();
     virtual OrderStatus	  status();
@@ -119,6 +121,7 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     QString		_from;
     QString		_to;
 
+    virtual QString	buildExtraClause();
     virtual void	silentSetId(const int);
 
 
@@ -127,6 +130,11 @@ class OPENMFGWIDGETS_EXPORT OrderLineEdit : public VirtualClusterLineEdit
     virtual void	sParse();
 
   private:
+    QString	_allClause;
+    QString	_poClause;
+    QString	_raClause;
+    QString	_soClause;
+    QString	_toClause;
     QString	_statusClause;
     QString	_typeClause;
 };
@@ -150,6 +158,9 @@ class OPENMFGWIDGETS_EXPORT OrderCluster : public VirtualCluster
     virtual bool	isSO()		const;
     virtual bool	isTO()		const;
     virtual bool	isUnposted()	const;
+    virtual void	setExtraClause(const QString &, const QString &);
+    virtual void	setExtraClause(const OrderLineEdit::OrderTypes,
+				       const QString &);
     virtual OrderLineEdit::OrderStatus	 status()		const;
     virtual QString	to()		const;
     virtual QString	type()		const;

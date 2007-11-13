@@ -87,6 +87,15 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _order->setAllowedTypes(OrderLineEdit::Purchase |
 			  OrderLineEdit::Return |
 			  OrderLineEdit::Transfer);
+  _order->setExtraClause("RA", "(SELECT SUM(raitem_qtyauthorized) > 0 "
+			       "  FROM raitem"
+			       "  WHERE ((raitem_rahead_id=orderhead_id)"
+			       "     AND (orderhead_type = 'RA'))) "
+			       " AND "
+			       "(SELECT (rahead_disposition IN ('R','P','V'))"
+			       " FROM rahead"
+			       " WHERE ((rahead_id=orderhead_id)"
+			       "   AND  (orderhead_type = 'RA')))");
   _order->setFocus();
 
   _orderitem->addColumn(tr("#"),            _whsColumn,  Qt::AlignCenter );
