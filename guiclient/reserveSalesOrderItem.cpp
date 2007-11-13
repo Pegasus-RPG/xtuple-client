@@ -133,7 +133,7 @@ void reserveSalesOrderItem::sIssue()
     int result = issue.value("result").toInt();
     if (result < 0)
     {
-      systemError( this, storedProcErrorLookup("issueToShipping", result),
+      systemError( this, storedProcErrorLookup("reserveSoLineQty", result),
 		  __FILE__, __LINE__);
       return;
     }
@@ -143,6 +143,8 @@ void reserveSalesOrderItem::sIssue()
     systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
+  accept();
 }
 
 void reserveSalesOrderItem::populate()
@@ -150,16 +152,20 @@ void reserveSalesOrderItem::populate()
   ParameterList itemp;
   itemp.append("soitem_id", _itemid);
 
-  QString sql = "<? if exists(\"soitem_id\") ?>"
-		"SELECT cohead_number AS order_number,"
+  QString sql = "SELECT cohead_number AS order_number,"
+                "       coitem_linenumber,"
 		"       itemsite_item_id AS item_id,"
 		"       warehous_code,"
                 "       uom_name,"
+                "       formatQty(itemsite_qtyonhand) AS qtyonhand,"
+                "       formatQty(qtyReserved(itemsite_id)) AS totreserved,"
+                "       formatQty(qtyUnreserved(itemsite_id)) AS totunreserved,"
 		"       formatQty(coitem_qtyord) AS qtyordered,"
 		"       formatQty(coitem_qtyshipped) AS qtyshipped,"
 		"       formatQty(coitem_qtyreturned) AS qtyreturned,"
+                "       formatQty(coitem_qtyreserved) AS qtyreserved,"
 		"       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped +"
-		"                       coitem_qtyreturned)) AS balance "
+		"                       coitem_qtyreturned - coitem_qtyreserved)) AS balance "
 		"FROM cohead, coitem, itemsite, item, warehous, uom "
 		"WHERE ((coitem_cohead_id=cohead_id)"
 		"  AND  (coitem_itemsite_id=itemsite_id)"
@@ -167,23 +173,7 @@ void reserveSalesOrderItem::populate()
                 "  AND  (coitem_qty_uom_id=uom_id)"
 		"  AND  (itemsite_item_id=item_id)"
 		"  AND  (itemsite_warehous_id=warehous_id)"
-		"  AND  (coitem_id=<? value(\"soitem_id\") ?>) );"
-		"<? elseif exists(\"toitem_id\") ?>"
-		"SELECT tohead_number AS order_number,"
-		"       toitem_item_id AS item_id,"
-		"       warehous_code,"
-                "       toitem_uom AS uom_name,"
-		"       formatQty(toitem_qty_ordered) AS qtyordered,"
-		"       formatQty(toitem_qty_shipped) AS qtyshipped,"
-		"       0 AS qtyreturned,"
-		"       formatQty(noNeg(toitem_qty_ordered -"
-		"                       toitem_qty_shipped)) AS balance "
-		"FROM tohead, toitem, warehous, item "
-		"WHERE ((toitem_tohead_id=tohead_id)"
-		"  AND  (toitem_status <> 'X')"
-		"  AND  (tohead_src_warehous_id=warehous_id)"
-		"  AND  (toitem_id=<? value(\"toitem_id\") ?>) );"
-		"<? endif ?>";
+		"  AND  (coitem_id=<? value(\"soitem_id\") ?>) );";
 
   MetaSQLQuery itemm(sql);
   XSqlQuery itemq = itemm.toQuery(itemp);
@@ -191,12 +181,17 @@ void reserveSalesOrderItem::populate()
   if (itemq.first())
   {
     _salesOrderNumber->setText(itemq.value("order_number").toString());
+    _salesOrderLine->setText(itemq.value("coitem_linenumber").toString());
     _item->setId(itemq.value("item_id").toInt());
     _warehouse->setText(itemq.value("warehous_code").toString());
     _qtyUOM->setText(itemq.value("uom_name").toString());
     _qtyOrdered->setText(itemq.value("qtyordered").toString());
     _qtyShipped->setText(itemq.value("qtyshipped").toString());
     _balance->setText(itemq.value("balance").toString());
+    _reserved->setText(itemq.value("qtyreserved").toString());
+    _onHand->setText(itemq.value("qtyonhand").toString());
+    _allocated->setText(itemq.value("totreserved").toString());
+    _unreserved->setText(itemq.value("totunreserved").toString());
   }
   else if (itemq.lastError().type() != QSqlError::None)
   {

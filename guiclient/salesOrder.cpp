@@ -86,6 +86,7 @@
 #include "printPackingList.h"
 #include "printSoForm.h"
 #include "deliverSalesOrder.h"
+#include "reserveSalesOrderItem.h"
 
 #define cNewQuote  (0x20 | cNew)
 #define cEditQuote (0x20 | cEdit)
@@ -4454,6 +4455,18 @@ void salesOrder::sTaxAuthChanged()
 
 void salesOrder::sReserveStock()
 {
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+
+    reserveSalesOrderItem newdlg(this, "", true);
+    newdlg.set(params);
+    newdlg.exec();
+  }
+
+  sFillItemList();
 }
 
 void salesOrder::sReserveLineBalance()

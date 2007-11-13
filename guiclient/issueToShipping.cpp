@@ -414,7 +414,7 @@ void issueToShipping::sIssueStock()
 
 bool issueToShipping::sufficientItemInventory(int porderitemid)
 {
-  if(_requireInventory->isChecked())
+  if(_requireInventory->isChecked() || ("SO" == _ordertype && _metrics->boolean("EnableSOReservations")))
   {
     q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :itemid) AS result;");
     q.bindValue(":itemid", porderitemid);
@@ -469,7 +469,7 @@ bool issueToShipping::sufficientItemInventory(int porderitemid)
 
 bool issueToShipping::sufficientInventory(int porderheadid)
 {
-  if(_requireInventory->isChecked())
+  if(_requireInventory->isChecked() || ("SO" == _ordertype && _metrics->boolean("EnableSOReservations")))
   {
     q.prepare("SELECT sufficientInventoryToShipOrder(:ordertype, :orderid) AS result;");
     q.bindValue(":orderid", porderheadid);
