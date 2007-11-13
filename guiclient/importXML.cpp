@@ -411,6 +411,11 @@ bool importXML::importOne(const QString &pFileName)
     QStringList columnNameList;
     QStringList columnValueList;
     bool update = ! viewElem.attribute("id").isEmpty();
+    bool ignoreErr = (viewElem.attribute("ignore", "false").isEmpty() ||
+		      viewElem.attribute("ignore", "false") == "true");
+
+    if (ignoreErr)
+      q.exec("SAVEPOINT " + viewElem.tagName() + ";");
 
     for (QDomElement columnElem = viewElem.firstChildElement();
 	 ! columnElem.isNull();
@@ -446,10 +451,17 @@ bool importXML::importOne(const QString &pFileName)
     q.exec(sql);
     if (q.lastError().type() != QSqlError::None)
     {
-      rollback.exec();
-      systemError(this, tr("Error importing %1 %2\n\n").arg(pFileName).arg(tmpfileName) + q.lastError().databaseText(), __FILE__, __LINE__);
-      return false;
+      if (ignoreErr)
+	q.exec("ROLLBACK TO SAVEPOINT " + viewElem.tagName() + ";");
+      else
+      {
+	rollback.exec();
+	systemError(this, tr("Error importing %1 %2\n\n").arg(pFileName).arg(tmpfileName) + q.lastError().databaseText(), __FILE__, __LINE__);
+	return false;
+      }
     }
+    else if (ignoreErr)
+      q.exec("RELEASE SAVEPOINT " + viewElem.tagName() + ";");
   }
 
   q.exec("COMMIT;");
