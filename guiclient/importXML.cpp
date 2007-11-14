@@ -207,7 +207,7 @@ void importXML::sClearStatus()
 {
   QList<QTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = selected.size() - 1; i >= 0; i--)
-    _file->topLevelItem(i)->setData(1, Qt::DisplayRole, tr(""));
+    selected[i]->setData(1, Qt::DisplayRole, tr(""));
 }
 
 void importXML::sDelete()
@@ -244,12 +244,11 @@ void importXML::sImportSelected()
   QList<QTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
-    QTreeWidgetItem* pItem = _file->topLevelItem(i);
-    if (pItem->data(1, Qt::DisplayRole).toString().isEmpty())
-      if (importOne(pItem->data(0, Qt::DisplayRole).toString()))
-	pItem->setData(1, Qt::DisplayRole, tr("Done"));
+    if (selected[i]->data(1, Qt::DisplayRole).toString().isEmpty())
+      if (importOne(selected[i]->data(0, Qt::DisplayRole).toString()))
+	selected[i]->setData(1, Qt::DisplayRole, tr("Done"));
       else
-	pItem->setData(1, Qt::DisplayRole, tr("Error"));
+	selected[i]->setData(1, Qt::DisplayRole, tr("Error"));
   }
 }
 
@@ -355,20 +354,24 @@ bool importXML::importOne(const QString &pFileName)
 
       QProcess xslt(this);
       xslt.setStandardOutputFile(tmpfileName);
-      qDebug("%s %s", command.toAscii().data(), args.join(" ").toAscii().data());
       xslt.start(command, args);
+      QString commandline = command + " " + args.join(" ");
       QString errOutput;
       if (! xslt.waitForStarted())
-	errOutput = tr("Error starting XSLT Processing: %1")
+	errOutput = tr("Error starting XSLT Processing: %1\n%2")
+			  .arg(commandline)
 			  .arg(QString(xslt.readAllStandardError()));
       if (! xslt.waitForFinished())
-	errOutput = tr("The XSLT Processor encountered an error: %1")
+	errOutput = tr("The XSLT Processor encountered an error: %1\n%2")
+			  .arg(commandline)
 			  .arg(QString(xslt.readAllStandardError()));
       if (xslt.exitStatus() !=  QProcess::NormalExit)
-	errOutput = tr("The XSLT Processor did not exit normally: %1")
+	errOutput = tr("The XSLT Processor did not exit normally: %1\n%2")
+			  .arg(commandline)
 			  .arg(QString(xslt.readAllStandardError()));
       if (xslt.exitCode() != 0)
-	errOutput = tr("The XSLT Processor returned an error code: %1\n%2")
+	errOutput = tr("The XSLT Processor returned an error code: %1\nreturned %2\n%3")
+			  .arg(commandline)
 			  .arg(xslt.exitCode())
 			  .arg(QString(xslt.readAllStandardError()));
 
@@ -388,10 +391,11 @@ bool importXML::importOne(const QString &pFileName)
 	second level elements are all api view names
 	  third level elements are all column names
      and there are no text nodes until third level
-  */
-  /*
-     for now wrap the import of an entire file in a single transaction.
-     at least we'll know which files succeeded and which files failed.
+
+     wrap the import of an entire file in a single transaction so
+     we can reimport files which have failures. however, if a
+     view-level element has the ignore attribute set to true then
+     rollback just that view-level element if it generates an error.
   */
 
   q.exec("BEGIN;");
@@ -410,9 +414,35 @@ bool importXML::importOne(const QString &pFileName)
   {
     QStringList columnNameList;
     QStringList columnValueList;
-    bool update = ! viewElem.attribute("id").isEmpty();
+
     bool ignoreErr = (viewElem.attribute("ignore", "false").isEmpty() ||
 		      viewElem.attribute("ignore", "false") == "true");
+
+    QString mode = viewElem.attribute("mode", "insert");
+    QStringList keyList;
+    if (! viewElem.attribute("key").isEmpty())
+      keyList = viewElem.attribute("key").split(QRegExp(",\\s*"));
+
+    // TODO: fix QtXML classes so they read default attribute values from the DTD
+    // then remove this code
+    if (mode.isEmpty())
+      mode = "insert";
+    else if (mode == "update" && keyList.isEmpty())
+    {
+      if (! viewElem.namedItem(viewElem.tagName() + "_number").isNull())
+	keyList.append(viewElem.tagName() + "_number");
+      else if (! viewElem.namedItem("order_number").isNull())
+	keyList.append("order_number");
+      else if (! ignoreErr)
+      {
+	rollback.exec();
+	systemError(this, tr("Cannot process %1 element without a key attribute"));
+	return false;
+      }
+      if (! viewElem.namedItem("line_number").isNull())
+	keyList.append("line_number");
+    }
+    // end of code to remove
 
     if (ignoreErr)
       q.exec("SAVEPOINT " + viewElem.tagName() + ";");
@@ -421,12 +451,15 @@ bool importXML::importOne(const QString &pFileName)
 	 ! columnElem.isNull();
 	 columnElem = columnElem.nextSiblingElement())
     {
-      qDebug(columnElem.tagName().toAscii().data());
       columnNameList.append(columnElem.tagName());
-      if (! columnElem.attribute("value").isEmpty())
+      if (columnElem.attribute("value") == "[NULL]")
+	columnValueList.append("NULL");
+      else if (! columnElem.attribute("value").isEmpty())
 	columnValueList.append("'" + columnElem.attribute("value") + "'");
       else if (columnElem.text().stripWhiteSpace().startsWith("SELECT"))
 	columnValueList.append("(" + columnElem.text() + ")");
+      else if (columnElem.text().stripWhiteSpace() == "[NULL]")
+	columnValueList.append("NULL");
       else if (columnElem.attribute("quote") == "false")
 	columnValueList.append(columnElem.text());
       else
@@ -434,20 +467,38 @@ bool importXML::importOne(const QString &pFileName)
     }
 
     QString sql;
-    if (update)
+    if (mode == "update")
     {
+      QStringList whereList;
+      for (int i = 0; i < keyList.size(); i++)
+	whereList.append("(" + keyList[i] + "=" +
+			 columnValueList[columnNameList.indexOf(keyList[i])] + ")");
+
       for (int i = 0; i < columnNameList.size(); i++)
 	columnNameList[i].append("=" + columnValueList[i]);
+
       sql = "UPDATE api." + viewElem.tagName() + " SET " +
 	    columnNameList.join(", ") +
-	    " WHERE (" + viewElem.tagName() +
-	    "_id='" + viewElem.attribute("id") + "');" ;
+	    " WHERE (" + whereList.join(" AND ") + ");";
     }
-    else
+    else if (mode == "insert")
       sql = "INSERT INTO api." + viewElem.tagName() + " (" +
 	    columnNameList.join(", ") +
 	    " ) SELECT " +
 	    columnValueList.join(", ") + ";" ;
+    else
+    {
+      if (ignoreErr)
+	q.exec("ROLLBACK TO SAVEPOINT " + viewElem.tagName() + ";");
+      else
+      {
+	rollback.exec();
+	systemError(this, tr("Could not process %1: invalid mode %2")
+			    .arg(viewElem.tagName()).arg(mode));
+	return false;
+      }
+    }
+
     q.exec(sql);
     if (q.lastError().type() != QSqlError::None)
     {
@@ -472,12 +523,26 @@ bool importXML::importOne(const QString &pFileName)
     return false;
   }
 
+  QFile file(pFileName);
   if (_metrics->value("XMLSuccessTreatment") == "Delete")
-    return QFile::remove(pFileName);
+  {
+    if (! file.remove())
+    {
+      systemError(this, tr("Could not remove %1 after successful processing (%2).")
+			.arg(pFileName).arg(file.error()));
+      return false;
+    }
+  }
   else if (_metrics->value("XMLSuccessTreatment") == "Rename")
-    return QFile::rename(pFileName, pFileName + suffix);
-  else if (_metrics->value("XMLSuccessTreatment") == "None")
-    return true;
+  {
+    if (! file.rename(pFileName + suffix))
+    {
+      systemError(this, tr("Could not rename %1 after successful processing (%2).")
+			.arg(pFileName).arg(file.error()));
+      return false;
+    }
+  }
+  // else if (_metrics->value("XMLSuccessTreatment") == "None") {}
 
-  return false;	// should never reach here
+  return true;
 }

@@ -209,6 +209,7 @@
 	    </xsl:call-template>
 	  </billing_contact_country>
 	</xsl:if>
+	<billing_contact_address_change value="CHANGEALL"/>
       </xsl:if>
 
       <xsl:if test="$customer_corresp_type != 'bill' and

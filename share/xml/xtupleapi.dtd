@@ -22,12 +22,15 @@
   - Space characters have been replaced by _ in attribute values that the
     API expects to contain spaces.
 
-  - If an API view element has an id attribute then the
-    corresponding underlying table has an id. By passing the id
-    attribute for this record, the user is telling us to update an
-    existing record with this internal id.  All id attributes in
-    this file should have positive integer values, *not* ID or IDREF
-    values.
+  - By default a view-level element will be inserted into the
+    database. This can be changed with the mode attribute of most
+    view-level elements. Some views should be insert-only, such as
+    *comment; these don't have mode attributes.
+
+  - If a view-level element has its attribute mode set to update then
+    it must also supply a value for its key element(s) or the processing
+    will fail. The key element for each view-level element is named in
+    the view-level element's key attribute.
 
   - If an API view element has an ignore attribute then the import
     program should be written so that it will ignore errors if this
@@ -94,8 +97,9 @@
 		      secondary_contact_email?,
 		      secondary_contact_web?)?,
 		    notes? ) >
-<!ATTLIST account	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' >
+<!ATTLIST account	mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'account_number' >
 
 <!ELEMENT accountchar (account_number, characteristic, value ) >
 <!ATTLIST accountchar	ignore 	(true|false)	'false' >
@@ -114,8 +118,9 @@
 		    active?,
 		    notes?,
 		    change? ) >
-<!ATTLIST address	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' > <!-- should be same as address_number if supplied -->
+<!ATTLIST address	mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'address_number' >
 
 <!ELEMENT addresschar (address_number, characteristic, value ) >
 <!ATTLIST addresschar	ignore 	(true|false)	'false' >
@@ -145,8 +150,9 @@
 		    country?,
 		    address_change?,
 		    notes? ) >
-<!ATTLIST contact	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' >
+<!ATTLIST contact	mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'contact_number' >
 
 <!ELEMENT contactchar (contact_number, characteristic, value ) >
 <!ATTLIST contactchar	ignore 	(true|false)	'false' >
@@ -254,8 +260,9 @@
 		      invc_edi_filename?,
 		      invc_edi_emailbody?
 		   ) >
-<!ATTLIST customer	id	CDATA		#IMPLIED
-			ignore	(true|false)	'false' >
+<!ATTLIST customer	mode	(insert|update)	'insert'
+			ignore	(true|false)	'false'
+			key	CDATA	#FIXED	'customer_number' >
 
 <!ELEMENT custshipto ( customer_number,
 		       shipto_number?,
@@ -289,8 +296,9 @@
 		       general_notes?,
 		       shipping_notes?
 		     ) >
-<!ATTLIST custshipto	id	CDATA		#IMPLIED
-			ignore	(true|false)	'false' >
+<!ATTLIST custshipto	mode	(insert|update)	'insert'
+			ignore	(true|false)	'false'
+			key	CDATA	#FIXED	'customer_number, shipto_number' >
 
 <!ELEMENT custtax (customer_number, tax_authority, registration_number) >
 <!ATTLIST custtax	ignore 	(true|false)	'false' >
@@ -345,8 +353,9 @@
 		   shipping_notes?,
 		   add_to_packing_list_batch?
 		) >
-<!ATTLIST quote	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' >
+<!ATTLIST quote		mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'quote_number' >
 
 <!ELEMENT quotecomment ( quote_number,
 			 type,
@@ -372,8 +381,9 @@
 		      overwrite_po_price?,
 		      notes?
 		    ) >
-<!ATTLIST quoteline	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' >
+<!ATTLIST quoteline	mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'quote_number, line_number' >
 
 <!ELEMENT quotelinechar ( quote_number,
 			  line_number,
@@ -409,8 +419,9 @@
 			  overwrite_po_price?,
 			  notes?
 			) >
-<!ATTLIST salesline	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' >
+<!ATTLIST salesline	mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'order_number, line_number' >
 
 <!ELEMENT saleslinechar ( order_number,
 			  line_number,
@@ -474,8 +485,9 @@
 			shipping_notes?,
 			add_to_packing_list_batch?
 		      )>
-<!ATTLIST salesorder	id	CDATA		#IMPLIED
-			ignore 	(true|false)	'false' >
+<!ATTLIST salesorder	mode	(insert|update)	'insert'
+			ignore 	(true|false)	'false'
+			key	CDATA	#FIXED	'order_number' >
 
 <!ELEMENT salesordercomment ( order_number,
 			      type,
