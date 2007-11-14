@@ -72,8 +72,15 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 {
   setupUi(this);
 
+  _codeGroup = new QButtonGroup(this);
+  _codeGroup->addButton(_cust);
+  _codeGroup->addButton(_custtype);
+  _custInfo->hide();
+  _parameter->setType(CustomerType);
+
 //  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 //  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
+  connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
@@ -220,6 +227,13 @@ void returnAuthorizationWorkbench::sViewDue()
 
 void returnAuthorizationWorkbench::sFillList()
 { 
+  if (_cust->isChecked() && !_custInfo->isValid())
+  {
+    QMessageBox::information( this, tr("Customer not selected"),
+			      tr("<p>Please select a customer.") );
+    _custInfo->setFocus();
+    return;
+  }
   if (_closed->isChecked() && !_dates->allValid())
   {
     QMessageBox::information( this, tr("Invalid Dates"),
@@ -228,7 +242,8 @@ void returnAuthorizationWorkbench::sFillList()
     _dates->setFocus();
     return;
   }
-  else if ((_receipts->isChecked()) || (_shipments->isChecked()) || (_payment->isChecked()))
+  else if ((_receipts->isChecked()) || (_shipments->isChecked()) || 
+	        (_payment->isChecked()) || (_closed->isChecked()))
   {
 	bool bw;
 	bw = false;
@@ -292,10 +307,19 @@ void returnAuthorizationWorkbench::sFillList()
 			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id), "
 			  " raitem "
 			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id), "
-			  " itemsite, item "
+			  " itemsite, item, custtype "
 			  "WHERE ( (rahead_id=raitem_rahead_id) "
 			  " AND (raitem_itemsite_id=itemsite_id) "
-			  " AND (itemsite_item_id=item_id) ");
+			  " AND (itemsite_item_id=item_id) "
+			  " AND (cust_custtype_id=custtype_id) ");
+
+    if ((_cust->isChecked()))
+	  sql += " AND (cust_id=:cust_id) ";
+    else if (_parameter->isSelected())
+	  sql += " AND (custtype_id=:custtype_id) ";
+    else if (_parameter->isPattern())
+	  sql += " AND (custtype_code ~ :custtype_pattern) ";
+
 	if (!_expired->isChecked())
 	  sql +=  " AND (COALESCE(rahead_expiredate,current_date) >= current_date)";
 	if (_closed->isChecked())
@@ -344,6 +368,8 @@ void returnAuthorizationWorkbench::sFillList()
 	}
     
 	q.prepare(sql);
+    _parameter->bindValue(q);
+	q.bindValue(":cust_id", _custInfo->id());
 	q.bindValue(":undefined",tr("Undefined"));
 	q.bindValue(":credit",tr("Credit"));
 	q.bindValue(":return",tr("Return"));
@@ -372,5 +398,19 @@ void returnAuthorizationWorkbench::sFillList()
   }
   else
     _ra->clear();
+}
+
+void returnAuthorizationWorkbench::sParameterTypeChanged()
+{
+  if(_cust->isChecked())
+  {
+    _parameter->hide();
+	_custInfo->show();
+  }
+  else //if(_custtype->isChecked())
+  {
+    _parameter->show();
+	_custInfo->hide();
+  }
 }
 

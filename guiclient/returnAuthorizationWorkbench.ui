@@ -23,13 +23,13 @@
     <item row="0" column="0" >
      <widget class="QGroupBox" name="_type" >
       <property name="title" >
-       <string>Filter Type</string>
+       <string/>
       </property>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
-        <widget class="QRadioButton" name="_cust" >
+        <widget class="QRadioButton" name="_custtype" >
          <property name="text" >
-          <string>Customer</string>
+          <string>Customer Type</string>
          </property>
          <property name="checked" >
           <bool>true</bool>
@@ -37,9 +37,12 @@
         </widget>
        </item>
        <item row="1" column="0" >
-        <widget class="QRadioButton" name="_custtype" >
+        <widget class="QRadioButton" name="_cust" >
          <property name="text" >
-          <string>Customer Type</string>
+          <string>Customer</string>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -49,11 +52,31 @@
     <item row="0" column="1" >
      <widget class="ParameterGroup" name="_parameter" >
       <property name="title" >
-       <string>Filter</string>
+       <string/>
       </property>
      </widget>
     </item>
     <item row="0" column="2" >
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="CustInfo" name="_custInfo" />
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="0" column="3" >
      <spacer>
       <property name="orientation" >
        <enum>Qt::Horizontal</enum>
@@ -66,7 +89,7 @@
       </property>
      </spacer>
     </item>
-    <item row="0" column="3" >
+    <item row="0" column="4" >
      <layout class="QVBoxLayout" >
       <property name="spacing" >
        <number>0</number>
@@ -593,6 +616,11 @@
  <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
+  <customwidget>
+   <class>CustInfo</class>
+   <extends>QWidget</extends>
+   <header>custcluster.h</header>
+  </customwidget>
   <customwidget>
    <class>DateCluster</class>
    <extends>QWidget</extends>
