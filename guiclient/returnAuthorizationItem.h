@@ -92,9 +92,6 @@ public slots:
     virtual void sHandleWo( bool pCreate );
     virtual void sPopulateOrderInfo();
 
-private slots:
-	void connectAll();
-
 protected slots:
     virtual void languageChange();
 

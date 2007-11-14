@@ -102,7 +102,6 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   _radue->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
   _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
   _radue->addColumn(tr("Eligible"),     _dateColumn,     Qt::AlignRight  );
-  _radue->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
   _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
   _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
 
@@ -111,6 +110,11 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
     _edit->hide();
 	_editdue->hide();
   }
+
+  //Remove Credit Card related option if Credit Card not enabled
+  QString key = omfgThis->_key;
+  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+    _creditcard->hide();
 }
 
 returnAuthorizationWorkbench::~returnAuthorizationWorkbench()
@@ -372,16 +376,14 @@ void returnAuthorizationWorkbench::sFillList()
 	bool bc;
 	bc = false;
 	QString sql (" SELECT * FROM ( "
-			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
+			  "SELECT rahead_id, rahead_number, cust_name,:undefined, "
 			  "formatDate(rahead_authdate), formatDate(NULL), "
-	  		  "CASE "
-			  "  WHEN raitem_disposition = 'C' THEN "
-			  "    :credit "
-			  "  WHEN raitem_disposition = 'R' THEN "
-			  "    :return "
-			  "  END AS disposition, "
-			  "  formatMoney(SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
-			  "     (raitem_unitprice / raitem_price_invuomratio),2)-raitem_amtcredited)) AS subtotal, "
+			  "formatMoney(SUM(round((( "
+			  " (CASE WHEN raitem_disposition = 'C' THEN "
+			  "   raitem_qtyauthorized "
+			  "  ELSE raitem_qtyreceived "
+			  "  END) - raitem_qtycredited) * raitem_qty_invuomratio) * "
+			  "     (raitem_unitprice / raitem_price_invuomratio),2))) AS subtotal, "
 			  "CASE "
 			  "  WHEN rahead_creditmethod = 'M' THEN "
 			  "    :creditmemo "
@@ -396,6 +398,8 @@ void returnAuthorizationWorkbench::sFillList()
 			  " AND (raitem_itemsite_id=itemsite_id) "
 			  " AND (itemsite_item_id=item_id) "
 			  " AND (cust_custtype_id=custtype_id) "
+			  " AND ((raitem_disposition = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
+			  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
 			  " AND (raitem_status = 'O') "
 			  " AND (rahead_creditmethod != 'N') "
 			  " AND (raitem_disposition IN ('C','R')) ");
@@ -408,7 +412,7 @@ void returnAuthorizationWorkbench::sFillList()
 	  sql += " AND (custtype_code ~ :custtype_pattern) ";
 
   	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name, "
-			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod "
+			  " rahead_authdate,raitem_status,rahead_creditmethod "
 			  " ORDER BY rahead_authdate,rahead_number "
 			  ") as data "
               " WHERE (creditmethod IN ( "; 
@@ -438,14 +442,12 @@ void returnAuthorizationWorkbench::sFillList()
 	radue.prepare(sql);
     _parameter->bindValue(radue);
 	radue.bindValue(":cust_id", _custInfo->id());
-	radue.bindValue(":undefined",tr("Undefined"));
 	radue.bindValue(":credit",tr("Credit"));
 	radue.bindValue(":return",tr("Return"));
 	radue.bindValue(":none",tr("None"));
 	radue.bindValue(":creditmemo",tr("Memo"));
 	radue.bindValue(":check",tr("Check"));
 	radue.bindValue(":creditcard",tr("Card"));
-	radue.bindValue(":unknown",tr("Unknown"));
     _dates->bindValue(radue);
 	radue.exec();
 	if (radue.first())
