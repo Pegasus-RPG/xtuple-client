@@ -88,7 +88,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
- // connect(_ra, SIGNAL(valid(bool)), this, SLOT(sHandleStatusButton()));
+  connect(_ra, SIGNAL(valid(bool)), this, SLOT(sHandleStatusButton()));
   connect(_chgstatus, SIGNAL(clicked()), this, SLOT(sChangeStatus()));
 
   _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
@@ -184,9 +184,9 @@ void returnAuthorizationWorkbench::sHandleStatusButton()
 	if (q.first())
 	{
 	  if (q.value("rahead_status").toString() == "O")
-		  _chgstatus->setText("Open");
-	  else
 		  _chgstatus->setText("Close");
+	  else
+		  _chgstatus->setText("Open");
 	}
 	else if (q.lastError().type() != QSqlError::None)
     {
@@ -367,31 +367,32 @@ void returnAuthorizationWorkbench::sFillList()
 	  sql +=  "(awaiting = :closed)) "; 
 	}
     
-	q.prepare(sql);
-    _parameter->bindValue(q);
-	q.bindValue(":cust_id", _custInfo->id());
-	q.bindValue(":undefined",tr("Undefined"));
-	q.bindValue(":credit",tr("Credit"));
-	q.bindValue(":return",tr("Return"));
-	q.bindValue(":replace",tr("Replace"));
-	q.bindValue(":service",tr("Service"));
-	q.bindValue(":mixed",tr("Mixed"));
-	q.bindValue(":none",tr("None"));
-	q.bindValue(":creditmemo",tr("Memo"));
-	q.bindValue(":check",tr("Check"));
-	q.bindValue(":creditcard",tr("Card"));
-	q.bindValue(":payment",tr("Payment"));
-	q.bindValue(":receipt",tr("Receipt"));
-	q.bindValue(":ship",tr("Shipment"));
-	q.bindValue(":unknown",tr("Unknown"));
-	q.bindValue(":closed",tr("Closed"));
-    _dates->bindValue(q);
-	q.exec();
-	if (q.first())
-		_ra->populate(q);
-	else if (q.lastError().type() != QSqlError::None)
+	XSqlQuery ra;
+	ra.prepare(sql);
+    _parameter->bindValue(ra);
+	ra.bindValue(":cust_id", _custInfo->id());
+	ra.bindValue(":undefined",tr("Undefined"));
+	ra.bindValue(":credit",tr("Credit"));
+	ra.bindValue(":return",tr("Return"));
+	ra.bindValue(":replace",tr("Replace"));
+	ra.bindValue(":service",tr("Service"));
+	ra.bindValue(":mixed",tr("Mixed"));
+	ra.bindValue(":none",tr("None"));
+	ra.bindValue(":creditmemo",tr("Memo"));
+	ra.bindValue(":check",tr("Check"));
+	ra.bindValue(":creditcard",tr("Card"));
+	ra.bindValue(":payment",tr("Payment"));
+	ra.bindValue(":receipt",tr("Receipt"));
+	ra.bindValue(":ship",tr("Shipment"));
+	ra.bindValue(":unknown",tr("Unknown"));
+	ra.bindValue(":closed",tr("Closed"));
+    _dates->bindValue(ra);
+	ra.exec();
+	if (ra.first())
+		_ra->populate(ra);
+	else if (ra.lastError().type() != QSqlError::None)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, ra.lastError().databaseText(), __FILE__, __LINE__);
 	  _ra->clear();
       return;
     }

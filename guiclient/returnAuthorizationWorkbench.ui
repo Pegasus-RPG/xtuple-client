@@ -83,7 +83,7 @@
       </property>
       <property name="sizeHint" >
        <size>
-        <width>40</width>
+        <width>16</width>
         <height>20</height>
        </size>
       </property>
@@ -144,7 +144,7 @@
       </item>
      </layout>
     </item>
-    <item row="1" column="0" colspan="4" >
+    <item row="1" column="0" colspan="5" >
      <widget class="QTabWidget" name="_tab" >
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -295,7 +295,7 @@
             <item>
              <widget class="QPushButton" name="_print" >
               <property name="enabled" >
-               <bool>false</bool>
+               <bool>true</bool>
               </property>
               <property name="text" >
                <string>&amp;Print</string>
@@ -474,7 +474,7 @@
           <item>
            <widget class="QPushButton" name="_printdue" >
             <property name="enabled" >
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text" >
              <string>&amp;Print</string>
@@ -682,22 +682,6 @@
   <connection>
    <sender>_ra</sender>
    <signal>valid(bool)</signal>
-   <receiver>_print</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>256</x>
-     <y>312</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>540</x>
-     <y>216</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_ra</sender>
-   <signal>valid(bool)</signal>
    <receiver>_edit</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
@@ -724,22 +708,6 @@
     <hint type="destinationlabel" >
      <x>540</x>
      <y>285</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_radue</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_printdue</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>256</x>
-     <y>286</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>545</x>
-     <y>195</y>
     </hint>
    </hints>
   </connection>
