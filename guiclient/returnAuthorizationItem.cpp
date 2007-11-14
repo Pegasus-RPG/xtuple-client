@@ -444,15 +444,18 @@ void returnAuthorizationItem::populate()
 				 "       formatQty(raitem_qtyreceived) AS qtyrcvd,"
 				 "       formatQty(nc.coitem_qtyshipped) AS qtyshipd,"
 		         "       rahead_taxauth_id,"
-		         "       rahead_curr_id AS taxcurr "
+		         "       rahead_curr_id AS taxcurr, "
+				 "       item_inv_uom_id "
                  "FROM raitem "
 				 "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
 				 "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
 				 "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
 				 "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id),"
-				 "  rahead "
+				 "  rahead, itemsite, item "
                  "WHERE ((raitem_rahead_id=rahead_id)"
-		         " AND  (raitem_id=:raitem_id));" );
+		         " AND  (raitem_id=:raitem_id) "
+				 " AND  (raitem_itemsite_id=itemsite_id) "
+				 " AND  (item_id=itemsite_item_id) );" );
   raitem.bindValue(":raitem_id", _raitemid);
   raitem.exec();
   if (raitem.first())
@@ -477,21 +480,17 @@ void returnAuthorizationItem::populate()
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _tax->setId(raitem.value("taxcurr").toInt());
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
+	_invuomid=raitem.value("item_inv_uom_id").toInt();
     _qtyUOM->setId(raitem.value("raitem_qty_uom_id").toInt());
     _pricingUOM->setId(raitem.value("raitem_price_uom_id").toInt());
+    _qtyinvuomratio = raitem.value("raitem_qty_invuomratio").toDouble();
+    _priceinvuomratio = raitem.value("raitem_price_invuomratio").toDouble();
     _lineNumber->setText(raitem.value("raitem_linenumber").toString());
     _qtyAuth->setText(raitem.value("qtyauth").toString());
     _qtyReceived->setText(raitem.value("qtyrcvd").toString());
     _qtyShipped->setText(raitem.value("qtyshipd").toString());
     _notes->setText(raitem.value("raitem_notes").toString());
     _taxCode->setId(raitem.value("raitem_tax_id").toInt());
-    _taxCache.setLinePct(raitem.value("raitem_tax_pcta").toDouble(),
-			 raitem.value("raitem_tax_pctb").toDouble(),
-			 raitem.value("raitem_tax_pctc").toDouble());
-    _taxCache.setLine(raitem.value("raitem_tax_ratea").toDouble(),
-		      raitem.value("raitem_tax_rateb").toDouble(),
-		      raitem.value("raitem_tax_ratec").toDouble());
-    _tax->setLocalValue(_taxCache.total());
     _rsnCode->setId(raitem.value("raitem_rsncode_id").toInt());
     if (raitem.value("raitem_disposition").toString() == "C")
 	  _disposition->setCurrentItem(0);
@@ -871,6 +870,7 @@ void returnAuthorizationItem::sDispositionChanged()
   {
     _netUnitPrice->setLocalValue(0);
 	_netUnitPrice->setEnabled(FALSE);
+	_pricingUOM->setEnabled(FALSE);
 	_discountFromSale->setEnabled(FALSE);
     _tab->setTabEnabled(0,(_qtyAuth->toDouble() > 0));
 	_scheduledDate->setEnabled(TRUE);
@@ -879,6 +879,7 @@ void returnAuthorizationItem::sDispositionChanged()
   {
     _netUnitPrice->setLocalValue(_salePrice->localValue());
 	_netUnitPrice->setEnabled(TRUE);
+	_pricingUOM->setEnabled(TRUE);
 	_discountFromSale->setEnabled(TRUE);
     _tab->setTabEnabled(0,FALSE);
 	_scheduledDate->clear();

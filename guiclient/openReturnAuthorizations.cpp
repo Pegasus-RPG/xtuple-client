@@ -265,7 +265,7 @@ void openReturnAuthorizations::sFillList()
   q.bindValue(":return", tr("Return"));
   q.bindValue(":replace", tr("Replace"));
   q.bindValue(":service", tr("Service"));
-  q.bindValue(":ship", tr("Ship"));
+  q.bindValue(":mixed", tr("Mixed"));
   q.exec();
 
   _ra->populate(q);
