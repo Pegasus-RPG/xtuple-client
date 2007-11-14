@@ -85,6 +85,11 @@ public slots:
     virtual void sIssueWO();
     virtual void sIssueCountTag();
     virtual void sFillList();
+    virtual void sAutoUpdateToggled(bool);
+    virtual void sHandleReservationNetting(bool);
+    virtual void sReserveStock();
+    virtual void sReserveLineBalance();
+    virtual void sUnreserveStock();
 
 protected slots:
     virtual void languageChange();

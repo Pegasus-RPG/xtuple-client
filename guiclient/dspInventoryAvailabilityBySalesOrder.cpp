@@ -69,6 +69,8 @@
 #include "createCountTagsByItem.h"
 #include "dspSubstituteAvailabilityByItem.h"
 #include "salesOrderList.h"
+#include "reserveSalesOrderItem.h"
+#include "storedProcErrorLookup.h"
 
 #include <openreports.h>
 #include <metasql.h>
@@ -96,6 +98,7 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
   connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSoList()));
   connect(_avail, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
   connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
+  connect(_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled(bool)));
 
 #ifndef Q_WS_MAC
   _salesOrderList->setMaximumWidth(25);
@@ -114,9 +117,23 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
   _avail->addColumn(tr("This Avail."),  _qtyColumn,  Qt::AlignRight  );
   _avail->addColumn(tr("Total Avail."), _qtyColumn,  Qt::AlignRight  );
   _avail->addColumn(tr("At Shipping"),  _qtyColumn,  Qt::AlignRight  );
+  _avail->addColumn(tr("Sched. Date"),  _dateColumn, Qt::AlignCenter );
   _avail->setIndentation(10);
 
+  if(!_metrics->boolean("EnableSOReservations"))
+  {
+    _useReservationNetting->hide();
+    _useReservationNetting->setEnabled(false);
+  }
+  else
+  {
+    connect(_useReservationNetting, SIGNAL(toggled(bool)), this, SLOT(sHandleReservationNetting(bool)));
+    if(_useReservationNetting->isChecked())
+      sHandleReservationNetting(true);
+  }
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
+  if(_autoupdate->isChecked())
+    sAutoUpdateToggled(true);
 }
 
 /*
@@ -227,12 +244,24 @@ void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWid
         if (!_privleges->check("MaintainWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
-  }
+    }
 
-  pMenu->insertSeparator();
-  menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
-    pMenu->setItemEnabled(menuItem, FALSE);
+    if(_metrics->boolean("EnableSOReservations"))
+    {
+      pMenu->insertSeparator();
+      int menuid;
+      menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      menuid = pMenu->insertItem(tr("Reserve Stock..."), this, SLOT(sReserveStock()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      menuid = pMenu->insertItem(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()), 0);
+      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+    }
+
+    pMenu->insertSeparator();
+    menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
+    if (!_privleges->check("IssueCountTags"))
+      pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
 
@@ -370,10 +399,17 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "       formatQty(allocated) AS f_allocated,"
                  "       ordered, formatQty(ordered) AS f_ordered,"
                  "       (qoh + ordered - sobalance) AS woavail,"
+                 "<? if exists(\"useReservationNetting\") ?>"
+                 "       formatQty(coitem_qtyreserved) AS f_soavail,"
+                 "<? else ?>"
                  "       formatQty(qoh + ordered - sobalance) AS f_soavail,"
+                 "<? endif ?>"
                  "       (qoh + ordered - allocated) AS totalavail,"
                  "       formatQty(qoh + ordered - allocated) AS f_totalavail,"
                  "       atshipping,formatQty(atshipping) AS f_atshipping,"
+                 "       formatDate(coitem_scheddate) AS f_scheddate,"
+                 "       (coitem_qtyreserved > 0 AND sobalance > coitem_qtyreserved) AS partialreservation,"
+                 "       ((sobalance - coitem_qtyreserved) = 0) AS fullreservation,"
                  "       reorderlevel "
                  "<? if exists(\"showWoSupply\") ?>, "        
                  "       wo_id,"
@@ -394,6 +430,8 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "              qtyAllocated(itemsite_id, coitem_scheddate) AS allocated,"
                  "              qtyOrdered(itemsite_id, coitem_scheddate) AS ordered,"
                  "              qtyatshipping(coitem_id) AS atshipping,"
+                 "              coitem_qtyreserved,"
+                 "              coitem_scheddate,"
                  "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel "
                  "<? if exists(\"showWoSupply\") ?>, " 
                  "              COALESCE(wo_id,-1) AS wo_id,"
@@ -419,7 +457,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "        AND (coitem_status <> 'X')"
                  "        AND (cohead_id=<? value(\"sohead_id\") ?>))"
                  ") AS data "
-	             " <? if exists(\"onlyShowShortages\") ?>"
+                 " <? if exists(\"onlyShowShortages\") ?>"
                  "WHERE ( ((qoh + ordered - allocated) < 0)"
                  " OR ((qoh + ordered - sobalance) < 0) ) "
                  "<? endif ?>"
@@ -435,6 +473,8 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
       params.append("onlyShowShortages");
     if (_showWoSupply->isChecked())
       params.append("showWoSupply");
+    if (_useReservationNetting->isChecked())
+      params.append("useReservationNetting");
     
     MetaSQLQuery mql(sql);
     q = mql.toQuery(params);
@@ -448,30 +488,46 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
       {
         if (coitemid != q.value("coitem_id").toInt())
         {
-        coitemid = q.value("coitem_id").toInt();
-        coitem = new XTreeWidgetItem( _avail, coitem,
+          coitemid = q.value("coitem_id").toInt();
+          coitem = new XTreeWidgetItem( _avail, coitem,
                                                q.value("itemsite_id").toInt(), q.value("coitem_id").toInt(),
                                                q.value("item_number"),
                                                q.value("item_description"), q.value("uom_name"),
                                                q.value("f_qoh"), q.value("f_sobalance"),
                                                q.value("f_allocated"), q.value("f_ordered"),
                                                q.value("f_soavail"), q.value("f_totalavail"),
-                                               q.value("f_atshipping") );
+                                               q.value("f_atshipping"), q.value("f_scheddate") );
 
-        if (q.value("qoh").toDouble() < 0)
+          if (q.value("qoh").toDouble() < 0)
             coitem->setTextColor(3, "red");
-        else if (q.value("qoh").toDouble() < q.value("reorderlevel").toDouble())
+          else if (q.value("qoh").toDouble() < q.value("reorderlevel").toDouble())
             coitem->setTextColor(3, "orange");
 
-        if (q.value("woavail").toDouble() < 0.0)
+          if (q.value("woavail").toDouble() < 0.0)
             coitem->setTextColor(7, "red");
-        else if (q.value("woavail").toDouble() <= q.value("reorderlevel").toDouble())
+          else if (q.value("woavail").toDouble() <= q.value("reorderlevel").toDouble())
             coitem->setTextColor(7, "orange");
 
-        if (q.value("totalavail").toDouble() < 0.0)
+          if (q.value("totalavail").toDouble() < 0.0)
             coitem->setTextColor(8, "red");
-        else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
+          else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
             coitem->setTextColor(8, "orange"); 
+
+          if(_useReservationNetting->isChecked())
+          {
+            if(q.value("partialreservation").toBool())
+            {
+              coitem->setTextColor(0, "blue");
+              coitem->setTextColor(1, "blue");
+              coitem->setTextColor(7, "blue");
+            }
+            else if(q.value("fullreservation").toBool())
+            {
+              coitem->setTextColor(0, "green");
+              coitem->setTextColor(1, "green");
+              coitem->setTextColor(7, "green");
+            }
+          }
         }
         if ((coitem)
         && (_showWoSupply->isChecked())
@@ -509,5 +565,73 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
     _custPhone->clear();
     _avail->clear();
   }
+}
+
+void dspInventoryAvailabilityBySalesOrder::sAutoUpdateToggled(bool pAutoUpdate)
+{
+  if (pAutoUpdate)
+    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  else
+    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+}
+
+void dspInventoryAvailabilityBySalesOrder::sHandleReservationNetting(bool yn)
+{
+  if(yn)
+    _avail->headerItem()->setText(7, tr("This Reserve"));
+  else
+    _avail->headerItem()->setText(7, tr("This Avail."));
+  sFillList();
+}
+
+void dspInventoryAvailabilityBySalesOrder::sReserveStock()
+{
+  ParameterList params;
+  params.append("soitem_id", _avail->altId());
+
+  reserveSalesOrderItem newdlg(this, "", true);
+  newdlg.set(params);
+  if(newdlg.exec() == QDialog::Accepted)
+    sFillList();
+}
+
+void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
+{
+  q.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
+  q.bindValue(":soitem_id", _avail->altId());
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("reserveSoLineBalance", result),
+                  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, tr("Error\n") +
+                      q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
+}
+
+void dspInventoryAvailabilityBySalesOrder::sUnreserveStock()
+{
+  q.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
+  q.bindValue(":soitem_id", _avail->altId());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, tr("Error\n") +
+                      q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
 }
 
