@@ -562,13 +562,6 @@ void returnAuthorizationItem::populate()
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
-  sDispositionChanged();
-  sPopulateItemInfo();
-  sPriceGroup();
-  sQtyUOMChanged();
-  sPriceUOMChanged();
-  sCalculateDiscountPrcnt();
-  sLookupTax();
 }
 
 void returnAuthorizationItem::sCalculateExtendedPrice()
