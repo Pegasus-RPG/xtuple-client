@@ -85,16 +85,16 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEditDue()));
+  connect(_editdue, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
+  connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillList()));
 
   _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
   _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
   _ra->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
   _ra->addColumn(tr("Expires"),      _dateColumn,     Qt::AlignRight  );
   _ra->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
-  _ra->addColumn(tr("Total Amt"),    _moneyColumn,    Qt::AlignRight  );
   _ra->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
   _ra->addColumn(tr("Awaiting"),     _itemColumn,     Qt::AlignCenter );
 
@@ -188,10 +188,24 @@ void returnAuthorizationWorkbench::sPrintDue()
 
 void returnAuthorizationWorkbench::sEditDue()
 {
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("rahead_id", _radue->id());
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void returnAuthorizationWorkbench::sViewDue()
 {
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("rahead_id", _radue->id());
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void returnAuthorizationWorkbench::sFillList()
@@ -233,8 +247,6 @@ void returnAuthorizationWorkbench::sFillList()
 			  "  WHEN raitem_disposition = 'S' THEN "
 			  "    :ship "
 			  "  END AS disposition, "
-			  "  formatMoney(SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
-			  "     (raitem_unitprice / raitem_price_invuomratio),2)-raitem_amtcredited)) AS subtotal, "
 			  "CASE "
 			  "  WHEN rahead_creditmethod = 'N' THEN "
 			  "    :none "
@@ -299,7 +311,8 @@ void returnAuthorizationWorkbench::sFillList()
       sql +=  " AND (raitem_status = 'O') ";
 
   	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name,rahead_expiredate, "
-			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod "
+			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod, "
+			  " rahead_curr_id "
 			  " ORDER BY rahead_authdate,rahead_number "
 			  ") as data ";
 
@@ -376,14 +389,9 @@ void returnAuthorizationWorkbench::sFillList()
 	bool bc;
 	bc = false;
 	QString sql (" SELECT * FROM ( "
-			  "SELECT rahead_id, rahead_number, cust_name,:undefined, "
+			  "SELECT rahead_id, rahead_number, cust_name, "
 			  "formatDate(rahead_authdate), formatDate(NULL), "
-			  "formatMoney(SUM(round((( "
-			  " (CASE WHEN raitem_disposition = 'C' THEN "
-			  "   raitem_qtyauthorized "
-			  "  ELSE raitem_qtyreceived "
-			  "  END) - raitem_qtycredited) * raitem_qty_invuomratio) * "
-			  "     (raitem_unitprice / raitem_price_invuomratio),2))) AS subtotal, "
+			  "formatMoney(currtobase(rahead_curr_id,calcradueamt(rahead_id),current_date)), "
 			  "CASE "
 			  "  WHEN rahead_creditmethod = 'M' THEN "
 			  "    :creditmemo "
@@ -402,6 +410,7 @@ void returnAuthorizationWorkbench::sFillList()
 			  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
 			  " AND (raitem_status = 'O') "
 			  " AND (rahead_creditmethod != 'N') "
+			  " AND (calcradueamt(rahead_id) > 0) "
 			  " AND (raitem_disposition IN ('C','R')) ");
 
     if ((_cust->isChecked()))
@@ -411,7 +420,7 @@ void returnAuthorizationWorkbench::sFillList()
     else if (_parameter->isPattern())
 	  sql += " AND (custtype_code ~ :custtype_pattern) ";
 
-  	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name, "
+  	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name, rahead_curr_id, "
 			  " rahead_authdate,raitem_status,rahead_creditmethod "
 			  " ORDER BY rahead_authdate,rahead_number "
 			  ") as data "

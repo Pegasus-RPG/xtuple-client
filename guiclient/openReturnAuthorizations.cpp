@@ -101,7 +101,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter );
   _ra->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter );
   
-  if (_privleges->check("MaintainSalesOrders"))
+  if (_privleges->check("MaintainReturns"))
   {
     connect(_ra, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_ra, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
