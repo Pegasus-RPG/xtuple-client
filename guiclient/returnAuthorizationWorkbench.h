@@ -80,8 +80,6 @@ public slots:
     virtual void sEditDue();
 	virtual void sViewDue();
     virtual void sFillList();
-    virtual void sHandleStatusButton();
-	virtual void sChangeStatus();
 	virtual void sParameterTypeChanged();
    // virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
 

@@ -88,17 +88,23 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
-  connect(_ra, SIGNAL(valid(bool)), this, SLOT(sHandleStatusButton()));
-  connect(_chgstatus, SIGNAL(clicked()), this, SLOT(sChangeStatus()));
 
   _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
   _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
   _ra->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
   _ra->addColumn(tr("Expires"),      _dateColumn,     Qt::AlignRight  );
   _ra->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
-  _ra->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
+  _ra->addColumn(tr("Total Amt"),    _moneyColumn,    Qt::AlignRight  );
   _ra->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
   _ra->addColumn(tr("Awaiting"),     _itemColumn,     Qt::AlignCenter );
+
+  _radue->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
+  _radue->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
+  _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
+  _radue->addColumn(tr("Eligible"),     _dateColumn,     Qt::AlignRight  );
+  _radue->addColumn(tr("Disposition"),  _itemColumn,     Qt::AlignRight  );
+  _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
+  _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
 
   if (!_privleges->check("MaintainReturns"))
   {
@@ -172,47 +178,6 @@ void returnAuthorizationWorkbench::sView()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void returnAuthorizationWorkbench::sHandleStatusButton()
-{
-  if (_closed->isChecked())
-  {
-    q.prepare("SELECT rahead_status "
-		      "FROM rahead "
-			  "WHERE (rahead_id=:rahead_id);");
-	q.bindValue(":rahead_id",_ra->id());
-	q.exec();
-	if (q.first())
-	{
-	  if (q.value("rahead_status").toString() == "O")
-		  _chgstatus->setText("Close");
-	  else
-		  _chgstatus->setText("Open");
-	}
-	else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }	
-  }
-  else
-  {
-    _chgstatus->setText("Close");
-  }
-}
-
-void returnAuthorizationWorkbench::sChangeStatus()
-{
-  q.prepare("UPDATE rahead SET rahead_status = :status "
-		    "WHERE (rahead_id=:rahead_id);");
-  q.bindValue(":rahead_id",_ra->id());
-  if (_chgstatus->text() == "Close")
-	  q.bindValue(":status",QString("C"));
-  else
-	  q.bindValue(":status",QString("O"));
-  q.exec();
-  sFillList();
-}
-
 void returnAuthorizationWorkbench::sPrintDue()
 {
 }
@@ -234,6 +199,8 @@ void returnAuthorizationWorkbench::sFillList()
     _custInfo->setFocus();
     return;
   }
+
+  //Fill Review List
   if (_closed->isChecked() && !_dates->allValid())
   {
     QMessageBox::information( this, tr("Invalid Dates"),
@@ -275,7 +242,7 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :creditcard "
 			  "END AS creditmethod, "
 			  "CASE "
-			  "  WHEN rahead_status = 'C' THEN "
+			  "  WHEN raitem_status = 'C' THEN "
 			  "    :closed "
 			  "  WHEN raitem_disposition = 'C' THEN "
 			  "    :payment "
@@ -301,17 +268,17 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :receipt "
 			  "  WHEN raitem_disposition = 'S' THEN "
 			  "    :ship "
-			  "  ELSE :unknown "
+			  "  ELSE '' "
 			  "END AS awaiting "
 			  "FROM rahead "
-			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id), "
+			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
+			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id), "
 			  " raitem "
 			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id), "
-			  " itemsite, item, custtype "
+			  " itemsite, item "
 			  "WHERE ( (rahead_id=raitem_rahead_id) "
 			  " AND (raitem_itemsite_id=itemsite_id) "
-			  " AND (itemsite_item_id=item_id) "
-			  " AND (cust_custtype_id=custtype_id) ");
+			  " AND (itemsite_item_id=item_id) ");
 
     if ((_cust->isChecked()))
 	  sql += " AND (cust_id=:cust_id) ";
@@ -323,12 +290,12 @@ void returnAuthorizationWorkbench::sFillList()
 	if (!_expired->isChecked())
 	  sql +=  " AND (COALESCE(rahead_expiredate,current_date) >= current_date)";
 	if (_closed->isChecked())
-	  sql +=  " AND (rahead_status='O' OR rahead_authdate BETWEEN :startDate AND :endDate)";
+	  sql +=  " AND (raitem_status='O' OR rahead_authdate BETWEEN :startDate AND :endDate)";
 	else
       sql +=  " AND (raitem_status = 'O') ";
 
   	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name,rahead_expiredate, "
-			  " rahead_authdate,rahead_status,raitem_disposition,rahead_creditmethod "
+			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod "
 			  " ORDER BY rahead_authdate,rahead_number "
 			  ") as data ";
 
@@ -376,7 +343,6 @@ void returnAuthorizationWorkbench::sFillList()
 	ra.bindValue(":return",tr("Return"));
 	ra.bindValue(":replace",tr("Replace"));
 	ra.bindValue(":service",tr("Service"));
-	ra.bindValue(":mixed",tr("Mixed"));
 	ra.bindValue(":none",tr("None"));
 	ra.bindValue(":creditmemo",tr("Memo"));
 	ra.bindValue(":check",tr("Check"));
@@ -399,6 +365,100 @@ void returnAuthorizationWorkbench::sFillList()
   }
   else
     _ra->clear();
+
+  //Fill Due Credit List
+  if ((_creditmemo->isChecked()) || (_check->isChecked()) || (_creditcard->isChecked()))
+  {
+	bool bc;
+	bc = false;
+	QString sql (" SELECT * FROM ( "
+			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
+			  "formatDate(rahead_authdate), formatDate(NULL), "
+	  		  "CASE "
+			  "  WHEN raitem_disposition = 'C' THEN "
+			  "    :credit "
+			  "  WHEN raitem_disposition = 'R' THEN "
+			  "    :return "
+			  "  END AS disposition, "
+			  "  formatMoney(SUM(round((raitem_qtyauthorized * raitem_qty_invuomratio) * "
+			  "     (raitem_unitprice / raitem_price_invuomratio),2)-raitem_amtcredited)) AS subtotal, "
+			  "CASE "
+			  "  WHEN rahead_creditmethod = 'M' THEN "
+			  "    :creditmemo "
+			  "  WHEN rahead_creditmethod = 'K' THEN "
+			  "    :check "
+			  "  WHEN rahead_creditmethod = 'C' THEN "
+			  "    :creditcard "
+			  "END AS creditmethod "
+			  "FROM rahead,custinfo,raitem,itemsite,item,custtype "
+			  "WHERE ( (rahead_id=raitem_rahead_id) "
+			  " AND (rahead_cust_id=cust_id) "
+			  " AND (raitem_itemsite_id=itemsite_id) "
+			  " AND (itemsite_item_id=item_id) "
+			  " AND (cust_custtype_id=custtype_id) "
+			  " AND (raitem_status = 'O') "
+			  " AND (rahead_creditmethod != 'N') "
+			  " AND (raitem_disposition IN ('C','R')) ");
+
+    if ((_cust->isChecked()))
+	  sql += " AND (cust_id=:cust_id) ";
+    else if (_parameter->isSelected())
+	  sql += " AND (custtype_id=:custtype_id) ";
+    else if (_parameter->isPattern())
+	  sql += " AND (custtype_code ~ :custtype_pattern) ";
+
+  	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name, "
+			  " rahead_authdate,raitem_status,raitem_disposition,rahead_creditmethod "
+			  " ORDER BY rahead_authdate,rahead_number "
+			  ") as data "
+              " WHERE (creditmethod IN ( "; 
+
+	if (_creditmemo->isChecked())
+	{
+	  sql += ":creditmemo";
+	  bc = true;
+	}
+	if (_check->isChecked())
+	{
+	  if (bc)
+		sql += ",";
+	  sql +=  ":check "; 
+	  bc = true;
+	}
+	if (_creditcard->isChecked())
+	{
+	  if (bc)
+		sql += ",";
+	  sql +=  ":creditcard"; 
+	}
+    
+	sql += "));";
+
+	XSqlQuery radue;
+	radue.prepare(sql);
+    _parameter->bindValue(radue);
+	radue.bindValue(":cust_id", _custInfo->id());
+	radue.bindValue(":undefined",tr("Undefined"));
+	radue.bindValue(":credit",tr("Credit"));
+	radue.bindValue(":return",tr("Return"));
+	radue.bindValue(":none",tr("None"));
+	radue.bindValue(":creditmemo",tr("Memo"));
+	radue.bindValue(":check",tr("Check"));
+	radue.bindValue(":creditcard",tr("Card"));
+	radue.bindValue(":unknown",tr("Unknown"));
+    _dates->bindValue(radue);
+	radue.exec();
+	if (radue.first())
+		_radue->populate(radue);
+	else if (radue.lastError().type() != QSqlError::None)
+    {
+      systemError(this, radue.lastError().databaseText(), __FILE__, __LINE__);
+	  _radue->clear();
+      return;
+    }
+  }
+  else
+    _radue->clear();
 }
 
 void returnAuthorizationWorkbench::sParameterTypeChanged()

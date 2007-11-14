@@ -1081,10 +1081,6 @@ void returnAuthorization::populate()
     _authNumber->setText(rahead.value("rahead_number"));
     _authDate->setDate(rahead.value("rahead_authdate").toDate(), true);
     _expireDate->setDate(rahead.value("rahead_expiredate").toDate());
-    if (rahead.value("rahead_status").toString() == "O")
-      _status->setText(tr("Open"));
-    else
-      _status->setText(tr("Closed"));
 
     _salesRep->setId(rahead.value("rahead_salesrep_id").toInt());
     _commission->setText(rahead.value("f_commission"));

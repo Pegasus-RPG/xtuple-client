@@ -341,16 +341,6 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="_chgstatus" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>Close</string>
-              </property>
-             </widget>
-            </item>
-            <item>
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
@@ -692,22 +682,6 @@
     <hint type="destinationlabel" >
      <x>540</x>
      <y>239</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_ra</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_chgstatus</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>256</x>
-     <y>312</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>540</x>
-     <y>285</y>
     </hint>
    </hints>
   </connection>
