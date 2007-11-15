@@ -88,6 +88,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_editdue, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPostDue()));
   connect(_radue, SIGNAL(valid(bool)), this, SLOT(sHandleButton()));
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillList()));
 
@@ -218,6 +219,16 @@ void returnAuthorizationWorkbench::sHandleButton()
 
 void returnAuthorizationWorkbench::sPostDue()
 {
+	q.prepare("SELECT postRaCredit(:rahead_id) AS result;");
+	q.bindValue(":rahead_id",_radue->id());
+	q.exec();
+	if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  _radue->clear();
+      return;
+    }
+	sFillList();
 }
 
 void returnAuthorizationWorkbench::sFillList()

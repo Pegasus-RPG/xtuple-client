@@ -148,7 +148,6 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _raitem->addColumn(tr("Price"),       _priceColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Extended"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Credited"),    _moneyColumn, Qt::AlignRight  );
-  _raitem->addColumn(tr("Refunded"),    _moneyColumn, Qt::AlignRight  );
   _raitem->addColumn(tr("Orig. Order"), _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("New Order"),   _itemColumn,  Qt::AlignLeft   );
   _raitem->addColumn(tr("Sched. Date"), _dateColumn,  Qt::AlignLeft   );
@@ -948,7 +947,7 @@ void returnAuthorization::sFillList()
 		 "       formatQty(COALESCE(nc.coitem_qtyshipped,0)),"
          "       formatSalesPrice(raitem_unitprice),"
          "       formatMoney(round((raitem_qtyauthorized * raitem_qty_invuomratio) * (raitem_unitprice / raitem_price_invuomratio),2)),"
-		 "       formatMoney(raitem_amtcredited),formatMoney(raitem_amtrefunded),"
+		 "       formatMoney(raitem_amtcredited),"
 		 "       och.cohead_number::text || '-' || oc.coitem_linenumber::text, "
 		 "       nch.cohead_number::text || '-' || nc.coitem_linenumber::text, "
 		 "       CASE WHEN raitem_disposition IN ('P','V','S') THEN "
