@@ -677,7 +677,7 @@ void creditMemo::sPopulateByInvoiceNumber(int pInvoiceNumber)
 
 void creditMemo::sCheckCreditMemoNumber()
 {
-  if ( (_memoNumber->text().length()) &&
+  if ( (_memoNumber->text().length()) && _mode != cNew &&
        ( (_metrics->value("CMNumberGeneration") == "O") || 
          (_metrics->value("CMNumberGeneration") == "M")   ) )
   {
