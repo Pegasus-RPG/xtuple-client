@@ -529,10 +529,11 @@ void returnAuthorization::sOrigSoChanged()
   }
   if (_origso->isValid())
   {
-	q.prepare("SELECT rahead_number FROM rahead "
+	q.prepare("SELECT rahead_number FROM rahead,raitem "
 		      "WHERE ((rahead_orig_cohead_id=:cohead_id) "
 		      "AND (rahead_id != :rahead_id) "
-		      "AND (rahead_status = 'O')); ");
+			  "AND (raitem_rahead_id=rahead_id) "
+		      "AND (raitem_status = 'O')); ");
 	q.bindValue(":cohead_id",_origso->id());
 	q.bindValue(":rahead_id",_raheadid);
 	q.exec();
