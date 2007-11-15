@@ -88,6 +88,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_editdue, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
+  connect(_radue, SIGNAL(valid(bool)), this, SLOT(sHandleButton()));
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillList()));
 
   _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
@@ -208,8 +209,21 @@ void returnAuthorizationWorkbench::sViewDue()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void returnAuthorizationWorkbench::sHandleButton()
+{
+  _post->setEnabled(((_radue->altId() == 1 && _privleges->check("PostARDocuments")) ||
+	   (_radue->altId() == 2 && _privleges->check("MaintainPayments")) ||
+	   (_radue->altId() == 3 && _privleges->check("PostARDocuments"))));  
+}
+
+void returnAuthorizationWorkbench::sPostDue()
+{
+}
+
 void returnAuthorizationWorkbench::sFillList()
 { 
+  _ra->clear();
+  _radue->clear();
   if (_cust->isChecked() && !_custInfo->isValid())
   {
     QMessageBox::information( this, tr("Customer not selected"),
@@ -234,7 +248,7 @@ void returnAuthorizationWorkbench::sFillList()
 	bw = false;
 	QString sql (" SELECT * FROM ( "
 			  "SELECT rahead_id, rahead_number, COALESCE(cust_name,:undefined), "
-			  "formatDate(rahead_authdate), formatDate(rahead_expiredate), "
+			  "formatDate(rahead_authdate), COALESCE(formatDate(rahead_expiredate),:never), "
 	  		  "CASE "
 			  "  WHEN raitem_disposition = 'C' THEN "
 			  "    :credit "
@@ -290,11 +304,8 @@ void returnAuthorizationWorkbench::sFillList()
 			  "  LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
 			  "  LEFT OUTER JOIN custtype ON (cust_custtype_id=custtype_id), "
 			  " raitem "
-			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id), "
-			  " itemsite, item "
-			  "WHERE ( (rahead_id=raitem_rahead_id) "
-			  " AND (raitem_itemsite_id=itemsite_id) "
-			  " AND (itemsite_item_id=item_id) ");
+			  "  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
+			  "WHERE ( (rahead_id=raitem_rahead_id)");
 
     if ((_cust->isChecked()))
 	  sql += " AND (cust_id=:cust_id) ";
@@ -367,7 +378,7 @@ void returnAuthorizationWorkbench::sFillList()
 	ra.bindValue(":payment",tr("Payment"));
 	ra.bindValue(":receipt",tr("Receipt"));
 	ra.bindValue(":ship",tr("Shipment"));
-	ra.bindValue(":unknown",tr("Unknown"));
+	ra.bindValue(":never",tr("Never"));
 	ra.bindValue(":closed",tr("Closed"));
     _dates->bindValue(ra);
 	ra.exec();
@@ -380,8 +391,6 @@ void returnAuthorizationWorkbench::sFillList()
       return;
     }
   }
-  else
-    _ra->clear();
 
   //Fill Due Credit List
   if ((_creditmemo->isChecked()) || (_check->isChecked()) || (_creditcard->isChecked()))
@@ -389,7 +398,16 @@ void returnAuthorizationWorkbench::sFillList()
 	bool bc;
 	bc = false;
 	QString sql (" SELECT * FROM ( "
-			  "SELECT rahead_id, rahead_number, cust_name, "
+			  "SELECT DISTINCT rahead_id, "
+		      "CASE "
+  			  "  WHEN rahead_creditmethod = 'M' THEN "
+			  "    1 "
+			  "  WHEN rahead_creditmethod = 'K' THEN "
+			  "    2 "
+			  "  WHEN rahead_creditmethod = 'C' THEN "
+			  "    3 "
+			  "END, "
+			  "rahead_number, cust_name, "
 			  "formatDate(rahead_authdate), formatDate(NULL), "
 			  "formatMoney(currtobase(rahead_curr_id,calcradueamt(rahead_id),current_date)), "
 			  "CASE "
@@ -399,12 +417,10 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :check "
 			  "  WHEN rahead_creditmethod = 'C' THEN "
 			  "    :creditcard "
-			  "END AS creditmethod "
-			  "FROM rahead,custinfo,raitem,itemsite,item,custtype "
+			  "END AS creditmethod, rahead_authdate "
+			  "FROM rahead,custinfo,raitem,custtype "
 			  "WHERE ( (rahead_id=raitem_rahead_id) "
 			  " AND (rahead_cust_id=cust_id) "
-			  " AND (raitem_itemsite_id=itemsite_id) "
-			  " AND (itemsite_item_id=item_id) "
 			  " AND (cust_custtype_id=custtype_id) "
 			  " AND ((raitem_disposition = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
 			  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
@@ -420,9 +436,7 @@ void returnAuthorizationWorkbench::sFillList()
     else if (_parameter->isPattern())
 	  sql += " AND (custtype_code ~ :custtype_pattern) ";
 
-  	sql +=    " ) GROUP BY rahead_id,rahead_number,cust_name, rahead_curr_id, "
-			  " rahead_authdate,raitem_status,rahead_creditmethod "
-			  " ORDER BY rahead_authdate,rahead_number "
+  	sql +=    " ) ORDER BY rahead_authdate,rahead_number "
 			  ") as data "
               " WHERE (creditmethod IN ( "; 
 
@@ -460,7 +474,7 @@ void returnAuthorizationWorkbench::sFillList()
     _dates->bindValue(radue);
 	radue.exec();
 	if (radue.first())
-		_radue->populate(radue);
+		_radue->populate(radue,TRUE);
 	else if (radue.lastError().type() != QSqlError::None)
     {
       systemError(this, radue.lastError().databaseText(), __FILE__, __LINE__);
