@@ -16,6 +16,7 @@ SELECT invhist_id, invhist_transdate, formatDateTime(invhist_transdate) AS trans
             WHEN (invhist_transtype='RB') THEN 'WIP'
             WHEN (invhist_transtype='RM') THEN 'WIP'
             WHEN (invhist_transtype='RP') THEN 'PURCH'
+            WHEN (invhist_transtype='RR') THEN 'CUST'
             WHEN (invhist_transtype='RS') THEN 'SHIP'
             WHEN (invhist_transtype='SH') THEN whs1.warehous_code
             WHEN (invhist_transtype='SI') THEN whs1.warehous_code
@@ -33,6 +34,7 @@ SELECT invhist_id, invhist_transdate, formatDateTime(invhist_transdate) AS trans
             WHEN (invhist_transtype='RB') THEN whs1.warehous_code
             WHEN (invhist_transtype='RM') THEN whs1.warehous_code
             WHEN (invhist_transtype='RP') THEN whs1.warehous_code
+            WHEN (invhist_transtype='RR') THEN whs1.warehous_code
             WHEN (invhist_transtype='RS') THEN whs1.warehous_code
             WHEN (invhist_transtype='RT') THEN whs1.warehous_code
             WHEN (invhist_transtype='RX') THEN whs1.warehous_code
@@ -102,6 +104,7 @@ UNION SELECT invhist_id, invhist_transdate, formatDateTime(invhist_transdate) AS
                   WHEN (invhist_transtype='RB') THEN 'WIP'
                   WHEN (invhist_transtype='RM') THEN 'WIP'
                   WHEN (invhist_transtype='RP') THEN 'PURCH'
+                  WHEN (invhist_transtype='RR') THEN 'CUST'
                   WHEN (invhist_transtype='RS') THEN 'SHIP'
                   WHEN (invhist_transtype='SH') THEN whs1.warehous_code
                   WHEN (invhist_transtype='SI') THEN whs1.warehous_code
@@ -118,7 +121,7 @@ UNION SELECT invhist_id, invhist_transdate, formatDateTime(invhist_transdate) AS
                   WHEN (invhist_transtype='NN') THEN whs1.warehous_code
                   WHEN (invhist_transtype='RB') THEN whs1.warehous_code
                   WHEN (invhist_transtype='RM') THEN whs1.warehous_code
-                  WHEN (invhist_transtype='RP') THEN whs1.warehous_code
+                  WHEN (invhist_transtype='RR') THEN whs1.warehous_code
                   WHEN (invhist_transtype='RS') THEN whs1.warehous_code
                   WHEN (invhist_transtype='RT') THEN whs1.warehous_code
                   WHEN (invhist_transtype='RX') THEN whs1.warehous_code
