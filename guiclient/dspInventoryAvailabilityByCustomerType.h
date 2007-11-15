@@ -55,26 +55,25 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef DSPINVENTORYAVAILABILITYBYSALESORDER_H
-#define DSPINVENTORYAVAILABILITYBYSALESORDER_H
+#ifndef DSPINVENTORYAVAILABILITYBYCUSTOMERTYPE_H
+#define DSPINVENTORYAVAILABILITYBYCUSTOMERTYPE_H
 
 #include "OpenMFGGUIClient.h"
 #include <QMainWindow>
 #include <parameter.h>
 
-#include "ui_dspInventoryAvailabilityBySalesOrder.h"
+#include "ui_dspInventoryAvailabilityByCustomerType.h"
 
-class dspInventoryAvailabilityBySalesOrder : public QMainWindow, public Ui::dspInventoryAvailabilityBySalesOrder
+class dspInventoryAvailabilityByCustomerType : public QMainWindow, public Ui::dspInventoryAvailabilityByCustomerType
 {
     Q_OBJECT
 
 public:
-    dspInventoryAvailabilityBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~dspInventoryAvailabilityBySalesOrder();
+    dspInventoryAvailabilityByCustomerType(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~dspInventoryAvailabilityByCustomerType();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSoList();
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
     virtual void sViewAllocations();
@@ -91,6 +90,7 @@ public slots:
     virtual void sReserveLineBalance();
     virtual void sUnreserveStock();
     virtual void sShowReservations();
+    virtual void sAddToPackingListBatch();
 
 protected slots:
     virtual void languageChange();
@@ -100,4 +100,4 @@ private:
 
 };
 
-#endif // DSPINVENTORYAVAILABILITYBYSALESORDER_H
+#endif // DSPINVENTORYAVAILABILITYBYCUSTOMERTYPE_H

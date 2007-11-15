@@ -55,7 +55,7 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "dspInventoryAvailabilityBySalesOrder.h"
+#include "dspInventoryAvailabilityByCustomerType.h"
 
 #include <QVariant>
 #include <QSqlError>
@@ -79,11 +79,11 @@
 
 
 /*
- *  Constructs a dspInventoryAvailabilityBySalesOrder as a child of 'parent', with the
+ *  Constructs a dspInventoryAvailabilityByCustomerType as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  *
  */
-dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
+dspInventoryAvailabilityByCustomerType::dspInventoryAvailabilityByCustomerType(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
@@ -95,17 +95,11 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_onlyShowShortages, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_showWoSupply, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_so, SIGNAL(newId(int)), this, SLOT(sFillList()));
-  connect(_salesOrderList, SIGNAL(clicked()), this, SLOT(sSoList()));
+  connect(_custtype, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_avail, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_so, SIGNAL(requestList()), this, SLOT(sSoList()));
   connect(_autoupdate, SIGNAL(toggled(bool)), this, SLOT(sAutoUpdateToggled(bool)));
 
-#ifndef Q_WS_MAC
-  _salesOrderList->setMaximumWidth(25);
-#endif
-
-  omfgThis->inputManager()->notify(cBCSalesOrder, this, _so, SLOT(setId(int)));
+  _custtype->setType(CustomerType);
 
   _avail->setRootIsDecorated(TRUE);
   _avail->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
@@ -135,12 +129,14 @@ dspInventoryAvailabilityBySalesOrder::dspInventoryAvailabilityBySalesOrder(QWidg
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
   if(_autoupdate->isChecked())
     sAutoUpdateToggled(true);
+
+  sFillList();
 }
 
 /*
  *  Destroys the object and frees any allocated resources
  */
-dspInventoryAvailabilityBySalesOrder::~dspInventoryAvailabilityBySalesOrder()
+dspInventoryAvailabilityByCustomerType::~dspInventoryAvailabilityByCustomerType()
 {
   // no need to delete child widgets, Qt does it all for us
 }
@@ -149,12 +145,12 @@ dspInventoryAvailabilityBySalesOrder::~dspInventoryAvailabilityBySalesOrder()
  *  Sets the strings of the subwidgets using the current
  *  language.
  */
-void dspInventoryAvailabilityBySalesOrder::languageChange()
+void dspInventoryAvailabilityByCustomerType::languageChange()
 {
   retranslateUi(this);
 }
 
-enum SetResponse dspInventoryAvailabilityBySalesOrder::set(const ParameterList &pParams)
+enum SetResponse dspInventoryAvailabilityByCustomerType::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -163,53 +159,34 @@ enum SetResponse dspInventoryAvailabilityBySalesOrder::set(const ParameterList &
   if (valid)
     _onlyShowShortages->setChecked(TRUE);
 
-  param = pParams.value("sohead_id", &valid);
-  if (valid)
-    _so->setId(param.toInt());
-
   return NoError;
 }
 
-void dspInventoryAvailabilityBySalesOrder::sSoList()
+void dspInventoryAvailabilityByCustomerType::sPrint()
 {
   ParameterList params;
-  params.append("sohead_id", _so->id());
-  params.append("soType", cSoOpen);
-  
-  salesOrderList newdlg(this, "", TRUE);
-  newdlg.set(params);
 
-  _so->setId(newdlg.exec());
-}
-
-void dspInventoryAvailabilityBySalesOrder::sPrint()
-{
-  if(!_so->isValid())
-  {
-    QMessageBox::warning(this, tr("No Sales Order Selected"),
-      tr("You must select a valid Sales Order.") );
-    return;
-  }
-
-  ParameterList params;
-
-  params.append("sohead_id", _so->id());
+  _custtype->appendValue(params);
 
   if(_onlyShowShortages->isChecked())
     params.append("onlyShowShortages");
 
-  orReport report("InventoryAvailabilityBySalesOrder", params);
+  orReport report("InventoryAvailabilityByCustomerType", params);
   if (report.isValid())
     report.print();
   else
     report.reportError(this);
 }
 
-void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
+void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
 {
   int menuItem;
   
-  if (_avail->altId() != -1)
+  if (_avail->altId() == -2)
+  {
+    menuItem = pMenu->insertItem(tr("Add to Packing List Batch"), this, SLOT(sAddToPackingListBatch()));
+  }
+  else if (_avail->altId() != -1)
   {
     menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
     if (selected->text(6).toDouble() == 0.0)
@@ -270,7 +247,7 @@ void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWid
   }
 }
 
-void dspInventoryAvailabilityBySalesOrder::sViewAllocations()
+void dspInventoryAvailabilityByCustomerType::sViewAllocations()
 {
   q.prepare( "SELECT coitem_scheddate "
              "FROM coitem "
@@ -290,7 +267,7 @@ void dspInventoryAvailabilityBySalesOrder::sViewAllocations()
   }
 }
 
-void dspInventoryAvailabilityBySalesOrder::sViewOrders()
+void dspInventoryAvailabilityByCustomerType::sViewOrders()
 {
   q.prepare( "SELECT coitem_scheddate "
              "FROM coitem "
@@ -310,7 +287,7 @@ void dspInventoryAvailabilityBySalesOrder::sViewOrders()
   }
 }
 
-void dspInventoryAvailabilityBySalesOrder::sRunningAvailability()
+void dspInventoryAvailabilityByCustomerType::sRunningAvailability()
 {
   ParameterList params;
   params.append("itemsite_id", _avail->id());
@@ -321,7 +298,7 @@ void dspInventoryAvailabilityBySalesOrder::sRunningAvailability()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspInventoryAvailabilityBySalesOrder::sViewSubstituteAvailability()
+void dspInventoryAvailabilityByCustomerType::sViewSubstituteAvailability()
 {
   q.prepare( "SELECT coitem_scheddate "
              "FROM coitem "
@@ -342,7 +319,7 @@ void dspInventoryAvailabilityBySalesOrder::sViewSubstituteAvailability()
 //  ToDo
 }
 
-void dspInventoryAvailabilityBySalesOrder::sIssuePO()
+void dspInventoryAvailabilityByCustomerType::sIssuePO()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -353,7 +330,7 @@ void dspInventoryAvailabilityBySalesOrder::sIssuePO()
     omfgThis->handleNewWindow(newdlg);
 }
 
-void dspInventoryAvailabilityBySalesOrder::sIssueWO()
+void dspInventoryAvailabilityByCustomerType::sIssueWO()
 {
   ParameterList params;
   params.append("mode", "new");
@@ -364,7 +341,7 @@ void dspInventoryAvailabilityBySalesOrder::sIssueWO()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspInventoryAvailabilityBySalesOrder::sIssueCountTag()
+void dspInventoryAvailabilityByCustomerType::sIssueCountTag()
 {
   ParameterList params;
   params.append("itemsite_id", _avail->id());
@@ -374,205 +351,194 @@ void dspInventoryAvailabilityBySalesOrder::sIssueCountTag()
   newdlg.exec();
 }
 
-void dspInventoryAvailabilityBySalesOrder::sFillList()
+void dspInventoryAvailabilityByCustomerType::sFillList()
 {
   _avail->clear();
 
-  if (_so->id() != -1)
-  {
-    q.prepare( "SELECT cohead_number,"
-               "       formatDate(cohead_orderdate) AS orderdate,"
-               "       cohead_custponumber,"
-               "       cust_name, cust_phone "
-               "FROM cohead, cust "
-               "WHERE ( (cohead_cust_id=cust_id)"
-               " AND (cohead_id=:sohead_id) );" );
-    q.bindValue(":sohead_id", _so->id());
-    q.exec();
-    if (q.first())
-    {
-      _orderDate->setText(q.value("orderdate").toString());
-      _poNumber->setText(q.value("cohead_custponumber").toString());
-      _custName->setText(q.value("cust_name").toString());
-      _custPhone->setText(q.value("cust_phone").toString());
-    }
-                 
-    QString sql( "SELECT itemsite_id, coitem_id,"
-                 "       item_number, item_description, uom_name, item_picklist,"
-                 "       qoh, formatQty(qoh) AS f_qoh,sobalance,"
-                 "       formatQty(sobalance) AS f_sobalance,"
-                 "       formatQty(allocated) AS f_allocated,"
-                 "       ordered, formatQty(ordered) AS f_ordered,"
-                 "       (qoh + ordered - sobalance) AS woavail,"
-                 "<? if exists(\"useReservationNetting\") ?>"
-                 "       formatQty(coitem_qtyreserved) AS f_soavail,"
-                 "<? else ?>"
-                 "       formatQty(qoh + ordered - sobalance) AS f_soavail,"
-                 "<? endif ?>"
-                 "       (qoh + ordered - allocated) AS totalavail,"
-                 "       formatQty(qoh + ordered - allocated) AS f_totalavail,"
-                 "       atshipping,formatQty(atshipping) AS f_atshipping,"
-                 "       formatDate(coitem_scheddate) AS f_scheddate,"
-                 "       (coitem_qtyreserved > 0 AND sobalance > coitem_qtyreserved) AS partialreservation,"
-                 "       ((sobalance - coitem_qtyreserved) = 0) AS fullreservation,"
-                 "       reorderlevel "
-                 "<? if exists(\"showWoSupply\") ?>, "        
-                 "       wo_id,"
-                 "       wo_status,"
-                 "       wo_number,"
-                 "       wo_ordered,"
-                 "       formatQty(wo_ordered) AS f_wo_ordered,"
-                 "       formatDate(wo_startdate) AS f_wo_startdate, "
-                 "       formatDate(wo_duedate) AS f_wo_duedate,"
-                 "       COALESCE(wo_latestart,false) AS wo_latestart,"
-                 "       COALESCE(wo_latedue,false) AS wo_latedue "
-                 "<? endif ?>"
-                 "FROM ( SELECT itemsite_id, coitem_id,"
-                 "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
-                 "              uom_name, item_picklist,"
-                 "              noNeg(itemsite_qtyonhand) AS qoh,"
-                 "              noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS sobalance,"
-                 "              qtyAllocated(itemsite_id, coitem_scheddate) AS allocated,"
-                 "              qtyOrdered(itemsite_id, coitem_scheddate) AS ordered,"
-                 "              qtyatshipping(coitem_id) AS atshipping,"
-                 "              coitem_qtyreserved,"
-                 "              coitem_scheddate,"
-                 "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel "
-                 "<? if exists(\"showWoSupply\") ?>, " 
-                 "              COALESCE(wo_id,-1) AS wo_id,"
-                 "              formatwonumber(wo_id) AS wo_number,"
-                 "              noNeg((wo_qtyord-wo_qtyrcv)) AS wo_ordered,"
-                 "              wo_status, wo_startdate, wo_duedate,"
-                 "              ((wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS wo_latestart,"
-                 "              (wo_duedate<=CURRENT_DATE) AS wo_latedue " 
-                 "<? endif ?>" 
-                 "       FROM cohead, itemsite, item, uom, coitem "
-                 "<? if exists(\"showWoSupply\") ?> "
-                 "            LEFT OUTER JOIN wo"
-                 "             ON ((coitem_itemsite_id=wo_itemsite_id)"
-                 "             AND (wo_status IN ('E','R','I'))"
-                 "             AND (wo_qtyord-wo_qtyrcv > 0)"
-                 "             AND (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned-qtyatshipping(coitem_id)) > "
-                 "              (SELECT itemsite_qtyonhand FROM itemsite WHERE (itemsite_id=coitem_itemsite_id))))"
-                 "<? endif ?>"
-                 "       WHERE ( (coitem_cohead_id=cohead_id)"
-                 "        AND (coitem_itemsite_id=itemsite_id)"
-                 "        AND (itemsite_item_id=item_id)"
-                 "        AND (item_inv_uom_id=uom_id)"
-                 "        AND (coitem_status <> 'X')"
-                 "        AND (cohead_id=<? value(\"sohead_id\") ?>))"
-                 ") AS data "
-                 " <? if exists(\"onlyShowShortages\") ?>"
-                 "WHERE ( ((qoh + ordered - allocated) < 0)"
-                 " OR ((qoh + ordered - sobalance) < 0) ) "
-                 "<? endif ?>"
-                 "ORDER BY item_number"
-                 "<? if exists(\"showWoSupply\") ?> ,"
-                 "wo_duedate"
-                 "<? endif ?>"
-                 ";");
-      
-    ParameterList params;             
-    params.append("sohead_id", _so->id());
-    if (_onlyShowShortages->isChecked())
-      params.append("onlyShowShortages");
-    if (_showWoSupply->isChecked())
-      params.append("showWoSupply");
-    if (_useReservationNetting->isChecked())
-      params.append("useReservationNetting");
+  QString sql( "SELECT itemsite_id, coitem_id,"
+               "       cohead_id, cohead_number, (cust_number||'-'||cust_name) AS custname,"
+               "       item_number, item_description, uom_name, item_picklist,"
+               "       qoh, formatQty(qoh) AS f_qoh,sobalance,"
+               "       formatQty(sobalance) AS f_sobalance,"
+               "       formatQty(allocated) AS f_allocated,"
+               "       ordered, formatQty(ordered) AS f_ordered,"
+               "       (qoh + ordered - sobalance) AS woavail,"
+               "<? if exists(\"useReservationNetting\") ?>"
+               "       formatQty(coitem_qtyreserved) AS f_soavail,"
+               "<? else ?>"
+               "       formatQty(qoh + ordered - sobalance) AS f_soavail,"
+               "<? endif ?>"
+               "       (qoh + ordered - allocated) AS totalavail,"
+               "       formatQty(qoh + ordered - allocated) AS f_totalavail,"
+               "       atshipping,formatQty(atshipping) AS f_atshipping,"
+               "       formatDate(coitem_scheddate) AS f_scheddate,"
+               "       (coitem_qtyreserved > 0 AND sobalance > coitem_qtyreserved) AS partialreservation,"
+               "       ((sobalance - coitem_qtyreserved) = 0) AS fullreservation,"
+               "       reorderlevel "
+               "<? if exists(\"showWoSupply\") ?>, "        
+               "       wo_id,"
+               "       wo_status,"
+               "       wo_number,"
+               "       wo_ordered,"
+               "       formatQty(wo_ordered) AS f_wo_ordered,"
+               "       formatDate(wo_startdate) AS f_wo_startdate, "
+               "       formatDate(wo_duedate) AS f_wo_duedate,"
+               "       COALESCE(wo_latestart,false) AS wo_latestart,"
+               "       COALESCE(wo_latedue,false) AS wo_latedue "
+               "<? endif ?>"
+               "FROM ( SELECT itemsite_id, coitem_id,"
+               "              cohead_id, cohead_number, cust_number, cust_name,"
+               "              item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
+               "              uom_name, item_picklist,"
+               "              noNeg(itemsite_qtyonhand) AS qoh,"
+               "              noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) AS sobalance,"
+               "              qtyAllocated(itemsite_id, coitem_scheddate) AS allocated,"
+               "              qtyOrdered(itemsite_id, coitem_scheddate) AS ordered,"
+               "              qtyatshipping(coitem_id) AS atshipping,"
+               "              coitem_qtyreserved,"
+               "              coitem_scheddate,"
+               "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel "
+               "<? if exists(\"showWoSupply\") ?>, " 
+               "              COALESCE(wo_id,-1) AS wo_id,"
+               "              formatwonumber(wo_id) AS wo_number,"
+               "              noNeg((wo_qtyord-wo_qtyrcv)) AS wo_ordered,"
+               "              wo_status, wo_startdate, wo_duedate,"
+               "              ((wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS wo_latestart,"
+               "              (wo_duedate<=CURRENT_DATE) AS wo_latedue " 
+               "<? endif ?>" 
+               "       FROM cohead, cust, itemsite, item, uom, coitem "
+               "<? if exists(\"showWoSupply\") ?> "
+               "            LEFT OUTER JOIN wo"
+               "             ON ((coitem_itemsite_id=wo_itemsite_id)"
+               "             AND (wo_status IN ('E','R','I'))"
+               "             AND (wo_qtyord-wo_qtyrcv > 0)"
+               "             AND (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned-qtyatshipping(coitem_id)) > "
+               "              (SELECT itemsite_qtyonhand FROM itemsite WHERE (itemsite_id=coitem_itemsite_id))))"
+               "<? endif ?>"
+               "       WHERE ( (coitem_cohead_id=cohead_id)"
+               "        AND (coitem_itemsite_id=itemsite_id)"
+               "        AND (itemsite_item_id=item_id)"
+               "        AND (item_inv_uom_id=uom_id)"
+               "        AND (coitem_status <> 'X')"
+               "        AND (cohead_cust_id=cust_id)"
+               "<? if exists(\"custtype_id\") ?>"
+               "        AND (cust_custtype_id=<? value(\"custtype_id\") ?>)"
+               "<? elseif exists(\"custtype_pattern\") ?>"
+               "        AND (cust_custtype_id IN (SELECT custtype_id "
+               "                                    FROM custtype "
+               "                                   WHERE(custtype_code ~ <? value(\"custtype_pattern\") ?>)))"
+               "<? endif ?>"
+               ")) AS data "
+               " <? if exists(\"onlyShowShortages\") ?>"
+               "WHERE ( ((qoh + ordered - allocated) < 0)"
+               " OR ((qoh + ordered - sobalance) < 0) ) "
+               "<? endif ?>"
+               "ORDER BY cohead_id, cohead_number, item_number"
+               "<? if exists(\"showWoSupply\") ?> ,"
+               "wo_duedate"
+               "<? endif ?>"
+               ";");
     
-    MetaSQLQuery mql(sql);
-    q = mql.toQuery(params);
-    if (q.first())
-    {
-      XTreeWidgetItem *coitem = NULL;
-      XTreeWidgetItem *wo = NULL;
-      int coitemid = -1;
+  ParameterList params;             
+  _custtype->appendValue(params);
+  if (_onlyShowShortages->isChecked())
+    params.append("onlyShowShortages");
+  if (_showWoSupply->isChecked())
+    params.append("showWoSupply");
+  if (_useReservationNetting->isChecked())
+    params.append("useReservationNetting");
+  
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  if (q.first())
+  {
+    XTreeWidgetItem *coitem = NULL, *cohead = NULL;
+    XTreeWidgetItem *wo = NULL;
+    int coitemid = -1;
+    int coheadid = -1;
       
-      do
+    do
+    {
+      if (coitemid != q.value("coitem_id").toInt())
       {
-        if (coitemid != q.value("coitem_id").toInt())
+        if(coheadid != q.value("cohead_id").toInt())
         {
-          coitemid = q.value("coitem_id").toInt();
-          coitem = new XTreeWidgetItem( _avail, coitem,
-                                               q.value("itemsite_id").toInt(), q.value("coitem_id").toInt(),
-                                               q.value("item_number"),
-                                               q.value("item_description"), q.value("uom_name"),
-                                               q.value("f_qoh"), q.value("f_sobalance"),
-                                               q.value("f_allocated"), q.value("f_ordered"),
-                                               q.value("f_soavail"), q.value("f_totalavail"),
-                                               q.value("f_atshipping"), q.value("f_scheddate") );
+          coheadid = q.value("cohead_id").toInt();
+          cohead = new XTreeWidgetItem(_avail, cohead, coheadid, -2,
+                                       q.value("cohead_number"), q.value("custname"));
+        }
 
-          if (q.value("qoh").toDouble() < 0)
-            coitem->setTextColor(3, "red");
-          else if (q.value("qoh").toDouble() < q.value("reorderlevel").toDouble())
-            coitem->setTextColor(3, "orange");
+        coitemid = q.value("coitem_id").toInt();
+        coitem = new XTreeWidgetItem( cohead, coitem,
+                                             q.value("itemsite_id").toInt(), q.value("coitem_id").toInt(),
+                                             q.value("item_number"),
+                                             q.value("item_description"), q.value("uom_name"),
+                                             q.value("f_qoh"), q.value("f_sobalance"),
+                                             q.value("f_allocated"), q.value("f_ordered"),
+                                             q.value("f_soavail"), q.value("f_totalavail"),
+                                             q.value("f_atshipping"), q.value("f_scheddate") );
 
-          if (q.value("woavail").toDouble() < 0.0)
-            coitem->setTextColor(7, "red");
-          else if (q.value("woavail").toDouble() <= q.value("reorderlevel").toDouble())
-            coitem->setTextColor(7, "orange");
+        if (q.value("qoh").toDouble() < 0)
+          coitem->setTextColor(3, "red");
+        else if (q.value("qoh").toDouble() < q.value("reorderlevel").toDouble())
+          coitem->setTextColor(3, "orange");
 
-          if (q.value("totalavail").toDouble() < 0.0)
-            coitem->setTextColor(8, "red");
-          else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
-            coitem->setTextColor(8, "orange"); 
+        if (q.value("woavail").toDouble() < 0.0)
+          coitem->setTextColor(7, "red");
+        else if (q.value("woavail").toDouble() <= q.value("reorderlevel").toDouble())
+          coitem->setTextColor(7, "orange");
 
-          if(_useReservationNetting->isChecked())
+        if (q.value("totalavail").toDouble() < 0.0)
+          coitem->setTextColor(8, "red");
+        else if (q.value("totalavail").toDouble() <= q.value("reorderlevel").toDouble())
+          coitem->setTextColor(8, "orange"); 
+
+        if(_useReservationNetting->isChecked())
+        {
+          if(q.value("partialreservation").toBool())
           {
-            if(q.value("partialreservation").toBool())
-            {
-              coitem->setTextColor(0, "blue");
-              coitem->setTextColor(1, "blue");
-              coitem->setTextColor(7, "blue");
-            }
-            else if(q.value("fullreservation").toBool())
-            {
-              coitem->setTextColor(0, "green");
-              coitem->setTextColor(1, "green");
-              coitem->setTextColor(7, "green");
-            }
+            coitem->setTextColor(0, "blue");
+            coitem->setTextColor(1, "blue");
+            coitem->setTextColor(7, "blue");
+          }
+          else if(q.value("fullreservation").toBool())
+          {
+            coitem->setTextColor(0, "green");
+            coitem->setTextColor(1, "green");
+            coitem->setTextColor(7, "green");
           }
         }
-        if ((coitem)
-        && (_showWoSupply->isChecked())
-        && (q.value("wo_id").toInt() != -1) )
-        {
-          wo = new XTreeWidgetItem( coitem, wo,
-                                               q.value("itemsite_id").toInt(),-1,
-                                               q.value("wo_number"),"",
-                                                q.value("wo_status"),
-                                               "", "",
-                                               "", q.value("f_wo_ordered"),
-                                              q.value("f_wo_startdate"), q.value("f_wo_duedate"),
-                                               "" );
-                                               
-          if (q.value("wo_latestart").toBool())
-            wo->setTextColor(7, "red");
-          if (q.value("wo_latedue").toBool())
-            wo->setTextColor(8, "red");
-        }
       }
-      while (q.next());
+      if ((coitem)
+      && (_showWoSupply->isChecked())
+      && (q.value("wo_id").toInt() != -1) )
+      {
+        wo = new XTreeWidgetItem( coitem, wo,
+                                             q.value("itemsite_id").toInt(),-1,
+                                             q.value("wo_number"),"",
+                                              q.value("wo_status"),
+                                             "", "",
+                                             "", q.value("f_wo_ordered"),
+                                            q.value("f_wo_startdate"), q.value("f_wo_duedate"),
+                                             "" );
+                                             
+        if (q.value("wo_latestart").toBool())
+          wo->setTextColor(7, "red");
+        if (q.value("wo_latedue").toBool())
+          wo->setTextColor(8, "red");
+      }
     }
-    if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  _avail->expandAll();
+    while (q.next());
   }
-  else
+  if (q.lastError().type() != QSqlError::None)
   {
-    _orderDate->clear();
-    _poNumber->clear();
-    _custName->clear();
-    _custPhone->clear();
-    _avail->clear();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
+  _avail->expandAll();
 }
 
-void dspInventoryAvailabilityBySalesOrder::sAutoUpdateToggled(bool pAutoUpdate)
+void dspInventoryAvailabilityByCustomerType::sAutoUpdateToggled(bool pAutoUpdate)
 {
   if (pAutoUpdate)
     connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
@@ -580,7 +546,7 @@ void dspInventoryAvailabilityBySalesOrder::sAutoUpdateToggled(bool pAutoUpdate)
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }
 
-void dspInventoryAvailabilityBySalesOrder::sHandleReservationNetting(bool yn)
+void dspInventoryAvailabilityByCustomerType::sHandleReservationNetting(bool yn)
 {
   if(yn)
     _avail->headerItem()->setText(7, tr("This Reserve"));
@@ -589,7 +555,7 @@ void dspInventoryAvailabilityBySalesOrder::sHandleReservationNetting(bool yn)
   sFillList();
 }
 
-void dspInventoryAvailabilityBySalesOrder::sReserveStock()
+void dspInventoryAvailabilityByCustomerType::sReserveStock()
 {
   ParameterList params;
   params.append("soitem_id", _avail->altId());
@@ -600,7 +566,7 @@ void dspInventoryAvailabilityBySalesOrder::sReserveStock()
     sFillList();
 }
 
-void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
+void dspInventoryAvailabilityByCustomerType::sReserveLineBalance()
 {
   q.prepare("SELECT reserveSoLineBalance(:soitem_id) AS result;");
   q.bindValue(":soitem_id", _avail->altId());
@@ -625,7 +591,7 @@ void dspInventoryAvailabilityBySalesOrder::sReserveLineBalance()
   sFillList();
 }
 
-void dspInventoryAvailabilityBySalesOrder::sUnreserveStock()
+void dspInventoryAvailabilityByCustomerType::sUnreserveStock()
 {
   q.prepare("UPDATE coitem SET coitem_qtyreserved=0 WHERE coitem_id=:soitem_id;");
   q.bindValue(":soitem_id", _avail->altId());
@@ -640,7 +606,7 @@ void dspInventoryAvailabilityBySalesOrder::sUnreserveStock()
   sFillList();
 }
 
-void dspInventoryAvailabilityBySalesOrder::sShowReservations()
+void dspInventoryAvailabilityByCustomerType::sShowReservations()
 {
   ParameterList params;
   params.append("soitem_id", _avail->altId());
@@ -648,5 +614,12 @@ void dspInventoryAvailabilityBySalesOrder::sShowReservations()
   dspReservations * newdlg = new dspReservations();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void dspInventoryAvailabilityByCustomerType::sAddToPackingListBatch()
+{
+  q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
+  q.bindValue(":sohead_id", _avail->id());
+  q.exec();
 }
 

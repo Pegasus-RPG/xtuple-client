@@ -55,49 +55,36 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef DSPINVENTORYAVAILABILITYBYSALESORDER_H
-#define DSPINVENTORYAVAILABILITYBYSALESORDER_H
+#ifndef DSPRESERVATIONS_H
+#define DSPRESERVATIONS_H
 
 #include "OpenMFGGUIClient.h"
 #include <QMainWindow>
 #include <parameter.h>
 
-#include "ui_dspInventoryAvailabilityBySalesOrder.h"
+#include "ui_dspReservations.h"
 
-class dspInventoryAvailabilityBySalesOrder : public QMainWindow, public Ui::dspInventoryAvailabilityBySalesOrder
+class dspReservations : public QMainWindow, public Ui::dspReservations
 {
     Q_OBJECT
 
 public:
-    dspInventoryAvailabilityBySalesOrder(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~dspInventoryAvailabilityBySalesOrder();
+    dspReservations(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~dspReservations();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sSoList();
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
-    virtual void sViewAllocations();
-    virtual void sViewOrders();
-    virtual void sRunningAvailability();
-    virtual void sViewSubstituteAvailability();
-    virtual void sIssuePO();
-    virtual void sIssueWO();
-    virtual void sIssueCountTag();
+    virtual enum SetResponse set( const ParameterList & pParams );
+    virtual void sEditCustomerOrder();
+    virtual void sEditTransferOrder();
     virtual void sFillList();
-    virtual void sAutoUpdateToggled(bool);
-    virtual void sHandleReservationNetting(bool);
-    virtual void sReserveStock();
-    virtual void sReserveLineBalance();
-    virtual void sUnreserveStock();
-    virtual void sShowReservations();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sViewCustomerOrder();
+    virtual void sViewTransferOrder();
+    virtual void sViewWorkOrder();
 
 protected slots:
     virtual void languageChange();
 
-private:
-    QButtonGroup* _showByGroupInt;
-
 };
 
-#endif // DSPINVENTORYAVAILABILITYBYSALESORDER_H
+#endif // DSPRESERVATIONS_H

@@ -114,7 +114,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspIndentedBOM.ui dspIndentedWhereUsed.ui dspInvalidBillsOfMaterials.ui                \
                dspInventoryAvailabilityByItem.ui dspInventoryAvailabilityByParameterList.ui           \
                dspInventoryAvailabilityBySalesOrder.ui dspInventoryAvailabilityBySourceVendor.ui      \
-               dspInventoryAvailabilityByWorkOrder.ui                                                 \
+               dspInventoryAvailabilityByWorkOrder.ui dspInventoryAvailabilityByCustomerType.ui       \
                dspInventoryBufferStatusByParameterList.ui                                             \
                dspInventoryHistoryByItem.ui dspInventoryHistoryByOrderNumber.ui                       \
                dspInventoryHistoryByParameterList.ui dspIncidentsByCRMAccount.ui                      \
@@ -146,6 +146,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspOperationsByWorkCenter.ui dspPartiallyShippedOrders.ui                              \
                dspPricesByItem.ui dspPricesByCustomer.ui dspPricesByCustomerType.ui                   \
                dspReorderExceptionsByPlannerCode.ui dspRoughCutByWorkCenter.ui                        \
+               dspReservations.ui                                                                     \
                dspRunningAvailability.ui                                                              \
                dspSalesHistoryByBilltoName.ui dspSalesHistoryByCustomer.ui                            \
                dspSalesHistoryByItem.ui dspSalesHistoryByParameterList.ui                             \
@@ -415,7 +416,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspIndentedBOM.h dspIndentedWhereUsed.h dspInvalidBillsOfMaterials.h                   \
                dspInventoryAvailabilityByItem.h dspInventoryAvailabilityByParameterList.h             \
                dspInventoryAvailabilityBySalesOrder.h dspInventoryAvailabilityBySourceVendor.h        \
-               dspInventoryAvailabilityByWorkOrder.h                                                  \
+               dspInventoryAvailabilityByWorkOrder.h dspInventoryAvailabilityByCustomerType.h         \
                dspInventoryBufferStatusByParameterList.h                                              \
                dspInventoryHistoryByItem.h dspInventoryHistoryByOrderNumber.h                         \
                dspInventoryHistoryByParameterList.h dspIncidentsByCRMAccount.h                        \
@@ -447,6 +448,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspOperationsByWorkCenter.h dspPartiallyShippedOrders.h                                \
                dspPricesByItem.h dspPricesByCustomer.h dspPricesByCustomerType.h                      \
                dspReorderExceptionsByPlannerCode.h dspRoughCutByWorkCenter.h                          \
+               dspReservations.h                                                                      \
                dspRunningAvailability.h                                                               \
                dspSalesHistoryByBilltoName.h dspSalesHistoryByCustomer.h                              \
                dspSalesHistoryByItem.h dspSalesHistoryByParameterList.h                               \
@@ -723,7 +725,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspIndentedBOM.cpp dspIndentedWhereUsed.cpp dspInvalidBillsOfMaterials.cpp             \
                dspInventoryAvailabilityByItem.cpp dspInventoryAvailabilityByParameterList.cpp         \
                dspInventoryAvailabilityBySalesOrder.cpp dspInventoryAvailabilityBySourceVendor.cpp    \
-               dspInventoryAvailabilityByWorkOrder.cpp                                                \
+               dspInventoryAvailabilityByWorkOrder.cpp dspInventoryAvailabilityByCustomerType.cpp     \
                dspInventoryHistoryByItem.cpp dspInventoryHistoryByOrderNumber.cpp                     \
                dspInventoryHistoryByParameterList.cpp dspIncidentsByCRMAccount.cpp                    \
                dspInventoryLocator.cpp dspInvoiceInformation.cpp                                      \
@@ -753,6 +755,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspOperationsByWorkCenter.cpp dspPartiallyShippedOrders.cpp                            \
                dspPricesByItem.cpp dspPricesByCustomer.cpp dspPricesByCustomerType.cpp                \
                dspReorderExceptionsByPlannerCode.cpp dspRoughCutByWorkCenter.cpp                      \
+               dspReservations.cpp                                                                    \
                dspRunningAvailability.cpp                                                             \
                dspSalesHistoryByBilltoName.cpp dspSalesHistoryByCustomer.cpp                          \
                dspSalesHistoryByItem.cpp dspSalesHistoryByParameterList.cpp                           \

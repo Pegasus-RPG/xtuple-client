@@ -144,6 +144,7 @@ class menuSales : public QObject
     void sDspQuoteLookupByItem();
     void sDspInventoryAvailabilityByItem();
     void sDspInventoryAvailabilityBySalesOrder();
+    void sDspInventoryAvailabilityByCustomerType();
     void sDspCustomersByCusttype();
     void sDspCustomersByCharacteristic();
     void sDspCustomerInformation();

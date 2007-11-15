@@ -87,6 +87,7 @@
 #include "printSoForm.h"
 #include "deliverSalesOrder.h"
 #include "reserveSalesOrderItem.h"
+#include "dspReservations.h"
 
 #define cNewQuote  (0x20 | cNew)
 #define cEditQuote (0x20 | cEdit)
@@ -1081,6 +1082,10 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
     {
       if(didsomething)
         pMenu->insertSeparator();
+
+      menuid = pMenu->insertItem(tr("Show Reservations..."), this, SLOT(sShowReservations()));
+
+      pMenu->insertSeparator();
 
       menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
       pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
@@ -4516,5 +4521,19 @@ void salesOrder::sUnreserveStock()
   }
 
   sFillItemList();
+}
+
+void salesOrder::sShowReservations()
+{
+  QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+
+    dspReservations * newdlg = new dspReservations();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 

@@ -128,6 +128,7 @@
 #include "dspCustomerInformation.h"
 #include "dspInventoryAvailabilityByItem.h"
 #include "dspInventoryAvailabilityBySalesOrder.h"
+#include "dspInventoryAvailabilityByCustomerType.h"
 #include "dspSalesOrderStatus.h"
 #include "dspBacklogByItem.h"
 #include "dspBacklogBySalesOrder.h"
@@ -363,6 +364,7 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
     { "menu",	tr("&Inventory Availability"),           (char*)reportsInvAvailMenu,	reportsMenu,	true,	NULL, NULL, true, NULL },
     { "so.dspInventoryAvailabilityBySalesOrder", tr("by Sales &Order..."),	SLOT(sDspInventoryAvailabilityBySalesOrder()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
     { "so.dspInventoryAvailabilityByItem", tr("by &Item..."),	SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },    
+    { "so.dspInventoryAvailabilityByCustomerType", tr("by &Customer Type..."),	SLOT(sDspInventoryAvailabilityByCustomerType()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },    
 
     { "separator",	NULL,	NULL,	reportsMenu,	true,		NULL, NULL, true, NULL },
     { "so.dspEarnedCommissions", tr("&Earned Commissions..."),	SLOT(sDspEarnedCommissions()), reportsMenu, _privleges->check("ViewCommissions"),	NULL, NULL, true, NULL },
@@ -836,6 +838,11 @@ void menuSales::sDspInventoryAvailabilityByItem()
 void menuSales::sDspInventoryAvailabilityBySalesOrder()
 {
   omfgThis->handleNewWindow(new dspInventoryAvailabilityBySalesOrder());
+}
+
+void menuSales::sDspInventoryAvailabilityByCustomerType()
+{
+  omfgThis->handleNewWindow(new dspInventoryAvailabilityByCustomerType());
 }
 
 void menuSales::sDspOrderLookupByCustomer()
