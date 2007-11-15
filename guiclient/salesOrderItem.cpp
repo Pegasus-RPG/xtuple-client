@@ -1996,7 +1996,7 @@ void salesOrderItem::populate()
 	"       coitem_price,"
         "       coitem_price_uom_id AS price_uom_id,"
         "       coitem_price_invuomratio AS price_invuomratio,"
-	"       formatDate(coitem_promdate) AS promdate,"
+	"       coitem_promdate AS promdate,"
 	"       coitem_substitute_item_id, coitem_prcost,"
 	"       (SELECT COALESCE(SUM(coship_qty), 0)"
 	"          FROM coship"
