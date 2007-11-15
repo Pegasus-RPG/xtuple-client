@@ -123,6 +123,8 @@ void configureIE::sSave()
     _metrics->set("XMLSuccessTreatment",  QString("Rename"));
   else if (_deleteFiles->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("Delete"));
+  else if (_moveFiles->isChecked())
+    _metrics->set("XMLSuccessTreatment",  QString("Move"));
   else if (_doNothing->isChecked())
     _metrics->set("XMLSuccessTreatment",  QString("None"));
   else
@@ -177,6 +179,7 @@ void configureIE::sSave()
   _metrics->set("XMLDefaultDirWindows",	  _windowsDir->text());
 
   _metrics->set("XMLSuccessSuffix",	  _renameSuffix->text());
+  _metrics->set("XMLSuccessDir",	  _moveDir->text());
 
   accept();
 }
@@ -205,10 +208,13 @@ void configureIE::sPopulate()
     _renameFiles->setChecked(true);
   else if (_metrics->value("XMLSuccessTreatment") == "Delete")
     _deleteFiles->setChecked(true);
+  else if (_metrics->value("XMLSuccessTreatment") == "Move")
+    _moveFiles->setChecked(true);
   else if (_metrics->value("XMLSuccessTreatment") == "None")
     _doNothing->setChecked(true);
 
   _renameSuffix->setText(_metrics->value("XMLSuccessSuffix"));
+  _moveDir->setText(_metrics->value("XMLSuccessDir"));
 
   sFillList();
 }

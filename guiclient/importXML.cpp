@@ -176,6 +176,7 @@ void importXML::languageChange()
 
 void importXML::sFillList()
 {
+  _file->clear();
   if (! _defaultXMLDir.isEmpty())
   {
     QStringList filters;
@@ -281,10 +282,6 @@ bool importXML::openDomDocument(const QString &pFileName, QDomDocument &pDoc)
 bool importXML::importOne(const QString &pFileName)
 {
 
-  QString suffix = _metrics->value("XMLSuccessSuffix");
-  if (suffix.isEmpty())
-    suffix = ".done";
-
   QDomDocument doc(pFileName);
   if (!openDomDocument(pFileName, doc))
     return false;
@@ -319,7 +316,8 @@ bool importXML::importOne(const QString &pFileName)
       return false;
     }
 
-    QTemporaryFile tmpfile(_defaultXMLDir + "/" + doc.doctype().name() + "TOxtupleimport");
+    QTemporaryFile tmpfile(_defaultXMLDir + QDir::separator() +
+			   doc.doctype().name() + "TOxtupleimport");
     tmpfile.setAutoRemove(false);
     if (! tmpfile.open())
     {
@@ -503,7 +501,14 @@ bool importXML::importOne(const QString &pFileName)
     if (q.lastError().type() != QSqlError::None)
     {
       if (ignoreErr)
+      {
+	QString warning = q.lastError().databaseText();
 	q.exec("ROLLBACK TO SAVEPOINT " + viewElem.tagName() + ";");
+	QMessageBox::warning(this, tr("Ignoring Error"),
+			     tr("Ignoring database error while importing %1:\n\n%2")
+			      .arg(viewElem.tagName())
+			      .arg(warning));
+      }
       else
       {
 	rollback.exec();
@@ -535,6 +540,10 @@ bool importXML::importOne(const QString &pFileName)
   }
   else if (_metrics->value("XMLSuccessTreatment") == "Rename")
   {
+    QString suffix = _metrics->value("XMLSuccessSuffix");
+    if (suffix.isEmpty())
+      suffix = ".done";
+
     if (! file.rename(pFileName + suffix))
     {
       systemError(this, tr("Could not rename %1 after successful processing (%2).")
@@ -542,6 +551,26 @@ bool importXML::importOne(const QString &pFileName)
       return false;
     }
   }
+  else if (_metrics->value("XMLSuccessTreatment") == "Move")
+  {
+    QString donedirName = _metrics->value("XMLSuccessDir");
+    if (donedirName.isEmpty())
+      donedirName = "done";
+    if (QDir::isRelativePath(donedirName))
+      donedirName = _defaultXMLDir + QDir::separator() + donedirName;
+
+    QDir donedir(donedirName);
+    if (! donedir.exists())
+      donedir.mkpath(donedirName);
+
+    if (! file.rename(donedirName + QDir::separator() + QFileInfo(file).fileName()))
+    {
+      systemError(this, tr("<p>Could not move %1 to %2 after successful processing (%3).")
+			.arg(pFileName).arg(donedirName).arg(file.error()));
+      return false;
+    }
+  }
+
   // else if (_metrics->value("XMLSuccessTreatment") == "None") {}
 
   return true;

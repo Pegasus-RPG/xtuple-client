@@ -49,6 +49,26 @@
 			'<xsl:value-of select="$generate"/>')
   </xsl:template>
 
+  <xsl:template name="shiptoNumberFromAddress">
+    <xsl:param name="address"/>
+    <xsl:param name="generate"	select="'false'"/>
+    <xsl:param name="create"	select="'false'"/>
+    getShiptoNumberFromInfo('<xsl:value-of select="$address/Email"/>',
+			    '<xsl:value-of select="$address/Company"/>',
+			    '<xsl:value-of select="$address/Name/First"/>',
+			    '<xsl:value-of select="$address/Name/Last"/>',
+			    '<xsl:value-of select="$address/Name/Full"/>',
+			    '<xsl:value-of select="$address/Address1"/>',
+			    '<xsl:value-of select="$address/Address2"/>',
+			    NULL,
+			    '<xsl:value-of select="$address/City"/>',
+			    '<xsl:value-of select="$address/State"/>',
+			    '<xsl:value-of select="$address/Zip"/>',
+			    '<xsl:value-of select="$address/Country"/>',
+			     <xsl:value-of select="$generate"/>,
+			     <xsl:value-of select="$create"/>)
+  </xsl:template>
+
   <xsl:template match="OrderList">
     <xsl:apply-templates/>
   </xsl:template>
@@ -438,7 +458,13 @@
       </xsl:if>
 
       <xsl:if test="AddressInfo[@type = 'ship']">
-	<!-- shipto_number -->
+	<shipto_number quote="false">
+	  <xsl:call-template name="shiptoNumberFromAddress">
+	    <xsl:with-param name="address"  select="AddressInfo[@type = 'ship']"/>
+	    <xsl:with-param name="generate" select="'true'"/>
+	    <xsl:with-param name="create"   select="'true'"/>
+	  </xsl:call-template>
+	</shipto_number>
 	<xsl:if test="AddressInfo[@type = 'ship']/Name/Full">
 	  <shipto_name>
 	    <xsl:value-of select="AddressInfo[@type = 'ship']/Name/Full"/>
@@ -677,7 +703,11 @@
 
   <xsl:template match="Option">
     <xsl:call-template name="saleslinechar">
-      <xsl:with-param name="id"			select="../../@id"	/>
+      <xsl:with-param name="id"			select="../../@id">
+	<xsl:call-template name="cleanSQLChars">
+	  <xsl:with-param name="inputStr" select="text()"/>
+	</xsl:call-template>
+      </xsl:with-param>
       <xsl:with-param name="line-number"	select="../@num"	/>
       <xsl:with-param name="characteristic"	select="@name"		/>
       <xsl:with-param name="value"		select="text()"		/>
@@ -689,13 +719,16 @@
   </xsl:template>
 
   <xsl:template match="OptionList">
-    <xsl:variable name="characteristic" select="@name"/>
     <xsl:for-each select="OptionValue">
       <xsl:call-template name="saleslinechar">
-	<xsl:with-param name="id"		select="../../../@id"	 />
-	<xsl:with-param name="line-number"	select="../../@num"	 />
-	<xsl:with-param name="characteristic"	select="$characteristic" />
-	<xsl:with-param name="value"		select="text()"		 />
+	<xsl:with-param name="id"		select="../../../../@id" >
+	  <xsl:call-template name="cleanSQLChars">
+	    <xsl:with-param name="inputStr" select="text()"/>
+	  </xsl:call-template>
+	</xsl:with-param>
+	<xsl:with-param name="line-number"	select="../../../@num"	/>
+	<xsl:with-param name="characteristic"	select="../@name" 	/>
+	<xsl:with-param name="value"		select="text()"		/>
       </xsl:call-template>
     </xsl:for-each>
   </xsl:template>

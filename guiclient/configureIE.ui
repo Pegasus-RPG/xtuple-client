@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>676</width>
-    <height>701</height>
+    <height>743</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -44,7 +44,7 @@
             <item row="0" column="1" >
              <widget class="FileCluster" name="_xsltLinuxDir" >
               <property name="fileMode" >
-               <enum>QFileDialog::Directory</enum>
+               <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
@@ -61,7 +61,7 @@
             <item row="1" column="1" >
              <widget class="FileCluster" name="_xsltWindowsDir" >
               <property name="fileMode" >
-               <enum>QFileDialog::Directory</enum>
+               <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
@@ -78,7 +78,7 @@
             <item row="2" column="1" >
              <widget class="FileCluster" name="_xsltMacDir" >
               <property name="fileMode" >
-               <enum>QFileDialog::Directory</enum>
+               <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
@@ -318,7 +318,7 @@
             <item row="0" column="1" >
              <widget class="FileCluster" name="_linuxDir" >
               <property name="fileMode" >
-               <enum>QFileDialog::Directory</enum>
+               <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
@@ -335,7 +335,7 @@
             <item row="1" column="1" >
              <widget class="FileCluster" name="_windowsDir" >
               <property name="fileMode" >
-               <enum>QFileDialog::Directory</enum>
+               <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
@@ -352,7 +352,7 @@
             <item row="2" column="1" >
              <widget class="FileCluster" name="_macDir" >
               <property name="fileMode" >
-               <enum>QFileDialog::Directory</enum>
+               <enum>QFileDialog::DirectoryOnly</enum>
               </property>
              </widget>
             </item>
@@ -377,7 +377,7 @@
               <item>
                <widget class="QRadioButton" name="_renameFiles" >
                 <property name="text" >
-                 <string>Rename XML files after successful import. Append:</string>
+                 <string>Rename after successful import. Append:</string>
                 </property>
                </widget>
               </item>
@@ -404,9 +404,30 @@
              </layout>
             </item>
             <item>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QRadioButton" name="_moveFiles" >
+                <property name="text" >
+                 <string>Move after successful import to:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="FileCluster" name="_moveDir" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="fileMode" >
+                 <enum>QFileDialog::DirectoryOnly</enum>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item>
              <widget class="QRadioButton" name="_deleteFiles" >
               <property name="text" >
-               <string>Delete XML files after successful import</string>
+               <string>Delete after successful import</string>
               </property>
              </widget>
             </item>
@@ -618,6 +639,22 @@
     <hint type="destinationlabel" >
      <x>506</x>
      <y>367</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_moveFiles</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_moveDir</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>164</x>
+     <y>612</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>406</x>
+     <y>611</y>
     </hint>
    </hints>
   </connection>
