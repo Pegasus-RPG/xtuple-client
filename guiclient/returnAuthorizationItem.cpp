@@ -317,14 +317,14 @@ void returnAuthorizationItem::sSave()
                "  raitem_disposition, raitem_qtyauthorized, "
                "  raitem_qty_uom_id, raitem_qty_invuomratio,"
                "  raitem_price_uom_id, raitem_price_invuomratio,"
-               "  raitem_unitprice, raitem_tax_id,"
+               "  raitem_unitprice, raitem_tax_id,raitem_taxtype_id, "
                "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id, "
 			   "  raitem_scheddate, raitem_warranty) "
 			   "SELECT :raitem_id, :rahead_id, :raitem_linenumber, itemsite_id,"
 			   "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
-               "       :raitem_unitprice, :raitem_tax_id,"
+			   "       :raitem_unitprice, :raitem_tax_id, :raitem_taxtype_id, "
 			   "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id, "
 			   "       :raitem_scheddate, :raitem_warranty "
                "FROM itemsite "
@@ -341,6 +341,7 @@ void returnAuthorizationItem::sSave()
                "    raitem_price_invuomratio=:price_invuomratio,"
                "    raitem_unitprice=:raitem_unitprice,"
     	       "    raitem_tax_id=:raitem_tax_id,"
+			   "    raitem_taxtype_id=:raitem_taxtype_id, "
 	           "    raitem_notes=:raitem_notes,"
                "    raitem_rsncode_id=:raitem_rsncode_id, "
 			   "    raitem_cos_accnt_id=:raitem_cos_accnt_id, "
@@ -358,6 +359,9 @@ void returnAuthorizationItem::sSave()
   q.bindValue(":price_uom_id", _pricingUOM->id());
   q.bindValue(":price_invuomratio", _priceinvuomratio);
   q.bindValue(":raitem_unitprice", _netUnitPrice->localValue());
+  if (_taxType->isValid())
+    q.bindValue(":raitem_taxtype_id",	_taxType->id());
+  q.bindValue(":raitem_notes", _notes->text());
   if (_taxCode->isValid())
     q.bindValue(":raitem_tax_id",	_taxCode->id());
   q.bindValue(":raitem_notes", _notes->text());
@@ -509,6 +513,7 @@ void returnAuthorizationItem::populate()
     // do _item and _taxauth before other tax stuff because of signal cascade
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
+	_taxType->setId(raitem.value("raitem_taxtype_id").toInt());
     _tax->setId(raitem.value("taxcurr").toInt());
 	_invuomid=raitem.value("item_inv_uom_id").toInt();
     _qtyUOM->setId(raitem.value("raitem_qty_uom_id").toInt());
