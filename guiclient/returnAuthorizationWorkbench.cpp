@@ -66,6 +66,7 @@
 #include <metasql.h>
 #include "mqlutil.h"
 #include "returnAuthorization.h"
+#include "returnAuthCheck.h"
 
 returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -238,8 +239,37 @@ void returnAuthorizationWorkbench::sProcess()
 	  _radue->clear();
       return;
     }
+	else
+	  sFillList();
   }
-  sFillList();
+  else if (_radue->altId() == 2)
+  {
+    q.prepare("SELECT rahead_cust_id,formatMoney(calcradueamt(rahead_id)) AS amount, "
+		      "rahead_curr_id, 'Return Authorization ' || rahead_number::text AS memo "
+			  "FROM rahead "
+			  "WHERE (rahead_id=:rahead_id); ");
+	q.bindValue(":rahead_id", _radue->id());
+	q.exec();
+	if (q.first())
+	{
+      ParameterList params;
+      params.append("cust_id", q.value("rahead_cust_id").toInt());
+      params.append("curr_id", q.value("rahead_curr_id").toInt());
+      params.append("amount", q.value("amount").toDouble());
+      params.append("memo", q.value("memo").toString());
+      params.append("rahead_id", _radue->id());
+
+      returnAuthCheck newdlg(this, "", TRUE);
+      newdlg.set(params);
+      if (newdlg.exec() != QDialog::Rejected)
+        sFillList();
+	}
+  	else if (q.lastError().type() != QSqlError::None)
+    {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+    }
+  }
 }
 
 void returnAuthorizationWorkbench::sFillList()

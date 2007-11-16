@@ -1009,7 +1009,7 @@ void returnAuthorization::sFillList()
 			"  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
 			"AND ((raitem_qtyreceived + COALESCE(coitem_qtyshipped,0) + "
-			" raitem_amtcredited + raitem_amtrefunded) > 0 ) );");
+			" raitem_amtcredited) > 0 ) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   if (q.first())
