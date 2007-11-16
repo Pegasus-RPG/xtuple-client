@@ -88,7 +88,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_editdue, SIGNAL(clicked()), this, SLOT(sEditDue()));
   connect(_viewdue, SIGNAL(clicked()), this, SLOT(sViewDue()));
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPostDue()));
+  connect(_process, SIGNAL(clicked()), this, SLOT(sProcess()));
   connect(_radue, SIGNAL(valid(bool)), this, SLOT(sHandleButton()));
   connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillList()));
 
@@ -117,6 +117,13 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   QString key = omfgThis->_key;
   if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
     _creditcard->hide();
+
+  if (!_privleges->check("PostARDocuments"))
+  {
+    _postmemos->setChecked(false);
+	_postmemos->setEnabled(false);
+  }
+  
 }
 
 returnAuthorizationWorkbench::~returnAuthorizationWorkbench()
@@ -212,15 +219,18 @@ void returnAuthorizationWorkbench::sViewDue()
 
 void returnAuthorizationWorkbench::sHandleButton()
 {
-  _post->setEnabled(((_radue->altId() == 1 && _privleges->check("PostARDocuments")) ||
+  _process->setEnabled(((_radue->altId() == 1 && _privleges->check("MaintainCreditMemos")) ||
 	   (_radue->altId() == 2 && _privleges->check("MaintainPayments")) ||
 	   (_radue->altId() == 3 && _privleges->check("PostARDocuments"))));  
 }
 
-void returnAuthorizationWorkbench::sPostDue()
+void returnAuthorizationWorkbench::sProcess()
 {
-	q.prepare("SELECT postRaCredit(:rahead_id) AS result;");
+  if (_radue->altId() == 1)
+  {
+	q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
 	q.bindValue(":rahead_id",_radue->id());
+	q.bindValue(":post",QVariant(_postmemos->isChecked()));
 	q.exec();
 	if (q.lastError().type() != QSqlError::None)
     {
@@ -228,7 +238,8 @@ void returnAuthorizationWorkbench::sPostDue()
 	  _radue->clear();
       return;
     }
-	sFillList();
+  }
+  sFillList();
 }
 
 void returnAuthorizationWorkbench::sFillList()

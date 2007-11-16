@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>606</width>
-    <height>448</height>
+    <width>600</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -426,9 +426,16 @@
            </spacer>
           </item>
           <item>
-           <widget class="XCheckBox" name="_printonpost" >
+           <widget class="XCheckBox" name="_postmemos" >
             <property name="text" >
-             <string>Print Credit Memo after Post</string>
+             <string>Post Credit Memos Immediately</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="XCheckBox" name="_printmemo" >
+            <property name="text" >
+             <string>Print Credit Memo</string>
             </property>
            </widget>
           </item>
@@ -510,12 +517,12 @@
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="_post" >
+           <widget class="QPushButton" name="_process" >
             <property name="enabled" >
              <bool>false</bool>
             </property>
             <property name="text" >
-             <string>Post</string>
+             <string>Process</string>
             </property>
             <property name="autoDefault" >
              <bool>false</bool>

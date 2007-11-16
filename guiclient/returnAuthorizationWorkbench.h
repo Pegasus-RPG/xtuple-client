@@ -79,7 +79,7 @@ public slots:
 	virtual void sPrintDue();
     virtual void sEditDue();
 	virtual void sViewDue();
-	virtual void sPostDue();
+	virtual void sProcess();
 	virtual void sHandleButton();
     virtual void sFillList();
 	virtual void sParameterTypeChanged();
