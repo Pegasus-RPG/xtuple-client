@@ -50,60 +50,6 @@
  </querysource>
  <rpthead>
   <height>246</height>
-  <field>
-   <rect>
-    <x>196</x>
-    <y>102</y>
-    <width>300</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>item_descrip2</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>215</x>
-    <y>205</y>
-    <width>125</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Location</string>
-  </label>
-  <field>
-   <rect>
-    <x>653</x>
-    <y>65</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>wonumber</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>45</x>
@@ -119,172 +65,6 @@
    <left/>
    <vcenter/>
    <string>Item Description</string>
-  </label>
-  <field>
-   <rect>
-    <x>653</x>
-    <y>102</y>
-    <width>130</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>startdate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>196</x>
-    <y>84</y>
-    <width>300</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>item_descrip1</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>578</x>
-    <y>18</y>
-    <width>204</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>20</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Pick List</string>
-  </label>
-  <label>
-   <rect>
-    <x>560</x>
-    <y>204</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. To Pick</string>
-  </label>
-  <label>
-   <rect>
-    <x>354</x>
-    <y>204</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Required</string>
-  </label>
-  <label>
-   <rect>
-    <x>494</x>
-    <y>121</y>
-    <width>154</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Due Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>494</x>
-    <y>65</y>
-    <width>154</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Work Order #:</string>
-  </label>
-  <label>
-   <rect>
-    <x>37</x>
-    <y>158</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Qty. Received:</string>
-  </label>
-  <label>
-   <rect>
-    <x>681</x>
-    <y>204</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Picked</string>
-  </label>
-  <label>
-   <rect>
-    <x>494</x>
-    <y>84</y>
-    <width>154</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Date:</string>
   </label>
   <field>
    <rect>
@@ -307,9 +87,9 @@
   </field>
   <field>
    <rect>
-    <x>196</x>
+    <x>653</x>
     <y>65</y>
-    <width>200</width>
+    <width>150</width>
     <height>20</height>
    </rect>
    <font>
@@ -321,9 +101,114 @@
    <vcenter/>
    <data>
     <query>Head</query>
-    <column>item_number</column>
+    <column>wonumber</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>196</x>
+    <y>102</y>
+    <width>300</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>item_descrip2</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>84</y>
+    <width>154</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>653</x>
+    <y>102</y>
+    <width>130</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>653</x>
+    <y>84</y>
+    <width>130</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>65</y>
+    <width>154</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Work Order #:</string>
+  </label>
+  <label>
+   <rect>
+    <x>560</x>
+    <y>204</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. To Pick</string>
+  </label>
   <field>
    <rect>
     <x>653</x>
@@ -345,6 +230,41 @@
   </field>
   <label>
    <rect>
+    <x>494</x>
+    <y>121</y>
+    <width>154</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Due Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>196</x>
+    <y>65</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>item_number</column>
+   </data>
+  </field>
+  <label>
+   <rect>
     <x>37</x>
     <y>121</y>
     <width>150</width>
@@ -361,58 +281,99 @@
   </label>
   <label>
    <rect>
-    <x>455</x>
-    <y>220</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Issue Method</string>
-  </label>
-  <label>
-   <rect>
-    <x>457</x>
-    <y>204</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Issued</string>
-  </label>
-  <line>
-   <xstart>10</xstart>
-   <ystart>240</ystart>
-   <xend>822</xend>
-   <yend>240</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>45</x>
-    <y>204</y>
+    <x>37</x>
+    <y>65</y>
     <width>150</width>
     <height>20</height>
    </rect>
    <font>
     <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Item:</string>
+  </label>
+  <label>
+   <rect>
+    <x>37</x>
+    <y>158</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Qty. Received:</string>
+  </label>
+  <label>
+   <rect>
+    <x>578</x>
+    <y>18</y>
+    <width>204</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>20</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Pick List</string>
+  </label>
+  <label>
+   <rect>
+    <x>681</x>
+    <y>204</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
     <size>10</size>
     <weight>bold</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Item Number</string>
+   <string>Qty. Picked</string>
+  </label>
+  <label>
+   <rect>
+    <x>215</x>
+    <y>205</y>
+    <width>125</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Location</string>
+  </label>
+  <label>
+   <rect>
+    <x>354</x>
+    <y>204</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Required</string>
   </label>
   <field>
    <rect>
@@ -433,71 +394,23 @@
     <column>qtyrcv</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>37</x>
-    <y>65</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Item:</string>
-  </label>
-  <label>
-   <rect>
-    <x>37</x>
-    <y>140</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Qty. Ordered:</string>
-  </label>
-  <label>
-   <rect>
-    <x>494</x>
-    <y>102</y>
-    <width>154</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
   <field>
    <rect>
-    <x>653</x>
+    <x>196</x>
     <y>84</y>
-    <width>130</width>
-    <height>20</height>
+    <width>300</width>
+    <height>17</height>
    </rect>
    <font>
     <face>helvetica</face>
-    <size>14</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
    <left/>
    <vcenter/>
    <data>
-    <query>Context Query</query>
-    <column>report_date</column>
+    <query>Head</query>
+    <column>item_descrip1</column>
    </data>
   </field>
   <field>
@@ -519,17 +432,120 @@
     <column>warehous_code</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>455</x>
+    <y>220</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issue Method</string>
+  </label>
+  <label>
+   <rect>
+    <x>45</x>
+    <y>204</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <line>
+   <xstart>10</xstart>
+   <ystart>240</ystart>
+   <xend>822</xend>
+   <yend>240</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>37</x>
+    <y>140</y>
+    <width>150</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Qty. Ordered:</string>
+  </label>
+  <label>
+   <rect>
+    <x>457</x>
+    <y>204</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>355</x>
+    <y>220</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issue UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>102</y>
+    <width>154</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Start Date:</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>9</height>
+  <height>6</height>
  </pghead>
  <pghead>
   <height>47</height>
   <label>
    <rect>
-    <x>545</x>
-    <y>5</y>
+    <x>340</x>
+    <y>20</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -540,39 +556,7 @@
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Qty. To Pick</string>
-  </label>
-  <label>
-   <rect>
-    <x>665</x>
-    <y>5</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Picked</string>
-  </label>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>25</y>
-    <width>300</width>
-    <height>14</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
+   <string>Issue UOM</string>
   </label>
   <label>
    <rect>
@@ -589,22 +573,6 @@
    <left/>
    <vcenter/>
    <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>5</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. Required</string>
   </label>
   <line>
    <xstart>10</xstart>
@@ -632,6 +600,38 @@
   <label>
    <rect>
     <x>440</x>
+    <y>20</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Issue Method</string>
+  </label>
+  <label>
+   <rect>
+    <x>665</x>
+    <y>5</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Picked</string>
+  </label>
+  <label>
+   <rect>
+    <x>440</x>
     <y>5</y>
     <width>100</width>
     <height>20</height>
@@ -644,6 +644,54 @@
    <hcenter/>
    <vcenter/>
    <string>Qty. Issued</string>
+  </label>
+  <label>
+   <rect>
+    <x>340</x>
+    <y>5</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. Required</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>25</y>
+    <width>300</width>
+    <height>14</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>545</x>
+    <y>5</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. To Pick</string>
   </label>
  </pghead>
  <section>
@@ -670,6 +718,89 @@
     <data>
      <query>Detail</query>
      <column>itemsite_location</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>45</x>
+     <y>0</y>
+     <width>160</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <line>
+    <xstart>680</xstart>
+    <ystart>30</ystart>
+    <xend>780</xend>
+    <yend>30</yend>
+    <weight>1</weight>
+   </line>
+   <field>
+    <rect>
+     <x>350</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>qtyreq</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>457</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>qtyiss</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>350</x>
+     <y>20</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>uom_name</column>
     </data>
    </field>
    <field>
@@ -708,63 +839,6 @@
     <data>
      <query>Detail</query>
      <column>f_issuemethod</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>45</x>
-     <y>0</y>
-     <width>160</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>item_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>457</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>qtyiss</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>350</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>qtyreq</column>
     </data>
    </field>
    <line>
@@ -812,17 +886,26 @@
      <column>item_descrip1</column>
     </data>
    </field>
-   <line>
-    <xstart>680</xstart>
-    <ystart>30</ystart>
-    <xend>780</xend>
-    <yend>30</yend>
-    <weight>1</weight>
-   </line>
   </detail>
  </section>
  <rptfoot>
   <height>57</height>
+  <label>
+   <rect>
+    <x>46</x>
+    <y>9</y>
+    <width>139</width>
+    <height>22</height>
+   </rect>
+   <font>
+    <face>Luciduxsans</face>
+    <size>12</size>
+    <weight>48</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Production Notes:</string>
+  </label>
   <text>
    <rect>
     <x>46</x>
@@ -843,21 +926,5 @@
     <column>wo_prodnotes</column>
    </data>
   </text>
-  <label>
-   <rect>
-    <x>46</x>
-    <y>9</y>
-    <width>139</width>
-    <height>22</height>
-   </rect>
-   <font>
-    <face>Luciduxsans</face>
-    <size>12</size>
-    <weight>48</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Production Notes:</string>
-  </label>
  </rptfoot>
 </report>
