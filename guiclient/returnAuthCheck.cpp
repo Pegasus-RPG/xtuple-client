@@ -159,6 +159,13 @@ void returnAuthCheck::sSave()
   {
     QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
                           tr("<p>You must enter an amount for this check.") );
+    return;
+  }
+
+  else if (!_bankaccnt->isValid())
+  {
+    QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
+                          tr("<p>You must select a bank account for this check.") );
     _date->setFocus();
     return;
   }
@@ -177,30 +184,39 @@ void returnAuthCheck::sSave()
     q.bindValue(":curr_id",	_amount->id());
     q.bindValue(":for",	_for->text().stripWhiteSpace());
     q.bindValue(":notes", _notes->text().stripWhiteSpace());
-  }
-  if (q.first())
-  {
-    _checkid = q.value("result").toInt();
-    if (_checkid < 0)
+	q.exec();
+    if (q.first())
     {
-      systemError(this, storedProcErrorLookup("createCheck", _checkid),
-		  __FILE__, __LINE__);
-      return;
-    }
-    q.prepare( "SELECT checkhead_number "
+      _checkid = q.value("result").toInt();
+      if (_checkid < 0)
+      {
+        systemError(this, storedProcErrorLookup("createCheck", _checkid),
+		    __FILE__, __LINE__);
+        return;
+      }
+      q.prepare( "SELECT checkhead_number "
                "FROM checkhead "
                "WHERE (checkhead_id=:check_id);" );
-    q.bindValue(":check_id", _checkid);
-    q.exec();
-    if (q.first())
-      QMessageBox::information( this, tr("New Check Created"),
+      q.bindValue(":check_id", _checkid);
+      q.exec();
+      if (q.first())
+      {
+        QMessageBox::information( this, tr("New Check Created"),
                                 tr("<p>A new Check has been created and "
-				   "assigned #%1")
-                                .arg(q.value("checkhead_number").toString()) );
+				                   "assigned #%1")
+                                   .arg(q.value("checkhead_number").toString()) );
+	    done(TRUE);
+	  }
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+	}
     else if (q.lastError().type() != QSqlError::None)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
     }
   }
 }
