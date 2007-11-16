@@ -1,0 +1,16 @@
+SELECT coitem_id AS source_id,
+       formatSoNumber(coitem_id) AS order_number,
+       formatQty(coitem_qtyord) AS totalqty,
+       formatQty((coitem_qtyshipped + qtyAtShipping(coitem_id)) - coitem_qtyreturned) as relievedqty,
+       formatQty(coitem_qtyreserved) AS balanceqty,
+       coitem_qtyreserved,
+       formatDate(coitem_scheddate) as duedate, coitem_scheddate AS r_duedate,
+       (coitem_scheddate < CURRENT_DATE) AS late  
+FROM cohead, coitem, itemsite, item 
+WHERE((coitem_cohead_id=cohead_id)
+  AND (coitem_itemsite_id=itemsite_id)
+  AND (coitem_qtyreserved > 0)
+  AND (itemsite_item_id=item_id)
+  AND (itemsite_warehous_id=<? value("warehous_id") ?>)
+  AND (itemsite_item_id=<? value("item_id") ?>))
+ORDER BY r_duedate;
