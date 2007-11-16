@@ -55,40 +55,39 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef MISCCHECK_H
-#define MISCCHECK_H
+#ifndef RETURNAUTHCHECK_H
+#define RETURNAUTHCHECK_H
 
 #include "OpenMFGGUIClient.h"
-#include <QMainWindow>
+#include <QtGui/QDialog>
 #include <parameter.h>
+#include "ui_returnAuthCheck.h"
 
-#include "ui_miscCheck.h"
-
-class miscCheck : public QMainWindow, public Ui::miscCheck
+class returnAuthCheck : public QDialog, public Ui::returnAuthCheck
 {
     Q_OBJECT
 
 public:
-    miscCheck(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
-    ~miscCheck();
+    returnAuthCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~returnAuthCheck();
 
-    virtual void populate();
+    virtual void init();
 
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sHandleButtons();
-    virtual void sPopulateBankInfo( int pBankaccntid );
+    virtual enum SetResponse set( ParameterList & pParams );
     virtual void sSave();
+    virtual void sClose();
+	virtual void sPopulateBankInfo(int pBankaccntid);
+    virtual void populate();
 
 protected slots:
     virtual void languageChange();
 
 private:
-    bool _captive;
-    int _checkid;
-    int _mode;
+    int _bankaccntid;
 	int _raheadid;
+	int _checkid;
 
 };
 
-#endif // MISCCHECK_H
+#endif // RETURNAUTHCHECK_H

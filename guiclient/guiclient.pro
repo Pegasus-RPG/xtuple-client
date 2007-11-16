@@ -269,7 +269,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                reports.ui reprioritizeWo.ui                                                           \
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                reserveSalesOrderItem.ui                                                               \
-               resetQOHBalances.ui returnAuthorization.ui returnAuthorizationItem.ui                  \
+               resetQOHBalances.ui returnAuthCheck.ui returnAuthorization.ui                          \
+               returnAuthorizationItem.ui                                                             \
                returnAuthorizationWorkbench.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui       \
                reverseGLSeries.ui                                                                     \
                runMPSByPlannerCode.ui                                                                 \
@@ -575,7 +576,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                reports.h reprioritizeWo.h                                                             \
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                reserveSalesOrderItem.h                                                                \
-               resetQOHBalances.h returnAuthorization.h returnAuthorizationItem.h                     \
+               resetQOHBalances.h returnAuthCheck.h returnAuthorization.h returnAuthorizationItem.h   \
                returnAuthorizationWorkbench.h returnWoMaterialBatch.h returnWoMaterialItem.h          \
                reverseGLSeries.h                                                                      \
                runMPSByPlannerCode.h                                                                  \
@@ -884,7 +885,8 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                reports.cpp reprioritizeWo.cpp                                                         \
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                reserveSalesOrderItem.cpp                                                              \
-               resetQOHBalances.cpp returnAuthorization.cpp returnAuthorizationItem.cpp               \
+               resetQOHBalances.cpp returnAuthCheck.cpp returnAuthorization.cpp                       \
+               returnAuthorizationItem.cpp                                                            \
                returnAuthorizationWorkbench.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp    \
                reverseGLSeries.cpp                                                                    \
                runMPSByPlannerCode.cpp                                                                \

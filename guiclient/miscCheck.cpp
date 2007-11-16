@@ -78,6 +78,7 @@ miscCheck::miscCheck(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_vendRB,    SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
 
   _captive = FALSE;
+  _raheadid = -1;
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 }
@@ -102,17 +103,6 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
   param = pParams.value("vend_id", &valid);
   if (valid)
     _vend->setId(param.toInt());
-
-  param = pParams.value("bankaccnt_id", &valid);
-  if (valid)
-    _bankaccnt->setId(param.toInt());
-
-  param = pParams.value("check_id", &valid);
-  if (valid)
-  {
-    _checkid = param.toInt();
-    populate();
-  }
 
   if (pParams.inList("new"))
   {
@@ -166,7 +156,7 @@ void miscCheck::sSave()
   {
     q.prepare("SELECT createCheck(:bankaccnt_id, :reciptype, :recipid,"
 	      "                   :checkDate, :amount, :curr_id, :expcat_id,"
-	      "                   NULL, :for, :notes, TRUE) AS result;" );
+		  "                   NULL, :for, :notes, TRUE) AS result;" );
     q.bindValue(":bankaccnt_id", _bankaccnt->id());
   }
   else if (_mode == cEdit)
@@ -203,7 +193,7 @@ void miscCheck::sSave()
   q.bindValue(":for",		_for->text().stripWhiteSpace());
   q.bindValue(":notes",		_notes->text().stripWhiteSpace());
 
-  if (! _cm->isChecked())
+  if (! _memo->isChecked())
     q.bindValue(":expcat_id", _expcat->id());
 
   q.exec();
@@ -275,7 +265,7 @@ void miscCheck::populate()
 	     "       checkhead_bankaccnt_id, checkhead_number,"
              "       checkhead_checkdate, checkhead_expcat_id,"
              "       checkhead_for, checkhead_notes,"
-             "       checkhead_amount, checkhead_curr_id "
+             "       checkhead_amount, checkhead_curr_id, checkhead_rahead_id "
              "FROM checkhead "
              "WHERE checkhead_id=:check_id;");
   q.bindValue(":check_id", _checkid);
@@ -309,20 +299,42 @@ void miscCheck::populate()
 
     if (q.value("checkhead_expcat_id").isNull() ||
 	q.value("checkhead_expcat_id").toInt() == -1)
-      _cm->setChecked(TRUE);
+      _memo->setChecked(TRUE);
     else
     {
       _expense->setChecked(TRUE);
       _expcat->setId(q.value("checkhead_expcat_id").toInt());
     }
+
+	if (!q.value("checkhead_rahead_id").isNull())
+	{
+      _recipGroup->setEnabled(FALSE);
+	  _expenseToGroup->setEnabled(FALSE);
+	  _amount->setEnabled(FALSE);
+	  _for->setEnabled(FALSE);
+	}
   }
 }
 
 void miscCheck::sHandleButtons()
 {
-  _cust->setEnabled(_custRB->isChecked());
-  _taxauth->setEnabled(_taxauthRB->isChecked());
-  _vend->setEnabled(_vendRB->isChecked());
+  if (_vendRB->isChecked())
+  {
+    _widgetStack->setCurrentIndex(0);
+	_memo->setText("Create Credit Memo");
+  }
+  else if (_custRB->isChecked())
+  {
+	_widgetStack->setCurrentIndex(1);
+	_memo->setText("Create Debit Memo");
+  }
+  else
+  {
+	_widgetStack->setCurrentIndex(2);
+	_memo->setText("Create Credit Memo");
+  }
 
-  _save->setEnabled(_cust->isValid() || _vend->isValid() || _taxauth->id() > 0);
+  _save->setEnabled((_cust->isValid() && _custRB->isChecked())
+	             || (_vend->isValid()  && _vendRB->isChecked()) 
+				 || (_taxauth->id() > 0 && _taxauthRB->isChecked()));
 }
