@@ -26,6 +26,7 @@ dynamic {
              plugins/addressclusterplugin.h \
              plugins/calendarcomboboxplugin.h \
              plugins/clineeditplugin.h \
+             plugins/cmclusterplugin.h \
              plugins/commentsplugin.h \
              plugins/contactclusterplugin.h \
              plugins/crmacctclusterplugin.h \
@@ -94,6 +95,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
               xlineedit.cpp xcheckbox.cpp xcombobox.cpp \
               xlistbox.cpp \
+              cmCluster.cpp \
               custCluster.cpp \
               itemCluster.cpp itemList.cpp itemSearch.cpp itemAliasList.cpp \
               warehouseCluster.cpp warehousegroup.cpp \
@@ -129,6 +131,7 @@ HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
               xlineedit.h xcheckbox.h xcombobox.h \
               xlistbox.h \
+              cmcluster.h \
               custcluster.h \
               itemcluster.h itemList.h itemSearch.h itemAliasList.h \
               warehouseCluster.h warehousegroup.h \
