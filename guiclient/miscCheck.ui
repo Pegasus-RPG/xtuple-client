@@ -139,12 +139,12 @@
      </widget>
     </item>
     <item row="0" column="1" >
-     <widget class="QGroupBox" name="_expenseToGroup" >
+     <widget class="QGroupBox" name="_chargeToGroup" >
       <property name="enabled" >
        <bool>true</bool>
       </property>
       <property name="title" >
-       <string>Expense To:</string>
+       <string>Charge To:</string>
       </property>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
@@ -185,21 +185,55 @@
         </layout>
        </item>
        <item row="1" column="0" >
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="_applytocm" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>Apply to Credit Memo</string>
+           </property>
+          </widget>
+         </item>
+         <item rowspan="2" row="0" column="1" >
+          <widget class="CmCluster" name="_cmCluster" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="2" column="0" >
         <widget class="QRadioButton" name="_memo" >
          <property name="text" >
           <string>Create Credit Memo</string>
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
+       <item row="3" column="0" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>20</width>
-           <height>0</height>
+           <width>218</width>
+           <height>16</height>
           </size>
          </property>
         </spacer>
@@ -207,7 +241,7 @@
       </layout>
      </widget>
     </item>
-    <item rowspan="2" row="0" column="2" >
+    <item row="0" column="2" >
      <layout class="QVBoxLayout" >
       <property name="spacing" >
        <number>0</number>
@@ -418,6 +452,11 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
+   <class>CmCluster</class>
+   <extends>QWidget</extends>
+   <header>cmcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>CurrCluster</class>
    <extends>CurrDisplay</extends>
    <header>currcluster.h</header>
@@ -523,6 +562,102 @@
     <hint type="destinationlabel" >
      <x>455</x>
      <y>113</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_applytocm</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_cmCluster</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>337</x>
+     <y>87</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>449</x>
+     <y>97</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_expense</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_expcat</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>330</x>
+     <y>42</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>442</x>
+     <y>52</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_custRB</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_applytocm</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>116</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>337</x>
+     <y>87</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_taxauthRB</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_memo</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>202</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>383</x>
+     <y>131</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_vendRB</sender>
+   <signal>clicked()</signal>
+   <receiver>_expense</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>47</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>330</x>
+     <y>42</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_taxauthRB</sender>
+   <signal>clicked()</signal>
+   <receiver>_expense</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>202</x>
+     <y>41</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>330</x>
+     <y>42</y>
     </hint>
    </hints>
   </connection>

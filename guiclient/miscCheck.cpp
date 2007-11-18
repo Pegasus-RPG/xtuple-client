@@ -76,9 +76,12 @@ miscCheck::miscCheck(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxauthRB, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_vend,      SIGNAL(newId(int)),    this, SLOT(sHandleButtons()));
   connect(_vendRB,    SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_cust,      SIGNAL(valid(bool)),   this, SLOT(sCustomerSelected()));
+  connect(_cmCluster, SIGNAL(valid(bool)),   this, SLOT(sCreditMemoSelected(bool)));
 
   _captive = FALSE;
   _raheadid = -1;
+  _aropenamt = 0;
 
   _bankaccnt->setType(XComboBox::APBankAccounts);
 }
@@ -104,6 +107,17 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
   if (valid)
     _vend->setId(param.toInt());
 
+  param = pParams.value("bankaccnt_id", &valid);
+  if (valid)
+    _bankaccnt->setId(param.toInt());
+   
+  param = pParams.value("check_id", &valid);
+  if (valid)
+  {
+    _checkid = param.toInt();
+    populate();
+  }
+
   if (pParams.inList("new"))
   {
     _mode = cNew;
@@ -126,7 +140,9 @@ enum SetResponse miscCheck::set(const ParameterList &pParams)
 
 void miscCheck::sSave()
 {
-
+  double _amt;
+  _amt=_amount->localValue();
+  XSqlQuery check;
   if (!_date->isValid())
   {
     QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
@@ -134,7 +150,7 @@ void miscCheck::sSave()
     _date->setFocus();
     return;
   }
-
+  
   if (_amount->isZero())
   {
     QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
@@ -143,6 +159,16 @@ void miscCheck::sSave()
     return;
   }
 
+  if (_cmCluster->isValid() && _amt > _aropenamt)
+  {
+    QMessageBox::warning( this, tr("Invalid Amount"),
+                            tr("<p>You must enter an amount less than or equal to the  "
+	   		                   "credit memo selected.") );
+    _amount->setLocalValue(_aropenamt);
+	_amount->setFocus();
+	return;
+  }
+ 
   if ( (_expense->isChecked()) && (_expcat->id() == -1) )
   {
     QMessageBox::warning( this, tr("Cannot Create Miscellaneous Check"),
@@ -151,17 +177,17 @@ void miscCheck::sSave()
     _expcat->setFocus();
     return;
   }
-
+ 
   if (_mode == cNew)
   {
-    q.prepare("SELECT createCheck(:bankaccnt_id, :reciptype, :recipid,"
+    check.prepare("SELECT createCheck(:bankaccnt_id, :reciptype, :recipid,"
 	      "                   :checkDate, :amount, :curr_id, :expcat_id,"
-		  "                   NULL, :for, :notes, TRUE) AS result;" );
-    q.bindValue(":bankaccnt_id", _bankaccnt->id());
+		  "                   NULL, :for, :notes, TRUE, :cmhead_id) AS result;" );
+    check.bindValue(":bankaccnt_id", _bankaccnt->id());
   }
   else if (_mode == cEdit)
   {
-    q.prepare( "UPDATE checkhead "
+    check.prepare( "UPDATE checkhead "
                "SET checkhead_recip_id=:recipid,"
 	       "    checkhead_recip_type=:reciptype,"
 	       "    checkhead_checkdate=:checkDate, "
@@ -169,62 +195,65 @@ void miscCheck::sSave()
                "    checkhead_expcat_id=:expcat_id, checkhead_for=:for,"
 	       "    checkhead_notes=:notes "
                "WHERE (checkhead_id=:check_id);" );
-    q.bindValue(":check_id", _checkid);
+    check.bindValue(":check_id", _checkid);
   }
 
   if (_vendRB->isChecked())
   {
-    q.bindValue(":reciptype",	"V");
-    q.bindValue(":recipid",	_vend->id());
+    check.bindValue(":reciptype",	"V");
+    check.bindValue(":recipid",	_vend->id());
   }
   else if (_custRB->isChecked())
   {
-    q.bindValue(":reciptype",	"C");
-    q.bindValue(":recipid",	_cust->id());
+    check.bindValue(":reciptype",	"C");
+    check.bindValue(":recipid",	_cust->id());
   }
   else if (_taxauthRB->isChecked())
   {
-    q.bindValue(":reciptype",	"T");
-    q.bindValue(":recipid",	_taxauth->id());
+    check.bindValue(":reciptype",	"T");
+    check.bindValue(":recipid",	_taxauth->id());
   }
-  q.bindValue(":checkDate",	_date->date());
-  q.bindValue(":amount",	_amount->localValue());
-  q.bindValue(":curr_id",	_amount->id());
-  q.bindValue(":for",		_for->text().stripWhiteSpace());
-  q.bindValue(":notes",		_notes->text().stripWhiteSpace());
+  check.bindValue(":checkDate",	_date->date());
+  check.bindValue(":amount",	_amt);
+  check.bindValue(":curr_id",	_amount->id());
+  check.bindValue(":for",		_for->text().stripWhiteSpace());
+  check.bindValue(":notes",		_notes->text().stripWhiteSpace());
 
-  if (! _memo->isChecked())
-    q.bindValue(":expcat_id", _expcat->id());
+  if (_expense->isChecked())
+    check.bindValue(":expcat_id", _expcat->id());
 
-  q.exec();
-  if (_mode == cNew && q.first())
+  if (_cmCluster->isValid())
+	check.bindValue(":cmhead_id",_cmCluster->id());
+
+  check.exec();
+  if (_mode == cNew && check.first())
   {
-    _checkid = q.value("result").toInt();
+    _checkid = check.value("result").toInt();
     if (_checkid < 0)
     {
       systemError(this, storedProcErrorLookup("createCheck", _checkid),
 		  __FILE__, __LINE__);
       return;
     }
-    q.prepare( "SELECT checkhead_number "
+    check.prepare( "SELECT checkhead_number "
                "FROM checkhead "
                "WHERE (checkhead_id=:check_id);" );
-    q.bindValue(":check_id", _checkid);
-    q.exec();
-    if (q.first())
+    check.bindValue(":check_id", _checkid);
+    check.exec();
+    if (check.first())
       QMessageBox::information( this, tr("New Check Created"),
                                 tr("<p>A new Check has been created and "
 				   "assigned #%1")
-                                .arg(q.value("checkhead_number").toString()) );
-    else if (q.lastError().type() != QSqlError::None)
+                                .arg(check.value("checkhead_number").toString()) );
+    else if (check.lastError().type() != QSqlError::None)
     {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (check.lastError().type() != QSqlError::None)
   {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
@@ -257,6 +286,9 @@ void miscCheck::sPopulateBankInfo(int pBankaccntid)
   }
   else
     _checkNum->clear();
+
+  if (_cmCluster->isValid())
+    sCreditMemoSelected(true);
 }
 
 void miscCheck::populate()
@@ -265,7 +297,7 @@ void miscCheck::populate()
 	     "       checkhead_bankaccnt_id, checkhead_number,"
              "       checkhead_checkdate, checkhead_expcat_id,"
              "       checkhead_for, checkhead_notes,"
-             "       checkhead_amount, checkhead_curr_id, checkhead_rahead_id "
+             "       checkhead_amount, checkhead_curr_id, checkhead_cmhead_id "
              "FROM checkhead "
              "WHERE checkhead_id=:check_id;");
   q.bindValue(":check_id", _checkid);
@@ -306,10 +338,10 @@ void miscCheck::populate()
       _expcat->setId(q.value("checkhead_expcat_id").toInt());
     }
 
-	if (!q.value("checkhead_rahead_id").isNull())
+	if (!q.value("checkhead_cmhead_id").isNull())
 	{
       _recipGroup->setEnabled(FALSE);
-	  _expenseToGroup->setEnabled(FALSE);
+	  _chargeToGroup->setEnabled(FALSE);
 	  _amount->setEnabled(FALSE);
 	  _for->setEnabled(FALSE);
 	}
@@ -337,4 +369,39 @@ void miscCheck::sHandleButtons()
   _save->setEnabled((_cust->isValid() && _custRB->isChecked())
 	             || (_vend->isValid()  && _vendRB->isChecked()) 
 				 || (_taxauth->id() > 0 && _taxauthRB->isChecked()));
+}
+
+void miscCheck::sCustomerSelected()
+{
+  _cmCluster->setEnabled(_cust->isValid() && _applytocm->isChecked());
+}
+
+void miscCheck::sCreditMemoSelected(bool p)
+{
+	
+  if (p) 
+  {  
+    q.prepare("SELECT aropen_curr_id, "
+  	          "currtocurr(aropen_curr_id,:curr_id,aropen_amount-aropen_paid,:date) AS amount "
+	          "FROM aropen "
+			  "WHERE (aropen_id=:aropen_id); ");
+	q.bindValue(":aropen_id",_cmCluster->id());
+	q.bindValue(":curr_id",_amount->id());
+    q.exec();
+    if (q.first())
+    {
+      _aropenamt=q.value("amount").toDouble();
+	  _amount->setLocalValue(q.value("amount").toDouble());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    } 
+  }
+  else
+  {
+    _aropenamt=0;
+	_amount->clear();
+  } 
 }

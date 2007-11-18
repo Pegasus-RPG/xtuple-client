@@ -79,6 +79,8 @@ public slots:
     virtual void sHandleButtons();
     virtual void sPopulateBankInfo( int pBankaccntid );
     virtual void sSave();
+	virtual void sCustomerSelected();
+	virtual void sCreditMemoSelected(bool p);
 
 protected slots:
     virtual void languageChange();
@@ -88,6 +90,8 @@ private:
     int _checkid;
     int _mode;
 	int _raheadid;
+	int _aropenid;
+	double _aropenamt;
 
 };
 
