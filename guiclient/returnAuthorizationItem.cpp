@@ -206,7 +206,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 	  {
 
         if (q.value("rahead_disposition").toString() == "C")
-	      _disposition->setCurrentItem(0);
+	      sDispositionChanged();
 	    else if (q.value("rahead_disposition").toString() == "R")
 	      _disposition->setCurrentItem(1);
 	    else if (q.value("rahead_disposition").toString() == "P")
@@ -266,6 +266,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _qtyAuth->setEnabled(FALSE);
 	  _qtyUOM->setEnabled(FALSE);
       _netUnitPrice->setEnabled(FALSE);
+	  _listPrices->setEnabled(FALSE);
 	  _pricingUOM->setEnabled(FALSE);
       _discountFromSale->setEnabled(FALSE);
       _notes->setReadOnly(TRUE);
@@ -863,6 +864,7 @@ void returnAuthorizationItem::sDispositionChanged()
   {
     _netUnitPrice->setLocalValue(0);
 	_netUnitPrice->setEnabled(FALSE);
+	_listPrices->setEnabled(FALSE);
 	_pricingUOM->setEnabled(FALSE);
 	_discountFromSale->setEnabled(FALSE);
     _tab->setTabEnabled(0,(_qtyAuth->toDouble() > 0));
@@ -871,6 +873,7 @@ void returnAuthorizationItem::sDispositionChanged()
   else
   {
 	_netUnitPrice->setEnabled(TRUE);
+	_listPrices->setEnabled(TRUE);
 	_pricingUOM->setEnabled(TRUE);
 	_discountFromSale->setEnabled(TRUE);
     _tab->setTabEnabled(0,FALSE);

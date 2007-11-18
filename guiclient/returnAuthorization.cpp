@@ -1168,6 +1168,14 @@ void returnAuthorization::populate()
 
     _notes->setText(rahead.value("rahead_notes").toString());
 
+	if (rahead.value("rahead_headcredited").toBool())
+	{
+	  _freight->setEnabled(FALSE);
+	  _miscCharge->setEnabled(FALSE);
+	  _miscChargeDescription->setEnabled(FALSE);
+	  _miscChargeAccount->setEnabled(FALSE);
+	}
+
     recalculateTax();
 
     sFillList();
@@ -1425,9 +1433,12 @@ void returnAuthorization::sDispositionChanged()
   {
     _immediately->setChecked(TRUE);
 	_uponReceipt->setEnabled(FALSE);
+	if (_creditBy->currentItem() == 0)
+	  _creditBy->setCurrentItem(1);
   }
   else
     _uponReceipt->setEnabled(TRUE);
+
 }
 
 void returnAuthorization::sAuthorizeLine()
