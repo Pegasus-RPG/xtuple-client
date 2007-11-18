@@ -1010,7 +1010,7 @@ void creditMemo::populate()
     if (cmhead.value("cmhead_invcnumber").toInt() != -1)
       _invoiceNumber->setInvoiceNumber(cmhead.value("cmhead_invcnumber").toInt());
 
-    recalculateTax();
+    sFreightChanged();
   }
   else if (cmhead.lastError().type() != QSqlError::None)
   {
