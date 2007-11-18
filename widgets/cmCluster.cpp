@@ -68,7 +68,7 @@ CmCluster::CmCluster(QWidget *pParent, const char *pName) :
 }
 
 CmLineEdit::CmLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "cmhead", "cmhead_id", "cmhead_number", "cmhead_billtoname", 0, 0, pName)
+  VirtualClusterLineEdit(pParent, "aropen", "aropen_id", "aropen_docnumber", "formatmoney(aropen_amount-aropen_paid)", 0, " (aropen_doctype='C') AND (aropen_open) ", pName)
 {
   setTitles(tr("Credit Memo"), tr("Credit Memos"));
 }
