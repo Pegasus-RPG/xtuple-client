@@ -79,6 +79,9 @@ returnAuthCheck::returnAuthCheck(QWidget* parent, const char* name, bool modal, 
     connect(_bankaccnt, SIGNAL(newID(int)),    this, SLOT(sPopulateBankInfo(int)));
     connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+
+    _date->setDate(omfgThis->dbDate(), true);
+
     init();
 }
 
@@ -110,35 +113,13 @@ enum SetResponse returnAuthCheck::set(ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("bankaccnt_id", &valid);
-  if (valid)
-    _bankaccntid = param.toInt();
-  else
-    _bankaccntid = -1;
-
-  param = pParams.value("cust_id", &valid);
-  if (valid)
-    _cust->setId(param.toInt());
-
-  param = pParams.value("bankaccnt_id", &valid);
-  if (valid)
-    _bankaccnt->setId(param.toInt());
-
-  param = pParams.value("rahead_id", &valid);
-  if (valid)
-    _raheadid = param.toInt();
-
-  param = pParams.value("curr_id", &valid);
-  if (valid)
-    _amount->setId(param.toInt());
-
   param = pParams.value("amount", &valid);
   if (valid)
     _amount->setLocalValue(param.toDouble());
 
-  param = pParams.value("memo", &valid);
+  param = pParams.value("cmhead_id", &valid);
   if (valid)
-    _for->setText(param.toString());
+    _cmheadid=param.toInt();
 
   populate();
 
@@ -174,16 +155,15 @@ void returnAuthCheck::sSave()
   {
     q.prepare("SELECT createCheck(:bankaccnt_id, 'C', :recipid,"
 	      "                   :checkDate, :amount, :curr_id, NULL,"
-		  "                   NULL, :for, :notes, TRUE, :rahead_id) AS result; "
-		  "    SELECT apply" );
-	q.bindValue(":rahead_id", _raheadid);
+		  "                   NULL, :for, :notes, TRUE, :aropen_id) AS result; ");
     q.bindValue(":bankaccnt_id", _bankaccnt->id());
-    q.bindValue(":recipid",	_cust->id());
+    q.bindValue(":recipid",	_custid);
     q.bindValue(":checkDate", _date->date());
     q.bindValue(":amount",	_amount->localValue());
     q.bindValue(":curr_id",	_amount->id());
     q.bindValue(":for",	_for->text().stripWhiteSpace());
     q.bindValue(":notes", _notes->text().stripWhiteSpace());
+	q.bindValue(":aropen_id", _aropenid);
 	q.exec();
     if (q.first())
     {
@@ -254,11 +234,32 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
 
 void returnAuthCheck::populate()
 {
-    _bankaccnt->populate( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip) "
+  _bankaccnt->populate( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip) "
                           "FROM bankaccnt "
                           "ORDER BY bankaccnt_name;" );
 
   if (_bankaccntid != -1)
     _bankaccnt->setId(_bankaccntid);
+
+  q.prepare("SELECT cust_id,cust_name,cmhead_number,cmhead_curr_id, "
+	        "'Return Authorization ' || cmhead_number::text AS memo, "
+			"aropen_id,aropen_amount "
+			"FROM cmhead,custinfo,aropen "
+			"WHERE ((cmhead_cust_id=cust_id) "
+			"AND (cmhead_id=:cmhead_id) "
+			"AND (aropen_doctype='C') "
+			"AND (aropen_docnumber=cmhead_number));");
+  q.bindValue(":cmhead_id",_cmheadid);
+  q.exec();
+  if (q.first())
+  {
+    _custid=q.value("cust_id").toInt();
+	_aropenid=q.value("aropen_id").toInt();
+    _custName->setText(q.value("cust_name").toString());
+	_creditmemo->setText(q.value("cmhead_number").toString());
+	_amount->setId(q.value("cmhead_curr_id").toInt());
+	_amount->setLocalValue(q.value("aropen_amount").toDouble());
+	_for->setText(q.value("memo").toString());
+  }
 }
 

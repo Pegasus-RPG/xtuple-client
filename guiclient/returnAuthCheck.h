@@ -85,8 +85,10 @@ protected slots:
 
 private:
     int _bankaccntid;
-	int _raheadid;
 	int _checkid;
+	int _custid;
+	int _aropenid;
+    int _cmheadid;
 
 };
 

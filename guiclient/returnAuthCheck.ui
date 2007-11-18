@@ -14,16 +14,23 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
-    <widget class="CustCluster" name="_cust" >
-     <property name="enabled" >
-      <bool>false</bool>
+    <widget class="QLabel" name="_custNameLit" >
+     <property name="text" >
+      <string>Customer:</string>
      </property>
-     <property name="focusPolicy" >
-      <enum>Qt::TabFocus</enum>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
    <item row="0" column="1" >
+    <widget class="QLabel" name="_custName" >
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="3" row="0" column="2" >
     <layout class="QVBoxLayout" >
      <property name="spacing" >
       <number>0</number>
@@ -97,7 +104,43 @@
      </item>
     </layout>
    </item>
-   <item row="1" column="0" colspan="2" >
+   <item row="1" column="0" >
+    <widget class="QLabel" name="_creditmemoLit" >
+     <property name="text" >
+      <string>Credit Memo:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="QLabel" name="_creditmemo" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+       <horstretch>1</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="text" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="0" colspan="3" >
     <layout class="QGridLayout" >
      <item row="0" column="0" >
       <widget class="QLabel" name="_dateLit" >
@@ -165,6 +208,9 @@
          <height>0</height>
         </size>
        </property>
+       <property name="focusPolicy" >
+        <enum>Qt::NoFocus</enum>
+       </property>
        <property name="currencyEditable" stdset="0" >
         <bool>false</bool>
        </property>
@@ -208,6 +254,9 @@
        <property name="enabled" >
         <bool>false</bool>
        </property>
+       <property name="focusPolicy" >
+        <enum>Qt::NoFocus</enum>
+       </property>
       </widget>
      </item>
      <item row="2" column="3" >
@@ -235,14 +284,14 @@
      </item>
     </layout>
    </item>
-   <item row="2" column="0" colspan="2" >
+   <item row="4" column="0" colspan="3" >
     <widget class="QLabel" name="_notesLit" >
      <property name="text" >
       <string>Notes:</string>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2" >
+   <item row="5" column="0" colspan="3" >
     <widget class="QTextEdit" name="_notes" >
      <property name="sizePolicy" >
       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
@@ -266,11 +315,6 @@
    <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>CustCluster</class>
-   <extends>QWidget</extends>
-   <header>custcluster.h</header>
-  </customwidget>
-  <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
@@ -287,8 +331,11 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_date</tabstop>
+  <tabstop>_bankaccnt</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_notes</tabstop>
  </tabstops>
  <includes>
   <include location="global" >parameter.h</include>

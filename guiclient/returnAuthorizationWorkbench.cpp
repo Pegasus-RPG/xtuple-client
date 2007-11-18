@@ -221,54 +221,71 @@ void returnAuthorizationWorkbench::sViewDue()
 void returnAuthorizationWorkbench::sHandleButton()
 {
   _process->setEnabled(((_radue->altId() == 1 && _privleges->check("MaintainCreditMemos")) ||
-	   (_radue->altId() == 2 && _privleges->check("MaintainPayments")) ||
-	   (_radue->altId() == 3 && _privleges->check("PostARDocuments"))));  
+	   (_radue->altId() == 2 && _privleges->check("MaintainPayments") && 
+                                _privleges->check("MaintainCreditMemos") && 
+								_privleges->check("PostARDocuments")) ||
+	   (_radue->altId() == 3 && _privleges->check("PostARDocuments") &&
+	                            _privleges->check("MaintainCreditMemos"))));   
+
+  if (_radue->altId() > 1)
+    _postmemos->hide();
+  else
+    _postmemos->show();
 }
 
 void returnAuthorizationWorkbench::sProcess()
 {
-  if (_radue->altId() == 1)
+  int _cmheadid;
+  bool _post;
+
+  if ((_radue->altId() > 1) ||
+	  (_radue->altId() == 1 && _postmemos->isChecked()))
+    _post = TRUE;
+    //_post = FALSE;
+  else
+    _post = FALSE;
+
+  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
+  q.bindValue(":rahead_id",_radue->id());
+  q.bindValue(":post",QVariant(_post));
+  q.exec();
+  if (q.first())
   {
-	q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
-	q.bindValue(":rahead_id",_radue->id());
-	q.bindValue(":post",QVariant(_postmemos->isChecked()));
-	q.exec();
-	if (q.lastError().type() != QSqlError::None)
+    _cmheadid = q.value("result").toInt();
+    q.prepare( "SELECT cmhead_number "
+               "FROM cmhead "
+               "WHERE (cmhead_id=:cmhead_id);" );
+    q.bindValue(":cmhead_id", _cmheadid);
+    q.exec();
+    if (q.first())
+	{
+      QMessageBox::information( this, tr("New Credit Memo Created"),
+                                tr("<p>A new CreditMemo has been created and "
+				                   "assigned #%1")
+                                   .arg(q.value("cmhead_number").toString()) );
+      if (_radue->altId() == 2)
+      {
+        ParameterList params;
+        params.append("cmhead_id", _cmheadid);
+
+        returnAuthCheck newdlg(this, "", TRUE);
+        newdlg.set(params);
+        if (newdlg.exec() != QDialog::Rejected)
+          sFillList();
+	  }
+	  else
+	    sFillList();
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	  _radue->clear();
       return;
     }
-	else
-	  sFillList();
   }
-  else if (_radue->altId() == 2)
+  else if (q.lastError().type() != QSqlError::None)
   {
-    q.prepare("SELECT rahead_cust_id,formatMoney(calcradueamt(rahead_id)) AS amount, "
-		      "rahead_curr_id, 'Return Authorization ' || rahead_number::text AS memo "
-			  "FROM rahead "
-			  "WHERE (rahead_id=:rahead_id); ");
-	q.bindValue(":rahead_id", _radue->id());
-	q.exec();
-	if (q.first())
-	{
-      ParameterList params;
-      params.append("cust_id", q.value("rahead_cust_id").toInt());
-      params.append("curr_id", q.value("rahead_curr_id").toInt());
-      params.append("amount", q.value("amount").toDouble());
-      params.append("memo", q.value("memo").toString());
-      params.append("rahead_id", _radue->id());
-
-      returnAuthCheck newdlg(this, "", TRUE);
-      newdlg.set(params);
-      if (newdlg.exec() != QDialog::Rejected)
-        sFillList();
-	}
-  	else if (q.lastError().type() != QSqlError::None)
-    {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
