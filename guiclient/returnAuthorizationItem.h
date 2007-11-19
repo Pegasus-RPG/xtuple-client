@@ -77,6 +77,7 @@ public slots:
 	
     virtual SetResponse set(const ParameterList & pParams );
     virtual void sPopulateItemInfo();
+    virtual void sPopulateItemsiteInfo();
     virtual void populate();
     virtual void sCalculateDiscountPrcnt();
     virtual void sCalculateFromDiscount();
@@ -124,6 +125,10 @@ private:
     QDate _availabilityLastSchedDate;
     bool _availabilityLastShow;
     double _availabilityQtyOrdered;
+	int _leadTime;
+	QDate _cScheduledDate;
+    double _cQtyOrdered;
+	int _preferredWarehouseid;
 
 };
 

@@ -88,6 +88,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _priceinvuomratio = 1.0;
   _invuomid = -1;
   _orderId = -1;
+  _preferredWarehouseid = -1;
 
   connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
@@ -107,6 +108,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
   connect(_qtyAuth, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
+  connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
 
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
@@ -146,8 +148,10 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     _raheadid = param.toInt();
     q.prepare("SELECT *,"
 	      "       rahead_curr_id AS taxcurr, "
+		  "       COALESCE(cust_preferred_warehous_id,-1) AS prefwhs, "
 		  "       COALESCE(rahead_orig_cohead_id,-1) AS cohead_id "
 	      "FROM rahead "
+		  " LEFT OUTER JOIN custinfo ON (rahead_cust_id=cust_id) "
 	      "WHERE (rahead_id=:rahead_id);");
     q.bindValue(":rahead_id", _raheadid);
     q.exec();
@@ -161,8 +165,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 	  _shiptoid = q.value("rahead_shipto_id").toInt();
 	  _netUnitPrice->setId(q.value("rahead_curr_id").toInt());
 	  _netUnitPrice->setEffective(q.value("rahead_authdate").toDate());
-	  _extendedPrice->setId(q.value("rahead_curr_id").toInt());
-	  _extendedPrice->setEffective(q.value("rahead_authdate").toDate());
+	  _preferredWarehouseid = q.value("prefwhs").toInt();
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -225,7 +228,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
-      connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
 
 	  _origSoNumber->hide();
 	  _origSoNumberLit->hide();
@@ -253,7 +255,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
-      connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
  
       _save->setFocus();
     }
@@ -382,17 +383,152 @@ void returnAuthorizationItem::sSave()
     return;
   }
   
+//  Check to see if a S/O should be re-scheduled
+	if (_orderId != -1)
+	{
+	  if (_scheduledDate->date() != _cScheduledDate)
+	  {
+		if (QMessageBox::question(this, tr("Reschedule W/O?"),
+				  tr("<p>The Scheduled Date for this Line "
+					  "Item has been changed.  Should the "
+					  "W/O for this Line Item be Re-"
+					  "Scheduled to reflect this change?"),
+					 QMessageBox::Yes | QMessageBox::Default,
+					 QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+		{
+		  q.prepare("SELECT changeWoDates(:wo_id, :schedDate, :schedDate, TRUE) AS result;");
+		  q.bindValue(":wo_id", _orderId);
+		  q.bindValue(":schedDate", _scheduledDate->date());
+		  q.exec();
+		  if (q.first())
+		  {
+			int result = q.value("result").toInt();
+			if (result < 0)
+			{
+			  systemError(this, storedProcErrorLookup("changeWoDates", result),
+			  __FILE__, __LINE__);
+			  return;
+			}
+		  }
+		  else if (q.lastError().type() != QSqlError::None)
+		  {
+			systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+			return;
+		  }
+		}
+	  }
+	  if (_qtyAuth->toDouble() != _cQtyOrdered)
+	  {
+		if(_item->itemType() == "M")
+		{
+		  if (QMessageBox::question(this, tr("Change W/O Quantity?"),
+					tr("<p>The quantity authorized for this Return "
+					   "Authorization Line Item has been changed. "
+					   "Should the quantity required for the "
+					   "associated Work Order be changed to "
+					   "reflect this?"),
+					QMessageBox::Yes | QMessageBox::Default,
+					QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+		  {
+			q.prepare("SELECT changeWoQty(:wo_id, :qty, TRUE) AS result;");
+			q.bindValue(":wo_id", _orderId);
+			q.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
+			q.exec();
+			if (q.first())
+			{
+			  int result = q.value("result").toInt();
+			  if (result < 0)
+			  {
+				systemError(this, storedProcErrorLookup("changeWoQty", result),
+				__FILE__, __LINE__);
+				return;
+			  }
+			}
+			else if (q.lastError().type() != QSqlError::None)
+			{
+			  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+			  return;
+			}
+		  }
+		}
+	  }
+	}
   //If this save has resulted in a link to an shipping S/O, we need to signal that
   if (_disposition->currentItem() > 1)
   {
-    q.prepare("SELECT rahead_new_cohead_id "
-		      "FROM rahead "
-			  "WHERE ((rahead_id=:rahead_id) "
-			  "AND (rahead_new_cohead_id IS NOT NULL));");
-	q.bindValue(":rahead_id", _raheadid);
-	q.exec();
-	if (q.first())
+    XSqlQuery so;
+    so.prepare("SELECT raitem_new_coitem_id, cohead_number, "
+		      " cust_name "
+		      "FROM raitem,custinfo,cohead,coitem "
+			  "WHERE ((raitem_id=:raitem_id) "
+			  "AND (raitem_new_coitem_id IS NOT NULL) "
+			  "AND (raitem_new_coitem_id=coitem_id) "
+			  "AND (cust_id=cohead_cust_id) "
+			  "AND (coitem_cohead_id=cohead_id));");
+    so.bindValue(":raitem_id", _raitemid);
+	so.exec();
+	if (so.first())
+	{
       omfgThis->sSalesOrdersUpdated(q.value("rahead_new_cohead_id").toInt());
+	  //  If requested, create a new W/O or P/R for this coitem
+	  if ( ( (_mode == cNew) || (_mode == cEdit) ) &&
+		 (_createOrder->isChecked())               &&
+		 (_orderId == -1) )
+	  {
+		QString chartype;
+		if (_item->itemType() == "M")
+		{
+		  q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments) AS result, itemsite_id "
+					 "FROM itemsite "
+					 "WHERE ( (itemsite_item_id=:item_id)"
+					 " AND (itemsite_warehous_id=:warehous_id) );" );
+		  q.bindValue(":orderNumber", so.value("cohead_number").toInt());
+		  q.bindValue(":qty", _qtyAuth->toDouble());
+		  q.bindValue(":dueDate", _scheduledDate->date());
+		  q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->text());
+		  q.bindValue(":item_id", _item->id());
+		  q.bindValue(":warehous_id", _warehouse->id());
+		  q.exec();
+		}
+		if (q.first())
+		{
+		  _orderId = q.value("result").toInt();
+		  if (_orderId < 0)
+		  {
+		    QString procname;
+		    if (_item->itemType() == "M")
+		      procname = "createWo";
+		    else
+		      procname = "unnamed stored procedure";
+		    systemError(this, storedProcErrorLookup(procname, _orderId),
+				__FILE__, __LINE__);
+		    return;
+		  }
+
+		  if (_item->itemType() == "M")
+		  {
+			omfgThis->sWorkOrdersUpdated(_orderId, TRUE);
+
+	//  Update the newly created coitem with the newly create wo_id and visa-versa
+			q.prepare( "UPDATE coitem "
+					   "SET coitem_order_type='W', coitem_order_id=:orderid "
+					   "WHERE (coitem_id=:soitem_id);"
+
+					   "UPDATE wo "
+					   "SET wo_ordid=:soitem_id, wo_ordtype='S' "
+					   "WHERE (wo_id=:orderid);" );
+			q.bindValue(":orderid", _orderId);
+			q.bindValue(":soitem_id", so.value("raitem_new_coitem_id").toInt());
+			q.exec();
+		    if (q.lastError().type() != QSqlError::None)
+		    {
+		      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+		      return;
+			}
+		  }
+		}
+	  }
+    }
   }
 
   done(_raitemid); 
@@ -455,6 +591,53 @@ void returnAuthorizationItem::sPopulateItemInfo()
     systemError(this, item.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
+
+  if (_item->itemType() == "M")
+    _createOrder->setEnabled(TRUE);
+  else
+    _createOrder->setEnabled(FALSE);
+
+}
+
+void returnAuthorizationItem::sPopulateItemsiteInfo()
+{
+  if (_item->isValid())
+  {
+    XSqlQuery itemsite;
+    itemsite.prepare( "SELECT itemsite_leadtime, "
+                      "       itemsite_createwo, itemsite_createpr "
+                      "FROM item, itemsite "
+                      "WHERE ( (itemsite_item_id=item_id)"
+                      " AND (itemsite_warehous_id=:warehous_id)"
+                      " AND (item_id=:item_id) );" );
+    itemsite.bindValue(":warehous_id", _warehouse->id());
+    itemsite.bindValue(":item_id", _item->id());
+    itemsite.exec();
+    if (itemsite.first())
+    {
+      _leadTime = itemsite.value("itemsite_leadtime").toInt();
+
+      if (cNew == _mode)
+      {
+        if (_item->itemType() == "M")
+          _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
+
+        else
+        {
+          _createOrder->setChecked(FALSE);
+          _createOrder->setEnabled(FALSE);
+        }
+      }
+    }
+    else if (itemsite.lastError().type() != QSqlError::None)
+    {
+      systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    _warehouse->findItemsites(_item->id());
+    if(_preferredWarehouseid > 0)
+      _warehouse->setId(_preferredWarehouseid);
+  }
 }
 
 void returnAuthorizationItem::populate()
@@ -470,7 +653,9 @@ void returnAuthorizationItem::populate()
 				 "       formatQty(nc.coitem_qtyshipped) AS qtyshipd,"
 		         "       rahead_taxauth_id,"
 		         "       rahead_curr_id AS taxcurr, "
-				 "       item_inv_uom_id "
+				 "       item_inv_uom_id, "
+				 "       nc.coitem_order_id AS coitem_order_id, "
+				 "       nc.coitem_order_type AS coitem_order_type "
                  "FROM raitem "
 				 "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
 				 "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
@@ -532,6 +717,10 @@ void returnAuthorizationItem::populate()
     _altcosAccntid->setId(raitem.value("raitem_cos_accnt_id").toInt());
 	_scheduledDate->setDate(raitem.value("raitem_scheddate").toDate());
 	_warranty->setChecked(raitem.value("raitem_warranty").toBool());
+	_orderId = raitem.value("coitem_order_id").toInt();
+
+    _cQtyOrdered = _qtyAuth->toDouble();
+    _cScheduledDate = _scheduledDate->date();
 
     if (raitem.value("raitem_qtyreceived").toDouble() > 0 || raitem.value("raitem_qtycredited").toDouble() > 0)
 	  _disposition->setEnabled(FALSE);
@@ -562,6 +751,40 @@ void returnAuthorizationItem::populate()
 	  _salePriceLit->hide();
 	}
 	sDetermineAvailability();
+
+    if (_orderId != -1)
+    {
+      XSqlQuery query;
+
+      if (raitem.value("coitem_order_type").toString() == "W")
+      {
+        query.prepare( "SELECT wo_status,"
+	    	           "       formatQty(wo_qtyord) AS f_qty,"
+		               "       wo_duedate, warehous_id, warehous_code "
+		               "FROM wo, itemsite, warehous "
+		               "WHERE ((wo_itemsite_id=itemsite_id)"
+	     	           " AND (itemsite_warehous_id=warehous_id)"
+		               " AND (wo_id=:wo_id));" );
+        query.bindValue(":wo_id", _orderId);
+        query.exec();
+        if (query.first())
+        {
+	      _createOrder->setChecked(TRUE);
+
+	      _orderQty->setText(query.value("f_qty").toString());
+	      _orderDueDate->setDate(query.value("wo_duedate").toDate());
+	      _orderStatus->setText(query.value("wo_status").toString());
+
+	      if ((query.value("wo_status").toString() == "R") || (query.value("wo_status").toString() == "C"))
+	        _createOrder->setEnabled(FALSE);
+         }
+         else
+         {
+	       _orderId = -1;
+	       _createOrder->setChecked(FALSE);
+         }
+	  }
+    }
   }
   else if (raitem.lastError().type() != QSqlError::None)
   {
@@ -867,7 +1090,7 @@ void returnAuthorizationItem::sDispositionChanged()
 	_listPrices->setEnabled(FALSE);
 	_pricingUOM->setEnabled(FALSE);
 	_discountFromSale->setEnabled(FALSE);
-    _tab->setTabEnabled(0,(_qtyAuth->toDouble() > 0));
+    _tab->setTabEnabled(0,TRUE);
 	_scheduledDate->setEnabled(TRUE);
 	_altcosAccntid->setEnabled(TRUE);
   }
@@ -902,7 +1125,7 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
       {
         if (QMessageBox::question(this, tr("Delete Work Order"),
                                   tr("<p>You are requesting to delete the Work "
-				     "Order created for the Sales Order Item linked to this Return."
+				     "Order created for the Sales Order Item linked to this Return. "
 				     "Are you sure you want to do this?"),
 				  QMessageBox::Yes | QMessageBox::Default,
 				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
@@ -910,75 +1133,40 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
           query.prepare("SELECT deleteWo(:wo_id, TRUE) AS result;");
           query.bindValue(":wo_id", _orderId);
           query.exec();
-	  if (query.first())
-	  {
-	    int result = query.value("result").toInt();
-	    if (result < 0)
-	    {
-	      systemError(this, storedProcErrorLookup("deleteWo", result),
-			  __FILE__, __LINE__);
-	      _createOrder->setChecked(true); // if (pCreate) => won't recurse
-	      return;
-	    }
-	  }
-	  else if (query.lastError().type() != QSqlError::NoError)
-	  {
-	    systemError(this, query.lastError().databaseText(),
+	      if (query.first())
+	      {
+	        int result = query.value("result").toInt();
+	        if (result < 0)
+	        {
+	          systemError(this, storedProcErrorLookup("deleteWo", result),
+		 	  __FILE__, __LINE__);
+	          _createOrder->setChecked(true); // if (pCreate) => won't recurse
+	          return;
+	        }
+			else
+			{
+			  _orderId = -1;
+              _orderQty->clear();
+              _orderDueDate->clear();
+              _orderStatus->clear();
+
+              _createOrder->setChecked(FALSE);
+			}
+	      }
+	      else if (query.lastError().type() != QSqlError::NoError)
+	      {
+	        systemError(this, query.lastError().databaseText(),
 			__FILE__, __LINE__);
-	    _createOrder->setChecked(true); // if (pCreate) => won't recurse
-	    return;
-	  }
+	        _createOrder->setChecked(true); // if (pCreate) => won't recurse
+	        return;
+	      }
 
           omfgThis->sWorkOrdersUpdated(-1, TRUE);
-
-          _supplyWarehouse->clear();
-          _supplyWarehouse->findItemsites(_item->id());
-          _supplyWarehouse->setId(_warehouse->id());
         }
-      }
-      else if (_item->itemType() == "P")
-      {
-        if (QMessageBox::question(this, tr("Delete Purchase Request"),
-				  tr("<p>You are requesting to delete the "
-				     "Purchase Request created for the Sales "
-				     "Order Item linked to this return. Are you sure you want to do "
-				     "this?"),
-				  QMessageBox::Yes | QMessageBox::Default,
-				  QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
-        {
-          query.prepare("SELECT deletePr(:pr_id) AS result;");
-          query.bindValue(":pr_id", _orderId);
-          query.exec();
-	  if (q.first())
-	  {
-	    bool result = q.value("result").toBool();
-	    if (! result)
-	    {
-	      systemError(this, tr("deletePr failed"), __FILE__, __LINE__);
-	      return;
-	    }
-	  }
-	  else
-	  if (query.lastError().type() != QSqlError::None)
-	  {
-	    systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-	    return;
-	  }
-        }
-        else
-        {
-          _createOrder->setChecked(TRUE);
-          return;
-        }
+		else
+		  _createOrder->setChecked(TRUE);
       }
     }
-
-    _orderId = -1;
-    _orderQty->clear();
-    _orderDueDate->clear();
-    _orderStatus->clear();
-
-    _createOrder->setChecked(FALSE);
   }
 }
 
@@ -997,7 +1185,7 @@ void returnAuthorizationItem::sPopulateOrderInfo()
                    " AND (itemsite_warehous_id=:warehous_id));" );
       qty.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
-      qty.bindValue(":warehous_id", (_item->itemType() == "M" ? _supplyWarehouse->id() : _warehouse->id()));
+      qty.bindValue(":warehous_id", (_item->itemType() == "M" ? _warehouse->id() : _warehouse->id()));
       qty.exec();
       if (qty.first())
         _orderQty->setText(qty.value("qty").toString());
