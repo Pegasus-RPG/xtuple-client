@@ -105,6 +105,9 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
     _warehouseLit->hide();
     _warehouse->hide();
   }
+  //If not Revision Control, hide controls
+  if (!_metrics->boolean("RevControl"))
+   _tab->removePage(_tab->page(4));
 }
 
 /*
@@ -397,11 +400,12 @@ void purchaseOrderItem::populate()
              "       formatDate(poitem_date_promise) AS f_promisedate,"
              "       poitem_qty_ordered,"
              "       formatQty(poitem_qty_received) AS f_qtyreceived,"
-	     "       pohead_curr_id, pohead_orderdate, "
+	         "       pohead_curr_id, pohead_orderdate, "
              "       poitem_unitprice,"
              "       poitem_freight,"
              "       poitem_unitprice * poitem_qty_ordered AS f_extended,"
              "       poitem_comments, poitem_prj_id,"
+			 "       poitem_bom_rev_id,poitem_boo_rev_id, "
              "       COALESCE(coitem_prcost, 0.0) AS overrideCost "
              "FROM pohead, poitem LEFT OUTER JOIN coitem ON (poitem_soitem_id=coitem_id) "
              "WHERE ( (poitem_pohead_id=pohead_id) "
@@ -440,6 +444,8 @@ void purchaseOrderItem::populate()
     {
       _inventoryItem->setChecked(TRUE);
       _item->setItemsiteid(q.value("poitem_itemsite_id").toInt());
+	  _bomRevision->setId(q.value("poitem_bom_rev_id").toInt());
+	  _booRevision->setId(q.value("poitem_boo_rev_id").toInt());
       sPopulateItemSourceInfo(_item->id());
     }
 
@@ -609,6 +615,7 @@ void purchaseOrderItem::sSave()
                "  poitem_vend_uom, poitem_invvenduomratio,"
                "  poitem_qty_ordered,"
                "  poitem_unitprice, poitem_freight, poitem_duedate, "
+			   "  poitem_bom_rev_id, poitem_boo_rev_id, "
 	       "  poitem_comments, poitem_prj_id, poitem_stdcost ) "
                "VALUES "
                "( :poitem_id, :poitem_pohead_id, :status, :poitem_linenumber,"
@@ -617,6 +624,7 @@ void purchaseOrderItem::sSave()
                "  :poitem_vend_uom, :poitem_invvenduomratio,"
                "  :poitem_qty_ordered,"
                "  :poitem_unitprice, :poitem_freight, :poitem_duedate, "
+			   "  :poitem_bom_rev_id, :poitem_boo_rev_id, "
 	       "  :poitem_comments, :poitem_prj_id, stdcost(:item_id) );" );
 
     q.bindValue(":status", _poStatus);
@@ -661,6 +669,8 @@ void purchaseOrderItem::sSave()
                "    poitem_freight=:poitem_freight,"
                "    poitem_duedate=:poitem_duedate, poitem_comments=:poitem_comments,"
                "    poitem_prj_id=:poitem_prj_id "
+			   "    poitem_bom_rev_id=:poitem_bom_rev_id "
+			   "    poitem_boo_rev_id=:poitem_boo_rev_id "
                "WHERE (poitem_id=:poitem_id);" );
 
   q.bindValue(":poitem_id", _poitemid);
@@ -677,6 +687,11 @@ void purchaseOrderItem::sSave()
   q.bindValue(":poitem_duedate", _dueDate->date());
   q.bindValue(":poitem_comments", _notes->text());
   q.bindValue(":poitem_prj_id", _project->id());
+  if (_metrics->boolean("RevControl"))
+  {
+    q.bindValue(":poitem_bom_rev_id", _bomRevision->id());
+	q.bindValue(":poitem_boo_rev_id", _booRevision->id());
+  }
   q.exec();
 
   if (_parentwo != -1)
