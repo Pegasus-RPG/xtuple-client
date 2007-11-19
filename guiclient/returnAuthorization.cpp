@@ -106,6 +106,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_enterReceipt, SIGNAL(clicked()), this, SLOT(sEnterReceipt()));
   connect(_receiveAll,   SIGNAL(clicked()), this, SLOT(sReceiveAll()));
   connect(_raitem,     SIGNAL(valid(bool)), this, SLOT(sHandleEnterReceipt(bool)));
+  connect(_raitem,     SIGNAL(valid(bool)), this, SLOT(sHandleAction()));
+  connect(_action, SIGNAL(clicked()), this, SLOT(sAction()));
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
 /*  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
@@ -925,7 +927,8 @@ void returnAuthorization::sDelete()
 void returnAuthorization::sFillList()
 {
   q.prepare( "SELECT raitem_id, "
-	     "       CASE WHEN (raitem_disposition='C') THEN 0"
+	     "       CASE WHEN (raitem_status='C')     THEN -1"
+		 "            WHEN (raitem_disposition='C') THEN 0"
 	     "            WHEN (raitem_disposition='R') THEN 1"
 	     "            WHEN (raitem_disposition='P') THEN 2"
 	     "            WHEN (raitem_disposition='V') THEN 3"
@@ -1588,6 +1591,36 @@ void returnAuthorization::sHandleEnterReceipt(bool p)
 			      _raitem->altId() == 3);
   else
     _enterReceipt->setEnabled(false);
+}
+
+void returnAuthorization::sHandleAction()
+{
+  {
+    if (_raitem->altId() == -1)
+	  _action->setText("Open");
+	else
+	  _action->setText("Close");
+  }
+}
+
+void returnAuthorization::sAction()
+{
+  q.prepare("UPDATE raitem SET "
+		    "raitem_status = :status "
+		    "WHERE (raitem_id=:raitem_id); ");
+  q.bindValue(":raitem_id", _raitem->id());
+  if (_raitem->altId() == -1)
+	q.bindValue(":status",QString("O"));
+  else
+    q.bindValue(":status",QString("C"));
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+    sFillList();
 }
 
 void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)

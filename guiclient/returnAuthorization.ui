@@ -1055,6 +1055,19 @@
              </widget>
             </item>
             <item>
+             <widget class="QPushButton" name="_action" >
+              <property name="enabled" >
+               <bool>false</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
+              </property>
+              <property name="text" >
+               <string>Close</string>
+              </property>
+             </widget>
+            </item>
+            <item>
              <widget class="QPushButton" name="_delete" >
               <property name="enabled" >
                <bool>false</bool>
@@ -2025,6 +2038,22 @@
     <hint type="destinationlabel" >
      <x>727</x>
      <y>230</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitem</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_action</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>294</x>
+     <y>227</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>631</x>
+     <y>153</y>
     </hint>
    </hints>
   </connection>

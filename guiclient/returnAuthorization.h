@@ -91,6 +91,7 @@ public slots:
 //	virtual void sCustChanged();
     virtual void sNew();
     virtual void sEdit();
+	virtual void sAction();
     virtual void sDelete();
     virtual void sFillList();
     virtual void sCalculateSubtotal();
@@ -108,6 +109,7 @@ public slots:
     virtual void sEnterReceipt();
     virtual void sReceiveAll();
     virtual void sHandleEnterReceipt(bool);
+	virtual void sHandleAction();
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
 
 protected slots:
