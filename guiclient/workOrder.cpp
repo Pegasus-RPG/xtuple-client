@@ -118,8 +118,8 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   //If not Revision Control, hide controls
-  _bomGroup->setVisible(_metrics->boolean("RevControl"));
-  _booGroup->setVisible(_metrics->boolean("RevControl"));
+  if (!_metrics->boolean("RevControl"))
+   _tabs->removePage(_tabs->page(3));
 }
 
 /*
