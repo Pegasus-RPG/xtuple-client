@@ -315,7 +315,6 @@ void RevisionLineEdit::sParse()
 	  if (numQ.first())
 	  {
 	    _valid = true;
-		//setText(""); //Little hack here because text doesn't see change to upper case.
 	    setId(numQ.value("rev_id").toInt());
 		setText(numQ.value("rev_number").toString());
 	  }
@@ -324,7 +323,7 @@ void RevisionLineEdit::sParse()
 	    if (_allowNew)
 	    {
           if (QMessageBox::question(this, tr("Create New Revision?"),
-	    	  tr("Revision does not exist.  Would you like to create a new one?"),
+	    	  tr("Revision does not exist.  Would you like to create a new one from the current active revision?"),
 		  	     QMessageBox::Yes | QMessageBox::Default,
 		  	     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
 		  {
