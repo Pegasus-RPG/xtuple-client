@@ -885,7 +885,11 @@ void returnAuthorization::sEdit()
     ParameterList params;
     params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     params.append("rahead_id", _raheadid);
-    params.append("mode", "edit");
+
+	if (_mode==cEdit)
+	  params.append("mode", "edit");
+	else
+      params.append("mode", "view");
 
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);

@@ -1495,7 +1495,7 @@
              <enum>Qt::NoFocus</enum>
             </property>
             <property name="text" >
-             <string>Authorize Al</string>
+             <string>Authorize All</string>
             </property>
            </widget>
           </item>

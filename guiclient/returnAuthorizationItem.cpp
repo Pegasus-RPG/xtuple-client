@@ -97,7 +97,6 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
   connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_qtyAuth,	  SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
-  connect(_qtyAuth,   SIGNAL(textChanged(const QString&)), this, SLOT(sDispositionChanged()));
   connect(_save,	  SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_taxCode,	  SIGNAL(newID(int)),	  this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
@@ -162,6 +161,8 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 	  _shiptoid = q.value("rahead_shipto_id").toInt();
 	  _netUnitPrice->setId(q.value("rahead_curr_id").toInt());
 	  _netUnitPrice->setEffective(q.value("rahead_authdate").toDate());
+	  _extendedPrice->setId(q.value("rahead_curr_id").toInt());
+	  _extendedPrice->setEffective(q.value("rahead_authdate").toDate());
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -543,7 +544,6 @@ void returnAuthorizationItem::populate()
 	  _qtySold->setText(raitem.value("qtysold").toString());
       _qtyUOM->setEnabled(FALSE);
 	  _pricingUOM->setEnabled(FALSE);
-      _priceinvuomratio = raitem.value("coitem_price_invuomratio").toDouble();
 	  _salePrice->setId(raitem.value("rahead_curr_id").toInt());
 	  _salePrice->setEffective(raitem.value("rahead_authdate").toDate());
       _salePrice->setLocalValue(raitem.value("coitem_price").toDouble());
@@ -869,6 +869,7 @@ void returnAuthorizationItem::sDispositionChanged()
 	_discountFromSale->setEnabled(FALSE);
     _tab->setTabEnabled(0,(_qtyAuth->toDouble() > 0));
 	_scheduledDate->setEnabled(TRUE);
+	_altcosAccntid->setEnabled(TRUE);
   }
   else
   {
@@ -879,7 +880,8 @@ void returnAuthorizationItem::sDispositionChanged()
     _tab->setTabEnabled(0,FALSE);
 	_scheduledDate->clear();
 	_scheduledDate->setEnabled(FALSE);
-  }
+	_altcosAccntid->setEnabled(FALSE);
+  } 
 }
 
 void returnAuthorizationItem::sHandleWo(bool pCreate)
