@@ -91,6 +91,7 @@ public slots:
 //	virtual void sCustChanged();
     virtual void sNew();
     virtual void sEdit();
+	virtual void sView();
 	virtual void sAction();
     virtual void sDelete();
     virtual void sFillList();

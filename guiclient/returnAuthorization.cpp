@@ -85,6 +85,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_shipToNumber, SIGNAL(lostFocus()), this, SLOT(sParseShipToNumber()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClick()));
@@ -312,7 +313,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _save->hide();
       _new->hide();
       _delete->hide();
-      _edit->setText(tr("&View"));
+      _edit->hide();
+	  _action->hide();
 	  _authorizeLine->hide();
 	  _clearAuthorization->hide();
 	  _authorizeAll->hide();
@@ -883,11 +885,7 @@ void returnAuthorization::sEdit()
     ParameterList params;
     params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     params.append("rahead_id", _raheadid);
-
-    if (_mode == cView)
-      params.append("mode", "view");
-    else
-      params.append("mode", "edit");
+    params.append("mode", "edit");
 
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);
@@ -897,6 +895,23 @@ void returnAuthorization::sEdit()
   }
   if (fill)
     populate();
+}
+
+void returnAuthorization::sView()
+{
+  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+    ParameterList params;
+    params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("rahead_id", _raheadid);
+    params.append("mode", "view");
+
+    returnAuthorizationItem newdlg(this, "", TRUE);
+    newdlg.set(params);
+  
+    newdlg.exec();
+  }
 }
 
 void returnAuthorization::sDelete()
@@ -1597,9 +1612,15 @@ void returnAuthorization::sHandleAction()
 {
   {
     if (_raitem->altId() == -1)
+	{
 	  _action->setText("Open");
+	  _edit->setEnabled(FALSE);
+	}
 	else
+	{
 	  _action->setText("Close");
+	  _edit->setEnabled(TRUE);
+	}
   }
 }
 
