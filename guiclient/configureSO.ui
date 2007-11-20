@@ -681,7 +681,7 @@
          <item>
           <widget class="QCheckBox" name="_enableReservations" >
            <property name="text" >
-            <string>Enabled S/O Reservations</string>
+            <string>Enable S/O Reservations</string>
            </property>
           </widget>
          </item>
