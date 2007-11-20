@@ -417,7 +417,8 @@ bool returnAuthorization::sSave()
   q.bindValue(":rahead_number", _authNumber->text().toInt());
   q.bindValue(":rahead_authdate", _authDate->date());
   q.bindValue(":rahead_expiredate", _expireDate->date());
-  q.bindValue(":rahead_salesrep_id", _salesRep->id());
+  if (_salesRep->isValid() && _cust->isValid())
+    q.bindValue(":rahead_salesrep_id", _salesRep->id());
   q.bindValue(":rahead_commission", (_commission->toDouble() / 100));
   if (_taxauth->isValid())
     q.bindValue(":rahead_taxauth_id",	_taxauth->id());
@@ -1405,7 +1406,8 @@ void returnAuthorization::sTaxAuthChanged()
 void returnAuthorization::sDispositionChanged()
 {
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
-  _new->setEnabled(_cust->isValid() || _disposition->currentIndex() < 2);
+  _new->setEnabled(_cust->isValid() || 
+	              (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
   
   bool enableReceipt = _privleges->check("EnterReceipts") &&
 		      (_disposition->currentItem() != 0);
