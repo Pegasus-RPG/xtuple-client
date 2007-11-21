@@ -152,6 +152,8 @@ class menuAccounting : public QObject
     void sDspDepositsRegister();
     void sRptSalesJournal();
     void sRptCreditMemoJournal();
+    void sRptPayablesJournal();
+    void sRptCheckJournal();
 
     // GL
     void sSimpleEntry();

@@ -301,6 +301,9 @@ menuAccounting::menuAccounting(OpenMFGGUIClient *Pparent) :
     { "ap.dspVoucherRegister", tr("&Voucher Register..."), SLOT(sDspVoucherRegister()), apReportsMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspVendorHistory", tr("Vendor &History..."), SLOT(sDspVendorHistory()), apReportsMenu, _privleges->check("ViewAPOpenItems"), NULL, NULL, true , NULL },
+    { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
+    { "ap.rptPayablesJournal", tr("Pa&yables Journal..."), SLOT(sRptPayablesJournal()), apReportsMenu, _privleges->check("PrintAPJournals"), NULL, NULL, true , NULL },
+    { "ap.rptCheckJournal", tr("Check &Journal..."), SLOT(sRptCheckJournal()), apReportsMenu, _privleges->check("PrintAPJournals"), NULL, NULL, true , NULL },
     
     { "separator", NULL, NULL, apMenu, true, NULL, NULL, true, NULL },
     { "ap.vendors", tr("Ve&ndors..."), SLOT(sVendors()), apMenu, (_privleges->check("MaintainVendors") || _privleges->check("ViewVendors")), NULL, NULL, true , NULL },
@@ -850,6 +853,25 @@ void menuAccounting::sRptCreditMemoJournal()
   newdlg.exec();
 }
 
+void menuAccounting::sRptPayablesJournal()
+{
+  ParameterList params;
+  params.append("type", PayablesJournal);
+
+  printJournal newdlg(parent, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void menuAccounting::sRptCheckJournal()
+{
+  ParameterList params;
+  params.append("type", CheckJournal);
+
+  printJournal newdlg(parent, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
 
 void menuAccounting::sDspAROpenItemsByCustomer()
 {
