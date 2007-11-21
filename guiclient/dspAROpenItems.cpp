@@ -57,20 +57,17 @@
 
 #include "dspAROpenItems.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include <QMessageBox>
 #include <QMenu>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
+
+#include <currCluster.h>
+
 #include "arOpenItem.h"
 #include "dspInvoiceInformation.h"
 
-/*
- *  Constructs a dspAROpenItems as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -78,9 +75,7 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 
@@ -89,6 +84,8 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter );
   _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignRight  );
+  _aropen->addColumn(tr("Cust. #"),   _itemColumn,     Qt::AlignLeft   );
+  _aropen->addColumn(tr("Customer"),  _itemColumn,     Qt::AlignLeft   );
   _aropen->addColumn(tr("Order #"),   _orderColumn,    Qt::AlignRight  );
   _aropen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter );
   _aropen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter );
@@ -100,18 +97,11 @@ dspAROpenItems::dspAROpenItems(QWidget* parent, const char* name, Qt::WFlags fl)
     _aropen->hideColumn(8);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspAROpenItems::~dspAROpenItems()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspAROpenItems::languageChange()
 {
   retranslateUi(this);
@@ -227,13 +217,13 @@ void dspAROpenItems::sFillList()
              "            ELSE (aropen_amount - aropen_paid)"
              "       END AS f_balance,"
              "       currConcat(aropen_curr_id) AS currAbbr,"
-             "       currConcat(baseCurrId()) AS baseAbbr,"
              "       currToBase(aropen_curr_id,"
              "            CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid) * -1)"
              "                 WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid)"
              "                 ELSE (aropen_amount - aropen_paid)"
-             "            END, CURRENT_DATE) AS base_balance "
-             "FROM aropen "
+             "            END, CURRENT_DATE) AS base_balance,"
+	     "        cust_id, cust_number, cust_name "
+             "FROM aropen LEFT OUTER JOIN custinfo ON (aropen_cust_id=cust_id) "
              "WHERE ( (aropen_open)"
              " AND (aropen_duedate BETWEEN :startDate AND :endDate) ) "
              "ORDER BY aropen_docnumber;" );
@@ -243,27 +233,32 @@ void dspAROpenItems::sFillList()
   q.bindValue(":invoice", tr("Invoice"));
   q.bindValue(":cashdeposit", tr("C/D"));
   q.exec();
-  if (q.first())
+
+  XTreeWidgetItem * last = 0;
+  double total= 0.0;
+  while (q.next())
   {
-    double total= 0.0;
-    QString baseAbbr = q.value("baseAbbr").toString();
+    last = new XTreeWidgetItem( _aropen, last, q.value("aropen_id").toInt(),
+				q.value("cust_id").toInt(),
+				q.value("f_doctype"),
+				q.value("aropen_docnumber"),
+				q.value("cust_number"), q.value("cust_name"),
+				q.value("aropen_ordernumber"),
+				q.value("f_docdate"),
+				q.value("f_duedate"), q.value("f_amount"),
+				q.value("f_paid"),
+				q.value("f_balance"), q.value("currAbbr") );
 
-    XTreeWidgetItem * last = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _aropen, last, q.value("aropen_id").toInt(),
-                                  q.value("f_doctype"), q.value("aropen_docnumber"),
-                                  q.value("aropen_ordernumber"), q.value("f_docdate"),
-                                  q.value("f_duedate"), q.value("f_amount"),
-                                  q.value("f_paid"), q.value("f_balance"), q.value("currAbbr") );
- 
-      total+= q.value("base_balance").toDouble();
-    }
-    while (q.next());
-
-    new XTreeWidgetItem( _aropen, last, -1,
-                         QVariant(tr("Total")), "", "", "", "", "", "", 
-                         formatMoney(total), baseAbbr );
+    total += q.value("base_balance").toDouble();
   }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  new XTreeWidgetItem( _aropen, last, -1,
+		       QVariant(tr("Total")), "", "", "", "", "", "", "", "",
+		       formatMoney(total), CurrDisplay::baseCurrAbbr() );
 }
 
