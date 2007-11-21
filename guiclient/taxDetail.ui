@@ -5,50 +5,51 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>452</height>
+    <width>480</width>
+    <height>549</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Tax Detail</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>11</number>
-   </property>
    <property name="spacing" >
     <number>0</number>
    </property>
+   <property name="leftMargin" >
+    <number>11</number>
+   </property>
+   <property name="topMargin" >
+    <number>11</number>
+   </property>
+   <property name="rightMargin" >
+    <number>11</number>
+   </property>
+   <property name="bottomMargin" >
+    <number>11</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
+         <property name="horizontalSpacing" >
+          <number>2</number>
          </property>
-         <property name="spacing" >
+         <property name="verticalSpacing" >
           <number>2</number>
          </property>
          <item row="1" column="1" >
           <widget class="QLabel" name="_description" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>5</vsizetype>
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -81,9 +82,7 @@
          <item row="2" column="1" >
           <widget class="QLabel" name="_cumulative" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>7</hsizetype>
-             <vsizetype>5</vsizetype>
+            <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -137,17 +136,11 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
@@ -195,9 +188,6 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -206,126 +196,72 @@
          <property name="title" >
           <string>Tax Rate A:</string>
          </property>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QLabel" name="_accntALit" >
+            <property name="text" >
+             <string>Account:</string>
             </property>
-            <property name="spacing" >
-             <number>0</number>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <item>
-             <layout class="QGridLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item row="1" column="1" >
-               <widget class="QLabel" name="_accntA" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>3</hsizetype>
-                  <vsizetype>5</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string>unassigned</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="_accntALit" >
-                <property name="text" >
-                 <string>Account:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" >
-               <widget class="QLabel" name="_prcntALit" >
-                <property name="text" >
-                 <string>Percentage:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QLabel" name="_prcntA" >
-                <property name="text" >
-                 <string>0.0%</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+          <item row="0" column="1" colspan="3" >
+           <widget class="QLabel" name="_accntA" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="spacing" >
-             <number>0</number>
+            <property name="text" >
+             <string>unassigned</string>
             </property>
-            <item>
-             <widget class="QLabel" name="_amountALit" >
-              <property name="text" >
-               <string>Amount</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="CurrCluster" name="_amountA" >
-              <property name="currencyEditable" >
-               <bool>false</bool>
-              </property>
-              <property name="baseVisible" >
-               <bool>false</bool>
-              </property>
-              <property name="allowNegative" >
-               <bool>true</bool>
-              </property>
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_prcntALit" >
+            <property name="text" >
+             <string>Percentage:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="_prcntA" >
+            <property name="text" >
+             <string>0.0%</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QLabel" name="_amountALit" >
+            <property name="text" >
+             <string>Amount:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item rowspan="2" row="1" column="3" >
+           <widget class="CurrCluster" name="_amountA" >
+            <property name="allowNegative" >
+             <bool>true</bool>
+            </property>
+            <property name="baseVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -335,126 +271,72 @@
          <property name="title" >
           <string>Tax Rate B:</string>
          </property>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QLabel" name="_accntBLit" >
+            <property name="text" >
+             <string>Account:</string>
             </property>
-            <property name="spacing" >
-             <number>0</number>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <item>
-             <layout class="QGridLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item row="1" column="1" >
-               <widget class="QLabel" name="_accntB" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>3</hsizetype>
-                  <vsizetype>5</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string>unassigned</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="_accntBLit" >
-                <property name="text" >
-                 <string>Account:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" >
-               <widget class="QLabel" name="_prcntBLit" >
-                <property name="text" >
-                 <string>Percentage:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QLabel" name="_prcntB" >
-                <property name="text" >
-                 <string>0.0%</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+          <item row="0" column="1" colspan="3" >
+           <widget class="QLabel" name="_accntB" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="spacing" >
-             <number>0</number>
+            <property name="text" >
+             <string>unassigned</string>
             </property>
-            <item>
-             <widget class="QLabel" name="_amountBLit" >
-              <property name="text" >
-               <string>Amount</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="CurrCluster" name="_amountB" >
-              <property name="currencyEditable" >
-               <bool>false</bool>
-              </property>
-              <property name="baseVisible" >
-               <bool>false</bool>
-              </property>
-              <property name="allowNegative" >
-               <bool>true</bool>
-              </property>
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
+          </item>
+          <item rowspan="2" row="1" column="3" >
+           <widget class="CurrCluster" name="_amountB" >
+            <property name="allowNegative" >
+             <bool>true</bool>
+            </property>
+            <property name="baseVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_prcntBLit" >
+            <property name="text" >
+             <string>Percentage:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="_prcntB" >
+            <property name="text" >
+             <string>0.0%</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QLabel" name="_amountBLit" >
+            <property name="text" >
+             <string>Amount:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -464,126 +346,72 @@
          <property name="title" >
           <string>Tax Rate C:</string>
          </property>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QLabel" name="_accntCLit" >
+            <property name="text" >
+             <string>Account:</string>
             </property>
-            <property name="spacing" >
-             <number>0</number>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
             </property>
-            <item>
-             <layout class="QGridLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item row="1" column="1" >
-               <widget class="QLabel" name="_accntC" >
-                <property name="sizePolicy" >
-                 <sizepolicy>
-                  <hsizetype>3</hsizetype>
-                  <vsizetype>5</vsizetype>
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="text" >
-                 <string>unassigned</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QLabel" name="_accntCLit" >
-                <property name="text" >
-                 <string>Account:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="0" >
-               <widget class="QLabel" name="_prcntCLit" >
-                <property name="text" >
-                 <string>Percentage:</string>
-                </property>
-                <property name="alignment" >
-                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QLabel" name="_prcntC" >
-                <property name="text" >
-                 <string>0.0%</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Preferred</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
+           </widget>
           </item>
-          <item>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
+          <item row="0" column="1" colspan="3" >
+           <widget class="QLabel" name="_accntC" >
+            <property name="sizePolicy" >
+             <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
             </property>
-            <property name="spacing" >
-             <number>0</number>
+            <property name="text" >
+             <string>unassigned</string>
             </property>
-            <item>
-             <widget class="QLabel" name="_amountCLit" >
-              <property name="text" >
-               <string>Amount</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="CurrCluster" name="_amountC" >
-              <property name="currencyEditable" >
-               <bool>false</bool>
-              </property>
-              <property name="baseVisible" >
-               <bool>false</bool>
-              </property>
-              <property name="allowNegative" >
-               <bool>true</bool>
-              </property>
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-           </layout>
+           </widget>
+          </item>
+          <item row="1" column="2" >
+           <widget class="QLabel" name="_amountCLit" >
+            <property name="text" >
+             <string>Amount:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item rowspan="2" row="1" column="3" >
+           <widget class="CurrCluster" name="_amountC" >
+            <property name="allowNegative" >
+             <bool>true</bool>
+            </property>
+            <property name="baseVisible" >
+             <bool>false</bool>
+            </property>
+            <property name="currencyEditable" stdset="0" >
+             <bool>false</bool>
+            </property>
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_prcntCLit" >
+            <property name="text" >
+             <string>Percentage:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLabel" name="_prcntC" >
+            <property name="text" >
+             <string>0.0%</string>
+            </property>
+           </widget>
           </item>
          </layout>
         </widget>
@@ -592,12 +420,6 @@
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QPushButton" name="_calculate" >
          <property name="text" >
@@ -623,9 +445,6 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>2</number>
          </property>
@@ -650,23 +469,20 @@
        </item>
       </layout>
      </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>40</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
     </layout>
-   </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
-     </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>20</width>
-       <height>40</height>
-      </size>
-     </property>
-    </spacer>
    </item>
   </layout>
  </widget>

@@ -469,6 +469,7 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
 
     _valueLocalWidget = new QLineEdit(this);
     _valueLocalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    _valueLocalWidget->setMinimumWidth(QFontMetrics(QFont()).width("99999.99"));
     _grid->addWidget(_valueLocalWidget, 0, 0);
 
     _valueLocalWidget->setAlignment(Qt::AlignRight|Qt::AlignTop);
