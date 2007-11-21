@@ -333,7 +333,7 @@
        </spacer>
       </item>
       <item>
-       <widget class="QCheckBox" name="_autoUpdate" >
+       <widget class="XCheckBox" name="_autoUpdate" >
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
           <horstretch>0</horstretch>
@@ -360,6 +360,11 @@
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
