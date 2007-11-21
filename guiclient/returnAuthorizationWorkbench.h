@@ -73,20 +73,21 @@ public:
     ~returnAuthorizationWorkbench();
 
 public slots:
-	virtual void sPrint();
+    virtual void sPrint();
     virtual void sEdit();
-	virtual void sView();
-	virtual void sPrintDue();
+    virtual void sView();
+    virtual void sPrintDue();
     virtual void sEditDue();
-	virtual void sViewDue();
-	virtual void sProcess();
-	virtual void sHandleButton();
+    virtual void sViewDue();
+    virtual void sProcess();
+    virtual void sHandleButton();
     virtual void sFillList();
-	virtual void sParameterTypeChanged();
+    virtual void sParameterTypeChanged();
    // virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
 
 protected slots:
     virtual void languageChange();
+    virtual void setParams(ParameterList&);
 
 private:
     QButtonGroup* _codeGroup;

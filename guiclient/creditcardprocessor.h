@@ -76,7 +76,8 @@ class CreditCardProcessor : public QObject
     virtual bool	authorize();
     virtual bool	charge();
     virtual bool	chargePreauthorized(float, int, int = 0, int = 0);
-    virtual bool	credit(int);
+    virtual bool	credit(const QString&, int&);
+    virtual bool	credit(const int, const double, const int, const QString&, const QString&, int&);
     virtual bool	voidPrevious();
 
     virtual bool	checkConfiguration();
@@ -85,7 +86,7 @@ class CreditCardProcessor : public QObject
     virtual QString	currencySymbol();
     virtual bool	isLive();
     virtual bool	isTest();
-    virtual QString	errorMsg()		{ return _errorMsg;  };
+    static  QString	errorMsg()		{ return _errorMsg;  };
 
   protected:
     CreditCardProcessor();
@@ -95,7 +96,7 @@ class CreditCardProcessor : public QObject
     virtual bool doCharge()			{ return false; };
     virtual bool doCheckConfiguration()		{ return false; };
     virtual bool doChargePreauthorized(QString&);
-    virtual bool doCredit(int)			{ return false; };
+    virtual bool doCredit(const int, const double, const int, const QString&, const QString&, int&);
     virtual bool doVoidPrevious()		{ return false; };
 
     virtual bool checkCreditCard(int);

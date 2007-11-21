@@ -64,14 +64,35 @@
 
 #include "OpenMFGGUIClient.h"
 #include "creditcardprocessor.h"
+#include "storedProcErrorLookup.h"
 #include "verisignprocessor.h"
 #include "yourpayprocessor.h"
+
+#define DEBUG true
+
+#define CCPOSTPROC_WARNING tr("The Credit Card transaction completed " \
+			      "successfully but the application encountered " \
+			      "an error with follow-up processing:\n%1")
+
+// TODO: make this a static method of CurrDisplay
+static QString currSymbol(int pcurrid)
+{
+  XSqlQuery cs;
+  cs.prepare("SELECT curr_symbol FROM curr_symbol WHERE (curr_id=:currid);");
+  cs.bindValue(":currid", pcurrid);
+  cs.exec();
+  if (cs.first())
+    return cs.value("curr_symbol").toString();
+
+  return "";
+}
 
 CreditCardProcessor *CreditCardProcessor::_processor = 0;
 QString CreditCardProcessor::_errorMsg = "";
 
 CreditCardProcessor::CreditCardProcessor()
 {
+  if (DEBUG) qDebug("CreditCardProcessor()");
   _currencyId     = 0;
   _currencyName   = "";
   _currencySymbol = "";
@@ -84,6 +105,7 @@ CreditCardProcessor::~CreditCardProcessor()
 
 CreditCardProcessor * CreditCardProcessor::getProcessor()
 {
+  if (DEBUG) qDebug("getProcessor()");
   _errorMsg = "";
   if (! _processor)
   {
@@ -112,18 +134,21 @@ CreditCardProcessor * CreditCardProcessor::getProcessor()
 
 bool CreditCardProcessor::authorize()
 {
+  if (DEBUG) qDebug("authorize()");
   _errorMsg = "";
   return doAuthorize();
 }
 
 bool CreditCardProcessor::charge()
 {
+  if (DEBUG) qDebug("charge()");
   _errorMsg = "";
   return doCharge();
 }
 
 bool CreditCardProcessor::chargePreauthorized(float pamount, int pcurrid, int pccpayid, int pcustid)
 {
+  if (DEBUG) qDebug("chargePreauthorized(%f, %d, %d, %d)", pamount, pcurrid, pccpayid, pcustid);
   _errorMsg = "";
   int ccValidDays = _metrics->value("CCValidDays").toInt();
   if(ccValidDays < 1)
@@ -260,18 +285,25 @@ bool CreditCardProcessor::chargePreauthorized(float pamount, int pcurrid, int pc
 
 bool CreditCardProcessor::checkConfiguration()
 {
+  if (DEBUG) qDebug("checkConfiguration()");
   _errorMsg = "";
-
-  if(!_metrics->boolean("CCAccept"))
-  {
-    _errorMsg = tr("The application is not set up to process credit cards");
-    return false;
-  }
 
   if (!_privleges->check("ProcessCreditCards"))
   {
     _errorMsg = tr("You do not have permission to process Credit Card "
 		   "transactions.");
+    return false;
+  }
+
+  if(!_metrics->boolean("CCAccept"))
+  {
+    _errorMsg = tr("The application is not set up to process credit cards.");
+    return false;
+  }
+
+  if (_metrics->value("CCDefaultBank").isEmpty())
+  {
+    _errorMsg = tr("The Bank Account is not set for Credit Card transactions.");
     return false;
   }
 
@@ -321,14 +353,95 @@ bool CreditCardProcessor::checkConfiguration()
   return doCheckConfiguration();
 }
 
-bool CreditCardProcessor::credit(int pccpayid)
+bool CreditCardProcessor::credit(const QString &pneworder, int &pccpayid)
 {
+  if (DEBUG) qDebug("credit(%s, %d)", pneworder.toAscii().data(), pccpayid);
+
   _errorMsg = "";
-  return doCredit(pccpayid);
+  XSqlQuery ccq;
+  ccq.prepare("SELECT * "
+	      "FROM ccpay "
+	      "WHERE ((ccpay_id=:ccpayid) AND (ccpay_type!= 'R'));");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+  if (ccq.first())
+  {
+    return credit(ccq.value("ccpay_ccard_id").toInt(),
+		  ccq.value("ccpay_amount").toDouble(),
+		  ccq.value("ccpay_curr_id").toInt(),
+		  pneworder.isEmpty() ?
+		      ccq.value("ccpay_order_number").toString() : pneworder,
+		  ccq.value("ccpay_order_number").toString(),
+		  pccpayid);
+  }
+  else if (ccq.lastError().type() != QSqlError::None)
+  {
+    _errorMsg = ccq.lastError().databaseText();
+    return false;
+  }
+  else
+  {
+    _errorMsg = tr("Could not find original Credit Card payment to credit.");
+    return false;
+  }
+}
+
+bool CreditCardProcessor::credit(const int pccardid, const double pamount, const int pcurrid, const QString &pneworder, const QString &porigorder, int &pccpayid)
+{
+  if (DEBUG)
+    qDebug("credit(%d, %f, %d, %s, %s, %d)", pccardid, pamount, pcurrid,
+	    pneworder.toAscii().data(), porigorder.toAscii().data(), pccpayid);
+  _errorMsg = "";
+  if (_metrics->value("CCConfirmTrans") == "R" ||
+      _metrics->value("CCConfirmTrans") == "B")
+  {
+    if (QMessageBox::question(0,
+	      tr("Confirm Credit Card Credit"),
+              tr("You must confirm that you wish to credit "
+                 "%1 %2. Would you like to credit this amount now?")
+                 .arg(currSymbol(pcurrid))
+                 .arg(pamount),
+              QMessageBox::Yes | QMessageBox::Default,
+              QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
+      return false;
+  }
+
+  if (! doCredit(pccardid, pamount, pcurrid, pneworder, porigorder, pccpayid))
+    return false;
+  else if (! _errorMsg.isEmpty())
+    _errorMsg = CCPOSTPROC_WARNING.arg(_errorMsg);
+
+  if (pccpayid > 0)
+  {
+    XSqlQuery cq;
+    cq.prepare("SELECT postCCCredit(:ccpayid) AS result;");
+    cq.bindValue(":ccpayid", pccpayid);
+    cq.exec();
+    if (cq.first())
+    {
+      int result = cq.value("result").toInt();
+      if (result < 0)
+	_errorMsg = CCPOSTPROC_WARNING.arg(storedProcErrorLookup("postCCCredit",
+								 result));
+    }
+    else if (cq.lastError().type() != QSqlError::NoError)
+      _errorMsg = CCPOSTPROC_WARNING.arg(cq.lastError().databaseText());
+  }
+
+  return true;
+}
+
+bool CreditCardProcessor::doCredit(const int pccardid, const double pamount, const int pcurrid, const QString &pneworder, const QString &porigorder, int &pccpayid)
+{
+  if (DEBUG)
+    qDebug("doCredit(%d, %f, %d, %s, %s, %d)", pccardid, pamount, pcurrid,
+	    pneworder.toAscii().data(), porigorder.toAscii().data(), pccpayid);
+  return false;
 }
 
 bool CreditCardProcessor::voidPrevious()
 {
+  if (DEBUG) qDebug("voidPrevious()");
   _errorMsg = "";
   return doVoidPrevious();
 }
@@ -363,39 +476,29 @@ bool CreditCardProcessor::isTest()
   return false;	// safest assumption
 }
 
-bool CreditCardProcessor::checkCreditCard(int pccpayid)
+bool CreditCardProcessor::checkCreditCard(int pccid)
 {
+  if (DEBUG) qDebug("checkCreditCard(%d)", pccid);
   _errorMsg = "";
-  if(!_metrics->boolean("CCAccept"))
-  {
-    _errorMsg = tr("The application is not set up to process credit cards") ;
-    return false;
-  }
 
   QString key = omfgThis->_key;
 
-  if(key.length() == 0 || key.isEmpty() || key.isNull())
+  if(key.isEmpty())
   {
     _errorMsg = tr("You do not have an encryption key defined");
     return false;
   }
 
-  q.prepare( "SELECT ccpay.*, "
-             "       ccard_active, "
-             "       formatbytea(decrypt(setbytea(ccard_number),"
-	     "                     setbytea(:key), 'bf')) AS ccard_number,"
-             "       formatccnumber(decrypt(setbytea(ccard_number),"
-	     "               setbytea(:key), 'bf')) AS ccard_number_x,"
+  q.prepare( "SELECT ccard_active, "
              "       formatbytea(decrypt(setbytea(ccard_month_expired),"
 	     "               setbytea(:key), 'bf')) AS ccard_month_expired,"
              "       formatbytea(decrypt(setbytea(ccard_year_expired),"
 	     "               setbytea(:key), 'bf')) AS ccard_year_expired,"
              "       ccard_type "
-             "FROM ccpay, ccard "
-             "WHERE ((ccpay_ccard_id=ccard_id) "
-             " AND (ccpay_id=:ccpay_id));");
-  q.bindValue(":ccpay_id", pccpayid);
-  q.bindValue(":key", key);
+             "FROM ccard "
+             "WHERE (ccard_id=:ccardid);");
+  q.bindValue(":ccardid", pccid);
+  q.bindValue(":key",     key);
   q.exec();
   if (q.first())
   {
@@ -419,6 +522,7 @@ bool CreditCardProcessor::checkCreditCard(int pccpayid)
 
 bool CreditCardProcessor::doChargePreauthorized(QString &pStatus)
 {
+  if (DEBUG) qDebug("doChargePreauthorized(&pStatus)");
   _errorMsg = "";
   pStatus = "X"; // No approval code obtained, must be valid ccpay_status
   return false;
@@ -427,6 +531,7 @@ bool CreditCardProcessor::doChargePreauthorized(QString &pStatus)
 bool CreditCardProcessor::processXML(const QDomDocument &ptransaction,
 				     QDomDocument &presponse)
 {
+  if (DEBUG) qDebug("processXML(input, output) with input:\n%s", ptransaction.toString().toAscii().data());
   _errorMsg = "";
   QString transactionString = ptransaction.toString();
 
@@ -478,15 +583,15 @@ bool CreditCardProcessor::processXML(const QDomDocument &ptransaction,
     return false;
   }
 
-  while (proc.state() == QProcess::Running)
-    qApp->processEvents();
-
-  if ( !proc.waitForFinished())
+  if (! proc.waitForFinished())
   {
+    QApplication::restoreOverrideCursor();
     _errorMsg = tr("Error running message transfer program: %1\n\n%2")
 		  .arg(curl_path).arg(QString(proc.readAllStandardError()));
     return false;
   }
+
+  QApplication::restoreOverrideCursor();
 
   if (proc.exitStatus() != QProcess::NormalExit)
   {
@@ -505,11 +610,10 @@ bool CreditCardProcessor::processXML(const QDomDocument &ptransaction,
     return false;
   }
 
-  QApplication::restoreOverrideCursor();
-
-  QString responseString = "<myroot>" +
+  // YourPay's response isn't valid XML: it has no root element!
+  QString responseString = "<yp_wrapper>" +
 			   proc.readAllStandardOutput() +
-			   "</myroot>";
+			   "</yp_wrapper>";
   if (isTest())
     _metrics->set("CCTestMe", responseString);
 

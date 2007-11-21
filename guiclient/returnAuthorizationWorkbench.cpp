@@ -64,6 +64,8 @@
 
 #include <openreports.h>
 #include <metasql.h>
+
+#include "creditcardprocessor.h"
 #include "mqlutil.h"
 #include "returnAuthorization.h"
 #include "returnAuthCheck.h"
@@ -111,20 +113,26 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   if (!_privleges->check("MaintainReturns"))
   {
     _edit->hide();
-	_editdue->hide();
+    _editdue->hide();
   }
 
-  //Remove Credit Card related option if Credit Card not enabled
-  QString key = omfgThis->_key;
-  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+  if (_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
+  {
+    if (! CreditCardProcessor::getProcessor())
+      QMessageBox::warning(this, tr("Credit Card Processing error"),
+			   CreditCardProcessor::errorMsg());
+  }
+  else
+  {
+    _creditcard->setChecked(false);
     _creditcard->hide();
+  }
 
   if (!_privleges->check("PostARDocuments"))
   {
     _postmemos->setChecked(false);
-	_postmemos->setEnabled(false);
+    _postmemos->setEnabled(false);
   }
-  
 }
 
 returnAuthorizationWorkbench::~returnAuthorizationWorkbench()
@@ -224,7 +232,8 @@ void returnAuthorizationWorkbench::sHandleButton()
 	   (_radue->altId() == 2 && _privleges->check("MaintainPayments") && 
                                 _privleges->check("MaintainCreditMemos") && 
 								_privleges->check("PostARDocuments")) ||
-	   (_radue->altId() == 3 && _privleges->check("PostARDocuments") &&
+	   (_radue->altId() == 3 && _privleges->check("ProcessCreditCards") &&
+				    _privleges->check("PostARDocuments") &&
 	                            _privleges->check("MaintainCreditMemos"))));   
 
   if (_radue->altId() > 1)
@@ -245,24 +254,29 @@ void returnAuthorizationWorkbench::sProcess()
   else
     _post = FALSE;
 
-  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
+  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result,"
+	    "       cohead_number "
+	    "FROM rahead LEFT OUTER JOIN cohead ON (rahead_orig_cohead_id=cohead_id)"
+	    "WHERE (rahead_id=:rahead_id);");
   q.bindValue(":rahead_id",_radue->id());
   q.bindValue(":post",QVariant(_post));
   q.exec();
   if (q.first())
   {
     _cmheadid = q.value("result").toInt();
+    QString origconumber = q.value("cohead_number").toString();
     q.prepare( "SELECT cmhead_number "
                "FROM cmhead "
                "WHERE (cmhead_id=:cmhead_id);" );
     q.bindValue(":cmhead_id", _cmheadid);
     q.exec();
     if (q.first())
-	{
+    {
+      QString newcmnumber = q.value("cmhead_number").toString();
       QMessageBox::information( this, tr("New Credit Memo Created"),
                                 tr("<p>A new CreditMemo has been created and "
 				                   "assigned #%1")
-                                   .arg(q.value("cmhead_number").toString()) );
+                                   .arg(newcmnumber));
       if (_radue->altId() == 2)
       {
         ParameterList params;
@@ -272,9 +286,66 @@ void returnAuthorizationWorkbench::sProcess()
         newdlg.set(params);
         if (newdlg.exec() != QDialog::Rejected)
           sFillList();
-	  }
-	  else
-	    sFillList();
+      }
+      else if (_radue->altId() == 3)
+      {
+	q.prepare("SELECT SUM(ROUND((cmitem_qtycredit * cmitem_qty_invuomratio) * "
+		  "                 (cmitem_unitprice / cmitem_price_invuomratio),"
+		  "                 2)) +"
+		  "       currToCurr(COALESCE(cmhead_tax_curr_id,cmhead_curr_id),"
+		  "                  cmhead_curr_id, "
+		  "                  cmhead_tax_ratea + cmhead_tax_rateb +"
+		  "                      cmhead_tax_ratec, CURRENT_DATE) +"
+		  "       cmhead_freight + cmhead_misc AS total,"
+		  "       cmhead_curr_id, ccard_id, ccard_seq "
+		  "FROM cmitem, cmhead, ccard "
+		  "WHERE ((cmitem_cmhead_id=cmhead_id)"
+		  "  AND  (cmhead_cust_id=ccard_cust_id)"
+		  "  AND  (ccard_active)"
+		  "  AND  (cmhead_id=:cmhead_id))"
+		  "GROUP BY cmhead_tax_curr_id, cmhead_curr_id, cmhead_tax_ratea,"
+		  "         cmhead_tax_rateb, cmhead_tax_ratec, cmhead_freight,"
+		  "         cmhead_misc, ccard_id, ccard_seq "
+		  "ORDER BY ccard_seq "
+		  "LIMIT 1;");
+	q.bindValue(":cmhead_id", _cmheadid);
+	q.exec();
+	int ccpayid;
+	if (q.first())
+	{
+	  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+	  if (! cardproc)
+	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				  tr("Could not start Credit Card processing:\n%1")
+				  .arg(cardproc->errorMsg()));
+	  else if (! cardproc->credit(q.value("ccard_id").toInt(),
+				      q.value("total").toDouble(),
+				      q.value("cmhead_curr_id").toInt(),
+				      newcmnumber, origconumber, ccpayid))
+	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				  tr("Could not process Credit transaction:\n%1")
+				  .arg(cardproc->errorMsg()));
+	  else if (! cardproc->errorMsg().isEmpty())
+	    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+				  cardproc->errorMsg());
+	  // requery regardless 'cause the new credit memo means nothing's "due"
+	  sFillList();
+	}
+	else if (q.lastError().type() != QSqlError::None)
+	{
+	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
+	else
+	{
+	  QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				tr("Could not find a Credit Card to use for "
+				   "this Credit transaction."));
+	  return;
+	}
+      }
+      else
+	sFillList();
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -287,6 +358,30 @@ void returnAuthorizationWorkbench::sProcess()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void returnAuthorizationWorkbench::setParams(ParameterList &params)
+{
+  if (_cust->isChecked())
+    params.append("cust_id", _custInfo->id());
+  else
+    _parameter->appendValue(params);
+
+  params.append("credit",     tr("Credit"));
+  params.append("return",     tr("Return"));
+  params.append("none",       tr("None"));
+  params.append("creditmemo", tr("Memo"));
+  params.append("check",      tr("Check"));
+  params.append("creditcard", tr("Card"));
+
+  if (_creditmemo->isChecked())
+    params.append("doM");
+  if (_check->isChecked())
+    params.append("doK");
+  if (_creditcard->isChecked())
+    params.append("doC");
+
+  _dates->appendValue(params);
 }
 
 void returnAuthorizationWorkbench::sFillList()
@@ -464,95 +559,68 @@ void returnAuthorizationWorkbench::sFillList()
   //Fill Due Credit List
   if ((_creditmemo->isChecked()) || (_check->isChecked()) || (_creditcard->isChecked()))
   {
-	bool bc;
-	bc = false;
-	QString sql (" SELECT * FROM ( "
-			  "SELECT DISTINCT rahead_id, "
-		      "CASE "
-  			  "  WHEN rahead_creditmethod = 'M' THEN "
-			  "    1 "
-			  "  WHEN rahead_creditmethod = 'K' THEN "
-			  "    2 "
-			  "  WHEN rahead_creditmethod = 'C' THEN "
-			  "    3 "
-			  "END, "
-			  "rahead_number, cust_name, "
-			  "formatDate(rahead_authdate), formatDate(NULL), "
-			  "formatMoney(currtobase(rahead_curr_id,calcradueamt(rahead_id),current_date)), "
-			  "CASE "
-			  "  WHEN rahead_creditmethod = 'M' THEN "
-			  "    :creditmemo "
-			  "  WHEN rahead_creditmethod = 'K' THEN "
-			  "    :check "
-			  "  WHEN rahead_creditmethod = 'C' THEN "
-			  "    :creditcard "
-			  "END AS creditmethod, rahead_authdate "
-			  "FROM rahead,custinfo,raitem,custtype "
-			  "WHERE ( (rahead_id=raitem_rahead_id) "
-			  " AND (rahead_cust_id=cust_id) "
-			  " AND (cust_custtype_id=custtype_id) "
-			  " AND ((raitem_disposition = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
-			  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
-			  " AND (raitem_status = 'O') "
-			  " AND (rahead_creditmethod != 'N') "
-			  " AND (calcradueamt(rahead_id) > 0) "
-			  " AND (raitem_disposition IN ('C','R')) ");
+    bool bc;
+    bc = false;
+    QString sql ( "SELECT DISTINCT rahead_id, "
+		  "CASE "
+		  "  WHEN rahead_creditmethod = 'M' THEN "
+		  "    1 "
+		  "  WHEN rahead_creditmethod = 'K' THEN "
+		  "    2 "
+		  "  WHEN rahead_creditmethod = 'C' THEN "
+		  "    3 "
+		  "END, "
+		  "rahead_number, cust_name, "
+		  "formatDate(rahead_authdate), formatDate(NULL), "
+		  "formatMoney(currtobase(rahead_curr_id,"
+		  "                       calcradueamt(rahead_id), current_date)), "
+		  "CASE "
+		  "  WHEN rahead_creditmethod = 'M' THEN "
+		  "    <? value(\"creditmemo\") ?> "
+		  "  WHEN rahead_creditmethod = 'K' THEN "
+		  "    <? value(\"check\") ?> "
+		  "  WHEN rahead_creditmethod = 'C' THEN "
+		  "    <? value(\"creditcard\") ?> "
+		  "END AS creditmethod, rahead_authdate "
+		  "FROM rahead,custinfo,raitem,custtype "
+		  "WHERE ( (rahead_id=raitem_rahead_id) "
+		  " AND (rahead_cust_id=cust_id) "
+		  " AND (cust_custtype_id=custtype_id) "
+		  " AND ((raitem_disposition = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
+		  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
+		  " AND (raitem_status = 'O') "
+		  " AND (rahead_creditmethod != 'N') "
+		  " AND (calcradueamt(rahead_id) > 0) "
+		  " AND (raitem_disposition IN ('C','R')) "
+		  " <? if exists(\"cust_id\") ?>"
+		  " AND (cust_id=<? value(\"cust_id\") ?>) "
+		  " <? elseif exists(\"custtype_id\") ?>"
+		  " AND (custtype_id=<? value(\"custtype_id\") ?>) "
+		  " <? elseif exists(\"custtype_pattern\") ?>"
+		  " AND (custtype_pattern=<? value(\"custtype_pattern\") ?>) "
+		  " <? endif ?>"
+		  " AND (rahead_creditmethod IN ('$'"	// avoid stress over commas
+		  " <? if exists(\"doM\") ?>, 'M'<? endif ?>"
+		  " <? if exists(\"doK\") ?>, 'K'<? endif ?>"
+		  " <? if exists(\"doC\") ?>, 'C'<? endif ?>"
+		  " ))"
+		  " ) "
+		  "ORDER BY rahead_authdate,rahead_number;"
+		  );
 
-    if ((_cust->isChecked()))
-	  sql += " AND (cust_id=:cust_id) ";
-    else if (_parameter->isSelected())
-	  sql += " AND (custtype_id=:custtype_id) ";
-    else if (_parameter->isPattern())
-	  sql += " AND (custtype_code ~ :custtype_pattern) ";
+    ParameterList params;
+    setParams(params);
 
-  	sql +=    " ) ORDER BY rahead_authdate,rahead_number "
-			  ") as data "
-              " WHERE (creditmethod IN ( "; 
-
-	if (_creditmemo->isChecked())
-	{
-	  sql += ":creditmemo";
-	  bc = true;
-	}
-	if (_check->isChecked())
-	{
-	  if (bc)
-		sql += ",";
-	  sql +=  ":check "; 
-	  bc = true;
-	}
-	if (_creditcard->isChecked())
-	{
-	  if (bc)
-		sql += ",";
-	  sql +=  ":creditcard"; 
-	}
-    
-	sql += "));";
-
-	XSqlQuery radue;
-	radue.prepare(sql);
-    _parameter->bindValue(radue);
-	radue.bindValue(":cust_id", _custInfo->id());
-	radue.bindValue(":credit",tr("Credit"));
-	radue.bindValue(":return",tr("Return"));
-	radue.bindValue(":none",tr("None"));
-	radue.bindValue(":creditmemo",tr("Memo"));
-	radue.bindValue(":check",tr("Check"));
-	radue.bindValue(":creditcard",tr("Card"));
-    _dates->bindValue(radue);
-	radue.exec();
-	if (radue.first())
-		_radue->populate(radue,TRUE);
-	else if (radue.lastError().type() != QSqlError::None)
+    MetaSQLQuery mql(sql);
+    XSqlQuery radue = mql.toQuery(params);
+    if (radue.first())
+      _radue->populate(radue,TRUE);
+    else if (radue.lastError().type() != QSqlError::None)
     {
       systemError(this, radue.lastError().databaseText(), __FILE__, __LINE__);
-	  _radue->clear();
       return;
     }
   }
-  else
-    _radue->clear();
 }
 
 void returnAuthorizationWorkbench::sParameterTypeChanged()

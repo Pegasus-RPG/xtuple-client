@@ -63,6 +63,8 @@
 #include "OpenMFGGUIClient.h"
 #include "yourpayprocessor.h"
 
+#define DEBUG true
+
 YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 {
   XSqlQuery currq;
@@ -99,12 +101,11 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
   }
 }
 
-bool YourPayProcessor::doCredit(int pccpayid)
+bool YourPayProcessor::doCredit(const int pccardid, const double pamount, const int pcurrid, const QString &pneworder, const QString &porigorder, int &pccpayid)
 {
   XSqlQuery ypq;
-  ypq.prepare( "SELECT ccpay.*, "
-	       "       currToCurr(ccpay_id, :yp_curr_id,"
-	       "              ccpay_amount, CURRENT_DATE) AS ccpay_amount_yp"
+  ypq.prepare( "SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
+	       "              :amount, CURRENT_DATE), 2) AS ccpay_amount_yp,"
 	       "       ccard_active, "
 	       "       formatbytea(decrypt(setbytea(ccard_number),"
 	       "               setbytea(:key), 'bf')) AS ccard_number,"
@@ -113,12 +114,13 @@ bool YourPayProcessor::doCredit(int pccpayid)
 	       "       formatbytea(decrypt(setbytea(ccard_year_expired),"
 	       "               setbytea(:key), 'bf')) AS ccard_year_expired,"
 	       "       ccard_type "
-	       "FROM ccpay, ccard "
-	       "WHERE ((ccpay_ccard_id=ccard_id) "
-	       " AND (ccpay_id=:ccpay_id));");
-  ypq.bindValue(":ccpay_id",       pccpayid);
-  ypq.bindValue(":yp_curr_id_id", _currencyId);
-  ypq.bindValue(":key",            omfgThis->_key);
+	       "FROM ccard "
+	       "WHERE (ccard_id=:ccardid);");
+  ypq.bindValue(":curr_id",    pcurrid);
+  ypq.bindValue(":yp_curr_id", _currencyId);
+  ypq.bindValue(":amount",     pamount);
+  ypq.bindValue(":key",        omfgThis->_key);
+  ypq.bindValue(":ccardid",    pccardid);
   ypq.exec();
   if (ypq.first())
   {
@@ -139,44 +141,73 @@ bool YourPayProcessor::doCredit(int pccpayid)
     return false;
   }
 
-  QDomDocument transaction;
-  QDomElement order = transaction.createElement("order");
-  transaction.appendChild(order);
+  QDomDocument request;
+  QDomElement order = request.createElement("order");
+  request.appendChild(order);
 
-  QDomElement merchantinfo = transaction.createElement("merchantinfo");
-  order.appendChild(merchantinfo);
-  if (isLive())
-    merchantinfo.setNodeValue(_storenum.toLatin1());
-  else if (isTest())
-    merchantinfo.setNodeValue((_storenum + " testing").toLatin1());
+  QDomElement	elem;
+  QDomElement	child;
 
-  QDomElement orderoptions = transaction.createElement("orderoptions");
-  order.appendChild(orderoptions);
-  QDomElement ordertype = transaction.createElement("ordertype");
-  orderoptions.appendChild(ordertype);
-  orderoptions.setNodeValue("CREDIT");
+  elem = request.createElement("merchantinfo");
+  order.appendChild(elem);
+  child = request.createElement("configfile");
+  child.appendChild(request.createTextNode(_storenum.toLatin1()));
+  elem.appendChild(child);
 
-  QDomElement payment = transaction.createElement("payment");
-  order.appendChild(payment);
-  QDomElement chargetotal = transaction.createElement("chargetotal");
-  chargetotal.setNodeValue(
-	    QString::number(ypq.value("ccpay_amount_yp").toDouble(), 'f', 2));
+  elem = request.createElement("orderoptions");
+  order.appendChild(elem);
+  child = request.createElement("ordertype");
+  child.appendChild(request.createTextNode("CREDIT"));
+  elem.appendChild(child);
+  if (isTest())
+  {
+    child = request.createElement("result");
+    int randomnum = qrand();
+    switch (randomnum % 10)
+    {
+      case 0: child.appendChild(request.createTextNode("DECLINE"));
+	      break;
+      case 1: child.appendChild(request.createTextNode("DUPLICATE"));
+	      break;
+      default:
+	      child.appendChild(request.createTextNode("GOOD"));
+	      break;
+    }
+    elem.appendChild(child);
+  }
 
-  QDomElement creditcard = transaction.createElement("creditcard");
-  order.appendChild(creditcard);
-  QDomElement cardnumber = transaction.createElement("cardnumber");
-  cardnumber.setNodeValue(ypq.value("ccard_number").toString());
+  elem = request.createElement("payment");
+  order.appendChild(elem);
+  child = request.createElement("chargetotal");
+  child.appendChild(request.createTextNode(ypq.value("ccpay_amount_yp").toString()));
+  elem.appendChild(child);
 
-  QDomElement cardexpmonth = transaction.createElement("cardexpmonth");
-  cardexpmonth.setNodeValue(
-    QString().arg(ypq.value("ccard_month_expired").toDouble(), 2, 'f', 0));
-  QDomElement cardexpyear = transaction.createElement("cardexpyear");
-  cardexpyear.setNodeValue(ypq.value("ccard_year_expired").toString().right(2));
+  elem = request.createElement("creditcard");
+  order.appendChild(elem);
+  child = request.createElement("cardnumber");
+  child.appendChild(request.createTextNode(ypq.value("ccard_number").toString()));
+  elem.appendChild(child);
 
-  QDomElement transactiondetails = transaction.createElement("transactiondetails");
-  order.appendChild(transactiondetails);
-  QDomElement oid = transaction.createElement("oid");
-  oid.setNodeValue(ypq.value("ccpay_yp_r_ordernum").toString());
+  child = request.createElement("cardexpmonth");
+  child.appendChild(request.createTextNode(
+	  QString("%1").arg(ypq.value("ccard_month_expired").toDouble(), 2, 'f', 0))
+  );
+  elem.appendChild(child);
+
+  child = request.createElement("cardexpyear");
+  child.appendChild(request.createTextNode(
+	    ypq.value("ccard_year_expired").toString().right(2))
+  );
+  elem.appendChild(child);
+
+  elem = request.createElement("transactiondetails");
+  order.appendChild(elem);
+  child = request.createElement("oid");
+  child.appendChild(request.createTextNode(porigorder));
+  elem.appendChild(child);
+  child = request.createElement("reference_number");
+  child.appendChild(request.createTextNode(pneworder));
+  elem.appendChild(child);
 
   /* TODO: billing info not needed for credits?
   <billing>
@@ -184,37 +215,43 @@ bool YourPayProcessor::doCredit(int pccpayid)
     <zip>billing zip</zip>
   */
 
-  qDebug(transaction.toString());
+  if (DEBUG) qDebug(request.toString());
 
   // TODO: there's got to be a better place to put this
   if (isTest())
-    _metrics->set("CCOrder", transaction.toString());
-
-/////////////////////////////////
-return false;
-/////////////////////////////////
+    _metrics->set("CCOrder", request.toString());
 
   QDomDocument response;
-  if (! processXML(transaction, response))
+  if (! processXML(request, response))
     return false;
 
-  if (! handleResponse(pccpayid, response))
-    return true;	// TODO: return false? the YP xaction is done!
+  if (! handleResponse(response, pccardid, "R", pamount, pcurrid, porigorder, pccpayid))
+    return false;
 
   return true;
 }
 
-bool YourPayProcessor::handleResponse(int pccpayid, const QDomDocument &response)
+bool YourPayProcessor::handleResponse(const QDomDocument &response, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, const QString &porigorder, int &pccpayid)
 {
+  if (DEBUG) qDebug("YP::handleResponse(%s, %d, %s, %f, %d, %s, %d)",
+	  response.toString().toAscii().data(), pccardid,
+	  ptype.toAscii().data(), pamount, pcurrid,
+	  porigorder.toAscii().data(), pccpayid);
   QDomNode node;
   QDomElement root = response.documentElement();
   
-  QString r_avs;
-  QString r_ordernum;
-  QString r_error;
   QString r_approved;
-  QString r_ref;
+  QString r_avs;
+  QString r_code;
+  QString r_error;
   QString r_message;
+  QString r_ordernum;
+  QString r_ref;
+  QString r_score;
+  QString r_shipping;
+  QString r_tax;
+  QString r_tdate;
+  QString r_time;
 
   QString status;
   
@@ -223,30 +260,51 @@ bool YourPayProcessor::handleResponse(int pccpayid, const QDomDocument &response
   // TODO: do we need to check all of these fields?
   while ( !node.isNull() )
   {
-    if ( node.isElement() && node.nodeName() == "r_avs" )
-      r_avs = node.nodeValue();
+    if (node.isElement())
+    {
+      if (node.nodeName() == "r_approved" )
+	r_approved = node.toElement().text();
 
-    else if ( node.isElement() && node.nodeName() == "r_ordernum" )
-      r_ordernum = node.nodeValue();
+      else if (node.nodeName() == "r_avs" )
+	r_avs = node.toElement().text();
 
-    else if ( node.isElement() && node.nodeName() == "r_error" )
-      r_error = node.nodeValue();
+      else if (node.nodeName() == "r_code" )
+	r_code = node.toElement().text();
 
-    else if ( node.isElement() && node.nodeName() == "r_approved" )
-      r_approved = node.nodeValue();
+      else if (node.nodeName() == "r_error" )
+	r_error = node.toElement().text();
 
-    else if ( node.isElement() && node.nodeName() == "r_ref" )
-      r_ref = node.nodeValue();
+      else if (node.nodeName() == "r_message" )
+	r_message = node.toElement().text();
 
-    else if ( node.isElement() && node.nodeName() == "r_message" )
-      r_message = node.nodeValue();
+      else if (node.nodeName() == "r_ordernum" )
+	r_ordernum = node.toElement().text();
+
+      else if (node.nodeName() == "r_ref" )
+	r_ref = node.toElement().text();
+
+      else if (node.nodeName() == "r_score" )
+	r_score = node.toElement().text();
+
+      else if (node.nodeName() == "r_shipping" )
+	r_shipping = node.toElement().text();
+
+      else if (node.nodeName() == "r_tax" )
+	r_tax = node.toElement().text();
+
+      else if (node.nodeName() == "r_tdate" )
+	r_tdate = node.toElement().text();
+
+      else if (node.nodeName() == "r_time" )
+	r_time = node.toElement().text();
+    }
 
     node = node.nextSibling();
   }
 
   if (r_approved == "APPROVED")
   {
-    _errorMsg = tr("This transaction was approved\n" + r_ref);
+    _errorMsg = tr("This transaction was approved\n") + r_ref;
     status = "C";
   }
 
@@ -264,13 +322,13 @@ bool YourPayProcessor::handleResponse(int pccpayid, const QDomDocument &response
   
   else if (r_approved == "DECLINED")
   {
-    _errorMsg = tr("This transaction is a declined\n") + r_error;
+    _errorMsg = tr("This transaction was declined\n") + r_error;
     status = "D";
   }
   
   else if (r_approved == "FRAUD")
   {
-    _errorMsg = tr("This transaction is denied because of possible fraud\n") +
+    _errorMsg = tr("This transaction was denied because of possible fraud\n") +
 		r_error;
     status = "D";
   }
@@ -282,26 +340,90 @@ bool YourPayProcessor::handleResponse(int pccpayid, const QDomDocument &response
     status = "X";
   }
 
+  /* From here on, treat errors as warnings:
+     do as much as possible,
+     set _errorMsg if there are problems, and
+     return true unless YourPay returned an error.
+  */
 
   XSqlQuery ypq;
-  ypq.prepare("UPDATE ccpay SET ccpay_status=:status,"
-	      "                 ccpay_yp_r_avs=:avs,"
-	      "                 ccpay_yp_r_ordernum=:ordernum,"
-	      "                 ccpay_yp_r_error=:error "
-	      "WHERE (ccpay_id=:ccpay_id);");
-  ypq.bindValue(":status",   status);
-  ypq.bindValue(":avs",      r_avs);
-  ypq.bindValue(":ordernum", r_ordernum);
-  ypq.bindValue(":error",    r_error);
-  ypq.bindValue(":ccpay_id", pccpayid);
-  ypq.exec();
-  if (ypq.lastError().type() != QSqlError::None)
+  ypq.exec("SELECT NEXTVAL('ccpay_ccpay_id_seq') AS ccpay_id;");
+  if (ypq.first())
+    pccpayid = ypq.value("ccpay_id").toInt();
+  else if (ypq.lastError().type() != QSqlError::None && r_error.isEmpty())
   {
     _errorMsg = ypq.lastError().databaseText();
+    return true;
+  }
+  else if (ypq.lastError().type() == QSqlError::None && r_error.isEmpty())
+  {
+    _errorMsg = tr("Could not generate a unique key for the ccpay table.");
+    return true;
+  }
+  else	// no rows found and YP reported an error
+  {
+    _errorMsg = r_error;
     return false;
   }
 
-  return true;
+  ypq.prepare("INSERT INTO ccpay ("
+	     "    ccpay_id, ccpay_ccard_id, ccpay_cust_id, ccpay_auth_charge,"
+	     "    ccpay_amount,"
+	     "    ccpay_curr_id, ccpay_type, ccpay_order_number, ccpay_status,"
+	     "    ccpay_yp_r_avs, ccpay_yp_r_ordernum, ccpay_yp_r_error,"
+	     "    ccpay_yp_r_approved, ccpay_yp_r_code, ccpay_yp_r_score,"
+	     "    ccpay_yp_r_shipping, ccpay_yp_r_tax, ccpay_yp_r_tdate,"
+	     "    ccpay_yp_r_ref, ccpay_yp_r_message, ccpay_yp_r_time"
+	     ") SELECT :ccpay_id, ccard_id, cust_id, 'R',"
+	     "    ROUND(currToCurr(:curr_id,:yp_curr_id,:amount,CURRENT_DATE), 2),"
+	     "    :yp_curr_id, :type, :reference, :status,"
+	     "    :avs, :ordernum, :error,"
+	     "    :approved, :code, :score,"
+	     "    :shipping, :tax, :tdate,"
+	     "    :ref, :message, :time"
+	     "  FROM ccard, custinfo"
+	     "  WHERE ((ccard_cust_id=cust_id)"
+	     "    AND  (ccard_id=:ccard_id));");
+
+  ypq.bindValue(":ccpay_id",   pccpayid);
+  ypq.bindValue(":curr_id",    pcurrid);
+  ypq.bindValue(":yp_curr_id", _currencyId);
+  ypq.bindValue(":amount",     pamount);
+  ypq.bindValue(":type",       ptype);
+  ypq.bindValue(":reference",  porigorder);
+  ypq.bindValue(":status",     status);
+  ypq.bindValue(":avs",        r_avs);
+  ypq.bindValue(":ordernum",   r_ordernum);
+  ypq.bindValue(":error",      r_error);
+  ypq.bindValue(":approved",   r_approved);
+  ypq.bindValue(":code",       r_code);
+  if (! r_score.isEmpty())
+    ypq.bindValue(":score",    r_score);
+  ypq.bindValue(":shipping",   r_shipping);
+  ypq.bindValue(":tax",        r_tax);
+  ypq.bindValue(":tdate",      r_tdate);
+  ypq.bindValue(":ref",        r_ref);
+  ypq.bindValue(":message",    r_message);
+  if (! r_time.isEmpty())
+    ypq.bindValue(":time",     r_time);
+  ypq.bindValue(":ccard_id",   pccardid);
+
+  ypq.exec();
+  if (ypq.lastError().type() != QSqlError::None)
+  {
+    pccpayid = -1;
+    _errorMsg = ypq.lastError().databaseText();
+  }
+
+  if (DEBUG) qDebug("r_error.isEmpty() = %d", r_error.isEmpty());
+
+  if (r_error.isEmpty())
+    return true;
+  else
+  {
+    _errorMsg = r_error;
+    return false;
+  }
 }
 
 bool YourPayProcessor::doCheckConfiguration()
