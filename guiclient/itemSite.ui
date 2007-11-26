@@ -5,14 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
-    <height>600</height>
+    <width>600</width>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize" >
    <size>
-    <width>800</width>
-    <height>600</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="windowTitle" >
@@ -352,36 +352,14 @@
         </item>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2" >
-       <widget class="QGroupBox" name="_expire" >
+      <item row="1" column="0" >
+       <widget class="QCheckBox" name="_perishable" >
         <property name="enabled" >
-         <bool>true</bool>
-        </property>
-        <property name="title" >
-         <string>Enable Expiration</string>
-        </property>
-        <property name="checkable" >
-         <bool>true</bool>
-        </property>
-        <property name="checked" >
          <bool>false</bool>
         </property>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QRadioButton" name="_perishable" >
-           <property name="text" >
-            <string>&amp;Perishable</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="QRadioButton" name="_warranty" >
-           <property name="text" >
-            <string>&amp;Warranty</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
+        <property name="text" >
+         <string>Perishable</string>
+        </property>
        </widget>
       </item>
      </layout>
@@ -494,7 +472,7 @@
       </sizepolicy>
      </property>
      <property name="focusPolicy" >
-      <enum>Qt::NoFocus</enum>
+      <enum>Qt::ClickFocus</enum>
      </property>
      <property name="currentIndex" >
       <number>0</number>
@@ -663,7 +641,7 @@
         </widget>
        </item>
        <item row="0" column="0" >
-        <widget class="QGroupBox" name="_location" >
+        <widget class="QGroupBox" name="_locationGroup" >
          <property name="title" >
           <string/>
          </property>
@@ -759,6 +737,16 @@
                </property>
               </widget>
              </item>
+             <item row="0" column="1" colspan="2" >
+              <widget class="XComboBox" name="_locations" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+              </widget>
+             </item>
              <item row="0" column="0" >
               <widget class="QRadioButton" name="_location" >
                <property name="text" >
@@ -766,19 +754,6 @@
                </property>
                <property name="checked" >
                 <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" colspan="2" >
-              <widget class="XComboBox" name="_locations" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="sizePolicy" >
-                <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
                </property>
               </widget>
              </item>
@@ -1280,7 +1255,11 @@
         <number>5</number>
        </property>
        <item>
-        <widget class="QTextEdit" name="_notes" />
+        <widget class="QTextEdit" name="_notes" >
+         <property name="focusPolicy" >
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1337,7 +1316,11 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="XTreeWidget" name="_restricted" />
+        <widget class="XTreeWidget" name="_restricted" >
+         <property name="focusPolicy" >
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
        </item>
        <item>
         <layout class="QVBoxLayout" >
@@ -1434,21 +1417,23 @@
   <tabstop>_sold</tabstop>
   <tabstop>_soldRanking</tabstop>
   <tabstop>_controlMethod</tabstop>
+  <tabstop>_perishable</tabstop>
   <tabstop>_plannerCode</tabstop>
   <tabstop>_costcat</tabstop>
-  <tabstop>_stocked</tabstop>
-  <tabstop>_abcClass</tabstop>
-  <tabstop>_autoUpdateABCClass</tabstop>
-  <tabstop>_cycleCountFreq</tabstop>
-  <tabstop>_eventFence</tabstop>
+  <tabstop>_tab</tabstop>
   <tabstop>_locationControl</tabstop>
-  <tabstop>_location</tabstop>
+  <tabstop>_useDefaultLocation</tabstop>
+  <tabstop>_locationGroup</tabstop>
   <tabstop>_locations</tabstop>
   <tabstop>_miscLocation</tabstop>
   <tabstop>_miscLocationName</tabstop>
   <tabstop>_locationComments</tabstop>
   <tabstop>_disallowBlankWIP</tabstop>
-  <tabstop>_tab</tabstop>
+  <tabstop>_stocked</tabstop>
+  <tabstop>_abcClass</tabstop>
+  <tabstop>_autoUpdateABCClass</tabstop>
+  <tabstop>_cycleCountFreq</tabstop>
+  <tabstop>_eventFence</tabstop>
   <tabstop>_useParameters</tabstop>
   <tabstop>_reorderLevel</tabstop>
   <tabstop>_orderUpToQty</tabstop>
@@ -1458,13 +1443,14 @@
   <tabstop>_useParametersOnManual</tabstop>
   <tabstop>_orderGroup</tabstop>
   <tabstop>_mpsTimeFence</tabstop>
+  <tabstop>_leadTime</tabstop>
   <tabstop>_safetyStock</tabstop>
-  <tabstop>_notes</tabstop>
-  <tabstop>_toggleRestricted</tabstop>
-  <tabstop>_restricted</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_toggleRestricted</tabstop>
   <tabstop>_comments</tabstop>
+  <tabstop>_restricted</tabstop>
  </tabstops>
  <resources/>
  <connections>
@@ -1472,22 +1458,6 @@
    <sender>_item</sender>
    <signal>valid(bool)</signal>
    <receiver>_save</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_location</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_locations</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
@@ -1561,6 +1531,22 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_location</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_locations</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>73</x>
+     <y>333</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>183</x>
+     <y>333</y>
     </hint>
    </hints>
   </connection>

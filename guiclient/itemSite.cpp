@@ -115,7 +115,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   {
     _controlMethod->removeItem(3);
     _controlMethod->removeItem(2);
-    _expire->hide();
+    _perishable->hide();
   }
   
   //If routings disabled, hide options
@@ -258,7 +258,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
 	_soldRanking->setEnabled(FALSE);
 	_stocked->setEnabled(FALSE);
 	_controlMethod->setEnabled(FALSE);
-	_expire->setEnabled(FALSE);
+	_perishable->setEnabled(FALSE);
 	_locationControl->setEnabled(FALSE);
 	_disallowBlankWIP->setEnabled(FALSE);
 	_useDefaultLocation->setEnabled(FALSE);
@@ -549,7 +549,7 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_createwo", QVariant(_createWo->isChecked(), 0));
   newItemSite.bindValue(":itemsite_sold", QVariant(_sold->isChecked(), 0));
   newItemSite.bindValue(":itemsite_stocked", QVariant(_stocked->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_perishable", QVariant((_expire->isChecked() && _perishable->isChecked()), 0));
+  newItemSite.bindValue(":itemsite_perishable", QVariant(_perishable->isChecked(), 0));
   newItemSite.bindValue(":itemsite_loccntrl", QVariant(_locationControl->isChecked(), 0));
   newItemSite.bindValue(":itemsite_disallowblankwip", QVariant((_locationControl->isChecked() && _disallowBlankWIP->isChecked()), 0));
     
@@ -671,9 +671,9 @@ void itemSite::sHandleControlMethod()
 {
   if ( (_controlMethod->currentItem() == 2) ||
        (_controlMethod->currentItem() == 3) )    
-    _expire->setEnabled(TRUE);
+    _perishable->setEnabled(TRUE);
   else
-    _expire->setEnabled(FALSE);
+    _perishable->setEnabled(FALSE);
 }
 
 void itemSite::sCacheItemType(const QString &pItemType)
@@ -789,16 +789,10 @@ void itemSite::populateLocations()
     query.exec();
     _locations->populate(query);
     
-    if (_locations->count())
-    {
-	_location->setEnabled(TRUE);
-	_locations->setEnabled(TRUE);
-    }
+    if (_locations->count() && _useDefaultLocation->isChecked())
+	  _location->setEnabled(TRUE);
     else
-    {
-	_location->setEnabled(FALSE);
-	_locations->setEnabled(FALSE);
-    }
+	  _location->setEnabled(FALSE);
   sFillRestricted();
 }
 
@@ -883,12 +877,11 @@ void itemSite::populate()
     if ( (_controlMethod->currentItem() == 2) ||
          (_controlMethod->currentItem() == 3) )
     {
-      _expire->setEnabled(TRUE);
-      _expire->setChecked(itemsite.value("itemsite_perishable").toBool());
+      _perishable->setEnabled(TRUE);
       _perishable->setChecked(itemsite.value("itemsite_perishable").toBool());
     }
     else
-      _expire->setEnabled(FALSE);
+      _perishable->setEnabled(FALSE);
 
     _costcat->setId(itemsite.value("itemsite_costcat_id").toInt());
     _plannerCode->setId(itemsite.value("itemsite_plancode_id").toInt());
@@ -945,7 +938,6 @@ void itemSite::populate()
     {
       _useDefaultLocation->setChecked(TRUE);
       _location->setChecked(TRUE);
-      _locations->setEnabled(TRUE);
       _locations->setId(itemsite.value("itemsite_location_id").toInt());
     }
 	
