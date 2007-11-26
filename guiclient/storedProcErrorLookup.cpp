@@ -256,7 +256,6 @@ void initErrorLookupHash()
   { "createProspect",    -3, TR("Cannot create a Prospect for this CRM Account "
 				"because it is already a Prospect."),
 								0, "" },
-  { "CreateRevision", -1, TR("Can not make revision for an invalid item."),	0, "" },
   { "CreateRevision", -2, TR("Revision control not enabled."),	0, "" },
   { "createTodoItem",	-1, TR("The To-Do List Item cannot be created as "
 			       "there is no assigned User."),	0, "" },
