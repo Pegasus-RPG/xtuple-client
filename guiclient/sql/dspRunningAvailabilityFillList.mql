@@ -153,10 +153,12 @@ WHERE ((coitem_status='O')
 <? if exists("showMRPplan") ?>
 UNION
 SELECT planord_id AS orderid, -1 AS altorderid,
-       'P/O' AS ordertype,
-       CASE WHEN (planord_firm) THEN <? value("firmPo") ?>
- 	   ELSE <? value("plannedPo") ?>
-       END AS ordernumber,
+       'Planned P/O' AS ordertype,
+--       CASE WHEN (planord_firm) THEN <? value("firmPo") ?>
+-- 	   ELSE <? value("plannedPo") ?>
+--       END AS ordernumber,
+--2.3 replaced case above with actual order number for higher level demand
+       CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
        '' AS item_number,
        formatDate(planord_duedate) AS duedate,
@@ -174,10 +176,12 @@ WHERE ((planord_type='P')
 
 UNION
 SELECT planord_id AS orderid, -1 AS altorderid,
-       'W/O' AS ordertype,
-       CASE WHEN (planord_firm) THEN <? value("firmWo") ?>
-	    ELSE <? value("plannedWo") ?>
-       END AS ordernumber,
+       'Planned W/O' AS ordertype,
+--       CASE WHEN (planord_firm) THEN <? value("firmWo") ?>
+--	    ELSE <? value("plannedWo") ?>
+--       END AS ordernumber,
+--2.3 replaced case above with actual order number
+       CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
        '' AS item_number,
        formatDate(planord_duedate) AS duedate,
@@ -195,12 +199,30 @@ WHERE ((planord_type='W')
 
 UNION
 SELECT planreq_id AS orderid, -1 AS altorderid,
-       'W/O' AS ordertype,
-       CASE WHEN (planord_firm) THEN <? value("firmWoReq") ?>
-	    ELSE <? value("plannedWoReq") ?>
-       END AS ordernumber,
+       'Planned W/O' AS ordertype,
+--       CASE WHEN (planord_firm) THEN <? value("firmWoReq") ?>
+--	    ELSE <? value("plannedWoReq") ?>
+--       END AS ordernumber,
+--2.3 replaced case above with actual order number for higher level demand
+       CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
-       item_number,
+--2.3 Start
+--Starting here a sub-select gets the planned order number for the higher level demand
+             (select item_number from item where item_id in
+(
+select itemsite_item_id from itemsite where itemsite_id in
+(
+
+select planord_itemsite_id from planord, planreq, itemsite, item
+where 
+planreq_itemsite_id = itemsite_id
+and itemsite_item_id = item_id
+and item_id = <? value("item_id") ?>
+and planreq_source_id = planord_id
+)
+)) AS item_number,
+--End of subselect to get higher level item number
+--2.3 Start
        formatDate(planord_startdate) AS duedate,
        planord_startdate AS r_duedate,
        FALSE AS late,
@@ -220,9 +242,11 @@ WHERE ((planreq_source='P')
 UNION
 SELECT pr_id AS orderid, -1 AS altorderid,
        'P/R' AS ordertype,
-       <? value("pr") ?> AS ordernumber,
+--       <? value("pr") ?> AS ordernumber,
+--2.3 replaced above with actual order number
+       CAST(pr_number AS text) AS ordernumber,       
        1 AS sequence,
-       item_number,
+       '' AS item_number,
        formatDate(pr_duedate) AS duedate,
        pr_duedate AS r_duedate,
        FALSE AS late,
@@ -239,3 +263,4 @@ WHERE ((pr_itemsite_id=itemsite_id)
 <? endif ?>
 
 ORDER BY r_duedate, sequence;
+
