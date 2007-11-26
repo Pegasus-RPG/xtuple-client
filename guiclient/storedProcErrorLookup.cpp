@@ -552,8 +552,7 @@ void initErrorLookupHash()
 
   { "deleteWorkCenter",  -1, TR("The selected Work Center cannot be deleted "
 				"because there has been history posted against "
-				"it. You may edit the selected Work Center and "
-				"set its active status to inactive." ),	0, "" },
+				"it."),	0, "" },
   { "deleteWorkCenter",  -2, TR("The selected Work Center cannot be deleted "
 				"because Standard Operations exist that use "
 				"it. You must reassign all Standard Operations "
