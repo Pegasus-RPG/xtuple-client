@@ -63,7 +63,7 @@
 
 #include <openreports.h>
 
-#include <currCluster.h>
+#include <currcluster.h>
 
 #include "arOpenItem.h"
 #include "dspInvoiceInformation.h"
