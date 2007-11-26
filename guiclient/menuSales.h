@@ -113,9 +113,9 @@ class menuSales : public QObject
     void sPostInvoices();
     void sPurgeInvoices();
 
-	void sNewReturn();
-	void sOpenReturns();
-	void sReturnsWorkbench();
+    void sNewReturn();
+    void sOpenReturns();
+    void sReturnsWorkbench();
 
     void sNewCreditMemo();
     void sUnpostedCreditMemos();
@@ -195,6 +195,7 @@ class menuSales : public QObject
     void sDspTimePhasedSalesByCustomerByItem();
 
     void sPrintSalesOrderForm();
+    void sPrintSASpecialCalendarForm();
 
     void sNewCustomer();
     void sSearchForCustomer();

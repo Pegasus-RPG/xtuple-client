@@ -198,6 +198,7 @@
 #include "reassignCustomerTypeByCustomerType.h"
 #include "characteristics.h"
 
+#include "printSASpecialCalendarForm.h"
 #include "archRestoreSalesHistory.h"
 
 // START_RW
@@ -441,6 +442,9 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
     { "separator",	NULL,	NULL,	analysisTpHistMenu,	true,		NULL, NULL, true, NULL },
     { "sa.dspTimePhasedSalesHistoryByProductCategory", tr("by &Product Category..."), SLOT(sDspTimePhasedSalesByProductCategory()), analysisTpHistMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")), NULL, NULL, true , NULL },
     { "sa.dspTimePhasedSalesHistoryByItem", tr("by &Item..."), SLOT(sDspTimePhasedSalesByItem()), analysisTpHistMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")), NULL, NULL, true , NULL },
+
+    // Sales | Analysis
+    { "sa.rptPrintSASpecialCalendarForm", tr("Print S/A Special Calendar Form..."), SLOT(sPrintSASpecialCalendarForm()), analysisMenu, _privleges->check("ViewSalesHistory"), NULL, NULL, true, NULL },
 
     { "separator",	NULL,	NULL,	mainMenu,	true,		NULL, NULL, true, NULL },
 
@@ -1329,3 +1333,9 @@ void menuSales::sRestoreSalesHistory()
   newdlg.set(params);
   newdlg.exec();
 }
+
+void menuSales::sPrintSASpecialCalendarForm()
+{
+  printSASpecialCalendarForm(parent, "", TRUE).exec();
+}
+
