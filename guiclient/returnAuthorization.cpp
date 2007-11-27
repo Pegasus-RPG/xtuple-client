@@ -362,6 +362,14 @@ bool returnAuthorization::sSave()
   char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   char *creditMethods[] = { "N", "M", "K", "C" };
 
+  if (_authNumber->text().isEmpty())
+  {
+    QMessageBox::critical( this, tr("Cannot Save Return Authorization"),
+      tr("You may not save this Return Authorization until you have entered a valid Authorization Number.") );
+    _authNumber->setFocus();
+    return false;
+  }
+
   if ( ! _miscCharge->isZero() && (!_miscChargeAccount->isValid()) )
   {
     QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
@@ -774,7 +782,7 @@ void returnAuthorization::sCheckAuthorizationNumber()
     _authNumber->setEnabled(FALSE);
 
     XSqlQuery query;
-    query.prepare( "SELECT rahead_id, rahead_status "
+    query.prepare( "SELECT rahead_id "
                    "FROM rahead "
                    "WHERE (rahead_number=:rahead_number)" );
     query.bindValue(":rahead_number", _authNumber->text().toInt());
@@ -788,39 +796,8 @@ void returnAuthorization::sCheckAuthorizationNumber()
 
       populate();
      
-      if (query.value("rahead_status").toString() == "C")
-      {
-        _authDate->setEnabled(FALSE);
-        _salesRep->setEnabled(FALSE);
-        _commission->setEnabled(FALSE);
-        _taxauth->setEnabled(FALSE);
-        _disposition->setEnabled(FALSE);
-		_rsnCode->setEnabled(FALSE);
-		_immediately->setEnabled(FALSE);
-		_uponReceipt->setEnabled(FALSE);
-		_creditBy->setEnabled(FALSE);
-        _origso->setEnabled(FALSE);
-        _incident->setEnabled(FALSE);
-		_project->setEnabled(FALSE);
-        _customerPO->setEnabled(FALSE);
-        _miscCharge->setEnabled(FALSE);
-        _miscChargeDescription->setEnabled(FALSE);
-        _miscChargeAccount->setReadOnly(TRUE);
-        _freight->setEnabled(FALSE);
-        _notes->setReadOnly(TRUE);
-        _shipToNumber->setEnabled(FALSE);
-        _shipToName->setEnabled(FALSE);
-        _raitem->setEnabled(FALSE);
-        _shipToList->hide();
-        _save->hide();
-        _new->hide();
-        _delete->hide();
-        _edit->hide();
 
-        _mode = cView;
-      }
-      else
-        _mode = cEdit;
+      _mode = cEdit;
     }
     else if (query.lastError().type() != QSqlError::None)
     {
@@ -889,10 +866,10 @@ void returnAuthorization::sEdit()
     params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     params.append("rahead_id", _raheadid);
 
-	if (_mode==cEdit)
-	  params.append("mode", "edit");
+	if (_mode==cView)
+	  params.append("mode", "view");
 	else
-      params.append("mode", "view");
+      params.append("mode", "edit");
 
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);
