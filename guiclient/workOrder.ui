@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>419</height>
+    <height>445</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -615,6 +615,19 @@
            <size>
             <width>40</width>
             <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" colspan="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>241</width>
+            <height>16</height>
            </size>
           </property>
          </spacer>

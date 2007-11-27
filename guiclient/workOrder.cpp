@@ -117,9 +117,14 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
     _warehouse->hide();
   }
 
+  //If not Routing, hide controls
+  if (!_metrics->boolean("Routings"))
+   _booGroup->hide();
+
   //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
    _tabs->removePage(_tabs->page(3));
+
 }
 
 /*
