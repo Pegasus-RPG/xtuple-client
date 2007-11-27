@@ -59,7 +59,7 @@
 #define RETURNWOMATERIALITEM_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_returnWoMaterialItem.h"
 
@@ -71,10 +71,8 @@ public:
     returnWoMaterialItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~returnWoMaterialItem();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sReturn();
     virtual void sSetQOH( int pWomatlid );
     virtual void sUpdateQty();

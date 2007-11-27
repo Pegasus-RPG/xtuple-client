@@ -57,9 +57,9 @@
 
 #include "returnWoMaterialItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QValidator>
 #include "inputManager.h"
 #include "distributeInventory.h"
 
@@ -73,39 +73,17 @@
 returnWoMaterialItem::returnWoMaterialItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_womatl, SIGNAL(valid(bool)), _return, SLOT(setEnabled(bool)));
-    connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
-    connect(_wo, SIGNAL(newId(int)), _womatl, SLOT(setWoid(int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_womatl, SIGNAL(newId(int)), this, SLOT(sSetQOH(int)));
-    connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty()));
-    init();
-}
+  // signals and slots connections
+  connect(_womatl, SIGNAL(valid(bool)), _return, SLOT(setEnabled(bool)));
+  connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
+  connect(_wo, SIGNAL(newId(int)), _womatl, SLOT(setWoid(int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_womatl, SIGNAL(newId(int)), this, SLOT(sSetQOH(int)));
+  connect(_qty, SIGNAL(textChanged(const QString&)), this, SLOT(sUpdateQty()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-returnWoMaterialItem::~returnWoMaterialItem()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void returnWoMaterialItem::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void returnWoMaterialItem::init()
-{
   _captive = FALSE;
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
@@ -114,7 +92,24 @@ void returnWoMaterialItem::init()
   _qty->setValidator(omfgThis->qtyVal());
 }
 
-enum SetResponse returnWoMaterialItem::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+returnWoMaterialItem::~returnWoMaterialItem()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void returnWoMaterialItem::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse returnWoMaterialItem::set(const ParameterList &pParams)
 {
   _captive = TRUE;
 
@@ -198,15 +193,18 @@ void returnWoMaterialItem::sSetQOH(int pWomatlid)
   else
   {
     XSqlQuery qoh;
-    qoh.prepare( "SELECT itemsite_qtyonhand "
-                 "FROM womatl, itemsite "
-                 "WHERE ( (womatl_itemsite_id=itemsite_id)"
-                 " AND (womatl_id=:womatl_id) );" );
+    qoh.prepare( "SELECT itemuomtouom(itemsite_item_id, NULL, womatl_uom_id, itemsite_qtyonhand) AS qtyonhand,"
+                 "       uom_name "
+                 "  FROM womatl, itemsite, uom"
+                 " WHERE((womatl_itemsite_id=itemsite_id)"
+                 "   AND (womatl_uom_id=uom_id)"
+                 "   AND (womatl_id=:womatl_id) );" );
     qoh.bindValue(":womatl_id", pWomatlid);
     qoh.exec();
     if (qoh.first())
     {
-      _cachedQOH = qoh.value("itemsite_qtyonhand").toDouble();
+      _uom->setText(qoh.value("uom_name").toString());
+      _cachedQOH = qoh.value("qtyonhand").toDouble();
       _beforeQty->setText(formatQty(_cachedQOH));
     }
     else
