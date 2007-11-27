@@ -94,7 +94,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
 
   statusBar()->hide();
   
-  _ra->addColumn(tr("S/O #"),            _orderColumn, Qt::AlignLeft   );
+  _ra->addColumn(tr("R/A #"),            _orderColumn, Qt::AlignLeft   );
   _ra->addColumn(tr("Cust. #"),          _orderColumn, Qt::AlignLeft   );
   _ra->addColumn(tr("Customer"),         -1,           Qt::AlignLeft   );
   _ra->addColumn(tr("Disposition"), _itemColumn,  Qt::AlignLeft   );
