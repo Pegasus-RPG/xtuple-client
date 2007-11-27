@@ -153,10 +153,12 @@ WHERE ((coitem_status='O')
 <? if exists("showMRPplan") ?>
 UNION
 SELECT planord_id AS orderid, -1 AS altorderid,
-       'Planned P/O' AS ordertype,
---       CASE WHEN (planord_firm) THEN <? value("firmPo") ?>
--- 	   ELSE <? value("plannedPo") ?>
---       END AS ordernumber,
+--       'Planned P/O' AS ordertype,
+-- 2.3 replace above with metasql that previously would have put these values in ordernumber
+-- now this info will be in ordertype
+       CASE WHEN (planord_firm) THEN <? value("firmPo") ?> 
+ 	   ELSE <? value("plannedPo") ?> 
+       END AS ordertype,
 --2.3 replaced case above with actual order number for higher level demand
        CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
@@ -176,10 +178,12 @@ WHERE ((planord_type='P')
 
 UNION
 SELECT planord_id AS orderid, -1 AS altorderid,
-       'Planned W/O' AS ordertype,
---       CASE WHEN (planord_firm) THEN <? value("firmWo") ?>
---	    ELSE <? value("plannedWo") ?>
---       END AS ordernumber,
+--       'Planned W/O' AS ordertype,
+-- 2.3 replace above with metasql that previously would have put these values in ordernumber
+-- now this info will be in ordertype
+       CASE WHEN (planord_firm) THEN <? value("firmWo") ?> 
+	    ELSE <? value("plannedWo") ?> 
+       END AS ordertype,
 --2.3 replaced case above with actual order number
        CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
@@ -199,10 +203,12 @@ WHERE ((planord_type='W')
 
 UNION
 SELECT planreq_id AS orderid, -1 AS altorderid,
-       'Planned W/O' AS ordertype,
---       CASE WHEN (planord_firm) THEN <? value("firmWoReq") ?>
---	    ELSE <? value("plannedWoReq") ?>
---       END AS ordernumber,
+--       'Planned W/O' AS ordertype,
+-- 2.3 replace above with metasql that previously would have put these values in ordernumber
+-- now this info will be in ordertype
+       CASE WHEN (planord_firm) THEN <? value("firmWoReq") ?> 
+	    ELSE <? value("plannedWoReq") ?> 
+       END AS ordertype,
 --2.3 replaced case above with actual order number for higher level demand
        CAST(planord_number AS text) AS ordernumber,
        1 AS sequence,
@@ -241,8 +247,8 @@ WHERE ((planreq_source='P')
 
 UNION
 SELECT pr_id AS orderid, -1 AS altorderid,
-       'P/R' AS ordertype,
---       <? value("pr") ?> AS ordernumber,
+--       'P/R' AS ordertype,
+       <? value("pr") ?> AS ordertype,
 --2.3 replaced above with actual order number
        CAST(pr_number AS text) AS ordernumber,       
        1 AS sequence,
