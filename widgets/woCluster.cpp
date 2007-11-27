@@ -59,9 +59,9 @@
 //  Created 03/08/2002 JSL
 //  Copyright (c) 2002-2007, OpenMFG, LLC
 
-#include <qlabel.h>
-#include <qpushbutton.h>
-#include <qlayout.h>
+#include <QLabel>
+#include <QPushButton>
+#include <QLayout>
 //Added by qt3to4:
 #include <Q3HBoxLayout>
 #include <Q3VBoxLayout>

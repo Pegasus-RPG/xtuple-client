@@ -459,7 +459,7 @@ void dspInventoryAvailabilityBySalesOrder::sFillList()
                  "        AND (coitem_itemsite_id=itemsite_id)"
                  "        AND (itemsite_item_id=item_id)"
                  "        AND (item_inv_uom_id=uom_id)"
-                 "        AND (coitem_status <> 'X')"
+                 "        AND (coitem_status NOT IN ('C', 'X'))"
                  "        AND (cohead_id=<? value(\"sohead_id\") ?>))"
                  ") AS data "
                  " <? if exists(\"onlyShowShortages\") ?>"

@@ -419,7 +419,7 @@ void dspInventoryAvailabilityByCustomerType::sFillList()
                "        AND (coitem_itemsite_id=itemsite_id)"
                "        AND (itemsite_item_id=item_id)"
                "        AND (item_inv_uom_id=uom_id)"
-               "        AND (coitem_status <> 'X')"
+               "        AND (coitem_status NOT IN ('C', 'X'))"
                "        AND (cohead_cust_id=cust_id)"
                "<? if exists(\"custtype_id\") ?>"
                "        AND (cust_custtype_id=<? value(\"custtype_id\") ?>)"
