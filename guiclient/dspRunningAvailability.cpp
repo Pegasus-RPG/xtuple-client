@@ -172,13 +172,13 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
 {
   int menuItem;
 
-  if (pSelected->text(ORDERNUM_COL) == tr("Planned W/O (firmed)") ||
-      pSelected->text(ORDERNUM_COL) == tr("Planned W/O") ||
-      pSelected->text(ORDERNUM_COL) == tr("Planned P/O (firmed)") ||
-      pSelected->text(ORDERNUM_COL) == tr("Planned P/O") )
+  if (pSelected->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
+      pSelected->text(ORDERTYPE_COL) == tr("Planned W/O") ||
+      pSelected->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") ||
+      pSelected->text(ORDERTYPE_COL) == tr("Planned P/O") )
   {
-    if (pSelected->text(ORDERNUM_COL) == tr("Planned W/O (firmed)") ||
-	pSelected->text(ORDERNUM_COL) == tr("Planned P/O (firmed)") )
+    if (pSelected->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
+	pSelected->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") )
       pMenu->insertItem(tr("Soften Order..."), this, SLOT(sSoftenOrder()), 0);
     else
       pMenu->insertItem(tr("Firm Order..."), this, SLOT(sFirmOrder()), 0);
@@ -188,8 +188,8 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
   }
   
   else if (pSelected->text(ORDERTYPE_COL).contains("W/O") &&
-	  !(pSelected->text(ORDERNUM_COL) == tr("Planned W/O Req. (firmed)") ||
-	    pSelected->text(ORDERNUM_COL) == tr("Planned W/O Req.")))
+	  !(pSelected->text(ORDERTYPE_COL) == tr("Planned W/O Req. (firmed)") ||
+	    pSelected->text(ORDERTYPE_COL) == tr("Planned W/O Req.")))
     pMenu->insertItem(tr("View Work Order Details..."), this, SLOT(sViewWo()), 0);
   else if (pSelected->text(ORDERTYPE_COL) == "S/O")
   {
@@ -235,8 +235,8 @@ void dspRunningAvailability::sSoftenOrder()
 void dspRunningAvailability::sReleaseOrder()
 {
   // TODO
-  if (_availability->currentItem()->text(ORDERNUM_COL) == tr("Planned W/O (firmed)") ||
-      _availability->currentItem()->text(ORDERNUM_COL) == tr("Planned W/O"))
+  if (_availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned W/O (firmed)") ||
+      _availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned W/O"))
   {
     ParameterList params;
     params.append("mode", "release");
@@ -253,8 +253,8 @@ void dspRunningAvailability::sReleaseOrder()
     }
 #endif
   }
-  else if (_availability->currentItem()->text(ORDERNUM_COL) == tr("Planned P/O (firmed)") ||
-	  _availability->currentItem()->text(ORDERNUM_COL) == tr("Planned P/O"))
+  else if (_availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned P/O (firmed)") ||
+	  _availability->currentItem()->text(ORDERTYPE_COL) == tr("Planned P/O"))
   {
     ParameterList params;
     params.append("mode", "release");
