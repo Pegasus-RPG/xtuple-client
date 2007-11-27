@@ -422,7 +422,8 @@ bool returnAuthorization::sSave()
   q.bindValue(":rahead_commission", (_commission->toDouble() / 100));
   if (_taxauth->isValid())
     q.bindValue(":rahead_taxauth_id",	_taxauth->id());
-  q.bindValue(":rahead_rsncode_id", _rsnCode->id());
+  if (_rsnCode->id() > 0)
+    q.bindValue(":rahead_rsncode_id", _rsnCode->id());
   q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
   if (_immediately->isChecked())
     q.bindValue(":rahead_timing", "I");
@@ -482,8 +483,8 @@ bool returnAuthorization::sSave()
     {
       if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
       {
-	enterPoReceipt::post("RA", _raheadid);
-	break;
+	    enterPoReceipt::post("RA", _raheadid);
+	    break;
       }
     }
   }
@@ -863,17 +864,18 @@ void returnAuthorization::sCopyToShipto()
 
 void returnAuthorization::sNew()
 {
-  sSave();
+  if (sSave())
+  {
+    ParameterList params;
+    params.append("mode", "new");
+    params.append("rahead_id", _raheadid);
 
-  ParameterList params;
-  params.append("mode", "new");
-  params.append("rahead_id", _raheadid);
-
-  returnAuthorizationItem newdlg(this, "", TRUE);
-  newdlg.set(params);
+    returnAuthorizationItem newdlg(this, "", TRUE);
+    newdlg.set(params);
   
-  if (newdlg.exec() != QDialog::Rejected)
-    populate();
+    if (newdlg.exec() != QDialog::Rejected)
+      populate();
+  }
 }
 
 void returnAuthorization::sEdit()
