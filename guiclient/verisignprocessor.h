@@ -72,7 +72,7 @@ class VerisignProcessor : public CreditCardProcessor
     VerisignProcessor();
 
   protected:
-    virtual bool doCheckConfiguration();
+    virtual int  doCheckConfiguration();
     virtual bool isLive();
     virtual bool isTest();
 

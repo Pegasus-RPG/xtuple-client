@@ -98,7 +98,7 @@ VerisignProcessor::VerisignProcessor() : CreditCardProcessor()
   }
 }
 
-bool VerisignProcessor::doCheckConfiguration()
+int VerisignProcessor::doCheckConfiguration()
 {
   _errorMsg = tr("Verisign is not yet supported as a Credit Card Processor.");
   return false;
@@ -110,28 +110,22 @@ bool VerisignProcessor::doCheckConfiguration()
   if ((_metrics->value("CCServer") != "payflow.verisign.com") &&
       (_metrics->value("CCServer") != "test-payflow.verisign.com"))
   {
-    _errorMsg = tr("The CCServer %1 is not valid for Verisign.")
-		  .arg(_metrics->value("CCServer"));
-    return false;
+    _errorMsg = errorMsg(-15)
+		  .arg(_metrics->value("CCServer"))
+		  .arg(_metrics->value("CCCompany"));
+    return -15;
 
-  }
-
-  if (!isLive() && !isTest())
-  {
-    _errorMsg = tr("If Credit Card test is selected you must select a test "
-		   "server.  If Credit Card Test is not selected you must "
-		   "select a production server");
-    return false;
   }
 
   if (_metrics->value("CCPort").toInt() != 443)
   {
-    _errorMsg = tr("You have an invalid port identified for the requested "
-		   "server");
-    return false;
+    _errorMsg = errorMsg(-16)
+		  .arg(_metrics->value("CCPort"))
+		  .arg(_metrics->value("CCCompany"));
+    return -16;
   }
 
-  return true;
+  return 0;
 }
 
 bool VerisignProcessor::isLive()

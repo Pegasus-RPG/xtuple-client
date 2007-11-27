@@ -72,13 +72,13 @@ class YourPayProcessor : public CreditCardProcessor
     YourPayProcessor();
 
   protected:
-    virtual bool doCheckConfiguration();
-    virtual bool doCredit(const int, const double, const int, const QString&, const QString&, int&);
+    virtual int  doCheckConfiguration();
+    virtual int  doCredit(const int, const double, const int, const QString&, const QString&, int&);
     virtual bool isLive();
     virtual bool isTest();
 
   private:
-    virtual bool handleResponse(const QDomDocument&, const int, const QString&, const double, const int, const QString&, int&);
+    virtual int  handleResponse(const QDomDocument&, const int, const QString&, const double, const int, const QString&, int&);
     QString	_pemfile;
     QString	_storenum;
 };

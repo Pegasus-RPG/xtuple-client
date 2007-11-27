@@ -63,7 +63,7 @@
 #include "OpenMFGGUIClient.h"
 #include "yourpayprocessor.h"
 
-#define DEBUG true
+#define DEBUG false
 
 YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 {
@@ -99,9 +99,14 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
     _currencyName   = CurrDisplay::baseCurrAbbr();
     _currencySymbol = CurrDisplay::baseCurrAbbr();
   }
+
+  _msgHash.insert(-100, tr("No Approval Code\n%1\n%2\n%3"));
+  _msgHash.insert(-103, tr("The YourPay Store Number is not set."));
+  _msgHash.insert(-104, tr("The digital certificate (.pem file) is not set."));
+  _msgHash.insert(-105, tr("Could not open digital certificate (.pem file) %1."));
 }
 
-bool YourPayProcessor::doCredit(const int pccardid, const double pamount, const int pcurrid, const QString &pneworder, const QString &porigorder, int &pccpayid)
+int YourPayProcessor::doCredit(const int pccardid, const double pamount, const int pcurrid, const QString &pneworder, const QString &porigorder, int &pccpayid)
 {
   XSqlQuery ypq;
   ypq.prepare( "SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
@@ -126,19 +131,19 @@ bool YourPayProcessor::doCredit(const int pccardid, const double pamount, const 
   {
     if (!ypq.value("ccard_active").toBool())
     {
-      _errorMsg = tr("The Credit Card you are trying to use is not active.");
-      return false;
+      _errorMsg = errorMsg(-10);
+      return -10;
     }
   }
   else if (ypq.lastError().type() != QSqlError::NoError)
   {
     _errorMsg = ypq.lastError().databaseText();
-    return false;
+    return -1;
   }
   else
   {
-    _errorMsg = tr("Could not find the credit transaction.");
-    return false;
+    _errorMsg = errorMsg(-50);
+    return -50;
   }
 
   QDomDocument request;
@@ -222,16 +227,19 @@ bool YourPayProcessor::doCredit(const int pccardid, const double pamount, const 
     _metrics->set("CCOrder", request.toString());
 
   QDomDocument response;
-  if (! processXML(request, response))
-    return false;
+  int returnValue = processXML(request, response);
+  if (returnValue < 0)
+    return returnValue;
 
-  if (! handleResponse(response, pccardid, "R", pamount, pcurrid, porigorder, pccpayid))
-    return false;
+  returnValue = handleResponse(response, pccardid, "R", pamount, pcurrid,
+			       porigorder, pccpayid);
+  if (returnValue < 0)
+    return returnValue;
 
-  return true;
+  return returnValue;
 }
 
-bool YourPayProcessor::handleResponse(const QDomDocument &response, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, const QString &porigorder, int &pccpayid)
+int YourPayProcessor::handleResponse(const QDomDocument &response, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, const QString &porigorder, int &pccpayid)
 {
   if (DEBUG) qDebug("YP::handleResponse(%s, %d, %s, %f, %d, %s, %d)",
 	  response.toString().toAscii().data(), pccardid,
@@ -302,48 +310,53 @@ bool YourPayProcessor::handleResponse(const QDomDocument &response, const int pc
     node = node.nextSibling();
   }
 
+  int returnValue = 0;
   if (r_approved == "APPROVED")
   {
-    _errorMsg = tr("This transaction was approved\n") + r_ref;
+    _errorMsg = errorMsg(0).arg(r_ref);
     status = "C";
   }
 
   else if (r_approved == "DENIED")
   {
-    _errorMsg = tr("This transaction was denied\n") + r_message;
+    _errorMsg = errorMsg(10).arg(r_message);
+    returnValue = 10;
     status = "D";
   }
   
   else if (r_approved == "DUPLICATE")
   {
-    _errorMsg = tr("This transaction is a duplicate\n") + r_message;
+    _errorMsg = errorMsg(11).arg(r_message);
+    returnValue = 11;
     status = "D";
   }
   
   else if (r_approved == "DECLINED")
   {
-    _errorMsg = tr("This transaction was declined\n") + r_error;
+    _errorMsg = errorMsg(12).arg(r_error);
+    returnValue = 12;
     status = "D";
   }
   
   else if (r_approved == "FRAUD")
   {
-    _errorMsg = tr("This transaction was denied because of possible fraud\n") +
-		r_error;
+    _errorMsg = errorMsg(13).arg(r_error);
+    returnValue = 13;
     status = "D";
   }
   
   else if (r_approved.isEmpty())
   {
-    _errorMsg = tr("<p>No Approval Code<br>%1<br>%2<br>%3")
+    _errorMsg = errorMsg(-100)
 		     .arg(r_error).arg(r_message).arg(response.toString());
+    returnValue = -100;
     status = "X";
   }
 
   /* From here on, treat errors as warnings:
      do as much as possible,
      set _errorMsg if there are problems, and
-     return true unless YourPay returned an error.
+     return a warning unless YourPay already gave an error.
   */
 
   XSqlQuery ypq;
@@ -353,17 +366,17 @@ bool YourPayProcessor::handleResponse(const QDomDocument &response, const int pc
   else if (ypq.lastError().type() != QSqlError::None && r_error.isEmpty())
   {
     _errorMsg = ypq.lastError().databaseText();
-    return true;
+    return 1;
   }
   else if (ypq.lastError().type() == QSqlError::None && r_error.isEmpty())
   {
-    _errorMsg = tr("Could not generate a unique key for the ccpay table.");
-    return true;
+    _errorMsg = errorMsg(2);
+    return 2;
   }
   else	// no rows found and YP reported an error
   {
-    _errorMsg = r_error;
-    return false;
+    _errorMsg = errorMsg(-12).arg(r_error);
+    return -12;
   }
 
   ypq.prepare("INSERT INTO ccpay ("
@@ -412,51 +425,49 @@ bool YourPayProcessor::handleResponse(const QDomDocument &response, const int pc
   if (ypq.lastError().type() != QSqlError::None)
   {
     pccpayid = -1;
-    _errorMsg = ypq.lastError().databaseText();
+    if (returnValue == 0)
+    {
+      _errorMsg = ypq.lastError().databaseText();
+      returnValue = 1;
+    }
   }
 
   if (DEBUG) qDebug("r_error.isEmpty() = %d", r_error.isEmpty());
 
   if (r_error.isEmpty())
-    return true;
+    return 0;
   else
   {
-    _errorMsg = r_error;
-    return false;
+    _errorMsg = errorMsg(-12).arg(r_error);
+    return -12;
   }
 }
 
-bool YourPayProcessor::doCheckConfiguration()
+int YourPayProcessor::doCheckConfiguration()
 {
   if ((_metrics->value("CCServer") != "staging.linkpt.net") &&
       (_metrics->value("CCServer") != "secure.linkpt.net"))
   {
-    _errorMsg = tr("The CCServer %1 is not valid for YourPay.")
-		  .arg(_metrics->value("CCServer"));
-    return false;
+    _errorMsg = errorMsg(-15)
+		.arg(_metrics->value("CCServer"))
+		.arg(_metrics->value("CCCompany"));
+    return -15;
 
-  }
-
-  if (!isLive() && !isTest())
-  {
-    _errorMsg = tr("If Credit Card test is selected you must select a test "
-		   "server. If Credit Card Test is not selected you must "
-		   "select a production server");
-    return false;
   }
 
   if (_metrics->value("CCPort").toInt() != 1129)
   {
-    _errorMsg = tr("You have an invalid port identified for the requested "
-		   "server");
-    return false;
+    _errorMsg = errorMsg(-16)
+		  .arg(_metrics->value("CCPort"))
+		  .arg(_metrics->value("CCCompany"));
+    return -16;
   }
 
   _storenum = _metricsenc->value("CCYPStoreNum");
   if (_storenum.isEmpty())
   {
-    _errorMsg = tr("The YourPay Store Number is missing");
-    return false;
+    _errorMsg = errorMsg(-103);
+    return -103;
   }
 
 #ifdef Q_WS_WIN
@@ -469,18 +480,18 @@ bool YourPayProcessor::doCheckConfiguration()
 
   if (_pemfile.isEmpty())
   {
-    _errorMsg = tr("The YourPay PEM file is not set.") ;
-    return false;
+    _errorMsg = errorMsg(-104);
+    return -104;
   }
 
   QFileInfo fileinfo(_pemfile.toLatin1());
   if (!fileinfo.isFile())
   {
-    _errorMsg = tr("Could not open PEM file %1", _pemfile.toLatin1());
-   return false;
+    _errorMsg = errorMsg(-105).arg(fileinfo.fileName());
+   return -105;
   }
 
-  return true;
+  return 0;
 }
 
 bool YourPayProcessor::isLive()

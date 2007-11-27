@@ -289,7 +289,8 @@ void returnAuthorizationWorkbench::sProcess()
       }
       else if (_radue->altId() == 3)
       {
-	q.prepare("SELECT SUM(ROUND((cmitem_qtycredit * cmitem_qty_invuomratio) * "
+	XSqlQuery ccq;
+	ccq.prepare("SELECT SUM(ROUND((cmitem_qtycredit * cmitem_qty_invuomratio) * "
 		  "                 (cmitem_unitprice / cmitem_price_invuomratio),"
 		  "                 2)) +"
 		  "       currToCurr(COALESCE(cmhead_tax_curr_id,cmhead_curr_id),"
@@ -308,32 +309,37 @@ void returnAuthorizationWorkbench::sProcess()
 		  "         cmhead_misc, ccard_id, ccard_seq "
 		  "ORDER BY ccard_seq "
 		  "LIMIT 1;");
-	q.bindValue(":cmhead_id", _cmheadid);
-	q.exec();
+	ccq.bindValue(":cmhead_id", _cmheadid);
+	ccq.exec();
 	int ccpayid;
-	if (q.first())
+	if (ccq.first())
 	{
 	  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
 	  if (! cardproc)
 	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
-				  tr("Could not start Credit Card processing:\n%1")
-				  .arg(cardproc->errorMsg()));
-	  else if (! cardproc->credit(q.value("ccard_id").toInt(),
-				      q.value("total").toDouble(),
-				      q.value("cmhead_curr_id").toInt(),
-				      newcmnumber, origconumber, ccpayid))
-	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
-				  tr("Could not process Credit transaction:\n%1")
-				  .arg(cardproc->errorMsg()));
-	  else if (! cardproc->errorMsg().isEmpty())
-	    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
-				  cardproc->errorMsg());
+				  CreditCardProcessor::errorMsg());
+	  else
+	  {
+	    int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
+					    ccq.value("total").toDouble(),
+					    ccq.value("cmhead_curr_id").toInt(),
+					    newcmnumber, origconumber, ccpayid);
+	    if (returnValue < 0)
+	      QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				    cardproc->errorMsg());
+	    else if (returnValue > 0)
+	      QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+				   cardproc->errorMsg());
+	    else if (! cardproc->errorMsg().isEmpty())
+	      QMessageBox::information(this, tr("Credit Card Processing Note"),
+				   cardproc->errorMsg());
+	  }
 	  // requery regardless 'cause the new credit memo means nothing's "due"
 	  sFillList();
 	}
-	else if (q.lastError().type() != QSqlError::None)
+	else if (ccq.lastError().type() != QSqlError::None)
 	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
 	else
