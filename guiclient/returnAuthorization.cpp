@@ -100,7 +100,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
   connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
-  connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
+  //connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
   connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
   connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
