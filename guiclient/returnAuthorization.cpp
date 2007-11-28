@@ -66,6 +66,7 @@
 
 #include <metasql.h>
 
+#include "creditcardprocessor.h"
 #include "enterPoitemReceipt.h"
 #include "enterPoReceipt.h"
 #include "mqlutil.h"
@@ -114,6 +115,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
   connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
   connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
+  connect(_refund,	SIGNAL(clicked()), this, SLOT(sRefund()));
 
 #ifndef Q_WS_MAC
   _shipToList->setMaximumWidth(25);
@@ -159,12 +161,18 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _clearAuthorization->hide();
   _authorizeAll->hide();
 
-  //Remove Credit Card related options if Credit Card not enabled
-  QString key = omfgThis->_key;
-  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
+  if(_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
   {
-    _returnAuthInformation->removePage(_returnAuthInformation->page(4));
+    if (! CreditCardProcessor::getProcessor())
+      QMessageBox::warning(this, tr("Credit Card Processing error"),
+			   CreditCardProcessor::errorMsg());
+  }
+  else
+  {
     _creditBy->removeItem(3);
+	_refund->hide();
+	_CCCVVLit->hide();
+	_CCCVV->hide();
   }
 
   _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
@@ -1409,6 +1417,7 @@ void returnAuthorization::sDispositionChanged()
                              tr("Would you like to update the disposition of all existing line items?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
       {
+		sSave();
 	    q.prepare("UPDATE raitem SET raitem_disposition=:rahead_disposition "
 		    	  "WHERE (raitem_rahead_id=:rahead_id);");
 		q.bindValue(":rahead_id", _raheadid);
@@ -1421,7 +1430,6 @@ void returnAuthorization::sDispositionChanged()
         }
 		else
 		{
-		  sSave();
 		  sFillList();
 		}
 	  }
@@ -1442,6 +1450,7 @@ void returnAuthorization::sDispositionChanged()
   else
     _uponReceipt->setEnabled(TRUE);
 
+  _refund->setEnabled(_creditBy->currentItem() == 3);
 }
 
 void returnAuthorization::sAuthorizeLine()
@@ -1633,4 +1642,78 @@ void returnAuthorization::sHandleSalesOrderEvent(int pSoheadid, bool)
 {
   if ((pSoheadid == _origso->id()) || (pSoheadid == _newso->id()))
     sFillList();
+}
+
+void returnAuthorization::sRefund()
+{
+  if (! sSave())
+    return;
+
+  bool _post = _disposition->currentItem() == 0 && _immediately->isChecked() &&
+		_creditBy->currentItem() == 3;
+
+  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
+  q.bindValue(":rahead_id", _raheadid);
+  q.bindValue(":post",      QVariant(_post));
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("createRaCreditMemo", result), __FILE__, __LINE__);
+      return;
+    }
+    ParameterList ccp;
+    ccp.append("cmhead_id", result);
+    MetaSQLQuery ccm = mqlLoad(":/so/creditMemoCreditCard.mql");
+    XSqlQuery ccq = ccm.toQuery(ccp);
+    if (ccq.first())
+    {
+      int ccpayid = ccq.value("ccpay_id").toInt();
+      QMessageBox::information( this, tr("New Credit Memo Created"),
+				tr("<p>A new CreditMemo has been created and "
+						   "assigned #%1")
+				   .arg(ccq.value("cmhead_number").toString()));
+      CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+      if (! cardproc)
+	QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			      CreditCardProcessor::errorMsg());
+      else
+      {
+	int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
+					   ccq.value("total").toDouble(),
+					   ccq.value("cmhead_curr_id").toInt(),
+					   ccq.value("cmhead_number").toString(),
+					   ccq.value("cohead_number").toString(),
+					   ccpayid);
+	if (returnValue < 0)
+	  QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				cardproc->errorMsg());
+	else if (returnValue > 0)
+	  QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+			       cardproc->errorMsg());
+	else if (! cardproc->errorMsg().isEmpty())
+	  QMessageBox::information(this, tr("Credit Card Processing Note"),
+			       cardproc->errorMsg());
+      }
+    }
+    else if (ccq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			    tr("Could not find a Credit Card to use for "
+			       "this Credit transaction."));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

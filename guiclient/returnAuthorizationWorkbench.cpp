@@ -69,6 +69,7 @@
 #include "mqlutil.h"
 #include "returnAuthorization.h"
 #include "returnAuthCheck.h"
+#include "storedProcErrorLookup.h"
 
 returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -244,43 +245,36 @@ void returnAuthorizationWorkbench::sHandleButton()
 
 void returnAuthorizationWorkbench::sProcess()
 {
-  int _cmheadid;
-  bool _post;
+  bool _post = ((_radue->altId() > 1) ||
+		(_radue->altId() == 1 && _postmemos->isChecked())) ;
 
-  if ((_radue->altId() > 1) ||
-	  (_radue->altId() == 1 && _postmemos->isChecked()))
-    _post = TRUE;
-    //_post = FALSE;
-  else
-    _post = FALSE;
-
-  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result,"
-	    "       cohead_number "
-	    "FROM rahead LEFT OUTER JOIN cohead ON (rahead_orig_cohead_id=cohead_id)"
-	    "WHERE (rahead_id=:rahead_id);");
+  q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");
   q.bindValue(":rahead_id",_radue->id());
   q.bindValue(":post",QVariant(_post));
   q.exec();
   if (q.first())
   {
-    _cmheadid = q.value("result").toInt();
-    QString origconumber = q.value("cohead_number").toString();
+    int cmheadid = q.value("result").toInt();
+    if (cmheadid < 0)
+    {
+      systemError(this, storedProcErrorLookup("createRaCreditMemo", cmheadid), __FILE__, __LINE__);
+      return;
+    }
     q.prepare( "SELECT cmhead_number "
                "FROM cmhead "
                "WHERE (cmhead_id=:cmhead_id);" );
-    q.bindValue(":cmhead_id", _cmheadid);
+    q.bindValue(":cmhead_id", cmheadid);
     q.exec();
     if (q.first())
     {
-      QString newcmnumber = q.value("cmhead_number").toString();
       QMessageBox::information( this, tr("New Credit Memo Created"),
                                 tr("<p>A new CreditMemo has been created and "
 				                   "assigned #%1")
-                                   .arg(newcmnumber));
+                                   .arg(q.value("cmhead_number").toString()));
       if (_radue->altId() == 2)
       {
         ParameterList params;
-        params.append("cmhead_id", _cmheadid);
+        params.append("cmhead_id", cmheadid);
 
         returnAuthCheck newdlg(this, "", TRUE);
         newdlg.set(params);
@@ -289,31 +283,13 @@ void returnAuthorizationWorkbench::sProcess()
       }
       else if (_radue->altId() == 3)
       {
-	XSqlQuery ccq;
-	ccq.prepare("SELECT SUM(ROUND((cmitem_qtycredit * cmitem_qty_invuomratio) * "
-		  "                 (cmitem_unitprice / cmitem_price_invuomratio),"
-		  "                 2)) +"
-		  "       currToCurr(COALESCE(cmhead_tax_curr_id,cmhead_curr_id),"
-		  "                  cmhead_curr_id, "
-		  "                  cmhead_tax_ratea + cmhead_tax_rateb +"
-		  "                      cmhead_tax_ratec, CURRENT_DATE) +"
-		  "       cmhead_freight + cmhead_misc AS total,"
-		  "       cmhead_curr_id, ccard_id, ccard_seq "
-		  "FROM cmitem, cmhead, ccard "
-		  "WHERE ((cmitem_cmhead_id=cmhead_id)"
-		  "  AND  (cmhead_cust_id=ccard_cust_id)"
-		  "  AND  (ccard_active)"
-		  "  AND  (cmhead_id=:cmhead_id))"
-		  "GROUP BY cmhead_tax_curr_id, cmhead_curr_id, cmhead_tax_ratea,"
-		  "         cmhead_tax_rateb, cmhead_tax_ratec, cmhead_freight,"
-		  "         cmhead_misc, ccard_id, ccard_seq "
-		  "ORDER BY ccard_seq "
-		  "LIMIT 1;");
-	ccq.bindValue(":cmhead_id", _cmheadid);
-	ccq.exec();
-	int ccpayid;
+	ParameterList ccp;
+	ccp.append("cmhead_id", cmheadid);
+	MetaSQLQuery ccm = mqlLoad(":/so/creditMemoCreditCard.mql");
+	XSqlQuery ccq = ccm.toQuery(ccp);
 	if (ccq.first())
 	{
+	  int ccpayid = ccq.value("ccpay_id").toInt();
 	  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
 	  if (! cardproc)
 	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
@@ -323,7 +299,9 @@ void returnAuthorizationWorkbench::sProcess()
 	    int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
 					    ccq.value("total").toDouble(),
 					    ccq.value("cmhead_curr_id").toInt(),
-					    newcmnumber, origconumber, ccpayid);
+					    q.value("cmhead_number").toString(),
+					    ccq.value("cohead_number").toString(),
+					    ccpayid);
 	    if (returnValue < 0)
 	      QMessageBox::critical(this, tr("Credit Card Processing Error"),
 				    cardproc->errorMsg());
@@ -347,6 +325,7 @@ void returnAuthorizationWorkbench::sProcess()
 	  QMessageBox::critical(this, tr("Credit Card Processing Error"),
 				tr("Could not find a Credit Card to use for "
 				   "this Credit transaction."));
+	  sFillList();
 	  return;
 	}
       }

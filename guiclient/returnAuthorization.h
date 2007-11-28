@@ -112,6 +112,7 @@ public slots:
     virtual void sHandleEnterReceipt(bool);
 	virtual void sHandleAction();
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
+    virtual void sRefund();
 
 protected slots:
     virtual void languageChange();

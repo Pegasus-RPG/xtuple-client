@@ -17,6 +17,7 @@
   </qresource>
   <qresource prefix="so">
     <file alias="displays/Reservations/FillListDetail.mql">dspReservationsFillList.mql</file>
+    <file alias="creditMemoCreditCard.mql">creditMemoCreditCard.mql</file>
   </qresource>
   <qresource prefix="po">
     <file alias="displays/POsByVendor/FillListDetail.mql">dspPOsByVendorFillList.mql</file>
