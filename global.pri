@@ -7,7 +7,20 @@
 #
 # This is the relative directory path to the openrpt project.
 #
-OPENRPT_DIR=../openrpt
+exists(../../../openrpt) {
+    OPENRPT_DIR = ../../../openrpt
+}
+exists(../../openrpt) {
+    OPENRPT_DIR = ../../openrpt
+}
+exists(../openrpt) {
+    OPENRPT_DIR = ../openrpt
+}
+
+! exists($${OPENRPT_DIR}) {
+    error("Could not set the OPENRPT_DIR qmake variable.")
+}
+
 INCLUDEPATH += ../$${OPENRPT_DIR}/common ../$${OPENRPT_DIR}/OpenRPT/renderer ../$${OPENRPT_DIR}/OpenRPT/wrtembed ../$${OPENRPT_DIR}/MetaSQL
 
 
