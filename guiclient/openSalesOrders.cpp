@@ -57,45 +57,36 @@
 
 #include "openSalesOrders.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <QWorkspace>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
-#include "salesOrder.h"
+
 #include "copySalesOrder.h"
-#include "rescheduleSoLineItems.h"
+#include "deliverSalesOrder.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
-#include "deliverSalesOrder.h"
+#include "rescheduleSoLineItems.h"
+#include "salesOrder.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a openSalesOrders as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_so, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
   connect(_copy, SIGNAL(clicked()), this, SLOT(sCopy()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
-  statusBar()->hide();
-  
   _so->addColumn(tr("S/O #"),            _orderColumn, Qt::AlignLeft   );
   _so->addColumn(tr("Cust. #"),          _orderColumn, Qt::AlignLeft   );
   _so->addColumn(tr("Customer"),         -1,           Qt::AlignLeft   );
@@ -121,27 +112,26 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 openSalesOrders::~openSalesOrders()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void openSalesOrders::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
+}
+
+void openSalesOrders::setParams(ParameterList &params)
+{
+  params.append("error", tr("Error"));
+  _warehouse->appendValue(params);
 }
 
 void openSalesOrders::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
+  setParams(params);
 
   orReport report("ListOpenSalesOrders", params);
   if (report.isValid())
@@ -187,46 +177,49 @@ void openSalesOrders::sReschedule()
 
 void openSalesOrders::sDelete()
 {
-  if ( QMessageBox::warning( this, tr("Delete Sales Order?"),
-                             tr("Are you sure that you want to completely delete the selected Sales Order?"),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
+  if ( QMessageBox::warning(this, tr("Delete Sales Order?"),
+                            tr("<p>Are you sure that you want to completely "
+			       "delete the selected Sales Order?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     q.prepare("SELECT deleteSo(:sohead_id) AS result;");
     q.bindValue(":sohead_id", _so->id());
     q.exec();
     if (q.first())
     {
-      switch (q.value("result").toInt())
+      int result = q.value("result").toInt();
+      if (result == -1)
       {
-        case 0:
-          omfgThis->sSalesOrdersUpdated(-1);
-          omfgThis->sProjectsUpdated(-1);
-          break;
-
-        case -1:
-          if ( QMessageBox::information( this, tr("Cannot Delete Sales Order"),
-                                         tr( "The selected Sales Order cannot be deleted as there have been shipments posted against it.\n"
-                                             "Would you like to Close the selected Sales Order instead?" ),
-                                         tr("Yes"), tr("No"), QString::null, 0, 1 ) == 0 )
-          {
-            q.prepare( "UPDATE coitem "
-                       "SET coitem_status='C' "
-                       "WHERE ((coitem_status <> 'X') AND (coitem_cohead_id=:sohead_id));" );
-            q.bindValue(":sohead_id", _so->id());
-            q.exec();
-      
-            sFillList();
-          }
-
-          break;
-
-        case -2:
-          QMessageBox::information( this, tr("Cannot Delete Sales Order"),
-                                    tr( "The selected Sales Order cannot be deleted as shipping stock has been posted against one or\n"
-                                        "more of its line items.  You must return this stock before you may delete this Sales Order." ) );
-          break;
-//  ToDo
+	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
+				   storedProcErrorLookup("deleteSo", result) + 
+				   "<br>Would you like to Close the selected "
+				   "Sales Order instead?",
+				   QMessageBox::Yes | QMessageBox::Default,
+				   QMessageBox::No) == QMessageBox::Yes)
+	{
+	  q.prepare( "UPDATE coitem "
+		     "SET coitem_status='C' "
+		     "WHERE ((coitem_status <> 'X')"
+		     "  AND  (coitem_cohead_id=:sohead_id));" );
+	  q.bindValue(":sohead_id", _so->id());
+	  q.exec();
+	}
       }
+      else if (result < 0)
+      {
+	systemError(this, storedProcErrorLookup("deleteSo", result),
+		    __FILE__, __LINE__);
+	return;
+      }
+
+      omfgThis->sSalesOrdersUpdated(-1);
+      omfgThis->sProjectsUpdated(-1);
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
 }
@@ -254,7 +247,20 @@ void openSalesOrders::sAddToPackingListBatch()
   q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
   q.bindValue(":sohead_id", _so->id());
   q.exec();
-//  ToDo
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("addToPackingListBatch", result), __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void openSalesOrders::sPopulateMenu(QMenu *pMenu)
@@ -301,6 +307,9 @@ void openSalesOrders::sPopulateMenu(QMenu *pMenu)
 
 void openSalesOrders::sFillList()
 {
+  ParameterList params;
+  setParams(params);
+
   QString sql( "SELECT DISTINCT cohead_id, cohead_number,"
                "       COALESCE(cust_number, :error),"
                "       cohead_billtoname, cohead_custponumber,"
@@ -309,20 +318,16 @@ void openSalesOrders::sFillList()
                "FROM cohead LEFT OUTER JOIN cust ON (cohead_cust_id=cust_id) "
                "     LEFT OUTER JOIN coitem JOIN itemsite ON (coitem_itemsite_id=itemsite_id) "
                "     ON (coitem_cohead_id=cohead_id) "
-               "WHERE (((coitem_status = 'O') OR (coitem_status IS NULL)) ");
-
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  sql += " ) "
-         "GROUP BY cohead_id, cohead_number, cust_number, cohead_billtoname,"
-         "         cohead_custponumber, cohead_orderdate "
-         "ORDER BY cohead_number ";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.bindValue(":error", tr("Error"));
-  q.exec();
+               "WHERE (((coitem_status = 'O') OR (coitem_status IS NULL)) "
+	       "<? if  exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       " ) "
+	       "GROUP BY cohead_id, cohead_number, cust_number, cohead_billtoname,"
+	       "         cohead_custponumber, cohead_orderdate "
+	       "ORDER BY cohead_number " );
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
 
   _so->populate(q);
   _so->setDragString("soheadid=");
@@ -338,8 +343,6 @@ void openSalesOrders::sDeliver()
   newdlg.exec();
 }
 
-
-
 void openSalesOrders::sPrintForms()
 {
   ParameterList params;
@@ -349,4 +352,3 @@ void openSalesOrders::sPrintForms()
   newdlg.set(params);
   newdlg.exec();
 }
-

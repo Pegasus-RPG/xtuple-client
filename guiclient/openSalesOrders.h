@@ -71,6 +71,7 @@ class openSalesOrders : public QMainWindow, public Ui::openSalesOrders
 public:
     openSalesOrders(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~openSalesOrders();
+    virtual void setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();
