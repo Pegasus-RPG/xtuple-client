@@ -926,6 +926,17 @@ void transferOrder::sAction()
       }
     }
     sFillItemList();
+
+    q.prepare("SELECT tohead_status FROM tohead WHERE (tohead_id=:tohead_id);");
+    q.bindValue(":tohead_id", _toheadid);
+    q.exec();
+    if (q.first())
+      _status->setText(q.value("tohead_status").toString());
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
