@@ -170,12 +170,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 
   if (_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
-  {
-    if (! CreditCardProcessor::getProcessor())
-      QMessageBox::warning(this, tr("Credit Card Processing error"),
-			   CreditCardProcessor::errorMsg());
     connect(_aropenCM, SIGNAL(valid(bool)), _ccRefundCM, SLOT(setEnabled(bool)));
-  }
   else
   {
     _ccRefundCM->setEnabled(false);

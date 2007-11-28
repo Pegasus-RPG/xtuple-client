@@ -161,18 +161,12 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _clearAuthorization->hide();
   _authorizeAll->hide();
 
-  if(_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
-  {
-    if (! CreditCardProcessor::getProcessor())
-      QMessageBox::warning(this, tr("Credit Card Processing error"),
-			   CreditCardProcessor::errorMsg());
-  }
-  else
+  if (! _metrics->boolean("CCAccept") || !_privleges->check("ProcessCreditCards"))
   {
     _creditBy->removeItem(3);
-	_refund->hide();
-	_CCCVVLit->hide();
-	_CCCVV->hide();
+    _refund->hide();
+    _CCCVVLit->hide();
+    _CCCVV->hide();
   }
 
   _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
