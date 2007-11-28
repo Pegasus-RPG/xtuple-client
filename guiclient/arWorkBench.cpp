@@ -66,12 +66,15 @@
 #include <QSqlError>
 
 #include <stdlib.h>
+#include <metasql.h>
 
 #include "arOpenItem.h"
 #include "applyARCreditMemo.h"
 #include "cashReceipt.h"
 #include "creditMemo.h"
+#include "creditcardprocessor.h"
 #include "dspInvoiceInformation.h"
+#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
 arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -86,6 +89,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_applyAropenCM, SIGNAL(clicked()), this, SLOT(sApplyAropenCM()));
   connect(_editAropenCM, SIGNAL(clicked()), this, SLOT(sEditAropenCM()));
   connect(_viewAropenCM, SIGNAL(clicked()), this, SLOT(sViewAropenCM()));
+  connect(_ccRefundCM,   SIGNAL(clicked()), this, SLOT(sCCRefundCM()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sFillList()));
   connect(_newCashrcpt, SIGNAL(clicked()), this, SLOT(sNewCashrcpt()));
   connect(_editCashrcpt, SIGNAL(clicked()), this, SLOT(sEditCashrcpt()));
@@ -163,6 +167,23 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     _preauth->hideColumn(2);
     _aropen->hideColumn(8);
     _aropenCM->hideColumn(4);
+  }
+
+  if (_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
+  {
+    if (! CreditCardProcessor::getProcessor())
+      QMessageBox::warning(this, tr("Credit Card Processing error"),
+			   CreditCardProcessor::errorMsg());
+    connect(_aropenCM, SIGNAL(valid(bool)), _ccRefundCM, SLOT(setEnabled(bool)));
+  }
+  else
+  {
+    _ccRefundCM->setEnabled(false);
+    _preauthLit->setEnabled(false);
+    _preauth->setEnabled(false);
+    _editPreauth->setEnabled(false);
+    _CCAmountLit->setEnabled(false);
+    _CCAmount->setEnabled(false);
   }
 
   if(_metrics->boolean("EnableCustomerDeposits"))
@@ -617,34 +638,20 @@ void arWorkBench::_editPreauth_clicked()
     
   if(YourPay)
     processYourPay();
-    
-  if(VeriSign)
-    QMessageBox::warning( this, tr("VeriSign"),
-             tr("VeriSign is not yet supported") );
 }
 
 void arWorkBench::precheckCreditCard()
 {
-  if(!_metrics->boolean("CCAccept"))
+  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+
+  if (cardproc->checkConfiguration() < 0)
   {
-    QMessageBox::warning( this, tr("Credit Cards"),
-                          tr("The application is not set up to process credit cards") );
+    QMessageBox::warning( this, tr("Credit Card Error"),
+			  cardproc->errorMsg() );
     _CCAmount->setFocus();
     _passPrecheck = false;
-    return;
   }
-    
-  key =  omfgThis->_key;
-    
-  if(key.length() == 0 || key.isEmpty() || key.isNull())
-  {
-    QMessageBox::warning( this, tr("Encryption Key"),
-                          tr("You do not have an encryption key defined") );
-    _CCAmount->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-    
+
   q.prepare( "SELECT ccpay.*, "
              "       ccard_active, "
              "       formatbytea(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
@@ -700,66 +707,9 @@ void arWorkBench::precheckCreditCard()
     return;
   }
   
-  if (VeriSign)
-  {
-    if ((_metrics->boolean("CCTest") && _metrics->value("CCServer") == "test-payflow.verisign.com") || (!_metrics->boolean("CCTest") && _metrics->value("CCServer") == "payflow.verisign.com"))
-    {
-// This is OK - We are either running test and test or production and production on Verisign
-    }
-    else
-    {
-// Not OK - we have an error
-      QMessageBox::warning( this, tr("Invalid Server Configuration"),
-                            tr("If Credit Card test is selected you must select a test server.  If Credit Card Test is not selected you must select a production server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  }
-  
-  
   if (YourPay)
   {
-    if ((_metrics->boolean("CCTest") && _metrics->value("CCServer") == "staging.linkpt.net") || (!_metrics->boolean("CCTest") && _metrics->value("CCServer") == "secure.linkpt.net"))
-    {
-// This is OK - We are either running test and test or production and production on Verisign
-    }
-    else
-    {
-// Not OK - we have an error
-      QMessageBox::warning( this, tr("Invalid Server Configuration"),
-                            tr("If Credit Card test is selected you must select a test server.  If Credit Card Test is not selected you must select a production server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  }
- 
-  port = _metrics->value("CCPort").toInt();
-  
-  if (YourPay)
-    if (port != 1129)
-    {
-      QMessageBox::warning( this, tr("Invalid Server Port Configuration"),
-                            tr("You have an invalid port identified for the requested server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  
-  if (VeriSign)
-    if (port != 443)
-    {
-      QMessageBox::warning( this, tr("Invalid Server Port Configuration"),
-                            tr("You have an invalid port identified for the requested server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  
-  if (YourPay)
-  {
-// Set up all of the YourPay parameters and check them
+    // Set up all of the YourPay parameters
     _storenum = _metricsenc->value("CCYPStoreNum");
      
 #ifdef Q_WS_WIN
@@ -769,25 +719,7 @@ void arWorkBench::precheckCreditCard()
 #elif defined Q_WS_X11
     _pemfile = _metrics->value("CCYPLinPathPEM");
 #endif
-    
-    if (_storenum.length() == 0 || _storenum.isEmpty() || _storenum.isNull())
-    {
-      QMessageBox::warning( this, tr("Store Number Missing"),
-                            tr("The YourPay Store Number is missing") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
       
-    if (_pemfile.length() == 0 || _pemfile.isEmpty() || _pemfile.isNull())
-    {
-      QMessageBox::warning( this, tr("Pem File Missing"),
-                            tr("The YourPay pem file is missing") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-    
     if (_CCAmount->baseValue() <= 0)
     {
       QMessageBox::warning( this, tr("Charge Amount Missing or incorrect"),
@@ -797,68 +729,12 @@ void arWorkBench::precheckCreditCard()
       return;
     }
     
-    
-// We got this far time to load everything up.
-    
     configfile = new char[strlen(_storenum.latin1()) + 1];
     strcpy(configfile, _storenum.latin1());
     host = new char[strlen(_metrics->value("CCServer").latin1()) + 1];
     strcpy(host, _metrics->value("CCServer").latin1());
     pemfile = new char[strlen(_pemfile.latin1()) + 1];
     strcpy(pemfile, _pemfile.latin1());
-    
-    QFileInfo fileinfo( pemfile );
-    
-    if (!fileinfo.isFile())
-    {
-// Oops we don't have a usable pemfile
-      QMessageBox::warning( this, tr("Missing PEM FIle"),
-           tr("Unable to verify that you have a PEM file for this application\nPlease contact your local support") );
-     _passPrecheck = false;
-     return;
-    }
-  }
-    
-  QString plogin;
-  QString ppassword;
-  QString pserver;
-  QString pport;
-  
-  plogin = _metricsenc->value("CCProxyLogin");
-  ppassword = _metricsenc->value("CCPassword");
-  pserver = _metrics->value("CCProxyServer");
-  pport = _metrics->value("CCProxyPort");
-
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    if (plogin.length() == 0 || plogin.isEmpty() || plogin.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a login") );
-     _passPrecheck = false;
-     return;
-    }
-    if (ppassword.length() == 0 || ppassword.isEmpty() || ppassword.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a password") );
-     _passPrecheck = false;
-     return;
-    }
-    if (pserver.length() == 0 || pserver.isEmpty() || pserver.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a proxy server to use") );
-     _passPrecheck = false;
-     return;
-    }
-    if (pport.length() == 0 || pport.isEmpty() || pport.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a lport to use") );
-     _passPrecheck = false;
-     return;
-    }
   }
 }
 
@@ -1262,3 +1138,112 @@ void arWorkBench::sPopulatePreauthMenu(QMenu*)
   */
 }
 
+void arWorkBench::sCCRefundCM()
+{
+  if (_aropenCM->altId() < 0)
+  {
+    QMessageBox::warning(this, tr("Cannot Refund by Credit Card"),
+			 tr("<p>The application cannot refund this "
+			    "transaction using a credit card."));
+    return;
+  }
+  
+  int     ccardid = -1;
+  double  total   =  0.0;
+  int     currid  = -1;
+  QString docnum;
+  QString refnum;
+  int     ccpayid = -1;
+
+  q.prepare("SELECT cmhead_id "
+	    "FROM cmhead "
+	    "WHERE (cmhead_number=:cmheadnumber);");
+  q.bindValue(":cmheadnumber", _aropenCM->currentItem()->text(1));
+  q.exec();
+  if (q.first())
+  {
+    ParameterList ccp;
+    ccp.append("cmhead_id", q.value("cmhead_id"));
+    MetaSQLQuery ccm = mqlLoad(":/so/creditMemoCreditCard.mql");
+    XSqlQuery ccq = ccm.toQuery(ccp);
+    if (ccq.first())
+    {
+      ccardid = ccq.value("ccard_id").toInt();
+      total   = ccq.value("total").toDouble();
+      currid  = ccq.value("cmhead_curr_id").toInt();
+      docnum  = ccq.value("cmhead_number").toString();
+      refnum  = ccq.value("cohead_number").toString();
+      ccpayid = ccq.value("ccpay_id").toInt();
+    }
+    else if (ccq.lastError().type() != QSqlError::None)
+    {
+      systemError(this, ccq.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			    tr("Could not find a Credit Card to use for "
+			       "this Credit transaction."));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else // cmhead not found - maybe it's just an open item
+  {
+    q.prepare("SELECT ccard_id, aropen_amount - aropen_paid AS balance,"
+	      "       aropen_curr_id, aropen_docnumber "
+	      "FROM aropen, ccard "
+	      "WHERE ((aropen_cust_id=ccard_cust_id)"
+	      "  AND  (ccard_active)"
+	      "  AND  (aropen_open)"
+	      "  AND  (aropen_id=:aropenid));");
+    q.bindValue(":aropenid", _aropenCM->id());
+    q.exec();
+
+    if (q.first())
+    {
+      ccardid = q.value("ccard_id").toInt();
+      total   = q.value("balance").toDouble();
+      currid  = q.value("aropen_curr_id").toInt();
+      docnum  = q.value("aropen_docnumber").toString();
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    else
+    {
+      QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			    tr("Could not find a Credit Card to use for "
+			       "this Credit transaction."));
+      return;
+    }
+  }
+
+  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+  if (! cardproc)
+    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			  CreditCardProcessor::errorMsg());
+  else
+  {
+    int returnValue = cardproc->credit(ccardid, total, currid,
+				       docnum, refnum, ccpayid);
+    if (returnValue < 0)
+      QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			    cardproc->errorMsg());
+    else if (returnValue > 0)
+      QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+			   cardproc->errorMsg());
+    else if (! cardproc->errorMsg().isEmpty())
+      QMessageBox::information(this, tr("Credit Card Processing Note"),
+			   cardproc->errorMsg());
+  }
+
+  sFillAropenCMList();
+}
