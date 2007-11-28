@@ -1245,5 +1245,5 @@ void arWorkBench::sCCRefundCM()
 			   cardproc->errorMsg());
   }
 
-  sFillAropenCMList();
+  sFillList();
 }
