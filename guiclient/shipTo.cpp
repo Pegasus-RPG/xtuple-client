@@ -383,6 +383,7 @@ void shipTo::populate()
   q.exec();
   if (q.first())
   {
+    QString commission = q.value("commission").toString();
     _custid = q.value("shipto_cust_id").toInt();
     _custNum->setText(q.value("cust_number").toString());
     _custName->setText(q.value("cust_name").toString());
@@ -391,7 +392,6 @@ void shipTo::populate()
     _shipToNumber->setText(q.value("shipto_num"));
     _name->setText(q.value("shipto_name"));
     _contact->setId(q.value("shipto_cntct_id").toInt());
-    _commission->setText(q.value("commission"));
     _comments->setText(q.value("shipto_comments").toString());
     _shippingComments->setText(q.value("shipto_shipcomments").toString());
     _taxauth->setId(q.value("shipto_taxauth_id").toInt());
@@ -418,6 +418,7 @@ void shipTo::populate()
     }
 
     _salesRep->setId(q.value("shipto_salesrep_id").toInt());
+    _commission->setText(commission);
   }
   else if (q.lastError().type() != QSqlError::None)
   {
