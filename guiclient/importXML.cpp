@@ -340,13 +340,13 @@ bool importXML::importOne(const QString &pFileName)
       args.replaceInStrings("%f", pFileName);
       if (QFile::exists(xsltfile))
 	args.replaceInStrings("%x", xsltfile);
-      else if (QFile::exists(_defaultXSLTDir + "/" + xsltfile))
-	args.replaceInStrings("%x", _defaultXSLTDir + "/" + xsltfile);
+      else if (QFile::exists(_defaultXSLTDir + QDir::separator() + xsltfile))
+	args.replaceInStrings("%x", _defaultXSLTDir + QDir::separator() + xsltfile);
       else
       {
 	systemError(this, tr("Cannot find the XSLT file as either %1 or %2")
 			  .arg(xsltfile)
-			  .arg(_defaultXSLTDir + "/" + xsltfile));
+			  .arg(_defaultXSLTDir + QDir::separator() + xsltfile));
 	return false;
       }
 
