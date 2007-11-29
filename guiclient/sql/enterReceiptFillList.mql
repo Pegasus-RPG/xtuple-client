@@ -30,6 +30,7 @@ FROM rahead, raitem LEFT OUTER JOIN
        ON (itemsite_item_id=item_id) JOIN uom ON (item_inv_uom_id=uom_id)
      ) ON (raitem_itemsite_id=itemsite_id) 
 WHERE ( (raitem_status <> 'C')
+ AND (raitem_qtyauthorized > 0)
  AND (raitem_rahead_id=rahead_id)
  AND (rahead_id=<? value("rahead_id") ?>) )
 ORDER BY raitem_linenumber;
