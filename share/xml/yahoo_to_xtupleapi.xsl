@@ -51,9 +51,15 @@
 
   <xsl:template name="shiptoNumberFromAddress">
     <xsl:param name="address"/>
+    <xsl:param name="billaddr"/>
     <xsl:param name="generate"	select="'false'"/>
     <xsl:param name="create"	select="'false'"/>
-    getShiptoNumberFromInfo('<xsl:value-of select="$address/Email"/>',
+    getShiptoNumberFromInfo(<xsl:if test="$billaddr">
+			      <xsl:call-template name="customerNameFromAddress">
+				<xsl:with-param name="address" select="$billaddr"/>
+			      </xsl:call-template>
+			    </xsl:if>,
+			    '<xsl:value-of select="$address/Email"/>',
 			    '<xsl:value-of select="$address/Company"/>',
 			    '<xsl:value-of select="$address/Name/First"/>',
 			    '<xsl:value-of select="$address/Name/Last"/>',
@@ -460,7 +466,10 @@
       <xsl:if test="AddressInfo[@type = 'ship']">
 	<shipto_number quote="false">
 	  <xsl:call-template name="shiptoNumberFromAddress">
-	    <xsl:with-param name="address"  select="AddressInfo[@type = 'ship']"/>
+	    <xsl:with-param name="address"
+			    select="AddressInfo[@type = 'ship']"/>
+	    <xsl:with-param name="billaddr"
+			    select="AddressInfo[@type = 'bill']"/>
 	    <xsl:with-param name="generate" select="'true'"/>
 	    <xsl:with-param name="create"   select="'true'"/>
 	  </xsl:call-template>
@@ -703,9 +712,9 @@
 
   <xsl:template match="Option">
     <xsl:call-template name="saleslinechar">
-      <xsl:with-param name="id"			select="../../@id">
+      <xsl:with-param name="id">
 	<xsl:call-template name="cleanSQLChars">
-	  <xsl:with-param name="inputStr" select="text()"/>
+	  <xsl:with-param name="inputStr" select="../../@id"/>
 	</xsl:call-template>
       </xsl:with-param>
       <xsl:with-param name="line-number"	select="../@num"	/>
@@ -721,9 +730,9 @@
   <xsl:template match="OptionList">
     <xsl:for-each select="OptionValue">
       <xsl:call-template name="saleslinechar">
-	<xsl:with-param name="id"		select="../../../../@id" >
+	<xsl:with-param name="id">
 	  <xsl:call-template name="cleanSQLChars">
-	    <xsl:with-param name="inputStr" select="text()"/>
+	    <xsl:with-param name="inputStr" select="../../../../@id"/>
 	  </xsl:call-template>
 	</xsl:with-param>
 	<xsl:with-param name="line-number"	select="../../../@num"	/>
