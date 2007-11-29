@@ -1001,8 +1001,9 @@ void returnAuthorization::sFillList()
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
-			"AND (raitem_orig_coitem_id IS NOT NULL) "
-			"AND (raitem_qtyauthorized > 0 ) );");
+			"AND ((raitem_orig_coitem_id IS NOT NULL) "
+			"AND (raitem_qtyauthorized > 0 ) "
+			"OR (raitem_status = 'C')) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   _origso->setEnabled((!q.first()) && (_mode == cEdit || _mode == cNew));
