@@ -34,6 +34,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                accountingYearPeriods.ui addPoComment.ui                                               \
                address.ui addresses.ui                                                                \
                adjustmentTrans.ui assignClassCodeToPlannerCode.ui assignItemToPlannerCode.ui          \
+               allocateReservations.ui                                                                \
                apAccountAssignment.ui apAccountAssignments.ui                                         \
                applyAPCreditMemo.ui apOpenItem.ui apCreditMemoApplication.ui                          \
                applyDiscount.ui                                                                       \
@@ -339,6 +340,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                accountingPeriod.h accountingPeriods.h accountingYearPeriod.h accountingYearPeriods.h  \
                addPoComment.h address.h addresses.h                                                   \
                adjustmentTrans.h assignClassCodeToPlannerCode.h assignItemToPlannerCode.h             \
+               allocateReservations.h                                                                 \
                apAccountAssignment.h apAccountAssignments.h                                           \
                applyAPCreditMemo.h apOpenItem.h apCreditMemoApplication.h                             \
                applyDiscount.h                                                                        \
@@ -647,6 +649,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                accountingPeriod.cpp accountingPeriods.cpp accountingYearPeriod.cpp accountingYearPeriods.cpp \
                addPoComment.cpp address.cpp addresses.cpp                                             \
                adjustmentTrans.cpp assignClassCodeToPlannerCode.cpp assignItemToPlannerCode.cpp       \
+               allocateReservations.cpp                                                               \
                apAccountAssignment.cpp apAccountAssignments.cpp                                       \
                applyAPCreditMemo.cpp apOpenItem.cpp apCreditMemoApplication.cpp                       \
                applyDiscount.cpp                                                                      \

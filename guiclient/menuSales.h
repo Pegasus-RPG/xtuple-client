@@ -225,6 +225,8 @@ class menuSales : public QObject
     void sArchiveSalesHistory();
     void sRestoreSalesHistory();
 
+    void sAllocateReservations();
+
 // START_RW
     void sPostAROpenAndDist();
     void sExportCustomers();

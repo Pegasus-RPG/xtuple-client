@@ -200,6 +200,7 @@
 
 #include "printSASpecialCalendarForm.h"
 #include "archRestoreSalesHistory.h"
+#include "allocateReservations.h"
 
 // START_RW
 #include "rwInterface.h"
@@ -511,6 +512,8 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
     { "separator",	NULL,	NULL,	utilitiesMenu,	true,		NULL, NULL, true, NULL },
     { "so.purgeInvoices",		     tr("Purge &Invoices..."),		SLOT(sPurgeInvoices()), utilitiesMenu, _privleges->check("PurgeInvoices"),	NULL, NULL, true, NULL },
     { "so.purgeCreditMemos",		     tr("Purge Credit &Memos..."),	SLOT(sPurgeCreditMemos()), utilitiesMenu, _privleges->check("PurgeCreditMemos"),	NULL, NULL, true, NULL },
+    { "separator",	NULL,	NULL,	utilitiesMenu,	true,		NULL, NULL, _metrics->boolean("EnableSOReservations"), NULL },
+    { "so.allocateReservations", tr("Allocate Reser&vations..."), SLOT(sAllocateReservations()), utilitiesMenu, _privleges->check("MaintainReservations"), NULL, NULL, _metrics->boolean("EnableSOReservations") , NULL },
     { "separator",	NULL,	NULL,	utilitiesMenu,	true,		NULL, NULL, true, NULL },
     { "sa.archieveSalesHistory", tr("&Archive Sales History..."), SLOT(sArchiveSalesHistory()), utilitiesMenu, _privleges->check("ArchiveSalesHistory"), NULL, NULL, true , NULL },
     { "sa.restoreSalesHistory", tr("Restore &Sales History..."), SLOT(sRestoreSalesHistory()), utilitiesMenu, _privleges->check("RestoreSalesHistory"), NULL, NULL, true , NULL },
@@ -1337,5 +1340,10 @@ void menuSales::sRestoreSalesHistory()
 void menuSales::sPrintSASpecialCalendarForm()
 {
   printSASpecialCalendarForm(parent, "", TRUE).exec();
+}
+
+void menuSales::sAllocateReservations()
+{
+  allocateReservations(parent, "", TRUE).exec();
 }
 
