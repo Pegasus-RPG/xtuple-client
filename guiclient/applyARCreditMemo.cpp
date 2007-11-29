@@ -238,16 +238,24 @@ void applyARCreditMemo::sClose()
 void applyARCreditMemo::populate()
 {
   q.prepare( "SELECT aropen_cust_id, aropen_docnumber, aropen_docdate,"
-             "       (aropen_amount - aropen_paid) AS available,"
+             "       (aropen_amount - aropen_paid - COALESCE(prepared,0.0)) AS available,"
              "       COALESCE(SUM(currToCurr(arcreditapply_curr_id, "
-	     "				     aropen_curr_id, "
-	     "				     arcreditapply_amount, "
-	     "				     aropen_docdate)), 0) AS f_applied, "
-	     "	     aropen_curr_id "
+	         "				     aropen_curr_id, "
+	         "				     arcreditapply_amount, "
+	         "				     aropen_docdate)), 0) AS f_applied, "
+	         "	     aropen_curr_id "
              "FROM aropen LEFT OUTER JOIN arcreditapply ON (arcreditapply_source_aropen_id=aropen_id) "
+ 	         "       LEFT OUTER JOIN (SELECT aropen_id AS prepared_aropen_id,"
+             "                               SUM(currToCurr(checkitem_curr_id, aropen_curr_id, checkitem_amount + checkitem_discount, checkitem_docdate)) AS prepared"
+             "                          FROM checkhead JOIN checkitem ON (checkitem_checkhead_id=checkhead_id)"
+             "                                     JOIN aropen ON (checkitem_aropen_id=aropen_id)"
+             "                         WHERE ((NOT checkhead_posted)"
+             "                           AND  (NOT checkhead_void))"
+             "                         GROUP BY aropen_id) AS sub1"
+             "         ON (prepared_aropen_id=aropen_id)"
              "WHERE (aropen_id=:aropen_id) "
              "GROUP BY aropen_cust_id, aropen_docnumber, aropen_docdate,"
-             "         aropen_amount, aropen_paid, aropen_curr_id;" );
+             "         aropen_amount, aropen_paid, aropen_curr_id, prepared;" );
   q.bindValue(":aropen_id", _aropenid);
   q.exec();
   if (q.first())
