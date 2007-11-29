@@ -179,7 +179,7 @@ menuSystem::menuSystem(OpenMFGGUIClient *Pparent) :
     { "sys.viewDatabaseLog",		tr("View Database &Log..."),		SLOT(sErrorLog()),		systemMenu,	TRUE,						NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.preferences",		tr("P&references..."),			SLOT(sPreferences()),		systemMenu,	(_privleges->check("MaintainPreferencesSelf") || _privleges->check("MaintainPreferencesOthers")),	NULL,	NULL,	true	},
-    { "sys.rescanPrivileges",		tr("Rescan &Privileges..."),		SLOT(sRescanPrivileges()),	systemMenu,	TRUE,						NULL,	NULL,	true	},
+    { "sys.rescanPrivileges",		tr("Rescan &Privileges"),		SLOT(sRescanPrivileges()),	systemMenu,	TRUE,						NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.maintainUsers",		tr("Maintain &Users..."),		SLOT(sMaintainUsers()),		systemMenu,	_privleges->check("MaintainUsers"),		NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
@@ -701,31 +701,31 @@ void menuSystem::sCommunityHome()
 
 void menuSystem::sCommunityNewAccount()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=user/register");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_registration&task=register");
 }
 
 void menuSystem::sCommunityEditAccount()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=user");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_user&task=UserDetails&Itemid=21");
 }
 
 void menuSystem::sCommunityForums()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=forum");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/phpBB2/");
 }
 
 void menuSystem::sCommunityBlogs()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=blog");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_content&task=blogsection&id=0&Itemid=9");
 }
 
 void menuSystem::sCommunityIssues()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=bugbits/all");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_mantis&Itemid=26");
 }
 
 void menuSystem::sCommunityDownloads()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=node/2077");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_docman&Itemid=50");
 }
 

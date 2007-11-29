@@ -707,31 +707,31 @@ void moduleSys::sCommunityHome()
 
 void moduleSys::sCommunityNewAccount()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=user/register");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_registration&task=register");
 }
 
 void moduleSys::sCommunityEditAccount()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=user");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_user&task=UserDetails&Itemid=21");
 }
 
 void moduleSys::sCommunityForums()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=forum");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/phpBB2/");
 }
 
 void moduleSys::sCommunityBlogs()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=blog");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_content&task=blogsection&id=0&Itemid=9");
 }
 
 void moduleSys::sCommunityIssues()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=bugbits/all");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_mantis&Itemid=26");
 }
 
 void moduleSys::sCommunityDownloads()
 {
-  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/?q=node/2077");
+  omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/index.php?option=com_docman&Itemid=50");
 }
 
