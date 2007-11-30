@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>808</width>
+    <width>914</width>
     <height>622</height>
    </rect>
   </property>
@@ -401,7 +401,7 @@
             <item row="2" column="1" >
              <widget class="QCheckBox" name="_printSO" >
               <property name="text" >
-               <string>Print S/O on Save</string>
+               <string>Print on Save</string>
               </property>
              </widget>
             </item>

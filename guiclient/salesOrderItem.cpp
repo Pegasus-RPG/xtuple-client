@@ -212,6 +212,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   if (!_metrics->boolean("EnableReturnAuth"))
     _warranty->hide();
 
+  resize(minimumSize());
   
   //TO DO **** Fix tab order issues and offer alternate means for "Express Tab Order"  ****
 }

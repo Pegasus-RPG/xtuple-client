@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
-    <height>636</height>
+    <width>695</width>
+    <height>804</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -959,6 +959,9 @@
          </property>
          <property name="checkable" >
           <bool>true</bool>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
          </property>
          <layout class="QGridLayout" >
           <item row="0" column="0" >

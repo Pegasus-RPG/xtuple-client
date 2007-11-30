@@ -89,6 +89,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _invuomid = -1;
   _orderId = -1;
   _preferredWarehouseid = -1;
+  _status = "O";
+  _qtycredited = 0;
 
   connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
@@ -125,6 +127,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
 
   //Remove lot/serial for now until we get to advanced warranty tracking
   _tab->removePage(_tab->page(4));
+  
+  resize(minimumSize());
 }
 
 returnAuthorizationItem::~returnAuthorizationItem()
@@ -494,7 +498,7 @@ void returnAuthorizationItem::sSave()
                      "WHERE ( (itemsite_item_id=:item_id)"
                      " AND (itemsite_warehous_id=:warehous_id) );" );
           q.bindValue(":orderNumber", so.value("cohead_number").toInt());
-          q.bindValue(":qty", _qtyAuth->toDouble());
+          q.bindValue(":qty", _orderQty->text().toDouble());
           q.bindValue(":dueDate", _scheduledDate->date());
           q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->text());
           q.bindValue(":item_id", _item->id());
@@ -665,7 +669,7 @@ void returnAuthorizationItem::populate()
                  "       rahead_taxauth_id,"
                  "       rahead_curr_id AS taxcurr, "
                  "       item_inv_uom_id, "
-                 "       nc.coitem_order_id AS coitem_order_id, "
+                 "       COALESCE(nc.coitem_order_id,-1) AS coitem_order_id, "
                  "       nc.coitem_order_type AS coitem_order_type "
                  "FROM raitem "
                  "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
@@ -729,12 +733,11 @@ void returnAuthorizationItem::populate()
     _scheduledDate->setDate(raitem.value("raitem_scheddate").toDate());
     _warranty->setChecked(raitem.value("raitem_warranty").toBool());
     _orderId = raitem.value("coitem_order_id").toInt();
+    _status = raitem.value("raitem_status").toString();
+    _qtycredited = raitem.value("raitem_qtycredited").toDouble();
 
     _cQtyOrdered = _qtyAuth->toDouble();
     _cScheduledDate = _scheduledDate->date();
-
-    if (raitem.value("raitem_qtyreceived").toDouble() > 0 || raitem.value("raitem_qtycredited").toDouble() > 0)
-      _disposition->setEnabled(FALSE);
 
     _coitemid = raitem.value("ra_coitem_id").toInt();
     if (_coitemid != -1)
@@ -762,6 +765,13 @@ void returnAuthorizationItem::populate()
       _salePriceLit->hide();
     }
     sDetermineAvailability();
+    
+    
+    
+    if (raitem.value("qtyrcvd").toDouble() > 0 || 
+        raitem.value("qtyshipd").toDouble() > 0 ||
+        _qtycredited > 0 || _orderId != -1)
+      _disposition->setEnabled(FALSE); 
 
     if (_orderId != -1)
     {
@@ -1150,7 +1160,11 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
                                   QMessageBox::Yes | QMessageBox::Default,
                                   QMessageBox::No | QMessageBox::Escape) == QMessageBox::Yes)
         {
-          query.prepare("SELECT deleteWo(:wo_id, TRUE) AS result;");
+          query.prepare("UPDATE coitem SET coitem_order_id=-1,coitem_order_type=NULL "
+                        "FROM wo "
+                        "WHERE ((coitem_id=wo_ordid) "
+                        "AND (wo_id=:wo_id)); "
+                        "SELECT deleteWo(:wo_id, TRUE) AS result;");
           query.bindValue(":wo_id", _orderId);
           query.exec();
           if (query.first())
@@ -1169,6 +1183,11 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
               _orderQty->clear();
               _orderDueDate->clear();
               _orderStatus->clear();
+              if (_qtyReceived->text().toDouble() == 0 && 
+                  _qtyShipped->text().toDouble() == 0 && 
+                  _qtycredited == 0 &&
+                  _status == "O")
+                _disposition->setEnabled(TRUE); 
 
               _createOrder->setChecked(FALSE);
             }

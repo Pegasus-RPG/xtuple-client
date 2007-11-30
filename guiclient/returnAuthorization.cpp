@@ -111,6 +111,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_action, SIGNAL(clicked()), this, SLOT(sAction()));
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
   connect(_refund,	SIGNAL(clicked()), this, SLOT(sRefund()));
+  connect(_postReceipts, SIGNAL(clicked()), this, SLOT(sPostReceipts()));
 
 #ifndef Q_WS_MAC
   _shipToList->setMaximumWidth(25);
@@ -165,7 +166,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   }
 
   _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
-  _postOnSave->setEnabled(_privleges->check("EnterReceipts"));
+  _postReceipts->setEnabled(_privleges->check("EnterReceipts"));
 }
 
 returnAuthorization::~returnAuthorization()
@@ -242,7 +243,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
         _disposition->setCurrentItem(4);
 
       if (_metrics->value("DefaultRaTiming") == "R")
-        _uponReceipt->setChecked(TRUE);
+        _timing->setCurrentItem(1);
 
       metric = _metrics->value("DefaultRaCreditMethod");
       if (metric == "N")
@@ -281,8 +282,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _taxauth->setEnabled(FALSE);
       _rsnCode->setEnabled(FALSE);
       _disposition->setEnabled(FALSE);
-      _immediately->setEnabled(FALSE);
-      _uponReceipt->setEnabled(FALSE);
+      _timing->setEnabled(FALSE);
       _creditBy->setEnabled(FALSE);
 
       _origso->setEnabled(FALSE);
@@ -318,7 +318,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 	  _authorizeAll->hide();
 	  _enterReceipt->hide();
 	  _receiveAll->hide();
-	  _postOnSave->hide();
+	  _postReceipts->hide();
 
       _cancel->setFocus();
     }
@@ -431,7 +431,7 @@ bool returnAuthorization::sSave()
   if (_rsnCode->id() > 0)
     q.bindValue(":rahead_rsncode_id", _rsnCode->id());
   q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
-  if (_immediately->isChecked())
+  if (_timing->currentItem() == 0)
     q.bindValue(":rahead_timing", "I");
   else
 	  q.bindValue(":rahead_timing", "R");
@@ -483,24 +483,23 @@ bool returnAuthorization::sSave()
   omfgThis->sReturnAuthorizationsUpdated();
   omfgThis->sProjectsUpdated(_project->id());
 
-  if (_postOnSave->isChecked())
-  {
-    for (int i = 0; i < _raitem->topLevelItemCount(); i++)
-    {
-      if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
-      {
-	    enterPoReceipt::post("RA", _raheadid);
-	    break;
-      }
-    }
-  }
-
-
   _comments->setId(_raheadid);
   
   connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
   
   return true;
+}
+
+void returnAuthorization::sPostReceipts()
+{
+  for (int i = 0; i < _raitem->topLevelItemCount(); i++)
+  {
+    if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
+    {
+      enterPoReceipt::post("RA", _raheadid);
+      break;
+    }
+  }
 }
 
 void returnAuthorization::sSaveClick()
@@ -999,9 +998,8 @@ void returnAuthorization::sFillList()
   q.prepare("SELECT raitem_id "
 		    "FROM raitem "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
-			"AND ((raitem_orig_coitem_id IS NOT NULL) "
-			"AND (raitem_qtyauthorized > 0 ) "
-			"OR (raitem_status = 'C')) );");
+			"AND (raitem_orig_coitem_id IS NOT NULL) "
+			"AND (raitem_qtyauthorized > 0) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   _origso->setEnabled((!q.first()) && (_mode == cEdit || _mode == cNew));
@@ -1011,8 +1009,8 @@ void returnAuthorization::sFillList()
 		    "FROM raitem "
 			"  LEFT OUTER JOIN coitem ON (raitem_new_coitem_id=coitem_id) "
 			"WHERE ( (raitem_rahead_id=:rahead_id) "
-			"AND ((raitem_qtyreceived + COALESCE(coitem_qtyshipped,0) + "
-			" raitem_amtcredited) > 0 ) );");
+			"AND (((raitem_qtyreceived + COALESCE(coitem_qtyshipped,0) + "
+			" raitem_amtcredited) > 0 OR raitem_status = 'C')) );");
   q.bindValue(":rahead_id", _raheadid);
   q.exec();
   if (q.first())
@@ -1021,8 +1019,7 @@ void returnAuthorization::sFillList()
 	_commission->setEnabled(false);
 	_taxauth->setEnabled(false);
     _disposition->setEnabled(false);
-	_immediately->setEnabled(false);
-	_uponReceipt->setEnabled(false);
+	_timing->setEnabled(false);
 	_cust->setEnabled(false);
 	_billToName->setEnabled(false);
 	_billToAddr->setEnabled(false);
@@ -1033,8 +1030,7 @@ void returnAuthorization::sFillList()
 	_commission->setEnabled(true);
 	_taxauth->setEnabled(true);
     _disposition->setEnabled(true);
-	_immediately->setEnabled(true);
-	_uponReceipt->setEnabled(true);
+	_timing->setEnabled(true);
 	_cust->setEnabled(!_origso->isValid());
 	_billToName->setEnabled(true);
 	_billToAddr->setEnabled(true);
@@ -1108,9 +1104,9 @@ void returnAuthorization::populate()
 	  _disposition->setCurrentItem(4);
 	
 	if (rahead.value("rahead_timing").toString() == "I")
-	  _immediately->setChecked(TRUE);
-	else
-	  _uponReceipt->setChecked(TRUE);
+	  _timing->setCurrentItem(0);
+    else
+	  _timing->setCurrentItem(1);
 
     if (rahead.value("rahead_creditmethod").toString() == "N")
 	  _creditBy->setCurrentItem(0);
@@ -1393,7 +1389,7 @@ void returnAuthorization::sDispositionChanged()
 		      (_disposition->currentItem() != 0);
 
   _receiveAll->setEnabled(enableReceipt);
-  _postOnSave->setEnabled(enableReceipt);
+  _postReceipts->setEnabled(enableReceipt);
 
   if (_disposition->currentItem() != 4)
   {
@@ -1410,6 +1406,8 @@ void returnAuthorization::sDispositionChanged()
                              tr("Would you like to update the disposition of all existing line items?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
       {
+	    if (_disposition->currentItem() == 0 && _creditBy->currentItem() == 0)
+	      _creditBy->setCurrentItem(1);
 		sSave();
 	    q.prepare("UPDATE raitem SET raitem_disposition=:rahead_disposition "
 		    	  "WHERE (raitem_rahead_id=:rahead_id);");
@@ -1435,13 +1433,13 @@ void returnAuthorization::sDispositionChanged()
   }
   if (_disposition->currentItem() == 0)
   {
-    _immediately->setChecked(TRUE);
-	_uponReceipt->setEnabled(FALSE);
+    _timing->setCurrentItem(0);
+	_timing->setEnabled(FALSE);
 	if (_creditBy->currentItem() == 0)
 	  _creditBy->setCurrentItem(1);
   }
   else
-    _uponReceipt->setEnabled(TRUE);
+    _timing->setEnabled(TRUE);
 
   _refund->setEnabled(_creditBy->currentItem() == 3);
 }
@@ -1673,7 +1671,7 @@ void returnAuthorization::sRefund()
   if (! sSave())
     return;
 
-  bool _post = _disposition->currentItem() == 0 && _immediately->isChecked() &&
+  bool _post = _disposition->currentItem() == 0 && _timing->currentItem() == 0 &&
 		_creditBy->currentItem() == 3;
 
   q.prepare("SELECT createRaCreditMemo(:rahead_id,:post) AS result;");

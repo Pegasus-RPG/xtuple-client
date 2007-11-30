@@ -113,8 +113,8 @@ private:
     double _listPriceCache;
     double _salePriceCache;
     double _qtyAuthCache;
-    int		_taxauthid;
-    taxCache	_taxCache;
+    int	_taxauthid;
+    taxCache _taxCache;
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
@@ -130,6 +130,8 @@ private:
 	QDate _cScheduledDate;
     double _cQtyOrdered;
 	int _preferredWarehouseid;
+    double _qtycredited;
+    QString _status;
 
 };
 

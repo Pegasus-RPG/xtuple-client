@@ -108,6 +108,8 @@ purchaseOrderItem::purchaseOrderItem(QWidget* parent, const char* name, bool mod
   //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
    _tab->removePage(_tab->page(4));
+   
+  resize(minimumSize());
 }
 
 /*

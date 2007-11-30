@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>850</width>
-    <height>696</height>
+    <width>950</width>
+    <height>706</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -78,21 +78,6 @@
        <layout class="QGridLayout" >
         <item row="0" column="0" >
          <layout class="QHBoxLayout" >
-          <property name="spacing" >
-           <number>6</number>
-          </property>
-          <property name="leftMargin" >
-           <number>0</number>
-          </property>
-          <property name="topMargin" >
-           <number>0</number>
-          </property>
-          <property name="rightMargin" >
-           <number>0</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>0</number>
-          </property>
           <item>
            <layout class="QGridLayout" >
             <property name="leftMargin" >
@@ -330,24 +315,16 @@
           </item>
           <item>
            <layout class="QGridLayout" >
-            <property name="leftMargin" >
-             <number>0</number>
-            </property>
-            <property name="topMargin" >
-             <number>0</number>
-            </property>
-            <property name="rightMargin" >
-             <number>0</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>0</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>6</number>
-            </property>
-            <property name="verticalSpacing" >
-             <number>6</number>
-            </property>
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_dispositionLit" >
+              <property name="text" >
+               <string>Disposition:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
             <item row="0" column="1" >
              <widget class="XComboBox" name="_disposition" >
               <item>
@@ -377,7 +354,31 @@
               </item>
              </widget>
             </item>
-            <item row="3" column="0" >
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_timingLit" >
+              <property name="text" >
+               <string>Credit/Ship:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
+             <widget class="XComboBox" name="_timing" >
+              <item>
+               <property name="text" >
+                <string>Immediately</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>Upon Receipt</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="2" column="0" >
              <widget class="QLabel" name="_creditByLit" >
               <property name="text" >
                <string>Credit by:</string>
@@ -387,7 +388,7 @@
               </property>
              </widget>
             </item>
-            <item row="3" column="1" >
+            <item row="2" column="1" >
              <widget class="XComboBox" name="_creditBy" >
               <property name="enabled" >
                <bool>true</bool>
@@ -414,36 +415,10 @@
               </item>
              </widget>
             </item>
-            <item row="1" column="1" >
-             <widget class="QRadioButton" name="_immediately" >
+            <item row="3" column="1" >
+             <widget class="QCheckBox" name="_printSO" >
               <property name="text" >
-               <string>Immediately</string>
-              </property>
-              <property name="checked" >
-               <bool>true</bool>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_dispositionLit" >
-              <property name="text" >
-               <string>Disposition:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <widget class="QRadioButton" name="_uponReceipt" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>Upon Receipt</string>
-              </property>
-              <property name="checked" >
-               <bool>false</bool>
+               <string>Print on Save</string>
               </property>
              </widget>
             </item>
@@ -614,7 +589,7 @@
              <widget class="CustInfo" name="_cust" >
               <property name="minimumSize" >
                <size>
-                <width>200</width>
+                <width>300</width>
                 <height>0</height>
                </size>
               </property>
@@ -1107,6 +1082,9 @@
               <property name="enabled" >
                <bool>false</bool>
               </property>
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
+              </property>
               <property name="text" >
                <string>Authorize Line</string>
               </property>
@@ -1117,6 +1095,9 @@
               <property name="enabled" >
                <bool>false</bool>
               </property>
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
+              </property>
               <property name="text" >
                <string>Clear Authorization</string>
               </property>
@@ -1126,6 +1107,9 @@
              <widget class="QPushButton" name="_authorizeAll" >
               <property name="enabled" >
                <bool>true</bool>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
               </property>
               <property name="text" >
                <string>&amp;Authorize All</string>
@@ -1156,6 +1140,9 @@
               <property name="enabled" >
                <bool>false</bool>
               </property>
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
+              </property>
               <property name="text" >
                <string>Enter Receipt...</string>
               </property>
@@ -1166,8 +1153,21 @@
               <property name="enabled" >
                <bool>true</bool>
               </property>
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
+              </property>
               <property name="text" >
                <string>Receive All</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QPushButton" name="_postReceipts" >
+              <property name="focusPolicy" >
+               <enum>Qt::ClickFocus</enum>
+              </property>
+              <property name="text" >
+               <string>Post Receipts</string>
               </property>
              </widget>
             </item>
@@ -1188,32 +1188,6 @@
               <property name="bottomMargin" >
                <number>0</number>
               </property>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>10</width>
-                  <height>20</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <widget class="XCheckBox" name="_postOnSave" >
-                <property name="enabled" >
-                 <bool>false</bool>
-                </property>
-                <property name="text" >
-                 <string>Post on Save</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </item>
            </layout>
@@ -1235,6 +1209,9 @@
            <widget class="QPushButton" name="_refund" >
             <property name="enabled" >
              <bool>false</bool>
+            </property>
+            <property name="focusPolicy" >
+             <enum>Qt::ClickFocus</enum>
             </property>
             <property name="text" >
              <string>Refund</string>
@@ -1269,6 +1246,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="focusPolicy" >
+               <enum>Qt::TabFocus</enum>
               </property>
              </widget>
             </item>
@@ -1542,7 +1522,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>850</width>
+     <width>950</width>
      <height>22</height>
     </rect>
    </property>
@@ -1601,11 +1581,6 @@
    <header>socluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1626,6 +1601,53 @@
    <header>xurllabel.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_authNumber</tabstop>
+  <tabstop>_authDate</tabstop>
+  <tabstop>_expireDate</tabstop>
+  <tabstop>_salesRep</tabstop>
+  <tabstop>_commission</tabstop>
+  <tabstop>_taxauth</tabstop>
+  <tabstop>_rsnCode</tabstop>
+  <tabstop>_disposition</tabstop>
+  <tabstop>_timing</tabstop>
+  <tabstop>_creditBy</tabstop>
+  <tabstop>_printSO</tabstop>
+  <tabstop>_origso</tabstop>
+  <tabstop>_project</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_copyToShipto</tabstop>
+  <tabstop>_billToName</tabstop>
+  <tabstop>_billToAddr</tabstop>
+  <tabstop>_shipToNumber</tabstop>
+  <tabstop>_shipToName</tabstop>
+  <tabstop>_shipToAddr</tabstop>
+  <tabstop>_customerPO</tabstop>
+  <tabstop>_incident</tabstop>
+  <tabstop>_returnAuthInformation</tabstop>
+  <tabstop>_raitem</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_view</tabstop>
+  <tabstop>_action</tabstop>
+  <tabstop>_delete</tabstop>
+  <tabstop>_authorizeLine</tabstop>
+  <tabstop>_clearAuthorization</tabstop>
+  <tabstop>_authorizeAll</tabstop>
+  <tabstop>_enterReceipt</tabstop>
+  <tabstop>_receiveAll</tabstop>
+  <tabstop>_postReceipts</tabstop>
+  <tabstop>_currency</tabstop>
+  <tabstop>_miscChargeDescription</tabstop>
+  <tabstop>_miscCharge</tabstop>
+  <tabstop>_freight</tabstop>
+  <tabstop>_total</tabstop>
+  <tabstop>_refund</tabstop>
+  <tabstop>_CCCVV</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_cancel</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
