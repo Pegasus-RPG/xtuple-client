@@ -273,7 +273,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
     {
       _mode = cView;
 
-	  _clear->hide();
       _authNumber->setEnabled(FALSE);
       _authDate->setEnabled(FALSE);
       _expireDate->setEnabled(FALSE);
@@ -867,7 +866,7 @@ void returnAuthorization::sEdit()
     params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     params.append("rahead_id", _raheadid);
 
-	if (_mode==cView)
+	if (_mode==cView || ((XTreeWidgetItem*)(selected[i]))->altId() == -1)
 	  params.append("mode", "view");
 	else
       params.append("mode", "edit");
@@ -1625,17 +1624,21 @@ void returnAuthorization::sHandleEnterReceipt(bool p)
 
 void returnAuthorization::sHandleAction()
 {
+  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+  if (selected.size() > 1)
   {
-    if (_raitem->altId() == -1)
-	{
-	  _action->setText("Open");
-	  _edit->setEnabled(FALSE);
-	}
-	else
-	{
-	  _action->setText("Close");
-	  _edit->setEnabled(TRUE);
-	}
+    _action->setText("Close");
+    _action->setEnabled(FALSE);
+  }
+  else if (_raitem->altId() == -1)
+  {
+    _action->setText("Open");
+    _edit->setEnabled(FALSE);
+  }
+  else
+  {
+    _action->setText("Close");
+    _edit->setEnabled(TRUE);
   }
 }
 
