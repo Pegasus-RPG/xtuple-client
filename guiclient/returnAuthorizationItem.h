@@ -108,6 +108,7 @@ private:
     int _custid;
 	int _coitemid;
     int _shiptoid;
+    QString _creditmethod;
     double _priceRatio;
     double _listPriceCache;
     double _salePriceCache;

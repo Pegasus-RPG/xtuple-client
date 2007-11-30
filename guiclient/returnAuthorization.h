@@ -104,6 +104,7 @@ public slots:
     virtual void sTaxDetail();
 	virtual void sOrigSoChanged();
 	virtual void sDispositionChanged();
+    virtual void sCreditByChanged();
 	virtual void sAuthorizeLine();
 	virtual void sClearAuthorization();
 	virtual void sAuthorizeAll();

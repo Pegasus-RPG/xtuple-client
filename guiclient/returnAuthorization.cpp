@@ -82,7 +82,6 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 {
   setupUi(this);
 
-  connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -100,8 +99,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_taxauth,	SIGNAL(newID(int)),	this, SLOT(sTaxAuthChanged()));
   connect(_origso, SIGNAL(newId(int)), this, SLOT(sOrigSoChanged()));
   connect(_shipToAddr, SIGNAL(changed()), this, SLOT(sClearShiptoNumber()));
-  //connect(_shipToName, SIGNAL(textChanged(const QString&)), this, SLOT(sNewTest()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
+  connect(_creditBy, SIGNAL(currentIndexChanged(int)), this, SLOT(sCreditByChanged()));
   connect(_authorizeLine, SIGNAL(clicked()), this, SLOT(sAuthorizeLine()));
   connect(_clearAuthorization, SIGNAL(clicked()), this, SLOT(sClearAuthorization()));
   connect(_authorizeAll, SIGNAL(clicked()), this, SLOT(sAuthorizeAll()));
@@ -111,10 +110,6 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_raitem,     SIGNAL(valid(bool)), this, SLOT(sHandleAction()));
   connect(_action, SIGNAL(clicked()), this, SLOT(sAction()));
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
-/*  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustChanged()));
-  connect(_upCC, SIGNAL(clicked()), this, SLOT(sMoveUp()));
-  connect(_viewCC, SIGNAL(clicked()), this, SLOT(sViewCreditCard()));
-  connect(_authCC, SIGNAL(valueChanged()), this, SLOT(sCalculateTotal())); */
   connect(_refund,	SIGNAL(clicked()), this, SLOT(sRefund()));
 
 #ifndef Q_WS_MAC
@@ -271,6 +266,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _authNumber->setEnabled(FALSE);
       sDispositionChanged();
       _save->setFocus();
+      
+      connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
     }
     else if (param.toString() == "view")
     {
@@ -501,7 +498,9 @@ bool returnAuthorization::sSave()
 
 
   _comments->setId(_raheadid);
-
+  
+  connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
+  
   return true;
 }
 
@@ -1446,6 +1445,33 @@ void returnAuthorization::sDispositionChanged()
     _uponReceipt->setEnabled(TRUE);
 
   _refund->setEnabled(_creditBy->currentItem() == 3);
+}
+
+void returnAuthorization::sCreditByChanged()
+{
+    if (_creditBy->currentItem() == 0 && _total->localValue() > 0)
+    {
+      QMessageBox::information(this, tr("Credit By 'None' not allowed"),
+			    tr("This Return Authorization has authorized credit amounts. "
+                "You may not set the Credit By to 'None' unless all credit amounts are zero."));
+      _creditBy->setCurrentItem(1);
+    }
+    else if (_creditBy->currentItem() == 0)
+    {
+      _currency->setEnabled(false);
+      _miscChargeDescription->setEnabled(false);
+      _miscChargeAccount->setEnabled(false);
+      _miscCharge->setEnabled(false);
+      _freight->setEnabled(false);
+    }
+    else
+    {
+      _currency->setEnabled(true);
+      _miscChargeDescription->setEnabled(true);
+      _miscChargeAccount->setEnabled(true);
+      _miscCharge->setEnabled(true);
+      _freight->setEnabled(true);
+    }
 }
 
 void returnAuthorization::sAuthorizeLine()

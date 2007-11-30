@@ -166,6 +166,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _netUnitPrice->setId(q.value("rahead_curr_id").toInt());
       _netUnitPrice->setEffective(q.value("rahead_authdate").toDate());
       _preferredWarehouseid = q.value("prefwhs").toInt();
+      _creditmethod = q.value("rahead_creditmethod").toString();
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -304,6 +305,16 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 void returnAuthorizationItem::sSave()
 { 
   char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
+  
+  if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
+  {
+    QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
+                          tr("<p>You must enter a valid Schedule Date before saving this Sales Order Item.") );
+    _scheduledDate->setFocus();
+    return;
+  }
+
+  
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('raitem_raitem_id_seq') AS _raitem_id");
@@ -1105,6 +1116,15 @@ void returnAuthorizationItem::sDispositionChanged()
     _scheduledDate->setEnabled(FALSE);
     _altcosAccntid->setEnabled(FALSE);
   } 
+  
+  if (_creditmethod == "N")
+  {
+    _netUnitPrice->setLocalValue(0);
+    _netUnitPrice->setEnabled(FALSE);
+    _listPrices->setEnabled(FALSE);
+    _pricingUOM->setEnabled(FALSE);
+    _discountFromSale->setEnabled(FALSE); 
+  }
 }
 
 void returnAuthorizationItem::sHandleWo(bool pCreate)
