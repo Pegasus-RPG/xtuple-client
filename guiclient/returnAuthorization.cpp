@@ -164,6 +164,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
     _CCCVVLit->hide();
     _CCCVV->hide();
   }
+  
+  _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
   _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
   _postReceipts->setEnabled(_privleges->check("EnterReceipts"));
@@ -247,13 +249,13 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       metric = _metrics->value("DefaultRaCreditMethod");
       if (metric == "N")
-        _disposition->setCurrentItem(0);
+        _creditBy->setCurrentItem(0);
       else if (metric == "M")
-        _disposition->setCurrentItem(1);
+        _creditBy->setCurrentItem(1);
       else if (metric == "K")
-        _disposition->setCurrentItem(2);
+        _creditBy->setCurrentItem(2);
       else if (metric == "C")
-        _disposition->setCurrentItem(3);
+        _creditBy->setCurrentItem(3);
 
       connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo()));
       connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));

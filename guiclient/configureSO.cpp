@@ -269,7 +269,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
       _disposition->setCurrentItem(4);
 
     if (_metrics->value("DefaultRaTiming") == "R")
-      _uponReceipt->setChecked(TRUE);
+      _timing->setCurrentItem(1);
 
     metric = _metrics->value("DefaultRaCreditMethod");
     if (metric == "N")
@@ -282,6 +282,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
       _creditBy->setCurrentItem(3);
 
     _returnAuthChangeLog->setChecked(_metrics->boolean("ReturnAuthorizationChangeLog"));
+    _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
     _enableReservations->setChecked(_metrics->boolean("EnableSOReservations"));
   }
@@ -394,12 +395,13 @@ void configureSO::sSave()
   if (_enableReturns->isChecked() || !_enableReturns->isCheckable())
   {
     _metrics->set("DefaultRaDisposition", QString(dispositionTypes[_disposition->currentItem()]));
-    if (_immediately->isChecked())
+    if (_timing->currentItem() == 0)
 	  _metrics->set("DefaultRaTiming", QString("I"));
 	else
 	  _metrics->set("DefaultRaTiming", QString("R"));
     _metrics->set("DefaultRaCreditMethod", QString(creditMethodTypes[_creditBy->currentItem()]));
     _metrics->set("ReturnAuthorizationChangeLog", _returnAuthChangeLog->isChecked());
+    _metrics->set("DefaultPrintRAOnSave", _printRA->isChecked());
     _metrics->set("RANumberGeneration", QString(numberGenerationTypes[_returnAuthorizationNumGeneration->currentItem()]));
 
     q.prepare( "SELECT setNextRaNumber(:ranumber);" );

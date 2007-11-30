@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>684</width>
-    <height>578</height>
+    <width>788</width>
+    <height>532</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -1695,6 +1695,9 @@
            <verstretch>0</verstretch>
           </sizepolicy>
          </property>
+         <property name="focusPolicy" >
+          <enum>Qt::ClickFocus</enum>
+         </property>
          <property name="title" >
           <string>Enable Return Authorizations</string>
          </property>
@@ -1707,6 +1710,9 @@
          <layout class="QGridLayout" >
           <item row="0" column="0" colspan="2" >
            <widget class="QCheckBox" name="_returnAuthChangeLog" >
+            <property name="focusPolicy" >
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <property name="text" >
              <string>Post Return Authorization Changes to the Change Log</string>
             </property>
@@ -1721,6 +1727,9 @@
           </item>
           <item row="1" column="1" >
            <widget class="XComboBox" name="_disposition" >
+            <property name="focusPolicy" >
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <item>
              <property name="text" >
               <string>Credit</string>
@@ -1748,32 +1757,42 @@
             </item>
            </widget>
           </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_timingLit" >
+            <property name="text" >
+             <string>Credit/Ship:</string>
+            </property>
+           </widget>
+          </item>
           <item row="2" column="1" >
-           <widget class="QRadioButton" name="_immediately" >
-            <property name="text" >
-             <string>Immediately</string>
+           <widget class="XComboBox" name="_timing" >
+            <property name="focusPolicy" >
+             <enum>Qt::ClickFocus</enum>
             </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
+            <item>
+             <property name="text" >
+              <string>Immediately</string>
+             </property>
+            </item>
+            <item>
+             <property name="text" >
+              <string>Upon Receipt</string>
+             </property>
+            </item>
            </widget>
           </item>
-          <item row="3" column="1" >
-           <widget class="QRadioButton" name="_uponReceipt" >
-            <property name="text" >
-             <string>Upon Receipt</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="0" >
+          <item row="3" column="0" >
            <widget class="QLabel" name="_creditByLit" >
             <property name="text" >
              <string>Default Credit Method:</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="1" >
+          <item row="3" column="1" >
            <widget class="XComboBox" name="_creditBy" >
+            <property name="focusPolicy" >
+             <enum>Qt::ClickFocus</enum>
+            </property>
             <item>
              <property name="text" >
               <string>None</string>
@@ -1794,6 +1813,16 @@
               <string>Credit Card</string>
              </property>
             </item>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2" >
+           <widget class="QCheckBox" name="_printRA" >
+            <property name="focusPolicy" >
+             <enum>Qt::ClickFocus</enum>
+            </property>
+            <property name="text" >
+             <string>Check Print On Save by Default</string>
+            </property>
            </widget>
           </item>
          </layout>
@@ -1900,8 +1929,6 @@
   <tabstop>_enableReturns</tabstop>
   <tabstop>_returnAuthChangeLog</tabstop>
   <tabstop>_disposition</tabstop>
-  <tabstop>_immediately</tabstop>
-  <tabstop>_uponReceipt</tabstop>
   <tabstop>_creditBy</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>

@@ -416,7 +416,7 @@
              </widget>
             </item>
             <item row="3" column="1" >
-             <widget class="QCheckBox" name="_printSO" >
+             <widget class="QCheckBox" name="_printRA" >
               <property name="text" >
                <string>Print on Save</string>
               </property>
@@ -1612,7 +1612,7 @@
   <tabstop>_disposition</tabstop>
   <tabstop>_timing</tabstop>
   <tabstop>_creditBy</tabstop>
-  <tabstop>_printSO</tabstop>
+  <tabstop>_printRA</tabstop>
   <tabstop>_origso</tabstop>
   <tabstop>_project</tabstop>
   <tabstop>_cust</tabstop>
