@@ -82,7 +82,7 @@
 #include "image.h"
 #include "itemUOM.h"
 
-const char *_itemTypes[] = { "P", "M", "F", "R", "S", "T", "O", "L", "B", "C", "Y" };
+const char *_itemTypes[] = { "P", "M", "J", "F", "R", "S", "T", "O", "L", "B", "C", "Y" };
 //const int _itemTypeCount = 8;
 const char *_planningTypes[] = { "M", "S", "N" };
 
@@ -219,9 +219,9 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
  
   if (!_metrics->boolean("BBOM"))
   {
+    _itemtype->removeItem(11);
     _itemtype->removeItem(10);
     _itemtype->removeItem(9);
-    _itemtype->removeItem(8);
   }
     
   if (_metrics->value("Application") != "OpenMFG")
@@ -839,7 +839,7 @@ void item::populate()
 {
   XSqlQuery item;
   item.prepare( "SELECT *,"
-                "       ( (item_type IN ('P', 'M', 'C', 'Y', 'R', 'A')) AND (item_sold) ) AS sold "
+                "       ( (item_type IN ('P', 'M', 'J',  'C', 'Y', 'R', 'A')) AND (item_sold) ) AS sold "
                 "FROM item "
                 "WHERE (item_id=:item_id);" );
   item.bindValue(":item_id", _itemid);
@@ -987,6 +987,15 @@ void item::sHandleItemtype()
     sold     = TRUE;
     weight   = TRUE;
     config   = TRUE;
+    capUOM   = TRUE;
+    shipUOM  = TRUE;
+
+  }
+
+  if (itemType == "J")
+  {
+    sold     = TRUE;
+    weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
   }
