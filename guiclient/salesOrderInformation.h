@@ -78,9 +78,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
-
-
 private:
     int _soheadid;
     int _soitemid;

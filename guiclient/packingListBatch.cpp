@@ -219,6 +219,7 @@ void packingListBatch::setParams(ParameterList & params)
   params.append("credit",	tr("Credit"));
   params.append("ship",		tr("Ship"));
   params.append("pack",		tr("Pack"));
+  params.append("return",	tr("Return"));
   params.append("other",	tr("Other"));
 }
 

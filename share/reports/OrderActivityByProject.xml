@@ -50,6 +50,7 @@ SELECT
             WHEN cohead_holdtype = 'C'  THEN 'On Credit Hold'
             WHEN cohead_holdtype = 'S'  THEN 'On Shipping Hold'
             WHEN cohead_holdtype = 'P'  THEN 'On Packing Hold'
+            WHEN cohead_holdtype = 'R'  THEN 'On Return Hold'
        END AS status,
        item_number AS item,
        

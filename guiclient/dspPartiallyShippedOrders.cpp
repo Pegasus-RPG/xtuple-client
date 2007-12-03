@@ -61,6 +61,7 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
 
@@ -130,14 +131,31 @@ void dspPartiallyShippedOrders::sHandlePrices(bool pShowPrices)
   }
 }
 
-void dspPartiallyShippedOrders::sPrint()
+bool dspPartiallyShippedOrders::setParams(ParameterList &params)
 {
-  ParameterList params;
   _warehouse->appendValue(params);
-  _dates->appendValue(params);
+  if (_dates->allValid())
+    _dates->appendValue(params);
+  else
+    return false;
 
   if(_showPrices->isChecked())
     params.append("showPrices");
+
+  params.append("none",   tr("None"));
+  params.append("credit", tr("Credit"));
+  params.append("pack",   tr("Pack"));
+  params.append("return", tr("Return"));
+  params.append("ship",   tr("Ship"));
+  params.append("other",  tr("Other"));
+
+  return true;
+}
+
+void dspPartiallyShippedOrders::sPrint()
+{
+  ParameterList params;
+  setParams(params);
 
   orReport report("PartiallyShippedOrders", params);
   if (report.isValid())
@@ -192,56 +210,51 @@ void dspPartiallyShippedOrders::sFillList()
 {
   _so->clear();
 
-  if (_dates->allValid())
+  ParameterList params;
+  if (setParams(params))
   {
-    QString sql( "SELECT CASE WHEN (cohead_holdtype IN ('P', 'C')) THEN -1"
-                 "            ELSE cohead_id"
-                 "       END AS _coheadid, cohead_id,"
-                 "       cohead_holdtype, cohead_number, cust_name,"
-                 "       CASE WHEN (cohead_holdtype='N') THEN :none"
-                 "            WHEN (cohead_holdtype='C') THEN :credit"
-                 "            WHEN (cohead_holdtype='S') THEN :ship"
-                 "            WHEN (cohead_holdtype='P') THEN :pack"
-                 "            ELSE :other"
-                 "       END AS f_holdtype,"
-                 "       formatDate(cohead_orderdate) AS f_orderdate,"
-                 "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
-                 "       formatDate(cohead_packdate) AS f_packdate,"
-                 "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                 "                         (coitem_price / coitem_price_invuomratio) ) ) AS f_extprice,"
+    QString sql( "SELECT CASE WHEN (cohead_holdtype IN ('P', 'C', 'R')) THEN -1"
+		 "            ELSE cohead_id"
+		 "       END AS _coheadid, cohead_id,"
+		 "       cohead_holdtype, cohead_number, cust_name,"
+		 "       CASE WHEN (cohead_holdtype='N') THEN <? value(\"none\") ?>"
+		 "            WHEN (cohead_holdtype='C') THEN <? value(\"credit\") ?>"
+		 "            WHEN (cohead_holdtype='S') THEN <? value(\"ship\") ?>"
+		 "            WHEN (cohead_holdtype='P') THEN <? value(\"pack\") ?>"
+		 "            WHEN (cohead_holdtype='R') THEN <? value(\"return\") ?>"
+		 "            ELSE <? value(\"other\") ?>"
+		 "       END AS f_holdtype,"
+		 "       formatDate(cohead_orderdate) AS f_orderdate,"
+		 "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
+		 "       formatDate(cohead_packdate) AS f_packdate,"
+		 "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "                         (coitem_price / coitem_price_invuomratio) ) ) AS f_extprice,"
 		 "       currConcat(cohead_curr_id) AS currAbbr,"
-                 "       SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                 "            (coitem_price / coitem_price_invuomratio) ) AS backlog,"
-                 "       MIN(coitem_scheddate) AS scheddate "
-                 "FROM cohead, itemsite, item, cust, coitem "
-                 "WHERE ( (coitem_cohead_id=cohead_id)"
-                 " AND (cohead_cust_id=cust_id)"
-                 " AND (coitem_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (coitem_status='O')"
-                 " AND (cohead_id IN ( SELECT DISTINCT coitem_cohead_id"
-                 "                     FROM coitem"
-                 "                     WHERE (coitem_qtyshipped > 0) ))"
-                 " AND (coitem_qtyshipped < coitem_qtyord)"
-                 " AND (coitem_scheddate BETWEEN :startDate AND :endDate)" );
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") "
-           "GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,"
-           "         cohead_orderdate, cohead_packdate, cohead_curr_id "
-           "ORDER BY scheddate, cohead_number;";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _dates->bindValue(q);
-    q.bindValue(":none", tr("None"));
-    q.bindValue(":credit", tr("Credit"));
-    q.bindValue(":ship", tr("Ship"));
-    q.bindValue(":pack", tr("Pack"));
-    q.bindValue(":other", tr("Other"));
-    q.exec();
+		 "       SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "            (coitem_price / coitem_price_invuomratio) ) AS backlog,"
+		 "       MIN(coitem_scheddate) AS scheddate "
+		 "FROM cohead, itemsite, item, cust, coitem "
+		 "WHERE ( (coitem_cohead_id=cohead_id)"
+		 " AND (cohead_cust_id=cust_id)"
+		 " AND (coitem_itemsite_id=itemsite_id)"
+		 " AND (itemsite_item_id=item_id)"
+		 " AND (coitem_status='O')"
+		 " AND (cohead_id IN ( SELECT DISTINCT coitem_cohead_id"
+		 "                     FROM coitem"
+		 "                     WHERE (coitem_qtyshipped > 0) ))"
+		 " AND (coitem_qtyshipped < coitem_qtyord)"
+		 " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
+		 "                           AND <? value(\"endDate\") ?>)"
+		 "<? if exists(\"warehous_id\") ?>"
+		 " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+		 "<? endif ?>"
+		 ") "
+		 "GROUP BY cohead_id, cohead_number, cust_name,"
+		 "         cohead_holdtype, cohead_orderdate, cohead_packdate,"
+		 "         cohead_curr_id "
+		 "ORDER BY scheddate, cohead_number;");
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
     if (q.first())
     {
       XTreeWidgetItem *last = NULL;

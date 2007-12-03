@@ -49,11 +49,12 @@
             ELSE cohead_id
        END AS _coheadid, cohead_id,
        cohead_holdtype, cohead_number, cust_name,
-       CASE WHEN (cohead_holdtype='N') THEN text('None')
-            WHEN (cohead_holdtype='C') THEN text('Credit')
-            WHEN (cohead_holdtype='S') THEN text('Ship')
-            WHEN (cohead_holdtype='P') THEN text('Pack')
-            ELSE text('Other')
+       CASE WHEN (cohead_holdtype='N') THEN &lt;? value(&quot;none&quot;) ?>
+            WHEN (cohead_holdtype='C') THEN &lt;? value(&quot;credit&quot;) ?>
+            WHEN (cohead_holdtype='S') THEN &lt;? value(&quot;ship&quot;) ?>
+            WHEN (cohead_holdtype='P') THEN &lt;? value(&quot;pack&quot;) ?>
+            WHEN (cohead_holdtype='R') THEN &lt;? value(&quot;return&quot;) ?>
+            ELSE &lt;? value(&quot;Other&quot;) ?>
        END AS f_holdtype,
        formatDate(cohead_orderdate) AS f_orderdate,
        formatDate(MIN(coitem_scheddate)) AS f_scheddate,

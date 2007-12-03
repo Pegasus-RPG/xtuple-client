@@ -57,46 +57,25 @@
 
 #include "salesOrderInformation.h"
 
-#include <qvariant.h>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a salesOrderInformation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 salesOrderInformation::salesOrderInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
+  _soitemid = 0;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 salesOrderInformation::~salesOrderInformation()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void salesOrderInformation::languageChange()
 {
-    retranslateUi(this);
-}
-
-void salesOrderInformation::init()
-{
-    _soitemid = 0;
+  retranslateUi(this);
 }
 
 enum SetResponse salesOrderInformation::set(ParameterList &pParams)
@@ -117,6 +96,11 @@ enum SetResponse salesOrderInformation::set(ParameterList &pParams)
     {
       _soheadid = q.value("coitem_cohead_id").toInt();
       populate();
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
     }
   }
 
@@ -163,12 +147,12 @@ void salesOrderInformation::populate()
              "         cohead_shiptoname,"
              "         cohead_shiptoaddress1, cohead_shiptoaddress2, cohead_shiptoaddress3,"
              "         cohead_shiptocity, cohead_shiptostate, cohead_shiptozipcode;" );
-  q.bindValue(":none", tr("None"));
+  q.bindValue(":none",   tr("None"));
   q.bindValue(":credit", tr("Credit"));
-  q.bindValue(":ship", tr("Ship"));
-  q.bindValue(":pack", tr("Pack"));
+  q.bindValue(":ship",   tr("Ship"));
+  q.bindValue(":pack",   tr("Pack"));
   q.bindValue(":return", tr("Return"));
-  q.bindValue(":other", tr("Other"));
+  q.bindValue(":other",  tr("Other"));
   q.bindValue(":sohead_id", _soheadid);
   q.bindValue(":soitem_id", _soitemid);
   q.exec();
@@ -199,4 +183,3 @@ void salesOrderInformation::populate()
     _shiptoZipCode->setText(q.value("cohead_shiptozipcode").toString());
   }
 }
-

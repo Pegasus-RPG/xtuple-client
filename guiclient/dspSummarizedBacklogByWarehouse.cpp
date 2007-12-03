@@ -61,6 +61,7 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "dspInventoryAvailabilityBySalesOrder.h"
@@ -138,12 +139,15 @@ void dspSummarizedBacklogByWarehouse::sHandlePrices(bool pShowPrices)
   sFillList();
 }
 
-void dspSummarizedBacklogByWarehouse::sPrint()
+bool dspSummarizedBacklogByWarehouse::setParams(ParameterList &params)
 {
-  ParameterList params;
   _warehouse->appendValue(params);
   _customerType->appendValue(params);
-  _dates->appendValue(params);
+
+  if (_dates->allValid())
+    _dates->appendValue(params);
+  else
+    return false;
 
   if (_showPrices->isChecked())
     params.append("showPrices");
@@ -155,11 +159,27 @@ void dspSummarizedBacklogByWarehouse::sPrint()
   else if (_orderNumber->isChecked())
     params.append("orderByOrderNumber");
 
-  orReport report("SummarizedBacklogByWarehouse", params);
-  if (report.isValid())
-    report.print();
-  else
-    report.reportError(this);
+  params.append("none",   tr("None"));
+  params.append("credit", tr("Credit"));
+  params.append("pack",   tr("Pack"));
+  params.append("return", tr("Return"));
+  params.append("ship",   tr("Ship"));
+  params.append("other",  tr("Other"));
+
+  return true;
+}
+
+void dspSummarizedBacklogByWarehouse::sPrint()
+{
+  ParameterList params;
+  if (setParams(params))
+  {
+    orReport report("SummarizedBacklogByWarehouse", params);
+    if (report.isValid())
+      report.print();
+    else
+      report.reportError(this);
+  }
 }
 
 void dspSummarizedBacklogByWarehouse::sInventoryAvailabilityBySalesOrder()
@@ -313,83 +333,77 @@ void dspSummarizedBacklogByWarehouse::sFillList()
 
   XTreeWidgetItem *orderLine  = NULL;
 
-  if (_dates->allValid())
+  ParameterList params;
+  if (setParams(params))
   {
     QString sql( "SELECT cohead_id, cohead_holdtype, cohead_number, cust_name,"
-                 "       CASE WHEN (cohead_holdtype='N') THEN :noHold"
-                 "            WHEN (cohead_holdtype='C') THEN :credit"
-                 "            WHEN (cohead_holdtype='S') THEN :shipping"
-                 "            WHEN (cohead_holdtype='P') THEN :packing"
-                 "            ELSE :otherHold"
-                 "       END AS f_holdtype,"
-                 "       formatDate(cohead_orderdate) AS f_orderdate,"
-                 "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
-                 "       formatDate(cohead_packdate) AS f_packdate,"
-                 "       formatMoney( SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                 "                         (coitem_price / coitem_price_invuomratio), 2) ) ) AS f_sales,"
-                 "       formatCost(SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) ) AS f_cost,"
-                 "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                 "                         ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) ) AS f_margin,"
-                 "       SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                 "            (coitem_price / coitem_price_invuomratio), 2) ) AS sales,"
-                 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,"
-                 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
-                 "            ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,"
-                 "       MIN(coitem_scheddate) AS scheddate,"
+		 "       CASE WHEN (cohead_holdtype='N') THEN <? value(\"none\") ?>"
+		 "            WHEN (cohead_holdtype='C') THEN <? value(\"credit\") ?>"
+		 "            WHEN (cohead_holdtype='S') THEN <? value(\"ship\") ?>"
+		 "            WHEN (cohead_holdtype='P') THEN <? value(\"pack\") ?>"
+		 "            WHEN (cohead_holdtype='R') THEN <? value(\"return\") ?>"
+		 "            ELSE <? value(\"other\") ?>"
+		 "       END AS f_holdtype,"
+		 "       formatDate(cohead_orderdate) AS f_orderdate,"
+		 "       formatDate(MIN(coitem_scheddate)) AS f_scheddate,"
+		 "       formatDate(cohead_packdate) AS f_packdate,"
+		 "       formatMoney( SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "                         (coitem_price / coitem_price_invuomratio), 2) ) ) AS f_sales,"
+		 "       formatCost(SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) ) AS f_cost,"
+		 "       formatMoney( SUM( (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "                         ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) ) AS f_margin,"
+		 "       SUM( round((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "            (coitem_price / coitem_price_invuomratio), 2) ) AS sales,"
+		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) * stdcost(item_id) ) AS cost,"
+		 "       SUM((noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) * coitem_qty_invuomratio) *"
+		 "            ((coitem_price / coitem_price_invuomratio) - stdcost(item_id)) ) AS margin,"
+		 "       MIN(coitem_scheddate) AS scheddate,"
 		 "       COALESCE(cosmisc_id, -1) AS cosmisc_id, "
 		 "       formatShipmentNumber(cosmisc_id) AS cosmisc_number, "
-                 "       CASE WHEN (cosmisc_shipped IS NULL) THEN 0"
-                 "            WHEN (cosmisc_shipped) THEN 1"
-                 "            WHEN (NOT cosmisc_shipped) THEN 2"
-                 "       END AS shipstatus,"
-                 "       COALESCE(cosmisc_shipvia, '') AS shipvia,"
-                 "       CASE WHEN (cosmisc_shipdate IS NULL) THEN ''"
-                 "            ELSE formatDate(cosmisc_shipdate)"
-                 "       END AS shipdate,"
-                 "       ( ((SELECT COALESCE(SUM(cobill_qty), 0)"
-                 "            FROM cobill, cobmisc"
-                 "           WHERE ((cobill_cobmisc_id=cobmisc_id)"
-                 "             AND  (cobmisc_cohead_id=cohead_id)) ) > 0)"
-                 "       AND (SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) > 0)"
-                 "       ) AS overbilled "
-                 "FROM coitem, itemsite, item, cust, cohead LEFT OUTER JOIN cosmisc ON (cosmisc_cohead_id=cohead_id) "
-                 "WHERE ( (coitem_cohead_id=cohead_id)"
-                 " AND (cohead_cust_id=cust_id)"
-                 " AND (coitem_itemsite_id=itemsite_id)"
-                 " AND (itemsite_item_id=item_id)"
-                 " AND (coitem_status NOT IN ('C','X'))"
-                 " AND (coitem_scheddate BETWEEN :startDate AND :endDate)" );
+		 "       CASE WHEN (cosmisc_shipped IS NULL) THEN 0"
+		 "            WHEN (cosmisc_shipped) THEN 1"
+		 "            WHEN (NOT cosmisc_shipped) THEN 2"
+		 "       END AS shipstatus,"
+		 "       COALESCE(cosmisc_shipvia, '') AS shipvia,"
+		 "       CASE WHEN (cosmisc_shipdate IS NULL) THEN ''"
+		 "            ELSE formatDate(cosmisc_shipdate)"
+		 "       END AS shipdate,"
+		 "       ( ((SELECT COALESCE(SUM(cobill_qty), 0)"
+		 "            FROM cobill, cobmisc"
+		 "           WHERE ((cobill_cobmisc_id=cobmisc_id)"
+		 "             AND  (cobmisc_cohead_id=cohead_id)) ) > 0)"
+		 "       AND (SUM(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) > 0)"
+		 "       ) AS overbilled "
+		 "FROM coitem, itemsite, item, cust, cohead LEFT OUTER JOIN cosmisc ON (cosmisc_cohead_id=cohead_id) "
+		 "WHERE ( (coitem_cohead_id=cohead_id)"
+		 " AND (cohead_cust_id=cust_id)"
+		 " AND (coitem_itemsite_id=itemsite_id)"
+		 " AND (itemsite_item_id=item_id)"
+		 " AND (coitem_status NOT IN ('C','X'))"
+		 " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
+		 "                           AND <? value(\"endDate\") ?>)"
+		 "<? if exists(\"warehous_id\") ?>"
+		 " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+		 "<? endif ?>"
+		 "<? if exists(\"custtype_id\") ?>"
+		 " AND (cust_custtype_id=<? exists(\"custtype_id\") ?>)"
+		 "<? elseif exists(\"custtype_pattern\") ?>"
+		 " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype"
+		 "  WHERE (custtype_code ~ <? value(\"custtype_pattern\") ?>)))"
+		 "<? endif ?>"
+		 ") "
+		 "GROUP BY cohead_id, cohead_number, cust_name,"
+		 "         cohead_holdtype, cohead_orderdate, cohead_packdate,"
+		 "         cosmisc_shipped, cosmisc_shipvia, cosmisc_shipdate,"
+		 "         cosmisc_id "
+		 " ORDER BY "
+		 "<? if exists(\"orderByShipDate\") ?>scheddate,"
+		 "<? elseif exists(\"orderByPackDate\") ?>cohead_packdate,"
+		 "<? endif ?>"
+		 "          cohead_number, cosmisc_shipped;");
 
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    if (_customerType->isSelected())
-      sql += " AND (cust_custtype_id=:custtype_id)";
-    else if (_customerType->isPattern())
-      sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-    sql += ") "
-           "GROUP BY cohead_id, cohead_number, cust_name, cohead_holdtype,"
-           "         cohead_orderdate, cohead_packdate,"
-           "         cosmisc_shipped, cosmisc_shipvia, cosmisc_shipdate, cosmisc_id ";
-
-    if (_shipDate->isChecked())
-      sql += "ORDER BY scheddate, cohead_number, cosmisc_shipped;";
-    else if (_packDate->isChecked())
-      sql += "ORDER BY cohead_packdate, cohead_number, cosmisc_shipped;";
-    else if (_orderNumber->isChecked())
-      sql += "ORDER BY cohead_number, cosmisc_shipped;";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _customerType->bindValue(q);
-    _dates->bindValue(q);
-    q.bindValue(":noHold", tr("None"));
-    q.bindValue(":credit", tr("Credit"));
-    q.bindValue(":shipping", tr("Ship"));
-    q.bindValue(":packing", tr("Pack"));
-    q.bindValue(":otherHold", tr("Other"));
-    q.exec();
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
     if (q.first())
     {
       double        totalSales  = 0.0;
@@ -463,86 +477,94 @@ void dspSummarizedBacklogByWarehouse::sFillList()
                            formatCost(totalCost),
                            formatMoney(totalMargin) );
 
-      sql = "SELECT COUNT(cohead_id) AS totalorders "
-            "FROM ( SELECT DISTINCT cohead_id "
-            "       FROM cohead, coitem, itemsite, cust "
-            "       WHERE ( (coitem_cohead_id=cohead_id)"
-            "        AND (coitem_itemsite_id=itemsite_id)"
-            "        AND (cohead_cust_id=cust_id)"
-            "        AND (coitem_status NOT IN ('C','X'))"
-            "        AND (coitem_scheddate BETWEEN :startDate AND :endDate)";
+      QString tots = "SELECT COUNT(cohead_id) AS totalorders "
+		     "FROM ( SELECT DISTINCT cohead_id "
+		     "       FROM cohead, coitem, itemsite, cust "
+		     "       WHERE ( (coitem_cohead_id=cohead_id)"
+		     "        AND (coitem_itemsite_id=itemsite_id)"
+		     "        AND (cohead_cust_id=cust_id)"
+		     "        AND (coitem_status NOT IN ('C','X'))"
+		     " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
+		     "                           AND <? value(\"endDate\") ?>)"
+		     "<? if exists(\"warehous_id\") ?>"
+		     " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+		     "<? endif ?>"
+		     "<? if exists(\"custtype_id\") ?>"
+		     " AND (cust_custtype_id=<? exists(\"custtype_id\") ?>)"
+		     "<? elseif exists(\"custtype_pattern\") ?>"
+		     " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype"
+		     "  WHERE (custtype_code ~ <? value(\"custtype_pattern\") ?>)))"
+		     "<? endif ?>"
+		     ") ) AS data;";
 
-      if (_warehouse->isSelected())
-        sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-      if (_customerType->isSelected())
-        sql += " AND (cust_custtype_id=:custtype_id)";
-      else if (_customerType->isPattern())
-        sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-      sql += ") ) AS data;";
-      q.prepare(sql);
-      _warehouse->bindValue(q);
-      _customerType->bindValue(q);
-      _dates->bindValue(q);
-      q.exec();
+      MetaSQLQuery totm(tots);
+      q = totm.toQuery(params);
       if (q.first())
         _totalSalesOrders->setText(q.value("totalorders").toString());
-//  ToDo
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
 
-      sql = "SELECT COUNT(coitem.*) AS totalitems "
-            "FROM cohead, coitem, itemsite, cust "
-            "WHERE ( (coitem_cohead_id=cohead_id)"
-            " AND (coitem_itemsite_id=itemsite_id)"
-            " AND (cohead_cust_id=cust_id)"
-            " AND (coitem_status NOT IN ('C','X'))"
-            " AND (coitem_scheddate BETWEEN :startDate AND :endDate)";
+      QString cnts = "SELECT COUNT(coitem.*) AS totalitems "
+		     "FROM cohead, coitem, itemsite, cust "
+		     "WHERE ( (coitem_cohead_id=cohead_id)"
+		     " AND (coitem_itemsite_id=itemsite_id)"
+		     " AND (cohead_cust_id=cust_id)"
+		     " AND (coitem_status NOT IN ('C','X'))"
+		     " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
+		     "                           AND <? value(\"endDate\") ?>)"
+		     "<? if exists(\"warehous_id\") ?>"
+		     " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+		     "<? endif ?>"
+		     "<? if exists(\"custtype_id\") ?>"
+		     " AND (cust_custtype_id=<? exists(\"custtype_id\") ?>)"
+		     "<? elseif exists(\"custtype_pattern\") ?>"
+		     " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype"
+		     "  WHERE (custtype_code ~ <? value(\"custtype_pattern\") ?>)))"
+		     "<? endif ?>"
+		     ");";
 
-      if (_warehouse->isSelected())
-        sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-      if (_customerType->isSelected())
-        sql += " AND (cust_custtype_id=:custtype_id)";
-      else if (_customerType->isPattern())
-        sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-      sql += ");";
-      q.prepare(sql);
-      _warehouse->bindValue(q);
-      _customerType->bindValue(q);
-      _dates->bindValue(q);
-      q.exec();
+      MetaSQLQuery cntm(cnts);
+      q = cntm.toQuery(params);
       if (q.first())
         _totalLineItems->setText(q.value("totalitems").toString());
-//  ToDo
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
 
-      sql = "SELECT formatQty(SUM(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_totalqty "
-            "FROM cohead, coitem, itemsite, item, cust "
-            "WHERE ( (coitem_cohead_id=cohead_id)"
-            " AND (coitem_itemsite_id=itemsite_id)"
-            " AND (itemsite_item_id=item_id)"
-            " AND (cohead_cust_id=cust_id)"
-            " AND (coitem_status NOT IN ('C','X'))"
-            " AND (coitem_scheddate BETWEEN :startDate AND :endDate)";
+      QString qtys = "SELECT formatQty(SUM(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_totalqty "
+		     "FROM cohead, coitem, itemsite, item, cust "
+		     "WHERE ( (coitem_cohead_id=cohead_id)"
+		     " AND (coitem_itemsite_id=itemsite_id)"
+		     " AND (itemsite_item_id=item_id)"
+		     " AND (cohead_cust_id=cust_id)"
+		     " AND (coitem_status NOT IN ('C','X'))"
+		     " AND (coitem_scheddate BETWEEN <? value(\"startDate\") ?>"
+		     "                           AND <? value(\"endDate\") ?>)"
+		     "<? if exists(\"warehous_id\") ?>"
+		     " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+		     "<? endif ?>"
+		     "<? if exists(\"custtype_id\") ?>"
+		     " AND (cust_custtype_id=<? exists(\"custtype_id\") ?>)"
+		     "<? elseif exists(\"custtype_pattern\") ?>"
+		     " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype"
+		     "  WHERE (custtype_code ~ <? value(\"custtype_pattern\") ?>)))"
+		     "<? endif ?>"
+		     ");";
 
-      if (_warehouse->isSelected())
-        sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-      if (_customerType->isSelected())
-        sql += " AND (cust_custtype_id=:custtype_id)";
-      else if (_customerType->isPattern())
-        sql += " AND (cust_custtype_id IN (SELECT custtype_id FROM custtype WHERE (custtype_code ~ :custtype_pattern)))";
-
-      sql += ");";
-      q.prepare(sql);
-      _warehouse->bindValue(q);
-      _customerType->bindValue(q);
-      _dates->bindValue(q);
-      q.exec();
+      MetaSQLQuery qtym(qtys);
+      q = qtym.toQuery(params);
       if (q.first())
         _totalQty->setText(q.value("f_totalqty").toString());
-//  ToDo
-
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return;
+      }
     }
     else
     {

@@ -6,6 +6,7 @@ SELECT cohead_id, pack_shiphead_id,
             WHEN (cohead_holdtype='C') THEN <? value("credit") ?>
             WHEN (cohead_holdtype='S') THEN <? value("ship") ?>
             WHEN (cohead_holdtype='P') THEN <? value("pack") ?>
+            WHEN (cohead_holdtype='R') THEN <? value("return") ?>
             ELSE <? value("other") ?>
        END AS f_holdtype,
        formatBoolYN(pack_printed) 

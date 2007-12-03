@@ -18,6 +18,7 @@
        CASE WHEN (cohead_holdtype='N') THEN 'None'
             WHEN (cohead_holdtype='S') THEN 'Ship'
             WHEN (cohead_holdtype='P') THEN 'Pack'
+            WHEN (cohead_holdtype='R') THEN 'Return'
             ELSE 'Other'
        END AS f_holdtype,
        formatBoolYN(sopack_printed) as f_printed
