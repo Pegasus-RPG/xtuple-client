@@ -427,6 +427,9 @@ void item::saveCore()
 
 void item::sSave()
 {
+  bool _zeroCosts = FALSE;
+  bool _inactivateSites = FALSE;
+  QString sql;
   QString itemNumber = _itemNumber->text().stripWhiteSpace().upper();
 
   if(_disallowPlanningType && QString(_itemTypes[_itemtype->currentItem()]) == "L")
@@ -511,6 +514,27 @@ void item::sSave()
 
   if (cEdit == _mode && _itemtype->currentText() != _originalItemType)
   {
+    if ((_itemtype->currentText() == "Job") || (_itemtype->currentText() == "Reference") ||
+		(_itemtype->currentText() == "Costing") || (_itemtype->currentText() == "Tooling"))
+	{
+      q.prepare( "SELECT itemsite_id "
+                 "  FROM itemsite "
+                 " WHERE ((itemsite_item_id=:item_id) "
+				 " AND (itemsite_qtyonhand + qtyallocated(itemsite_id,startoftime(),endoftime()) +"
+		         "      qtyordered(itemsite_id,startoftime(),endoftime()) > 0 ));" );
+      q.bindValue(":item_id", _itemid);
+      q.exec();
+      if (q.first())
+	  {
+	    QMessageBox::information( this, tr("Cannot Save Item"),
+                              tr("There are itemsites with quantities with on hand quantities or \n"
+							     "pending inventory activity for this item.  This item type does not \n"
+								 "allow on hand balances or inventory activity.")  );
+        _itemtype->setFocus();
+        return;
+	  }
+	}
+
     q.prepare( "SELECT itemcost_id "
                "  FROM itemcost "
                " WHERE (itemcost_item_id=:item_id);" );
@@ -525,18 +549,31 @@ void item::sSave()
                                    "Do you wish to continue saving and delete the Item Costs?"),
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
-      {
         return;
-      }
+	  else
+	    _zeroCosts = TRUE;
+	}
 
-      q.prepare("SELECT updateCost(itemcost_id, 0) FROM itemcost WHERE (itemcost_item_id=:item_id);");
-      q.bindValue(":item_id", _itemid);
-      q.exec();
-      if (q.lastError().type() != QSqlError::None)
+    q.prepare( "SELECT itemsite_id "
+               "  FROM itemsite "
+               " WHERE (itemsite_item_id=:item_id);" );
+    q.bindValue(":item_id", _itemid);
+    q.exec();
+    if (q.first())
+    {
+      if(QMessageBox::question( this, tr("Item Sites Exist"),
+                                tr("You have changed the Item Type of this Item. To ensure\n"
+                                   "item sites do not have invalid settings all Item Sites \n "
+								   "associated with it will be inactivated beore this change \n"
+                                   "may occurr.  You may afterward edit the itemsites, enter \n"
+								   "valid information and reactivate them.  "
+                                   "Do you wish to continue saving and inactivate the Item Sites?"),
+                                QMessageBox::Ok,
+                                QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
       {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
+	  _inactivateSites = TRUE;
     }
   }
 
@@ -551,7 +588,7 @@ void item::sSave()
   }
 
   if ( (_mode == cNew && !_inTransaction) || (_mode == cCopy) )
-    q.prepare( "INSERT INTO item "
+         sql = "INSERT INTO item "
                "( item_id, item_number, item_active,"
                "  item_descrip1, item_descrip2,"
                "  item_type, item_inv_uom_id, item_classcode_id,"
@@ -572,9 +609,9 @@ void item::sSave()
                "  :item_prodcat_id, :item_price_uom_id,"
                "  :item_exclusive,"
                "  :item_listprice, :item_upccode, :item_config,"
-               "  :item_comments, :item_extdescrip );" );
+               "  :item_comments, :item_extdescrip );" ;
   else if ((_mode == cEdit) || (cNew == _mode && _inTransaction))
-    q.prepare( "UPDATE item "
+         sql = "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
                "    item_type=:item_type, item_inv_uom_id=:item_inv_uom_id, item_classcode_id=:item_classcode_id,"
                "    item_planning_type=:item_planning_type,"
@@ -586,8 +623,13 @@ void item::sSave()
                "    item_exclusive=:item_exclusive,"
                "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
                "    item_comments=:item_comments, item_extdescrip=:item_extdescrip "
-               "WHERE (item_id=:item_id);" );
+               "WHERE (item_id=:item_id);";
 
+  if (_zeroCosts)
+    sql += "SELECT updateCost(itemcost_id, 0) FROM itemcost WHERE (itemcost_item_id=:item_id);";
+  if (_inactivateSites)
+    sql += "UPDATE itemsite SET itemsite_active=false WHERE (itemsite_item_id=:item_id);";
+  q.prepare(sql);
   q.bindValue(":item_id", _itemid);
   q.bindValue(":item_number", itemNumber);
   q.bindValue(":item_descrip1", _description1->text());
