@@ -109,6 +109,7 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
 
   sCreateToggled(_create->isChecked());
   sHandleButtons();
+  _reject = false;
 }
 
 shipOrder::~shipOrder()
@@ -127,28 +128,6 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("cosmisc_id", &valid);
-  if (valid)
-  {
-    q.prepare( "SELECT cosmisc_cohead_id "
-               "FROM cosmisc "
-               "WHERE (cosmisc_id=:cosmisc_id);" );
-    q.bindValue(":cosmisc_id", param.toInt());
-    q.exec();
-    if (q.first())
-    {
-      _soNumber->setId(q.value("cosmisc_cohead_id").toInt());
-      _captive = TRUE;
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return UndefinedError;
-    }
-
-    _shipment->setId(param.toInt());	// last because of signal cascade
-  }
-
   param = pParams.value("shiphead_id", &valid);
   if (valid)
   {
@@ -159,6 +138,7 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
     q.exec();
     if (q.first())
     {
+      _captive = true;	// so order handling can reject if necessary
       if (q.value("shiphead_order_type").toString() == "SO")
       {
 	_toNumber->setId(-1);
@@ -171,7 +151,6 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
 	_toNumber->setId(q.value("shiphead_order_id").toInt());
 	_select->setEnabled(false);
       }
-      _captive = TRUE;
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -181,6 +160,9 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
 
     _shipment->setId(param.toInt());	// last because of signal cascade
   }
+
+  if (_reject)
+    return UndefinedError;
 
   return NoError;
 }
@@ -489,17 +471,29 @@ void shipOrder::sHandleSo()
     q.exec();
     if (q.first())
     {
-      if ( (q.value("cohead_holdtype").toString() == "P") ||
-           (q.value("cohead_holdtype").toString() == "C") ||
-           (q.value("cohead_holdtype").toString() == "S") )
+      QString msg;
+      if ( (q.value("cohead_holdtype").toString() == "C"))
+	msg = storedProcErrorLookup("shipShipment", -12);
+      else if (q.value("cohead_holdtype").toString() == "P")
+	msg = storedProcErrorLookup("shipShipment", -13);
+      else if (q.value("cohead_holdtype").toString() == "R")
+	msg = storedProcErrorLookup("shipShipment", -14);
+      else if (q.value("cohead_holdtype").toString() == "S")
+	msg = storedProcErrorLookup("shipShipment", -15);
+
+      if (! msg.isEmpty())
       {
-        QMessageBox::warning( this, tr("Cannot Ship Order"),
-                              tr("<p>The selected Sales Order cannot be "
-			         "shipped as it has been placed on Shipping "
-				 "Hold. It must be released from Shipping Hold "
-				 "before it may be shipped." ) );
-        _soNumber->setId(-1);
-        return;
+	QMessageBox::warning(this, tr("Cannot Ship Order"), msg);
+	if (_captive)
+	{
+	  _reject = true;	// so set() can return an error
+	  reject();	// this only works if shipOrder has been exec()'ed
+	}
+	else
+	{
+	  _soNumber->setId(-1);
+	  return;
+	}
       }
 
       _freight->setId(q.value("cohead_curr_id").toInt());

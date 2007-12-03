@@ -643,14 +643,30 @@ void initErrorLookupHash()
 
   { "issueAllBalanceToShipping",  -1, "",	 -1, "issueToShipping" },
   { "issueAllBalanceToShipping", -10, "",	-10, "issueToShipping" },
+  { "issueAllBalanceToShipping", -12, "",	-12, "issueToShipping" },
+  { "issueAllBalanceToShipping", -13, "",	-13, "issueToShipping" },
+  { "issueAllBalanceToShipping", -14, "",	-14, "issueToShipping" },
 
   { "issueLineBalanceToShipping",  -1, "",	 -1, "issueToShipping" },
   { "issueLineBalanceToShipping", -10, "",	-10, "issueToShipping" },
+  { "issueLineBalanceToShipping", -12, "",	-12, "issueToShipping" },
+  { "issueLineBalanceToShipping", -13, "",	-13, "issueToShipping" },
+  { "issueLineBalanceToShipping", -14, "",	-14, "issueToShipping" },
 
   { "issueToShipping",	-1, "",		 	 -1, "postInvTrans" },
   { "issueToShipping", -10, TR("The Next Shipment Number has not been set in "
 			       "the Configure S/R window. Set that value and "
 			       "try issuing to shipping again."), 0, "" },
+  { "issueToShipping", -12, TR("The selected Sales Order is on Credit Hold and "
+			       "must be taken off of Credit Hold before any "
+			       "inventory may be issued to it."),	0, "" },
+  { "issueToShipping", -13, TR("The selected Sales Order is on Packing Hold "
+			       "and must be taken off of Packing Hold before "
+			       "any inventory may be issued to it."),	0, "" },
+  { "issueToShipping", -14, TR("The selected Sales Order is on Return Hold. "
+			       "The Customer must return all materials for a "
+			       "related Return Authorization before any inven"
+			       "tory may be issued to this Order."),	0, "" },
 
   { "massReplaceBomitem",  -1, TR("Cannot make this BOM Item replacement "
 				  "because it would create a recursive BOM."),
@@ -883,6 +899,19 @@ void initErrorLookupHash()
 			    "Transit Warehouse."),			0, "" },
   { "shipShipment",  -8, TR("This Shipment cannot be shipped because it "
 			    "appears to have already shipped."),	0, "" },
+  { "shipShipment", -12, TR("The selected Order is on Credit Hold and must be "
+			    "taken off of Credit Hold before it "
+			    "may be shipped."),				0, "" },
+  { "shipShipment", -13, TR("The selected Order is on Packing Hold and must be "
+			     "taken off of Packing Hold before it "
+			     "may be shipped."),			0, "" },
+  { "shipShipment", -14, TR("The selected Order is on Return Hold. The Customer"
+			     " must return all materials for a related Return "
+			     "Authorization before this order may be shipped."),
+			     						0, "" },
+  { "shipShipment", -15, TR("The selected Order is on Shipping Hold and must "
+			     "be taken off of Shipping Hold before it "
+			     "may be shipped."),			0, "" },
   { "shipShipment", -50, TR("This Shipment cannot be shipped because it "
 			    "does not appear to exist."),		0, "" },
   { "shipShipment", -99, TR("This Order may not be shipped because it has been "

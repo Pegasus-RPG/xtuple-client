@@ -90,7 +90,8 @@ protected slots:
 
 
 private:
-    bool _captive;
+    bool	_captive;
+    bool	_reject;	// for handling errors during set()
 
 };
 

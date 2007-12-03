@@ -218,31 +218,11 @@ void shippingInformation::sSalesOrderList()
   newdlg.set(params);
 
   int soheadid;
-  if ((soheadid = newdlg.exec()) != QDialog::Rejected)
-  {
-    q.prepare( "SELECT cohead_holdtype "
-               "FROM cohead "
-               "WHERE (cohead_id=:cohead_id);" );
-    q.bindValue(":cohist_id", soheadid);
-    q.exec();
-    if (q.first())
-    {
-      if ( (q.value("cohead_holdtype").toString() == "P") || (q.value("cohead_holdtype").toString() == "C") )
-      {
-        QMessageBox::critical( this, tr("Sales Order on Hold"),
-                               tr( "The selected Sales Order is on Hold. \n"
-                                   "You may not issue Inventory for this Sales Order to Shipping\n"
-                                   "or print of Bill of Lading for this Sales Order until\n"
-                                   "it is taken off of Hold." ) );
-        _salesOrder->setId(-1);
-        _salesOrder->setFocus();
-      }
-
-      _salesOrder->setId(soheadid);
-    }
-    else
-      _salesOrder->setId(-1);
-  }
+  soheadid = newdlg.exec();
+  if (soheadid == QDialog::Rejected)
+    _salesOrder->setId(-1);
+  else
+    _salesOrder->setId(soheadid);
 }
 
 void shippingInformation::sPopulateMenu(QMenu *menuThis)
@@ -388,6 +368,7 @@ void shippingInformation::sFillList()
   if (_salesOrder->isValid())
   {
     q.prepare( "SELECT cohead_orderdate AS orderdate,"
+	       "       cohead_holdtype AS holdtype,"
 	       "       cohead_custponumber AS ponumber,"
                "       cust_name AS name, cust_phone AS phone,"
                "       cohead_shipcomments AS shipcomments,"
@@ -402,6 +383,7 @@ void shippingInformation::sFillList()
   else if (_to->isValid())
   {
     q.prepare( "SELECT tohead_orderdate AS orderdate,"
+	       "       'N' AS holdtype,"
 	       "       :to AS ponumber,"
 	       "       tohead_destname AS name, tohead_destphone AS phone,"
 	       "       tohead_shipcomments AS shipcomments,"
@@ -419,6 +401,23 @@ void shippingInformation::sFillList()
     _poNumber->setText(q.value("custponumber").toString());
     _custName->setText(q.value("name").toString());
     _custPhone->setText(q.value("phone").toString());
+
+    QString msg;
+    if (q.value("head_holdtype").toString() == "C")
+      msg = storedProcErrorLookup("issuetoshipping", -12);
+    else if (q.value("head_holdtype").toString() == "P")
+      msg = storedProcErrorLookup("issuetoshipping", -13);
+    else if (q.value("head_holdtype").toString() == "R")
+      msg = storedProcErrorLookup("issuetoshipping", -14);
+
+    if (! msg.isEmpty())
+    {
+      QMessageBox::warning(this, tr("Order on Hold"), msg);
+      _salesOrder->setId(-1);
+      _salesOrder->setFocus();
+      _to->setId(-1);
+      return;
+    }
 
     if (fetchFromHead)
     {

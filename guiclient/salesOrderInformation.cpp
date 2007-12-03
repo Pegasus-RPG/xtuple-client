@@ -140,6 +140,7 @@ void salesOrderInformation::populate()
              "            WHEN (cohead_holdtype='C') THEN :credit"
              "            WHEN (cohead_holdtype='S') THEN :ship"
              "            WHEN (cohead_holdtype='P') THEN :pack"
+             "            WHEN (cohead_holdtype='R') THEN :return"
              "            ELSE :other"
              "       END AS f_holdtype,"
              "       cohead_shipvia, cohead_billtoname,"
@@ -166,6 +167,7 @@ void salesOrderInformation::populate()
   q.bindValue(":credit", tr("Credit"));
   q.bindValue(":ship", tr("Ship"));
   q.bindValue(":pack", tr("Pack"));
+  q.bindValue(":return", tr("Return"));
   q.bindValue(":other", tr("Other"));
   q.bindValue(":sohead_id", _soheadid);
   q.bindValue(":soitem_id", _soitemid);

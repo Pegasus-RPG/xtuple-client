@@ -59,7 +59,6 @@
 #include "issueToShipping.h"
 
 #include <QSqlError>
-#include <QStatusBar>
 #include <QVariant>
 
 #include <metasql.h>
@@ -180,17 +179,24 @@ void issueToShipping::sHandleSalesOrder(const int pSoheadid)
     if (q.first())
     {
       _ordertype = "SO";
-      if (q.value("cohead_holdtype").toString() == "P")
+      if (q.value("cohead_holdtype").toString() == "C")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
-                               tr("<p>The selected Sales Order is on Packing Hold and must be taken off of Packing Hold before any inventory may be issued to it.") );
+                               storedProcErrorLookup("issuetoshipping", -12));
         _so->setId(-1);
         _so->setFocus();
       }
-      else if (q.value("cohead_holdtype").toString() == "C")
+      else if (q.value("cohead_holdtype").toString() == "P")
       {
         QMessageBox::critical( this, tr("Cannot Issue Stock"),
-                               tr("<p>The selected Sales Order is on Credit Hold and must be taken off of Credit Hold before any inventory may be issued to it.") );
+                               storedProcErrorLookup("issuetoshipping", -13));
+        _so->setId(-1);
+        _so->setFocus();
+      }
+      else if (q.value("cohead_holdtype").toString() == "R")
+      {
+        QMessageBox::critical( this, tr("Cannot Issue Stock"),
+                               storedProcErrorLookup("issuetoshipping", -14));
         _so->setId(-1);
         _so->setFocus();
       }
@@ -599,34 +605,6 @@ void issueToShipping::sReturnStock()
 
 void issueToShipping::sShip()
 {
-  if (_ordertype == "SO")
-  {
-    q.prepare( "SELECT cohead_holdtype "
-	       "FROM cohead "
-	       "WHERE (cohead_id=:sohead_id);" );
-    q.bindValue(":sohead_id", _so->id());
-    q.exec();
-    if (q.first())
-    {
-      if ( (q.value("cohead_holdtype").toString() == "P") ||
-	   (q.value("cohead_holdtype").toString() == "C") ||
-	   (q.value("cohead_holdtype").toString() == "S") )
-      {
-	QMessageBox::warning(this, tr("Cannot Ship Order"),
-			   tr("<p>The selected Sales Order cannot be shipped "
-			      "as it has been placed on Shipping Hold. It must "
-			      "be released from Shipping Hold before it may be "
-			      "shipped." ) );
-	return;
-      }
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-
   q.prepare( "SELECT shiphead_id "
              "FROM shiphead "
              "WHERE ((NOT shiphead_shipped)"
