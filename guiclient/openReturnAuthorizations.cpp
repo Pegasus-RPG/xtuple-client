@@ -140,6 +140,9 @@ void openReturnAuthorizations::sPrint()
   ParameterList params;
   _warehouse->appendValue(params);
 
+  if(_expired->isChecked())
+    params.append("showExpired");
+
   orReport report("ListOpenReturnAuthorizations", params);
   if (report.isValid())
     report.print();
