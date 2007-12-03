@@ -280,6 +280,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       _workbench->hide();
       _site->hide();
       _newUOM->setEnabled(false);
+	  _print->hide();
 
       q.exec("SELECT NEXTVAL('item_item_id_seq') AS item_id");
       if (q.first())
