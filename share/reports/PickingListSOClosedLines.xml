@@ -57,7 +57,10 @@
        coitem_memo,
        item_number,
        formatitemsitebarcode(itemsite_id) AS item_barcode,
-       uom_name,
+--     In 2.3 replaced the next line:
+--     uom_name,
+--     with:
+       (select uom_name from uom where uom_id = coitem_qty_uom_id) AS uom_name,
        item_shipuom,
        item_descrip1,
        item_descrip2,
@@ -106,7 +109,9 @@
    AND (coitem_status &lt;> 'X')
    AND (coitem_cohead_id=&lt;? value("sohead_id") ?>)
 )
-GROUP BY coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,
+--2.3 add coitem_qty_uom_id, to the GROUP BY clause
+GROUP BY coitem_qty_uom_id,
+         coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
          itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
@@ -120,219 +125,6 @@ WHERE ((image_name='logo'));</sql>
  </querysource>
  <rpthead>
   <height>477</height>
-  <label>
-   <rect>
-    <x>25</x>
-    <y>400</y>
-    <width>95</width>
-    <height>25</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <string>Attention:</string>
-  </label>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>95</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cohead_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>434</x>
-    <y>215</y>
-    <width>331</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cohead_shipvia</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>465</x>
-    <y>260</y>
-    <width>305</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cohead_shiptoname</column>
-   </data>
-  </field>
-  <image>
-   <rect>
-    <x>375</x>
-    <y>0</y>
-    <width>425</width>
-    <height>85</height>
-   </rect>
-   <mode>stretch</mode>
-   <data>
-    <query>logo</query>
-    <column>image_data</column>
-   </data>
-  </image>
-  <barcode>
-   <rect>
-    <x>375</x>
-    <y>160</y>
-    <width>307</width>
-    <height>25</height>
-   </rect>
-   <format>3of9</format>
-   <maxlength>20</maxlength>
-   <left/>
-   <data>
-    <query>head</query>
-    <column>cohead_custponumber</column>
-   </data>
-  </barcode>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>155</y>
-    <width>170</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cohead_custponumber</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>120</x>
-    <y>400</y>
-    <width>254</width>
-    <height>25</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>head</query>
-    <column>cust_contact</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>75</x>
-    <y>260</y>
-    <width>305</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cohead_billtoname</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>15</x>
-    <y>155</y>
-    <width>150</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Customer P/O #:</string>
-  </label>
-  <label>
-   <rect>
-    <x>650</x>
-    <y>425</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>At Shipping</string>
-  </label>
-  <label>
-   <rect>
-    <x>365</x>
-    <y>400</y>
-    <width>75</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Terms:</string>
-  </label>
-  <line>
-   <xstart>25</xstart>
-   <ystart>425</ystart>
-   <xend>824</xend>
-   <yend>425</yend>
-   <weight>0</weight>
-  </line>
   <label>
    <rect>
     <x>15</x>
@@ -351,25 +143,25 @@ WHERE ((image_name='logo'));</sql>
   </label>
   <label>
    <rect>
-    <x>385</x>
+    <x>25</x>
+    <y>425</y>
+    <width>85</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <field>
+   <rect>
+    <x>465</x>
     <y>260</y>
-    <width>75</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Ship To:</string>
-  </label>
-  <field>
-   <rect>
-    <x>175</x>
-    <y>195</y>
-    <width>100</width>
+    <width>305</width>
     <height>20</height>
    </rect>
    <font>
@@ -381,79 +173,7 @@ WHERE ((image_name='logo'));</sql>
    <vcenter/>
    <data>
     <query>head</query>
-    <column>orderdate</column>
-   </data>
-  </field>
-  <barcode>
-   <rect>
-    <x>375</x>
-    <y>95</y>
-    <width>234</width>
-    <height>25</height>
-   </rect>
-   <format>128</format>
-   <maxlength>10</maxlength>
-   <left/>
-   <data>
-    <query>head</query>
-    <column>order_barcode</column>
-   </data>
-  </barcode>
-  <line>
-   <xstart>25</xstart>
-   <ystart>465</ystart>
-   <xend>824</xend>
-   <yend>465</yend>
-   <weight>0</weight>
-  </line>
-  <barcode>
-   <rect>
-    <x>375</x>
-    <y>130</y>
-    <width>177</width>
-    <height>25</height>
-   </rect>
-   <format>3of9</format>
-   <maxlength>10</maxlength>
-   <left/>
-   <data>
-    <query>head</query>
-    <column>cust_number</column>
-   </data>
-  </barcode>
-  <label>
-   <rect>
-    <x>330</x>
-    <y>215</y>
-    <width>102</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Ship Via:</string>
-  </label>
-  <field>
-   <rect>
-    <x>170</x>
-    <y>125</y>
-    <width>170</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>cust_number</column>
+    <column>cohead_shiptoname</column>
    </data>
   </field>
   <label>
@@ -490,6 +210,89 @@ WHERE ((image_name='logo'));</sql>
   </label>
   <label>
    <rect>
+    <x>10</x>
+    <y>260</y>
+    <width>65</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Bill To:</string>
+  </label>
+  <field>
+   <rect>
+    <x>120</x>
+    <y>400</y>
+    <width>254</width>
+    <height>25</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>head</query>
+    <column>cust_contact</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>650</x>
+    <y>425</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>At Shipping</string>
+  </label>
+  <label>
+   <rect>
+    <x>25</x>
+    <y>444</y>
+    <width>95</width>
+    <height>14</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>70</x>
+    <y>195</y>
+    <width>102</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>S/O Date:</string>
+  </label>
+  <label>
+   <rect>
     <x>745</x>
     <y>425</y>
     <width>55</width>
@@ -506,83 +309,19 @@ WHERE ((image_name='logo'));</sql>
   </label>
   <label>
    <rect>
-    <x>254</x>
-    <y>425</y>
-    <width>35</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>50</x>
-    <y>215</y>
-    <width>121</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Sched. Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>25</x>
-    <y>425</y>
-    <width>85</width>
-    <height>20</height>
+    <y>400</y>
+    <width>95</width>
+    <height>25</height>
    </rect>
    <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>260</y>
-    <width>65</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>14</size>
+    <face>Arial</face>
+    <size>12</size>
     <weight>normal</weight>
    </font>
    <left/>
-   <vcenter/>
-   <string>Bill To:</string>
-  </label>
-  <label>
-   <rect>
-    <x>440</x>
-    <y>425</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Shipped</string>
+   <top/>
+   <string>Attention:</string>
   </label>
   <text>
    <rect>
@@ -604,6 +343,291 @@ WHERE ((image_name='logo'));</sql>
     <column>billing_address</column>
    </data>
   </text>
+  <label>
+   <rect>
+    <x>254</x>
+    <y>425</y>
+    <width>35</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <field>
+   <rect>
+    <x>75</x>
+    <y>260</y>
+    <width>305</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cohead_billtoname</column>
+   </data>
+  </field>
+  <barcode>
+   <rect>
+    <x>375</x>
+    <y>160</y>
+    <width>307</width>
+    <height>25</height>
+   </rect>
+   <format>3of9</format>
+   <maxlength>20</maxlength>
+   <left/>
+   <data>
+    <query>head</query>
+    <column>cohead_custponumber</column>
+   </data>
+  </barcode>
+  <barcode>
+   <rect>
+    <x>375</x>
+    <y>130</y>
+    <width>177</width>
+    <height>25</height>
+   </rect>
+   <format>3of9</format>
+   <maxlength>10</maxlength>
+   <left/>
+   <data>
+    <query>head</query>
+    <column>cust_number</column>
+   </data>
+  </barcode>
+  <line>
+   <xstart>25</xstart>
+   <ystart>465</ystart>
+   <xend>824</xend>
+   <yend>465</yend>
+   <weight>0</weight>
+  </line>
+  <field>
+   <rect>
+    <x>434</x>
+    <y>215</y>
+    <width>331</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cohead_shipvia</column>
+   </data>
+  </field>
+  <barcode>
+   <rect>
+    <x>375</x>
+    <y>95</y>
+    <width>234</width>
+    <height>25</height>
+   </rect>
+   <format>128</format>
+   <maxlength>10</maxlength>
+   <left/>
+   <data>
+    <query>head</query>
+    <column>order_barcode</column>
+   </data>
+  </barcode>
+  <field>
+   <rect>
+    <x>469</x>
+    <y>400</y>
+    <width>320</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>terms_descrip</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>5</y>
+    <width>330</width>
+    <height>40</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>20</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Picking List (SO)</string>
+  </label>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>95</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cohead_number</column>
+   </data>
+  </field>
+  <line>
+   <xstart>25</xstart>
+   <ystart>425</ystart>
+   <xend>824</xend>
+   <yend>425</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>50</x>
+    <y>215</y>
+    <width>121</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Sched. Date:</string>
+  </label>
+  <label>
+   <rect>
+    <x>330</x>
+    <y>215</y>
+    <width>102</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Ship Via:</string>
+  </label>
+  <field>
+   <rect>
+    <x>175</x>
+    <y>215</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>scheddate</query>
+    <column>scheddate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>125</y>
+    <width>170</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cust_number</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>365</x>
+    <y>400</y>
+    <width>75</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Terms:</string>
+  </label>
+  <label>
+   <rect>
+    <x>340</x>
+    <y>425</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Ordered</string>
+  </label>
+  <label>
+   <rect>
+    <x>440</x>
+    <y>425</y>
+    <width>100</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Shipped</string>
+  </label>
   <text>
    <rect>
     <x>465</x>
@@ -624,11 +648,43 @@ WHERE ((image_name='logo'));</sql>
     <column>shipping_address</column>
    </data>
   </text>
+  <field>
+   <rect>
+    <x>170</x>
+    <y>155</y>
+    <width>170</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>helvetica</face>
+    <size>14</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>cohead_custponumber</column>
+   </data>
+  </field>
+  <image>
+   <rect>
+    <x>375</x>
+    <y>0</y>
+    <width>425</width>
+    <height>85</height>
+   </rect>
+   <mode>stretch</mode>
+   <data>
+    <query>logo</query>
+    <column>image_data</column>
+   </data>
+  </image>
   <label>
    <rect>
-    <x>70</x>
-    <y>195</y>
-    <width>102</width>
+    <x>385</x>
+    <y>260</y>
+    <width>75</width>
     <height>20</height>
    </rect>
    <font>
@@ -638,31 +694,28 @@ WHERE ((image_name='logo'));</sql>
    </font>
    <right/>
    <vcenter/>
-   <string>S/O Date:</string>
+   <string>Ship To:</string>
   </label>
-  <field>
+  <label>
    <rect>
-    <x>469</x>
-    <y>400</y>
-    <width>320</width>
+    <x>15</x>
+    <y>155</y>
+    <width>150</width>
     <height>20</height>
    </rect>
    <font>
-    <face>Arial</face>
-    <size>12</size>
+    <face>helvetica</face>
+    <size>14</size>
     <weight>normal</weight>
    </font>
    <left/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>terms_descrip</column>
-   </data>
-  </field>
+   <string>Customer P/O #:</string>
+  </label>
   <field>
    <rect>
     <x>175</x>
-    <y>215</y>
+    <y>195</y>
     <width>100</width>
     <height>20</height>
    </rect>
@@ -674,58 +727,10 @@ WHERE ((image_name='logo'));</sql>
    <left/>
    <vcenter/>
    <data>
-    <query>scheddate</query>
-    <column>scheddate</column>
+    <query>head</query>
+    <column>orderdate</column>
    </data>
   </field>
-  <label>
-   <rect>
-    <x>25</x>
-    <y>444</y>
-    <width>95</width>
-    <height>14</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>5</y>
-    <width>330</width>
-    <height>40</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>20</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Picking List (SO)</string>
-  </label>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>425</y>
-    <width>100</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Ordered</string>
-  </label>
  </rpthead>
  <section>
   <name>detail</name>
@@ -733,7 +738,7 @@ WHERE ((image_name='logo'));</sql>
    <name>detail</name>
    <column>groupby</column>
    <foot>
-    <height>71</height>
+    <height>74</height>
     <text>
      <rect>
       <x>50</x>
@@ -760,7 +765,7 @@ WHERE ((image_name='logo'));</sql>
    <name>lineitem</name>
    <column>coitem_linenumber</column>
    <foot>
-    <height>28</height>
+    <height>29</height>
     <line>
      <xstart>5</xstart>
      <ystart>5</ystart>
@@ -774,56 +779,7 @@ WHERE ((image_name='logo'));</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>152</height>
-   <field>
-    <rect>
-     <x>635</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>atshipping</column>
-    </data>
-   </field>
-   <line>
-    <xstart>190</xstart>
-    <ystart>80</ystart>
-    <xend>280</xend>
-    <yend>80</yend>
-    <weight>0</weight>
-   </line>
-   <label>
-    <rect>
-     <x>565</x>
-     <y>70</y>
-     <width>60</width>
-     <height>17</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <string>Batch #:</string>
-   </label>
-   <line>
-    <xstart>80</xstart>
-    <ystart>80</ystart>
-    <xend>170</xend>
-    <yend>80</yend>
-    <weight>0</weight>
-   </line>
+   <height>155</height>
    <field>
     <rect>
      <x>530</x>
@@ -841,237 +797,6 @@ WHERE ((image_name='logo'));</sql>
     <data>
      <query>detail</query>
      <column>balance</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>20</x>
-     <y>120</y>
-     <width>75</width>
-     <height>17</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Notes:</string>
-   </label>
-   <label>
-    <rect>
-     <x>565</x>
-     <y>95</y>
-     <width>60</width>
-     <height>17</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <string>Status:</string>
-   </label>
-   <label>
-    <rect>
-     <x>25</x>
-     <y>65</y>
-     <width>49</width>
-     <height>17</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Carton:</string>
-   </label>
-   <line>
-    <xstart>415</xstart>
-    <ystart>110</ystart>
-    <xend>500</xend>
-    <yend>110</yend>
-    <weight>0</weight>
-   </line>
-   <line>
-    <xstart>745</xstart>
-    <ystart>15</ystart>
-    <xend>795</xend>
-    <yend>15</yend>
-    <weight>1</weight>
-   </line>
-   <label>
-    <rect>
-     <x>25</x>
-     <y>95</y>
-     <width>49</width>
-     <height>17</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Qty:</string>
-   </label>
-   <line>
-    <xstart>305</xstart>
-    <ystart>80</ystart>
-    <xend>395</xend>
-    <yend>80</yend>
-    <weight>0</weight>
-   </line>
-   <line>
-    <xstart>632</xstart>
-    <ystart>80</ystart>
-    <xend>720</xend>
-    <yend>80</yend>
-    <weight>0</weight>
-   </line>
-   <barcode>
-    <rect>
-     <x>365</x>
-     <y>30</y>
-     <width>469</width>
-     <height>35</height>
-    </rect>
-    <format>128</format>
-    <maxlength>15</maxlength>
-    <left/>
-    <data>
-     <query>detail</query>
-     <column>item_barcode</column>
-    </data>
-   </barcode>
-   <field>
-    <rect>
-     <x>320</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>ordered</column>
-    </data>
-   </field>
-   <line>
-    <xstart>80</xstart>
-    <ystart>110</ystart>
-    <xend>170</xend>
-    <yend>110</yend>
-    <weight>0</weight>
-   </line>
-   <line>
-    <xstart>190</xstart>
-    <ystart>110</ystart>
-    <xend>280</xend>
-    <yend>110</yend>
-    <weight>0</weight>
-   </line>
-   <line>
-    <xstart>305</xstart>
-    <ystart>110</ystart>
-    <xend>395</xend>
-    <yend>110</yend>
-    <weight>0</weight>
-   </line>
-   <text>
-    <rect>
-     <x>100</x>
-     <y>120</y>
-     <width>700</width>
-     <height>17</height>
-    </rect>
-    <bottompad>14</bottompad>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>coitem_memo</column>
-    </data>
-   </text>
-   <field>
-    <rect>
-     <x>425</x>
-     <y>0</y>
-     <width>100</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>shipped</column>
-    </data>
-   </field>
-   <line>
-    <xstart>415</xstart>
-    <ystart>80</ystart>
-    <xend>500</xend>
-    <yend>80</yend>
-    <weight>0</weight>
-   </line>
-   <field>
-    <rect>
-     <x>25</x>
-     <y>20</y>
-     <width>295</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>11</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip1</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>25</x>
-     <y>0</y>
-     <width>200</width>
-     <height>20</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>11</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_number</column>
     </data>
    </field>
    <field>
@@ -1093,6 +818,270 @@ WHERE ((image_name='logo'));</sql>
      <column>f_status</column>
     </data>
    </field>
+   <line>
+    <xstart>415</xstart>
+    <ystart>80</ystart>
+    <xend>500</xend>
+    <yend>80</yend>
+    <weight>0</weight>
+   </line>
+   <line>
+    <xstart>415</xstart>
+    <ystart>110</ystart>
+    <xend>500</xend>
+    <yend>110</yend>
+    <weight>0</weight>
+   </line>
+   <line>
+    <xstart>190</xstart>
+    <ystart>110</ystart>
+    <xend>280</xend>
+    <yend>110</yend>
+    <weight>0</weight>
+   </line>
+   <label>
+    <rect>
+     <x>20</x>
+     <y>120</y>
+     <width>75</width>
+     <height>17</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Notes:</string>
+   </label>
+   <barcode>
+    <rect>
+     <x>365</x>
+     <y>30</y>
+     <width>469</width>
+     <height>35</height>
+    </rect>
+    <format>128</format>
+    <maxlength>15</maxlength>
+    <left/>
+    <data>
+     <query>detail</query>
+     <column>item_barcode</column>
+    </data>
+   </barcode>
+   <text>
+    <rect>
+     <x>100</x>
+     <y>120</y>
+     <width>700</width>
+     <height>17</height>
+    </rect>
+    <bottompad>14</bottompad>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>coitem_memo</column>
+    </data>
+   </text>
+   <label>
+    <rect>
+     <x>25</x>
+     <y>65</y>
+     <width>49</width>
+     <height>17</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Carton:</string>
+   </label>
+   <field>
+    <rect>
+     <x>635</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>atshipping</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>25</x>
+     <y>95</y>
+     <width>49</width>
+     <height>17</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Qty:</string>
+   </label>
+   <field>
+    <rect>
+     <x>425</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>shipped</column>
+    </data>
+   </field>
+   <line>
+    <xstart>305</xstart>
+    <ystart>80</ystart>
+    <xend>395</xend>
+    <yend>80</yend>
+    <weight>0</weight>
+   </line>
+   <line>
+    <xstart>745</xstart>
+    <ystart>15</ystart>
+    <xend>795</xend>
+    <yend>15</yend>
+    <weight>1</weight>
+   </line>
+   <line>
+    <xstart>80</xstart>
+    <ystart>110</ystart>
+    <xend>170</xend>
+    <yend>110</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>25</x>
+     <y>0</y>
+     <width>200</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>11</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <line>
+    <xstart>305</xstart>
+    <ystart>110</ystart>
+    <xend>395</xend>
+    <yend>110</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>25</x>
+     <y>20</y>
+     <width>295</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>11</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip1</column>
+    </data>
+   </field>
+   <line>
+    <xstart>632</xstart>
+    <ystart>80</ystart>
+    <xend>720</xend>
+    <yend>80</yend>
+    <weight>0</weight>
+   </line>
+   <label>
+    <rect>
+     <x>565</x>
+     <y>95</y>
+     <width>60</width>
+     <height>17</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <string>Status:</string>
+   </label>
+   <line>
+    <xstart>190</xstart>
+    <ystart>80</ystart>
+    <xend>280</xend>
+    <yend>80</yend>
+    <weight>0</weight>
+   </line>
+   <line>
+    <xstart>80</xstart>
+    <ystart>80</ystart>
+    <xend>170</xend>
+    <yend>80</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
+     <x>320</x>
+     <y>0</y>
+     <width>100</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>ordered</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>229</x>
@@ -1112,6 +1101,22 @@ WHERE ((image_name='logo'));</sql>
      <column>uom_name</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>565</x>
+     <y>70</y>
+     <width>60</width>
+     <height>17</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <string>Batch #:</string>
+   </label>
    <field>
     <rect>
      <x>25</x>
@@ -1134,93 +1139,7 @@ WHERE ((image_name='logo'));</sql>
   </detail>
  </section>
  <pgfoot>
-  <height>56</height>
-  <label>
-   <rect>
-    <x>695</x>
-    <y>5</y>
-    <width>38</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <top/>
-   <string>Page:</string>
-  </label>
-  <label>
-   <rect>
-    <x>25</x>
-    <y>5</y>
-    <width>62</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <top/>
-   <string>Print Date: </string>
-  </label>
-  <label>
-   <rect>
-    <x>360</x>
-    <y>5</y>
-    <width>90</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <top/>
-   <string>Sales Order #:</string>
-  </label>
-  <field>
-   <rect>
-    <x>455</x>
-    <y>5</y>
-    <width>80</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>head</query>
-    <column>cohead_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>735</x>
-    <y>5</y>
-    <width>45</width>
-    <height>17</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
+  <height>57</height>
   <field>
    <rect>
     <x>90</x>
@@ -1240,25 +1159,95 @@ WHERE ((image_name='logo'));</sql>
     <column>report_date</column>
    </data>
   </field>
- </pgfoot>
- <rptfoot>
-  <height>113</height>
-  <label>
+  <field>
    <rect>
-    <x>40</x>
+    <x>455</x>
     <y>5</y>
-    <width>165</width>
-    <height>30</height>
+    <width>80</width>
+    <height>17</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>14</size>
-    <weight>bold</weight>
+    <size>8</size>
+    <weight>normal</weight>
    </font>
    <left/>
-   <vcenter/>
-   <string>Checked By:</string>
+   <top/>
+   <data>
+    <query>head</query>
+    <column>cohead_number</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>360</x>
+    <y>5</y>
+    <width>90</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <top/>
+   <string>Sales Order #:</string>
   </label>
+  <label>
+   <rect>
+    <x>695</x>
+    <y>5</y>
+    <width>38</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <top/>
+   <string>Page:</string>
+  </label>
+  <field>
+   <rect>
+    <x>735</x>
+    <y>5</y>
+    <width>45</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>25</x>
+    <y>5</y>
+    <width>62</width>
+    <height>17</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <top/>
+   <string>Print Date: </string>
+  </label>
+ </pgfoot>
+ <rptfoot>
+  <height>113</height>
   <line>
    <xstart>186</xstart>
    <ystart>90</ystart>
@@ -1288,6 +1277,22 @@ WHERE ((image_name='logo'));</sql>
    <left/>
    <vcenter/>
    <string>Completed By:</string>
+  </label>
+  <label>
+   <rect>
+    <x>40</x>
+    <y>5</y>
+    <width>165</width>
+    <height>30</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Checked By:</string>
   </label>
  </rptfoot>
 </report>
