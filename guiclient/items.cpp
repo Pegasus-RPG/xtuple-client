@@ -242,7 +242,8 @@ void items::sFillList( int pItemid, bool pLocal )
   QString sql( "SELECT item_id, item_number, formatBoolYN(item_active),"
                "       (item_descrip1 || ' ' || item_descrip2), classcode_code,"
                "       CASE WHEN (item_type='P') THEN text(<? value(\"purchased\") ?>)"
-               "            WHEN (item_type='M') THEN text(<? value(\"manufactured\") ?>)" 
+               "            WHEN (item_type='M') THEN text(<? value(\"manufactured\") ?>)"
+			   "            WHEN (item_type='J') THEN text(<? value(\"job\") ?>)"
                "            WHEN (item_type='F') THEN text(<? value(\"phantom\") ?>)"
                "            WHEN (item_type='B') THEN text(<? value(\"breeder\") ?>)"
                "            WHEN (item_type='C') THEN text(<? value(\"coProduct\") ?>)"
@@ -262,7 +263,7 @@ void items::sFillList( int pItemid, bool pLocal )
                "<? if exists(\"showPurchased\") ?>"
                " AND (item_type IN ('P', 'O'))"
                "<? elseif exists(\"showManufactured\") ?>"
-               " AND (item_type IN ('M', 'F', 'B'))"
+               " AND (item_type IN ('M', 'F', 'B', 'J'))"
                "<? elseif exists(\"showSold\") ?>"
                " AND (item_sold)"
                "<? endif ?>"
@@ -292,6 +293,7 @@ void items::sFillList( int pItemid, bool pLocal )
   
   params.append("purchased", tr("Purchased"));
   params.append("manufactured", tr("Manufactured"));
+  params.append("job", tr("Job"));
   params.append("phantom", tr("Phantom"));
   params.append("breeder", tr("Breeder"));
   params.append("coProduct", tr("Co-Product"));

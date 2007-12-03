@@ -686,13 +686,15 @@ void itemSite::sCacheItemType(char pItemType)
 {
   _itemType = pItemType;
 
-  if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') || (_itemType == 'L') )
+  if ( (_itemType == 'B') || (_itemType == 'F') || (_itemType == 'R') ||
+	   (_itemType == 'L') || (_itemType == 'J') )
   {  
     _safetyStock->setEnabled(FALSE);
     _abcClass->setEnabled(FALSE);
     _autoUpdateABCClass->setEnabled(FALSE);
     _cycleCountFreq->setEnabled(FALSE);
-    _leadTime->setEnabled(FALSE);
+    _leadTime->setEnabled(_itemType == 'J');
+	_useParameters->setEnabled(!_itemType == 'J');
 
     if(_itemType=='L')
     {
@@ -709,10 +711,10 @@ void itemSite::sCacheItemType(char pItemType)
     _supply->setEnabled(FALSE);
     _createPr->setChecked(FALSE);
     _createPr->setEnabled(FALSE);
-    _createWo->setChecked(FALSE);
+    _createWo->setChecked(_itemType == 'J');
     _createWo->setEnabled(FALSE);
 
-    if(_itemType == 'R')
+    if((_itemType == 'R') || (_itemType == 'J'))
       _sold->setEnabled(TRUE);
     else
     {
