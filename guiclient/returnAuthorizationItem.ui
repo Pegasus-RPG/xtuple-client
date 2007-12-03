@@ -438,7 +438,7 @@
       <item row="1" column="1" >
        <widget class="XComboBox" name="_qtyUOM" >
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::WheelFocus</enum>
         </property>
        </widget>
       </item>
@@ -557,7 +557,7 @@
          </size>
         </property>
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="alignment" >
          <set>Qt::AlignRight</set>
@@ -583,7 +583,7 @@
          </size>
         </property>
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::StrongFocus</enum>
         </property>
         <property name="currencyEditable" stdset="0" >
          <bool>false</bool>
@@ -628,7 +628,7 @@
       <item row="2" column="1" >
        <widget class="XComboBox" name="_pricingUOM" >
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::WheelFocus</enum>
         </property>
        </widget>
       </item>
@@ -1534,6 +1534,7 @@
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>GLCluster</class>
@@ -1544,6 +1545,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>WComboBox</class>
