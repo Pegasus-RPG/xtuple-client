@@ -155,6 +155,13 @@ void correctProductionPosting::sCorrect()
                                  "You must, instead, adjust the Breeder's, Co-Product's and By-Product's QOH." ) );
       return;
     }
+    if (q.value("item_type").toString() == "J")
+    {
+      QMessageBox::critical( this, tr("Cannot Post Correction"),
+                             tr( "You may not post a correction to a W/O for a Job Item.\n"
+                                 "You must, instead, adjust shipped quantities." ) );
+      return;
+    }
   }
 
   q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations) AS result;");

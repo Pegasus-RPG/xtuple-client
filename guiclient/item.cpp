@@ -971,6 +971,7 @@ void item::sHandleItemtype()
   bool config   = FALSE;
   bool shipUOM  = FALSE;
   bool capUOM   = FALSE;
+  bool planType = FALSE;
 
   if (itemType == "P")
   {
@@ -979,6 +980,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+	planType = TRUE;
   }
 
   if (itemType == "M")
@@ -989,6 +991,7 @@ void item::sHandleItemtype()
     config   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+	planType = TRUE;
 
   }
 
@@ -1000,8 +1003,14 @@ void item::sHandleItemtype()
     shipUOM  = TRUE;
   }
 
+  if (itemType == "F")
+    planType = TRUE;
+
   if (itemType == "B")
+  {
     capUOM   = TRUE;
+  	planType = TRUE;
+  }
 
   if (itemType == "C")
   {
@@ -1010,6 +1019,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+	planType = TRUE;
   }
 
   if (itemType == "Y")
@@ -1019,6 +1029,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+	planType = TRUE;
   }
 
   if (itemType == "R")
@@ -1038,18 +1049,23 @@ void item::sHandleItemtype()
   }
 
   if (itemType == "O")
+  {
     capUOM   = TRUE;
+	planType = TRUE;
+  }
 
   if (itemType == "A")
+  {
     sold     = TRUE;
+	planType = TRUE;
+  }
 
   if (itemType == "L")
-  {
-    _planningType->setEnabled(false);
     _planningType->setCurrentItem(1);
-  }
+  else if (!planType)
+    _planningType->setCurrentItem(2);
   else
-    _planningType->setEnabled(true);
+    _planningType->setCurrentItem(0);
 
   _pickListItem->setChecked(pickList);
   _pickListItem->setEnabled(pickList);
@@ -1059,6 +1075,8 @@ void item::sHandleItemtype()
 
   _prodWeight->setEnabled(weight);
   _packWeight->setEnabled(weight);
+
+  _planningType->setEnabled(planType);
 
 }
 
