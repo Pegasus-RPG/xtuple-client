@@ -92,8 +92,8 @@
    to an existing conversion rate, then reset so subsequent errors or repeats
    of the same error can be reported.
 */
-#include <qpair.h>
-#include <qmutex.h>
+#include <QPair>
+#include <QMutex>
 typedef QMap<QPair<int, QDate>, int> DateToCurrMap;
 static DateToCurrMap	errorMap;
 static QDate nullDate = QDate();
@@ -464,12 +464,12 @@ CurrDisplay::CurrDisplay(QWidget * parent, const char* name)
     setCaption("CurrDisplay");
 
     _grid = new QGridLayout(this);
-    _grid->setMargin(1);
-    _grid->setSpacing(1);
+    _grid->setMargin(2);
+    _grid->setSpacing(2);
 
     _valueLocalWidget = new QLineEdit(this);
     _valueLocalWidget->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-    _valueLocalWidget->setMinimumWidth(QFontMetrics(QFont()).width("99999.99"));
+    _valueLocalWidget->setMinimumWidth(QFontMetrics(QFont()).width("99999.9999"));
     _grid->addWidget(_valueLocalWidget, 0, 0);
 
     _valueLocalWidget->setAlignment(Qt::AlignRight|Qt::AlignTop);
