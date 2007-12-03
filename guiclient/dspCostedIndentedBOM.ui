@@ -34,7 +34,7 @@
       <item>
        <widget class="ItemCluster" name="_item" >
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::StrongFocus</enum>
         </property>
        </widget>
       </item>
@@ -58,7 +58,7 @@
         <item>
          <widget class="RevisionCluster" name="_revision" >
           <property name="focusPolicy" >
-           <enum>Qt::TabFocus</enum>
+           <enum>Qt::StrongFocus</enum>
           </property>
          </widget>
         </item>
@@ -281,6 +281,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>RevisionCluster</class>

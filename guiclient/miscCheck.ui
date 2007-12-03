@@ -74,7 +74,7 @@
               <bool>true</bool>
              </property>
              <property name="focusPolicy" >
-              <enum>Qt::TabFocus</enum>
+              <enum>Qt::StrongFocus</enum>
              </property>
             </widget>
            </item>
@@ -200,6 +200,9 @@
           <widget class="CmCluster" name="_cmCluster" >
            <property name="enabled" >
             <bool>false</bool>
+           </property>
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
            </property>
           </widget>
          </item>

@@ -19,7 +19,7 @@
       <item>
        <widget class="ItemCluster" name="_item" >
         <property name="focusPolicy" >
-         <enum>Qt::TabFocus</enum>
+         <enum>Qt::StrongFocus</enum>
         </property>
        </widget>
       </item>
@@ -43,7 +43,7 @@
         <item>
          <widget class="RevisionCluster" name="_revision" >
           <property name="focusPolicy" >
-           <enum>Qt::TabFocus</enum>
+           <enum>Qt::StrongFocus</enum>
           </property>
           <property name="readOnly" >
            <bool>false</bool>
