@@ -440,7 +440,7 @@
             <item>
              <widget class="SoCluster" name="_origso" >
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
               <property name="label" >
                <string>Original Order #:</string>
@@ -520,7 +520,7 @@
             <item>
              <widget class="ProjectCluster" name="_project" >
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -707,7 +707,7 @@
                <bool>true</bool>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -856,7 +856,7 @@
                <bool>true</bool>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -936,7 +936,7 @@
           <item row="0" column="2" >
            <widget class="IncidentCluster" name="_incident" >
             <property name="focusPolicy" >
-             <enum>Qt::TabFocus</enum>
+             <enum>Qt::StrongFocus</enum>
             </property>
             <property name="label" >
              <string>Incident:</string>
@@ -1559,6 +1559,7 @@
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>GLCluster</class>

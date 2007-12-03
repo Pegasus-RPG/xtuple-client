@@ -723,7 +723,7 @@ void salesOrderItem::sSave()
     return;
   }
 
-  if(_createOrder->isChecked() && _item->itemType() == "M" && _supplyWarehouse->id() == -1)
+  if(_createOrder->isChecked() && ((_item->itemType() == "M") || (_item->itemType() == "J")) && _supplyWarehouse->id() == -1)
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
                           tr("<p>Before an Order may be created, a valid Supplied at Warehouse must be selected.") );
@@ -841,7 +841,7 @@ void salesOrderItem::sSave()
     q.bindValue(":soitem_memo", _notes->text());
     if(_orderId != -1)
     {
-      if (_item->itemType() == "M")
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
         q.bindValue(":soitem_order_type", "W");
       else if (_item->itemType() == "P")
         q.bindValue(":soitem_order_type", "R");
@@ -900,7 +900,7 @@ void salesOrderItem::sSave()
 
       if (_qtyOrdered->toDouble() != _cQtyOrdered)
       {
-        if(_item->itemType() == "M")
+        if((_item->itemType() == "M") || (_item->itemType() == "J"))
         {
           if (QMessageBox::question(this, tr("Change W/O Quantity?"),
 				    tr("<p>The quantity ordered for this Sales "
@@ -1119,7 +1119,7 @@ void salesOrderItem::sSave()
      (_orderId == -1) )
   {
     QString chartype;
-    if (_item->itemType() == "M")
+    if ((_item->itemType() == "M") || (_item->itemType() == "J"))
     {
       q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments) AS result, itemsite_id "
                  "FROM itemsite "
@@ -1147,7 +1147,7 @@ void salesOrderItem::sSave()
       if (_orderId < 0)
       {
 	QString procname;
-	if (_item->itemType() == "M")
+	if ((_item->itemType() == "M") || (_item->itemType() == "J"))
 	  procname = "createWo";
 	else if (_item->itemType() == "P")
 	  procname = "createPr";
@@ -1158,7 +1158,7 @@ void salesOrderItem::sSave()
 	return;
       }
 
-      if (_item->itemType() == "M")
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
       {
         omfgThis->sWorkOrdersUpdated(_orderId, TRUE);
 
@@ -1255,6 +1255,12 @@ void salesOrderItem::sPopulateItemsiteInfo()
       {
         if (_item->itemType() == "M")
           _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
+
+		else if (_item->itemType() == "J")
+		{
+          _createOrder->setChecked(TRUE);
+		  _createOrder->setEnabled(FALSE);
+		}
 
         else if (_item->itemType() == "P")
           _createOrder->setChecked(itemsite.value("itemsite_createpr").toBool());
@@ -1430,10 +1436,10 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
 
       sCalculateDiscountPrcnt();
 
-      if (_item->itemType() == "M")
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
       {
         if ( (_mode == cNew) || (_mode == cEdit) )
-          _createOrder->setEnabled(TRUE);
+          _createOrder->setEnabled((_item->itemType() == "M"));
 
         _createOrder->setTitle(tr("C&reate Work Order"));
         _orderQtyLit->setText(tr("W/O Q&ty.:"));
@@ -1580,7 +1586,7 @@ void salesOrderItem::sDetermineAvailability()
       else
         _available->setPaletteForegroundColor(QColor("black"));
 
-      if ( (_item->itemType() == "M") )
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
       {
         if(_showIndented->isChecked())
         {
@@ -1817,7 +1823,7 @@ void salesOrderItem::sHandleWo(bool pCreate)
     {
       XSqlQuery query;
 
-      if (_item->itemType() == "M")
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
       {
         if (QMessageBox::question(this, tr("Delete Work Order"),
                                   tr("<p>You are requesting to delete the Work "
@@ -1916,7 +1922,7 @@ void salesOrderItem::sPopulateOrderInfo()
                    " AND (itemsite_warehous_id=:warehous_id));" );
       qty.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
-      qty.bindValue(":warehous_id", (_item->itemType() == "M" ? _supplyWarehouse->id() : _warehouse->id()));
+      qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _supplyWarehouse->id() : _warehouse->id()));
       qty.exec();
       if (qty.first())
         _orderQty->setText(qty.value("qty").toString());

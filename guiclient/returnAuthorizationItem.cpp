@@ -100,11 +100,13 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
   connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
+  connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOrderInfo()));
   connect(_save,          SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_taxCode,       SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_taxType,       SIGNAL(newID(int)),     this, SLOT(sLookupTaxCode()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
+  connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sPopulateOrderInfo()));
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
@@ -313,7 +315,7 @@ void returnAuthorizationItem::sSave()
   if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
-                          tr("<p>You must enter a valid Schedule Date before saving this Sales Order Item.") );
+                          tr("<p>You must enter a valid Schedule Date before saving.") );
     _scheduledDate->setFocus();
     return;
   }
@@ -434,7 +436,7 @@ void returnAuthorizationItem::sSave()
     }
     if (_qtyAuth->toDouble() != _cQtyOrdered)
     {
-      if(_item->itemType() == "M")
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
       {
         if (QMessageBox::question(this, tr("Change W/O Quantity?"),
                   tr("<p>The quantity authorized for this Return "
@@ -491,7 +493,7 @@ void returnAuthorizationItem::sSave()
          (_orderId == -1) )
       {
         QString chartype;
-        if (_item->itemType() == "M")
+        if ((_item->itemType() == "M") || (_item->itemType() == "J"))
         {
           q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments) AS result, itemsite_id "
                      "FROM itemsite "
@@ -511,7 +513,7 @@ void returnAuthorizationItem::sSave()
           if (_orderId < 0)
           {
             QString procname;
-            if (_item->itemType() == "M")
+            if ((_item->itemType() == "M") && (_item->itemType() == "J"))
               procname = "createWo";
             else
               procname = "unnamed stored procedure";
@@ -520,7 +522,7 @@ void returnAuthorizationItem::sSave()
             return;
           }
 
-          if (_item->itemType() == "M")
+          if ((_item->itemType() == "M") || (_item->itemType() == "J"))
           {
             omfgThis->sWorkOrdersUpdated(_orderId, TRUE);
 
@@ -609,6 +611,13 @@ void returnAuthorizationItem::sPopulateItemInfo()
 
   if (_item->itemType() == "M")
     _createOrder->setEnabled(TRUE);
+
+  else if (_item->itemType() == "J")
+  {
+    _createOrder->setChecked(TRUE);
+    _createOrder->setEnabled(FALSE);
+  }
+
   else
     _createOrder->setEnabled(FALSE);
 
@@ -636,6 +645,12 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
       {
         if (_item->itemType() == "M")
           _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
+
+        if (_item->itemType() == "J")
+		{
+          _createOrder->setChecked(TRUE);
+		  _createOrder->setEnabled(FALSE);
+		}
 
         else
         {
@@ -1151,7 +1166,7 @@ void returnAuthorizationItem::sHandleWo(bool pCreate)
     {
       XSqlQuery query;
 
-      if (_item->itemType() == "M")
+      if ((_item->itemType() == "M") || (_item->itemType() == "J"))
       {
         if (QMessageBox::question(this, tr("Delete Work Order"),
                                   tr("<p>You are requesting to delete the Work "
@@ -1224,7 +1239,7 @@ void returnAuthorizationItem::sPopulateOrderInfo()
                    " AND (itemsite_warehous_id=:warehous_id));" );
       qty.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
-      qty.bindValue(":warehous_id", (_item->itemType() == "M" ? _warehouse->id() : _warehouse->id()));
+      qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _warehouse->id() : _warehouse->id()));
       qty.exec();
       if (qty.first())
         _orderQty->setText(qty.value("qty").toString());

@@ -694,7 +694,7 @@
                </size>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -756,7 +756,7 @@
                </size>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
@@ -1158,7 +1158,7 @@
                <bool>false</bool>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
               <property name="text" >
                <string>&amp;New</string>
@@ -1177,7 +1177,7 @@
                <bool>false</bool>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
               <property name="text" >
                <string>&amp;Edit</string>
@@ -2243,6 +2243,7 @@
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>GLCluster</class>
