@@ -188,9 +188,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
-      _wipValueLit->hide();
-      _wipValue->hide();
       _qtyReceivedLit->clear();
+      _tabs->removePage(_tabs->page(4));
 
       populateWoNumber();
     }
@@ -205,8 +204,11 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                   "       formatQty(wo_qtyrcv) AS f_received,"
                   "       wo_startdate, wo_duedate,"
                   "       formatMoney(wo_wipvalue) AS f_wipvalue,"
+				  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
+				  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
                   "       wo_prodnotes, wo_prj_id, "
-				  "       wo_bom_rev_id, wo_boo_rev_id "
+				  "       wo_bom_rev_id, wo_boo_rev_id, "
+				  "       wo_cosmethod "
                   "FROM wo "
                   "WHERE (wo_id=:wo_id);" );
       wo.bindValue(":wo_id", _woid);
@@ -221,6 +223,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _woNumber->setText(wo.value("f_wonumber").toString());
         _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
         _priority->setValue(_oldPriority);
+		_postedValue->setText(wo.value("f_postedvalue").toString());
+		_rcvdValue->setText(wo.value("f_rcvdvalue").toString());
         _wipValue->setText(wo.value("f_wipvalue").toString());
         _qty->setText(wo.value("f_ordered").toString());
         _qtyReceived->setText(wo.value("f_received").toString());
@@ -231,6 +235,13 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _project->setId(wo.value("wo_prj_id").toInt());
 		_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
 		_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
+
+		if (wo.value("wo_cosmethod").toString() == "D")
+		  _todate->setChecked(TRUE);
+		else if (wo.value("wo_cosmethod").toString() == "P")
+		  _proportional->setChecked(TRUE);
+		else
+	      _jobCosGroup->hide();
 
         // If the W/O is closed or Released don't allow changing some items.
         if(wo.value("wo_status").toString() == "C" || wo.value("wo_status") == "R")
@@ -277,8 +288,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                   "       formatQty(wo_qtyrcv) AS f_received,"
                   "       wo_startdate, wo_duedate,"
                   "       formatMoney(wo_wipvalue) AS f_wipvalue,"
+				  "       formatMoney(wo_postedvalue) AS f_postedvalue,"
+				  "       formatMoney(wo_postedvalue-wo_wipvalue) AS f_rcvdvalue,"
                   "       wo_prodnotes, wo_prj_id, wo_bom_rev_id, "
-				  "       wo_boo_rev_id "
+				  "       wo_boo_rev_id, wo_cosmethod "
                   "FROM wo "
                   "WHERE (wo_id=:wo_id);" );
       wo.bindValue(":wo_id", _woid);
@@ -290,6 +303,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _woNumber->setText(wo.value("f_wonumber").toString());
         _item->setItemsiteid(wo.value("wo_itemsite_id").toInt());
         _priority->setValue(wo.value("wo_priority").toInt());
+		_postedValue->setText(wo.value("f_postedvalue").toString());
+		_rcvdValue->setText(wo.value("f_rcvdvalue").toString());
         _wipValue->setText(wo.value("f_wipvalue").toString());
         _qty->setText(wo.value("f_ordered").toString());
         _qtyReceived->setText(wo.value("f_received").toString());
@@ -300,6 +315,13 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _project->setId(wo.value("wo_prj_id").toInt());
 		_bomRevision->setId(wo.value("wo_bom_rev_id").toInt());
 		_booRevision->setId(wo.value("wo_boo_rev_id").toInt());
+
+		if (wo.value("wo_cosmethod").toString() == "D")
+		  _todate->setChecked(TRUE);
+		else if (wo.value("wo_cosmethod").toString() == "P")
+		  _proportional->setChecked(TRUE);
+		else
+	      _jobCosGroup->hide();
  
         _woNumber->setEnabled(FALSE);
         _item->setReadOnly(TRUE);
@@ -320,6 +342,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
         _close->setText(tr("&Close"));
         _project->setEnabled(FALSE);
         _itemcharView->setEnabled(false);
+		_jobCosGroup->setEnabled(FALSE);
         
         _close->setFocus();
       }

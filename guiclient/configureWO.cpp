@@ -127,6 +127,11 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _production->setChecked(TRUE);
   else
     _operations->setChecked(TRUE);
+
+  if (_metrics->value("JobItemCosDefault") == "P")
+    _proportional->setChecked(TRUE);
+  else
+    _todate->setChecked(TRUE);
     
   //Remove this when old menu system goes away
   if (!_preferences->boolean("UseOldMenu"))
@@ -178,6 +183,11 @@ void configureWO::sSave()
     _metrics->set("WOTCPostStyle", QString("Production"));
   else if (_operations->isChecked())
     _metrics->set("WOTCPostStyle", QString("Operations"));
+
+  if (_todate->isChecked())
+    _metrics->set("JobItemCosDefault", QString("D"));
+  else 
+    _metrics->set("JobItemCosDefault", QString("P"));
 
   _metrics->load();
 

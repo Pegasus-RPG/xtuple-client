@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>559</width>
-    <height>445</height>
+    <height>480</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -207,31 +207,21 @@
          </property>
         </widget>
        </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_wipValueLit" >
-         <property name="text" >
-          <string>WIP Value:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="2" column="1" >
-        <widget class="QLabel" name="_wipValue" >
-         <property name="minimumSize" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeType" >
+          <enum>QSizePolicy::Preferred</enum>
+         </property>
+         <property name="sizeHint" >
           <size>
-           <width>0</width>
-           <height>0</height>
+           <width>20</width>
+           <height>20</height>
           </size>
          </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -443,6 +433,9 @@
         <verstretch>1</verstretch>
        </sizepolicy>
       </property>
+      <property name="focusPolicy" >
+       <enum>Qt::StrongFocus</enum>
+      </property>
       <property name="currentIndex" >
        <number>0</number>
       </property>
@@ -628,6 +621,174 @@
            <size>
             <width>241</width>
             <height>16</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="_costing" >
+       <attribute name="title" >
+        <string>Costing</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QGroupBox" name="_costGroup" >
+          <property name="title" >
+           <string>Accumulated Costs</string>
+          </property>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="QLabel" name="_postedValueLit" >
+             <property name="text" >
+              <string>Posted:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="QLabel" name="_postedValue" >
+             <property name="minimumSize" >
+              <size>
+               <width>60</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QLabel" name="_rcvdValueLit" >
+             <property name="text" >
+              <string>Received:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <widget class="QLabel" name="_rcvdValue" >
+             <property name="minimumSize" >
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <widget class="QLabel" name="_wipValueLit" >
+             <property name="text" >
+              <string>WIP:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1" >
+            <widget class="QLabel" name="_wipValue" >
+             <property name="minimumSize" >
+              <size>
+               <width>0</width>
+               <height>20</height>
+              </size>
+             </property>
+             <property name="text" >
+              <string/>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QGroupBox" name="_jobCosGroup" >
+          <property name="title" >
+           <string>Cost of Sales Recognition</string>
+          </property>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="QRadioButton" name="_todate" >
+             <property name="focusPolicy" >
+              <enum>Qt::ClickFocus</enum>
+             </property>
+             <property name="text" >
+              <string>To Date</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QRadioButton" name="_proportional" >
+             <property name="focusPolicy" >
+              <enum>Qt::ClickFocus</enum>
+             </property>
+             <property name="text" >
+              <string>Proportional</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0" >
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Fixed</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>20</width>
+            <height>0</height>
            </size>
           </property>
          </spacer>

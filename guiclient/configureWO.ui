@@ -5,348 +5,194 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>523</width>
-    <height>309</height>
+    <width>474</width>
+    <height>371</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>W/O Module Configuration</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>0</number>
-   </property>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
+  <layout class="QGridLayout" >
+   <item row="0" column="0" colspan="2" >
+    <layout class="QHBoxLayout" >
+     <property name="spacing" >
+      <number>7</number>
+     </property>
+     <property name="leftMargin" >
       <number>0</number>
      </property>
-     <property name="spacing" >
-      <number>6</number>
+     <property name="topMargin" >
+      <number>0</number>
+     </property>
+     <property name="rightMargin" >
+      <number>0</number>
+     </property>
+     <property name="bottomMargin" >
+      <number>0</number>
      </property>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>7</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>5</number>
-             </property>
-             <item>
-              <widget class="QLabel" name="_nextWoNumLit" >
-               <property name="text" >
-                <string>Next Work Order #:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="buddy" >
-                <cstring></cstring>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="_woNumCreationLit" >
-               <property name="text" >
-                <string>W/O Number Creation:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>5</number>
-             </property>
-             <item>
-              <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="XLineEdit" name="_nextWoNumber" >
-                 <property name="sizePolicy" >
-                  <sizepolicy>
-                   <hsizetype>5</hsizetype>
-                   <vsizetype>0</vsizetype>
-                   <horstretch>0</horstretch>
-                   <verstretch>0</verstretch>
-                  </sizepolicy>
-                 </property>
-                 <property name="maximumSize" >
-                  <size>
-                   <width>100</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::Expanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>43</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="QComboBox" name="_woNumGeneration" />
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>10</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="_close" >
-             <property name="text" >
-              <string>&amp;Cancel</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+C</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_save" >
-             <property name="text" >
-              <string>&amp;Save</string>
-             </property>
-             <property name="shortcut" >
-              <string>Alt+S</string>
-             </property>
-             <property name="default" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
+      <layout class="QVBoxLayout" >
        <property name="spacing" >
         <number>0</number>
        </property>
-       <item row="1" column="0" >
-        <widget class="QCheckBox" name="_postopFillQty" >
-         <property name="text" >
-          <string>Auto fill Post Operation Qty. to Balance</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="QCheckBox" name="_workOrderChangeLog" >
-         <property name="text" >
-          <string>Post Work Order Changes to the Change Log</string>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="0" >
-        <widget class="QCheckBox" name="_autoExplode" >
-         <property name="enabled" >
-          <bool>true</bool>
-         </property>
-         <property name="text" >
-          <string>Automatically Explode W/O's</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
+       <property name="leftMargin" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <property name="leftMargin" >
           <number>0</number>
          </property>
-         <property name="spacing" >
-          <number>7</number>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
-          <widget class="QGroupBox" name="_explodeEffectiveGroup" >
-           <property name="title" >
-            <string>Explode W/O's Effective as of:</string>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>5</number>
            </property>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_explodeDateEffective" >
-              <property name="text" >
-               <string>Date of Explosion</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_startDateEffective" >
-              <property name="text" >
-               <string>W/O Start Date</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="_nextWoNumLit" >
+             <property name="text" >
+              <string>Next Work Order #:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring></cstring>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="_woNumCreationLit" >
+             <property name="text" >
+              <string>W/O Number Creation:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="QGroupBox" name="QButtonGroup_1" >
-           <property name="title" >
-            <string>Default W/O Explosion Level:</string>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>5</number>
            </property>
-           <property name="alignment" >
-            <set>Qt::AlignLeading</set>
+           <property name="leftMargin" >
+            <number>0</number>
            </property>
-           <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>5</number>
-            </property>
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <item>
-             <widget class="QRadioButton" name="_singleLevel" >
-              <property name="text" >
-               <string>Single Level</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QRadioButton" name="_multiLevel" >
-              <property name="text" >
-               <string>Multiple Level</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </widget>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <layout class="QHBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="XLineEdit" name="_nextWoNumber" >
+               <property name="sizePolicy" >
+                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="maximumSize" >
+                <size>
+                 <width>100</width>
+                 <height>16777215</height>
+                </size>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>43</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QComboBox" name="_woNumGeneration" />
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
        <item>
         <spacer>
          <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType" >
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Preferred</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>100</width>
-           <height>20</height>
+           <width>10</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -354,83 +200,76 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
-        <number>6</number>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
-        <widget class="QGroupBox" name="_defaultGroup" >
-         <property name="title" >
-          <string>Defaults</string>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QCheckBox" name="_materialVariances" >
-            <property name="text" >
-             <string>Post Material Usage Variances</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QCheckBox" name="_laborVariances" >
-            <property name="text" >
-             <string>Post Labor Variances</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
-        <widget class="QGroupBox" name="_wotcPostStyle" >
-         <property name="title" >
-          <string>Shop Floor Workbench Posts:</string>
+         <property name="leftMargin" >
+          <number>0</number>
          </property>
-         <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>5</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <widget class="QRadioButton" name="_production" >
-            <property name="text" >
-             <string>Production</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_operations" >
-            <property name="text" >
-             <string>Operations</string>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Cancel</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+C</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_save" >
+           <property name="text" >
+            <string>&amp;Save</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+S</string>
+           </property>
+           <property name="default" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer>
          <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+          <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType" >
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Preferred</enum>
          </property>
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -439,21 +278,214 @@
      </item>
     </layout>
    </item>
-   <item>
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+   <item row="1" column="0" colspan="2" >
+    <layout class="QGridLayout" >
+     <property name="leftMargin" >
+      <number>0</number>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
+     <property name="topMargin" >
+      <number>0</number>
      </property>
-     <property name="sizeHint" >
-      <size>
-       <width>490</width>
-       <height>20</height>
-      </size>
+     <property name="rightMargin" >
+      <number>0</number>
      </property>
-    </spacer>
+     <property name="bottomMargin" >
+      <number>0</number>
+     </property>
+     <property name="horizontalSpacing" >
+      <number>0</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>0</number>
+     </property>
+     <item row="0" column="0" >
+      <widget class="QCheckBox" name="_autoExplode" >
+       <property name="enabled" >
+        <bool>true</bool>
+       </property>
+       <property name="text" >
+        <string>Automatically Explode W/O's</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" >
+      <widget class="QCheckBox" name="_workOrderChangeLog" >
+       <property name="text" >
+        <string>Post Work Order Changes to the Change Log</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" >
+      <widget class="QCheckBox" name="_postopFillQty" >
+       <property name="text" >
+        <string>Auto fill Post Operation Qty. to Balance</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="2" column="0" >
+    <widget class="QGroupBox" name="_explodeEffectiveGroup" >
+     <property name="title" >
+      <string>Explode W/O's Effective as of:</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QRadioButton" name="_explodeDateEffective" >
+        <property name="text" >
+         <string>Date of Explosion</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="_startDateEffective" >
+        <property name="text" >
+         <string>W/O Start Date</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="QGroupBox" name="QButtonGroup_1" >
+     <property name="title" >
+      <string>Default W/O Explosion Level:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignLeading</set>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="_singleLevel" >
+        <property name="text" >
+         <string>Single Level</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="_multiLevel" >
+        <property name="text" >
+         <string>Multiple Level</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QGroupBox" name="_defaultGroup" >
+     <property name="title" >
+      <string>Inventory Item Cost Defaults</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QCheckBox" name="_materialVariances" >
+        <property name="text" >
+         <string>Post Material Usage Variances</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QCheckBox" name="_laborVariances" >
+        <property name="text" >
+         <string>Post Labor Variances</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="QGroupBox" name="_jobCosGroup" >
+     <property name="title" >
+      <string>Job Item COS Recognition Defaults</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QRadioButton" name="_todate" >
+        <property name="text" >
+         <string>To Date</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QRadioButton" name="_proportional" >
+        <property name="text" >
+         <string>Proportional</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" >
+    <widget class="QGroupBox" name="_wotcPostStyle" >
+     <property name="title" >
+      <string>Shop Floor Workbench Posts:</string>
+     </property>
+     <layout class="QVBoxLayout" >
+      <property name="spacing" >
+       <number>6</number>
+      </property>
+      <property name="leftMargin" >
+       <number>9</number>
+      </property>
+      <property name="topMargin" >
+       <number>9</number>
+      </property>
+      <property name="rightMargin" >
+       <number>9</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>9</number>
+      </property>
+      <item>
+       <widget class="QRadioButton" name="_production" >
+        <property name="text" >
+         <string>Production</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QRadioButton" name="_operations" >
+        <property name="text" >
+         <string>Operations</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -478,6 +510,8 @@
   <tabstop>_multiLevel</tabstop>
   <tabstop>_materialVariances</tabstop>
   <tabstop>_laborVariances</tabstop>
+  <tabstop>_todate</tabstop>
+  <tabstop>_proportional</tabstop>
   <tabstop>_production</tabstop>
   <tabstop>_operations</tabstop>
   <tabstop>_save</tabstop>
