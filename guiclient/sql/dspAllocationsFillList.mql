@@ -1,12 +1,12 @@
 SELECT womatl_id AS source_id, TEXT('W/O') AS type,
        formatWoNumber(wo_id) AS order_number,
        item_number,
-       formatQty(womatl_qtyreq)  AS totalqty,
-       formatQty(womatl_qtyiss) AS relievedqty,
-       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balanceqty,
+       formatQty(itemuomtouom(component.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq))  AS totalqty,
+       formatQty(itemuomtouom(component.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyiss)) AS relievedqty,
+       formatQty(itemuomtouom(component.itemsite_item_id, womatl_uom_id, NULL, noNeg(womatl_qtyreq - womatl_qtyiss))) AS balanceqty,
        formatDate(wo_duedate) as duedate, wo_duedate AS r_duedate,
        (wo_duedate < CURRENT_DATE) AS late 
-FROM womatl, wo, itemsite AS parent, itemsite AS component, item 
+FROM womatl, wo, itemsite AS parent, itemsite AS component, item
 WHERE ((womatl_wo_id=wo_id)
   AND (wo_status<>'C')
   AND (wo_itemsite_id=parent.itemsite_id)
@@ -29,9 +29,9 @@ UNION
 SELECT coitem_id AS source_id, TEXT('S/O') AS type,
        formatSoNumber(coitem_id) AS order_number,
        item_number,
-       formatQty(coitem_qtyord) AS totalqty,
-       formatQty((coitem_qtyshipped + qtyAtShipping(coitem_id)) - coitem_qtyreturned) as relievedqty,
-       formatQty(noNeg(coitem_qtyord - (coitem_qtyshipped + qtyAtShipping(coitem_id)) + coitem_qtyreturned)) AS balanceqty,
+       formatQty(itemuomtouom(itemsite_item_id, coitem_qty_uom_id, NULL, coitem_qtyord)) AS totalqty,
+       formatQty(itemuomtouom(itemsite_item_id, coitem_qty_uom_id, NULL, (coitem_qtyshipped + qtyAtShipping(coitem_id)) - coitem_qtyreturned)) as relievedqty,
+       formatQty(itemuomtouom(itemsite_item_id, coitem_qty_uom_id, NULL, noNeg(coitem_qtyord - (coitem_qtyshipped + qtyAtShipping(coitem_id)) + coitem_qtyreturned))) AS balanceqty,
        formatDate(coitem_scheddate) as duedate, coitem_scheddate AS r_duedate,
        (coitem_scheddate < CURRENT_DATE) AS late  
 FROM cohead, coitem, itemsite, item 
