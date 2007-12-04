@@ -302,7 +302,7 @@ menuInventory::menuInventory(OpenMFGGUIClient *Pparent) :
     { "sr.enterReceipt", tr("&New Receipt..."), SLOT(sEnterReceipt()), receivingMenu, _privleges->check("EnterReceipts"), NULL, NULL, true, NULL },
     { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, _privleges->check("EnterReceipts"), new QPixmap(":/images/postReceipts.png"), toolBar,  true, NULL },
     { "separator", NULL, NULL, receivingMenu, true, NULL, NULL, true, NULL },
-    { "sr.enterReturn", tr("&Return..."), SLOT(sEnterReturn()), receivingMenu, _privleges->check("EnterReturns"), NULL, NULL, true, NULL },
+    { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, _privleges->check("EnterReturns"), NULL, NULL, true, NULL },
     { "separator",			NULL,				  NULL,				receivingMenu, true, NULL, NULL, true , NULL },
 
     //  Inventory | Receiving | Forms

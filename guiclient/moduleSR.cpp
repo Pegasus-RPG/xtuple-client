@@ -150,7 +150,7 @@ moduleSR::moduleSR(OpenMFGGUIClient *Pparent) :
     { "sr.enterReceipt", tr("Enter Receipt..."), SLOT(sEnterReceipt()), receivingMenu, _privleges->check("EnterReceipts"), NULL, NULL, true},
     { "sr.postReceipts", tr("List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, _privleges->check("EnterReceipts"), new QPixmap(":/images/postReceipts.png"), toolBar,  true},
     { "separator", NULL, NULL, receivingMenu, true, NULL, NULL, true},
-    { "sr.enterReturn", tr("Enter Return..."), SLOT(sEnterReturn()), receivingMenu, _privleges->check("EnterReturns"), NULL, NULL, true},
+    { "sr.enterReturn", tr("Enter P/O Return..."), SLOT(sEnterReturn()), receivingMenu, _privleges->check("EnterReturns"), NULL, NULL, true},
 
 
     //  S/R | Forms
