@@ -73,6 +73,7 @@ public:
 
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
+	virtual void clear();
     virtual void sHandleWoid( int pWoid );
     virtual void sReadWorkOrder( int pWoid );
     virtual void sPost();

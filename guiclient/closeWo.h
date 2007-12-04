@@ -74,6 +74,7 @@ public:
 
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
+	virtual void clear();
 
 protected slots:
     virtual void languageChange();

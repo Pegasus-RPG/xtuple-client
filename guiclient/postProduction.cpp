@@ -219,160 +219,164 @@ void postProduction::sScrap()
 
 void postProduction::sPost()
 {
-  if (_qty->toDouble() == 0.0 && _fromWOTC)
+  XSqlQuery type;
+  type.prepare( "SELECT item_type "
+	            "FROM item,itemsite,wo "
+			    "WHERE ((wo_id=:wo_id) "
+			    "AND (wo_itemsite_id=itemsite_id) "
+			    "AND (itemsite_item_id=item_id)); ");
+  type.bindValue(":wo_id", _wo->id());
+  type.exec();
+  if (type.first())
   {
-    if (QMessageBox::question(this, tr("Zero Quantity To Post"),
-			    tr("Is the Quantity of Production really 0?\n"
-			       "If so, you will be clocked out but nothing "
-			       "else will be posted."),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-    {
-      _qty->setFocus();
-      return;
-    }
-    accept();	// nothing to post, but accept() to let woTimeClock clock out the user
-  }
-  else if (_qty->toDouble() == 0.0)
-  {
-    QMessageBox::critical( this, tr("Enter Quantity to Post"),
-                           tr("You must enter a quantity of production to Post.") );
-    _qty->setFocus();
-    return;
-  }
-  else
-  {
-    q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations, 0, :suUser, :rnUser) AS result;");
-    q.bindValue(":wo_id", _wo->id());
-    q.bindValue(":qty", _qty->toDouble());
-    q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked(), 0));
-    q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked(), 0));
-    q.bindValue(":suUser", _setupUser->username());
-    q.bindValue(":rnUser", _runUser->username());
-    q.exec();
-    if (q.first())
-    {
-      int itemlocSeries = q.value("result").toInt();
-
-      omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
-
-      if (itemlocSeries < 0)
-      {
-	systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2, Error #%3.")
-			   .arg(__LINE__)
-			   .arg(_wo->id())
-			   .arg(itemlocSeries) );
-	return;
-      }
-      else
-      {
-	if (_productionNotes->text().stripWhiteSpace().length())
+    if (type.value("item_type").toString() == "J")
 	{
-	  q.prepare( "UPDATE wo "
-		     "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
-		     "WHERE (wo_id=:wo_id);" );
-	  q.bindValue(":productionNotes", _productionNotes->text().stripWhiteSpace());
-	  q.bindValue(":wo_id", _wo->id());
-	  q.exec();
+      QMessageBox::critical( this, tr("Invalid Work Order"),
+                           tr("Work Orders of Item Type Job are posted when shipping \n"
+						      "the Sales Order they are associated with.") );
+	  clear();
+	  return;
 	}
-
-	distributeInventory::SeriesAdjust(itemlocSeries, this);
-
-	if (_immediateTransfer->isChecked())
+	else
 	{
-	  q.prepare( "SELECT itemsite_warehous_id "
-		     "FROM itemsite, wo "
-		     "WHERE ( (wo_itemsite_id=itemsite_id)"
-		     " AND (wo_id=:wo_id) );" );
-	  q.bindValue(":wo_id", _wo->id());
-	  q.exec();
-	  if (q.first())
+	  if (_qty->toDouble() == 0.0 && _fromWOTC)
 	  {
-	    if (q.value("itemsite_warehous_id").toInt() == _transferWarehouse->id())
-	      QMessageBox::warning( this, tr("Cannot Post Immediate Transfer"),
-				    tr( "OpenMFG cannot post an immediate transfer for the newly posted production as the\n"
-					"transfer Warehouse is the same as the production Warehouse.  You must manually\n"
-					"transfer the production to the intended Warehouse." ) );
-	    else
-	    {
-	      q.prepare( "SELECT interWarehouseTransfer( itemsite_item_id, itemsite_warehous_id, :to_warehous_id, :qty,"
-			 "                               'W', formatWoNumber(wo_id), 'Immediate Transfer from Production Posting' ) AS result "
-			 "FROM wo, itemsite "
-			 "WHERE ( (wo_itemsite_id=itemsite_id)"
-			 " AND (wo_id=:wo_id) );" );
-	      q.bindValue(":wo_id", _wo->id());
-	      q.bindValue(":to_warehous_id", _transferWarehouse->id());
-	      q.bindValue(":qty", _qty->toDouble());
-	      q.exec();
-	      if (q.first())
-		distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
-	    }
+		if (QMessageBox::question(this, tr("Zero Quantity To Post"),
+					tr("Is the Quantity of Production really 0?\n"
+					   "If so, you will be clocked out but nothing "
+					   "else will be posted."),
+					QMessageBox::Yes,
+					QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+		{
+		  _qty->setFocus();
+		  return;
+		}
+		accept();	// nothing to post, but accept() to let woTimeClock clock out the user
+	  }
+	  else if (_qty->toDouble() == 0.0)
+	  {
+		QMessageBox::critical( this, tr("Enter Quantity to Post"),
+							   tr("You must enter a quantity of production to Post.") );
+		_qty->setFocus();
+		return;
 	  }
 	  else
 	  {
-	    systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
-			 .arg(__LINE__)
-			 .arg(_wo->id()) );
-	    return;
+		q.prepare("SELECT postProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations, 0, :suUser, :rnUser) AS result;");
+		q.bindValue(":wo_id", _wo->id());
+		q.bindValue(":qty", _qty->toDouble());
+		q.bindValue(":backflushMaterials", QVariant(_backflush->isChecked(), 0));
+		q.bindValue(":backflushOperations", QVariant(_backflushOperations->isChecked(), 0));
+		q.bindValue(":suUser", _setupUser->username());
+		q.bindValue(":rnUser", _runUser->username());
+		q.exec();
+		if (q.first())
+		{
+		  int itemlocSeries = q.value("result").toInt();
+
+		  omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+
+		  if (itemlocSeries < 0)
+		  {
+			systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2, Error #%3.")
+					   .arg(__LINE__)
+					   .arg(_wo->id())
+					   .arg(itemlocSeries) );
+			return;
+		  }
+		  else
+		  {
+			if (_productionNotes->text().stripWhiteSpace().length())
+			{
+			  q.prepare( "UPDATE wo "
+					 "SET wo_prodnotes=(wo_prodnotes || :productionNotes || '\n') "
+					 "WHERE (wo_id=:wo_id);" );
+			  q.bindValue(":productionNotes", _productionNotes->text().stripWhiteSpace());
+			  q.bindValue(":wo_id", _wo->id());
+			  q.exec();
+			}
+
+			distributeInventory::SeriesAdjust(itemlocSeries, this);
+
+			if (_immediateTransfer->isChecked())
+			{
+			  q.prepare( "SELECT itemsite_warehous_id "
+					 "FROM itemsite, wo "
+					 "WHERE ( (wo_itemsite_id=itemsite_id)"
+					 " AND (wo_id=:wo_id) );" );
+			  q.bindValue(":wo_id", _wo->id());
+			  q.exec();
+			  if (q.first())
+			  {
+				if (q.value("itemsite_warehous_id").toInt() == _transferWarehouse->id())
+				  QMessageBox::warning( this, tr("Cannot Post Immediate Transfer"),
+							tr( "OpenMFG cannot post an immediate transfer for the newly posted production as the\n"
+							"transfer Warehouse is the same as the production Warehouse.  You must manually\n"
+							"transfer the production to the intended Warehouse." ) );
+				else
+				{
+				  q.prepare( "SELECT interWarehouseTransfer( itemsite_item_id, itemsite_warehous_id, :to_warehous_id, :qty,"
+					 "                               'W', formatWoNumber(wo_id), 'Immediate Transfer from Production Posting' ) AS result "
+					 "FROM wo, itemsite "
+					 "WHERE ( (wo_itemsite_id=itemsite_id)"
+					 " AND (wo_id=:wo_id) );" );
+				  q.bindValue(":wo_id", _wo->id());
+				  q.bindValue(":to_warehous_id", _transferWarehouse->id());
+				  q.bindValue(":qty", _qty->toDouble());
+				  q.exec();
+				  if (q.first())
+				distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+				}
+			  }
+			  else
+			  {
+				systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
+					 .arg(__LINE__)
+					 .arg(_wo->id()) );
+				return;
+			  }
+			}
+
+		    if (type.value("item_type").toString() == "B")
+		    {
+			  ParameterList params;
+   	 		  params.append("mode", "new");
+			  params.append("wo_id", _wo->id());
+
+			  distributeBreederProduction newdlg(this, "", TRUE);
+			  newdlg.set(params);
+			  newdlg.exec();
+		    }
+
+			if (_closeWo->isChecked())
+			{
+			  ParameterList params;
+			  params.append("wo_id", _wo->id());
+
+			  closeWo newdlg(this, "", TRUE);
+			  newdlg.set(params);
+			  newdlg.exec();
+			}
+		  }
+		}
+		else
+		  systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
+				 .arg(__LINE__)
+				 .arg(_wo->id()) );
+
+		if (_captive)
+		  accept();
+		else
+		  clear();
 	  }
 	}
-
-  // If this is a breeder item then distribute the production
-	q.prepare( "SELECT item_type "
-		   "FROM wo, itemsite, item "
-		   "WHERE ( (wo_itemsite_id=itemsite_id)"
-		   " AND (itemsite_item_id=item_id)"
-		   " AND (wo_id=:wo_id) );" );
-	q.bindValue(":wo_id", _wo->id());
-	q.exec();
-	if (q.first())
-	{
-	  if (q.value("item_type").toString() == "B")
-	  {
-	    ParameterList params;
-	    params.append("mode", "new");
-	    params.append("wo_id", _wo->id());
-
-	    distributeBreederProduction newdlg(this, "", TRUE);
-	    newdlg.set(params);
-	    newdlg.exec();
-	  }
-	}
-	else
-	  systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
-			     .arg(__LINE__)
-			     .arg(_wo->id()) );
-
-	if (_closeWo->isChecked())
-	{
-	  ParameterList params;
-	  params.append("wo_id", _wo->id());
-
-	  closeWo newdlg(this, "", TRUE);
-	  newdlg.set(params);
-	  newdlg.exec();
-	}
-      }
-    }
-    else
-      systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
-			 .arg(__LINE__)
-			 .arg(_wo->id()) );
-
-
-    if (_captive)
-      accept();
-    else
-    {
-      _wo->setId(-1);
-      _qty->clear();
-      _productionNotes->clear();
-      _immediateTransfer->setChecked(FALSE);
-      _closeWo->setChecked(FALSE);
-      _close->setText(tr("&Close"));
-
-      _wo->setFocus();
-    }
+  }
+  else
+  {
+	systemError( this, tr("A System Error occurred at postProduction::%1, Work Order ID #%2.")
+		 .arg(__LINE__)
+		 .arg(_wo->id()) );
+	return;
   }
 }
 
@@ -386,5 +390,17 @@ void postProduction::sBackflushOperationsToggled( bool yes )
 {
   _setupUser->setReadOnly(!yes);
   _runUser->setReadOnly(!yes);
+}
+
+void postProduction::clear()
+{
+  _wo->setId(-1);
+  _qty->clear();
+  _productionNotes->clear();
+  _immediateTransfer->setChecked(FALSE);
+  _closeWo->setChecked(FALSE);
+  _close->setText(tr("&Close"));
+
+  _wo->setFocus();
 }
 

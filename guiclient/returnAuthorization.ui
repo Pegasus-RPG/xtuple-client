@@ -594,7 +594,7 @@
                </size>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
               <property name="type" >
                <enum>CLineEdit::ActiveCustomers</enum>
@@ -1248,7 +1248,7 @@
                </sizepolicy>
               </property>
               <property name="focusPolicy" >
-               <enum>Qt::TabFocus</enum>
+               <enum>Qt::StrongFocus</enum>
               </property>
              </widget>
             </item>
