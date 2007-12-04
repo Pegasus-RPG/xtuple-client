@@ -177,6 +177,35 @@ void returnAuthorizationWorkbench::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *
 
 void returnAuthorizationWorkbench::sPrint()
 {
+  ParameterList params;
+
+  if ((_cust->isChecked()))
+    params.append("cust_id", _custInfo->id());
+  else
+    _parameter->appendValue(params);
+
+  if(_expired->isChecked())
+    params.append("showExpired");
+
+  if (_closed->isChecked())
+  {
+    params.append("showClosed");
+    _dates->appendValue(params);
+  }
+
+  if (_receipts->isChecked())
+    params.append("showReceipts");
+  if (_shipments->isChecked())
+    params.append("showShipments");
+  if (_payment->isChecked())
+    params.append("showPayments");
+
+  orReport report("ReturnAuthorizationWorkbenchReview", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
+
 }
 
 void returnAuthorizationWorkbench::sEdit()
@@ -203,6 +232,15 @@ void returnAuthorizationWorkbench::sView()
 
 void returnAuthorizationWorkbench::sPrintDue()
 {
+  ParameterList params;
+
+  setParams(params);
+
+  orReport report("ReturnAuthorizationWorkbenchDueCredit", params);
+  if (report.isValid())
+    report.print();
+  else
+    report.reportError(this);
 }
 
 void returnAuthorizationWorkbench::sEditDue()
