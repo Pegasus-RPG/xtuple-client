@@ -703,6 +703,7 @@ void selectOrderForBilling::sTaxDetail()
   taxq.bindValue(":freightb",	_taxCache.freight(1));
   taxq.bindValue(":freightc",	_taxCache.freight(2));
   taxq.bindValue(":cobmisc_id",	_cobmiscid);
+  taxq.bindValue(":invcdate",   _invoiceDate->date());
   taxq.exec();
   if (taxq.lastError().type() != QSqlError::None)
   {
