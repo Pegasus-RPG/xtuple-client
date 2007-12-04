@@ -601,13 +601,18 @@ void workOrder::sCreate()
               "   SET wo_prodnotes=:productionNotes,"
               "       wo_prj_id=:prj_id,"
 			  "       wo_bom_rev_id=:bom_rev_id,"
-			  "       wo_boo_rev_id=:boo_rev_id"
+			  "       wo_boo_rev_id=:boo_rev_id,"
+			  "       wo_cosmethod=:wo_cosmethod"
               " WHERE (wo_id=:wo_id); ");
     q.bindValue(":wo_id", _woid);
     q.bindValue(":productionNotes", _productionNotes->text());
     q.bindValue(":prj_id", _project->id());
 	q.bindValue(":bom_rev_id", _bomRevision->id());
 	q.bindValue(":boo_rev_id", _booRevision->id());
+	if (_todate->isChecked() && _jobCosGroup->isEnabled())
+		q.bindValue(":wo_cosmethod",QString("D"));
+	else if (_proportional->isChecked() && _jobCosGroup->isEnabled())
+		q.bindValue(":wo_cosmethod",QString("P"));
     q.exec();
 
     q.prepare("SELECT updateCharAssignment('W', :target_id, :char_id, :char_value);");

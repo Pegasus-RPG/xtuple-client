@@ -495,7 +495,7 @@ void returnAuthorizationItem::sSave()
         QString chartype;
         if ((_item->itemType() == "M") || (_item->itemType() == "J"))
         {
-          q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments) AS result, itemsite_id "
+          q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments, :parent_type, :parent_id) AS result, itemsite_id "
                      "FROM itemsite "
                      "WHERE ( (itemsite_item_id=:item_id)"
                      " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -505,6 +505,8 @@ void returnAuthorizationItem::sSave()
           q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->text());
           q.bindValue(":item_id", _item->id());
           q.bindValue(":warehous_id", _warehouse->id());
+	      q.bindValue(":parent_type", QString("S"));
+	      q.bindValue(":parent_id", so.value("raitem_new_coitem_id").toInt());
           q.exec();
         }
         if (q.first())
@@ -526,14 +528,10 @@ void returnAuthorizationItem::sSave()
           {
             omfgThis->sWorkOrdersUpdated(_orderId, TRUE);
 
-    //  Update the newly created coitem with the newly create wo_id and visa-versa
+    //  Update the newly created coitem with the newly create wo_id
             q.prepare( "UPDATE coitem "
                        "SET coitem_order_type='W', coitem_order_id=:orderid "
-                       "WHERE (coitem_id=:soitem_id);"
-
-                       "UPDATE wo "
-                       "SET wo_ordid=:soitem_id, wo_ordtype='S' "
-                       "WHERE (wo_id=:orderid);" );
+                       "WHERE (coitem_id=:soitem_id);" );
             q.bindValue(":orderid", _orderId);
             q.bindValue(":soitem_id", so.value("raitem_new_coitem_id").toInt());
             q.exec();
