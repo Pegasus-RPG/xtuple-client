@@ -12,27 +12,27 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT costcat_code, costcat_descrip,
-       CASE WHEN (costcat_asset_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_asset_accnt_id) ELSE '' END AS asset,
-       CASE WHEN (costcat_wip_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_wip_accnt_id) ELSE '' END AS wip,
-       CASE WHEN (costcat_invcost_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_invcost_accnt_id) ELSE '' END AS invcost,
-       CASE WHEN (costcat_matusage_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_matusage_accnt_id) ELSE '' END AS matusage,
-       CASE WHEN (costcat_purchprice_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_purchprice_accnt_id) ELSE '' END AS purchprice,
-       CASE WHEN (costcat_adjustment_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_adjustment_accnt_id) ELSE '' END AS adjustment,
-       CASE WHEN (costcat_scrap_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_scrap_accnt_id) ELSE '' END AS scrap,
-       CASE WHEN (costcat_laboroverhead_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_laboroverhead_accnt_id) ELSE '' END AS laboroverhead,
-       CASE WHEN (costcat_liability_accnt_id IS NOT NULL) THEN (select (accnt_number || ' - ' || accnt_descrip) from accnt where accnt_id=costcat_liability_accnt_id) ELSE '' END AS liability
+       CASE WHEN (costcat_asset_accnt_id IS NOT NULL)      THEN formatGlAccountLong(costcat_asset_accnt_id)         ELSE '' END AS asset,
+       CASE WHEN (costcat_wip_accnt_id IS NOT NULL)        THEN formatGlAccountLong(costcat_wip_accnt_id)           ELSE '' END AS wip,
+       CASE WHEN (costcat_invcost_accnt_id IS NOT NULL)    THEN formatGlAccountLong(costcat_invcost_accnt_id)       ELSE '' END AS invcost,
+       CASE WHEN (costcat_purchprice_accnt_id IS NOT NULL) THEN formatGlAccountLong(costcat_purchprice_accnt_id)    ELSE '' END AS purchprice,
+       CASE WHEN (costcat_adjustment_accnt_id IS NOT NULL) THEN formatGlAccountLong(costcat_adjustment_accnt_id)    ELSE '' END AS adjustment,
+       CASE WHEN (costcat_scrap_accnt_id IS NOT NULL)      THEN formatGlAccountLong(costcat_scrap_accnt_id)         ELSE '' END AS scrap,
+       CASE WHEN fetchMetricBool('Routings')               THEN 'Labor and Overhead Costs:'                         ELSE '' END AS laboroverheadLit,
+       CASE WHEN (fetchMetricBool('Routings') AND
+              costcat_laboroverhead_accnt_id IS NOT NULL)  THEN formatGlAccountLong(costcat_laboroverhead_accnt_id) ELSE '' END AS laboroverhead,
+       CASE WHEN (costcat_liability_accnt_id IS NOT NULL)  THEN formatGlAccountLong(costcat_liability_accnt_id)     ELSE '' END AS liability,
+       CASE WHEN fetchMetricBool('MultiWhs')               THEN 'Transfer Order Liability Clearing:'                ELSE '' END AS toliabilityLit,
+       CASE WHEN (fetchMetricBool('MultiWhs') AND
+                costcat_toliability_accnt_id IS NOT NULL)  THEN formatGlAccountLong(costcat_toliability_accnt_id)   ELSE '' END AS toliability,
+       CASE WHEN fetchMetricBool('Transforms')             THEN 'Transform Clearing:'                               ELSE '' END AS transformLit,
+       CASE WHEN (fetchMetricBool('Transforms') AND
+                 costcat_transform_accnt_id IS NOT NULL)   THEN formatGlAccountLong(costcat_transform_accnt_id)     ELSE '' END AS transform
   FROM costcat
 ORDER BY costcat_code;</sql>
  </querysource>
  <rpthead>
   <height>61</height>
-  <line>
-   <xstart>5</xstart>
-   <ystart>55</ystart>
-   <xend>745</xend>
-   <yend>55</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
     <x>295</x>
@@ -49,6 +49,13 @@ ORDER BY costcat_code;</sql>
    <vcenter/>
    <string>Cost Categories Master List</string>
   </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>55</ystart>
+   <xend>745</xend>
+   <yend>55</yend>
+   <weight>2</weight>
+  </line>
  </rpthead>
  <section>
   <name>detail</name>
@@ -56,12 +63,66 @@ ORDER BY costcat_code;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>186</height>
+   <height>161</height>
+   <field>
+    <rect>
+     <x>415</x>
+     <y>55</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>transformLit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>575</x>
+     <y>55</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>transform</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>0</x>
+     <y>115</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Inventory Scrap:</string>
+   </label>
    <field>
     <rect>
      <x>165</x>
-     <y>100</y>
-     <width>450</width>
+     <y>55</y>
+     <width>250</width>
      <height>15</height>
     </rect>
     <font>
@@ -73,14 +134,33 @@ ORDER BY costcat_code;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>purchprice</column>
+     <column>wip</column>
     </data>
    </field>
-   <label>
+   <field>
     <rect>
-     <x>10</x>
-     <y>55</y>
-     <width>150</width>
+     <x>575</x>
+     <y>70</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>toliability</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>415</x>
+     <y>70</y>
+     <width>160</width>
      <height>15</height>
     </rect>
     <font>
@@ -90,7 +170,45 @@ ORDER BY costcat_code;</sql>
     </font>
     <right/>
     <vcenter/>
-    <string>WIP Asset</string>
+    <data>
+     <query>detail</query>
+     <column>toliabilityLit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>165</x>
+     <y>100</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>adjustment</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>0</x>
+     <y>84</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Purchase Price Variance:</string>
    </label>
    <field>
     <rect>
@@ -114,8 +232,27 @@ ORDER BY costcat_code;</sql>
    <field>
     <rect>
      <x>165</x>
+     <y>131</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>liability</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>165</x>
      <y>40</y>
-     <width>450</width>
+     <width>250</width>
      <height>15</height>
     </rect>
     <font>
@@ -132,22 +269,6 @@ ORDER BY costcat_code;</sql>
    </field>
    <label>
     <rect>
-     <x>0</x>
-     <y>145</y>
-     <width>160</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Labor and Overhead Costs:</string>
-   </label>
-   <label>
-    <rect>
      <x>35</x>
      <y>20</y>
      <width>80</width>
@@ -162,57 +283,13 @@ ORDER BY costcat_code;</sql>
     <vcenter/>
     <string>Description:</string>
    </label>
-   <field>
-    <rect>
-     <x>165</x>
-     <y>160</y>
-     <width>450</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>liability</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>10</x>
-     <y>160</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Liability Clearing:</string>
-   </label>
-   <label>
-    <rect>
-     <x>10</x>
-     <y>85</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Material Usage Variance</string>
-   </label>
+   <line>
+    <xstart>20</xstart>
+    <ystart>150</ystart>
+    <xend>760</xend>
+    <yend>150</yend>
+    <weight>0</weight>
+   </line>
    <field>
     <rect>
      <x>120</x>
@@ -234,28 +311,9 @@ ORDER BY costcat_code;</sql>
    </field>
    <field>
     <rect>
-     <x>165</x>
-     <y>70</y>
-     <width>450</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>invcost</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>10</x>
-     <y>70</y>
-     <width>150</width>
+     <x>415</x>
+     <y>40</y>
+     <width>160</width>
      <height>15</height>
     </rect>
     <font>
@@ -265,106 +323,16 @@ ORDER BY costcat_code;</sql>
     </font>
     <right/>
     <vcenter/>
-    <string>Inventory Cost Variance</string>
-   </label>
-   <label>
-    <rect>
-     <x>10</x>
-     <y>114</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Inventory Adjustment:</string>
-   </label>
-   <field>
-    <rect>
-     <x>165</x>
-     <y>114</y>
-     <width>450</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
     <data>
      <query>detail</query>
-     <column>adjustment</column>
-    </data>
-   </field>
-   <label>
-    <rect>
-     <x>10</x>
-     <y>130</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Inventory Scrap:</string>
-   </label>
-   <line>
-    <xstart>5</xstart>
-    <ystart>180</ystart>
-    <xend>745</xend>
-    <yend>180</yend>
-    <weight>0</weight>
-   </line>
-   <label>
-    <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>150</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <string>Purchase Price Variance:</string>
-   </label>
-   <field>
-    <rect>
-     <x>165</x>
-     <y>85</y>
-     <width>450</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>matusage</column>
+     <column>laboroverheadLit</column>
     </data>
    </field>
    <field>
     <rect>
      <x>165</x>
-     <y>130</y>
-     <width>450</width>
+     <y>84</y>
+     <width>250</width>
      <height>15</height>
     </rect>
     <font>
@@ -376,45 +344,7 @@ ORDER BY costcat_code;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>scrap</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>165</x>
-     <y>145</y>
-     <width>450</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>laboroverhead</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>165</x>
-     <y>55</y>
-     <width>450</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>wip</column>
+     <column>purchprice</column>
     </data>
    </field>
    <label>
@@ -433,11 +363,49 @@ ORDER BY costcat_code;</sql>
     <vcenter/>
     <string>Category:</string>
    </label>
+   <field>
+    <rect>
+     <x>575</x>
+     <y>40</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>laboroverhead</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>165</x>
+     <y>70</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>invcost</column>
+    </data>
+   </field>
    <label>
     <rect>
-     <x>10</x>
+     <x>0</x>
      <y>40</y>
-     <width>150</width>
+     <width>160</width>
      <height>15</height>
     </rect>
     <font>
@@ -449,10 +417,112 @@ ORDER BY costcat_code;</sql>
     <vcenter/>
     <string>Inventory Asset:</string>
    </label>
+   <field>
+    <rect>
+     <x>165</x>
+     <y>115</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>scrap</column>
+    </data>
+   </field>
+   <label>
+    <rect>
+     <x>0</x>
+     <y>55</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>WIP Asset:</string>
+   </label>
+   <label>
+    <rect>
+     <x>0</x>
+     <y>70</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Inventory Cost Variance:</string>
+   </label>
+   <label>
+    <rect>
+     <x>0</x>
+     <y>131</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Liability Clearing:</string>
+   </label>
+   <label>
+    <rect>
+     <x>0</x>
+     <y>100</y>
+     <width>160</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <string>Inventory Adjustment:</string>
+   </label>
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
+  <height>15</height>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>615</x>
@@ -486,25 +556,6 @@ ORDER BY costcat_code;</sql>
    <data>
     <query>Context Query</query>
     <column>report_date</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
    </data>
   </field>
   <label>
