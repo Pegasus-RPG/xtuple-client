@@ -121,10 +121,10 @@ SELECT wo_id AS orderid, womatl_id AS altorderid,
       formatDate(womatl_duedate) AS duedate,
       womatl_duedate AS r_duedate,
       FALSE AS late,
-      formatQty(womatl_qtyreq) AS f_qtyordered,
-      formatQty(womatl_qtyiss) AS f_qtyreceived,
-      formatQty((noNeg(womatl_qtyreq - womatl_qtyiss) * -1)) AS f_balance,
-      (noNeg(womatl_qtyreq - womatl_qtyiss) * -1) AS balance
+      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyreq)) AS f_qtyordered,
+      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyiss)) AS f_qtyreceived,
+      formatQty(itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, (noNeg(womatl_qtyreq - womatl_qtyiss) * -1))) AS f_balance,
+      itemuomtouom(womatlis.itemsite_item_id, womatl_uom_id, NULL, (noNeg(womatl_qtyreq - womatl_qtyiss) * -1)) AS balance
 FROM womatl, wo, itemsite AS wois, item, itemsite AS womatlis
 WHERE ((wo_status&lt;>'C')
   AND  (wo_itemsite_id=wois.itemsite_id)
@@ -166,10 +166,10 @@ SELECT cohead_id AS orderid, coitem_id AS altorderid,
        formatDate(coitem_scheddate) AS duedate,
        coitem_scheddate AS r_duedate,
        (coitem_scheddate &lt; CURRENT_DATE) AS late,
-       formatQty(coitem_qtyord) AS f_qtyordered,
-       formatQty(coitem_qtyshipped - coitem_qtyreturned + qtyAtShipping(coitem_id)) AS f_qtyreceived,
-       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping(coitem_id)) * -1) AS f_balance,
-       (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping(coitem_id)) * -1) AS balance
+       formatQty(coitem_qty_invuomratio * coitem_qtyord) AS f_qtyordered,
+       formatQty(coitem_qty_invuomratio * (coitem_qtyshipped - coitem_qtyreturned + qtyAtShipping(coitem_id))) AS f_qtyreceived,
+       formatQty(coitem_qty_invuomratio * noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping(coitem_id)) * -1) AS f_balance,
+       (coitem_qty_invuomratio * noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned - qtyAtShipping(coitem_id)) * -1) AS balance
 FROM coitem, cohead, cust, itemsite, item
 WHERE ((coitem_status='O')
   AND  (cohead_cust_id=cust_id)
