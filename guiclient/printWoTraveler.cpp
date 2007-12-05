@@ -295,6 +295,10 @@ void printWoTraveler::sPrint()
     {
       ParameterList params;
       params.append("sohead_id", query.value("cohead_id"));
+      params.append("order_id",  query.value("cohead_id"));
+      params.append("order_type",  "SO");
+      if (_metrics->boolean("MultiWhs"))
+	params.append("MultiWhs");
 
       orReport report(query.value("reportname").toString(), params);
       if (report.isValid() && report.print(&printer, setupPrinter))

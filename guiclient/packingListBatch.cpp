@@ -166,16 +166,21 @@ void packingListBatch::sPrintBatch()
   {
     int osmiscid = q.value("pack_shiphead_id").toInt();
 
-    // set sohead_id and cosmisc_id for compatibility with existing reports
+    // set sohead_id, tohead_id, and cosmisc_id for customer and 3rd-party use
     ParameterList params;
-    params.append("sohead_id", q.value("pack_head_id").toInt());
-    params.append("pack_head_id", q.value("pack_head_id").toInt());
+    params.append("head_id",   q.value("pack_head_id").toInt());
+    params.append("head_type", q.value("pack_head_type").toString());
+    if (q.value("pack_head_type").toString() == "SO")
+      params.append("sohead_id", q.value("pack_head_id").toInt());
+    else if (q.value("pack_head_type").toString() == "TO")
+      params.append("tohead_id", q.value("pack_head_id").toInt());
     if (osmiscid > 0)
     {
       params.append("cosmisc_id", osmiscid);
       params.append("shiphead_id",  osmiscid);
     }
-    params.append("pack_head_type", q.value("pack_head_type").toString());
+    if (_metrics->boolean("MultiWhs"))
+      params.append("MultiWhs");
 
     orReport report(q.value(osmiscid > 0 ? "packform" : "pickform").toString(), params);
     if (report.isValid() && report.print(&printer, setupPrinter))

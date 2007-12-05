@@ -181,7 +181,6 @@ enum SetResponse printPackingList::set(const ParameterList &pParams)
 
 void printPackingList::sPrint()
 {
-  //qDebug("sPrint: _headtype %s, _so %d, _to %d", _headtype.toAscii().data(), _so->id(), _to->id());
   if (_headtype == "SO")
   {
     if (! _so->isValid())
@@ -220,7 +219,11 @@ void printPackingList::sPrint()
   {
     ParameterList params;
     params.append("sohead_id", _so->id());
-    params.append("head_id",   _headtype == "SO" ? _so->id() : _to->id() );
+    params.append("tohead_id", _to->id());
+    if (_headtype == "SO")
+      params.append("head_id", _so->id());
+    else if (_headtype == "TO")
+      params.append("head_id", _to->id() );
     params.append("head_type", _headtype);
     if (_metrics->boolean("MultiWhs"))
       params.append("MultiWhs");

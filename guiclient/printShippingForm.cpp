@@ -306,6 +306,9 @@ void printShippingForm::sPrint()
       params.append("watermark",   cursor->text(1));
       params.append("shipchrg_id", _shipchrg->id());
 
+      if (_metrics->boolean("MultiWhs"))
+	params.append("MultiWhs");
+
       if (cursor->text(2) == tr("Yes"))
         params.append("showcosts");
 

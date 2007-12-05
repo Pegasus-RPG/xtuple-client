@@ -1,8 +1,8 @@
 <!DOCTYPE openRPTDef>
 <report>
- <title>Packing List (Shipment)</title>
- <name>PackingList-Shipment</name>
- <description>Non-Hybrid version - driven only by shiphead_id parameter - Packing List showing the contents of a particular shipment</description>
+ <title>Packing List</title>
+ <name>PackingList</name>
+ <description>Hybrid Packing List - use the shiphead_id if it is passed but use the order id and type if they're passed but not shiphead_id</description>
  <size>Letter</size>
  <portrait/>
  <topmargin>25</topmargin>
@@ -11,14 +11,16 @@
  <leftmargin>25</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT shiphead_number, 'S/O #:' AS ordertype,
+  <sql>SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_number,
+	      'S/O #:' AS ordertype,
        cohead_number AS ordernumber,
        formatsobarcode(cohead_id) AS order_barcode,
-       cohead_shipvia AS shipvia,
+       -- in 2.3: use the shipment info if we have one
+       COALESCE(shiphead_shipvia, cohead_shipvia) AS shipvia,
        cohead_shiptophone AS shiptophone,
        cohead_custponumber,
        formatDate(cohead_orderdate) AS orderdate,
-       cohead_shipcomments AS shipcomments,   
+       cohead_shipcomments AS shipcomments,
        cohead_billtoname AS billtoname,
        formataddr(cohead_billtoaddress1, cohead_billtoaddress2,
                   cohead_billtoaddress3,
@@ -34,19 +36,32 @@
        cust_contact,
        cust_phone,
        terms_descrip
-  FROM shiphead, cohead, cust, terms
+  -- In 2.3: rearrange FROM and WHERE to use shiphead_id or order head_id, whichever we have
+  FROM cust, terms, cohead
+&lt;? if exists("shiphead_id") ?>
+	JOIN
+&lt;? else ?>
+	LEFT OUTER JOIN
+&lt;? endif ?>
+       shiphead ON ((shiphead_id=&lt;? value("shiphead_id") ?>)
+		AND (shiphead_order_id=cohead_id)
+		AND (shiphead_order_type='SO'))
  WHERE ((cohead_cust_id=cust_id)
-   AND (cohead_terms_id=terms_id)
-   AND (cohead_id=shiphead_order_id)
-   AND (shiphead_order_type='SO')
-   AND (shiphead_id=&lt;? value("shiphead_id") ?>)
+   AND  (cohead_terms_id=terms_id)
+&lt;? if exists("head_id") ?>
+   AND  (&lt;? value("head_type") ?>='SO')
+   AND  (cohead_id=&lt;? value("head_id") ?>)
+&lt;? endif ?>
 )
+
 &lt;? if exists("MultiWhs") ?>
 UNION
-SELECT shiphead_number, 'T/O #:' AS ordertype,
+SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_number,
+      'T/O #:' AS ordertype,
        tohead_number AS ordernumber,
        formattobarcode(tohead_id) AS order_barcode,
-       shiphead_shipvia AS shipvia,
+       -- in 2.3: use the shipment info if we have one
+       COALESCE(shiphead_shipvia, tohead_shipvia) AS shipvia,
        tohead_destphone AS shiptophone,
        TEXT(tohead_number) AS cohead_custponumber,
        formatDate(tohead_orderdate) AS orderdate,
@@ -62,20 +77,43 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        tohead_destcntct_name AS cust_contact,
        tohead_destphone AS cust_phone,
        '' AS terms_descrip
-  FROM shiphead, tohead
- WHERE ((tohead_id=shiphead_order_id)
-   AND  (shiphead_order_type='TO')
-   AND  (shiphead_id=&lt;? value("shiphead_id") ?>)
-)
+  -- In 2.3: rearrange FROM and WHERE to use shiphead_id or order head_id, whichever we have
+  FROM tohead 
+&lt;? if exists("shiphead_id") ?>
+	JOIN
+&lt;? else ?>
+	LEFT OUTER JOIN
+&lt;? endif ?>
+       shiphead ON ((shiphead_id=&lt;? value("shiphead_id") ?>)
+		AND (shiphead_order_id=tohead_id)
+		AND (shiphead_order_type='TO'))
+&lt;? if exists("head_id") ?>
+ WHERE ((&lt;? value("head_type") ?>='TO')
+   AND  (tohead_id=&lt;? value("head_id") ?>)
+   )
+&lt;? endif ?>
 &lt;? endif ?>;</sql>
  </querysource>
  <querysource>
   <name>scheddate</name>
-  <sql>SELECT formatDate(MIN(coitem_scheddate)) AS scheddate
-  FROM coitem, coship
- WHERE ((coitem_status &lt;> 'X')
-   AND  (coitem_id=coship_coitem_id)
-   AND  (coship_cosmisc_id=&lt;? value("coship_cosmisc_id") ?>));</sql>
+  <sql>SELECT formatDate(MIN(orderitem_scheddate)) AS scheddate
+  -- In 2.3: use orderitem view to get sched date regardless of order type
+  FROM orderitem
+  -- In 2.3: use shiphead_id if we have it
+       &lt;? if exists("shiphead_id") ?>
+       JOIN shiphead ON ((orderitem_orderhead_type=shiphead_order_type)
+		     AND (orderitem_orderhead_id=shiphead_order_id)
+		     AND (shiphead_id=&lt;? value("shiphead_id")?>))
+       JOIN shipitem ON ((shiphead_id=shipitem_shiphead_id)
+		     AND (shipitem_orderitem_id=orderitem_id))
+       &lt;? endif ?>
+ WHERE ((orderitem_status &lt;> 'X')
+-- In 2.3: use order's head_id if we have it
+&lt;? if exists("head_id") ?>
+   AND  (orderitem_orderhead_type=&lt;? value("head_type") ?>)
+   AND  (orderitem_orderhead_id=&lt;? value("head_id") ?>)
+&lt;? endif ?>
+ );</sql>
  </querysource>
  <querysource>
   <name>detail</name>
@@ -94,16 +132,18 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
        item_descrip2,
 
        formatQty(coitem_qtyord) AS ordered,
-       formatQty(coship_qty) AS atshipping,
+       -- In 2.3: use qtyAtShipping instead joining with the deprecated coship
+       formatQty(qtyAtShipping('SO', coitem_id)) AS atshipping,
 
        formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) /
                          CASE WHEN(item_shipinvrat = 0) THEN 1
                                                         ELSE item_shipinvrat
                          END)) AS shipordered,
-       formatQty(roundUp(coship_qty /
+       -- In 2.3: use qtyAtShipping instead joining with the deprecated coship
+       formatQty(roundUp(qtyAtShipping('SO', coitem_id) /
                          CASE WHEN(item_shipinvrat = 0) THEN 1
                                                         ELSE item_shipinvrat
-                         END ) ) AS shipatshipping,
+                         END)) AS shipatshipping,
 
        CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus
                                            FROM cust,cohead
@@ -130,19 +170,28 @@ SELECT shiphead_number, 'T/O #:' AS ordertype,
                                           >= (coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) THEN 'R'
             ELSE coitem_status
        END AS f_status
-  FROM itemsite, item, coitem, coship, uom
+  -- In 2.3: remove uses of the deprecated coship in FROM, WHERE, and GROUP BY
+  FROM itemsite, item, coitem, uom
  WHERE ( (coitem_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
    AND (item_inv_uom_id=uom_id)
    AND (coitem_status &lt;> 'X')
-   AND (coitem_id=coship_coitem_id)
-   AND (coship_cosmisc_id=&lt;? value("cosmisc_id") ?>)
+-- In 2.3: use the shiphead_id if we have it and the order head_id if we have it
+&lt;? if exists("shiphead_id") ?>
+   AND  (coitem_cohead_id IN (SELECT shiphead_order_id FROM shiphead
+			      WHERE ((shiphead_id=&lt;? value("shiphead_id") ?>)
+			        AND  (shiphead_order_type='SO'))))
+&lt;? endif ?>
+&lt;? if exists("head_id") ?>
+   AND  (&lt;? value("head_type") ?>='SO')
+   AND  (coitem_cohead_id=&lt;? value("head_id") ?>)
+&lt;? endif ?>
 )
 --2.3 add coitem_qty_uom_id, to the GROUP BY clause
 GROUP BY coitem_qty_uom_id, coitem_linenumber, coitem_id, coitem_memo, item_number, uom_name, item_shipuom,
          item_descrip1, item_descrip2, coitem_qtyord, coitem_qty_invuomratio, coitem_qtyshipped,
          coitem_qtyreturned, item_shipinvrat, coitem_status, coitem_cohead_id,
-         itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id, coship_qty
+         itemsite_id, itemsite_qtyonhand, itemsite_warehous_id, item_id
 &lt;? if exists("MultiWhs") ?>
 UNION
 SELECT 2 AS groupby,
@@ -157,29 +206,38 @@ SELECT 2 AS groupby,
        item_descrip2,
 
        formatQty(toitem_qty_ordered) AS ordered,
-       formatQty(shipitem_qty) AS atshipping,
+       -- In 2.3: use qtyAtShipping instead of joining with the shipitem table
+       formatQty(qtyAtShipping('TO', toitem_id)) AS atshipping,
 
        formatQty(roundUp(toitem_qty_ordered /
                          CASE WHEN (item_shipinvrat = 0) THEN 1
                                                          ELSE item_shipinvrat
                          END)) AS shipordered,
-       formatQty(roundUp(shipitem_qty /
+       -- In 2.3: use qtyAtShipping instead of joining with the shipitem table
+       formatQty(roundUp(qtyAtShipping('TO', toitem_id) /
                          CASE WHEN (item_shipinvrat = 0) THEN 1
                                                          ELSE item_shipinvrat
                          END)) AS shipatshipping,
 
        toitem_status AS f_status
-  FROM itemsite, item, toitem, tohead, shipitem, shiphead, uom
+  FROM itemsite, item, toitem, tohead, uom
+  -- In 2.3: remove uses of the shipitem and shiphead tables in FROM and WHERE
  WHERE ((toitem_item_id=item_id)
    AND  (item_inv_uom_id=uom_id)
    AND  (item_id=itemsite_item_id)
    AND  (toitem_tohead_id=tohead_id)
    AND  (toitem_status &lt;> 'X')
    AND  (tohead_src_warehous_id=itemsite_warehous_id)
-   AND  (toitem_id=shipitem_orderitem_id)
-   AND  (shipitem_shiphead_id=shiphead_id)
-   AND  (shiphead_order_type='TO')
-   AND  (shiphead_id=&lt;? value("shiphead_id") ?>)
+-- In 2.3: use the shiphead_id if we have it and the order head_id if we have it
+&lt;? if exists("shiphead_id") ?>
+   AND  (toitem_tohead_id IN (SELECT shiphead_order_id FROM shiphead
+			      WHERE ((shiphead_id=&lt;? value("shiphead_id") ?>)
+			        AND  (shiphead_order_type='TO'))))
+&lt;? endif ?>
+&lt;? if exists("head_id") ?>
+   AND  (&lt;? value("head_type") ?>='TO')
+   AND  (toitem_tohead_id=&lt;? value("head_id") ?>)
+&lt;? endif ?>
 )
 &lt;? endif ?>
 ORDER BY linenumber;</sql>
