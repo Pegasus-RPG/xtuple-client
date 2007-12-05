@@ -295,8 +295,8 @@ void printWoTraveler::sPrint()
     {
       ParameterList params;
       params.append("sohead_id", query.value("cohead_id"));
-      params.append("order_id",  query.value("cohead_id"));
-      params.append("order_type",  "SO");
+      params.append("head_id",  query.value("cohead_id"));
+      params.append("head_type",  "SO");
       if (_metrics->boolean("MultiWhs"))
 	params.append("MultiWhs");
 
