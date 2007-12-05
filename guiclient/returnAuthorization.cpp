@@ -981,7 +981,6 @@ void returnAuthorization::sFillList()
   if ((q.first()) && (_mode == cEdit))
   {
     _cust->setDisabled(_cust->isValid());
-    _disposition->setEnabled(_cust->isValid());
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
@@ -1383,7 +1382,6 @@ void returnAuthorization::sTaxAuthChanged()
 
 void returnAuthorization::sDispositionChanged()
 {
-  char *dispositionTypes[] = { "C", "R", "P", "V", "M" };
   _new->setEnabled(_cust->isValid() || 
 	              (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
   
@@ -1393,46 +1391,6 @@ void returnAuthorization::sDispositionChanged()
   _receiveAll->setEnabled(enableReceipt);
   _postReceipts->setEnabled(enableReceipt);
 
-  if (_disposition->currentItem() != 4)
-  {
-    q.prepare("SELECT raitem_id FROM raitem, rahead "
-		      "WHERE ((raitem_rahead_id=rahead_id) "
-			  "AND (rahead_id=:rahead_id) "
-			  "AND (rahead_disposition <> :rahead_disposition));");
-	q.bindValue(":rahead_id",_raheadid);
-    q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
-	q.exec();
-    if (q.first())
-	{
-      if ( QMessageBox::question( this, tr("Disposition Changed"),
-                             tr("Would you like to update the disposition of all existing line items?"),
-                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0 )
-      {
-	    if (_disposition->currentItem() == 0 && _creditBy->currentItem() == 0)
-	      _creditBy->setCurrentItem(1);
-		sSave();
-	    q.prepare("UPDATE raitem SET raitem_disposition=:rahead_disposition "
-		    	  "WHERE (raitem_rahead_id=:rahead_id);");
-		q.bindValue(":rahead_id", _raheadid);
-	    q.bindValue(":rahead_disposition", QString(dispositionTypes[_disposition->currentItem()]));
-		q.exec();
-        if (q.lastError().type() != QSqlError::NoError)
-        {
-           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-           return;
-        }
-		else
-		{
-		  sFillList();
-		}
-	  }
-	}
-    else if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
   if (_disposition->currentItem() == 0)
   {
     _timing->setCurrentItem(0);

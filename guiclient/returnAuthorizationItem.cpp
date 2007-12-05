@@ -101,6 +101,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_netUnitPrice,  SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
   connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
   connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOrderInfo()));
+  connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
   connect(_save,          SIGNAL(clicked()),      this, SLOT(sSave()));
   connect(_taxCode,       SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
@@ -259,6 +260,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
       _qtyAuth->setFocus();
+	  _disposition->setEnabled(FALSE);
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
       connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
@@ -594,12 +596,10 @@ void returnAuthorizationItem::sPopulateItemInfo()
     _pricingUOM->setId(item.value("item_price_uom_id").toInt());
     _priceinvuomratio = item.value("iteminvpricerat").toDouble();
     _qtyinvuomratio = 1.0;
-    //_ratio->setText(item.value("f_invpricerat").toString());
     _invuomid = item.value("item_inv_uom_id").toInt();
-    // {_listPrice,_unitCost}->setBaseValue() because they're stored in base
     _listPrice->setBaseValue(item.value("item_listprice").toDouble());
-    _unitCost->setBaseValue(item.value("f_cost").toDouble());
-    _taxType->setId(item.value("taxtype_id").toInt());
+	_unitCost->setBaseValue(item.value("f_cost").toDouble());
+    _taxType->setId(item.value("taxtype_id").toInt()); 
   }
   else if (item.lastError().type() != QSqlError::None)
   {
@@ -619,6 +619,7 @@ void returnAuthorizationItem::sPopulateItemInfo()
   else
     _createOrder->setEnabled(FALSE);
 
+  _disposition->setEnabled(_item->id() == -1);
 }
 
 void returnAuthorizationItem::sPopulateItemsiteInfo()
@@ -722,6 +723,7 @@ void returnAuthorizationItem::populate()
       _disposition->setCurrentItem(3);
     else if (raitem.value("raitem_disposition").toString() == "S")
       _disposition->setCurrentItem(4);
+	_orderId = raitem.value("coitem_order_id").toInt();
     _netUnitPrice->setId(raitem.value("rahead_curr_id").toInt());
     _netUnitPrice->setEffective(raitem.value("rahead_authdate").toDate());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
@@ -745,7 +747,6 @@ void returnAuthorizationItem::populate()
     _altcosAccntid->setId(raitem.value("raitem_cos_accnt_id").toInt());
     _scheduledDate->setDate(raitem.value("raitem_scheddate").toDate());
     _warranty->setChecked(raitem.value("raitem_warranty").toBool());
-    _orderId = raitem.value("coitem_order_id").toInt();
     _status = raitem.value("raitem_status").toString();
     _qtycredited = raitem.value("raitem_qtycredited").toDouble();
 
@@ -1049,7 +1050,7 @@ void returnAuthorizationItem::sLookupTaxCode()
 
 void returnAuthorizationItem::sQtyUOMChanged()
 {
-  if(_qtyUOM->id() == _invuomid)
+  if(_qtyUOM->id() == _invuomid || _item->id() == -1)
     _qtyinvuomratio = 1.0;
   else
   {
@@ -1117,6 +1118,18 @@ void returnAuthorizationItem::updatePriceInfo()
 
 void returnAuthorizationItem::sDispositionChanged()
 {
+  if (_disposition->currentIndex() == 3)
+    _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                      "       item_active, item_config, item_type, uom_name "
+                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
+					  "WHERE ((item_type = 'J') "
+					  "AND (item_active)) ");
+  else
+	  _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                      "       item_active, item_config, item_type, uom_name "
+                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
+					  "AND (item_active) ");
+
   if (_disposition->currentIndex() >= 2)
   {
     _netUnitPrice->setLocalValue(0);
@@ -1317,5 +1330,21 @@ void returnAuthorizationItem::sDetermineAvailability()
     _onOrder->clear();
     _available->clear();
     _leadtime->clear();
+  }
+}
+
+void returnAuthorizationItem::sCalcWoUnitCost()
+{
+  if (_item->itemType() == "J" && _orderId > -1 && _qtyAuth->toDouble() != 0)
+  {
+    q.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
+		      "FROM wo,raitem "
+			  "WHERE ((wo_ordtype='S') "
+			  "AND (wo_ordid=raitem_new_coitem_id) "
+			  "AND (raitem_id=:raitem_id));");
+	q.bindValue(":raitem_id", _raitemid);
+	q.exec();
+	if (q.first())
+      _unitCost->setBaseValue(q.value("wo_value").toDouble() / _qtyAuth->toDouble() * _qtyinvuomratio);
   }
 }

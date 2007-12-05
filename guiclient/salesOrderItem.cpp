@@ -10,7 +10,6 @@
  * attribution for the Original Developer. In addition, Exhibit A has 
  * been modified to be consistent with Exhibit B.
  * 
- * Software distributed under the License is distributed on an "AS IS" 
  * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
  * the License for the specific language governing rights and limitations 
  * under the License. 
@@ -94,10 +93,10 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sPopulateOrderInfo()));
   connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
   connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
+  connect(_qtyOrdered, SIGNAL(textChanged()), this, SLOT(sCalcWoUintCost()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateOrderInfo()));
-  connect(_showAvailability, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
   connect(_showAvailability, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
   connect(_showIndented, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
   connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sPopulateItemsiteInfo()));
@@ -108,6 +107,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_notes, SIGNAL(textChanged()), this, SLOT(sChanged()));
   connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sChanged()));
   connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
+  connect(_orderQty, SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
   connect(_orderDueDate, SIGNAL(newDate(const QDate&)), this, SLOT(sChanged()));
   connect(_supplyWarehouse, SIGNAL(newID(int)), this, SLOT(sChanged()));
   connect(_discountFromCust, SIGNAL(textChanged(const QString&)), this, SLOT(sChanged()));
@@ -2628,3 +2628,17 @@ void salesOrderItem::sPriceUOMChanged()
   sDeterminePrice();
 }
 
+void salesOrderItem::sCalcWoUnitCost()
+{
+  if (_item->itemType() == "J" && _orderId > -1 && _qtyOrdered->toDouble() != 0)
+  {
+    q.prepare("SELECT COALESCE(SUM(wo_postedvalue),0) AS wo_value "
+		      "FROM wo "
+			  "WHERE ((wo_ordtype='S') "
+			  "AND (wo_ordid=:soitem_id));");
+	q.bindValue(":soitem_id", _soitemid);
+	q.exec();
+	if (q.first())
+      _unitCost->setBaseValue(q.value("wo_value").toDouble() / _qtyOrdered->toDouble() * _qtyinvuomratio);
+  }
+}

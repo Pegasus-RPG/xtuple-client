@@ -100,6 +100,7 @@ public slots:
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
+	virtual void sCalcWoUnitCost();
 
 protected slots:
     virtual void languageChange();

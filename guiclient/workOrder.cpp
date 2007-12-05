@@ -187,7 +187,8 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
 	  _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                       "       item_active, item_config, item_type, uom_name "
                       "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-                      "WHERE (item_type IN ('M', 'B')) ");
+                      "WHERE (item_type IN ('M', 'B') "
+					  "AND (item_active)) ");
       _qtyReceivedLit->clear();
       _tabs->removePage(_tabs->page(4));
 

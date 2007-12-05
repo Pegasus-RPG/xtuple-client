@@ -92,6 +92,7 @@ public slots:
     virtual void sDetermineAvailability();
     virtual void sHandleWo( bool pCreate );
     virtual void sPopulateOrderInfo();
+	virtual void sCalcWoUnitCost();
 
 protected slots:
     virtual void languageChange();
