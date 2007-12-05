@@ -172,6 +172,7 @@
 #include "dspTimePhasedSalesByCustomerByItem.h"
 
 #include "printSoForm.h"
+#include "printRaForm.h"
 #include "deliverSalesOrder.h"
 
 #include "customer.h"
@@ -337,6 +338,7 @@ menuSales::menuSales(OpenMFGGUIClient *pParent) :
     // Sales | Forms
     { "menu",	tr("&Forms"),           (char*)formsMenu,	mainMenu,	true,	NULL, NULL, true, NULL },
     { "so.printSalesOrderForm", tr("Print Sales &Order Form..."),	SLOT(sPrintSalesOrderForm()), formsMenu, (_privleges->check("MaintainSalesOrders") || _privleges->check("ViewSalesOrders")),	NULL, NULL, true, NULL },
+    { "so.printReturnAuthForm", tr("Print &Return Auth. Form..."),	SLOT(sPrintReturnAuthForm()), formsMenu, _privleges->check("MaintainReturns"),	NULL, NULL, true, NULL },
     { "separator",	NULL,	NULL,	formsMenu,	true,		NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL }, 
     { "so.deliverSalesOrder", tr("&Schedule S/O for Email Delivery..."),	SLOT(sDeliverSalesOrder()), formsMenu, _privleges->check("ViewSalesOrders") ,	NULL, NULL, _metrics->boolean("EnableBatchManager"), NULL },
     { "separator",	NULL,	NULL,	formsMenu,	true,		NULL, NULL, true , NULL }, 
@@ -1136,6 +1138,11 @@ void menuSales::sDspTimePhasedSalesByCustomerByItem()
 void menuSales::sPrintSalesOrderForm()
 {
   printSoForm(parent, "", TRUE).exec();
+}
+
+void menuSales::sPrintReturnAuthForm()
+{
+  printRaForm(parent, "", TRUE).exec();
 }
 
 

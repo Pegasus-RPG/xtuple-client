@@ -64,19 +64,19 @@
 form::form(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 }
 
 form::~form()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void form::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse form::set(const ParameterList &pParams)
@@ -185,6 +185,8 @@ void form::sSave()
     q.bindValue(":form_key", "SASC");
   else if (_key->currentItem() == 8)
     q.bindValue(":form_key", "PES");
+  else if (_key->currentItem() == 9)
+    q.bindValue(":form_key", "RA");
   else
     q.bindValue(":form_key", "");
 
@@ -229,6 +231,8 @@ void form::populate()
       _key->setCurrentItem(7);
     else if (q.value("form_key").toString() == "PES")
       _key->setCurrentItem(8);
+    else if (q.value("form_key").toString() == "RA")
+      _key->setCurrentItem(9);
     else
       _key->setCurrentItem(-1);
   }

@@ -250,6 +250,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                printLabelsByPo.ui printPackingListBatchByShipvia.ui printPoForm.ui                    \
                printProductionEntrySheet.ui printPurchaseOrder.ui                                     \
                printPurchaseOrdersByAgent.ui printSASpecialCalendarForm.ui printSoForm.ui             \
+               printRaForm.ui                                                                         \
                printShippingForm.ui printShippingForms.ui                                             \
                printStatementByCustomer.ui printStatementsByCustomerType.ui                           \
                printVendorForm.ui                                                                     \
@@ -558,6 +559,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                printLabelsByPo.h printPackingListBatchByShipvia.h printPoForm.h                       \
                printProductionEntrySheet.h printPurchaseOrder.h                                       \
                printPurchaseOrdersByAgent.h printSASpecialCalendarForm.h printSoForm.h                \
+               printRaForm.h                                                                          \
                printShippingForm.h printShippingForms.h                                               \
                printStatementByCustomer.h printStatementsByCustomerType.h                             \
                printVendorForm.h                                                                      \
@@ -869,6 +871,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                printLabelsByPo.cpp printPackingListBatchByShipvia.cpp printPoForm.cpp                 \
                printProductionEntrySheet.cpp printPurchaseOrder.cpp                                   \
                printPurchaseOrdersByAgent.cpp printSASpecialCalendarForm.cpp printSoForm.cpp          \
+               printRaForm.cpp                                                                        \
                printShippingForm.cpp printShippingForms.cpp                                           \
                printStatementByCustomer.cpp printStatementsByCustomerType.cpp                         \
                printVendorForm.cpp                                                                    \

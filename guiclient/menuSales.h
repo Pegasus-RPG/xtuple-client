@@ -195,6 +195,7 @@ class menuSales : public QObject
     void sDspTimePhasedSalesByCustomerByItem();
 
     void sPrintSalesOrderForm();
+    void sPrintReturnAuthForm();
     void sPrintSASpecialCalendarForm();
 
     void sNewCustomer();
