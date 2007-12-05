@@ -143,6 +143,8 @@ invoice::invoice(QWidget* parent, const char* name, Qt::WFlags fl)
   _project->setType(ProjectLineEdit::SalesOrder);
   if(!_metrics->boolean("UseProjects"))
     _project->hide();
+
+  _miscAmount->setAllowNegative(true);
 }
 
 invoice::~invoice()
