@@ -100,7 +100,7 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
   connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
-  _item->setType(ItemLineEdit::cGeneralManufactured);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
   _dates->setStartCaption(tr("Start W/O Start Date:"));
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
