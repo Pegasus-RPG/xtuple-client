@@ -966,6 +966,10 @@ void initErrorLookupHash()
 			       "to which the funds should be credited is not "
 			       "valid."),				0, "" },
 
+  { "reserveSoLineQty", -1, TR("Cannot reserve more quantity than remaining on order."), 0, ""},
+  { "reserveSoLineQty", -2, TR("Cannot reserve negative quantities."), 0, ""},
+  { "reserveSoLineQty", -3, TR("Cannot reserve more quanity than currently on hand and already reserved."), 0, ""},
+
   { "woClockIn",  -1, "", -1, "explodeWo" },
   { "woClockIn",  -2, "", -2, "explodeWo" },
   { "woClockIn",  -3, "", -3, "explodeWo" },
