@@ -145,9 +145,11 @@ void issueLineToShipping::sIssue()
 
   if(_requireInventory || ("SO" == _ordertype && _metrics->boolean("EnableSOReservations")))
   {
-    q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :orderitemid) AS result;");
+    q.prepare("SELECT sufficientInventoryToShipItem(:ordertype, :orderitemid, :orderqty) AS result;");
     q.bindValue(":ordertype",   _ordertype);
     q.bindValue(":orderitemid", _itemid);
+    if(!_requireInventory)
+      q.bindValue(":orderqty",  _qtyToIssue->toDouble());
     q.exec();
     if (q.first())
     {
