@@ -86,10 +86,6 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _planordid = -1;
   _woid = -1;
 
-  _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                  "       item_active, item_config, item_type, uom_name "
-                  "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-                  "WHERE (item_type IN ('M', 'B')) ");
   _lastWarehousid = _warehouse->id();
   _lastItemid = -1;
   _comments->setReadOnly(TRUE);
@@ -188,6 +184,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     {
       _mode = cNew;
 
+	  _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                      "       item_active, item_config, item_type, uom_name "
+                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
+                      "WHERE (item_type IN ('M', 'B')) ");
       _qtyReceivedLit->clear();
       _tabs->removePage(_tabs->page(4));
 
@@ -197,6 +197,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
+     _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                     "       item_active, item_config, item_type, uom_name "
+                     "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
+                     "WHERE (item_type IN ('M', 'B', 'J')) ");
       XSqlQuery wo;
       wo.prepare( "SELECT wo_itemsite_id, wo_priority, wo_status,"
                   "       formatWoNumber(wo_id) AS f_wonumber,"
@@ -281,6 +285,10 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     {
       _mode = cView;
 
+      _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                      "       item_active, item_config, item_type, uom_name "
+                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
+                      "WHERE (item_type IN ('M', 'B', 'J')) ");
       XSqlQuery wo;
       wo.prepare( "SELECT wo_itemsite_id, wo_priority,"
                   "       formatWoNumber(wo_id) AS f_wonumber,"

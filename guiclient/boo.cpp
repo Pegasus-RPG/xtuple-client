@@ -96,7 +96,7 @@ boo::boo(QWidget* parent, const char* name, Qt::WFlags fl)
 
   statusBar()->hide();
 
-  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased);
+  _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cJob);
 
   _booitem->addColumn(tr("#"),           _seqColumn,  Qt::AlignCenter );
   _booitem->addColumn(tr("Std Oper."),   _itemColumn, Qt::AlignLeft   );
