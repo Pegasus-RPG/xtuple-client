@@ -150,7 +150,14 @@ enum SetResponse booItem::set(ParameterList &pParams)
 
   param = pParams.value("item_id", &valid);
   if (valid)
+  {
     _item->setId(param.toInt());
+	if (_item->itemType() == "J")
+	{
+      _receiveStock->setEnabled(FALSE);
+	  _receiveStock->setChecked(FALSE);
+	}
+  }
 
   param = pParams.value("revision_id", &valid);
   if (valid)
@@ -478,6 +485,11 @@ void booItem::populate()
       _runReport->setCurrentItem(2);
 
     _item->setId(booitem.value("booitem_item_id").toInt());
+	if (_item->itemType() == "J")
+	{
+      _receiveStock->setEnabled(FALSE);
+	  _receiveStock->setChecked(FALSE);
+	}
 
     sCalculateInvRunTime();
     sFillImageList();

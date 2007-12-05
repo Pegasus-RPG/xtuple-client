@@ -332,6 +332,12 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
 {
   _booitem->clear();
 
+  if (_item->itemType() == "J")
+  {
+    _closeWO->setEnabled(FALSE);
+	_closeWO->setChecked(FALSE);
+  }
+
   int locid = _finalLocation->id();
   q.prepare("SELECT location_id, (warehous_code || '-' || formatLocationName(location_id)) AS locationname"
             "  FROM location, warehous"

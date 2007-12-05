@@ -252,13 +252,16 @@ void postOperations::sHandleWooperid(int)
                "       noNeg(wo_qtyord - COALESCE(wooper_qtyrcv, 0)) AS balance,"
                "       wooper_issuecomp, wooper_rcvinv, wooper_produom,"
                "       wooper_sucomplete, wooper_rncomplete,"
-	       "       wooper_sutime, wooper_suconsumed,"
+	           "       wooper_sutime, wooper_suconsumed,"
                "       formatTime(noNeg(wooper_sutime - wooper_suconsumed)) AS suremaining,"
                "       wooper_rnqtyper, wooper_invproduomratio, wooper_wrkcnt_id,"
-               "       (COALESCE(wooper_qtyrcv,0) = 0) AS noqty "
-               "FROM wo, wooper "
+               "       (COALESCE(wooper_qtyrcv,0) = 0) AS noqty, "
+			   "       item_type "
+               "FROM wo, wooper, itemsite, item "
                "WHERE ( (wooper_wo_id=wo_id)"
-               " AND (wooper_id=:wooper_id) );" );
+               " AND (wooper_id=:wooper_id) "
+			   " AND (wo_itemsite_id=itemsite_id) "
+			   " AND (itemsite_item_id=item_id) );" );
     w.bindValue(":wooper_id", _wooper->id());
     w.exec();
     if (w.first())
@@ -344,6 +347,8 @@ void postOperations::sHandleWooperid(int)
         _issueComponents->setChecked(FALSE);
       }
 
+	  _closeWO->setDisabled((w.value("item_type").toString() == "J" || !_privleges->check("CloseWorkOrders")));
+
       sHandleQty();
     }
     else if (w.lastError().type() != QSqlError::None)
@@ -419,7 +424,7 @@ void postOperations::sHandleQty()
     _closeWO->setChecked(FALSE);
     return;
   }
-  else
+  else if (_closeWO->isEnabled())
   {
     double qty = _qty->toDouble();
 
