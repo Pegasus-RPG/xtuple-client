@@ -120,6 +120,7 @@ importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
   (void)statusBar();
 
   connect(_add,            SIGNAL(clicked()), this, SLOT(sAdd()));
+  connect(_autoUpdate,	SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(_clearStatus,    SIGNAL(clicked()), this, SLOT(sClearStatus()));
   connect(_delete,         SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_file, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
@@ -162,6 +163,7 @@ importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
       );
 
   sFillList();
+  sHandleAutoUpdate(_autoUpdate->isChecked());
 }
 
 importXML::~importXML()
@@ -229,6 +231,8 @@ void importXML::sPopulateMenu(QMenu* pMenu, QTreeWidgetItem* /* pItem */)
 
 void importXML::sImportAll()
 {
+  bool oldAutoUpdate = _autoUpdate->isChecked();
+  sHandleAutoUpdate(false);
   for (int i = 0; i < _file->topLevelItemCount(); i++)
   {
     QTreeWidgetItem* pItem = _file->topLevelItem(i);
@@ -238,10 +242,14 @@ void importXML::sImportAll()
       else
 	pItem->setData(1, Qt::DisplayRole, tr("Error"));
   }
+  if (oldAutoUpdate)
+    sHandleAutoUpdate(true);
 }
 
 void importXML::sImportSelected()
 {
+  bool oldAutoUpdate = _autoUpdate->isChecked();
+  sHandleAutoUpdate(false);
   QList<QTreeWidgetItem*> selected = _file->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
@@ -251,6 +259,8 @@ void importXML::sImportSelected()
       else
 	selected[i]->setData(1, Qt::DisplayRole, tr("Error"));
   }
+  if (oldAutoUpdate)
+    sHandleAutoUpdate(true);
 }
 
 bool importXML::openDomDocument(const QString &pFileName, QDomDocument &pDoc)
@@ -544,9 +554,13 @@ bool importXML::importOne(const QString &pFileName)
     if (suffix.isEmpty())
       suffix = ".done";
 
-    if (! file.rename(pFileName + suffix))
+    QString newname = pFileName + suffix;
+    for (int i = 0; QFile::exists(newname) ; i++)
+      newname = pFileName + suffix + "." + QString::number(i);
+
+    if (! file.rename(newname))
     {
-      systemError(this, tr("Could not rename %1 after successful processing (%2).")
+      systemError(this, tr("Could not rename %1 to %2 after successful processing (%3).")
 			.arg(pFileName).arg(file.error()));
       return false;
     }
@@ -563,10 +577,18 @@ bool importXML::importOne(const QString &pFileName)
     if (! donedir.exists())
       donedir.mkpath(donedirName);
 
-    if (! file.rename(donedirName + QDir::separator() + QFileInfo(file).fileName()))
+    QString newname = donedirName + QDir::separator() + QFileInfo(file).fileName(); 
+    if (QFile::exists(newname))
+      newname = newname + QDate::currentDate().toString(".yyyy.MM.dd");
+    if (QFile::exists(newname))
+      newname = newname + QDateTime::currentDateTime().toString(".hh.mm");
+    if (QFile::exists(newname))
+      newname = newname + QDateTime::currentDateTime().toString(".ss");
+
+    if (! file.rename(newname))
     {
       systemError(this, tr("<p>Could not move %1 to %2 after successful processing (%3).")
-			.arg(pFileName).arg(donedirName).arg(file.error()));
+			.arg(pFileName).arg(newname).arg(file.error()));
       return false;
     }
   }
@@ -574,4 +596,12 @@ bool importXML::importOne(const QString &pFileName)
   // else if (_metrics->value("XMLSuccessTreatment") == "None") {}
 
   return true;
+}
+
+void importXML::sHandleAutoUpdate(const bool pAutoUpdate)
+{
+  if (pAutoUpdate)
+    connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+  else
+    disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
 }

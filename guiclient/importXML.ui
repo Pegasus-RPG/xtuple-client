@@ -30,6 +30,33 @@
         </property>
        </widget>
       </item>
+      <item>
+       <layout class="QHBoxLayout" >
+        <property name="topMargin" >
+         <number>10</number>
+        </property>
+        <item>
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="XCheckBox" name="_autoUpdate" >
+          <property name="text" >
+           <string>Automatically Update</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
      </layout>
     </item>
     <item>
@@ -125,6 +152,11 @@
   <widget class="QStatusBar" name="statusbar" />
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>

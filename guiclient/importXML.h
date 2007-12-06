@@ -87,6 +87,7 @@ class importXML : public QMainWindow, public Ui::importXML
     virtual void sClearStatus();
     virtual void sDelete();
     virtual void sFillList();
+    virtual void sHandleAutoUpdate(const bool);
     virtual void sImportAll();
     virtual void sImportSelected();
     virtual void sPopulateMenu(QMenu*, QTreeWidgetItem*);
