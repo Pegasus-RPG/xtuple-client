@@ -57,6 +57,9 @@
 
 #include "allocateReservations.h"
 
+#include <QVariant>
+#include <QMessageBox>
+
 /*
  *  Constructs a allocateReservations as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -72,6 +75,11 @@ allocateReservations::allocateReservations(QWidget* parent, const char* name, bo
   // signals and slots connections
   connect(_allocate, SIGNAL(clicked()), this, SLOT(sAllocate()));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustomerSelected()));
+
+  _customerTypes->setType(XComboBox::CustomerTypes);
+
+  
 }
 
 /*
@@ -93,10 +101,37 @@ void allocateReservations::languageChange()
 
 void allocateReservations::sAllocate()
 {
-  q.prepare("SELECT reserveAllSo(:addpackinglist) AS result;");
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"), tr("You must specify a valid date range."));
+    return;
+  }
+
+  q.prepare("SELECT reserveAllSo(:addpackinglist, :startDate, :endDate, :cust_id, :shipto_id, :custtype_id, :custtype_pattern) AS result;");
   q.bindValue(":addpackinglist", _addPackingList->isChecked());
+  _dates->bindValue(q);
+  if (_selectedCustomer->isChecked())
+    q.bindValue(":cust_id", _cust->id());
+  if (_selectedCustomerShipto->isChecked())
+    q.bindValue(":shipto_id", _customerShipto->id());
+  if (_selectedCustomerType->isChecked())
+    q.bindValue(":custtype_id", _customerTypes->id());
+  if (_customerTypePattern->isChecked())
+    q.bindValue(":ipsass_custtype_pattern", _customerType->text());
+
   q.exec();
 
   accept();
+}
+
+void allocateReservations::sCustomerSelected()
+{
+  _customerShipto->clear();
+  q.prepare("SELECT shipto_id, shipto_num"
+            "  FROM shipto"
+            " WHERE (shipto_cust_id=:cust_id); ");
+  q.bindValue(":cust_id", _cust->id());
+  q.exec();
+  _customerShipto->populate(q);
 }
 

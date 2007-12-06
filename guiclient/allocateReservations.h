@@ -74,6 +74,7 @@ public slots:
     virtual void sAllocate();
 
 protected slots:
+    virtual void sCustomerSelected();
     virtual void languageChange();
 
 };
