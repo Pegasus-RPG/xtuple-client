@@ -362,7 +362,7 @@ void distributeInventory::sDefaultAndPost()
 
 void distributeInventory::sFillList()
 {
-  q.prepare( "SELECT itemsite_id, itemsite_location_id, itemlocdist_lotserial,"
+  q.prepare( "SELECT itemsite_id, COALESCE(itemsite_location_id,-1) AS itemsite_location_id, itemlocdist_lotserial,"
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
