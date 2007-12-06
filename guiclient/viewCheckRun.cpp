@@ -88,8 +88,8 @@ viewCheckRun::viewCheckRun(QWidget* parent, const char* name, Qt::WFlags fl)
   _check->addColumn(tr("Void"),             _ynColumn, Qt::AlignCenter );
   _check->addColumn(tr("Misc."),            _ynColumn, Qt::AlignCenter );
   _check->addColumn(tr("Prt'd"),            _ynColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Chk./Voucher #"), _itemColumn, Qt::AlignCenter );
-  _check->addColumn(tr("Recipient/Invc. #"),       -1, Qt::AlignLeft   );
+  _check->addColumn(tr("Chk./Voucher/RA #"), _itemColumn, Qt::AlignCenter );
+  _check->addColumn(tr("Recipient/Invc./CM #"),       -1, Qt::AlignLeft   );
   _check->addColumn(tr("Check Date") ,    _dateColumn, Qt::AlignCenter );
   _check->addColumn(tr("Amount"),        _moneyColumn, Qt::AlignRight  );
   _check->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft );
@@ -300,8 +300,14 @@ void viewCheckRun::sFillList()
 
                "UNION SELECT checkitem_checkhead_id AS checkid, checkitem_id,"
                "             '' AS f_void, '' AS f_misc, '' AS f_printed,"
-               "             checkitem_vouchernumber AS number,"
-               "             checkitem_invcnumber AS description,"
+               "             CASE WHEN (checkitem_ranumber IS NOT NULL) THEN"
+	       "                        checkitem_ranumber::TEXT"
+	       "                  ELSE checkitem_vouchernumber"
+	       "             END AS number,"
+	       "             CASE WHEN (checkitem_cmnumber IS NOT NULL) THEN"
+	       "                        checkitem_cmnumber::TEXT"
+	       "                  ELSE checkitem_invcnumber"
+               "             END AS description,"
                "             '' AS f_checkdate,"
                "             formatMoney(checkitem_amount) AS f_amount,"
                "             0 AS misc, checkhead_number, "
@@ -341,6 +347,7 @@ void viewCheckRun::sFillList()
         item->setText(3, q.value("number"));
         item->setText(4, q.value("description"));
         item->setText(6, q.value("f_amount"));
+	item->setText(7, q.value("curr_concat"));
       }
     }
     while (q.next());
