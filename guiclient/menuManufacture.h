@@ -141,6 +141,7 @@ class menuManufacture : public QObject
     void sDspWoOperationsByWo();
     void sDspWoOperationBufrStsByWorkCenter();
     void sDspPendingAvailability();
+	void sDspJobCosting();
     void sDspWoEffortByUser();
     void sDspWoEffortByWorkOrder();
     void sDspMaterialUsageVarianceByBOMItem();

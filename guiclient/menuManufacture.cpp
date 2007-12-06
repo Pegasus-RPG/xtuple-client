@@ -116,6 +116,7 @@
 #include "dspWoOperationsByWorkOrder.h"
 #include "dspWoOperationsByWorkCenter.h"
 #include "dspWoOperationBufrStsByWorkCenter.h"
+#include "dspJobCosting.h"
 #include "dspMaterialUsageVarianceByBOMItem.h"
 #include "dspMaterialUsageVarianceByItem.h"
 #include "dspMaterialUsageVarianceByComponentItem.h"
@@ -156,7 +157,6 @@ menuManufacture::menuManufacture(OpenMFGGUIClient *Pparent) :
   materialsReturnMenu = new QMenu();
   operationsMenu = new QMenu();
   transactionsMenu = new QMenu();
-//  displaysMenu	 = new QMenu();
   reportsMenu	 = new QMenu();
   reportsScheduleMenu = new QMenu();
   reportsBufrStsMenu = new QMenu();
@@ -283,6 +283,7 @@ menuManufacture::menuManufacture(OpenMFGGUIClient *Pparent) :
     { "wo.dspWoHistoryByNumber",	tr("by &W/O Number..."),	SLOT(sDspWoHistoryByNumber()), reportsHistoryMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
     { "separator",			NULL,	NULL,	reportsMenu,	true,	0, 0,	true, NULL },
+    { "wo.dspJobCosting",	tr("&Job Costing..."),	SLOT(sDspJobCosting()), reportsMenu, _privleges->check("ViewCosts"), 0, 0, true, NULL },
     
     //  Production | Reports | Material Usage Variance
     { "menu",				tr("Material &Usage Variance"),	(char*)reportsMatlUseVarMenu,	reportsMenu,	true,	0, 0,	true, NULL },
@@ -660,6 +661,11 @@ void menuManufacture::sDspWoBufferStatusByPlannerCode()
   dspWoBufferStatusByParameterList *newdlg = new dspWoBufferStatusByParameterList();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void menuManufacture::sDspJobCosting()
+{
+  omfgThis->handleNewWindow(new dspJobCosting());
 }
 
 void menuManufacture::sDspMaterialUsageVarianceByBOMItem()

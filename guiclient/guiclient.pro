@@ -124,7 +124,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspItemCostHistory.ui                                                                  \
                dspItemsByCharacteristic.ui dspItemsByClassCode.ui dspItemsByProductCategory.ui        \
                dspItemsWithoutItemSources.ui dspItemSitesByItem.ui dspItemSitesByParameterList.ui     \
-               dspItemSourcesByItem.ui dspItemSourcesByVendor.ui                                      \
+               dspItemSourcesByItem.ui dspItemSourcesByVendor.ui dspJobCosting.ui                     \
                dspLaborVarianceByBOOItem.ui dspLaborVarianceByItem.ui                                 \
                dspLaborVarianceByWorkCenter.ui dspLaborVarianceByWorkOrder.ui                         \
                dspMaterialUsageVarianceByBOMItem.ui dspMaterialUsageVarianceByItem.ui                 \
@@ -430,7 +430,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspItemCostHistory.h                                                                   \
                dspItemsByCharacteristic.h dspItemsByClassCode.h dspItemsByProductCategory.h           \
                dspItemsWithoutItemSources.h dspItemSitesByItem.h dspItemSitesByParameterList.h        \
-               dspItemSourcesByItem.h dspItemSourcesByVendor.h                                        \
+               dspItemSourcesByItem.h dspItemSourcesByVendor.h dspJobCosting.h                        \
                dspLaborVarianceByBOOItem.h dspLaborVarianceByItem.h                                   \
                dspLaborVarianceByWorkCenter.h dspLaborVarianceByWorkOrder.h                           \
                dspMaterialUsageVarianceByBOMItem.h dspMaterialUsageVarianceByItem.h                   \
@@ -740,7 +740,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspItemCostHistory.cpp                                                                 \
                dspItemsByCharacteristic.cpp dspItemsByClassCode.cpp dspItemsByProductCategory.cpp     \
                dspItemsWithoutItemSources.cpp dspItemSitesByItem.cpp dspItemSitesByParameterList.cpp  \
-               dspItemSourcesByItem.cpp dspItemSourcesByVendor.cpp                                    \
+               dspItemSourcesByItem.cpp dspItemSourcesByVendor.cpp dspJobCosting.cpp                  \
                dspLaborVarianceByBOOItem.cpp dspLaborVarianceByItem.cpp                               \
                dspLaborVarianceByWorkCenter.cpp dspLaborVarianceByWorkOrder.cpp                       \
                dspMaterialUsageVarianceByBOMItem.cpp dspMaterialUsageVarianceByItem.cpp               \
