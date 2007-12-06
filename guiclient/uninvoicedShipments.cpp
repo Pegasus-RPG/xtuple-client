@@ -60,9 +60,9 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QMenu>
 #include <parameter.h>
 #include <openreports.h>
-#include <QWorkspace>
 #include "selectOrderForBilling.h"
 
 /*
@@ -73,17 +73,26 @@
 uninvoicedShipments::uninvoicedShipments(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  // signals and slots connections
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
+  connect(_showUnselected, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_coship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_showUnselected, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_coship, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_warehouse, SIGNAL(updated()), this, SLOT(sFillList()));
-    init();
+  _coship->setRootIsDecorated(TRUE);
+  _coship->addColumn(tr("Order/Line #"),           _itemColumn, Qt::AlignRight );
+  _coship->addColumn(tr("Cust./Item Number"),      _itemColumn, Qt::AlignLeft  );
+  _coship->addColumn(tr("Cust. Name/Description"), -1,          Qt::AlignLeft  );
+  _coship->addColumn(tr("UOM"),                    _uomColumn,  Qt::AlignLeft  );
+  _coship->addColumn(tr("Shipped"),                _qtyColumn,  Qt::AlignRight );
+  _coship->addColumn(tr("Selected"),               _qtyColumn,  Qt::AlignRight );
+  
+  connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
+
+  sFillList();
 }
 
 /*
@@ -91,7 +100,7 @@ uninvoicedShipments::uninvoicedShipments(QWidget* parent, const char* name, Qt::
  */
 uninvoicedShipments::~uninvoicedShipments()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -100,26 +109,7 @@ uninvoicedShipments::~uninvoicedShipments()
  */
 void uninvoicedShipments::languageChange()
 {
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void uninvoicedShipments::init()
-{
-  statusBar()->hide();
-  
-  _coship->setRootIsDecorated(TRUE);
-  _coship->addColumn(tr("Order/Line #"),           _itemColumn, Qt::AlignRight );
-  _coship->addColumn(tr("Cust./Item Number"),      _itemColumn, Qt::AlignLeft  );
-  _coship->addColumn(tr("Cust. Name/Description"), -1,          Qt::AlignLeft  );
-  _coship->addColumn(tr("Shipped"),                _qtyColumn,  Qt::AlignRight );
-  _coship->addColumn(tr("Selected"),               _qtyColumn,  Qt::AlignRight );
-  
-  connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
-
-  sFillList();
+  retranslateUi(this);
 }
 
 void uninvoicedShipments::sPrint()
@@ -161,10 +151,11 @@ void uninvoicedShipments::sFillList()
   QString sql( "SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,"
                "       cust_number, cust_name,"
                "       item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
+               "       uom_name,"
                "       formatQty(SUM(coship_qty)) AS f_shipped,"
                "       COALESCE(SUM(cobill_qty), 0) AS selected,"
                "       formatQty(COALESCE(SUM(cobill_qty), 0)) AS f_selected "
-               "FROM cohead, cust, itemsite, item, warehous, coship, cosmisc,"
+               "FROM cohead, cust, itemsite, item, warehous, coship, cosmisc, uom,"
                "     coitem LEFT OUTER JOIN"
                "      ( cobill JOIN cobmisc"
                "        ON ( (cobill_cobmisc_id=cobmisc_id) AND (NOT cobmisc_posted) ) )"
@@ -174,6 +165,7 @@ void uninvoicedShipments::sFillList()
                " AND (coship_cosmisc_id=cosmisc_id)"
                " AND (coitem_cohead_id=cohead_id)"
                " AND (coitem_itemsite_id=itemsite_id)"
+               " AND (coitem_qty_uom_id=uom_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (itemsite_warehous_id=warehous_id)"
                " AND (cosmisc_shipped)"
@@ -185,7 +177,7 @@ void uninvoicedShipments::sFillList()
   sql += ") "
          "GROUP BY cohead_number, cust_number, cust_name,"
          "         coitem_id, coitem_linenumber, item_number,"
-         "         item_descrip1, item_descrip2, cohead_id, coship_id "
+         "         item_descrip1, item_descrip2, cohead_id, coship_id, uom_name "
          "ORDER BY cohead_number DESC, coitem_linenumber DESC;";
 
   q.prepare(sql);
@@ -210,7 +202,7 @@ void uninvoicedShipments::sFillList()
 
         new XTreeWidgetItem( head, q.value("cohead_id").toInt(), q.value("coship_id").toInt(),
                            q.value("coitem_linenumber"), q.value("item_number"),
-                           q.value("description"), q.value("f_shipped"),
+                           q.value("description"), q.value("uom_name"), q.value("f_shipped"),
                            q.value("f_selected") );
       }
     }

@@ -11,10 +11,10 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>head</name>
-  <sql>SELECT &lt;? if exists(&quot;warehous_id&quot;) ?>
+  <sql>SELECT &lt;? if exists("warehous_id") ?>
          ( SELECT warehous_code
              FROM warehous
-            WHERE (warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>) )
+            WHERE (warehous_id=&lt;? value("warehous_id") ?>) )
        &lt;? else ?>
          text('All Warehouses')
        &lt;? endif ?>
@@ -25,9 +25,10 @@
   <name>detail</name>
   <sql>SELECT cohead_id, coship_id, cohead_number, coitem_linenumber,
        item_number, item_descrip1, item_descrip2,
+       uom_name,
        formatQty(SUM(coship_qty)) AS f_shipped,
        formatQty(COALESCE(SUM(cobill_qty), 0)) AS f_selected
-FROM cohead, itemsite, item,
+FROM cohead, itemsite, item, uom,
      warehous, coship, cosmisc,
      coitem LEFT OUTER JOIN
       ( cobill JOIN cobmisc
@@ -37,35 +38,46 @@ WHERE ( (coship_coitem_id=coitem_id)
  AND (coship_cosmisc_id=cosmisc_id)
  AND (coitem_cohead_id=cohead_id)
  AND (coitem_itemsite_id=itemsite_id)
+ AND (coitem_qty_uom_id=uom_id)
  AND (itemsite_item_id=item_id)
  AND (itemsite_warehous_id=warehous_id)
  AND (cosmisc_shipped)
  AND (NOT coship_invoiced)
-&lt;? if exists(&quot;warehous_id&quot;) ?>
- AND (itemsite_warehous_id=&lt;? value(&quot;warehous_id&quot;) ?>)
+&lt;? if exists("warehous_id") ?>
+ AND (itemsite_warehous_id=&lt;? value("warehous_id") ?>)
 &lt;? endif ?>
  )
 GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
-         item_descrip1, item_descrip2, cohead_id, coship_id;</sql>
+         item_descrip1, item_descrip2, cohead_id, coship_id, uom_name;</sql>
  </querysource>
  <rpthead>
-  <height>237</height>
-  <label>
+  <height>236</height>
+  <field>
    <rect>
-    <x>150</x>
-    <y>215</y>
-    <width>300</width>
-    <height>15</height>
+    <x>100</x>
+    <y>104</y>
+    <width>200</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
+    <size>10</size>
+    <weight>bold</weight>
    </font>
    <left/>
    <vcenter/>
-   <string>Item Description</string>
-  </label>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>229</ystart>
+   <xend>745</xend>
+   <yend>229</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>150</x>
@@ -81,6 +93,22 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <left/>
    <vcenter/>
    <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
   </label>
   <label>
    <rect>
@@ -100,29 +128,6 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
   </label>
   <label>
    <rect>
-    <x>375</x>
-    <y>10</y>
-    <width>350</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Uninvoiced Shipments</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>229</ystart>
-   <xend>745</xend>
-   <yend>229</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
     <x>580</x>
     <y>200</y>
     <width>80</width>
@@ -136,41 +141,6 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <hcenter/>
    <vcenter/>
    <string>Shipped</string>
-  </label>
-  <field>
-   <rect>
-    <x>100</x>
-    <y>105</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>15</x>
-    <y>105</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Warehouse:</string>
   </label>
   <label>
    <rect>
@@ -204,18 +174,43 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <vcenter/>
    <string>Selected</string>
   </label>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>7</height>
- </pghead>
- <pghead>
-  <height>37</height>
   <label>
    <rect>
-    <x>10</x>
-    <y>0</y>
-    <width>50</width>
+    <x>375</x>
+    <y>10</y>
+    <width>350</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Uninvoiced Shipments</string>
+  </label>
+  <label>
+   <rect>
+    <x>15</x>
+    <y>104</y>
+    <width>80</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Warehouse:</string>
+  </label>
+  <label>
+   <rect>
+    <x>150</x>
+    <y>215</y>
+    <width>300</width>
     <height>15</height>
    </rect>
    <font>
@@ -225,7 +220,30 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    </font>
    <left/>
    <vcenter/>
-   <string>Order #</string>
+   <string>Item Description</string>
+  </label>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>37</height>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
   </label>
   <label>
    <rect>
@@ -258,6 +276,54 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <left/>
    <vcenter/>
    <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>95</x>
+    <y>0</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>#</string>
+  </label>
+  <label>
+   <rect>
+    <x>150</x>
+    <y>15</y>
+    <width>300</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>0</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order #</string>
   </label>
   <label>
    <rect>
@@ -282,38 +348,6 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <yend>30</yend>
    <weight>2</weight>
   </line>
-  <label>
-   <rect>
-    <x>150</x>
-    <y>15</y>
-    <width>300</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>95</x>
-    <y>0</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>#</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -322,6 +356,44 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
     <query>detail</query>
    </key>
    <height>57</height>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>85</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>cohead_number</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>494</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>uom_name</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>665</x>
@@ -344,25 +416,6 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <field>
     <rect>
      <x>150</x>
-     <y>30</y>
-     <width>300</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>150</x>
      <y>15</y>
      <width>300</width>
      <height>15</height>
@@ -379,13 +432,25 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
      <column>item_descrip1</column>
     </data>
    </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>50</ystart>
-    <xend>745</xend>
-    <yend>50</yend>
-    <weight>0</weight>
-   </line>
+   <field>
+    <rect>
+     <x>95</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>coitem_linenumber</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>580</x>
@@ -426,9 +491,9 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    </field>
    <field>
     <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>85</width>
+     <x>150</x>
+     <y>30</y>
+     <width>300</width>
      <height>15</height>
     </rect>
     <font>
@@ -440,32 +505,20 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>cohead_number</column>
+     <column>item_descrip2</column>
     </data>
    </field>
-   <field>
-    <rect>
-     <x>95</x>
-     <y>0</y>
-     <width>50</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>coitem_linenumber</column>
-    </data>
-   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>50</ystart>
+    <xend>745</xend>
+    <yend>50</yend>
+    <weight>0</weight>
+   </line>
   </detail>
  </section>
  <pgfoot>
-  <height>17</height>
+  <height>18</height>
   <label>
    <rect>
     <x>0</x>
@@ -482,6 +535,25 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>615</x>
@@ -515,25 +587,6 @@ GROUP BY cohead_number, coitem_id, coitem_linenumber, item_number,
    <data>
     <query>Context Query</query>
     <column>report_date</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
    </data>
   </field>
  </pgfoot>
