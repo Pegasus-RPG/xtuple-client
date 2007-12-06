@@ -109,6 +109,9 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
   _radue->addColumn(tr("Eligible"),     _dateColumn,     Qt::AlignRight  );
   _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
+  _radue->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignRight  );
+  _radue->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()),
+					_moneyColumn,    Qt::AlignRight  );
   _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
 
   if (!_privleges->check("MaintainReturns"))
@@ -119,9 +122,11 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 
   if (_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
   {
+    /*
     if (! CreditCardProcessor::getProcessor())
       QMessageBox::warning(this, tr("Credit Card Processing error"),
 			   CreditCardProcessor::errorMsg());
+    */
   }
   else
   {
@@ -595,6 +600,8 @@ void returnAuthorizationWorkbench::sFillList()
 		  "END, "
 		  "rahead_number, cust_name, "
 		  "formatDate(rahead_authdate), formatDate(NULL), "
+		  "formatMoney(calcradueamt(rahead_id)), "
+		  "currConcat(rahead_curr_id), "
 		  "formatMoney(currtobase(rahead_curr_id,"
 		  "                       calcradueamt(rahead_id), current_date)), "
 		  "CASE "
