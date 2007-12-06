@@ -143,6 +143,10 @@ void dspJobCosting::sPrint()
 {
   ParameterList params;
   params.append("wo_id", _wo->id());
+  params.append("setup", tr("Setup"));
+  params.append("runtime", tr("Run Time"));
+  params.append("material", tr("Material"));
+  params.append("timeuom", tr("Hours"));
 
   if (_showsu->isChecked())
     params.append("showsu");
@@ -150,7 +154,7 @@ void dspJobCosting::sPrint()
   if (_showrt->isChecked())
     params.append("showrt");
 
-  if (_showrt->isChecked())
+  if (_showmatl->isChecked())
     params.append("showmatl");
 
   orReport report("JobCosting", params);
@@ -179,9 +183,10 @@ void dspJobCosting::sFillList(int, bool)
 	
 	if (_showsu->isChecked())
 	{
-	  sql += "SELECT wooper_id,1 AS sort,:setup, wrkcnt_code AS code, wooper_descrip1, "
-		     "  formatqty(SUM(COALESCE(wooperpost_sutime,0))/60),:uom, "
-			 "  formatmoney(SUM(COALESCE(wooperpost_sucost,0))), wooper_seqnumber "
+	  sql += "SELECT wooper_id AS id,1 AS sort,:setup AS type, wrkcnt_code AS code, wooper_descrip1 AS descrip, "
+		     "  formatqty(SUM(COALESCE(wooperpost_sutime,0))/60) AS f_qty,:uom AS uom, "
+			 "  formatCost(SUM(COALESCE(wooperpost_sucost,0))) as f_cost, wooper_seqnumber, "
+			 "  SUM(COALESCE(wooperpost_sucost,0)) AS cost "
 		     "FROM wooper "
 		     "  LEFT OUTER JOIN wooperpost ON (wooper_id=wooperpost_wooper_id), "
 			 "  wrkcnt "
@@ -195,9 +200,10 @@ void dspJobCosting::sFillList(int, bool)
 
     if (_showrt->isChecked())
 	{
-	sql +=	"SELECT wooper_id,2 AS sort,:runtime, wrkcnt_code AS code, wooper_descrip1, "
-		    "  formatqty(SUM(COALESCE(wooperpost_rntime,0))/60),:uom, "
-			"  formatmoney(SUM(COALESCE(wooperpost_rncost,0))), wooper_seqnumber "
+	sql +=	"SELECT wooper_id AS id,2 AS sort,:runtime AS type, wrkcnt_code AS code, wooper_descrip1 AS descrip, "
+		    "  formatqty(SUM(COALESCE(wooperpost_rntime,0))/60) AS f_qty,:uom AS uom, "
+			"  formatCost(SUM(COALESCE(wooperpost_rncost,0))) AS f_cost, wooper_seqnumber, "
+			"  SUM(COALESCE(wooperpost_rncost,0)) AS cost "
 		    "FROM wooper "
 		    "  LEFT OUTER JOIN wooperpost ON (wooper_id=wooperpost_wooper_id), "
 			"  wrkcnt "
@@ -211,10 +217,10 @@ void dspJobCosting::sFillList(int, bool)
 
     if (_showmatl->isChecked())
 	{
-	  sql +=  "SELECT womatl_id,3 AS sort,:material, item_number AS code, item_descrip1, "
-		      "  formatqty(SUM(COALESCE(invhist_invqty,0))),uom_name, "
-			  "  formatmoney(SUM(COALESCE(invhist_invqty * invhist_unitcost,0))), "
-			  "  NULL as wooper_seqnumber "
+	  sql +=  "SELECT womatl_id AS id,3 AS sort,:material AS type, item_number AS code, item_descrip1 AS descrip, "
+		      "  formatqty(SUM(COALESCE(invhist_invqty,0))) AS f_qty,uom_name AS uom, "
+			  "  formatCost(SUM(COALESCE(invhist_invqty * invhist_unitcost,0))) AS f_cost, "
+			  "  NULL as wooper_seqnumber, SUM(COALESCE(invhist_invqty * invhist_unitcost,0)) AS cost "
 		      "FROM womatl "
 		      "  LEFT OUTER JOIN womatlpost ON (womatl_id=womatlpost_womatl_id) "
 			  "  LEFT OUTER JOIN invhist ON (womatlpost_invhist_id=invhist_id), "
@@ -240,26 +246,25 @@ void dspJobCosting::sFillList(int, bool)
 	q.bindValue(":material", tr("Material"));
     q.bindValue(":uom", tr("Hours"));
     q.exec();
-    _cost->populate(q,TRUE);
-	/*
+   // _cost->populate(q,TRUE);
+	
+	double totalCosts = 0;
     XTreeWidgetItem *last = 0;
     while (q.next())
     {
-      last = new XTreeWidgetItem( _bomitem, last, q.value("bomitem_id").toInt(),
-				 q.value("bomitem_seqnumber"),
-				 q.value("item_number"),
-				 q.value("itemdescription"),
-				 q.value("uom_name"),
-				 q.value("f_qtyper"),
-				 q.value("f_scrap"),
-				 q.value("f_effective"),
-				 q.value("f_expires"),
-				 q.value("bomitem_ecn") );
+      last = new XTreeWidgetItem( _cost, last, q.value("id").toInt(),
+				 q.value("type"),
+				 q.value("code"),
+				 q.value("descrip"),
+				 q.value("f_qty"),
+				 q.value("uom"),
+				 q.value("f_cost"));
 
-      if (q.value("expired").toBool())
-        last->setTextColor("red");
-      else if (q.value("future").toBool())
-        last->setTextColor("blue");
-    } */
+	  totalCosts = totalCosts + q.value("cost").toDouble();
+    } 
+
+    last = new XTreeWidgetItem(_cost, -1, -1);
+    last->setText(0, tr("Total Cost"));
+    last->setText(5, formatCost(totalCosts));
   }
 }
