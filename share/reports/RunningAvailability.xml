@@ -239,19 +239,11 @@ SELECT planreq_id AS orderid, -1 AS altorderid,
        1 AS sequence,
 --2.3 Start
 --Starting here a sub-select gets the planned order number for the higher level demand
-             (select item_number from item where item_id in
-(
-select itemsite_item_id from itemsite where itemsite_id in
-(
-
-select planord_itemsite_id from planord, planreq, itemsite, item
-where 
-planreq_itemsite_id = itemsite_id
-and itemsite_item_id = item_id
-and item_id = &lt;? value("item_id") ?>
-and planreq_source_id = planord_id
-)
-)) AS item_number,
+             (SELECT item_number
+                FROM item, itemsite
+               WHERE((itemsite_item_id=item_id)
+                 AND (itemsite_id=planord_itemsite_id))
+             ) AS item_number,
 --End of subselect to get higher level item number
 --2.3 Start
        formatDate(planord_startdate) AS duedate,
