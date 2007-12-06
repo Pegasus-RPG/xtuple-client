@@ -59,7 +59,7 @@
 #define RETURNAUTHCHECK_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_returnAuthCheck.h"
 
@@ -71,10 +71,8 @@ public:
     returnAuthCheck(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~returnAuthCheck();
 
-    virtual void init();
-
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSave();
     virtual void sClose();
 	virtual void sPopulateBankInfo(int pBankaccntid);
@@ -89,6 +87,7 @@ private:
 	int _custid;
 	int _aropenid;
     int _cmheadid;
+    int _cmheadcurrid;
 
 };
 

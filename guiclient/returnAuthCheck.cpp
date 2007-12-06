@@ -58,57 +58,38 @@
 #include "returnAuthCheck.h"
 #include "storedProcErrorLookup.h"
 
-#include <qvariant.h>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a returnAuthCheck as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 returnAuthCheck::returnAuthCheck(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_bankaccnt, SIGNAL(newID(int)),    this, SLOT(sPopulateBankInfo(int)));
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_bankaccnt, SIGNAL(newID(int)),    this, SLOT(sPopulateBankInfo(int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  _date->setDate(omfgThis->dbDate(), true);
 
-    _date->setDate(omfgThis->dbDate(), true);
-
-    init();
+  _bankaccnt->setAllowNull(TRUE);
+  _bankaccnt->setType(XComboBox::APBankAccounts);
+  _cmheadcurrid = CurrDisplay::baseId();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 returnAuthCheck::~returnAuthCheck()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void returnAuthCheck::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void returnAuthCheck::init()
-{
-  _bankaccnt->setAllowNull(TRUE);
-}
-
-enum SetResponse returnAuthCheck::set(ParameterList &pParams)
+enum SetResponse returnAuthCheck::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -155,7 +136,7 @@ void returnAuthCheck::sSave()
   {
     q.prepare("SELECT createCheck(:bankaccnt_id, 'C', :recipid,"
 	      "                   :checkDate, :amount, :curr_id, NULL,"
-		  "                   NULL, :for, :notes, TRUE, :aropen_id) AS result; ");
+	      "                   NULL, :for, :notes, TRUE, :aropen_id) AS result; ");
     q.bindValue(":bankaccnt_id", _bankaccnt->id());
     q.bindValue(":recipid",	_custid);
     q.bindValue(":checkDate", _date->date());
@@ -208,7 +189,12 @@ void returnAuthCheck::sClose()
 
 void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
 {
-  if ( pBankaccntid != -1 )
+  if ( pBankaccntid == -1 )
+  {
+    _amount->setId(_cmheadcurrid);
+    _checkNum->clear();
+  }
+  else
   {
     XSqlQuery checkNumber;
     checkNumber.prepare( "SELECT bankaccnt_nextchknum, bankaccnt_curr_id "
@@ -218,6 +204,16 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
     checkNumber.exec();
     if (checkNumber.first())
     {
+      if (checkNumber.value("bankaccnt_curr_id").toInt() != _cmheadcurrid)
+      {
+	QMessageBox::critical(this, tr("Bank Uses Different Currency"),
+			      tr("<p>The currency of the bank account is not "
+				 "the same as the currency of the credit "
+				 "memo. You may not use this bank account."));
+	_amount->setId(_cmheadcurrid);
+	_bankaccnt->setId(-1);
+	return;
+      }
       _checkNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
       _amount->setId(checkNumber.value("bankaccnt_curr_id").toInt());
     }
@@ -227,20 +223,10 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
       return;
     }
   }
-  else
-    _checkNum->clear();
 }
-
 
 void returnAuthCheck::populate()
 {
-  _bankaccnt->populate( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip) "
-                          "FROM bankaccnt "
-                          "ORDER BY bankaccnt_name;" );
-
-  if (_bankaccntid != -1)
-    _bankaccnt->setId(_bankaccntid);
-
   q.prepare("SELECT cust_id,cust_name,cmhead_number,cmhead_curr_id, "
 	        "'Return Authorization ' || cmhead_number::text AS memo, "
 			"aropen_id,aropen_amount "
@@ -257,9 +243,31 @@ void returnAuthCheck::populate()
 	_aropenid=q.value("aropen_id").toInt();
     _custName->setText(q.value("cust_name").toString());
 	_creditmemo->setText(q.value("cmhead_number").toString());
+	_cmheadcurrid = q.value("cmhead_curr_id").toInt();
 	_amount->setId(q.value("cmhead_curr_id").toInt());
 	_amount->setLocalValue(q.value("aropen_amount").toDouble());
 	_for->setText(q.value("memo").toString());
   }
-}
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
+  q.prepare("SELECT bankaccnt_id "
+	    "FROM bankaccnt "
+	    "WHERE (bankaccnt_ap"
+	    "  AND  (bankaccnt_type='K')"
+	    "  AND  (bankaccnt_curr_id=:cmcurrid));");
+  q.bindValue(":cmcurrid", _cmheadcurrid);
+  q.exec();
+  if (q.first())
+    _bankaccnt->setId(q.value("bankaccnt_id").toInt());
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+    _bankaccnt->setId(-1);
+}
