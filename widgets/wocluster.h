@@ -90,6 +90,7 @@ friend class WoCluster;
     WoLineEdit(QWidget *, const char * = 0);
     WoLineEdit(int, QWidget *, const char * = 0);
 
+	inline void setQuery(const QString  &pSql) { _sql = pSql; _useQuery = TRUE; }
     inline void setType(int pWoType)           { _woType = pWoType;           }
     inline void setWarehouse(int pWarehouseid) { _warehouseid = pWarehouseid; }
 
@@ -98,11 +99,13 @@ friend class WoCluster;
     void sParse();
 
   private:
-    int    _woType;
-    int    _warehouseid;
-    QChar  _status;
-    double _qtyOrdered;
-    double _qtyReceived;
+    bool    _useQuery;
+    QString _sql;
+    int     _woType;
+    int     _warehouseid;
+    QChar   _status;
+    double  _qtyOrdered;
+    double  _qtyReceived;
 
   signals:
     void newId(int);
@@ -131,6 +134,7 @@ class OPENMFGWIDGETS_EXPORT WoCluster : public QWidget
 
     QString woNumber() const;
 
+	inline void setQuery(const QString &pSql)  { _woNumber->_sql = pSql; _woNumber->_useQuery = TRUE; }
     inline void setType(int pWoType)           { _woNumber->_woType = pWoType;           }
     inline void setWarehouse(int pWarehouseid) { _woNumber->_warehouseid = pWarehouseid; }
     inline int id()                            { return _woNumber->_id;                  }

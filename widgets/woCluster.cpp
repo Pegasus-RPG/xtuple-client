@@ -68,6 +68,7 @@
 
 #include <parameter.h>
 #include <xsqlquery.h>
+#include <QMessageBox>
 
 #include "xcombobox.h"
 #include "xlineedit.h"
@@ -105,27 +106,38 @@ WoLineEdit::WoLineEdit(int pWoType, QWidget *pParent, const char *name) :
 
 void WoLineEdit::setId(int pId)
 {
+  bool found = FALSE;
   if (pId != -1)
   {
     XSqlQuery wo;
-    wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
-                "       warehous_code, item_id, item_number, uom_name,"
-                "       item_descrip1, item_descrip2,"
-                "       wo_qtyord, wo_qtyrcv, wo_status,"
-                "       formatDate(wo_duedate) AS duedate,"
-                "       formatDate(wo_startdate) AS startdate,"
-                "       formatQtyPer(wo_qtyord) AS ordered,"
-                "       formatQtyPer(wo_qtyrcv) AS received, "
-                "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance "
-                "FROM wo, itemsite, item, warehous, uom "
-                "WHERE ((wo_itemsite_id=itemsite_id)"
-                " AND (itemsite_item_id=item_id)"
-                " AND (item_inv_uom_id=uom_id)"
-                " AND (itemsite_warehous_id=warehous_id)"
-                " AND (wo_id=:wo_id));" );
-    wo.bindValue(":wo_id", pId);
-    wo.exec();
-    if (wo.first())
+	if (_useQuery)
+    {
+      wo.prepare(_sql);
+      wo.exec();
+      found = (wo.findFirst("wo_id", pId) != -1);
+    }
+	else
+	{
+      wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
+                  "       warehous_code, item_id, item_number, uom_name,"
+                  "       item_descrip1, item_descrip2,"
+                  "       wo_qtyord, wo_qtyrcv, wo_status,"
+                  "       formatDate(wo_duedate) AS duedate,"
+                  "       formatDate(wo_startdate) AS startdate,"
+                  "       formatQtyPer(wo_qtyord) AS ordered,"
+                  "       formatQtyPer(wo_qtyrcv) AS received, "
+                  "       formatQtyPer(noNeg(wo_qtyord - wo_qtyrcv)) AS balance "
+                  "FROM wo, itemsite, item, warehous, uom "
+                  "WHERE ((wo_itemsite_id=itemsite_id)"
+                  " AND (itemsite_item_id=item_id)"
+                  " AND (item_inv_uom_id=uom_id)"
+                  " AND (itemsite_warehous_id=warehous_id)"
+                  " AND (wo_id=:wo_id));" );
+      wo.bindValue(":wo_id", pId);
+      wo.exec();
+      found = (wo.first());
+	}
+	if (found)
     {
       _id    = pId;
       _valid = TRUE;
@@ -189,11 +201,23 @@ void WoLineEdit::sParse()
     if (text().stripWhiteSpace().length() == 0)
       setId(-1);
 
+    else if (_useQuery)
+    {
+      XSqlQuery wo;
+      wo.prepare(_sql);
+      wo.exec();
+      if (wo.findFirst("wonumber", text().stripWhiteSpace().upper()) != -1)
+      {
+        setId(wo.value("wo_id").toInt());
+        return;
+      }
+    }
+
     else if (text().contains('-'))
     {
       int soNumber = text().left(text().find('-')).toInt();
       int subNumber = text().right(text().length() - text().find('-') - 1).toInt();
-      bool statusCheck = FALSE;
+ //     bool statusCheck = FALSE;
       QString sql = QString( "SELECT wo_id "
                              "FROM wo "
                              "WHERE ((wo_number=%1)"
@@ -453,7 +477,13 @@ void WoCluster::sWoList()
 {
   ParameterList params;
   params.append("wo_id", _woNumber->_id);
-  params.append("woType", _woNumber->_woType);
+
+  if (_woNumber->_useQuery)
+  {
+    params.append("sql", _woNumber->_sql);
+  }
+  else 
+    params.append("woType", _woNumber->_woType);
 
   if (_woNumber->_warehouseid != -1)
     params.append("warehous_id", _woNumber->_warehouseid);
