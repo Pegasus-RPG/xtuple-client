@@ -195,6 +195,9 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
     if (param.toString() == "new")
     {
       _mode = cNew;
+      
+      connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
+      connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
       q.prepare( "SELECT (COALESCE(MAX(raitem_linenumber), 0) + 1) AS n_linenumber "
                  "FROM raitem "
@@ -234,8 +237,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
         return UndefinedError;
       }
 
-      connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-      connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
       _origSoNumber->hide();
       _origSoNumberLit->hide();
@@ -1152,7 +1153,7 @@ void returnAuthorizationItem::sDispositionChanged()
     _scheduledDate->setEnabled(FALSE);
     _altcosAccntid->setEnabled(FALSE);
   } 
-  
+
   if (_creditmethod == "N")
   {
     _netUnitPrice->setLocalValue(0);
@@ -1160,6 +1161,7 @@ void returnAuthorizationItem::sDispositionChanged()
     _listPrices->setEnabled(FALSE);
     _pricingUOM->setEnabled(FALSE);
     _discountFromSale->setEnabled(FALSE); 
+    disconnect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
   }
 }
 
