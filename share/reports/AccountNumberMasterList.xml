@@ -25,7 +25,7 @@
             ELSE text(accnt_type)
        END AS f_type
   from accnt
-order by accnt_number;</sql>
+order by formatglaccount(accnt_id);</sql>
  </querysource>
  <rpthead>
   <height>76</height>
@@ -47,6 +47,45 @@ order by accnt_number;</sql>
   </label>
   <label>
    <rect>
+    <x>430</x>
+    <y>55</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>220</x>
+    <y>55</y>
+    <width>95</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Account #</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>70</ystart>
+   <xend>745</xend>
+   <yend>70</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
     <x>10</x>
     <y>55</y>
     <width>95</width>
@@ -60,6 +99,38 @@ order by accnt_number;</sql>
    <left/>
    <vcenter/>
    <string>Company</string>
+  </label>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>55</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>295</x>
+    <y>10</y>
+    <width>450</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Chart of Accounts Master List</string>
   </label>
   <label>
    <rect>
@@ -77,77 +148,6 @@ order by accnt_number;</sql>
    <vcenter/>
    <string>Sub</string>
   </label>
-  <label>
-   <rect>
-    <x>430</x>
-    <y>55</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Type</string>
-  </label>
-  <label>
-   <rect>
-    <x>295</x>
-    <y>10</y>
-    <width>450</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Chart of Accounts Master List</string>
-  </label>
-  <label>
-   <rect>
-    <x>220</x>
-    <y>55</y>
-    <width>95</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Account #</string>
-  </label>
-  <label>
-   <rect>
-    <x>495</x>
-    <y>55</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>70</ystart>
-   <xend>745</xend>
-   <yend>70</yend>
-   <weight>2</weight>
-  </line>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -155,45 +155,6 @@ order by accnt_number;</sql>
  </pghead>
  <pghead>
   <height>21</height>
-  <label>
-   <rect>
-    <x>220</x>
-    <y>0</y>
-    <width>95</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Account #</string>
-  </label>
-  <line>
-   <xstart>10</xstart>
-   <ystart>15</ystart>
-   <xend>750</xend>
-   <yend>15</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>495</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Description</string>
-  </label>
   <label>
    <rect>
     <x>115</x>
@@ -210,9 +171,16 @@ order by accnt_number;</sql>
    <vcenter/>
    <string>Profit Center</string>
   </label>
+  <line>
+   <xstart>10</xstart>
+   <ystart>15</ystart>
+   <xend>750</xend>
+   <yend>15</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
-    <x>325</x>
+    <x>10</x>
     <y>0</y>
     <width>95</width>
     <height>15</height>
@@ -224,7 +192,23 @@ order by accnt_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Sub</string>
+   <string>Company</string>
+  </label>
+  <label>
+   <rect>
+    <x>494</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Description</string>
   </label>
   <label>
    <rect>
@@ -244,7 +228,7 @@ order by accnt_number;</sql>
   </label>
   <label>
    <rect>
-    <x>10</x>
+    <x>220</x>
     <y>0</y>
     <width>95</width>
     <height>15</height>
@@ -256,7 +240,23 @@ order by accnt_number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Company</string>
+   <string>Account #</string>
+  </label>
+  <label>
+   <rect>
+    <x>325</x>
+    <y>0</y>
+    <width>95</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Sub</string>
   </label>
  </pghead>
  <section>
@@ -266,44 +266,6 @@ order by accnt_number;</sql>
     <query>detail</query>
    </key>
    <height>16</height>
-   <field>
-    <rect>
-     <x>115</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>accnt_profit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>495</x>
-     <y>0</y>
-     <width>250</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>accnt_descrip</column>
-    </data>
-   </field>
    <field>
     <rect>
      <x>220</x>
@@ -325,9 +287,9 @@ order by accnt_number;</sql>
    </field>
    <field>
     <rect>
-     <x>325</x>
+     <x>430</x>
      <y>0</y>
-     <width>100</width>
+     <width>55</width>
      <height>15</height>
     </rect>
     <font>
@@ -339,7 +301,26 @@ order by accnt_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>accnt_sub</column>
+     <column>f_type</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>494</x>
+     <y>0</y>
+     <width>250</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>accnt_descrip</column>
     </data>
    </field>
    <field>
@@ -363,9 +344,9 @@ order by accnt_number;</sql>
    </field>
    <field>
     <rect>
-     <x>430</x>
+     <x>115</x>
      <y>0</y>
-     <width>55</width>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -377,13 +358,67 @@ order by accnt_number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_type</column>
+     <column>accnt_profit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>325</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>accnt_sub</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>0</x>
@@ -419,40 +454,5 @@ order by accnt_number;</sql>
     <column>report_date</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
  </pgfoot>
 </report>
