@@ -75,7 +75,7 @@
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
 
-#define TO_RECEIVE_COL	10
+#define TO_RECEIVE_COL	11
 
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -499,6 +499,7 @@ void returnAuthorization::sPostReceipts()
     if (_raitem->topLevelItem(i)->text(TO_RECEIVE_COL).toFloat() > 0)
     {
       enterPoReceipt::post("RA", _raheadid);
+      sFillList();
       break;
     }
   }
@@ -586,7 +587,7 @@ void returnAuthorization::sOrigSoChanged()
             _commission->setText(sohead.value("f_commission"));
   
             _taxauth->setId(sohead.value("cohead_taxauth_id").toInt());
-            _customerPO->setText(sohead.value("cohead_ponumber"));
+            _customerPO->setText(sohead.value("cohead_custponumber"));
 
             _cust->setEnabled(FALSE);
 
@@ -1086,10 +1087,7 @@ void returnAuthorization::populate()
     _commission->setText(rahead.value("f_commission"));
     // do taxauth first so we can overwrite the result of the signal cascade
     _taxauth->setId(rahead.value("rahead_taxauth_id").toInt());
-    if (rahead.value("rahead_tax_curr_id").isNull())
-      _taxcurrid = rahead.value("rahead_curr_id").toInt();
-    else
-      _taxcurrid = rahead.value("rahead_tax_curr_id").toInt();
+    _taxcurrid = rahead.value("rahead_curr_id").toInt();
     if (!rahead.value("rahead_rsncode_id").isNull() && rahead.value("rahead_rsncode_id").toInt() != -1)
       _rsnCode->setId(rahead.value("rahead_rsncode_id").toInt());
 
