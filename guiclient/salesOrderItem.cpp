@@ -93,7 +93,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sPopulateOrderInfo()));
   connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
   connect(_qtyOrdered, SIGNAL(lostFocus()), this, SLOT(sDeterminePrice()));
-  connect(_qtyOrdered, SIGNAL(textChanged()), this, SLOT(sCalcWoUintCost()));
+  connect(_qtyOrdered, SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sPopulateOrderInfo()));
