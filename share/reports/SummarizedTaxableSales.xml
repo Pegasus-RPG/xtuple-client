@@ -25,44 +25,96 @@
  <querysource>
   <name>detail</name>
   <sql>SELECT (tax_code||'-'||tax_descrip) AS taxcode,
-       formatMoney( ( SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0)
-                           FROM cohist
-                          WHERE ( (cohist_tax_id=tax_id)
-                            AND (cohist_itemsite_id&lt;>-1)
-                            AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) ) ) ) AS f_sales,
-       formatMoney( ( SELECT COALESCE(SUM(cohist_unitprice), 0)
-                           FROM cohist
-                          WHERE ( (cohist_tax_id=tax_id)
-                            AND (cohist_misc_type='F')
-                            AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) ) ) ) AS f_freight,
+       formatMoney((
+	  SELECT COALESCE(SUM(ROUND(cohist_qtyshipped *
+				    currToCurr(cohist_curr_id, baseCurrId(),
+					       cohist_unitprice,
+					       cohist_invcdate),2)), 0)
+	  FROM cohist
+	  WHERE ((cohist_tax_id=tax_id)
+	    AND  (cohist_itemsite_id&lt;>-1)
+	    AND  (cohist_invcdate BETWEEN &lt;? value("startDate") ?>
+				      AND &lt;? value("endDate") ?>))
+       )) AS f_sales,
+       formatMoney((
+	  SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id, baseCurrId(),
+					       cohist_unitprice,
+					       cohist_invcdate), 2)), 0)
+	  FROM cohist
+	  WHERE ((cohist_tax_id=tax_id)
+	    AND  (cohist_misc_type='F')
+	    AND  (cohist_invcdate BETWEEN &lt;? value("startDate") ?>
+				      AND &lt;? value("endDate") ?>))
+       )) AS f_freight,
        formatBoolYN(tax_freight) AS f_taxfreight,
-       formatMoney( ( SELECT COALESCE(SUM(COALESCE(cohist_tax_ratea,0) + COALESCE(cohist_tax_rateb,0) + COALESCE(cohist_tax_ratec,0)), 0)
-                           FROM cohist
-                          WHERE ( (cohist_tax_id=tax_id)
-                            AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>) ) ) ) AS f_tax
-  FROM tax
+       formatMoney((
+	 SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id, baseCurrId(),
+					      COALESCE(cohist_tax_ratea,0) +
+					      COALESCE(cohist_tax_rateb,0) +
+					      COALESCE(cohist_tax_ratec, 0),
+					      cohist_invcdate), 2)), 0)
+	 FROM cohist
+	 WHERE ((cohist_tax_id=tax_id)
+--          AND (cohist_misc_type='T')
+	    AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?>
+				      AND &lt;? value("endDate") ?>))
+       )) AS f_taxbase,
+       formatMoney((
+	 SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id,
+					      COALESCE(taxauth_curr_id,
+						       baseCurrId()),
+					      COALESCE(cohist_tax_ratea,0) +
+					      COALESCE(cohist_tax_rateb,0) +
+					      COALESCE(cohist_tax_ratec, 0),
+					      cohist_invcdate), 2)), 0)
+	 FROM cohist
+	 WHERE ((cohist_tax_id=tax_id)
+--          AND (cohist_misc_type='T')
+	    AND (cohist_invcdate BETWEEN &lt;? value("startDate") ?>
+				      AND &lt;? value("endDate") ?>))
+       )) AS f_tax,
+       currConcat(COALESCE(taxauth_curr_id, baseCurrId())) AS taxauthcurr
+FROM tax LEFT OUTER JOIN
+     (taxsel JOIN taxauth ON (taxsel_taxauth_id=taxauth_id))
+	ON (taxsel_tax_id=tax_id)
 &lt;? if exists("tax_id") ?>
- WHERE (tax_id=&lt;? value("tax_id") ?>)
+WHERE (tax_id=&lt;? value("tax_id") ?>) 
 &lt;? endif ?>
-GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
+GROUP BY tax_id, tax_code, tax_descrip, tax_freight, taxauth_curr_id;</sql>
  </querysource>
  <rpthead>
   <height>221</height>
   <label>
    <rect>
-    <x>30</x>
-    <y>140</y>
-    <width>104</width>
-    <height>20</height>
+    <x>5</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <string>End Date:</string>
+   <string>Tax Code</string>
+  </label>
+  <label>
+   <rect>
+    <x>600</x>
+    <y>200</y>
+    <width>90</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Tax</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -71,30 +123,11 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    <yend>215</yend>
    <weight>2</weight>
   </line>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>120</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>540</x>
+    <x>430</x>
     <y>200</y>
-    <width>100</width>
+    <width>70</width>
     <height>15</height>
    </rect>
    <font>
@@ -108,9 +141,9 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
   </label>
   <label>
    <rect>
-    <x>434</x>
-    <y>200</y>
-    <width>100</width>
+    <x>600</x>
+    <y>184</y>
+    <width>150</width>
     <height>15</height>
    </rect>
    <font>
@@ -120,11 +153,46 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Freight $</string>
+   <string>In Tax Authority's Currency</string>
   </label>
   <label>
    <rect>
-    <x>330</x>
+    <x>700</x>
+    <y>200</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Currency</string>
+  </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>100</y>
+    <width>385</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>taxcode</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>230</x>
     <y>200</y>
     <width>100</width>
     <height>15</height>
@@ -136,7 +204,7 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Sales $</string>
+   <string>Sales</string>
   </label>
   <field>
    <rect>
@@ -159,35 +227,35 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
   </field>
   <label>
    <rect>
-    <x>275</x>
-    <y>10</y>
-    <width>450</width>
-    <height>38</height>
+    <x>30</x>
+    <y>100</y>
+    <width>104</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
+    <size>10</size>
+    <weight>normal</weight>
    </font>
    <right/>
    <vcenter/>
-   <string>Summarized Taxable Sales</string>
+   <string>Tax Code:</string>
   </label>
   <label>
    <rect>
-    <x>645</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
+    <x>30</x>
+    <y>140</y>
+    <width>104</width>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Tax $</string>
+   <string>End Date:</string>
   </label>
   <label>
    <rect>
@@ -207,24 +275,98 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
   </label>
   <label>
    <rect>
-    <x>30</x>
-    <y>100</y>
-    <width>104</width>
+    <x>275</x>
+    <y>10</y>
+    <width>450</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Summarized Taxable Sales</string>
+  </label>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Tax</string>
+  </label>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>120</y>
+    <width>200</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>334</x>
+    <y>200</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <hcenter/>
    <vcenter/>
-   <string>Tax Code:</string>
+   <string>Freight</string>
+  </label>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>5</height>
+ </pghead>
+ <pghead>
+  <height>25</height>
+  <label>
+   <rect>
+    <x>500</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Tax</string>
   </label>
   <label>
    <rect>
     <x>5</x>
-    <y>200</y>
+    <y>5</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -237,32 +379,6 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    <vcenter/>
    <string>Tax Code</string>
   </label>
-  <field>
-   <rect>
-    <x>140</x>
-    <y>100</y>
-    <width>385</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>taxcode</column>
-   </data>
-  </field>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>26</height>
   <line>
    <xstart>5</xstart>
    <ystart>20</ystart>
@@ -272,9 +388,41 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
   </line>
   <label>
    <rect>
-    <x>540</x>
+    <x>334</x>
     <y>5</y>
     <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Freight</string>
+  </label>
+  <label>
+   <rect>
+    <x>700</x>
+    <y>5</y>
+    <width>50</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Currency</string>
+  </label>
+  <label>
+   <rect>
+    <x>430</x>
+    <y>5</y>
+    <width>70</width>
     <height>15</height>
    </rect>
    <font>
@@ -288,23 +436,7 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Tax Code</string>
-  </label>
-  <label>
-   <rect>
-    <x>330</x>
+    <x>230</x>
     <y>5</y>
     <width>100</width>
     <height>15</height>
@@ -316,13 +448,13 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Sales $</string>
+   <string>Sales</string>
   </label>
   <label>
    <rect>
-    <x>434</x>
+    <x>600</x>
     <y>5</y>
-    <width>100</width>
+    <width>90</width>
     <height>15</height>
    </rect>
    <font>
@@ -332,23 +464,7 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Freight $</string>
-  </label>
-  <label>
-   <rect>
-    <x>645</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Tax $</string>
+   <string>Tax</string>
   </label>
  </pghead>
  <section>
@@ -360,26 +476,7 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    <height>18</height>
    <field>
     <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_taxfreight</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>645</x>
+     <x>500</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -393,12 +490,12 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_tax</column>
+     <column>f_taxbase</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>330</x>
+     <x>334</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -412,7 +509,7 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_sales</column>
+     <column>f_freight</column>
     </data>
    </field>
    <field>
@@ -436,7 +533,26 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    </field>
    <field>
     <rect>
-     <x>434</x>
+     <x>600</x>
+     <y>0</y>
+     <width>90</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_tax</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>230</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -450,29 +566,51 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_freight</column>
+     <column>f_sales</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>440</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_taxfreight</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>700</x>
+     <y>0</y>
+     <width>50</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>taxauthcurr</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
-  <height>17</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
+  <height>15</height>
   <label>
    <rect>
     <x>615</x>
@@ -491,25 +629,6 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
   </label>
   <field>
    <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>90</x>
     <y>0</y>
     <width>100</width>
@@ -525,6 +644,41 @@ GROUP BY tax_id, tax_code, tax_descrip, tax_freight;</sql>
    <data>
     <query>Context Query</query>
     <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
    </data>
   </field>
  </pgfoot>

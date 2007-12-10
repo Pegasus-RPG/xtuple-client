@@ -60,7 +60,7 @@
 
 #include "OpenMFGGUIClient.h"
 #include <QMainWindow>
-
+#include <parameter.h>
 #include "ui_dspSummarizedTaxableSales.h"
 
 class dspSummarizedTaxableSales : public QMainWindow, public Ui::dspSummarizedTaxableSales
@@ -70,6 +70,7 @@ class dspSummarizedTaxableSales : public QMainWindow, public Ui::dspSummarizedTa
 public:
     dspSummarizedTaxableSales(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSummarizedTaxableSales();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sPrint();

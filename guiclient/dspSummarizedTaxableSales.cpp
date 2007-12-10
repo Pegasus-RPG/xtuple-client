@@ -57,17 +57,15 @@
 
 #include "dspSummarizedTaxableSales.h"
 
-#include <QVariant>
-#include <QStatusBar>
 #include <QMessageBox>
-#include <parameter.h>
+#include <QSqlError>
+
+#include <metasql.h>
 #include <openreports.h>
 
-/*
- *  Constructs a dspSummarizedTaxableSales as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+#include "currdisplay.h"
+#include "mqlutil.h"
+
 dspSummarizedTaxableSales::dspSummarizedTaxableSales(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -75,52 +73,43 @@ dspSummarizedTaxableSales::dspSummarizedTaxableSales(QWidget* parent, const char
 
   (void)statusBar();
 
-  // signals and slots connections
-  connect(_selectedTaxCode, SIGNAL(toggled(bool)), _taxCode, SLOT(setEnabled(bool)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _dates->setStartCaption(tr("Start Ship Date:"));
   _dates->setEndCaption(tr("End Ship Date:"));
 
-  _taxCode->populate( "SELECT tax_id, (tax_code || '-' || tax_descrip) "
-                      "FROM tax "
-                      "ORDER by tax_code;" );
+  _taxCode->setType(XComboBox::TaxTypes);
 
+  QString base = CurrDisplay::baseCurrAbbr();
   _invchead->addColumn(tr("Tax Code"),      _itemColumn,  Qt::AlignLeft   );
   _invchead->addColumn(tr("Description"),   -1,           Qt::AlignLeft   );
-  _invchead->addColumn(tr("Sales $"),       _itemColumn,  Qt::AlignRight  );
-  _invchead->addColumn(tr("Freight $"),     _moneyColumn, Qt::AlignRight  );
-  _invchead->addColumn(tr("Freight Taxed"), _itemColumn,  Qt::AlignCenter ); 
-  _invchead->addColumn(tr("Tax $"),         _moneyColumn, Qt::AlignRight  );
+  _invchead->addColumn(tr("Sales %1").arg(base),  _itemColumn,  Qt::AlignRight);
+  _invchead->addColumn(tr("Freight %1").arg(base),_moneyColumn, Qt::AlignRight);
+  _invchead->addColumn(tr("Freight Taxed"),       _itemColumn,  Qt::AlignCenter);
+  _invchead->addColumn(tr("Tax %1").arg(base),    _moneyColumn, Qt::AlignRight);
+  _invchead->addColumn(tr("Tax"),                 _moneyColumn, Qt::AlignRight);
+  _invchead->addColumn(tr("Currency"),         _currencyColumn, Qt::AlignRight);
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspSummarizedTaxableSales::~dspSummarizedTaxableSales()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspSummarizedTaxableSales::languageChange()
 {
   retranslateUi(this);
 }
 
-void dspSummarizedTaxableSales::sPrint()
+bool dspSummarizedTaxableSales::setParams(ParameterList &params)
 {
   if (!_dates->startDate().isValid())
   {
     QMessageBox::warning( this, tr("Enter Valid Start Date"),
                           tr("You must enter a valid Start Date to print this report.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
   if (!_dates->endDate().isValid())
@@ -128,14 +117,22 @@ void dspSummarizedTaxableSales::sPrint()
     QMessageBox::warning( this, tr("Enter Valid End Date"),
                           tr("You must enter a valid End Date to print this report.") );
     _dates->setFocus();
-    return;
+    return false;
   }
 
-  ParameterList params;
   _dates->appendValue(params);
 
   if (_selectedTaxCode->isChecked())
     params.append("tax_id", _taxCode->id());
+
+  return true;
+}
+
+void dspSummarizedTaxableSales::sPrint()
+{
+  ParameterList params;
+  if (! setParams(params))
+    return;
 
   orReport report("SummarizedTaxableSales", params);
   if (report.isValid())
@@ -146,38 +143,19 @@ void dspSummarizedTaxableSales::sPrint()
 
 void dspSummarizedTaxableSales::sFillList()
 {
-  if (_dates->allValid())
+  ParameterList params;
+  if (! setParams(params))
+    return;
+
+  _invchead->clear();
+
+  MetaSQLQuery mql = mqlLoad(":/so/displays/SummarizedTaxableSales/FillListDetail.mql");
+  q = mql.toQuery(params);
+  q.exec();
+  _invchead->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    QString sql( "SELECT tax_id, tax_code, tax_descrip,"
-                 "       formatMoney( ( SELECT COALESCE(SUM(round(cohist_qtyshipped * cohist_unitprice,2)), 0)"
-                 "                      FROM cohist"
-                 "                      WHERE ( (cohist_tax_id=tax_id)"
-                 "                       AND (cohist_itemsite_id<>-1)"
-                 "                       AND (cohist_invcdate BETWEEN :startDate AND :endDate) ) ) ),"
-                 "       formatMoney( ( SELECT COALESCE(SUM(cohist_unitprice), 0)"
-                 "                         FROM cohist"
-                 "                         WHERE ( (cohist_tax_id=tax_id)"
-                 "                          AND (cohist_misc_type='F')"
-                 "                          AND (cohist_invcdate BETWEEN :startDate AND :endDate) ) ) ),"
-                 "       formatBoolYN(tax_freight),"
-                 "       formatMoney( ( SELECT COALESCE(SUM(COALESCE(cohist_tax_ratea,0) + COALESCE(cohist_tax_rateb,0) + COALESCE(cohist_tax_ratec, 0)), 0)"
-                 "                         FROM cohist"
-                 "                         WHERE ( (cohist_tax_id=tax_id)"
-                // "                          AND (cohist_misc_type='T')"
-                 "                          AND (cohist_invcdate BETWEEN :startDate AND :endDate) ) ) ) "
-                 "FROM tax " );
-
-    if (_selectedTaxCode->isChecked())
-      sql += "WHERE (tax_id=:tax_id) ";
-
-    sql += "GROUP BY tax_id, tax_code, tax_descrip, tax_freight;";
-
-    q.prepare(sql);
-    _dates->bindValue(q);
-    q.bindValue(":tax_id", _taxCode->id());
-    q.exec();
-    _invchead->populate(q);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  else
-    _invchead->clear();
 }
