@@ -538,95 +538,6 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="_revision" >
-       <attribute name="title" >
-        <string>Revision</string>
-       </attribute>
-       <layout class="QGridLayout" >
-        <item row="0" column="0" >
-         <widget class="QGroupBox" name="_bomGroup" >
-          <property name="minimumSize" >
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="title" >
-           <string>Bill of Materials</string>
-          </property>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" >
-            <widget class="RevisionCluster" name="_bomRevision" >
-             <property name="focusPolicy" >
-              <enum>Qt::ClickFocus</enum>
-             </property>
-             <property name="readOnly" >
-              <bool>false</bool>
-             </property>
-             <property name="mode" >
-              <enum>RevisionLineEdit::Use</enum>
-             </property>
-             <property name="type" >
-              <enum>RevisionLineEdit::BOM</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="1" >
-         <widget class="QGroupBox" name="_booGroup" >
-          <property name="title" >
-           <string>Bill of Operations</string>
-          </property>
-          <layout class="QGridLayout" >
-           <item row="0" column="0" >
-            <widget class="RevisionCluster" name="_booRevision" >
-             <property name="focusPolicy" >
-              <enum>Qt::ClickFocus</enum>
-             </property>
-             <property name="readOnly" >
-              <bool>false</bool>
-             </property>
-             <property name="mode" >
-              <enum>RevisionLineEdit::Use</enum>
-             </property>
-             <property name="type" >
-              <enum>RevisionLineEdit::BOO</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item row="0" column="2" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="1" column="0" colspan="2" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>241</width>
-            <height>16</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </widget>
       <widget class="QWidget" name="_costing" >
        <attribute name="title" >
         <string>Costing</string>
@@ -789,6 +700,95 @@
            <size>
             <width>20</width>
             <height>0</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="_revision" >
+       <attribute name="title" >
+        <string>Revision</string>
+       </attribute>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <widget class="QGroupBox" name="_bomGroup" >
+          <property name="minimumSize" >
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="title" >
+           <string>Bill of Materials</string>
+          </property>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="RevisionCluster" name="_bomRevision" >
+             <property name="focusPolicy" >
+              <enum>Qt::ClickFocus</enum>
+             </property>
+             <property name="readOnly" >
+              <bool>false</bool>
+             </property>
+             <property name="mode" >
+              <enum>RevisionLineEdit::Use</enum>
+             </property>
+             <property name="type" >
+              <enum>RevisionLineEdit::BOM</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="1" >
+         <widget class="QGroupBox" name="_booGroup" >
+          <property name="title" >
+           <string>Bill of Operations</string>
+          </property>
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="RevisionCluster" name="_booRevision" >
+             <property name="focusPolicy" >
+              <enum>Qt::ClickFocus</enum>
+             </property>
+             <property name="readOnly" >
+              <bool>false</bool>
+             </property>
+             <property name="mode" >
+              <enum>RevisionLineEdit::Use</enum>
+             </property>
+             <property name="type" >
+              <enum>RevisionLineEdit::BOO</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="1" column="0" colspan="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>241</width>
+            <height>16</height>
            </size>
           </property>
          </spacer>

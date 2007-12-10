@@ -119,7 +119,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   //If not Revision Control, hide controls
   if (!_metrics->boolean("RevControl"))
-   _tabs->removePage(_tabs->page(3));
+   _tabs->removePage(_tabs->page(4));
 
 }
 
@@ -190,7 +190,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
                       "WHERE (item_type IN ('M', 'B') "
 					  "AND (item_active)) ");
       _qtyReceivedLit->clear();
-      _tabs->removePage(_tabs->page(4));
+      _tabs->removePage(_tabs->page(3));
 
       populateWoNumber();
     }
@@ -367,7 +367,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     else if (param.toString() == "release")
     {
       _mode = cRelease;
-      _tabs->removePage(_tabs->page(4));
+      _tabs->removePage(_tabs->page(3));
 
       q.prepare( "SELECT planord_itemsite_id, planord_duedate,"
                  "       CASE WHEN(planord_mps) THEN 'P'"
