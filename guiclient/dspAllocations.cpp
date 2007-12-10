@@ -62,6 +62,7 @@
 #include <QVariant>
 
 #include <metasql.h>
+#include <format.h>
 
 #include "mqlutil.h"
 #include "salesOrder.h"
@@ -286,6 +287,24 @@ void dspAllocations::sFillList()
       last->setTextColor(7, "red");
     }
     if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    QString avails("SELECT itemsite_qtyonhand AS qoh, "
+		   "       formatQty(itemsite_qtyonhand) AS f_qoh "
+		   "FROM itemsite "
+		   "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
+		   "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>));");
+    MetaSQLQuery availm(avails);
+    q = availm.toQuery(params);
+    if (q.first())
+    {
+      _qoh->setText(q.value("f_qoh").toString());
+      _available->setText(formatQty(q.value("qoh").toDouble() - runningBal));
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
