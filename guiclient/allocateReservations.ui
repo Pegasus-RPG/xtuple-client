@@ -64,7 +64,7 @@
             <item>
              <widget class="QRadioButton" name="_selectedCustomer" >
               <property name="text" >
-               <string>Selected Customer:</string>
+               <string>Selected </string>
               </property>
               <property name="checked" >
                <bool>true</bool>
@@ -239,7 +239,7 @@
        <item>
         <widget class="QCheckBox" name="_addPackingList" >
          <property name="text" >
-          <string>Automatically Add to PackingLIst Batch</string>
+          <string>Automatically Add to PackingList Batch</string>
          </property>
         </widget>
        </item>
@@ -353,7 +353,7 @@
    </item>
   </layout>
  </widget>
- <layoutdefault spacing="6" margin="11" />
+ <layoutdefault spacing="5" margin="5" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>

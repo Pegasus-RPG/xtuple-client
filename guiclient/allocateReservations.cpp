@@ -72,14 +72,10 @@ allocateReservations::allocateReservations(QWidget* parent, const char* name, bo
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_allocate, SIGNAL(clicked()), this, SLOT(sAllocate()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustomerSelected()));
 
   _customerTypes->setType(XComboBox::CustomerTypes);
-
-  
 }
 
 /*
@@ -117,7 +113,7 @@ void allocateReservations::sAllocate()
   if (_selectedCustomerType->isChecked())
     q.bindValue(":custtype_id", _customerTypes->id());
   if (_customerTypePattern->isChecked())
-    q.bindValue(":ipsass_custtype_pattern", _customerType->text());
+    q.bindValue(":custtype_pattern", _customerType->text());
 
   q.exec();
 
