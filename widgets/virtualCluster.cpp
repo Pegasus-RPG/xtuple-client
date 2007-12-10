@@ -94,7 +94,7 @@ void VirtualCluster::init()
 	_info->setMaximumWidth(25);
 #else
     _info->setMinimumWidth(60);
-    _list->setMinimumHeight(32);
+    _info->setMinimumHeight(32);
 #endif
 
 
