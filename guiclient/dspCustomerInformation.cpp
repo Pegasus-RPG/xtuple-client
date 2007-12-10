@@ -192,13 +192,14 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_creditMemo, SIGNAL(itemSelected(int)), _viewCreditMemo, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillCreditMemoList()));
 
-  // setup Payments list
+  _payments->addColumn(tr("Type"),         _whsColumn,      Qt::AlignLeft  );
   _payments->addColumn(tr("Status"),       _whsColumn,      Qt::AlignLeft  );
   _payments->addColumn(tr("Timestamp"),    _timeDateColumn, Qt::AlignLeft  );
   _payments->addColumn(tr("Entered By"),   _userColumn,     Qt::AlignLeft  );
   _payments->addColumn(tr("Total Amount"), _moneyColumn,    Qt::AlignRight );
   _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
   _payments->addColumn(tr("S/O #"),        _orderColumn,    Qt::AlignLeft  );
+  _payments->addColumn(tr("Reference"),    _orderColumn,    Qt::AlignLeft  );
   _payments->addColumn(tr("Allocated"),    _moneyColumn,    Qt::AlignRight );
   _payments->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignLeft  );
 
@@ -207,8 +208,8 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     _arhist->hideColumn(7);
     _invoice->hideColumn(7);
     _creditMemo->hideColumn(6);
-    _payments->hideColumn(4);
-    _payments->hideColumn(7);
+    _payments->hideColumn(5);
+    _payments->hideColumn(8);
   }
 
   _edit->setEnabled(_privleges->check("MaintainCustomerMasters"));
@@ -936,26 +937,45 @@ void dspCustomerInformation::sViewAropen()
 void dspCustomerInformation::sFillPaymentsList()
 {
   q.prepare("SELECT ccpay_id, cohead_id,"
-            "       CASE WHEN(ccpay_status='A') THEN :authorized"
-            "            WHEN(ccpay_status='B') THEN :declined"
-            "            WHEN(ccpay_status='C') THEN :charged"
+	    "       CASE WHEN (ccpay_type='C') THEN :charge"
+	    "            WHEN (ccpay_type='R') THEN :refund"
+	    "            ELSE ccpay_type"
+	    "       END AS f_type,"
+            "       CASE WHEN (ccpay_status='A') THEN :authorized"
+            "            WHEN (ccpay_status='C') THEN :approved"
+            "            WHEN (ccpay_status='D') THEN :declined"
+            "            WHEN (ccpay_status='X') THEN :noapproval"
             "            ELSE ccpay_status"
             "       END AS f_status,"
             "       formatDateTime(ccpay_transaction_datetime) AS f_datetime,"
             "       ccpay_by_username, ccpay_amount,"
-            "       currConcat(ccpay_curr_id) AS ccpay_currAbbr, cohead_number,"
-	    "       payco_amount, currConcat(payco_curr_id) AS payco_currAbbr"
-            "  FROM ccpay LEFT OUTER JOIN (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
+            "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
+	    "       COALESCE(cohead_number, ccpay_order_number),"
+	    "       ccpay_yp_r_ref,"
+	    "       COALESCE(payco_amount, ccpay_amount),"
+	    "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
+            "  FROM ccpay LEFT OUTER JOIN "
+	    "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
             "         ON (payco_ccpay_id=ccpay_id)"
             " WHERE ((ccpay_cust_id=:cust_id))"
             " ORDER BY ccpay_transaction_datetime;");
   q.bindValue(":cust_id", _cust->id());
+  q.bindValue(":charge", tr("Charge"));
+  q.bindValue(":refund", tr("Refund"));
   q.bindValue(":authorized", tr("Authorized"));
+  q.bindValue(":approved", tr("Approved"));
   q.bindValue(":declined", tr("Declined"));
-  q.bindValue(":charged", tr("Charged"));
+  q.bindValue(":noapproval", tr("No Approval Code"));
   q.exec();
+
   _payments->clear();
   _payments->populate(q, true);
+
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )
