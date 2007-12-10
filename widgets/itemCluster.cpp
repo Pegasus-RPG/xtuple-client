@@ -504,8 +504,8 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 #ifndef Q_WS_MAC
   _itemList->setMaximumWidth(25);
 #else
-  _itemlist->setMinimumWidth(60);
-  _itemlist->setMinimumHeight(32);
+  _itemList->setMinimumWidth(60);
+  _itemList->setMinimumHeight(32);
 #endif
   _itemList->setFocusPolicy(Qt::NoFocus);
   itemLayout->addWidget(_itemList);
