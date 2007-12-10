@@ -216,6 +216,7 @@ class menuAccounting : public QObject
 
     void sCustomers();
     void sCustomerTypes();
+    void sVendorTypes();
     void sSalesCategories();
     void sReasonCodes();
     void sARAccountAssignments();

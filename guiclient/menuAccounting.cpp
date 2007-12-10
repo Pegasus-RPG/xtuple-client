@@ -189,6 +189,7 @@
 #include "customers.h"
 #include "customerType.h"
 #include "customerTypes.h"
+#include "vendorTypes.h"
 #include "salesCategories.h"
 #include "reasonCodes.h"
 #include "arAccountAssignments.h"
@@ -454,6 +455,7 @@ menuAccounting::menuAccounting(OpenMFGGUIClient *Pparent) :
     { "ap.apAccountAssignments", tr("A/&P Account Assignments..."), SLOT(sAPAssignments()), masterInfoMenu, (_privleges->check("MaintainVendorAccounts") || _privleges->check("ViewVendorAccounts")), NULL, NULL, true , NULL },
     { "separator",		  NULL,					NULL,					masterInfoMenu,		true,					       NULL, NULL, true, NULL },
     { "ar.customerTypes", tr("Customer &Types..."), SLOT(sCustomerTypes()), masterInfoMenu, (_privleges->check("MaintainCustomerTypes") || _privleges->check("ViewCustomerTypes")), NULL, NULL, true , NULL },
+    { "ar.vendorTypes", tr("&Vendor Types..."), SLOT(sVendorTypes()), masterInfoMenu, (_privleges->check("MaintainVendorTypes")) || (_privleges->check("ViewVendorTypes")), NULL, NULL, true , NULL },
     { "ar.salesCategories", tr("&Sales Categories..."), SLOT(sSalesCategories()), masterInfoMenu, (_privleges->check("MaintainSalesCategories")) || (_privleges->check("ViewSalesCategories")), NULL, NULL, true , NULL },
     { "ar.arAccountAssignments", tr("A/R Account Assi&gnments..."), SLOT(sARAccountAssignments()), masterInfoMenu, (_privleges->check("MaintainSalesAccount") || _privleges->check("ViewSalesAccount")), NULL, NULL, true , NULL },
     { "ar.reasonCodes", tr("&Reason Codes..."), SLOT(sReasonCodes()), masterInfoMenu, _privleges->check("MaintainReasonCodes"), NULL, NULL, true , NULL },
@@ -1191,6 +1193,11 @@ void menuAccounting::sCustomers()
 void menuAccounting::sCustomerTypes()
 {
   omfgThis->handleNewWindow(new customerTypes());
+}
+
+void menuAccounting::sVendorTypes()
+{
+  omfgThis->handleNewWindow(new vendorTypes());
 }
 
 void menuAccounting::sSalesCategories()
