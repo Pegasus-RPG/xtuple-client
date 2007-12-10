@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
+    <width>659</width>
     <height>400</height>
    </rect>
   </property>
@@ -76,7 +76,7 @@
            <enum>Qt::Vertical</enum>
           </property>
           <property name="sizeType" >
-           <enum>QSizePolicy::Minimum</enum>
+           <enum>QSizePolicy::Preferred</enum>
           </property>
           <property name="sizeHint" >
            <size>
@@ -553,7 +553,7 @@
             <property name="sizeHint" >
              <size>
               <width>20</width>
-              <height>16</height>
+              <height>90</height>
              </size>
             </property>
            </spacer>
@@ -593,7 +593,7 @@
         <property name="sizePolicy" >
          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
+          <verstretch>1</verstretch>
          </sizepolicy>
         </property>
        </widget>

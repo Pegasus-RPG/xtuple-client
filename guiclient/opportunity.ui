@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>623</width>
+    <width>670</width>
     <height>492</height>
    </rect>
   </property>
@@ -13,28 +13,10 @@
    <string>Opportunity</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
      <item>
       <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item row="2" column="2" >
         <widget class="QLabel" name="_oppstageLit" >
          <property name="text" >
@@ -179,9 +161,6 @@
        </item>
        <item rowspan="2" row="1" column="0" >
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -224,12 +203,6 @@
        </item>
        <item row="4" column="1" >
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item>
           <widget class="XLineEdit" name="_probability" >
            <property name="maximumSize" >
@@ -246,9 +219,7 @@
          <item>
           <widget class="QLabel" name="_prcntLit" >
            <property name="sizePolicy" >
-            <sizepolicy>
-             <hsizetype>3</hsizetype>
-             <vsizetype>5</vsizetype>
+            <sizepolicy vsizetype="Preferred" hsizetype="MinimumExpanding" >
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
@@ -265,6 +236,12 @@
        </item>
        <item rowspan="2" row="1" column="1" >
         <widget class="CRMAcctCluster" name="_crmacct" >
+         <property name="minimumSize" >
+          <size>
+           <width>250</width>
+           <height>0</height>
+          </size>
+         </property>
          <property name="focusPolicy" >
           <enum>Qt::StrongFocus</enum>
          </property>
@@ -284,9 +261,6 @@
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -308,12 +282,6 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>6</number>
-         </property>
          <item>
           <widget class="QPushButton" name="_cancel" >
            <property name="text" >
@@ -350,9 +318,7 @@
    <item>
     <widget class="QTabWidget" name="_tab" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>7</hsizetype>
-       <vsizetype>7</vsizetype>
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
@@ -365,12 +331,6 @@
        <string>Notes</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="QTextEdit" name="_notes" />
        </item>
@@ -381,20 +341,11 @@
        <string>To-Do's</string>
       </attribute>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="XTreeWidget" name="_todoList" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -448,20 +399,11 @@
        <string>Characteristics</string>
       </attribute>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="XTreeWidget" name="_charass" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -526,12 +468,6 @@
        <string>Comments</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>9</number>
-       </property>
-       <property name="spacing" >
-        <number>6</number>
-       </property>
        <item>
         <widget class="Comments" name="_comments" >
          <property name="focusPolicy" >
@@ -550,9 +486,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>CurrCluster</class>
-   <extends>CurrDisplay</extends>
-   <header>currcluster.h</header>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
   </customwidget>
   <customwidget>
    <class>CRMAcctCluster</class>
@@ -560,24 +496,14 @@
    <header>crmacctcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
+   <class>CurrCluster</class>
+   <extends>CurrDisplay</extends>
+   <header>currcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>Comments</class>
-   <extends>QWidget</extends>
-   <header>comments.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
   </customwidget>
   <customwidget>
    <class>UsernameCluster</class>
@@ -585,9 +511,19 @@
    <header>usernamecluster.h</header>
   </customwidget>
   <customwidget>
-   <class>DLineEdit</class>
-   <extends>XLineEdit</extends>
-   <header>datecluster.h</header>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>486</width>
-    <height>352</height>
+    <height>413</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,33 +14,18 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>5</number>
       </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
           </property>
@@ -70,9 +55,7 @@
           <item>
            <widget class="QLabel" name="_username" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>5</vsizetype>
+             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -83,9 +66,6 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -118,9 +98,6 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>5</number>
         </property>
@@ -172,17 +149,8 @@
     </item>
     <item>
      <layout class="QGridLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
       <item row="0" column="0" >
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
@@ -219,26 +187,18 @@
       </item>
       <item row="1" column="1" >
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
           <item>
            <widget class="XLineEdit" name="_qty" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>5</hsizetype>
-              <vsizetype>0</vsizetype>
+             <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -274,9 +234,6 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -289,17 +246,11 @@
       </item>
       <item row="0" column="1" >
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>7</number>
         </property>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -326,9 +277,6 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -365,9 +313,6 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -416,9 +361,6 @@
       </item>
       <item row="1" column="0" >
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
@@ -448,9 +390,6 @@
     </item>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>0</number>
       </property>
@@ -481,9 +420,6 @@
     </item>
     <item>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>0</number>
       </property>
@@ -506,14 +442,14 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>WComboBox</class>
-   <extends>XComboBox</extends>
-   <header>wcombobox.h</header>
-  </customwidget>
-  <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ExpenseCluster</class>
+   <extends>QWidget</extends>
+   <header>expensecluster.h</header>
   </customwidget>
   <customwidget>
    <class>ItemCluster</class>
@@ -521,9 +457,9 @@
    <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>ExpenseCluster</class>
-   <extends>QWidget</extends>
-   <header>expensecluster.h</header>
+   <class>WComboBox</class>
+   <extends>XComboBox</extends>
+   <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>

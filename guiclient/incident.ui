@@ -13,33 +13,18 @@
    <string>Incident</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -67,9 +52,6 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -119,18 +101,15 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
         <layout class="QGridLayout" >
-         <property name="margin" >
+         <property name="horizontalSpacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="verticalSpacing" >
           <number>0</number>
          </property>
          <item row="2" column="0" >
@@ -300,9 +279,6 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -340,9 +316,7 @@
    <item>
     <widget class="QFrame" name="frame" >
      <property name="sizePolicy" >
-      <sizepolicy>
-       <hsizetype>5</hsizetype>
-       <vsizetype>7</vsizetype>
+      <sizepolicy vsizetype="Expanding" hsizetype="Preferred" >
        <horstretch>0</horstretch>
        <verstretch>1</verstretch>
       </sizepolicy>
@@ -354,25 +328,25 @@
       <enum>QFrame::Plain</enum>
      </property>
      <layout class="QVBoxLayout" >
-      <property name="margin" >
+      <property name="leftMargin" >
        <number>0</number>
       </property>
-      <property name="spacing" >
-       <number>6</number>
+      <property name="topMargin" >
+       <number>0</number>
+      </property>
+      <property name="rightMargin" >
+       <number>0</number>
+      </property>
+      <property name="bottomMargin" >
+       <number>0</number>
       </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -396,9 +370,6 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -418,9 +389,7 @@
           <item>
            <widget class="QTextEdit" name="_description" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>3</vsizetype>
+             <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -447,20 +416,11 @@
           <string>To-Do List Items</string>
          </attribute>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
           <item>
            <widget class="XTreeWidget" name="_todoList" />
           </item>
           <item>
            <layout class="QVBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
             <property name="spacing" >
              <number>0</number>
             </property>
@@ -514,18 +474,10 @@
           <string>History</string>
          </attribute>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
           <item>
            <widget class="XTreeWidget" name="_incdthist" >
             <property name="sizePolicy" >
-             <sizepolicy>
-              <hsizetype>7</hsizetype>
-              <vsizetype>3</vsizetype>
+             <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
               <horstretch>0</horstretch>
               <verstretch>0</verstretch>
              </sizepolicy>
@@ -545,12 +497,6 @@
           <string>Comments</string>
          </attribute>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>9</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
           <item>
            <widget class="Comments" name="_comments" >
             <property name="focusPolicy" >
@@ -573,9 +519,24 @@
  <layoutdefault spacing="5" margin="5" />
  <customwidgets>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CRMAcctCluster</class>
+   <extends>QWidget</extends>
+   <header>crmacctcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
    <class>LotserialCluster</class>
@@ -588,29 +549,14 @@
    <header>usernamecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-  </customwidget>
-  <customwidget>
-   <class>CRMAcctCluster</class>
-   <extends>QWidget</extends>
-   <header>crmacctcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ContactCluster</class>
-   <extends>QWidget</extends>
-   <header>contactcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>ItemCluster</class>
-   <extends>QWidget</extends>
-   <header>itemcluster.h</header>
-  </customwidget>
-  <customwidget>
-   <class>Comments</class>
-   <extends>QWidget</extends>
-   <header>comments.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

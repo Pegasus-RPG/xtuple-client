@@ -13,259 +13,196 @@
    <string>To-Do List Items by User and Incident</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" colspan="2" >
+     <widget class="ParameterGroup" name="_usr" >
+      <property name="focusPolicy" >
+       <enum>Qt::StrongFocus</enum>
       </property>
-      <property name="spacing" >
-       <number>5</number>
+      <property name="title" >
+       <string/>
       </property>
+     </widget>
+    </item>
+    <item rowspan="2" row="0" column="2" >
+     <layout class="QVBoxLayout" >
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+       <widget class="QGroupBox" name="groupBox" >
+        <property name="title" >
+         <string>Date Started</string>
         </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="ParameterGroup" name="_usr" >
-          <property name="focusPolicy" >
-           <enum>Qt::StrongFocus</enum>
-          </property>
-          <property name="title" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="_incidentBox" >
-          <property name="title" >
-           <string/>
-          </property>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>5</number>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="DateCluster" name="_startDate" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QRadioButton" name="_allIncidents" >
-             <property name="text" >
-              <string>All Incidents</string>
-             </property>
-             <property name="checked" >
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QRadioButton" name="_selectedIncident" >
-                 <property name="text" >
-                  <string>Selected</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <widget class="IncidentCluster" name="_incident" >
-               <property name="focusPolicy" >
-                <enum>Qt::StrongFocus</enum>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+       <widget class="QGroupBox" name="groupBox_2" >
+        <property name="title" >
+         <string>Date Due</string>
         </property>
-        <property name="spacing" >
-         <number>0</number>
-        </property>
-        <item>
-         <widget class="QGroupBox" name="groupBox" >
-          <property name="title" >
-           <string>Date Started</string>
-          </property>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="DateCluster" name="_dueDate" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
            </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="DateCluster" name="_startDate" >
-             <property name="focusPolicy" >
-              <enum>Qt::StrongFocus</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_2" >
-          <property name="title" >
-           <string>Date Due</string>
-          </property>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="DateCluster" name="_dueDate" >
-             <property name="focusPolicy" >
-              <enum>Qt::StrongFocus</enum>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="XCheckBox" name="_showCompleted" >
-          <property name="text" >
-           <string>Show Completed Items</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="XCheckBox" name="_showInactive" >
-          <property name="text" >
-           <string>Show Inactive Items</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>0</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
         </property>
-        <property name="spacing" >
-         <number>0</number>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
         </property>
-        <item>
-         <widget class="QPushButton" name="_close" >
-          <property name="text" >
-           <string>Close</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_query" >
-          <property name="text" >
-           <string>Query</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_print" >
-          <property name="text" >
-           <string>Print</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>75</width>
-            <height>28</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+       </spacer>
       </item>
      </layout>
     </item>
-    <item>
+    <item rowspan="2" row="0" column="3" >
+     <layout class="QVBoxLayout" >
+      <item>
+       <widget class="QPushButton" name="_close" >
+        <property name="text" >
+         <string>Close</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="_query" >
+        <property name="text" >
+         <string>Query</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="_print" >
+        <property name="text" >
+         <string>Print</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>75</width>
+          <height>28</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0" colspan="2" >
+     <widget class="QGroupBox" name="_incidentBox" >
+      <property name="title" >
+       <string/>
+      </property>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="QRadioButton" name="_allIncidents" >
+           <property name="text" >
+            <string>All Incidents</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QLabel" name="label" >
+           <property name="text" >
+            <string/>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="0" >
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>8</number>
+           </property>
+           <item>
+            <widget class="QRadioButton" name="_selectedIncident" >
+             <property name="text" >
+              <string>Selected</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="IncidentCluster" name="_incident" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="XCheckBox" name="_showCompleted" >
+      <property name="text" >
+       <string>Show Completed Items</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1" colspan="2" >
+     <widget class="XCheckBox" name="_showInactive" >
+      <property name="text" >
+       <string>Show Inactive Items</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="4" >
      <widget class="XTreeWidget" name="_todoitem" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>0</horstretch>
         <verstretch>1</verstretch>
        </sizepolicy>
@@ -283,6 +220,11 @@
    <header>datecluster.h</header>
   </customwidget>
   <customwidget>
+   <class>IncidentCluster</class>
+   <extends>QWidget</extends>
+   <header>incidentcluster.h</header>
+  </customwidget>
+  <customwidget>
    <class>ParameterGroup</class>
    <extends>QGroupBox</extends>
    <header>parametergroup.h</header>
@@ -291,11 +233,6 @@
    <class>XCheckBox</class>
    <extends>QCheckBox</extends>
    <header>xcheckbox.h</header>
-  </customwidget>
-  <customwidget>
-   <class>IncidentCluster</class>
-   <extends>QWidget</extends>
-   <header>incidentcluster.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>

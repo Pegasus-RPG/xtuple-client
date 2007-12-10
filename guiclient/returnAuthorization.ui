@@ -259,7 +259,7 @@
               <property name="maximumSize" >
                <size>
                 <width>40</width>
-                <height>32767</height>
+                <height>22</height>
                </size>
               </property>
               <property name="alignment" >
@@ -589,7 +589,7 @@
              <widget class="CustInfo" name="_cust" >
               <property name="minimumSize" >
                <size>
-                <width>300</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>
@@ -696,7 +696,7 @@
               <property name="sizeHint" >
                <size>
                 <width>40</width>
-                <height>10</height>
+                <height>20</height>
                </size>
               </property>
              </spacer>
@@ -835,7 +835,7 @@
               <property name="sizeHint" >
                <size>
                 <width>20</width>
-                <height>20</height>
+                <height>32</height>
                </size>
               </property>
              </spacer>
@@ -872,6 +872,13 @@
                </size>
               </property>
              </spacer>
+            </item>
+            <item row="1" column="1" >
+             <widget class="QLabel" name="_spacerlabel" >
+              <property name="text" >
+               <string/>
+              </property>
+             </widget>
             </item>
            </layout>
           </item>

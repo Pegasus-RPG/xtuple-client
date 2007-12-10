@@ -1,392 +1,184 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>dspTimePhasedPlannedREByPlannerCode</class>
  <widget class="QMainWindow" name="dspTimePhasedPlannedREByPlannerCode" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>521</height>
+    <width>627</width>
+    <height>543</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Time-Phased Planned Revenue/Expense by Planner Code</string>
   </property>
   <widget class="QWidget" name="widget" >
-   <property name="geometry" >
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>700</width>
-     <height>521</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>5</number>
-    </property>
-    <property name="spacing" >
-     <number>5</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+   <layout class="QGridLayout" >
+    <item row="0" column="0" colspan="2" >
+     <widget class="ParameterGroup" name="_plannerCode" >
+      <property name="title" >
+       <string/>
       </property>
-      <property name="spacing" >
-       <number>7</number>
-      </property>
+     </widget>
+    </item>
+    <item rowspan="3" row="0" column="2" >
+     <layout class="QVBoxLayout" >
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+       <widget class="QPushButton" name="_close" >
+        <property name="text" >
+         <string>&amp;Close</string>
         </property>
-        <property name="spacing" >
-         <number>5</number>
-        </property>
-        <item>
-         <widget class="ParameterGroup" name="_plannerCode" >
-          <property name="title" >
-           <string/>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>0</number>
-          </property>
-          <item>
-           <layout class="QHBoxLayout" >
-            <property name="margin" >
-             <number>0</number>
-            </property>
-            <property name="spacing" >
-             <number>7</number>
-            </property>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="WarehouseGroup" name="_warehouse" >
-                <property name="title" >
-                 <string/>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Expanding</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>16</width>
-                  <height>56</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QGroupBox" name="_costGroup" >
-                <property name="title" >
-                 <string>Costs</string>
-                </property>
-                <layout class="QVBoxLayout" >
-                 <property name="margin" >
-                  <number>5</number>
-                 </property>
-                 <property name="spacing" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <widget class="QRadioButton" name="_useStandardCost" >
-                   <property name="text" >
-                    <string>Use Standard Cost</string>
-                   </property>
-                   <property name="checked" >
-                    <bool>true</bool>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QRadioButton" name="_useActualCost" >
-                   <property name="text" >
-                    <string>Use Actual Cost</string>
-                   </property>
-                  </widget>
-                 </item>
-                </layout>
-               </widget>
-              </item>
-              <item>
-               <spacer>
-                <property name="orientation" >
-                 <enum>Qt::Vertical</enum>
-                </property>
-                <property name="sizeType" >
-                 <enum>QSizePolicy::Preferred</enum>
-                </property>
-                <property name="sizeHint" >
-                 <size>
-                  <width>20</width>
-                  <height>16</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-             </layout>
-            </item>
-            <item>
-             <widget class="QGroupBox" name="_salesPriceGroup" >
-              <property name="title" >
-               <string>Sales Price</string>
-              </property>
-              <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>5</number>
-               </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QRadioButton" name="_useListPrice" >
-                 <property name="text" >
-                  <string>Use List Price</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QRadioButton" name="_useAveragePrice" >
-                 <property name="text" >
-                  <string>Use Average Price</string>
-                 </property>
-                 <property name="checked" >
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <layout class="QHBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
-                 <property name="spacing" >
-                  <number>0</number>
-                 </property>
-                 <item>
-                  <spacer>
-                   <property name="orientation" >
-                    <enum>Qt::Horizontal</enum>
-                   </property>
-                   <property name="sizeType" >
-                    <enum>QSizePolicy::Minimum</enum>
-                   </property>
-                   <property name="sizeHint" >
-                    <size>
-                     <width>11</width>
-                     <height>10</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
-                   <property name="spacing" >
-                    <number>5</number>
-                   </property>
-                   <item>
-                    <layout class="QVBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="QLabel" name="_startEvalDateLit" >
-                       <property name="enabled" >
-                        <bool>false</bool>
-                       </property>
-                       <property name="text" >
-                        <string>Start Evaluation Date:</string>
-                       </property>
-                       <property name="alignment" >
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QLabel" name="_endEvalDateLit" >
-                       <property name="enabled" >
-                        <bool>false</bool>
-                       </property>
-                       <property name="text" >
-                        <string>End Evaluation Date:</string>
-                       </property>
-                       <property name="alignment" >
-                        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <layout class="QVBoxLayout" >
-                     <property name="margin" >
-                      <number>0</number>
-                     </property>
-                     <property name="spacing" >
-                      <number>0</number>
-                     </property>
-                     <item>
-                      <widget class="DLineEdit" name="_startEvalDate" >
-                       <property name="enabled" >
-                        <bool>false</bool>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="DLineEdit" name="_endEvalDate" >
-                       <property name="enabled" >
-                        <bool>false</bool>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                  </layout>
-                 </item>
-                </layout>
-               </item>
-              </layout>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item>
-           <spacer>
-            <property name="orientation" >
-             <enum>Qt::Horizontal</enum>
-            </property>
-            <property name="sizeType" >
-             <enum>QSizePolicy::Expanding</enum>
-            </property>
-            <property name="sizeHint" >
-             <size>
-              <width>24</width>
-              <height>20</height>
-             </size>
-            </property>
-           </spacer>
-          </item>
-         </layout>
-        </item>
-       </layout>
+       </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
+       <widget class="QPushButton" name="_query" >
+        <property name="text" >
+         <string>&amp;Query</string>
         </property>
-        <property name="spacing" >
-         <number>6</number>
+        <property name="autoDefault" >
+         <bool>true</bool>
         </property>
-        <item>
-         <widget class="QPushButton" name="_close" >
-          <property name="text" >
-           <string>&amp;Close</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_query" >
-          <property name="text" >
-           <string>&amp;Query</string>
-          </property>
-          <property name="autoDefault" >
-           <bool>true</bool>
-          </property>
-          <property name="default" >
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="_print" >
-          <property name="text" >
-           <string>&amp;Print</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>20</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+        <property name="default" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="_print" >
+        <property name="text" >
+         <string>&amp;Print</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
+    <item row="1" column="0" >
+     <widget class="QGroupBox" name="_costGroup" >
+      <property name="title" >
+       <string>Costs</string>
       </property>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="QRadioButton" name="_useStandardCost" >
+         <property name="text" >
+          <string>Use Standard Cost</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QRadioButton" name="_useActualCost" >
+         <property name="text" >
+          <string>Use Actual Cost</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item rowspan="2" row="1" column="1" >
+     <widget class="QGroupBox" name="_salesPriceGroup" >
+      <property name="title" >
+       <string>Sales Price</string>
+      </property>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" colspan="2" >
+        <widget class="QRadioButton" name="_useListPrice" >
+         <property name="text" >
+          <string>Use List Price</string>
+         </property>
+         <property name="checked" >
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QRadioButton" name="_useAveragePrice" >
+         <property name="text" >
+          <string>Use Average Price</string>
+         </property>
+         <property name="checked" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_startEvalDateLit" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Start Evaluation Date:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="DLineEdit" name="_startEvalDate" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="_endEvalDateLit" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>End Evaluation Date:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="DLineEdit" name="_endEvalDate" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item row="2" column="0" >
+     <widget class="WarehouseGroup" name="_warehouse" >
+      <property name="title" >
+       <string/>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="0" colspan="3" >
+     <layout class="QHBoxLayout" >
       <property name="spacing" >
        <number>7</number>
       </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>5</number>
           </property>
@@ -402,6 +194,11 @@
           </item>
           <item>
            <widget class="CalendarComboBox" name="_calendar" >
+            <item>
+             <property name="text" >
+              <string/>
+             </property>
+            </item>
             <item>
              <property name="text" >
               <string/>
@@ -432,9 +229,7 @@
       <item>
        <widget class="PeriodsListView" name="_periods" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>5</vsizetype>
+         <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -459,11 +254,8 @@
       </item>
      </layout>
     </item>
-    <item>
+    <item row="4" column="0" colspan="3" >
      <layout class="QVBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
       <property name="spacing" >
        <number>0</number>
       </property>
@@ -477,9 +269,7 @@
       <item>
        <widget class="XTreeWidget" name="_plannedRE" >
         <property name="sizePolicy" >
-         <sizepolicy>
-          <hsizetype>7</hsizetype>
-          <vsizetype>7</vsizetype>
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
           <horstretch>0</horstretch>
           <verstretch>0</verstretch>
          </sizepolicy>
@@ -501,53 +291,34 @@
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>ParameterGroup</class>
-   <extends>QGroupBox</extends>
-   <header>parametergroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>CalendarComboBox</class>
    <extends>XComboBox</extends>
    <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>PeriodsListView</class>
-   <extends>XTreeWidget</extends>
-   <header>calendarTools.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
-   <class>XTreeWidget</class>
-   <extends>QTreeWidget</extends>
-   <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>ParameterGroup</class>
+   <extends>QGroupBox</extends>
+   <header>parametergroup.h</header>
   </customwidget>
   <customwidget>
-   <class>QMainWindow</class>
-   <extends>QWidget</extends>
-   <header>qmainwindow.h</header>
-   <container>1</container>
-   <pixmap></pixmap>
+   <class>PeriodsListView</class>
+   <extends>XTreeWidget</extends>
+   <header>calendarTools.h</header>
   </customwidget>
   <customwidget>
    <class>WarehouseGroup</class>
    <extends>QGroupBox</extends>
    <header>warehousegroup.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

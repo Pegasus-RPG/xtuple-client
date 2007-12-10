@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>817</width>
+    <height>437</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -200,6 +200,12 @@
           <widget class="CmCluster" name="_cmCluster" >
            <property name="enabled" >
             <bool>false</bool>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>150</width>
+             <height>0</height>
+            </size>
            </property>
            <property name="focusPolicy" >
             <enum>Qt::StrongFocus</enum>

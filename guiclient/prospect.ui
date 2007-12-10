@@ -1,7 +1,4 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>prospect</class>
  <widget class="QMainWindow" name="prospect" >
   <property name="geometry" >
@@ -9,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>692</width>
-    <height>506</height>
+    <height>578</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -17,42 +14,18 @@
   </property>
   <widget class="QWidget" name="centralwidget" >
    <layout class="QVBoxLayout" >
-    <property name="margin" >
-     <number>9</number>
-    </property>
-    <property name="spacing" >
-     <number>6</number>
-    </property>
     <item>
      <layout class="QHBoxLayout" >
-      <property name="margin" >
-       <number>0</number>
-      </property>
-      <property name="spacing" >
-       <number>6</number>
-      </property>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
-          <property name="spacing" >
-           <number>6</number>
-          </property>
           <item>
            <layout class="QGridLayout" >
-            <property name="margin" >
-             <number>0</number>
+            <property name="horizontalSpacing" >
+             <number>5</number>
             </property>
-            <property name="spacing" >
+            <property name="verticalSpacing" >
              <number>5</number>
             </property>
             <item row="1" column="1" >
@@ -87,12 +60,6 @@
             </item>
             <item row="0" column="1" >
              <layout class="QHBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>6</number>
-              </property>
               <item>
                <widget class="XLineEdit" name="_number" >
                 <property name="focusPolicy" >
@@ -154,9 +121,6 @@
         </item>
         <item>
          <layout class="QHBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -192,9 +156,6 @@
       </item>
       <item>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>0</number>
-        </property>
         <property name="spacing" >
          <number>0</number>
         </property>
@@ -232,9 +193,7 @@
     <item>
      <widget class="QTabWidget" name="_tabs" >
       <property name="sizePolicy" >
-       <sizepolicy>
-        <hsizetype>7</hsizetype>
-        <vsizetype>7</vsizetype>
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>0</horstretch>
         <verstretch>5</verstretch>
        </sizepolicy>
@@ -247,12 +206,6 @@
         <string>Notes</string>
        </attribute>
        <layout class="QVBoxLayout" >
-        <property name="margin" >
-         <number>9</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
         <item>
          <widget class="QTextEdit" name="_notes" />
         </item>
@@ -263,20 +216,11 @@
         <string>Quotes</string>
        </attribute>
        <layout class="QHBoxLayout" >
-        <property name="margin" >
-         <number>9</number>
-        </property>
-        <property name="spacing" >
-         <number>6</number>
-        </property>
         <item>
          <widget class="XTreeWidget" name="_quotes" />
         </item>
         <item>
          <layout class="QVBoxLayout" >
-          <property name="margin" >
-           <number>0</number>
-          </property>
           <property name="spacing" >
            <number>0</number>
           </property>
@@ -350,42 +294,31 @@
   </widget>
   <widget class="QStatusBar" name="statusbar" />
  </widget>
- <pixmapfunction></pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XComboBox</class>
-   <extends>QComboBox</extends>
-   <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
   </customwidget>
   <customwidget>
    <class>CRMAcctCluster</class>
    <extends>QWidget</extends>
    <header>crmacctcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
-   <class>ContactCluster</class>
-   <extends>QWidget</extends>
-   <header>contactcluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
    <extends>QTreeWidget</extends>
    <header>xtreewidget.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
