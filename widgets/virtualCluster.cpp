@@ -80,15 +80,21 @@ void VirtualCluster::init()
 
     _list = new QPushButton(tr("..."), this, "_list");
     _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+
 #ifndef Q_WS_MAC
+	_list->setMaximumWidth(25);
+#else
     _list->setMinimumWidth(60);
-#endif
     _list->setMinimumHeight(32);
-    
+#endif
+   
     _info = new QPushButton(tr("?"), this, "_info");
     _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
+	_info->setMaximumWidth(25);
+#else
     _info->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
 #endif
 
 
