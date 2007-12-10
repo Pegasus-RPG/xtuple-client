@@ -74,14 +74,23 @@ class OPENMFGWIDGETS_EXPORT CmLineEdit : public VirtualClusterLineEdit
 {
   Q_OBJECT;
 
+  public slots:
+	void setCustId(int pItem);
+
   public:
     CmLineEdit(QWidget *, const char * = 0);
+
+  private:
+	int _custId;
 
 };
 
 class OPENMFGWIDGETS_EXPORT CmCluster : public VirtualCluster
 {
   Q_OBJECT
+
+  public slots:
+	virtual void setCustId(int pCust);
 
   public:
     CmCluster(QWidget *, const char * = 0);

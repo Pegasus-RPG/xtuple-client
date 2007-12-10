@@ -67,8 +67,39 @@ CmCluster::CmCluster(QWidget *pParent, const char *pName) :
   _info->hide();
 }
 
+void CmCluster::setCustId(int pcustid)
+{
+  return (static_cast<CmLineEdit*>(_number))->setCustId(pcustid);
+}
+
 CmLineEdit::CmLineEdit(QWidget *pParent, const char *pName) :
-  VirtualClusterLineEdit(pParent, "aropen", "aropen_id", "aropen_docnumber", "formatmoney(aropen_amount-aropen_paid)", 0, " (aropen_doctype='C') AND (aropen_open) ", pName)
+  VirtualClusterLineEdit(pParent, "aropen", "aropen_id", "aropen_docnumber", "formatmoney(aropen_amount-aropen_paid)", 0, 
+	  " AND (aropen_doctype='C') AND (aropen_open) "
+	  " AND aropen_amount - aropen_paid - "
+	  "(SELECT COALESCE(SUM(checkhead_amount),0) "
+	  " FROM checkhead,checkitem "
+	  " WHERE ((checkhead_id=checkitem_checkhead_id) "
+	  " AND (NOT checkhead_posted) "
+	  " AND (NOT checkhead_void) "
+	  " AND (checkitem_aropen_id=aropen_id))) > 0 "
+	  , pName)
 {
   setTitles(tr("Credit Memo"), tr("Credit Memos"));
 }
+
+void CmLineEdit::setCustId(int pCust)
+{
+  {
+    _custId = pCust;
+    setExtraClause(QString(" (aropen_cust_id='%1') "
+			  " AND (aropen_doctype='C') AND (aropen_open) "
+	          " AND aropen_amount - aropen_paid - "
+	          "(SELECT COALESCE(SUM(checkhead_amount),0) "
+	          " FROM checkhead,checkitem "
+	          " WHERE ((checkhead_id=checkitem_checkhead_id) "
+	          " AND (NOT checkhead_posted) "
+	          " AND (NOT checkhead_void) "
+	          " AND (checkitem_aropen_id=aropen_id))) > 0 ").arg(pCust));
+  }
+}
+

@@ -374,7 +374,12 @@ VendorCluster::VendorCluster(QWidget *pParent, const char *name) :
 
   _list = new QPushButton(tr("..."), this);
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-  _list->setMinimumWidth(60);
+#ifndef Q_WS_MAC
+	_list->setMaximumWidth(25);
+#else
+    _list->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
+#endif
   _list->setFocusPolicy(Qt::NoFocus);
   layoutFirstLine->addWidget(_list);
 
