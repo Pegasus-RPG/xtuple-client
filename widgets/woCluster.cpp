@@ -84,6 +84,7 @@ WoLineEdit::WoLineEdit(QWidget *pParent, const char *name) :
   _woType = 0;
   _warehouseid = -1;
   _parsed = TRUE;
+  _useQuery = FALSE;
 
   _qtyOrdered = 0.0;
   _qtyReceived = 0.0;
