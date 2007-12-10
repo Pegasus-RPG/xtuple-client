@@ -133,8 +133,8 @@ private:
     int _taxcurrid;
 
     taxCache _taxCache;
-	char *dispositionTypes[];
-    char *creditMethods[];
+//	char *dispositionTypes[];
+    //char *creditMethods[];
 };
 
 #endif // RETURNAUTHORIZATION_H

@@ -231,11 +231,11 @@ moduleCRM::moduleCRM(OpenMFGGUIClient *Pparent) :
 
   for (unsigned int i = 0; i < sizeof(acts) / sizeof(acts[0]); i++)
   {
-    if (acts[i].actionName == "menu")
+    if (acts[i].actionName == QString("menu"))
     {
       acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
     }
-    else if (acts[i].actionName == "separator")
+    else if (acts[i].actionName == QString("separator"))
     {
       acts[i].menu->addSeparator();
     }

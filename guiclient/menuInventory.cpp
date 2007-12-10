@@ -523,11 +523,11 @@ void menuInventory::addActionsToMenu(actionProperties acts[], unsigned int numEl
     {
       continue;
     }
-    else if (acts[i].actionName == "menu")
+    else if (acts[i].actionName == QString("menu"))
     {
       acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
     }
-    else if (acts[i].actionName == "separator")
+    else if (acts[i].actionName == QString("separator"))
     {
       acts[i].menu->addSeparator();
     }

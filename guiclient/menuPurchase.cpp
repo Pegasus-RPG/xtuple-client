@@ -308,11 +308,11 @@ void menuPurchase::addActionsToMenu(actionProperties acts[], unsigned int numEle
     {
       continue;
     }
-    else if (acts[i].actionName == "menu")
+    else if (acts[i].actionName == QString("menu"))
     {
       acts[i].menu->insertItem(acts[i].actionTitle, (QMenu*)(acts[i].slot));
     }
-    else if (acts[i].actionName == "separator")
+    else if (acts[i].actionName == QString("separator"))
     {
       acts[i].menu->addSeparator();
     }
