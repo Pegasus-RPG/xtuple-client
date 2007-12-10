@@ -651,8 +651,8 @@ void invoice::populate()
 {
   q.prepare( "SELECT invchead.*, "
              "       COALESCE(invchead_taxauth_id, -1) AS taxauth_id,"
-	     "    currToCurr(invchead_tax_curr_id, invchead_curr_id, "
-	     "               invchead_tax, invchead_invcdate) AS invccurrtax, "
+             "    currToCurr(invchead_tax_curr_id, invchead_curr_id, "
+             "               invchead_tax, invchead_invcdate) AS invccurrtax, "
              "    COALESCE(cust_taxauth_id, -1) AS cust_taxauth_id,"
 	     "    cust_ffbillto, cust_ffshipto "
              "FROM invchead, custinfo "
@@ -833,11 +833,14 @@ void invoice::sFillItemList()
 void invoice::sFreightChanged()
 {
   XSqlQuery freightq;
-  freightq.prepare("SELECT calculateTax(:tax_id, :freight, 0, 'A') AS freighta,"
-		   "     calculateTax(:tax_id, :freight, 0, 'B') AS freightb,"
-		   "     calculateTax(:tax_id, :freight, 0, 'C') AS freightc;");
+  freightq.prepare("SELECT currToCurr(:dispcurr, :taxcurr, calculateTax(:tax_id, :freight, 0, 'A'), :invcdate) AS freighta,"
+		   "     currtoCurr(:dspcurr, :taxcurr, calculateTax(:tax_id, :freight, 0, 'B'), :invcdate) AS freightb,"
+		   "     currtoCurr(:dspcurr, :taxcurr, calculateTax(:tax_id, :freight, 0, 'C'), :invcdate) AS freightc;");
   freightq.bindValue(":tax_id", _taxCache.freightId());
   freightq.bindValue(":freight", _freight->localValue());
+  freightq.bindValue(":dispcurr", _freight->id());
+  freightq.bindValue(":taxcurr",  _taxcurrid);
+  freightq.bindValue(":invcdate", _invoiceDate->date());
   freightq.exec();
   if (freightq.first())
   {
