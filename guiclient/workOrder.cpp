@@ -367,6 +367,7 @@ enum SetResponse workOrder::set(const ParameterList &pParams)
     else if (param.toString() == "release")
     {
       _mode = cRelease;
+      _tabs->removePage(_tabs->page(4));
 
       q.prepare( "SELECT planord_itemsite_id, planord_duedate,"
                  "       CASE WHEN(planord_mps) THEN 'P'"
