@@ -80,17 +80,13 @@ void VirtualCluster::init()
 
     _list = new QPushButton(tr("..."), this, "_list");
     _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-    _list->setMaximumWidth(25);
-#endif
-
+    _list->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
+    
     _info = new QPushButton(tr("?"), this, "_info");
     _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-    _info->setMaximumWidth(25);
-#else
     _info->setMinimumWidth(60);
-#endif
+
 
     _name = new QLabel(this, "_name");
     _name->setAlignment(Qt::AlignLeft | Qt::AlignTop);
@@ -101,7 +97,7 @@ void VirtualCluster::init()
 
     _grid = new QGridLayout(this);
     _grid->setMargin(0);
-    _grid->setSpacing(0);
+    _grid->setSpacing(6);
     _grid->addWidget(_label,  0, 0);
     _grid->addWidget(_list,   0, 2);
     _grid->addWidget(_info,   0, 3);

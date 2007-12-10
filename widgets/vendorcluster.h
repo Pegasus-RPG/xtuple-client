@@ -148,6 +148,7 @@ class OPENMFGWIDGETS_EXPORT VendorInfo : public QWidget
   private:
     VendorLineEdit *_vendorNumber;
     QPushButton    *_list;
+    QPushButton    *_info;
 };
 
 

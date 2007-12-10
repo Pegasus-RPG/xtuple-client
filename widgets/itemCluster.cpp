@@ -497,6 +497,7 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   itemLayout->addWidget(_itemNumberLit);
 
   _itemNumber = new ItemLineEdit(this, "_itemNumber");
+  _itemNumber->setMinimumWidth(100);
   itemLayout->addWidget(_itemNumber);
 
   _itemList = new QPushButton(tr("..."), this, "_itemList");

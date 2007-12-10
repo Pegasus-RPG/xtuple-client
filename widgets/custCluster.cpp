@@ -434,35 +434,29 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   QWidget(pParent, name)
 {
 //  Create and place the component Widgets
-  QHBoxLayout *layoutMain = new QHBoxLayout(this, 0, 7, "layoutMain"); 
-  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 5, "layoutNumber"); 
-  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, 0, "layoutButtons"); 
+  QHBoxLayout *layoutMain = new QHBoxLayout(this, 0, 2, "layoutMain"); 
+  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 6, "layoutNumber"); 
+  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, 6, "layoutButtons"); 
 
   QLabel *_customerNumberLit = new QLabel(tr("Customer #:"), this, "_customerNumberLit");
   _customerNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   layoutNumber->addWidget(_customerNumberLit);
 
   _customerNumber = new CLineEdit(this, "_customerNumber");
+  _customerNumber->setMinimumWidth(100);
   layoutNumber->addWidget(_customerNumber);
   layoutMain->addLayout(layoutNumber);
 
   _list = new QPushButton(tr("..."), this, "_list");
-#ifndef Q_WS_MAC
-  _list->setMaximumWidth(25);
-#endif
   _list->setFocusPolicy(Qt::NoFocus);
   layoutButtons->addWidget(_list);
 
   _info = new QPushButton(tr("?"), this, "_info");
-#ifndef Q_WS_MAC
-  _info->setMaximumWidth(25);
-#endif
   _info->setFocusPolicy(Qt::NoFocus);
+  _info->setMinimumWidth(60);
+
   layoutButtons->addWidget(_info);
-
-  QSpacerItem* spacer = new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
-  layoutButtons->addItem(spacer);
-
+  
   layoutMain->addLayout(layoutButtons);
 
 //  Make some internal connections

@@ -164,7 +164,7 @@ UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
 {
   QHBoxLayout *layout = new QHBoxLayout(this);
   layout->setMargin(0);
-  layout->setSpacing(0);
+  layout->setSpacing(6);
 
   _label = new QLabel(tr("Username:"), this);
   _label->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
@@ -176,7 +176,7 @@ UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
   _list = new QPushButton(tr("..."), this);
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
-  _list->setMaximumWidth(25);
+  _list->setMinimumWidth(60);
 #endif
   _list->setFocusPolicy(Qt::NoFocus);
   layout->addWidget(_list);

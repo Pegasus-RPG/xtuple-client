@@ -282,27 +282,33 @@ VendorInfo::VendorInfo(QWidget *parent, const char *name) :
   QWidget(parent, name)
 {
 //  Create and place the component Widgets
-  QHBoxLayout *layoutMain   = new QHBoxLayout(this, 0, 7, "layoutMain"); 
-  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 5, "layoutNumber"); 
+  QHBoxLayout *layoutMain   = new QHBoxLayout(this, 0, 2, "layoutMain"); 
+  QHBoxLayout *layoutNumber = new QHBoxLayout(0, 0, 6, "layoutNumber"); 
+  QHBoxLayout *layoutButtons = new QHBoxLayout(0, 0, 6, "layoutButtons"); 
 
   QLabel *_vendorNumberLit = new QLabel(tr("Vendor #:"), this, "_vendorNumberLit");
   _vendorNumberLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
   layoutNumber->addWidget(_vendorNumberLit);
 
   _vendorNumber = new VendorLineEdit(this, "_vendorNumber");
+  _vendorNumber->setMinimumWidth(100);
   layoutNumber->addWidget(_vendorNumber);
   layoutMain->addLayout(layoutNumber);
 
   _list = new QPushButton(tr("..."), this, "_list");
-  _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-  _list->setMaximumWidth(25);
-#endif
   _list->setFocusPolicy(Qt::NoFocus);
-  layoutMain->addWidget(_list);
+  layoutButtons->addWidget(_list);
 
-  QSpacerItem* spacer = new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
-  layoutMain->addItem(spacer);
+/* Can implement this later  
+  _info = new QPushButton(tr("?"), this, "_info");
+  _info->setFocusPolicy(Qt::NoFocus);
+  layoutButtons->addWidget(_info);
+*/
+
+  layoutMain->addLayout(layoutButtons);
+
+ // QSpacerItem* spacer = new QSpacerItem(20, 0, QSizePolicy::Expanding, QSizePolicy::Fixed);
+ // layoutMain->addItem(spacer);
 
 //  Make some internal connections
   connect(_list, SIGNAL(clicked()), _vendorNumber, SLOT(sEllipses()));
@@ -362,9 +368,7 @@ VendorCluster::VendorCluster(QWidget *pParent, const char *name) :
 
   _list = new QPushButton(tr("..."), this);
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
-#ifndef Q_WS_MAC
-  _list->setMaximumWidth(25);
-#endif
+  _list->setMinimumWidth(60);
   _list->setFocusPolicy(Qt::NoFocus);
   layoutFirstLine->addWidget(_list);
 
