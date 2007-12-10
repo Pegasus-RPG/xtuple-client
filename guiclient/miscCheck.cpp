@@ -359,6 +359,8 @@ void miscCheck::sHandleButtons()
   {
 	_widgetStack->setCurrentIndex(1);
 	_memo->setText("Create Debit Memo");
+	_cmCluster->setId(-1);
+	_cmCluster->setCustId(_cust->id());
   }
   else
   {
