@@ -68,6 +68,11 @@ lotSerialComments::lotSerialComments(QWidget* parent, const char* name, bool mod
     setupUi(this);
 
     connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateLotSerial(int)));
+    
+    //Remove these controls until functionality is implemented
+    _tab->removePage(_tab->page(0));
+    _tab->removePage(_tab->page(0));
+    _save->hide();
 }
 
 lotSerialComments::~lotSerialComments()
