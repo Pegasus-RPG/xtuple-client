@@ -80,12 +80,16 @@ void VirtualCluster::init()
 
     _list = new QPushButton(tr("..."), this, "_list");
     _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+#ifndef Q_WS_MAC
     _list->setMinimumWidth(60);
+#endif
     _list->setMinimumHeight(32);
     
     _info = new QPushButton(tr("?"), this, "_info");
     _info->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+#ifndef Q_WS_MAC
     _info->setMinimumWidth(60);
+#endif
 
 
     _name = new QLabel(this, "_name");
