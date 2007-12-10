@@ -448,10 +448,22 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
   layoutMain->addLayout(layoutNumber);
 
   _list = new QPushButton(tr("..."), this, "_list");
+#ifndef Q_WS_MAC
+	_list->setMaximumWidth(25);
+#else
+    _list->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
+#endif
   _list->setFocusPolicy(Qt::NoFocus);
   layoutButtons->addWidget(_list);
 
   _info = new QPushButton(tr("?"), this, "_info");
+#ifndef Q_WS_MAC
+	_info->setMaximumWidth(25);
+#else
+    _info->setMinimumWidth(60);
+    _info->setMinimumHeight(32);
+#endif
   _info->setFocusPolicy(Qt::NoFocus);
   _info->setMinimumWidth(60);
 

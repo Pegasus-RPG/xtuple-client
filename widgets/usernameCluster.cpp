@@ -176,7 +176,10 @@ UsernameCluster::UsernameCluster(QWidget * parent, const char * name)
   _list = new QPushButton(tr("..."), this);
   _list->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 #ifndef Q_WS_MAC
-  _list->setMinimumWidth(60);
+	_list->setMaximumWidth(25);
+#else
+    _list->setMinimumWidth(60);
+    _list->setMinimumHeight(32);
 #endif
   _list->setFocusPolicy(Qt::NoFocus);
   layout->addWidget(_list);
