@@ -230,71 +230,104 @@ void quotes::sConvert()
 
       for (int i = 0; i < selected.size(); i++)
       {
-	int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
-	convert.bindValue(":quhead_id", quheadid);
-	convert.exec();
-	if (convert.first())
-	{
-	  soheadid = convert.value("sohead_id").toInt();
-	  if (soheadid == -3)
-	  {
-	    if (QMessageBox::question(this, tr("Quote for Prospect"),
-				      tr("<p>This Quote is for a Prospect, not "
-					 "a Customer. Do you want to convert "
-					 "the Prospect to a Customer?"),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
-	    {
-	      prospectq.bindValue(":quhead_id", quheadid);
-	      prospectq.exec();
-	      if (prospectq.first())
-	      {
-		int result = prospectq.value("result").toInt();
-		if (result < 0)
-		{
-		  systemError(this,
-			      storedProcErrorLookup("convertProspectToCustomer",
-						  result), __FILE__, __LINE__);
-		  notConverted.append(selected[i]);
-		  continue;
-		}
-		customer *newdlg = new customer(0, "customer", Qt::Dialog);
-		newdlg->setWindowModality(Qt::WindowModal);
-		ParameterList params;
-		params.append("cust_id", result);
-		params.append("mode",    "edit");
-		newdlg->set(params);
-		omfgThis->handleNewWindow(newdlg);
-		return;
-	      }
-	      else if (prospectq.lastError().type() != QSqlError::None)
-	      {
-		systemError(this, prospectq.lastError().databaseText(),
-			    __FILE__, __LINE__);
-		notConverted.append(selected[i]);
-		continue;
-	      }
-	    }
-	  }
-	  else if (soheadid < 0)
-	  {
-	    QMessageBox::warning(this, tr("Cannot Convert Quote"),
-				storedProcErrorLookup("convertQuote", soheadid)
-				.arg(selected[i] ? selected[i]->text(0) : ""));
-	    notConverted.append(selected[i]);
-	    continue;
-	  }
-	  omfgThis->sQuotesUpdated(quheadid);
-	  omfgThis->sSalesOrdersUpdated(soheadid);
+        int quheadid = ((XTreeWidgetItem*)(selected[i]))->id();
+        convert.bindValue(":quhead_id", quheadid);
+        convert.exec();
+        if (convert.first())
+        {
+          soheadid = convert.value("sohead_id").toInt();
+          if (soheadid == -3)
+          {
+            if ((_metrics->value("DefaultSalesRep").toInt() > 0) &&
+                (_metrics->value("DefaultTerms").toInt() > 0) &&
+                (_metrics->value("DefaultCustType").toInt() > 0) && 
+                (_metrics->value("DefaultShipFormId").toInt() > 0)  && 
+                (_privleges->check("MaintainCustomerMasters"))) 
+              {
+                if (QMessageBox::question(this, tr("Quote for Prospect"),
+                              tr("<p>This Quote is for a Prospect, not "
+                             "a Customer. Do you want to convert "
+                             "the Prospect to a Customer using global "
+                             "default values?"),
+                        QMessageBox::Yes,
+                        QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                {
+                  prospectq.bindValue(":quhead_id", quheadid);
+                  prospectq.exec();
+                  if (prospectq.first())
+                  {
+                    int result = prospectq.value("result").toInt();
+                    if (result < 0)
+                    {
+                      systemError(this,
+                                  storedProcErrorLookup("convertProspectToCustomer",
+                                  result), __FILE__, __LINE__);
+                      notConverted.append(selected[i]);
+                      continue;
+                    }
+                    convert.exec();
+                    if (convert.first())
+                    {
+                      soheadid = convert.value("sohead_id").toInt();
+                      if (soheadid < 0)
+                      {
+                        QMessageBox::warning(this, tr("Cannot Convert Quote"),
+                                storedProcErrorLookup("convertQuote", soheadid)
+                                .arg(selected[i] ? selected[i]->text(0) : ""));
+                        notConverted.append(selected[i]);
+                        continue;
+                      }
+                    }
+                  }
+                  else if (prospectq.lastError().type() != QSqlError::None)
+                  {
+                    systemError(this, prospectq.lastError().databaseText(),
+                            __FILE__, __LINE__);
+                    notConverted.append(selected[i]);
+                    continue;
+                  }
+                }
+                else
+                {
+                  QMessageBox::information(this, tr("Quote for Prospect"),
+                              tr("<p>The prospect must be manually "
+                                 "converted to customer from either the "
+                                 "CRM Account or Customer windows before "
+                                 "coverting this quote."));
+                  notConverted.append(selected[i]);
+                  continue;
+                }
+            }
+            else
+            {
+              QMessageBox::information(this, tr("Quote for Prospect"),
+                          tr("<p>The prospect must be manually "
+                             "converted to customer from either the "
+                             "CRM Account or Customer windows before "
+                             "coverting this quote."));
+              notConverted.append(selected[i]);
+              continue;
+            }
+          }
+          else if (soheadid < 0)
+          {
+            QMessageBox::warning(this, tr("Cannot Convert Quote"),
+                    storedProcErrorLookup("convertQuote", soheadid)
+                    .arg(selected[i] ? selected[i]->text(0) : ""));
+            notConverted.append(selected[i]);
+            continue;
+          }
+          omfgThis->sQuotesUpdated(quheadid);
+          omfgThis->sSalesOrdersUpdated(soheadid);
 
-	  salesOrder::editSalesOrder(soheadid, true);
-	}
-	else if (convert.lastError().type() != QSqlError::None)
-	{
-	  notConverted.append(selected[i]);
-	  systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
-	  continue;
-	}
+          salesOrder::editSalesOrder(soheadid, true);
+        }
+        else if (convert.lastError().type() != QSqlError::None)
+        {
+          notConverted.append(selected[i]);
+          systemError(this, convert.lastError().databaseText(), __FILE__, __LINE__);
+          continue;
+        }
       }
 
       if (notConverted.size() > 0)

@@ -197,6 +197,8 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
     _balanceMethod->setCurrentItem(1);
 
   _custtype->setId(_metrics->value("DefaultCustType").toInt());
+  _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
+  _terms->setId(_metrics->value("DefaultTerms").toInt());
 
   _partial->setChecked(_metrics->boolean("DefaultPartialShipments"));
   _backorders->setChecked(_metrics->boolean("DefaultBackOrders"));
@@ -322,6 +324,8 @@ void configureSO::sSave()
   _metrics->set("DefaultShipFormId", _shipform->id());
   _metrics->set("DefaultShipViaId", _shipvia->id());
   _metrics->set("DefaultCustType", _custtype->id());
+  _metrics->set("DefaultSalesRep", _salesrep->id());
+  _metrics->set("DefaultTerms", _terms->id());
   _metrics->set("DefaultPartialShipments", _partial->isChecked());
   _metrics->set("DefaultBackOrders", _backorders->isChecked());
   _metrics->set("DefaultFreeFormShiptos", _freeFormShiptos->isChecked());

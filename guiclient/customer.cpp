@@ -237,9 +237,8 @@ enum SetResponse customer::set(const ParameterList &pParams)
 
       _comments->setId(_custid);
 
-      _salesrep->setCurrentItem(-1);
-      _custtype->setCurrentItem(-1);
-      _terms->setCurrentItem(-1);
+      _salesrep->setId(_metrics->value("DefaultSalesRep").toInt());
+      _terms->setId(_metrics->value("DefaultTerms").toInt());
       _taxauth->setCurrentItem(-1);
       _shipform->setId(_metrics->value("DefaultShipFormId").toInt());
       _shipvia->setId(_metrics->value("DefaultShipViaId").toInt());
