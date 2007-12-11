@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>400</height>
+    <height>452</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -120,13 +120,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="_query" >
-        <property name="text" >
-         <string>Query</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer>
         <property name="orientation" >
          <enum>Qt::Vertical</enum>
@@ -145,7 +138,7 @@
      </layout>
     </item>
     <item row="1" column="0" colspan="5" >
-     <widget class="QTabWidget" name="_tab" >
+     <widget class="QTabWidget" name="_tabReview" >
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
         <horstretch>0</horstretch>
@@ -256,117 +249,98 @@
          </widget>
         </item>
         <item row="1" column="0" colspan="3" >
-         <layout class="QGridLayout" >
-          <property name="leftMargin" >
-           <number>5</number>
-          </property>
-          <property name="topMargin" >
-           <number>5</number>
-          </property>
-          <property name="rightMargin" >
-           <number>5</number>
-          </property>
-          <property name="bottomMargin" >
-           <number>5</number>
-          </property>
-          <property name="horizontalSpacing" >
-           <number>5</number>
-          </property>
-          <property name="verticalSpacing" >
-           <number>5</number>
-          </property>
-          <item row="1" column="1" >
-           <layout class="QVBoxLayout" >
-            <property name="spacing" >
-             <number>0</number>
-            </property>
-            <property name="leftMargin" >
-             <number>5</number>
-            </property>
-            <property name="topMargin" >
-             <number>5</number>
-            </property>
-            <property name="rightMargin" >
-             <number>5</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>5</number>
-            </property>
-            <item>
-             <widget class="QPushButton" name="_print" >
-              <property name="enabled" >
-               <bool>true</bool>
-              </property>
-              <property name="text" >
-               <string>&amp;Print</string>
-              </property>
-              <property name="autoDefault" >
-               <bool>false</bool>
-              </property>
-              <property name="default" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_edit" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>Edit</string>
-              </property>
-              <property name="autoDefault" >
-               <bool>false</bool>
-              </property>
-              <property name="default" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QPushButton" name="_view" >
-              <property name="enabled" >
-               <bool>false</bool>
-              </property>
-              <property name="text" >
-               <string>View</string>
-              </property>
-              <property name="autoDefault" >
-               <bool>false</bool>
-              </property>
-              <property name="default" >
-               <bool>false</bool>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeType" >
-               <enum>QSizePolicy::Expanding</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>16</width>
-                <height>46</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="0" >
-           <widget class="XTreeWidget" name="_ra" />
-          </item>
-          <item row="0" column="0" colspan="2" >
+         <layout class="QVBoxLayout" >
+          <item>
            <widget class="QLabel" name="_raopenLit" >
             <property name="text" >
              <string>Return Authorizations:</string>
             </property>
            </widget>
+          </item>
+          <item>
+           <layout class="QHBoxLayout" >
+            <item>
+             <widget class="XTreeWidget" name="_ra" />
+            </item>
+            <item>
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="_queryReview" >
+                <property name="text" >
+                 <string>&amp;Query</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_print" >
+                <property name="enabled" >
+                 <bool>true</bool>
+                </property>
+                <property name="text" >
+                 <string>&amp;Print</string>
+                </property>
+                <property name="autoDefault" >
+                 <bool>false</bool>
+                </property>
+                <property name="default" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_edit" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>Edit</string>
+                </property>
+                <property name="autoDefault" >
+                 <bool>false</bool>
+                </property>
+                <property name="default" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_view" >
+                <property name="enabled" >
+                 <bool>false</bool>
+                </property>
+                <property name="text" >
+                 <string>View</string>
+                </property>
+                <property name="autoDefault" >
+                 <bool>false</bool>
+                </property>
+                <property name="default" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeType" >
+                 <enum>QSizePolicy::Expanding</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>16</width>
+                  <height>46</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </item>
+           </layout>
           </item>
          </layout>
         </item>
@@ -468,6 +442,13 @@
           <property name="bottomMargin" >
            <number>5</number>
           </property>
+          <item>
+           <widget class="QPushButton" name="_queryDue" >
+            <property name="text" >
+             <string>&amp;Query</string>
+            </property>
+           </widget>
+          </item>
           <item>
            <widget class="QPushButton" name="_printdue" >
             <property name="enabled" >
@@ -639,6 +620,33 @@
    <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_custtype</tabstop>
+  <tabstop>_cust</tabstop>
+  <tabstop>_tabReview</tabstop>
+  <tabstop>_receipts</tabstop>
+  <tabstop>_shipments</tabstop>
+  <tabstop>_payment</tabstop>
+  <tabstop>_expired</tabstop>
+  <tabstop>_closed</tabstop>
+  <tabstop>_ra</tabstop>
+  <tabstop>_queryReview</tabstop>
+  <tabstop>_print</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_view</tabstop>
+  <tabstop>_creditmemo</tabstop>
+  <tabstop>_check</tabstop>
+  <tabstop>_creditcard</tabstop>
+  <tabstop>_queryDue</tabstop>
+  <tabstop>_printdue</tabstop>
+  <tabstop>_editdue</tabstop>
+  <tabstop>_viewdue</tabstop>
+  <tabstop>_process</tabstop>
+  <tabstop>_radue</tabstop>
+  <tabstop>_postmemos</tabstop>
+  <tabstop>_printmemo</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>
  </includes>

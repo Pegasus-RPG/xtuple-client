@@ -85,7 +85,8 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 //  connect(_ra, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
 //  connect(_radue, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_codeGroup, SIGNAL(buttonClicked(int)), this, SLOT(sParameterTypeChanged()));
-  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_queryReview, SIGNAL(clicked()), this, SLOT(sFillListReview()));
+  connect(_queryDue, SIGNAL(clicked()), this, SLOT(sFillListDue()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
@@ -94,7 +95,8 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   connect(_printdue, SIGNAL(clicked()), this, SLOT(sPrintDue()));
   connect(_process, SIGNAL(clicked()), this, SLOT(sProcess()));
   connect(_radue, SIGNAL(valid(bool)), this, SLOT(sHandleButton()));
-  connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillList()));
+  connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillListReview()));
+  connect(omfgThis, SIGNAL(returnAuthorizationsUpdated()), this, SLOT(sFillListDue()));
 
   _ra->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
   _ra->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
@@ -322,7 +324,7 @@ void returnAuthorizationWorkbench::sProcess()
         returnAuthCheck newdlg(this, "", TRUE);
         newdlg.set(params);
         if (newdlg.exec() != QDialog::Rejected)
-          sFillList();
+          sFillListDue();
       }
       else if (_radue->altId() == 3)
       {
@@ -356,7 +358,7 @@ void returnAuthorizationWorkbench::sProcess()
 				   cardproc->errorMsg());
 	  }
 	  // requery regardless 'cause the new credit memo means nothing's "due"
-	  sFillList();
+	  sFillListDue();
 	}
 	else if (ccq.lastError().type() != QSqlError::None)
 	{
@@ -368,12 +370,12 @@ void returnAuthorizationWorkbench::sProcess()
 	  QMessageBox::critical(this, tr("Credit Card Processing Error"),
 				tr("Could not find a Credit Card to use for "
 				   "this Credit transaction."));
-	  sFillList();
+	  sFillListDue();
 	  return;
 	}
       }
       else
-	sFillList();
+	sFillListDue();
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -412,7 +414,7 @@ void returnAuthorizationWorkbench::setParams(ParameterList &params)
   _dates->appendValue(params);
 }
 
-void returnAuthorizationWorkbench::sFillList()
+void returnAuthorizationWorkbench::sFillListReview()
 { 
   _ra->clear();
   _radue->clear();
@@ -468,9 +470,9 @@ void returnAuthorizationWorkbench::sFillList()
 			  "    :closed "
 			  "  WHEN raitem_disposition = 'C' THEN "
 			  "    :payment "
-			  "  WHEN raitem_disposition = 'R' "
-			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 "
-			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0 THEN "
+			  "  WHEN (raitem_disposition = 'R' "
+			  "    AND SUM(raitem_qtyauthorized-raitem_qtycredited) > 0 "
+			  "    AND SUM(raitem_qtyauthorized-raitem_qtyreceived) > 0) THEN "
 			  "    :receipt || ',' || :payment "
 			  "  WHEN raitem_disposition = 'R' "
 			  "    AND SUM(raitem_qtyreceived-raitem_qtycredited) > 0 THEN "
@@ -583,6 +585,19 @@ void returnAuthorizationWorkbench::sFillList()
       return;
     }
   }
+}
+
+void returnAuthorizationWorkbench::sFillListDue()
+{ 
+  _ra->clear();
+  _radue->clear();
+  if (_cust->isChecked() && !_custInfo->isValid())
+  {
+    QMessageBox::information( this, tr("Customer not selected"),
+			      tr("<p>Please select a customer.") );
+    _custInfo->setFocus();
+    return;
+  }
 
   //Fill Due Credit List
   if ((_creditmemo->isChecked()) || (_check->isChecked()) || (_creditcard->isChecked()))
@@ -616,7 +631,8 @@ void returnAuthorizationWorkbench::sFillList()
 		  "WHERE ( (rahead_id=raitem_rahead_id) "
 		  " AND (rahead_cust_id=cust_id) "
 		  " AND (cust_custtype_id=custtype_id) "
-		  " AND ((raitem_disposition = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
+		  " AND ((raitem_disposition = 'R' AND rahead_timing = 'R' AND raitem_qtyreceived > raitem_qtycredited) "
+          " OR (raitem_disposition = 'R' AND rahead_timing = 'I' AND raitem_qtyauthorized > raitem_qtycredited) "
 		  " OR (raitem_disposition = 'C' AND raitem_qtyauthorized > raitem_qtycredited)) "
 		  " AND (raitem_status = 'O') "
 		  " AND (rahead_creditmethod != 'N') "
@@ -652,6 +668,7 @@ void returnAuthorizationWorkbench::sFillList()
     }
   }
 }
+
 
 void returnAuthorizationWorkbench::sParameterTypeChanged()
 {
