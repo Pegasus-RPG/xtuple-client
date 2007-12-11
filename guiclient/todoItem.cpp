@@ -203,7 +203,7 @@ void todoItem::sSave()
   {
     q.prepare( "SELECT updateTodoItem(:todoitem_id, "
 	       "  :usr_id, :name, :description, "
-	       "  :incdt_id, :crmacct_id, :started, :due, :status, "
+	       "  :incdt_id, :crmacct_id, :ophead_id, :started, :due, :status, "
 	       "  :assigned, :completed, :seq, :notes, :active) AS result;");
     storedProc = "updateTodoItem";
     q.bindValue(":todoitem_id", _todoitemid);
