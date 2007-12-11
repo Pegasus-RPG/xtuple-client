@@ -6,8 +6,6 @@
   <!-- parameters supply default values for mandatory fields that we can't
        derive from the data. param name = (view-name)_(column-name)
     -->
-  <xsl:param name="customer_sales_rep"		   select="'Yahoo'"/>
-  <xsl:param name="customer_default_terms"	   select="'Yahoo'"/>
   <xsl:param name="customer_default_tax_authority" select="'Yahoo'"/>
   <xsl:param name="customer_corresp_type" select="'bill'" />   <!-- bill|ship -->
   <xsl:param name="salesline_sched_offset"	   select="'1 day'" />
@@ -137,8 +135,7 @@
       </customer_name>
 
       <!-- active -->
-
-      <sales_rep><xsl:value-of select="$customer_sales_rep"/></sales_rep>
+      <!-- sales_rep -->
 
       <!-- commission -->
 
@@ -156,7 +153,7 @@
       <!-- allow_free_form_billto -->
       <!-- preferred_selling_whs -->
       <default_tax_authority><xsl:value-of select="$customer_default_tax_authority"/></default_tax_authority>
-      <default_terms><xsl:value-of select="$customer_default_terms"/></default_terms>
+      <!-- default_terms -->
       <!-- balance_method -->
       <!-- default_discount -->
 
