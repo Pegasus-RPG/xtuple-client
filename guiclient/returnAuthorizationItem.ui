@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>696</width>
-    <height>804</height>
+    <width>725</width>
+    <height>799</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -586,7 +586,7 @@
          <widget class="CurrCluster" name="_netUnitPrice" >
           <property name="minimumSize" >
            <size>
-            <width>130</width>
+            <width>150</width>
             <height>0</height>
            </size>
           </property>
@@ -663,7 +663,7 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1" colspan="2" >
+        <item row="3" column="1" colspan="3" >
          <widget class="CurrCluster" name="_extendedPrice" >
           <property name="focusPolicy" >
            <enum>Qt::NoFocus</enum>

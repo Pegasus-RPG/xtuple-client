@@ -172,7 +172,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   else
   {
     _tab->removePage(_tab->page(1));
-    _tab->removePage(_tab->page(0));
+    _tab->removePage(_tab->page(1));
   }
   
 }
