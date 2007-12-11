@@ -196,6 +196,7 @@ enum SetResponse transferOrderItem::set(const ParameterList &pParams)
 
       _save->setEnabled(FALSE);
       _next->setText(tr("New"));
+      _comments->setEnabled(FALSE);
       _item->setReadOnly(false);
       _item->setFocus();
 
