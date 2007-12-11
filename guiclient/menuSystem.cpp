@@ -333,7 +333,10 @@ void menuSystem::sPrepareWindowMenu()
 
   QWidget * activeWindow = parent->workspace()->activeWindow();
   if(omfgThis->showTopLevel())
-    activeWindow = qApp->activeWindow();
+  {
+    //activeWindow = qApp->activeWindow();
+    activeWindow = omfgThis->myActiveWindow();
+  }
   _lastActive = activeWindow;
 
   if(activeWindow)

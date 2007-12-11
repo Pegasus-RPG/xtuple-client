@@ -300,6 +300,7 @@ OpenMFGGUIClient *omfgThis;
 OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   _menuBar = 0;
+  _activeWindow = 0;
 
   _databaseURL = pDatabaseURL;
   _username = pUsername;
@@ -438,6 +439,8 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
   _splash->showMessage(tr("Completing Initialzation"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
   _splash->finish(this);
+
+  connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*)));
 }
 
 bool OpenMFGGUIClient::singleCurrency()
@@ -1159,6 +1162,9 @@ void OpenMFGGUIClient::windowDestroyed(QObject * o)
   QWidget * w = qobject_cast<QWidget *>(o);
   if(w)
   {
+    if(w == _activeWindow)
+      _activeWindow = 0;
+
     _windowList.removeAll(w);
 
     QString objName = w->objectName();
@@ -1222,4 +1228,19 @@ QMenuBar *OpenMFGGUIClient::menuBar()
 #else
   return QMainWindow::menuBar();
 #endif
+}
+
+void OpenMFGGUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
+{
+  QWidget * thisActive = workspace()->activeWindow();
+  if(omfgThis->showTopLevel())
+    thisActive = qApp->activeWindow();
+  if(thisActive == this)
+    return;
+  _activeWindow = thisActive;
+}
+
+QWidget * OpenMFGGUIClient::myActiveWindow()
+{
+  return _activeWindow;
 }

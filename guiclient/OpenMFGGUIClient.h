@@ -275,6 +275,7 @@ class OpenMFGGUIClient : public QMainWindow
     QString _singleWindow;
 
     void launchBrowser(QWidget*, const QString &);
+    QWidget * myActiveWindow();
 
   public slots:
     void sReportError(const QString &);
@@ -307,7 +308,7 @@ class OpenMFGGUIClient : public QMainWindow
     void sQOHChanged(int, bool);
     void sQuotesUpdated(int);
     void sReportsChanged(int, bool);
-	void sReturnAuthorizationsUpdated();
+    void sReturnAuthorizationsUpdated();
     void sSalesOrdersUpdated(int);
     void sStandardPeriodsUpdated();
     void sTaxAuthsUpdated(int);
@@ -321,6 +322,8 @@ class OpenMFGGUIClient : public QMainWindow
     void sWorkOrdersUpdated(int, bool);
 
     void sIdleTimeout();
+
+    void sFocusChanged(QWidget* old, QWidget* now);
 
   signals:
     void tick();
@@ -352,7 +355,7 @@ class OpenMFGGUIClient : public QMainWindow
     void qohChanged(int, bool);
     void quotesUpdated(int, bool);
     void reportsChanged(int, bool);
-	void returnAuthorizationsUpdated();
+    void returnAuthorizationsUpdated();
     void salesOrdersUpdated(int, bool);
     void standardPeriodsUpdated();
     void taxAuthsUpdated(int);
@@ -380,6 +383,7 @@ class OpenMFGGUIClient : public QMainWindow
     bool         _showTopLevel;
     QWidgetList  _windowList;
     QMenuBar	*_menuBar;
+    QWidget     *_activeWindow;
 
     InputManager   *_inputManager;
 
