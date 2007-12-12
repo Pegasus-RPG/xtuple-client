@@ -1038,6 +1038,7 @@ void returnAuthorization::sFillList()
 	_billToAddr->setEnabled(true);
   }
   _comments->refresh();
+  sCreditByChanged();
 }
 
 void returnAuthorization::sCalculateSubtotal()
@@ -1411,7 +1412,7 @@ void returnAuthorization::sCreditByChanged()
                 "You may not set the Credit By to 'None' unless all credit amounts are zero."));
       _creditBy->setCurrentItem(1);
     }
-    else if (_creditBy->currentItem() == 0)
+    else if (_creditBy->currentItem() == 0  || _total->localValue() == 0)
     {
       _currency->setEnabled(false);
       _miscChargeDescription->setEnabled(false);
