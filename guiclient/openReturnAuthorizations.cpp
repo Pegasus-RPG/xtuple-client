@@ -242,7 +242,7 @@ void openReturnAuthorizations::sFillList()
 			   "       WHEN rahead_disposition = 'V' THEN "
 			   "         :service "
 			   "       WHEN rahead_disposition = 'M' THEN "
-			   "         :mixed "
+			   "         :substitute "
 			   "       END AS disposition, "
                "       formatDate(rahead_authdate) AS f_authorized,"
                "       formatDate(rahead_expiredate) AS f_expires "
@@ -268,7 +268,7 @@ void openReturnAuthorizations::sFillList()
   q.bindValue(":return", tr("Return"));
   q.bindValue(":replace", tr("Replace"));
   q.bindValue(":service", tr("Service"));
-  q.bindValue(":mixed", tr("Mixed"));
+  q.bindValue(":substitute", tr("Substitute"));
   q.exec();
 
   _ra->populate(q);
