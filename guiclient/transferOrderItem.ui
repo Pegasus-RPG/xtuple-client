@@ -930,8 +930,8 @@
   <tabstop>_warehouse</tabstop>
   <tabstop>_qtyOrdered</tabstop>
   <tabstop>_scheduledDate</tabstop>
-  <tabstop>_freight</tabstop>
   <tabstop>_promisedDate</tabstop>
+  <tabstop>_freight</tabstop>
   <tabstop>_tabs</tabstop>
   <tabstop>_itemcharView</tabstop>
   <tabstop>_notes</tabstop>
