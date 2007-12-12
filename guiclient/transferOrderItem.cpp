@@ -919,7 +919,7 @@ void transferOrderItem::populate()
       _scheduledDate->setDate(item.value("toitem_schedshipdate").toDate());
       _notes->setText(item.value("toitem_notes").toString());
       if (!item.value("toitem_schedrecvdate").isNull() && _metrics->boolean("UsePromiseDate"))
-	_promisedDate->setText(item.value("toitem_schedrecvdate").toString());
+	_promisedDate->setDate(item.value("toitem_schedrecvdate").toDate());
       _freight->set(item.value("toitem_freight").toDouble(),
 		    item.value("tohead_freight_curr_id").toInt(),
 		    item.value("tohead_orderdate").toDate());
