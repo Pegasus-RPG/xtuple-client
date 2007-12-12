@@ -187,14 +187,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
   bool     valid;
   QString metric;
 
-  param = pParams.value("rahead_id", &valid);
-  if (valid)
-  {
-    _raheadid = param.toInt();
-    _comments->setId(_raheadid);
-    populate();
-  }
-
   param = pParams.value("mode", &valid);
   if (valid)
   {
@@ -324,6 +316,14 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 
       _cancel->setFocus();
     }
+  }
+
+  param = pParams.value("rahead_id", &valid);
+  if (valid)
+  {
+    _raheadid = param.toInt();
+    _comments->setId(_raheadid);
+    populate();
   }
 
   param = pParams.value("cust_id", &valid);
