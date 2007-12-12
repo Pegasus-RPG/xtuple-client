@@ -74,6 +74,9 @@ class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
 
     virtual void	setObjectName(const QString &);
 
+  public slots:
+    virtual void paintEvent(QPaintEvent *);
+
   private:
     virtual void	constructor();
 

@@ -55,6 +55,10 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
+#include <QApplication>
+#include <QStyleOptionButton>
+#include <QStylePainter>
+
 #include "xcheckbox.h"
 
 XCheckBox::XCheckBox(QWidget *pParent) :
@@ -84,13 +88,6 @@ void XCheckBox::constructor()
     Q_INIT_RESOURCE(widgets);
     if (! _checkedIcon)
       _checkedIcon = new QPixmap(":/widgets/images/xcheckbox.png");
-#if 0
-  // TODO: can we use the icon as the background for the XCheckBox::indicator?
-  setStyleSheet(styleSheet() + " XCheckBox::indicator { border-style: wave }");
-#else
-    setIcon(*_checkedIcon);
-    setIconSize(_checkedIcon->size());
-#endif
   }
 }
 
@@ -119,4 +116,57 @@ XCheckBox::~XCheckBox()
     else
       _x_preferences->set(_settingsName + "/checked", (int)checkState());
   }
+}
+
+void XCheckBox::paintEvent(QPaintEvent * /*event*/)
+{
+  // copied from Qt's QCheckBox
+  QStylePainter p(this);
+  QStyleOptionButton opt;
+  initStyleOption(&opt);
+
+  QBrush brush = QBrush(Qt::Dense6Pattern);
+
+  QString styleName = style()->metaObject()->className();
+  if (styleName == "QWindowsStyle")
+  {
+    opt.palette.setBrush(QPalette::Button, brush);
+    opt.palette.setBrush(QPalette::Base,   brush);
+  }
+  else if (styleName == "QMotifStyle")
+  {
+    opt.palette.setBrush(QPalette::Button, brush);
+    opt.palette.setBrush(QPalette::Base,   brush);
+
+    opt.palette.setBrush(QPalette::Mid,    brush);
+  }
+  else if (styleName == "QCDEStyle")
+  {
+    opt.palette.setBrush(QPalette::Button, brush);
+    opt.palette.setBrush(QPalette::Base,   brush);
+  }
+  else if (styleName == "QPlastiqueStyle")
+  {
+    // the innards of the check box: base palette,
+    // but setting a pattern makes the whole thing black
+
+    brush = opt.palette.shadow();
+    brush.setStyle(Qt::Dense5Pattern);
+    opt.palette.setBrush(QPalette::Shadow, brush);
+  }
+  else if (styleName == "QCleanlooksStyle")
+  {
+    opt.palette.setBrush(QPalette::Button, brush);
+    opt.palette.setBrush(QPalette::Base,   brush);
+
+    brush = QBrush(Qt::SolidPattern);
+    brush.setColor(brush.color().darker(300));
+    opt.palette.setBrush(QPalette::Text,   brush);
+  }
+  else	// fallback
+  {
+    setIcon(*_checkedIcon);
+    setIconSize(_checkedIcon->size());
+  }
+  p.drawControl(QStyle::CE_CheckBox, opt);
 }
