@@ -78,10 +78,7 @@ salesAccount::salesAccount(QWidget* parent, const char* name, bool modal, Qt::WF
 
   if (! _metrics->boolean("EnableReturnAuth"))
   {
-    _returnsLit->setVisible(false);
-    _returns->setVisible(false);
-    _corLit->setVisible(false);
-    _cor->setVisible(false);
+    _returnsGroup->setVisible(false);
     _cowLit->setVisible(false);
     _cow->setVisible(false);
   }

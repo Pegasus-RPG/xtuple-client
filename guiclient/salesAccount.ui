@@ -5,234 +5,58 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>528</width>
-    <height>437</height>
+    <width>600</width>
+    <height>624</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Sales Account Assignment</string>
   </property>
-  <layout class="QHBoxLayout" >
-   <property name="spacing" >
-    <number>7</number>
-   </property>
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
-   <item>
-    <layout class="QVBoxLayout" >
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QHBoxLayout" >
      <property name="spacing" >
-      <number>0</number>
+      <number>5</number>
      </property>
      <item>
-      <layout class="QVBoxLayout" >
+      <widget class="QLabel" name="_warehouseLit" >
+       <property name="text" >
+        <string>&amp;Warehouse:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_warehouse</cstring>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <layout class="QHBoxLayout" >
        <property name="spacing" >
-        <number>5</number>
+        <number>0</number>
        </property>
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_warehouseLit" >
-           <property name="text" >
-            <string>&amp;Warehouse:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_warehouse</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="XComboBox" name="_warehouse" />
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-        </layout>
+        <widget class="XComboBox" name="_warehouse" />
        </item>
        <item>
-        <widget class="ParameterGroup" name="_customerTypes" >
-         <property name="title" >
-          <string/>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ParameterGroup" name="_productCategories" >
-         <property name="title" >
-          <string/>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
          </property>
-        </widget>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_salesLit" >
-             <property name="text" >
-              <string>Sa&amp;les Account:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_sales</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_creditLit" >
-             <property name="text" >
-              <string>Credit &amp;Memo Account:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_credit</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_cosLit" >
-             <property name="text" >
-              <string>C&amp;ost of Sales Account:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_cos</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_returnsLit" >
-             <property name="text" >
-              <string>&amp;Returns Account:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_returns</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_corLit" >
-             <property name="text" >
-              <string>Cost of R&amp;eturns Account:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_cor</cstring>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="_cowLit" >
-             <property name="text" >
-              <string>Cost of W&amp;arranty Account:</string>
-             </property>
-             <property name="alignment" >
-              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-             </property>
-             <property name="buddy" >
-              <cstring>_cow</cstring>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="GLCluster" name="_sales" />
-           </item>
-           <item>
-            <widget class="GLCluster" name="_credit" />
-           </item>
-           <item>
-            <widget class="GLCluster" name="_cos" />
-           </item>
-           <item>
-            <widget class="GLCluster" name="_returns" />
-           </item>
-           <item>
-            <widget class="GLCluster" name="_cor" />
-           </item>
-           <item>
-            <widget class="GLCluster" name="_cow" />
-           </item>
-          </layout>
-         </item>
-        </layout>
+        </spacer>
        </item>
       </layout>
      </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>16</width>
-         <height>17</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
     </layout>
    </item>
-   <item>
+   <item rowspan="3" row="0" column="1" >
     <layout class="QVBoxLayout" >
      <property name="spacing" >
       <number>5</number>
@@ -271,6 +95,147 @@
       </spacer>
      </item>
     </layout>
+   </item>
+   <item row="1" column="0" >
+    <widget class="ParameterGroup" name="_customerTypes" >
+     <property name="title" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0" >
+    <widget class="ParameterGroup" name="_productCategories" >
+     <property name="title" >
+      <string/>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2" >
+    <widget class="QGroupBox" name="_salesGroup" >
+     <property name="title" >
+      <string>Sales</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="_salesLit" >
+        <property name="text" >
+         <string>Sa&amp;les Account:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_sales</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="GLCluster" name="_sales" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="_creditLit" >
+        <property name="text" >
+         <string>Credit &amp;Memo Account:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_credit</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="GLCluster" name="_credit" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="_cosLit" >
+        <property name="text" >
+         <string>C&amp;ost of Sales Account:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_cos</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" >
+       <widget class="GLCluster" name="_cos" />
+      </item>
+      <item row="3" column="0" >
+       <widget class="QLabel" name="_cowLit" >
+        <property name="text" >
+         <string>Cost of W&amp;arranty Account:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_cow</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1" >
+       <widget class="GLCluster" name="_cow" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2" >
+    <widget class="QGroupBox" name="_returnsGroup" >
+     <property name="title" >
+      <string>Returns</string>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="_returnsLit" >
+        <property name="text" >
+         <string>&amp;Returns Account:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_returns</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="GLCluster" name="_returns" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="_corLit" >
+        <property name="text" >
+         <string>Cost of R&amp;eturns Account:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+        <property name="buddy" >
+         <cstring>_cor</cstring>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="GLCluster" name="_cor" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="5" column="0" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>20</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
    </item>
   </layout>
  </widget>
