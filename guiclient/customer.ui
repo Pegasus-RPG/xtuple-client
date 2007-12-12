@@ -651,6 +651,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -1382,13 +1387,7 @@
           <widget class="QWidget" name="_charassPage" >
            <layout class="QGridLayout" >
             <item row="0" column="0" >
-             <widget class="XTreeWidget" name="_charass" >
-              <property name="font" >
-               <font>
-                <pointsize>13</pointsize>
-               </font>
-              </property>
-             </widget>
+             <widget class="XTreeWidget" name="_charass" />
             </item>
             <item row="0" column="1" >
              <layout class="QVBoxLayout" >
@@ -1460,11 +1459,6 @@
               <width>661</width>
               <height>463</height>
              </rect>
-            </property>
-            <property name="font" >
-             <font>
-              <pointsize>13</pointsize>
-             </font>
             </property>
             <property name="editTriggers" >
              <set>QAbstractItemView::AllEditTriggers</set>
