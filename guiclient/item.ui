@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>720</width>
+    <width>791</width>
     <height>600</height>
    </rect>
   </property>
@@ -291,6 +291,12 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="minimumSize" >
+               <size>
+                <width>150</width>
+                <height>0</height>
+               </size>
               </property>
              </widget>
             </item>
