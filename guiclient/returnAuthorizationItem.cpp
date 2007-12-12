@@ -296,17 +296,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
- 
-  _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                              "                uom_name, item_type, item_config "
-                              "FROM item, itemsite, uom "
-                              "WHERE ( (itemsite_item_id=item_id)"
-                              " AND (item_inv_uom_id=uom_id)"
-                              " AND (itemsite_active)"
-                              " AND (item_active)"
-                              " AND (customerCanPurchase(item_id, %1, %2)) ) "
-                              "ORDER BY item_number;" )
-                     .arg(_custid).arg(_shiptoid) );
 
   return NoError; 
 }
@@ -1120,16 +1109,28 @@ void returnAuthorizationItem::updatePriceInfo()
 void returnAuthorizationItem::sDispositionChanged()
 {
   if (_disposition->currentIndex() == 3)
-    _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                      "       item_active, item_config, item_type, uom_name "
-                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-					  "WHERE ((item_type = 'J') "
-					  "AND (item_active)) ");
+  _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                              "                uom_name, item_type, item_config "
+                              "FROM item, itemsite, uom "
+                              "WHERE ( (itemsite_item_id=item_id)"
+                              " AND (item_inv_uom_id=uom_id)"
+                              " AND (itemsite_active)"
+                              " AND (item_active)"
+							  " AND (item_type = 'J')"
+                              " AND (customerCanPurchase(item_id, %1, %2)) ) "
+                              "ORDER BY item_number;" )
+                     .arg(_custid).arg(_shiptoid) );
   else
-	  _item->setQuery("SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
-                      "       item_active, item_config, item_type, uom_name "
-                      "FROM item JOIN uom ON (item_inv_uom_id=uom_id) "
-					  "AND (item_active) ");
+  _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
+                              "                uom_name, item_type, item_config "
+                              "FROM item, itemsite, uom "
+                              "WHERE ( (itemsite_item_id=item_id)"
+                              " AND (item_inv_uom_id=uom_id)"
+                              " AND (itemsite_active)"
+                              " AND (item_active)"
+                              " AND (customerCanPurchase(item_id, %1, %2)) ) "
+                              "ORDER BY item_number;" )
+                     .arg(_custid).arg(_shiptoid) );
 
   if (_disposition->currentIndex() >= 2)
   {
