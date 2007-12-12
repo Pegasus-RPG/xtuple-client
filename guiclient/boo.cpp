@@ -373,6 +373,26 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
     _closeWO->setChecked(q.value("boohead_closewo").toBool());
   }
 
+  if (_revision->description() == "Inactive")
+  {
+	  _save->setEnabled(FALSE);
+      _new->setEnabled(FALSE);
+	  _documentNum->setEnabled(FALSE);
+	  _revisionDate->setEnabled(FALSE);
+	  _closeWO->setEnabled(FALSE);
+	  _finalLocation->setEnabled(FALSE);
+  }
+
+  if ((_revision->description() == "Pending") || (_revision->description() == "Active"))
+  {
+	  _save->setEnabled(TRUE);
+      _new->setEnabled(TRUE);
+	  _documentNum->setEnabled(TRUE);
+	  _revisionDate->setEnabled(TRUE);
+	  _closeWO->setEnabled(TRUE);
+	  _finalLocation->setEnabled(TRUE);
+  }
+
   q.prepare( "SELECT MAX(booitem_execday) AS leadtime "
              "FROM booitem(:item_id,:revision_id);" );
   q.bindValue(":item_id", _item->id());
