@@ -261,6 +261,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _authNumber->setEnabled(FALSE);
       sDispositionChanged();
       _save->setFocus();
+  	  _cancel->setText("&Close");
       
       connect(_authNumber, SIGNAL(lostFocus()), this, SLOT(sCheckAuthorizationNumber()));
     }
@@ -314,6 +315,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
 	  _receiveAll->hide();
 	  _postReceipts->hide();
 
+  	  _cancel->setText("&Close");
       _cancel->setFocus();
     }
   }
@@ -506,6 +508,8 @@ void returnAuthorization::sPostReceipts()
       sFillList();
       break;
     }
+    _mode = cEdit;
+	_cancel->setText("&Close");
   }
 }
 
