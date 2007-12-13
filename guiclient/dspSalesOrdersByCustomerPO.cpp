@@ -57,56 +57,22 @@
 
 #include "dspSalesOrdersByCustomerPO.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
-#include "salesOrder.h"
+#include <QMenu>
+#include <QMessageBox>
+
 #include "dspSalesOrderStatus.h"
 #include "dspShipmentsBySalesOrder.h"
+#include "returnAuthorization.h"
+#include "salesOrder.h"
 
-/*
- *  Constructs a dspSalesOrdersByCustomerPO as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspSalesOrdersByCustomerPO::dspSalesOrdersByCustomerPO(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
-
-    // signals and slots connections
-    connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_poNumber, SIGNAL(lostFocus()), this, SLOT(sFillList()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-dspSalesOrdersByCustomerPO::~dspSalesOrdersByCustomerPO()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void dspSalesOrdersByCustomerPO::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QMenu>
-
-void dspSalesOrdersByCustomerPO::init()
-{
-  statusBar()->hide();
+  connect(_so, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_dates, SIGNAL(updated()), this, SLOT(sFillList()));
+  connect(_poNumber, SIGNAL(lostFocus()), this, SLOT(sFillList()));
 
   _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
   _dates->setStartCaption(tr("Starting Order Date:"));
@@ -126,6 +92,16 @@ void dspSalesOrdersByCustomerPO::init()
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sFillList())  );
 }
 
+dspSalesOrdersByCustomerPO::~dspSalesOrdersByCustomerPO()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void dspSalesOrdersByCustomerPO::languageChange()
+{
+  retranslateUi(this);
+}
+
 void dspSalesOrdersByCustomerPO::sPopulateMenu(QMenu *menuThis)
 {
   menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
@@ -133,6 +109,12 @@ void dspSalesOrdersByCustomerPO::sPopulateMenu(QMenu *menuThis)
   menuThis->insertSeparator();
   menuThis->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
   menuThis->insertItem(tr("Shipments..."), this, SLOT(sDspShipments()), 0);
+
+  if (_privleges->check("MaintainReturns"))
+  {
+    menuThis->insertSeparator();
+    menuThis->insertItem(tr("Create Return Authorization..."), this, SLOT(sCreateRA()));
+  }
 }
 
 void dspSalesOrdersByCustomerPO::sEditOrder()
@@ -143,6 +125,20 @@ void dspSalesOrdersByCustomerPO::sEditOrder()
 void dspSalesOrdersByCustomerPO::sViewOrder()
 {
   salesOrder::viewSalesOrder(_so->id());
+}
+
+void dspSalesOrdersByCustomerPO::sCreateRA()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("sohead_id", _so->id());
+
+  returnAuthorization *newdlg = new returnAuthorization();
+  if (newdlg->set(params) == NoError)
+    omfgThis->handleNewWindow(newdlg);
+  else
+    QMessageBox::critical(this, tr("Could Not Open Window"),
+			  tr("The new Return Authorization could not be created"));
 }
 
 void dspSalesOrdersByCustomerPO::sDspShipmentStatus()

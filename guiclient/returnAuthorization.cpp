@@ -330,6 +330,10 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
   if(cNew == _mode && valid)
     _cust->setId(param.toInt());
 
+  param = pParams.value("sohead_id", &valid);
+  if (cNew == _mode && valid)
+    _origso->setId(param.toInt());
+
   return NoError;
 }
 

@@ -72,13 +72,12 @@ public:
     dspSalesOrdersByParameterList(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspSalesOrdersByParameterList();
 
-    virtual void init();
-
 public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void sPopulateMenu( QMenu * menuThis );
     virtual void sEditOrder();
     virtual void sViewOrder();
+    virtual void sCreateRA();
     virtual void sDspShipmentStatus();
     virtual void sDspShipments();
     virtual void sFillList();
