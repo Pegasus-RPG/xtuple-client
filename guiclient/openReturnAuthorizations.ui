@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>600</width>
-    <height>400</height>
+    <height>459</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -90,7 +90,7 @@
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>16</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -149,10 +149,13 @@
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
           </property>
+          <property name="sizeType" >
+           <enum>QSizePolicy::Preferred</enum>
+          </property>
           <property name="sizeHint" >
            <size>
             <width>20</width>
-            <height>40</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
