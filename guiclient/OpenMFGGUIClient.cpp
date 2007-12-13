@@ -323,7 +323,7 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
   }
   else
     systemError( this, tr( "A Critical Error occurred at %1::%2.\n"
-                           "Please immediately log and contact your Systems Adminitrator." )
+                           "Please immediately log out and contact your Systems Adminitrator." )
                        .arg(__FILE__)
                        .arg(__LINE__) );
 
