@@ -292,8 +292,8 @@ void dspAllocations::sFillList()
       return;
     }
 
-    QString avails("SELECT itemsite_qtyonhand AS qoh, "
-		   "       formatQty(itemsite_qtyonhand) AS f_qoh "
+    QString avails("SELECT formatQty(itemsite_qtyonhand) AS f_qoh,"
+		   "       formatQty(qtyunreserved(itemsite_id)) AS f_unreserved "
 		   "FROM itemsite "
 		   "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
 		   "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>));");
@@ -302,7 +302,7 @@ void dspAllocations::sFillList()
     if (q.first())
     {
       _qoh->setText(q.value("f_qoh").toString());
-      _available->setText(formatQty(q.value("qoh").toDouble() - runningBal));
+      _available->setText(q.value("f_unreserved").toString());
     }
     else if (q.lastError().type() != QSqlError::None)
     {
