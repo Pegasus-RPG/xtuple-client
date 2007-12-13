@@ -131,6 +131,10 @@ enum SetResponse printCreditMemo::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("posted", &valid);
+  if (valid)
+    _post->hide();
+
   if (pParams.inList("print"))
   {
     sPrint();

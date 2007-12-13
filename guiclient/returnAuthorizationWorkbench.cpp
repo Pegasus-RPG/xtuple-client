@@ -67,6 +67,7 @@
 
 #include "creditcardprocessor.h"
 #include "mqlutil.h"
+#include "printCreditMemo.h"
 #include "returnAuthorization.h"
 #include "returnAuthCheck.h"
 #include "storedProcErrorLookup.h"
@@ -316,6 +317,17 @@ void returnAuthorizationWorkbench::sProcess()
                                 tr("<p>A new CreditMemo has been created and "
 				                   "assigned #%1")
                                    .arg(q.value("cmhead_number").toString()));
+	  if (_printmemo->isChecked())
+	  {
+		ParameterList params;
+		params.append("cmhead_id", cmheadid);
+		if (_post)
+		  params.append("posted");
+
+		printCreditMemo newdlg(this, "", TRUE);
+		newdlg.set(params);
+		newdlg.exec();
+	  }
       if (_radue->altId() == 2)
       {
         ParameterList params;
