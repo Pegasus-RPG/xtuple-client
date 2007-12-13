@@ -259,7 +259,6 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _mode = cEdit;
 
       _authNumber->setEnabled(FALSE);
-      sDispositionChanged();
       _save->setFocus();
   	  _cancel->setText("&Close");
       
@@ -1099,17 +1098,6 @@ void returnAuthorization::populate()
     _taxcurrid = rahead.value("rahead_curr_id").toInt();
     if (!rahead.value("rahead_rsncode_id").isNull() && rahead.value("rahead_rsncode_id").toInt() != -1)
       _rsnCode->setId(rahead.value("rahead_rsncode_id").toInt());
-
-    if (rahead.value("rahead_disposition").toString() == "C")
-	  _disposition->setCurrentItem(0);
-	else if (rahead.value("rahead_disposition").toString() == "R")
-	  _disposition->setCurrentItem(1);
-	else if (rahead.value("rahead_disposition").toString() == "P")
-	  _disposition->setCurrentItem(2);
-	else if (rahead.value("rahead_disposition").toString() == "V")
-	  _disposition->setCurrentItem(3);
-    else if (rahead.value("rahead_disposition").toString() == "M")
-	  _disposition->setCurrentItem(4);
 	
 	if (rahead.value("rahead_timing").toString() == "I")
 	  _timing->setCurrentItem(0);
@@ -1182,6 +1170,17 @@ void returnAuthorization::populate()
 	  _miscChargeDescription->setEnabled(FALSE);
 	  _miscChargeAccount->setEnabled(FALSE);
 	}
+
+	if (rahead.value("rahead_disposition").toString() == "C")
+	  sDispositionChanged();
+	else if (rahead.value("rahead_disposition").toString() == "R")
+	  _disposition->setCurrentItem(1);
+	else if (rahead.value("rahead_disposition").toString() == "P")
+	  _disposition->setCurrentItem(2);
+	else if (rahead.value("rahead_disposition").toString() == "V")
+	  _disposition->setCurrentItem(3);
+    else if (rahead.value("rahead_disposition").toString() == "M")
+	  _disposition->setCurrentItem(4);
 
     recalculateTax();
 

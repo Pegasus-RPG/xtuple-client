@@ -92,9 +92,10 @@ enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 			       "  WHERE ((raitem_rahead_id=orderhead_id)"
 			       "     AND (orderhead_type = 'RA'))) "
 			       " AND "
-			       "(SELECT (raitem_disposition IN ('R','P','V'))"
+			       "(SELECT TRUE "
 				   " FROM raitem"
 			       " WHERE ((raitem_rahead_id=orderhead_id)"
+				   "   AND  (raitem_disposition IN ('R','P','V')) "
 			       "   AND  (orderhead_type = 'RA')) "
 				   " LIMIT 1)");
   _order->setFocus();
