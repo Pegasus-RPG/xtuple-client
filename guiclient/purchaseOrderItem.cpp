@@ -670,8 +670,8 @@ void purchaseOrderItem::sSave()
                "    poitem_qty_ordered=:poitem_qty_ordered, poitem_unitprice=:poitem_unitprice,"
                "    poitem_freight=:poitem_freight,"
                "    poitem_duedate=:poitem_duedate, poitem_comments=:poitem_comments,"
-               "    poitem_prj_id=:poitem_prj_id "
-			   "    poitem_bom_rev_id=:poitem_bom_rev_id "
+               "    poitem_prj_id=:poitem_prj_id, "
+			   "    poitem_bom_rev_id=:poitem_bom_rev_id, "
 			   "    poitem_boo_rev_id=:poitem_boo_rev_id "
                "WHERE (poitem_id=:poitem_id);" );
 
