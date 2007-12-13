@@ -110,7 +110,6 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
   _radue->addColumn(tr("Auth. #"),       _orderColumn,   Qt::AlignLeft   );
   _radue->addColumn(tr("Customer"),     -1,              Qt::AlignLeft   );
   _radue->addColumn(tr("Authorized"),   _dateColumn,     Qt::AlignRight  );
-  _radue->addColumn(tr("Eligible"),     _dateColumn,     Qt::AlignRight  );
   _radue->addColumn(tr("Amount"),       _moneyColumn,    Qt::AlignRight  );
   _radue->addColumn(tr("Currency"),     _currencyColumn, Qt::AlignRight  );
   _radue->addColumn(tr("Amount (%1)").arg(CurrDisplay::baseCurrAbbr()),
@@ -429,7 +428,6 @@ void returnAuthorizationWorkbench::setParams(ParameterList &params)
 void returnAuthorizationWorkbench::sFillListReview()
 { 
   _ra->clear();
-  _radue->clear();
   if (_cust->isChecked() && !_custInfo->isValid())
   {
     QMessageBox::information( this, tr("Customer not selected"),
@@ -601,7 +599,6 @@ void returnAuthorizationWorkbench::sFillListReview()
 
 void returnAuthorizationWorkbench::sFillListDue()
 { 
-  _ra->clear();
   _radue->clear();
   if (_cust->isChecked() && !_custInfo->isValid())
   {
@@ -626,7 +623,7 @@ void returnAuthorizationWorkbench::sFillListDue()
 		  "    3 "
 		  "END, "
 		  "rahead_number, cust_name, "
-		  "formatDate(rahead_authdate), formatDate(NULL), "
+		  "formatDate(rahead_authdate), "
 		  "formatMoney(calcradueamt(rahead_id)), "
 		  "currConcat(rahead_curr_id), "
 		  "formatMoney(currtobase(rahead_curr_id,"

@@ -228,10 +228,12 @@ void returnAuthCheck::sPopulateBankInfo(int pBankaccntid)
 void returnAuthCheck::populate()
 {
   q.prepare("SELECT cust_id,cust_name,cmhead_number,cmhead_curr_id, "
-	        "'Return Authorization ' || cmhead_number::text AS memo, "
+	        "'Return Authorization ' || rahead_number::text AS memo, "
+			"'Applied Against Credit Memo ' || cmhead_number::text AS note, "
 			"aropen_id,aropen_amount "
-			"FROM cmhead,custinfo,aropen "
+			"FROM rahead,cmhead,custinfo,aropen "
 			"WHERE ((cmhead_cust_id=cust_id) "
+			"AND (rahead_id=cmhead_rahead_id) "
 			"AND (cmhead_id=:cmhead_id) "
 			"AND (aropen_doctype='C') "
 			"AND (aropen_docnumber=cmhead_number));");
@@ -247,6 +249,7 @@ void returnAuthCheck::populate()
 	_amount->setId(q.value("cmhead_curr_id").toInt());
 	_amount->setLocalValue(q.value("aropen_amount").toDouble());
 	_for->setText(q.value("memo").toString());
+	_notes->setText(q.value("note").toString());
   }
   else if (q.lastError().type() != QSqlError::None)
   {
