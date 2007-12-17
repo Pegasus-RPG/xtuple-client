@@ -505,10 +505,10 @@ void returnAuthorization::sPostReceipts()
     {
       enterPoReceipt::post("RA", _raheadid);
       sFillList();
+      _mode = cEdit;
+	  _cancel->setText("&Close");
       break;
     }
-    _mode = cEdit;
-	_cancel->setText("&Close");
   }
 }
 
