@@ -331,7 +331,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                idleShutdown.ui xdateinputdialog.ui xsltMap.ui
 
 HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwInterface.h             \
-               ../common/format.h                                                                     \
+               ../common/format.h SaveSizePositionEventFilter.h                                       \
                menuProducts.h menuInventory.h menuSchedule.h menuPurchase.h                           \
                menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
                moduleAP.h moduleAR.h moduleSO.h moduleCP.h moduleGL.h moduleIM.h                      \

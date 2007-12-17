@@ -162,6 +162,9 @@ QList<QString> _hotkeyList;
 
 bool _evaluation;
 
+#include <SaveSizePositionEventFilter.h>
+static SaveSizePositionEventFilter * __saveSizePositionEventFilter = 0;
+
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, bool pEnabled ) :
@@ -304,6 +307,7 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
 
   _databaseURL = pDatabaseURL;
   _username = pUsername;
+  __saveSizePositionEventFilter = new SaveSizePositionEventFilter(this);
 
   _splash->showMessage(tr("Initializing Internal Data"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
@@ -1166,15 +1170,26 @@ void OpenMFGGUIClient::windowDestroyed(QObject * o)
       _activeWindow = 0;
 
     _windowList.removeAll(w);
-
-    QString objName = w->objectName();
-    QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
-    settings.setValue(objName + "/geometry/size", w->size());
-    if(_showTopLevel)
-      settings.setValue(objName + "/geometry/pos", w->pos());
-    else
-      settings.setValue(objName + "/geometry/pos", w->parentWidget()->pos());
   }
+}
+
+bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
+{
+  if(event->type() == QEvent::Close)
+  {
+    QWidget * w = qobject_cast<QWidget *>(obj);
+    if(w)
+    {
+      QString objName = w->objectName();
+      QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+      settings.setValue(objName + "/geometry/size", w->size());
+      if(omfgThis->showTopLevel())
+        settings.setValue(objName + "/geometry/pos", w->pos());
+      else
+        settings.setValue(objName + "/geometry/pos", w->parentWidget()->pos());
+    }
+  }
+  return QObject::eventFilter(obj, event);
 }
 
 void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
@@ -1216,6 +1231,7 @@ void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     if(fw)
       fw->setFocus();
   }
+  w->installEventFilter(__saveSizePositionEventFilter);
 }
 
 QMenuBar *OpenMFGGUIClient::menuBar()
