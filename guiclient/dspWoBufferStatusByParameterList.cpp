@@ -99,8 +99,6 @@ dspWoBufferStatusByParameterList::dspWoBufferStatusByParameterList(QWidget* pare
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
   connect(omfgThis, SIGNAL(workOrdersUpdated(int, bool)), this, SLOT(sFillList()));
 
-  _showOnlyRI->setChecked(_preferences->boolean("ShowRIWorkOrdersByDefault"));
-
   _wo->addColumn(tr("parentType"),    0,             Qt::AlignCenter );
   _wo->addColumn(tr("W/O #"),         _orderColumn,  Qt::AlignLeft   );
   _wo->addColumn(tr("Status"),        _statusColumn, Qt::AlignCenter );

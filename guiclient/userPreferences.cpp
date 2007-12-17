@@ -260,7 +260,6 @@ void userPreferences::sPopulate()
   _glToolbar->setChecked(_pref.boolean("ShowGLToolbar"));
 
   _fixedWidthFonts->setChecked(_pref.boolean("UsedFixedWidthFonts"));
-  _showRIWorkOrders->setChecked(_pref.boolean("ShowRIWorkOrdersByDefault"));
   _listNumericItemsFirst->setChecked(_pref.boolean("ListNumericItemNumbersFirst"));
   _showSoitemAvailability->setChecked(_pref.boolean("ShowSOItemAvailability"));
 
@@ -358,7 +357,6 @@ void userPreferences::sSave()
   _pref.set("UseCustCache", _customerCache->isChecked());
 
   _pref.set("UsedFixedWidthFonts", _fixedWidthFonts->isChecked());
-  _pref.set("ShowRIWorkOrdersByDefault", _showRIWorkOrders->isChecked());
   _pref.set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
   _pref.set("ShowSOItemAvailability", _showSoitemAvailability->isChecked());
 

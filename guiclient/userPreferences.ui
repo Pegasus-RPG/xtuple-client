@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>595</width>
-    <height>399</height>
+    <width>731</width>
+    <height>435</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -290,27 +290,20 @@
            </widget>
           </item>
           <item row="1" column="0" >
-           <widget class="QCheckBox" name="_showRIWorkOrders" >
-            <property name="text" >
-             <string>Show Only Released and In-Process Work Orders</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" >
            <widget class="QCheckBox" name="_listNumericItemsFirst" >
             <property name="text" >
              <string>List Numeric Item Numbers First</string>
             </property>
            </widget>
           </item>
-          <item row="3" column="0" >
+          <item row="2" column="0" >
            <widget class="QCheckBox" name="_showSoitemAvailability" >
             <property name="text" >
              <string>Show S/O Item Availability when Entering</string>
             </property>
            </widget>
           </item>
-          <item row="4" column="0" >
+          <item row="3" column="0" >
            <layout class="QHBoxLayout" >
             <property name="spacing" >
              <number>5</number>
@@ -354,6 +347,19 @@
              </widget>
             </item>
            </layout>
+          </item>
+          <item row="4" column="0" >
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Vertical</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>20</width>
+              <height>40</height>
+             </size>
+            </property>
+           </spacer>
           </item>
          </layout>
         </widget>
@@ -2396,7 +2402,6 @@
   <tabstop>_interfaceWorkspace</tabstop>
   <tabstop>_interfaceTopLevel</tabstop>
   <tabstop>_fixedWidthFonts</tabstop>
-  <tabstop>_showRIWorkOrders</tabstop>
   <tabstop>_listNumericItemsFirst</tabstop>
   <tabstop>_showSoitemAvailability</tabstop>
   <tabstop>_ellipsesAction</tabstop>

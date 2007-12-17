@@ -106,8 +106,6 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
   _dates->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
   _dates->setEndCaption(tr("End W/O Start Date:"));
 
-  _showOnlyRI->setChecked(_preferences->boolean("ShowRIWorkOrdersByDefault"));
-
   _wo->addColumn(tr("W/O #"),      -1,            Qt::AlignLeft   );
   _wo->addColumn(tr("Status"),     _statusColumn, Qt::AlignCenter );
   _wo->addColumn(tr("Pri."),       _statusColumn, Qt::AlignCenter );
