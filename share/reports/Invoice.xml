@@ -90,10 +90,11 @@ FROM invchead,
 (SELECT COALESCE(SUM(CASE WHEN((aropen_amount - aropen_paid) >=
 			        currToCurr(aropenco_curr_id, aropen_curr_id,
 					   aropenco_amount, aropen_docdate))
-		THEN currToCurr(aropenco_curr_id, aropen_curr_id,
+		THEN currToCurr(aropenco_curr_id, invchead_curr_id,
 				aropenco_amount, aropen_docdate)
-                ELSE (aropen_amount - aropen_paid)
-           END),0) AS total_allocated
+		ELSE currToCurr(aropen_curr_id, invchead_curr_id,
+				aropen_amount - aropen_paid, aropen_docdate)
+	    END),0) AS total_allocated
   FROM aropenco, aropen, cohead, invchead
  WHERE ( (aropenco_aropen_id=aropen_id)
    AND   (aropenco_cohead_id=cohead_id)
