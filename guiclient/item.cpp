@@ -1298,13 +1298,18 @@ void item::keyPressEvent( QKeyEvent * e )
 void item::newItem()
 {
   // Check for an Item window in new mode already.
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); ++i)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), "item new")==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }
@@ -1322,13 +1327,18 @@ void item::editItem( int pId )
 {
   // Check for an Item window in edit mode for the specified item already.
   QString n = QString("item edit %1").arg(pId);
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); ++i)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), n)==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }
@@ -1347,13 +1357,18 @@ void item::viewItem( int pId )
 {
   // Check for an Item window in edit mode for the specified item already.
   QString n = QString("item view %1").arg(pId);
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); ++i)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), n)==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }

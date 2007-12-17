@@ -1642,13 +1642,18 @@ void transferOrder::newTransferOrder(int pSrcWhsid, int pDstWhsid)
   // Check for an Item window in new mode already.
   if(pSrcWhsid == -1 && pDstWhsid == -1)
   {
-    QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+    QWidgetList list = omfgThis->windowList();
     for(int i = 0; i < list.size(); i++)
     {
       QWidget * w = list.at(i);
       if(QString::compare(w->name(), "transferOrder new")==0)
       {
         w->setFocus();
+        if(omfgThis->showTopLevel())
+        {
+          w->raise();
+          w->activateWindow();
+        }
         return;
       }
     }
@@ -1673,13 +1678,18 @@ void transferOrder::editTransferOrder( int pId , bool enableSaveAndAdd )
 {
   // Check for an Item window in edit mode for the specified transferOrder already.
   QString n = QString("transferOrder edit %1").arg(pId);
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), n)==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }
@@ -1700,13 +1710,18 @@ void transferOrder::viewTransferOrder( int pId )
 {
   // Check for an Item window in view mode for the specified transferOrder already.
   QString n = QString("transferOrder view %1").arg(pId);
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), n)==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }

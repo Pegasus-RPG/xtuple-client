@@ -362,7 +362,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
             if(_mode == cEdit)
             {
               // check for another open window
-              QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+              QWidgetList list = omfgThis->windowList();
               for(int i = 0; i < list.size(); i++)
               {
                 QWidget * w = list.at(i);

@@ -2900,13 +2900,18 @@ void salesOrder::newSalesOrder(int pCustid)
   // Check for an Item window in new mode already.
   if(pCustid == -1)
   {
-    QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+    QWidgetList list = omfgThis->windowList();
     for(int i = 0; i < list.size(); i++)
     {
       QWidget * w = list.at(i);
       if(QString::compare(w->name(), "salesOrder new")==0)
       {
         w->setFocus();
+        if(omfgThis->showTopLevel())
+        {
+          w->raise();
+          w->activateWindow();
+        }
         return;
       }
     }
@@ -2927,13 +2932,18 @@ void salesOrder::editSalesOrder( int pId , bool enableSaveAndAdd )
 {
   // Check for an Item window in edit mode for the specified salesOrder already.
   QString n = QString("salesOrder edit %1").arg(pId);
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), n)==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }
@@ -2954,13 +2964,18 @@ void salesOrder::viewSalesOrder( int pId )
 {
   // Check for an Item window in edit mode for the specified salesOrder already.
   QString n = QString("salesOrder view %1").arg(pId);
-  QWidgetList list = omfgThis->workspace()->windowList(QWorkspace::CreationOrder);
+  QWidgetList list = omfgThis->windowList();
   for(int i = 0; i < list.size(); i++)
   {
     QWidget * w = list.at(i);
     if(QString::compare(w->name(), n)==0)
     {
       w->setFocus();
+      if(omfgThis->showTopLevel())
+      {
+        w->raise();
+        w->activateWindow();
+      }
       return;
     }
   }
