@@ -4545,6 +4545,7 @@ void salesOrder::sShowReservations()
   {
     ParameterList params;
     params.append("soitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+    params.append("run");
 
     dspReservations * newdlg = new dspReservations();
     newdlg->set(params);

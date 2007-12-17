@@ -610,6 +610,7 @@ void dspInventoryAvailabilityByCustomerType::sShowReservations()
 {
   ParameterList params;
   params.append("soitem_id", _avail->altId());
+  params.append("run");
 
   dspReservations * newdlg = new dspReservations();
   newdlg->set(params);
