@@ -20,7 +20,10 @@ SELECT tax_id, tax_code, tax_descrip,
 	    AND  (cohist_invcdate BETWEEN <? value("startDate") ?>
 				      AND <? value("endDate") ?>))
        )),
-       formatBoolYN(tax_freight),
+       formatBoolYN(EXISTS(SELECT *
+			   FROM taxsel
+			   WHERE ((taxsel_tax_id=tax_id) AND (taxsel_taxtype_id=getFreightTaxTypeId()))
+       )),
        formatMoney((
 	 SELECT COALESCE(SUM(ROUND(currToCurr(cohist_curr_id, baseCurrId(),
 					      COALESCE(cohist_tax_ratea,0) +
