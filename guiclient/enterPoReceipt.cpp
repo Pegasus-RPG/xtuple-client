@@ -416,6 +416,8 @@ void enterPoReceipt::sReceiveAll()
 {
   ParameterList params;
   setParams(params);
+  if (_metrics->boolean("EnableReturnAuth"))
+    params.append("EnableReturnAuth", TRUE);
   MetaSQLQuery recvm = mqlLoad(":/sr/enterReceipt/ReceiveAll.mql");
   q = recvm.toQuery(params);
 
