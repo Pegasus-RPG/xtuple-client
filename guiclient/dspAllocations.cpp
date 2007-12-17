@@ -291,23 +291,5 @@ void dspAllocations::sFillList()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-
-    QString avails("SELECT formatQty(itemsite_qtyonhand) AS f_qoh,"
-		   "       formatQty(qtyunreserved(itemsite_id)) AS f_unreserved "
-		   "FROM itemsite "
-		   "WHERE ((itemsite_item_id=<? value(\"item_id\") ?>)"
-		   "  AND  (itemsite_warehous_id=<? value(\"warehous_id\") ?>));");
-    MetaSQLQuery availm(avails);
-    q = availm.toQuery(params);
-    if (q.first())
-    {
-      _qoh->setText(q.value("f_qoh").toString());
-      _available->setText(q.value("f_unreserved").toString());
-    }
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
   }
 }
