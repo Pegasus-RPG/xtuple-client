@@ -19,11 +19,12 @@
        (checkrecip_number || '-' || checkrecip_name) AS description,
        formatDate(checkhead_checkdate) AS f_checkdate,
        formatMoney(checkhead_amount) AS f_amount,
-       checkhead_number AS orderby
+       checkhead_number,
+       1 AS orderby
   FROM checkhead LEFT OUTER JOIN
        checkrecip ON ((checkrecip_id=checkhead_recip_id)
 		 AND  (checkrecip_type=checkhead_recip_type))
- WHERE ((checkhead_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
+ WHERE ((checkhead_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
    AND  (NOT checkhead_posted)
    AND  (NOT checkhead_replaced)
    AND  (NOT checkhead_deleted) )
@@ -32,33 +33,38 @@ UNION SELECT checkitem_checkhead_id AS primaryid,
              checkitem_id AS secondaryid,
              '' AS f_void,
              '' AS f_printed,
-             checkitem_vouchernumber AS number,
-             checkitem_invcnumber AS description,
+             CASE WHEN (checkitem_ranumber IS NOT NULL) THEN checkitem_ranumber::TEXT
+	          ELSE checkitem_vouchernumber
+	     END AS number,
+             CASE WHEN (checkitem_cmnumber IS NOT NULL) THEN checkitem_cmnumber::TEXT
+	          ELSE checkitem_invcnumber
+	     END AS description,
              '' AS f_checkdate,
              formatMoney(checkitem_amount) AS f_amount,
-             checkhead_number AS orderby
+	     checkhead_number,
+             2 AS orderby
         FROM checkitem, checkhead
        WHERE ( (checkitem_checkhead_id=checkhead_id)
-         AND (checkhead_bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>)
+         AND (checkhead_bankaccnt_id=&lt;? value("bankaccnt_id") ?>)
          AND (NOT checkhead_posted)
          AND (NOT checkhead_replaced)
          AND (NOT checkhead_deleted) )
 
-ORDER BY orderby desc, secondaryid, number;</sql>
+ORDER BY checkhead_number, primaryid, orderby;</sql>
  </querysource>
  <querysource>
   <name>head</name>
   <sql>SELECT (bankaccnt_name || '-' || bankaccnt_descrip) AS bankaccnt
   FROM bankaccnt
- WHERE (bankaccnt_id=&lt;? value(&quot;bankaccnt_id&quot;) ?>);</sql>
+ WHERE (bankaccnt_id=&lt;? value("bankaccnt_id") ?>);</sql>
  </querysource>
  <rpthead>
   <height>121</height>
   <label>
    <rect>
-    <x>5</x>
+    <x>335</x>
     <y>100</y>
-    <width>55</width>
+    <width>125</width>
     <height>15</height>
    </rect>
    <font>
@@ -66,25 +72,9 @@ ORDER BY orderby desc, secondaryid, number;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <left/>
    <vcenter/>
-   <string>Void</string>
-  </label>
-  <label>
-   <rect>
-    <x>280</x>
-    <y>5</y>
-    <width>465</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>A/P Check Run Edit List</string>
+   <string>Invoice/Credit Memo #</string>
   </label>
   <label>
    <rect>
@@ -102,22 +92,13 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    <vcenter/>
    <string>Printed</string>
   </label>
-  <label>
-   <rect>
-    <x>335</x>
-    <y>100</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Recipient/Invoice #</string>
-  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>114</ystart>
+   <xend>745</xend>
+   <yend>114</yend>
+   <weight>2</weight>
+  </line>
   <label>
    <rect>
     <x>130</x>
@@ -132,7 +113,7 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Check/Voucher #</string>
+   <string>Voucher/Return Auth. #</string>
   </label>
   <label>
    <rect>
@@ -149,45 +130,6 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    <right/>
    <vcenter/>
    <string>Amount</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>114</ystart>
-   <xend>745</xend>
-   <yend>114</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>20</x>
-    <y>55</y>
-    <width>120</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Bank Account:</string>
-  </label>
-  <label>
-   <rect>
-    <x>540</x>
-    <y>100</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Check Date</string>
   </label>
   <field>
    <rect>
@@ -208,13 +150,109 @@ ORDER BY orderby desc, secondaryid, number;</sql>
     <column>bankaccnt</column>
    </data>
   </field>
+  <label>
+   <rect>
+    <x>540</x>
+    <y>100</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Check Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>280</x>
+    <y>5</y>
+    <width>465</width>
+    <height>38</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>A/P Check Run Edit List</string>
+  </label>
+  <label>
+   <rect>
+    <x>20</x>
+    <y>55</y>
+    <width>120</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Bank Account:</string>
+  </label>
+  <label>
+   <rect>
+    <x>335</x>
+    <y>84</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Recipient</string>
+  </label>
+  <label>
+   <rect>
+    <x>130</x>
+    <y>84</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Check #</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>100</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Void</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>7</height>
+  <height>5</height>
  </pghead>
  <pghead>
-  <height>26</height>
+  <height>25</height>
   <label>
    <rect>
     <x>540</x>
@@ -230,6 +268,29 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    <hcenter/>
    <vcenter/>
    <string>Check Date</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>20</ystart>
+   <xend>745</xend>
+   <yend>20</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>645</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Amount</string>
   </label>
   <label>
    <rect>
@@ -265,38 +326,6 @@ ORDER BY orderby desc, secondaryid, number;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>5</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Void</string>
-  </label>
-  <label>
-   <rect>
-    <x>645</x>
-    <y>5</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Amount</string>
-  </label>
-  <label>
-   <rect>
     <x>65</x>
     <y>5</y>
     <width>55</width>
@@ -311,13 +340,22 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    <vcenter/>
    <string>Printed</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>20</ystart>
-   <xend>745</xend>
-   <yend>20</yend>
-   <weight>2</weight>
-  </line>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>5</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Void</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -329,7 +367,26 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>16</height>
+   <height>15</height>
+   <field>
+    <rect>
+     <x>645</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_amount</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>5</x>
@@ -351,7 +408,7 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    </field>
    <field>
     <rect>
-     <x>335</x>
+     <x>130</x>
      <y>0</y>
      <width>200</width>
      <height>15</height>
@@ -365,45 +422,7 @@ ORDER BY orderby desc, secondaryid, number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>description</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>540</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_checkdate</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>645</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_amount</column>
+     <column>number</column>
     </data>
    </field>
    <field>
@@ -427,7 +446,26 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    </field>
    <field>
     <rect>
-     <x>130</x>
+     <x>540</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_checkdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>335</x>
      <y>0</y>
      <width>200</width>
      <height>15</height>
@@ -441,32 +479,13 @@ ORDER BY orderby desc, secondaryid, number;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>number</column>
+     <column>description</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
-  <height>17</height>
-  <field>
-   <rect>
-    <x>90</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
+  <height>15</height>
   <field>
    <rect>
     <x>705</x>
@@ -488,22 +507,6 @@ ORDER BY orderby desc, secondaryid, number;</sql>
   </field>
   <label>
    <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>615</x>
     <y>0</y>
     <width>85</width>
@@ -517,6 +520,41 @@ ORDER BY orderby desc, secondaryid, number;</sql>
    <right/>
    <vcenter/>
    <string>Page:</string>
+  </label>
+  <field>
+   <rect>
+    <x>90</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
   </label>
  </pgfoot>
 </report>
