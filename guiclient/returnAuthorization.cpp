@@ -1551,6 +1551,7 @@ void returnAuthorization::sReceiveAll()
   params.append("ordertype", "RA");
   params.append("nonInventory",	tr("Non-Inventory"));
   params.append("na",		tr("N/A"));
+  params.append("EnableReturnAuth", TRUE);
   if (_metrics->boolean("MultiWhs"))
     params.append("MultiWhs");
   MetaSQLQuery recvm = mqlLoad(":/sr/enterReceipt/ReceiveAll.mql");
