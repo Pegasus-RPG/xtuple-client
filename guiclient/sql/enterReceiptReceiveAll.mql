@@ -6,9 +6,14 @@ SELECT enterReceipt(<? value("ordertype") ?>, orderitem_id,
 FROM orderitem LEFT OUTER JOIN
      recv ON ((recv_orderitem_id=orderitem_id)
 	  AND (recv_order_type=orderitem_orderhead_type))
+<? if exists("EnableReturnAuth") ?>
                LEFT OUTER JOIN
      raitem ON ((raitem_id=orderitem_id)
         AND ('RA' = orderitem_orderhead_type))
+<? endif ?>
 WHERE ((orderitem_orderhead_id=<? value("orderid") ?>)
   AND  (orderitem_orderhead_type=<? value("ordertype") ?>)
-  AND  ((orderitem_orderhead_type != 'RA' OR raitem_disposition IN (NULL,'R','V','P'))));
+<? if exists("EnableReturnAuth") ?>
+  AND  ((orderitem_orderhead_type != 'RA' OR raitem_disposition IN (NULL,'R','V','P')))
+<? endif?>
+);
