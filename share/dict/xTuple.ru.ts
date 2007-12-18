@@ -1088,7 +1088,7 @@ Address:</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Issue Method</source>
@@ -1862,7 +1862,7 @@ Address:</source>
     </message>
     <message>
         <source>UOM:</source>
-        <translation>Единица измерения:</translation>
+        <translation>Ед.изм:</translation>
     </message>
 </context>
 <context>
@@ -2213,7 +2213,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>Pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон:</translation>
     </message>
 </context>
 <context>
@@ -2247,7 +2247,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     </message>
     <message>
         <source>UOM:</source>
-        <translation>Единица измерения:</translation>
+        <translation>Ед.изм:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -2258,7 +2258,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <name>PoCluster</name>
     <message>
         <source>P/O #:</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ№:</translation>
     </message>
     <message>
         <source>...</source>
@@ -2402,11 +2402,11 @@ Username = %3
     </message>
     <message>
         <source>Cannot Load Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Не могу загрузить словарь</translation>
     </message>
     <message>
         <source>Version Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>Несоответствие версий</translation>
     </message>
     <message>
         <source>The version of the database you are connecting to is not the version
@@ -2433,16 +2433,17 @@ Do you want to continue anyway?</source>
     </message>
     <message>
         <source>Loading Translation Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка Словаря Переводов</translation>
     </message>
     <message>
         <source>The specified Translation Dictionary, &quot;dict/%1.qm&quot; cannot be loaded.
 Reverting to the default dictionary instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>Определенный Ранее Словарь, &quot;dict/%1.qm&quot; не может быть загружен.
+Переключаемся на Язык по Умолчанию.</translation>
     </message>
     <message>
         <source>Loading Database Encryption Metrics</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка Метрик Шифрования Базы Данных</translation>
     </message>
     <message>
         <source>Additional Configuration Required</source>
@@ -2458,12 +2459,12 @@ posting any transactions in the system.</source>
     </message>
     <message>
         <source>System Message</source>
-        <translation type="unfinished"></translation>
+        <translation>Системное Сообщение</translation>
     </message>
     <message>
         <source>
 Report this to your Systems Administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>Сообщите Об Этом Системному Администратору.</translation>
     </message>
     <message>
         <source>System Message (%1 at %2)</source>
@@ -2574,11 +2575,11 @@ Call your system administrator.</source>
     </message>
     <message>
         <source>All Customer Types</source>
-        <translation type="unfinished"></translation>
+        <translation>Все Типы Покупателей</translation>
     </message>
     <message>
         <source>All Customer Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Все Группы Покупателей</translation>
     </message>
     <message>
         <source>All Foreign Currencies</source>
@@ -2594,7 +2595,7 @@ Call your system administrator.</source>
     </message>
     <message>
         <source>All Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Все пользователи</translation>
     </message>
     <message>
         <source>Found %1 tables with mismatched serial values.</source>
@@ -3009,7 +3010,7 @@ Call your system administrator.</source>
     </message>
     <message>
         <source>UOM:</source>
-        <translation>Единица измерения:</translation>
+        <translation>Ед.изм:</translation>
     </message>
     <message>
         <source>Status:</source>
@@ -3024,7 +3025,7 @@ Call your system administrator.</source>
     </message>
     <message>
         <source>UOM:</source>
-        <translation>Единица измерения:</translation>
+        <translation>Ед.изм:</translation>
     </message>
     <message>
         <source>Qty. Per:</source>
@@ -3104,14 +3105,14 @@ Call your system administrator.</source>
     <name>XListView</name>
     <message>
         <source>Export Contents...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать содержимое...</translation>
     </message>
 </context>
 <context>
     <name>XTreeWidget</name>
     <message>
         <source>Export Contents...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать содержимое...</translation>
     </message>
     <message>
         <source>Export Save Filename</source>
@@ -3127,11 +3128,11 @@ Call your system administrator.</source>
     </message>
     <message>
         <source>Remember Widths</source>
-        <translation type="unfinished"></translation>
+        <translation>Запоминать Ширину Столбцов</translation>
     </message>
     <message>
         <source>Do Not Remember Widths</source>
-        <translation type="unfinished"></translation>
+        <translation>Не запоминать Ширину Столбцов</translation>
     </message>
 </context>
 <context>
@@ -3595,11 +3596,11 @@ You must reassign these Currency definitions before you may delete the selected 
     </message>
     <message>
         <source>Close...</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть...</translation>
     </message>
     <message>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть...</translation>
     </message>
     <message>
         <source>Freeze...</source>
@@ -5695,7 +5696,7 @@ You may not cancel this action.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. Per</source>
@@ -6504,7 +6505,7 @@ Contact your Systems Administrator.</source>
     </message>
     <message>
         <source>All Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Все пользователи</translation>
     </message>
     <message>
         <source>&amp;Selected User</source>
@@ -6551,7 +6552,7 @@ Contact your Systems Administrator.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty.</source>
@@ -6795,7 +6796,7 @@ Breeder Bill of Materials?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. to Bill</source>
@@ -13497,7 +13498,7 @@ creating Planned Orders.</source>
     </message>
     <message>
         <source>Header Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Шапка</translation>
     </message>
     <message>
         <source>Memo #:</source>
@@ -13676,7 +13677,7 @@ creating Planned Orders.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. to Bill</source>
@@ -14364,19 +14365,19 @@ posting any transactions in the system.</source>
     </message>
     <message>
         <source>Cannot delete base currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Удалить Основную Валюту</translation>
     </message>
     <message>
         <source>You cannot delete the base currency.</source>
-        <translation type="unfinished"></translation>
+        <translation>Основную Валюту Удалять Нельзя.</translation>
     </message>
     <message>
         <source>Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Валюты</translation>
     </message>
     <message>
         <source>Currencies:</source>
-        <translation type="unfinished"></translation>
+        <translation>Валюты:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -14733,7 +14734,7 @@ and make your selection.</source>
     </message>
     <message>
         <source>Module:</source>
-        <translation type="unfinished"></translation>
+        <translation>Модуль:</translation>
     </message>
     <message>
         <source>A/P</source>
@@ -14883,7 +14884,7 @@ and make your selection.</source>
     <name>customCommands</name>
     <message>
         <source>Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Модуль</translation>
     </message>
     <message>
         <source>Menu Label</source>
@@ -14899,7 +14900,7 @@ and make your selection.</source>
     </message>
     <message>
         <source>Commands</source>
-        <translation type="unfinished"></translation>
+        <translation>Команды</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -17616,7 +17617,7 @@ You may not cancel this action.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -19532,7 +19533,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ext. Qty. Per</source>
@@ -19619,7 +19620,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty.</source>
@@ -19702,7 +19703,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ext&apos;d Qty. Per</source>
@@ -20782,7 +20783,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Cust. Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип  Кл:</translation>
     </message>
     <message>
         <source>...</source>
@@ -20798,11 +20799,11 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Payment Terms:</source>
-        <translation type="unfinished"></translation>
+        <translation>Условия Оплаты:</translation>
     </message>
     <message>
         <source>Shipping Terms:</source>
-        <translation type="unfinished"></translation>
+        <translation>Условия Отгрузки:</translation>
     </message>
     <message>
         <source>N/A</source>
@@ -20830,43 +20831,43 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Correspondence Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Юридический Адрес</translation>
     </message>
     <message>
         <source>Contact Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Контактное Лицо:</translation>
     </message>
     <message>
         <source>Phone:</source>
-        <translation type="unfinished"></translation>
+        <translation>Телефон:</translation>
     </message>
     <message>
         <source>Fax:</source>
-        <translation type="unfinished"></translation>
+        <translation>Факс:</translation>
     </message>
     <message>
         <source>Email:</source>
-        <translation type="unfinished"></translation>
+        <translation>E-mail:</translation>
     </message>
     <message>
         <source>Billing Address</source>
-        <translation type="unfinished"></translation>
+        <translation>Фактический Адрес</translation>
     </message>
     <message>
         <source>First Sales Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата Первой Продажи:</translation>
     </message>
     <message>
         <source>Last Sales Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата Последн. Продажи:</translation>
     </message>
     <message>
         <source>Last Year Sales:</source>
-        <translation type="unfinished"></translation>
+        <translation>Прошлогодние Продажи:</translation>
     </message>
     <message>
         <source>YTD Sales:</source>
-        <translation type="unfinished"></translation>
+        <translation>Продажи этого года:</translation>
     </message>
     <message>
         <source>Backlog:</source>
@@ -20906,7 +20907,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Convert</source>
-        <translation type="unfinished"></translation>
+        <translation>Продать</translation>
     </message>
     <message>
         <source>Sales Orders</source>
@@ -20914,15 +20915,15 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>Invoices</source>
-        <translation type="unfinished"></translation>
+        <translation>Счета</translation>
     </message>
     <message>
         <source>Credit Memos</source>
-        <translation type="unfinished"></translation>
+        <translation>Бал.Записки</translation>
     </message>
     <message>
         <source>A/R History</source>
-        <translation type="unfinished"></translation>
+        <translation>История Оплат</translation>
     </message>
     <message>
         <source>C/C Payments</source>
@@ -21421,7 +21422,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Trans-Qty</source>
@@ -21552,7 +21553,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Trans-Qty</source>
@@ -21785,7 +21786,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Lot/Serial #</source>
@@ -22654,7 +22655,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ext.Qty. Per</source>
@@ -22725,7 +22726,7 @@ Total</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ext. Qty. Per</source>
@@ -23175,7 +23176,7 @@ indicated the date.  Please enter a valid date.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>QOH</source>
@@ -23459,7 +23460,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>QOH</source>
@@ -23685,7 +23686,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Trans-Qty</source>
@@ -23824,7 +23825,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Trans-Qty</source>
@@ -23963,7 +23964,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Trans-Qty</source>
@@ -24439,7 +24440,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. Per</source>
@@ -24628,7 +24629,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Std. Cost</source>
@@ -24814,7 +24815,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>QOH</source>
@@ -24937,7 +24938,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>UOM Ratio</source>
@@ -24972,7 +24973,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Vendor Item Number</source>
@@ -25027,7 +25028,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Edit Item Master...</source>
@@ -25150,7 +25151,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Edit Item Master...</source>
@@ -25269,7 +25270,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Edit Item Master...</source>
@@ -26898,7 +26899,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Pend. Alloc.</source>
@@ -26989,7 +26990,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. Per</source>
@@ -27475,7 +27476,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Due/Recvd.</source>
@@ -27867,7 +27868,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -27994,7 +27995,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -28264,7 +28265,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -29266,7 +29267,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>QOH</source>
@@ -29345,7 +29346,7 @@ indicated the dates.  Please enter valid dates.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Default Location</source>
@@ -31148,7 +31149,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty.</source>
@@ -31449,7 +31450,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. Per</source>
@@ -31532,7 +31533,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. Per</source>
@@ -31607,7 +31608,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Last Movement</source>
@@ -31903,7 +31904,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ext. Qty. Per</source>
@@ -31958,15 +31959,15 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>S/O #/Shipped</source>
-        <translation type="unfinished"></translation>
+        <translation>№Зак/Отгружен</translation>
     </message>
     <message>
         <source>Customer/Ship Via</source>
-        <translation type="unfinished"></translation>
+        <translation>Клиент/Грузоперевозчик</translation>
     </message>
     <message>
         <source>Ordered/Shipped</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказан/Отгружен</translation>
     </message>
     <message>
         <source>Scheduled</source>
@@ -31974,27 +31975,27 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Pack Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Упакован</translation>
     </message>
     <message>
         <source>Sales</source>
-        <translation type="unfinished"></translation>
+        <translation>Продажа</translation>
     </message>
     <message>
         <source>Cost</source>
-        <translation>Стоимость</translation>
+        <translation>Закупка</translation>
     </message>
     <message>
         <source>Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>Маржа</translation>
     </message>
     <message>
         <source>Delete Sales Order?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Заказ продажи?</translation>
     </message>
     <message>
         <source>Cannot Delete Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Удалить Заказ продажи</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -32006,7 +32007,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Inventory Availability by Sales Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Наличие на Складах по Заказам продаж...</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -32054,23 +32055,23 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Summarized Backlog by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Сводный Беклог по складу</translation>
     </message>
     <message>
         <source>Show Prices and Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Цены Продаж и Закупки</translation>
     </message>
     <message>
         <source>Order By:</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по:</translation>
     </message>
     <message>
         <source>Ship Date</source>
-        <translation>Дата отгрузки</translation>
+        <translation>Дате отгрузки</translation>
     </message>
     <message>
         <source>S/O Number</source>
-        <translation type="unfinished"></translation>
+        <translation>№№ Заказов</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -32098,19 +32099,19 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Backlog:</source>
-        <translation>Долг:</translation>
+        <translation>Беклоги:</translation>
     </message>
     <message>
         <source>Total Sales Orders:</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего Заказов продаж:</translation>
     </message>
     <message>
         <source>Total Line Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего Позиций:</translation>
     </message>
     <message>
         <source>Total Qty (Shipping UOM):</source>
-        <translation type="unfinished"></translation>
+        <translation>ИТОГО (Shipping UOM):</translation>
     </message>
     <message>
         <source>Hold Type/Ship #</source>
@@ -32919,7 +32920,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -33106,7 +33107,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -33203,7 +33204,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>View Bookings...</source>
@@ -33343,7 +33344,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>View Demand...</source>
@@ -33731,7 +33732,7 @@ date range to evaluate the average price.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>View Transactions...</source>
@@ -33782,7 +33783,7 @@ date range to evaluate the average price.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>View Transactions...</source>
@@ -34159,7 +34160,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -34252,7 +34253,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -34633,7 +34634,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>QOH</source>
@@ -34878,7 +34879,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Total QOH</source>
@@ -35558,7 +35559,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -36487,7 +36488,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>View Operation...</source>
@@ -36573,7 +36574,7 @@ selected W/O Operation?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>View Operation...</source>
@@ -37066,7 +37067,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ordered</source>
@@ -37339,7 +37340,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -37410,7 +37411,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -38029,7 +38030,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Vend. Item #</source>
@@ -38136,7 +38137,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Vend. Item #</source>
@@ -38450,15 +38451,15 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Time</source>
-        <translation>Время</translation>
+        <translation>Время События</translation>
     </message>
     <message>
         <source>Acknowleged</source>
-        <translation type="unfinished"></translation>
+        <translation>Время Ознакомления</translation>
     </message>
     <message>
         <source>Event Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип События</translation>
     </message>
     <message>
         <source>Order #</source>
@@ -38466,7 +38467,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Acknowledge</source>
-        <translation type="unfinished"></translation>
+        <translation>Ознакомился</translation>
     </message>
     <message>
         <source>Delete</source>
@@ -38538,7 +38539,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Events</source>
-        <translation type="unfinished"></translation>
+        <translation>События</translation>
     </message>
     <message>
         <source>Current &amp;User</source>
@@ -38554,7 +38555,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Show &amp;Acknowledged Events</source>
-        <translation type="unfinished"></translation>
+        <translation>Отобразить &amp;События с которыми уже ознакомлен</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -38562,7 +38563,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Events:</source>
-        <translation type="unfinished"></translation>
+        <translation>События:</translation>
     </message>
     <message>
         <source>Automatically Update</source>
@@ -38581,7 +38582,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Cannot Delete Expense Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Удалить Категорию Затрат</translation>
     </message>
     <message>
         <source>&amp;Yes</source>
@@ -38593,11 +38594,11 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Expense Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории затрат</translation>
     </message>
     <message>
         <source>Expense Categories:</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории затрат:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -40636,11 +40637,11 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <name>hotkey</name>
     <message>
         <source>Action Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Действие</translation>
     </message>
     <message>
         <source>Display Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображаемое Имя</translation>
     </message>
     <message>
         <source>F</source>
@@ -40648,15 +40649,15 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Hot Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Определение Горячих Клавиш</translation>
     </message>
     <message>
         <source>Keystroke:</source>
-        <translation type="unfinished"></translation>
+        <translation>Клавиша:</translation>
     </message>
     <message>
         <source>Actions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Действия, Выполняемые При Нажатии:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -40676,22 +40677,22 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>No Action Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Выбрано Действие</translation>
     </message>
     <message>
         <source>You must select an Action before saving this Hotkey.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно Выбрать Какое-нибудь Действие.</translation>
     </message>
 </context>
 <context>
     <name>hotkeys</name>
     <message>
         <source>Keystroke</source>
-        <translation type="unfinished"></translation>
+        <translation>Клавиша</translation>
     </message>
     <message>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Действие, Выполняемое При Нажатии</translation>
     </message>
     <message>
         <source>F%1</source>
@@ -40746,15 +40747,15 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <name>idleShutdown</name>
     <message>
         <source>Idle Shutdown</source>
-        <translation type="unfinished"></translation>
+        <translation>Обнаружено Дологое Бездействие</translation>
     </message>
     <message>
         <source>You have been idle for %1 minute(s).  OpenMFG will be closed unless you Cancel.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы Не Пользовались Базой %1 Минут. Программа будет вскоре закрыта еслиВы не отмените это действие.</translation>
     </message>
     <message>
         <source>Shutdown in</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрытие Программы Через</translation>
     </message>
     <message>
         <source>60</source>
@@ -40762,7 +40763,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>seconds.</source>
-        <translation type="unfinished"></translation>
+        <translation>Секунд.</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -40777,7 +40778,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Images (</source>
-        <translation type="unfinished"></translation>
+        <translation>Картинки (</translation>
     </message>
     <message>
         <source>*.</source>
@@ -40789,15 +40790,15 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Images (*.png *.xpm *.jpg *.gif)</source>
-        <translation type="unfinished"></translation>
+        <translation>Картинки (*.png *.xpm *.jpg *.gif)</translation>
     </message>
     <message>
         <source>Select Image File</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите Картинку</translation>
     </message>
     <message>
         <source>Could not load file</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно Загрузить Файл</translation>
     </message>
     <message>
         <source>Could not load the selected file.
@@ -40806,11 +40807,11 @@ The file is not an image, an unknown image format or is corrupt</source>
     </message>
     <message>
         <source>Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Картинка</translation>
     </message>
     <message>
         <source>File Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя Файла:</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -40849,7 +40850,7 @@ The file is not an image, an unknown image format or is corrupt</source>
     </message>
     <message>
         <source>Image List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список с Картинками</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -40872,15 +40873,15 @@ The file is not an image, an unknown image format or is corrupt</source>
     </message>
     <message>
         <source>Size</source>
-        <translation type="unfinished"></translation>
+        <translation>Размер</translation>
     </message>
     <message>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Картинки</translation>
     </message>
     <message>
         <source>Images:</source>
-        <translation type="unfinished"></translation>
+        <translation>Картинки:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -41787,7 +41788,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Header Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Шапка</translation>
     </message>
     <message>
         <source>Order #:</source>
@@ -42414,7 +42415,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Issue Method</source>
@@ -42531,7 +42532,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     </message>
     <message>
         <source>UOM:</source>
-        <translation>Единица измерения:</translation>
+        <translation>Ед.изм:</translation>
     </message>
     <message>
         <source>Total Qty. Required:</source>
@@ -43323,7 +43324,7 @@ You may not create duplicate Item Aliases.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Ext. Qty. Per</source>
@@ -45480,7 +45481,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Edit...</source>
@@ -46111,7 +46112,7 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>Build: </source>
-        <translation type="unfinished"></translation>
+        <translation>Сборка:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -46123,27 +46124,27 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>&amp;Options</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Опции</translation>
     </message>
     <message>
         <source>&amp;Username:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Имя Пользователя:</translation>
     </message>
     <message>
         <source>&amp;Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пароль:</translation>
     </message>
     <message>
         <source>S&amp;erver:</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;ервер:</translation>
     </message>
     <message>
         <source>&amp;Database:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;База Данных:</translation>
     </message>
     <message>
         <source>Version </source>
-        <translation type="unfinished"></translation>
+        <translation>Версия</translation>
     </message>
     <message>
         <source> Evaluation</source>
@@ -46151,11 +46152,11 @@ You must reassign the Locales for these Users before you may delete the selected
     </message>
     <message>
         <source>Initializing the Database Connector</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Подключения к Базе Данных</translation>
     </message>
     <message>
         <source>No Database Driver</source>
-        <translation type="unfinished"></translation>
+        <translation>Нет Драйвера Базы Данных</translation>
     </message>
     <message>
         <source>A connection could not be established with the specified
@@ -46198,7 +46199,7 @@ Contact your Systems Administrator to report this issue.</source>
     </message>
     <message>
         <source>User is Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользователь неактивен</translation>
     </message>
     <message>
         <source>The specified Username does exists in the specified Database but is not Active.
@@ -46207,7 +46208,7 @@ Contact your Systems Administrator to report this issue.</source>
     </message>
     <message>
         <source>System Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Системная Ошибка</translation>
     </message>
     <message>
         <source>A System Error occurred at login2::%1.
@@ -46345,7 +46346,7 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>Add</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <source>Move Up</source>
@@ -46357,7 +46358,7 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Accounting Periods:</source>
@@ -46365,19 +46366,19 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>Select All</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать все</translation>
     </message>
     <message>
         <source>Invert</source>
-        <translation type="unfinished"></translation>
+        <translation>Инвертировать</translation>
     </message>
     <message>
         <source>Unselect All</source>
-        <translation type="unfinished"></translation>
+        <translation>Снять выделение со всех</translation>
     </message>
     <message>
         <source>Generate Table</source>
-        <translation type="unfinished"></translation>
+        <translation>Генерация таблицы</translation>
     </message>
     <message>
         <source>Close</source>
@@ -46535,7 +46536,7 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. At Ship</source>
@@ -46756,7 +46757,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Accounts &amp;Payable</source>
-        <translation type="unfinished"></translation>
+        <translation>Наши &amp;Платежи</translation>
     </message>
     <message>
         <source>Purchase &amp;Order</source>
@@ -46864,7 +46865,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Open &amp;Items by Vendor...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Счета по получателю...</translation>
     </message>
     <message>
         <source>A/P &amp;Aging...</source>
@@ -46880,19 +46881,19 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Vendor &amp;History...</source>
-        <translation type="unfinished"></translation>
+        <translation>Оплаты &amp;Поставщикам...</translation>
     </message>
     <message>
         <source>Ve&amp;ndors...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Поставщики...</translation>
     </message>
     <message>
         <source>Accounts Recei&amp;vable</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Оплаты Нам</translation>
     </message>
     <message>
         <source>&amp;Invoice</source>
-        <translation type="unfinished">&amp;Счёта</translation>
+        <translation>&amp;Счёта</translation>
     </message>
     <message>
         <source>C&amp;ash Receipt</source>
@@ -47048,7 +47049,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Financial &amp;Statements</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Финансы</translation>
     </message>
     <message>
         <source>&amp;New Financial Report...</source>
@@ -47056,11 +47057,11 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;List Financial Reports...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Список Финансовых Отчётов...</translation>
     </message>
     <message>
         <source>View &amp;Trial Balances...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Баланс...</translation>
     </message>
     <message>
         <source>View &amp;Financial Report...</source>
@@ -47068,15 +47069,15 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;Fiscal Calendar</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Календарь</translation>
     </message>
     <message>
         <source>Fiscal &amp;Years...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Годовые Отчёты...</translation>
     </message>
     <message>
         <source>Accounting &amp;Periods...</source>
-        <translation type="unfinished"></translation>
+        <translation>Отчётные &amp;Периоды...</translation>
     </message>
     <message>
         <source>&amp;Account</source>
@@ -49148,11 +49149,11 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <name>menuSystem</name>
     <message>
         <source>&amp;Cascade</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Каскадом</translation>
     </message>
     <message>
         <source>&amp;Tile</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Мозаикой</translation>
     </message>
     <message>
         <source>Close &amp;Active Window</source>
@@ -49224,19 +49225,19 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     </message>
     <message>
         <source>&amp;Manufacture...</source>
-        <translation type="unfinished"></translation>
+        <translation>Произ&amp;водство...</translation>
     </message>
     <message>
         <source>&amp;CRM...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Клиенты...</translation>
     </message>
     <message>
         <source>&amp;Sales...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Продажи...</translation>
     </message>
     <message>
         <source>&amp;Accounting...</source>
-        <translation type="unfinished"></translation>
+        <translation>С&amp;чета...</translation>
     </message>
     <message>
         <source>&amp;Master Information</source>
@@ -49316,7 +49317,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     </message>
     <message>
         <source>&amp;System Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Системные Утилиты</translation>
     </message>
     <message>
         <source>&amp;Serial Columns</source>
@@ -52516,7 +52517,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     </message>
     <message>
         <source>Configure Modules</source>
-        <translation type="unfinished"></translation>
+        <translation>Конфигурация Модулей</translation>
     </message>
     <message>
         <source>Master Information</source>
@@ -58576,7 +58577,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     </message>
     <message>
         <source>Header Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Шапка</translation>
     </message>
     <message>
         <source>Order #:</source>
@@ -59626,11 +59627,11 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>Class Code Pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон Кода Класса:</translation>
     </message>
     <message>
         <source>New Class Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый Код Класса:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -59638,7 +59639,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>&amp;Reassign</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переназначить</translation>
     </message>
 </context>
 <context>
@@ -59657,7 +59658,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>New Customer Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый тип клиента:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -59665,7 +59666,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>&amp;Ressign</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переназначить</translation>
     </message>
 </context>
 <context>
@@ -59759,11 +59760,11 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>Product Category Pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>Шаблон Категории Продукта:</translation>
     </message>
     <message>
         <source>New Product Category:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая Категория Продукта:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -59771,7 +59772,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     </message>
     <message>
         <source>&amp;Ressign</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переназначить</translation>
     </message>
 </context>
 <context>
@@ -68955,7 +68956,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>&amp;Header Information</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Шапка</translation>
     </message>
     <message>
         <source>Warehouse:</source>
@@ -69510,7 +69511,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Pend. Alloc.</source>
@@ -71253,7 +71254,7 @@ Would you like to use this Bank Account anyway?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty.</source>
@@ -74776,11 +74777,11 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     </message>
     <message>
         <source>&amp;Header Information</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Шапка</translation>
     </message>
     <message>
         <source>Order Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>Состояние Заказа:</translation>
     </message>
     <message>
         <source>Order Date:</source>
@@ -74896,7 +74897,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     </message>
     <message>
         <source>Order Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст к заказу</translation>
     </message>
     <message>
         <source>Comments</source>
@@ -74904,7 +74905,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     </message>
     <message>
         <source>Shipping Notes</source>
-        <translation type="unfinished"></translation>
+        <translation>Текст к отгрузке</translation>
     </message>
     <message>
         <source>Quick Entry</source>
@@ -74939,7 +74940,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Pend. Alloc.</source>
@@ -76178,7 +76179,7 @@ Would you like to post it anyway?</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Vend. Item #</source>
@@ -76475,7 +76476,7 @@ Would you like to post it anyway?</source>
     <name>uoms</name>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Description</source>
@@ -77277,12 +77278,12 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Password do not Match</source>
-        <translation type="unfinished"></translation>
+        <translation>Пароль не совпадает</translation>
     </message>
     <message>
         <source>The entered password and verify do not match
 Please enter both again carefully.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введенный пароль не совпадает с подтверждаемым.</translation>
     </message>
     <message>
         <source>A System Error occurred at %1::%2.</source>
@@ -77290,7 +77291,7 @@ Please enter both again carefully.</source>
     </message>
     <message>
         <source>Cannot Create System User</source>
-        <translation type="unfinished"></translation>
+        <translation>Не могу создать пользователя системы</translation>
     </message>
     <message>
         <source>A User with the entered username does not exist in the system and you do not have privilege to create a new system User.
@@ -77299,29 +77300,29 @@ You may create the OpenMFG User but the new User will not be able to log into Op
     </message>
     <message>
         <source>Enhanced Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Шифрование подключения</translation>
     </message>
     <message>
         <source>You have changed this user&apos;s Enhanced Authentication option.
 The password must be updated in order for this change to take
 full effect.</source>
-        <translation type="unfinished"></translation>
+        <translation>После выбора шифрованного метода подключения рекомендуется сменить пароль для входа в систему.</translation>
     </message>
     <message>
         <source>User Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Управление пользовательскими настройками</translation>
     </message>
     <message>
         <source>&amp;Username:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Имя Пользователя:</translation>
     </message>
     <message>
         <source>Proper &amp;Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Полное &amp;Имя:</translation>
     </message>
     <message>
         <source>&amp;Email Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Адрес &amp;Е-маил:</translation>
     </message>
     <message>
         <source>&amp;Active</source>
@@ -77333,19 +77334,19 @@ full effect.</source>
     </message>
     <message>
         <source>&amp;Initials:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Инициалы:</translation>
     </message>
     <message>
         <source>&amp;Password:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пароль:</translation>
     </message>
     <message>
         <source>&amp;Verify:</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;одтвердить:</translation>
     </message>
     <message>
         <source>Dept.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Отдел:</translation>
     </message>
     <message>
         <source>Shift:</source>
@@ -77353,19 +77354,19 @@ full effect.</source>
     </message>
     <message>
         <source>Purchasing Agent</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер по закупкам</translation>
     </message>
     <message>
         <source>Can Create System Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешено заводить новых пользователей системы</translation>
     </message>
     <message>
         <source>Disable Export Display Contents</source>
-        <translation type="unfinished"></translation>
+        <translation>Запретить экспортировать содержимое</translation>
     </message>
     <message>
         <source>Use Enhanced Authentication</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать шифрованное подключение к базе</translation>
     </message>
     <message>
         <source>May only use Shop Floor Workbench</source>
@@ -77373,7 +77374,7 @@ full effect.</source>
     </message>
     <message>
         <source>L&amp;ocale:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Локаль:</translation>
     </message>
     <message>
         <source>5</source>
@@ -77389,23 +77390,23 @@ full effect.</source>
     </message>
     <message>
         <source>&amp;Module:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Модуль:</translation>
     </message>
     <message>
         <source>Add-&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Добавить-&gt;</translation>
     </message>
     <message>
         <source>Add All-&gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Доб.Всё-&gt;&gt;</translation>
     </message>
     <message>
         <source>&lt;-Revoke</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;-Убрать</translation>
     </message>
     <message>
         <source>&lt;&lt;-Revoke All</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;&lt;-Убрать Всё</translation>
     </message>
 </context>
 <context>
@@ -77464,7 +77465,7 @@ You may not create a Costing Element with this code.</source>
     <name>userEventNotification</name>
     <message>
         <source>Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Модуль</translation>
     </message>
     <message>
         <source>Name</source>
@@ -77476,7 +77477,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Notify</source>
-        <translation type="unfinished"></translation>
+        <translation>Извещ</translation>
     </message>
     <message>
         <source>Whs.</source>
@@ -77484,7 +77485,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Склад</translation>
     </message>
     <message>
         <source>Yes</source>
@@ -77496,7 +77497,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>User Event Notification</source>
-        <translation type="unfinished"></translation>
+        <translation>Наcтройка Оповещений о Событиях</translation>
     </message>
     <message>
         <source>Username:</source>
@@ -77504,7 +77505,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Proper Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Полное Имя:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -77512,11 +77513,11 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Event:</source>
-        <translation type="unfinished"></translation>
+        <translation>События:</translation>
     </message>
     <message>
         <source>Warehouses:</source>
-        <translation type="unfinished"></translation>
+        <translation>Склады:</translation>
     </message>
 </context>
 <context>
@@ -77527,15 +77528,15 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Proper Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Полное Имя</translation>
     </message>
     <message>
         <source>User List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список Пользователей</translation>
     </message>
     <message>
         <source>Users:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользователи:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -77558,19 +77559,19 @@ You may not create a Costing Element with this code.</source>
     <name>userPreferences</name>
     <message>
         <source>List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список</translation>
     </message>
     <message>
         <source>Search</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск</translation>
     </message>
     <message>
         <source>User Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>Пользовательские Настройки</translation>
     </message>
     <message>
         <source>Current &amp;User</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий &amp;Пользователь</translation>
     </message>
     <message>
         <source>Alt+U</source>
@@ -77578,7 +77579,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>&amp;Selected User:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Выбрать Пользователя:</translation>
     </message>
     <message>
         <source>Alt+S</source>
@@ -77586,15 +77587,15 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Картинка Рабочего Стола</translation>
     </message>
     <message>
         <source>None</source>
-        <translation>Нету</translation>
+        <translation>Нет</translation>
     </message>
     <message>
         <source>Image:</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображение:</translation>
     </message>
     <message>
         <source>...</source>
@@ -77718,7 +77719,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>&amp;Events</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;События</translation>
     </message>
     <message>
         <source>Alt+E</source>
@@ -77726,7 +77727,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>&amp;Hotkeys</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Горячие Клавиши</translation>
     </message>
     <message>
         <source>Alt+H</source>
@@ -77734,7 +77735,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Preferred Warehouse:</source>
-        <translation type="unfinished"></translation>
+        <translation>Склад по умолчанию:</translation>
     </message>
     <message>
         <source>Warehouse:</source>
@@ -77742,63 +77743,63 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Data Caches</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки кеширования данных</translation>
     </message>
     <message>
         <source>Use Item Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Кешировать Позиции Каталога</translation>
     </message>
     <message>
         <source>Use Customer Cache</source>
-        <translation type="unfinished"></translation>
+        <translation>Кешировать Данные о Клиентах</translation>
     </message>
     <message>
         <source>Defaults</source>
-        <translation type="unfinished"></translation>
+        <translation>Настройки по Умолчанию</translation>
     </message>
     <message>
         <source>Use Fixed Width Fonts where Applicable</source>
-        <translation type="unfinished"></translation>
+        <translation>Использовать моноширинные шрифты где применимо</translation>
     </message>
     <message>
         <source>Show Only Released and In-Process Work Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>Показывать Только Новые и Находящиеся в Производстве Наряд-Заказы</translation>
     </message>
     <message>
         <source>List Numeric Item Numbers First</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображать Цифровые Названия Позиций Первыми</translation>
     </message>
     <message>
         <source>Show S/O Item Availability when Entering</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображать Доступность Позиций При Заполнении Продажи</translation>
     </message>
     <message>
         <source>Default Ellipses Action:</source>
-        <translation type="unfinished"></translation>
+        <translation>Отображение по умолчанию:</translation>
     </message>
     <message>
         <source>Idle Timeout:</source>
-        <translation type="unfinished"></translation>
+        <translation>Автоотключение через (мин):</translation>
     </message>
     <message>
         <source>Show CRM Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Клиенты</translation>
     </message>
     <message>
         <source>Show CRM Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Клиенты</translation>
     </message>
     <message>
         <source>Interface Options</source>
-        <translation type="unfinished"></translation>
+        <translation>Опции Интерфейса</translation>
     </message>
     <message>
         <source>Show windows inside workspace</source>
-        <translation type="unfinished"></translation>
+        <translation>Ограничить окна пределами рабочего пространства</translation>
     </message>
     <message>
         <source>Show windows as free-floating</source>
-        <translation type="unfinished"></translation>
+        <translation>Свободное расположение всплывающих окон</translation>
     </message>
     <message>
         <source>User</source>
@@ -77806,78 +77807,78 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>Menu Style</source>
-        <translation type="unfinished"></translation>
+        <translation>Стиль Отображения Меню</translation>
     </message>
     <message>
         <source>Note: The Neo menu style will become the standard style in future versions of this product</source>
-        <translation type="unfinished"></translation>
+        <translation>Стиль НЕО будет стилем по умолчанию с версии 2.3.0</translation>
     </message>
     <message>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартный (устаревший)</translation>
     </message>
     <message>
         <source>Neo</source>
-        <translation type="unfinished"></translation>
+        <translation>Нео (Юзабилити)</translation>
     </message>
     <message>
         <source>Show Manufacture Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Производство</translation>
     </message>
     <message>
         <source>Show Manufacture Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Производство</translation>
     </message>
     <message>
         <source>Show Sales Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Продажи</translation>
     </message>
     <message>
         <source>Show Sales Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Продажи</translation>
     </message>
     <message>
         <source>Show Accounting Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Счета</translation>
     </message>
     <message>
         <source>Show Accountng Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Счета</translation>
     </message>
     <message>
         <source>Show Inventory Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Склад</translation>
     </message>
     <message>
         <source>Show Inventory Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Склад</translation>
     </message>
     <message>
         <source>Show Products Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Продукция</translation>
     </message>
     <message>
         <source>Show Products Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Продукция</translation>
     </message>
     <message>
         <source>Show Schedule Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Расписание</translation>
     </message>
     <message>
         <source>Show Schedule Toolbar</source>
-        <translation type="unfinished"></translation>
+        <translation>Кнопки Расписание</translation>
     </message>
     <message>
         <source>Show Purchase Menu</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Меню Закупки</translation>
     </message>
 </context>
 <context>
     <name>usernameList</name>
     <message>
         <source>Username List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список имён пользователей</translation>
     </message>
     <message>
         <source>S&amp;earch for:</source>
@@ -77944,7 +77945,7 @@ You may not create a Costing Element with this code.</source>
     </message>
     <message>
         <source>&amp;Show Inactive Users</source>
-        <translation type="unfinished"></translation>
+        <translation>Отобразить &amp;Неактивных Пользователей</translation>
     </message>
     <message>
         <source>Users:</source>
@@ -78781,7 +78782,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Vend. Item #</source>
@@ -79141,7 +79142,7 @@ Please distribute manually.</source>
     </message>
     <message>
         <source>UOM:</source>
-        <translation>Единица измерения:</translation>
+        <translation>Ед.изм:</translation>
     </message>
     <message>
         <source>Vend. Item Descrip.:</source>
@@ -79350,7 +79351,7 @@ Please distribute manually.</source>
     </message>
     <message>
         <source>UOM</source>
-        <translation>Единица измерения</translation>
+        <translation>Ед.изм</translation>
     </message>
     <message>
         <source>Qty. Vchrd.</source>
