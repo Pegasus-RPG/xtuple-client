@@ -866,28 +866,31 @@ void returnAuthorization::sNew()
 
 void returnAuthorization::sEdit()
 {
-  bool fill;
-  fill = FALSE;
-  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
-  for (int i = 0; i < selected.size(); i++)
+  if (sSave())
   {
-    ParameterList params;
-    params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
-    params.append("rahead_id", _raheadid);
+	  bool fill;
+	  fill = FALSE;
+	  QList<QTreeWidgetItem*> selected = _raitem->selectedItems();
+	  for (int i = 0; i < selected.size(); i++)
+	  {
+		ParameterList params;
+		params.append("raitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
+		params.append("rahead_id", _raheadid);
 
-	if (_mode==cView || ((XTreeWidgetItem*)(selected[i]))->altId() == -1)
-	  params.append("mode", "view");
-	else
-      params.append("mode", "edit");
+		if (_mode==cView || ((XTreeWidgetItem*)(selected[i]))->altId() == -1)
+		  params.append("mode", "view");
+		else
+		  params.append("mode", "edit");
 
-    returnAuthorizationItem newdlg(this, "", TRUE);
-    newdlg.set(params);
-  
-    if (newdlg.exec() != QDialog::Rejected)
-      fill = TRUE;
+		returnAuthorizationItem newdlg(this, "", TRUE);
+		newdlg.set(params);
+	  
+		if (newdlg.exec() != QDialog::Rejected)
+		  fill = TRUE;
+	  }
+	  if (fill)
+		populate();
   }
-  if (fill)
-    populate();
 }
 
 void returnAuthorization::sView()
