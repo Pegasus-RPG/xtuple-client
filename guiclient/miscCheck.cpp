@@ -380,20 +380,22 @@ void miscCheck::sCustomerSelected()
 
 void miscCheck::sCreditMemoSelected(bool p)
 {
-	
   if (p) 
   {  
+    if(!_date->isValid())
+      _date->setDate(QDate::currentDate());
     q.prepare("SELECT aropen_curr_id, "
-  	          "currtocurr(aropen_curr_id,:curr_id,aropen_amount-aropen_paid,:date) AS amount "
-	          "FROM aropen "
-			  "WHERE (aropen_id=:aropen_id); ");
-	q.bindValue(":aropen_id",_cmCluster->id());
-	q.bindValue(":curr_id",_amount->id());
+              "       currtocurr(aropen_curr_id,:curr_id,aropen_amount-aropen_paid,:date) AS amount "
+              "  FROM aropen "
+              " WHERE (aropen_id=:aropen_id); ");
+    q.bindValue(":aropen_id", _cmCluster->id());
+    q.bindValue(":curr_id", _amount->id());
+    q.bindValue(":date", _date->date());
     q.exec();
     if (q.first())
     {
       _aropenamt=q.value("amount").toDouble();
-	  _amount->setLocalValue(q.value("amount").toDouble());
+      _amount->setLocalValue(q.value("amount").toDouble());
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -404,6 +406,6 @@ void miscCheck::sCreditMemoSelected(bool p)
   else
   {
     _aropenamt=0;
-	_amount->clear();
+    _amount->clear();
   } 
 }
