@@ -111,7 +111,7 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
       _addAdjustment->setEnabled(FALSE);
 
     connect(omfgThis, SIGNAL(bankAdjustmentsUpdated(int, bool)), this, SLOT(populate()));
-    connect(omfgThis, SIGNAL(apChecksUpdated(int, int, bool)), this, SLOT(populate()));
+    connect(omfgThis, SIGNAL(checksUpdated(int, int, bool)), this, SLOT(populate()));
     connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(populate()));
 }
 
