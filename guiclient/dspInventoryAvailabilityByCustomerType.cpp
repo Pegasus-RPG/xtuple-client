@@ -629,5 +629,6 @@ void dspInventoryAvailabilityByCustomerType::sAddToPackingListBatch()
   q.prepare("SELECT addToPackingListBatch(:sohead_id) AS result;");
   q.bindValue(":sohead_id", _avail->id());
   q.exec();
+  sFillList();
 }
 
