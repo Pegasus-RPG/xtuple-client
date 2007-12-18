@@ -374,6 +374,7 @@ void dspInventoryAvailabilityByCustomerType::sFillList()
                "       formatDate(coitem_scheddate) AS f_scheddate,"
                "       (coitem_qtyreserved > 0 AND sobalance > coitem_qtyreserved) AS partialreservation,"
                "       ((sobalance - coitem_qtyreserved) = 0) AS fullreservation,"
+               "       onpacklist,"
                "       reorderlevel "
                "<? if exists(\"showWoSupply\") ?>, "        
                "       wo_id,"
@@ -397,6 +398,7 @@ void dspInventoryAvailabilityByCustomerType::sFillList()
                "              qtyatshipping(coitem_id) AS atshipping,"
                "              coitem_qtyreserved,"
                "              coitem_scheddate,"
+               "              (pack_id IS NOT NULL) AS onpacklist,"
                "              CASE WHEN(itemsite_useparams) THEN itemsite_reorderlevel ELSE 0.0 END AS reorderlevel "
                "<? if exists(\"showWoSupply\") ?>, " 
                "              COALESCE(wo_id,-1) AS wo_id,"
@@ -406,7 +408,10 @@ void dspInventoryAvailabilityByCustomerType::sFillList()
                "              ((wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS wo_latestart,"
                "              (wo_duedate<=CURRENT_DATE) AS wo_latedue " 
                "<? endif ?>" 
-               "       FROM cohead, cust, itemsite, item, uom, coitem "
+               "       FROM cohead "
+               "            LEFT OUTER JOIN pack"
+               "              ON (pack_head_type='SO' AND pack_head_id=cohead_id),"
+               "            cust, itemsite, item, uom, coitem "
                "<? if exists(\"showWoSupply\") ?> "
                "            LEFT OUTER JOIN wo"
                "             ON ((coitem_itemsite_id=wo_itemsite_id)"
@@ -466,6 +471,8 @@ void dspInventoryAvailabilityByCustomerType::sFillList()
           coheadid = q.value("cohead_id").toInt();
           cohead = new XTreeWidgetItem(_avail, cohead, coheadid, -2,
                                        q.value("cohead_number"), q.value("custname"));
+          if(q.value("onpacklist").toBool())
+            cohead->setTextColor("green");
         }
 
         coitemid = q.value("coitem_id").toInt();
