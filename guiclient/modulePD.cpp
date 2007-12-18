@@ -348,9 +348,12 @@ modulePD::modulePD(OpenMFGGUIClient *Pparent) :
                                       this, SLOT(sDspSummarizedBOM()),
                                       displaysMenu, _privleges->check("ViewBOMs") ) );
 
+if (_metrics->boolean("Routings") )
+{
   parent->actions.append( new Action( parent, "pd.dspSequencedBOM", tr("Sequenced Bill of Materials..."),
                                       this, SLOT(sDspSequencedBOM()),
                                       displaysMenu, _privleges->check("ViewBOMs") ) );
+}
 
   displaysMenu->insertSeparator();
 

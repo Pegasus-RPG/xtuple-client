@@ -187,7 +187,7 @@ menuProducts::menuProducts(OpenMFGGUIClient *Pparent) :
   { "pd.dspSingleLevelBOM", tr("&Single Level..."), SLOT(sDspSingleLevelBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
   { "pd.dspIndentedBOM", tr("&Indented..."), SLOT(sDspIndentedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
   { "pd.dspSummarizedBOM", tr("Summari&zed..."), SLOT(sDspSummarizedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
-  { "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL,  _metrics->boolean("Routings") , NULL },
   
   // Product | Reports | Where Used
   { "menu",	tr("&Where Used"), (char*)reportsWhereUsdMenu,	reportsMenu, true, NULL, NULL, true , NULL },
