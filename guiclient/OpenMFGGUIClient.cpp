@@ -1209,9 +1209,6 @@ void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 
   if(size.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
     w->resize(size);
-  QRect r(pos, w->size());
-  if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
-    w->move(pos);
 
   if(_showTopLevel)
   {
@@ -1220,6 +1217,9 @@ void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     QMainWindow *mw = qobject_cast<QMainWindow*>(w);
     if (mw)
       mw->statusBar()->show();
+	QRect r(pos, w->size());
+    if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+      w->move(pos);
     w->show();
   }
   else
@@ -1227,10 +1227,14 @@ void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     QWidget * fw = w->focusWidget();
     w->setAttribute(Qt::WA_DeleteOnClose);
     _workspace->addWindow(w);
+    QRect r(pos, w->size());
+    if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
+      w->move(pos);
     w->show();
     if(fw)
       fw->setFocus();
   }
+
   w->installEventFilter(__saveSizePositionEventFilter);
 }
 
