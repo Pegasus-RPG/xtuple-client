@@ -381,6 +381,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
 	  _revisionDate->setEnabled(FALSE);
 	  _closeWO->setEnabled(FALSE);
 	  _finalLocation->setEnabled(FALSE);
+	  _booitem->setEnabled(FALSE);
   }
 
   if ((_revision->description() == "Pending") || (_revision->description() == "Active"))
@@ -391,6 +392,7 @@ void boo::sFillList(int pItemid, bool pLocalUpdate)
 	  _revisionDate->setEnabled(TRUE);
 	  _closeWO->setEnabled(TRUE);
 	  _finalLocation->setEnabled(TRUE);
+	  _booitem->setEnabled(TRUE);
   }
 
   q.prepare( "SELECT MAX(booitem_execday) AS leadtime "
