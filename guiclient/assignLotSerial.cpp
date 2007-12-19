@@ -57,53 +57,22 @@
 
 #include "assignLotSerial.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QCloseEvent>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include "createLotSerial.h"
 
-/*
- *  Constructs a assignLotSerial as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
 
-    // signals and slots connections
-    connect(_itemlocdist, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
-    connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-    connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-    connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-assignLotSerial::~assignLotSerial()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void assignLotSerial::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QCloseEvent>
-
-void assignLotSerial::init()
-{
   _trapClose = TRUE;
 
   _item->setReadOnly(TRUE);
@@ -111,10 +80,19 @@ void assignLotSerial::init()
   _itemlocdist->addColumn( tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
   _itemlocdist->addColumn( tr("Expires"),      _dateColumn, Qt::AlignCenter );
   _itemlocdist->addColumn( tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
-
 }
 
-enum SetResponse assignLotSerial::set(ParameterList &pParams)
+assignLotSerial::~assignLotSerial()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void assignLotSerial::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse assignLotSerial::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -135,8 +113,18 @@ enum SetResponse assignLotSerial::set(ParameterList &pParams)
       q.exec();
       if (q.first())
         _item->setItemsiteid(q.value("itemlocdist_itemsite_id").toInt());
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return UndefinedError;
+      }
 
       sFillList();
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
     }
   }
 
@@ -148,8 +136,9 @@ void assignLotSerial::closeEvent(QCloseEvent *pEvent)
   if (_trapClose)
   {
     QMessageBox::critical( this, tr("Cannot Cancel Distribution"),
-                           tr( "You must indicate the Lot/Serial # to assign and select the 'Assign' button.\n"
-                               "You may not cancel this action." ) );
+                           tr("<p>You must indicate the Lot/Serial # to "
+			      "assign and select the 'Assign' button. You may "
+			      "not cancel this action." ) );
     pEvent->ignore();
   }
   else
@@ -178,6 +167,11 @@ void assignLotSerial::sDelete()
              " AND (lsdetail_source_id=:itemlocdist_id) );" );
   q.bindValue(":itemlocdist_id", _itemlocdist->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillList();
 }
@@ -189,6 +183,11 @@ void assignLotSerial::sClose()
              " AND (itemlocdist_source_id=:source_id) );" );
   q.bindValue(":source_id", _itemlocdistid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   reject();
 }
@@ -198,7 +197,9 @@ void assignLotSerial::sAssign()
   if (_qtyBalance->text().toDouble() != 0.0)
   {
     QMessageBox::warning( this, tr("Incomplete Assignment"),
-                          tr( "You must assign a Lot/Serial # to the remaining Quantity before saving this assignment." ) );
+                          tr( "<p>You must assign a Lot/Serial # to the "
+			      "remaining Quantity before saving this "
+			      "assignment." ) );
     _new->setFocus();
     return;
   }
@@ -212,6 +213,11 @@ void assignLotSerial::sAssign()
   q.bindValue(":itemlocdist_series", _itemlocSeries);
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   _trapClose = FALSE;
   done(_itemlocSeries);
@@ -231,7 +237,11 @@ void assignLotSerial::sFillList()
     openQty = q.value("qty").toDouble();
     _qtyToAssign->setText(formatNumber(openQty,6));
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   q.prepare( "SELECT COALESCE(SUM(itemlocdist_qty), 0) AS totalqty "
              "FROM itemlocdist "
@@ -243,7 +253,12 @@ void assignLotSerial::sFillList()
     _qtyAssigned->setText(formatNumber(q.value("totalqty").toDouble(),6));
     _qtyBalance->setText(formatNumber(openQty - q.value("totalqty").toDouble(), 6));
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
 
   q.prepare( "SELECT itemlocdist_id, itemlocdist_lotserial,"
              "       formatDate(itemlocdist_expiration, :never),"
@@ -255,5 +270,9 @@ void assignLotSerial::sFillList()
   q.bindValue(":itemlocdist_series", _itemlocSeries);
   q.exec();
   _itemlocdist->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-

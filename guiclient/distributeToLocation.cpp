@@ -57,51 +57,30 @@
 
 #include "distributeToLocation.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a distributeToLocation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 distributeToLocation::distributeToLocation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_distribute, SIGNAL(clicked()), this, SLOT(sDistribute()));
-    init();
+  connect(_distribute, SIGNAL(clicked()), this, SLOT(sDistribute()));
+  _availToDistribute = 0;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 distributeToLocation::~distributeToLocation()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void distributeToLocation::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void distributeToLocation::init()
-{
-}
-
-enum SetResponse distributeToLocation::set(ParameterList &pParams)
+enum SetResponse distributeToLocation::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -158,6 +137,19 @@ void distributeToLocation::sDistribute()
   {
     QMessageBox::warning( this, tr("Cannot Distribute Quantity"),
                           tr("You may not distribute a positive value when the balance to distribute is negative.") );
+    _locationQty->setFocus();
+    return;
+  }
+
+  if (qty < 0 && _availToDistribute < qAbs(qty) &&
+      QMessageBox::question(this, tr("Distribute More Than Available?"),
+			    tr("<p>It appears you are trying to distribute "
+			       "more than is available to be distributed. "
+			       "Are you sure you want to distribute this "
+			       "quantity?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
     _locationQty->setFocus();
     return;
   }
@@ -271,7 +263,8 @@ void distributeToLocation::populate()
 {
   if (_mode == cLocation)
   {
-    q.prepare( "SELECT formatLocationName(location_id) AS locationname, COALESCE(itemlocdist_qty, 0) AS qty "
+    q.prepare( "SELECT formatLocationName(location_id) AS locationname, COALESCE(itemlocdist_qty, 0) AS qty, "
+	       "       0 AS availqty "
                "FROM location LEFT OUTER JOIN itemlocdist"
                "               ON ( (itemlocdist_source_type='L')"
                "                   AND (itemlocdist_source_id=location_id)"
@@ -282,14 +275,15 @@ void distributeToLocation::populate()
   }
   else if (_mode == cItemloc)
   {
-    q.prepare( "SELECT formatLocationName(location_id) AS locationname, COALESCE(itemlocdist_qty, 0) AS qty "
-               "FROM location,"
-               "     itemloc LEFT OUTER JOIN itemlocdist"
-               "               ON ( (itemlocdist_source_type='I')"
-               "                   AND (itemlocdist_source_id=itemloc_id)"
-               "                   AND (itemlocdist_itemlocdist_id=:itemlocdist_id) ) "
-               "WHERE ((itemloc_location_id=location_id)"
-               " AND (itemloc_id=:itemloc_id));" );
+    q.prepare( "SELECT formatLocationName(location_id) AS locationname,"
+	       "       COALESCE(itemlocdist_qty, 0) AS qty, "
+	       "       itemloc_qty AS availqty "
+               "FROM itemloc LEFT OUTER JOIN"
+	       "     location ON (itemloc_location_id=location_id) LEFT OUTER JOIN"
+	       "     itemlocdist ON ((itemlocdist_source_type='I')"
+               "                 AND (itemlocdist_source_id=itemloc_id)"
+               "                 AND (itemlocdist_itemlocdist_id=:itemlocdist_id) ) "
+               "WHERE (itemloc_id=:itemloc_id);" );
     q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
     q.bindValue(":itemloc_id", _itemlocdistid);
   }
@@ -299,6 +293,7 @@ void distributeToLocation::populate()
   {
     _locationQty->setText(q.value("qty").toString());
     _location->setText(q.value("locationname").toString());
+    _availToDistribute = q.value("availqty").toDouble();
   }
 
   q.prepare( "SELECT parent.itemlocdist_lotserial AS lotserial,"
@@ -317,11 +312,27 @@ void distributeToLocation::populate()
   {
     _lotSerial = q.value("lotserial").toString();
 
-    _qtyToDistribute->setText(formatNumber(q.value("qtydistrib").toDouble(),6));
+    _qtyToDistribute->setText(formatNumber(q.value("qtydistrib").toDouble(), 6));
     _qtyTagged->setText(formatNumber(q.value("qtytagged").toDouble(),6));
     _qtyBalance->setText(formatNumber(q.value("qtybalance").toDouble(),6));
-    _locationQty->setText(formatNumber(q.value("qtybalance").toDouble(),6));
     _balance = q.value("qtybalance").toDouble();
+
+    double locQty = _balance;
+    if (_mode == cItemloc)	// lot/serial
+    {
+      // if we want to take stuff away and we have stuff to take away
+      if (locQty < 0 && _availToDistribute > 0)
+	locQty = qMax(-_availToDistribute, locQty);
+      // if we want to take stuff away but don't have anything to take away
+      else if (locQty < 0)
+	locQty = 0;
+    }
+    _locationQty->setText(formatNumber(locQty, 6));
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 

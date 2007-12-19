@@ -59,7 +59,7 @@
 #define CREATELOTSERIAL_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_createLotSerial.h"
@@ -73,19 +73,18 @@ public:
     ~createLotSerial();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sAssign();
 
 protected slots:
     virtual void languageChange();
 
 private:
-    int _itemlocdistid;
-    int _itemlocSeries;
     bool _fractional;
-
-    void init();
-
+    int  _itemlocSeries;
+    int  _itemlocdistid;
+    int  _itemsiteid;
+    bool _serial;
 };
 
 #endif // CREATELOTSERIAL_H

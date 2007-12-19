@@ -59,7 +59,7 @@
 #define DISTRIBUTETOLOCATION_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_distributeToLocation.h"
@@ -73,7 +73,7 @@ public:
     ~distributeToLocation();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sDistribute();
     virtual void populate();
 
@@ -87,9 +87,7 @@ private:
     int _itemlocdistid;
     double _balance;
     QString _lotSerial;
-
-    void init();
-
+    double _availToDistribute;
 };
 
 #endif // DISTRIBUTETOLOCATION_H

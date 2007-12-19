@@ -57,55 +57,37 @@
 
 #include "createLotSerial.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
+
 #include <parameter.h>
 #include <openreports.h>
 
-/*
- *  Constructs a createLotSerial as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
-    init();
+  _qtyToAssign->setValidator(omfgThis->qtyVal());
+  _serial = false;
+  _itemsiteid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 createLotSerial::~createLotSerial()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void createLotSerial::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
-
-void createLotSerial::init()
-{
-  _qtyToAssign->setValidator(omfgThis->qtyVal());
-}
-
-enum SetResponse createLotSerial::set(ParameterList &pParams)
+enum SetResponse createLotSerial::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -119,7 +101,8 @@ enum SetResponse createLotSerial::set(ParameterList &pParams)
   {
     _itemlocdistid = param.toInt();
 
-    q.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_perishable "
+    q.prepare( "SELECT item_fractional, itemsite_controlmethod, "
+	       "       itemsite_id, itemsite_perishable "
                "FROM itemlocdist, itemsite, item "
                "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
@@ -130,12 +113,21 @@ enum SetResponse createLotSerial::set(ParameterList &pParams)
     {
       if (q.value("itemsite_controlmethod").toString() == "S")
       {
+	_serial = true;
         _qtyToAssign->setText("1");
         _qtyToAssign->setEnabled(FALSE);
       }
+      else
+	_serial = false;
 
+      _itemsiteid = q.value("itemsite_id").toInt();
       _expiration->setEnabled(q.value("itemsite_perishable").toBool());
       _fractional = q.value("item_fractional").toBool();
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
     }
   }
 
@@ -144,10 +136,21 @@ enum SetResponse createLotSerial::set(ParameterList &pParams)
 
 void createLotSerial::sAssign()
 {
+  if (_lotSerial->text().contains(QRegExp("\\s")) &&
+      QMessageBox::question(this, tr("Lot/Serial Number Contains Spaces"),
+			    tr("<p>The Lot/Serial Number contains spaces. Do "
+			       "you want to save it anyway?"),
+			    QMessageBox::Yes,
+			    QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+  {
+    return;
+  }
+
   if (_qtyToAssign->toDouble() == 0.0)
   {
     QMessageBox::critical( this, tr("Enter Quantity"),
-                           tr("You must enter a positive value to assign to this Lot/Serial number.") );
+                           tr("<p>You must enter a positive value to assign to "
+			      "this Lot/Serial number.") );
     _qtyToAssign->setFocus();
     return;
   }
@@ -155,7 +158,8 @@ void createLotSerial::sAssign()
   if ( (_expiration->isEnabled()) && (!_expiration->isValid()) )
   {
     QMessageBox::critical( this, tr("Enter Expiration Date"),
-                           tr("You must enter an expiration date to this Perishable Lot/Serial number.") );
+                           tr("<p>You must enter an expiration date to this "
+			      "Perishable Lot/Serial number.") );
     _expiration->setFocus();
     return;
   }
@@ -165,16 +169,48 @@ void createLotSerial::sAssign()
     if (_qtyToAssign->toDouble() != _qtyToAssign->text().toInt())
     {
       QMessageBox::critical( this, tr("Item is Non-Fractional"),
-                             tr( "The Item in question is not stored in fractional quantities.\n"
-                                 "You must enter a whole value to assign to this Lot/Serial number." ) );
+                             tr( "<p>The Item in question is not stored in "
+				 "fractional quantities. You must enter a "
+				 "whole value to assign to this Lot/Serial "
+				 "number." ) );
       _qtyToAssign->setFocus();
       return;
     }
   }
 
-  q.exec("SELECT NEXTVAL('itemlocdist_itemlocdist_id_seq') AS itemlocdist_id;");
-  if (!q.first())
+  if (_serial)
   {
+    q.prepare("SELECT COUNT(*) AS count "
+	      "FROM lsdetail "
+	      "WHERE ((lsdetail_itemsite_id=:itemsite_id)"
+	      "  AND  (lsdetail_lotserial=:lotserial));");
+    q.bindValue(":itemsite_id", _itemsiteid);
+    q.bindValue(":lotserial", _lotSerial->text());
+    q.exec();
+    if (q.first())
+    {
+      if (q.value("count").toInt() > 0)
+      {
+	QMessageBox::critical(this, tr("Duplicate Serial Number"),
+			      tr("This Serial Number has already been used "
+			         "and cannot be reused."));
+
+	return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+  }
+
+  q.exec("SELECT NEXTVAL('itemlocdist_itemlocdist_id_seq') AS itemlocdist_id;");
+  if (!q.first() || q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
  
   int itemlocdistid = q.value("itemlocdist_id").toInt();
@@ -214,4 +250,3 @@ void createLotSerial::sAssign()
 
   accept();
 }
-

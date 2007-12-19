@@ -59,7 +59,7 @@
 #define ASSIGNLOTSERIAL_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_assignLotSerial.h"
@@ -73,7 +73,7 @@ public:
     ~assignLotSerial();
 
 public slots:
-    virtual enum SetResponse set( ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sNew();
     virtual void sDelete();
@@ -88,9 +88,6 @@ private:
     int _itemlocSeries;
     int _itemlocdistid;
     bool _trapClose;
-
-    void init();
-
 };
 
 #endif // ASSIGNLOTSERIAL_H
