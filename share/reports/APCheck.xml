@@ -48,10 +48,10 @@ formatAddr(CASE WHEN checkhead_recip_type = 'C' THEN
                                   FROM vendinfo
                                   WHERE (vend_id=checkhead_recip_id)))
            END) AS check_address,
-CASE WHEN checkhead_recip_type = 'C' THEN (SELECT cust_number
+CASE WHEN checkhead_recip_type = 'C' THEN (SELECT cust_name
                                            FROM custinfo
                                            WHERE cust_id=checkhead_recip_id)
-     WHEN checkhead_recip_type = 'T' THEN (SELECT taxauth_code
+     WHEN checkhead_recip_type = 'T' THEN (SELECT taxauth_name
                                            FROM taxauth
                                            WHERE taxauth_id=checkhead_recip_id)
      WHEN checkhead_recip_type = 'V' THEN
@@ -167,7 +167,7 @@ ORDER BY ord
 LIMIT 16;</sql>
  </querysource>
  <pghead>
-  <height>15</height>
+  <height>19</height>
  </pghead>
  <section>
   <name>Top Detail Header</name>
@@ -175,46 +175,7 @@ LIMIT 16;</sql>
    <key>
     <query>Head</query>
    </key>
-   <height>45</height>
-   <label>
-    <rect>
-     <x>530</x>
-     <y>30</y>
-     <width>45</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Amount:</string>
-   </label>
-   <line>
-    <xstart>51</xstart>
-    <ystart>7</ystart>
-    <xend>51</xend>
-    <yend>7</yend>
-    <weight>0</weight>
-   </line>
-   <label>
-    <rect>
-     <x>600</x>
-     <y>30</y>
-     <width>85</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Discount / Credit:</string>
-   </label>
+   <height>49</height>
    <field>
     <rect>
      <x>305</x>
@@ -253,25 +214,22 @@ LIMIT 16;</sql>
      <column>checkhead_number</column>
     </data>
    </field>
-   <field>
+   <label>
     <rect>
-     <x>494</x>
-     <y>15</y>
-     <width>104</width>
-     <height>15</height>
+     <x>175</x>
+     <y>30</y>
+     <width>75</width>
+     <height>14</height>
     </rect>
     <font>
-     <face>Helvetica</face>
+     <face>Arial</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
     <left/>
-    <bottom/>
-    <data>
-     <query>Head</query>
-     <column>recip_number</column>
-    </data>
-   </field>
+    <top/>
+    <string>Reference:</string>
+   </label>
    <field>
     <rect>
      <x>305</x>
@@ -292,17 +250,36 @@ LIMIT 16;</sql>
     </data>
    </field>
    <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>805</xend>
-    <yend>45</yend>
+    <xstart>51</xstart>
+    <ystart>7</ystart>
+    <xend>51</xend>
+    <yend>7</yend>
     <weight>0</weight>
    </line>
+   <field>
+    <rect>
+     <x>494</x>
+     <y>15</y>
+     <width>104</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <bottom/>
+    <data>
+     <query>Head</query>
+     <column>recip_number</column>
+    </data>
+   </field>
    <label>
     <rect>
-     <x>175</x>
+     <x>5</x>
      <y>30</y>
-     <width>75</width>
+     <width>111</width>
      <height>14</height>
     </rect>
     <font>
@@ -312,7 +289,23 @@ LIMIT 16;</sql>
     </font>
     <left/>
     <top/>
-    <string>Reference:</string>
+    <string>Invoice / Document:</string>
+   </label>
+   <label>
+    <rect>
+     <x>530</x>
+     <y>30</y>
+     <width>45</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Amount:</string>
    </label>
    <label>
     <rect>
@@ -330,11 +323,18 @@ LIMIT 16;</sql>
     <top/>
     <string>Check #</string>
    </label>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>805</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
    <label>
     <rect>
-     <x>5</x>
+     <x>600</x>
      <y>30</y>
-     <width>111</width>
+     <width>85</width>
      <height>14</height>
     </rect>
     <font>
@@ -344,7 +344,7 @@ LIMIT 16;</sql>
     </font>
     <left/>
     <top/>
-    <string>Invoice / Document:</string>
+    <string>Discount / Credit:</string>
    </label>
   </detail>
  </section>
@@ -354,45 +354,7 @@ LIMIT 16;</sql>
    <key>
     <query>TopDetail2</query>
    </key>
-   <height>18</height>
-   <field>
-    <rect>
-     <x>468</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>TopDetail2</query>
-     <column>amount</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>155</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>TopDetail2</query>
-     <column>doc_number</column>
-    </data>
-   </field>
+   <height>22</height>
    <field>
     <rect>
      <x>175</x>
@@ -450,31 +412,25 @@ LIMIT 16;</sql>
      <column>docdate</column>
     </data>
    </field>
-  </detail>
- </section>
- <section>
-  <name>Top Detail Amount</name>
-  <detail>
-   <key>
-    <query>Head</query>
-   </key>
-   <height>31</height>
-   <label>
+   <field>
     <rect>
-     <x>20</x>
-     <y>15</y>
-     <width>75</width>
+     <x>5</x>
+     <y>0</y>
+     <width>155</width>
      <height>15</height>
     </rect>
     <font>
-     <face>Arial</face>
+     <face>Helvetica</face>
      <size>8</size>
      <weight>normal</weight>
     </font>
     <left/>
-    <top/>
-    <string>Memo:</string>
-   </label>
+    <vcenter/>
+    <data>
+     <query>TopDetail2</query>
+     <column>doc_number</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>468</x>
@@ -488,28 +444,21 @@ LIMIT 16;</sql>
      <weight>normal</weight>
     </font>
     <right/>
-    <top/>
+    <vcenter/>
     <data>
-     <query>Head</query>
-     <column>f_amount</column>
+     <query>TopDetail2</query>
+     <column>amount</column>
     </data>
    </field>
-   <label>
-    <rect>
-     <x>340</x>
-     <y>0</y>
-     <width>75</width>
-     <height>12</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Check Total:</string>
-   </label>
+  </detail>
+ </section>
+ <section>
+  <name>Top Detail Amount</name>
+  <detail>
+   <key>
+    <query>Head</query>
+   </key>
+   <height>35</height>
    <field>
     <rect>
      <x>395</x>
@@ -548,6 +497,57 @@ LIMIT 16;</sql>
      <column>memo</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>20</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Memo:</string>
+   </label>
+   <label>
+    <rect>
+     <x>340</x>
+     <y>0</y>
+     <width>75</width>
+     <height>12</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Check Total:</string>
+   </label>
+   <field>
+    <rect>
+     <x>468</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>f_amount</column>
+    </data>
+   </field>
   </detail>
  </section>
  <section>
@@ -556,7 +556,26 @@ LIMIT 16;</sql>
    <key>
     <query>Head</query>
    </key>
-   <height>352</height>
+   <height>356</height>
+   <field>
+    <rect>
+     <x>425</x>
+     <y>125</y>
+     <width>121</width>
+     <height>20</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>f_checkdate</column>
+    </data>
+   </field>
    <field>
     <rect>
      <x>80</x>
@@ -595,25 +614,22 @@ LIMIT 16;</sql>
      <column>curr_symbol</column>
     </data>
    </field>
-   <field>
+   <label>
     <rect>
      <x>30</x>
-     <y>145</y>
-     <width>225</width>
-     <height>20</height>
+     <y>335</y>
+     <width>75</width>
+     <height>15</height>
     </rect>
     <font>
-     <face>Helvetica</face>
-     <size>10</size>
+     <face>Arial</face>
+     <size>8</size>
      <weight>normal</weight>
     </font>
     <left/>
     <top/>
-    <data>
-     <query>Head</query>
-     <column>recip_name</column>
-    </data>
-   </field>
+    <string>Memo:</string>
+   </label>
    <field>
     <rect>
      <x>35</x>
@@ -672,27 +688,11 @@ LIMIT 16;</sql>
      <column>check_address</column>
     </data>
    </text>
-   <label>
-    <rect>
-     <x>30</x>
-     <y>335</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Memo:</string>
-   </label>
    <field>
     <rect>
-     <x>425</x>
-     <y>125</y>
-     <width>121</width>
+     <x>30</x>
+     <y>145</y>
+     <width>225</width>
      <height>20</height>
     </rect>
     <font>
@@ -704,7 +704,7 @@ LIMIT 16;</sql>
     <top/>
     <data>
      <query>Head</query>
-     <column>f_checkdate</column>
+     <column>recip_name</column>
     </data>
    </field>
   </detail>
@@ -715,46 +715,7 @@ LIMIT 16;</sql>
    <key>
     <query>Head</query>
    </key>
-   <height>41</height>
-   <label>
-    <rect>
-     <x>600</x>
-     <y>20</y>
-     <width>85</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Discount / Credit:</string>
-   </label>
-   <line>
-    <xstart>0</xstart>
-    <ystart>35</ystart>
-    <xend>800</xend>
-    <yend>35</yend>
-    <weight>0</weight>
-   </line>
-   <label>
-    <rect>
-     <x>175</x>
-     <y>20</y>
-     <width>75</width>
-     <height>14</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Reference:</string>
-   </label>
+   <height>45</height>
    <label>
     <rect>
      <x>5</x>
@@ -790,6 +751,29 @@ LIMIT 16;</sql>
      <column>recip_name</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>600</x>
+     <y>20</y>
+     <width>85</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Discount / Credit:</string>
+   </label>
+   <line>
+    <xstart>0</xstart>
+    <ystart>35</ystart>
+    <xend>800</xend>
+    <yend>35</yend>
+    <weight>0</weight>
+   </line>
    <field>
     <rect>
      <x>520</x>
@@ -809,6 +793,38 @@ LIMIT 16;</sql>
      <column>recip_number</column>
     </data>
    </field>
+   <label>
+    <rect>
+     <x>175</x>
+     <y>20</y>
+     <width>75</width>
+     <height>14</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Reference:</string>
+   </label>
+   <label>
+    <rect>
+     <x>645</x>
+     <y>0</y>
+     <width>61</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <top/>
+    <string>Check #</string>
+   </label>
    <field>
     <rect>
      <x>320</x>
@@ -844,22 +860,6 @@ LIMIT 16;</sql>
     <top/>
     <string>Amount:</string>
    </label>
-   <label>
-    <rect>
-     <x>645</x>
-     <y>0</y>
-     <width>61</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <top/>
-    <string>Check #</string>
-   </label>
    <field>
     <rect>
      <x>710</x>
@@ -887,12 +887,12 @@ LIMIT 16;</sql>
    <key>
     <query>TopDetail2</query>
    </key>
-   <height>18</height>
+   <height>22</height>
    <field>
     <rect>
-     <x>340</x>
+     <x>610</x>
      <y>0</y>
-     <width>100</width>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -900,11 +900,11 @@ LIMIT 16;</sql>
      <size>8</size>
      <weight>normal</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>TopDetail2</query>
-     <column>docdate</column>
+     <column>disc_cred</column>
     </data>
    </field>
    <field>
@@ -928,6 +928,25 @@ LIMIT 16;</sql>
    </field>
    <field>
     <rect>
+     <x>340</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>TopDetail2</query>
+     <column>docdate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
      <x>5</x>
      <y>0</y>
      <width>160</width>
@@ -943,25 +962,6 @@ LIMIT 16;</sql>
     <data>
      <query>TopDetail2</query>
      <column>doc_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>610</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>TopDetail2</query>
-     <column>disc_cred</column>
     </data>
    </field>
    <field>
@@ -991,7 +991,26 @@ LIMIT 16;</sql>
    <key>
     <query>Head</query>
    </key>
-   <height>31</height>
+   <height>35</height>
+   <field>
+    <rect>
+     <x>468</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Helvetica</face>
+     <size>8</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <top/>
+    <data>
+     <query>Head</query>
+     <column>f_amount</column>
+    </data>
+   </field>
    <label>
     <rect>
      <x>20</x>
@@ -1060,25 +1079,6 @@ LIMIT 16;</sql>
     <data>
      <query>Head</query>
      <column>memo</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>468</x>
-     <y>0</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Helvetica</face>
-     <size>8</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <top/>
-    <data>
-     <query>Head</query>
-     <column>f_amount</column>
     </data>
    </field>
   </detail>
