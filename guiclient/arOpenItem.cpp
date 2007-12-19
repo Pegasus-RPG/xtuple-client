@@ -507,7 +507,7 @@ void arOpenItem::populate()
                  "WHERE (arapply_target_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
 
-      q.bindValue(":creditMemo", tr("C/M"));
+      q.bindValue(":creditMemo", tr("Credit Memo"));
       q.bindValue(":cashdeposit", tr("Cash Deposit"));
       q.bindValue(":check", tr("Check"));
       q.bindValue(":certifiedCheck", tr("Certified Check"));
@@ -525,18 +525,20 @@ void arOpenItem::populate()
       q.prepare( "SELECT arapply_id, arapply_target_aropen_id,"
                  "       CASE WHEN (arapply_target_doctype = 'I') THEN :invoice"
                  "            WHEN (arapply_target_doctype = 'D') THEN :debitMemo"
+                 "            WHEN (arapply_target_doctype = 'K') THEN :apcheck"
                  "            ELSE :other"
                  "       END AS documenttype,"
                  "       arapply_target_docnumber,"
                  "       formatDate(arapply_postdate) AS f_applydate,"
                  "       formatMoney(arapply_applied) AS f_amount, "
-		 "       currConcat(arapply_curr_id) "
+		         "       currConcat(arapply_curr_id) "
                  "FROM arapply "
                  "WHERE (arapply_source_aropen_id=:aropen_id) "
                  "ORDER BY arapply_postdate;" );
 
       q.bindValue(":invoice", tr("Invoice"));
       q.bindValue(":debitMemo", tr("Debit Memo"));
+      q.bindValue(":apcheck", tr("A/P Check"));
     }
 
     q.bindValue(":error", tr("Error"));

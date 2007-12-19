@@ -381,35 +381,37 @@ void dspARApplications::sFillList()
       QString fundstype = q.value("arapply_fundstype").toString();
       QString doctype;
       if (q.value("arapply_source_doctype") == "C")
-	doctype = tr("C/M");
+	    doctype = tr("Credit Memo");
       else if (q.value("arapply_source_doctype") == "R")
         doctype = tr("Cash Deposit");
       else if (fundstype == "A")
-	doctype = tr("AmEx");
+	    doctype = tr("AmEx");
       else if (fundstype == "C")
-	doctype = tr("Check");
+	    doctype = tr("Check");
       else if (fundstype == "D")
-	doctype = tr("Discover");
+	    doctype = tr("Discover");
       else if (fundstype == "K")
-	doctype = tr("Cash");
+	    doctype = tr("Cash");
       else if (fundstype == "M")
-	doctype = tr("M/C");
+	    doctype = tr("M/C");
       else if (fundstype == "R")
-	doctype = tr("Other C/C");
+	    doctype = tr("Other C/C");
       else if (fundstype == "T")
-	doctype = tr("Cert. Check");
+	    doctype = tr("Cert. Check");
       else if (fundstype == "V")
-	doctype = tr("Visa");
+	    doctype = tr("Visa");
       else if (fundstype == "W")
-	doctype = tr("Wire Trans.");
+	    doctype = tr("Wire Trans.");
       else if (fundstype == "O")
-	doctype = tr("Other");
+	    doctype = tr("Other");
 
       QString targetdoctype = q.value("arapply_target_doctype").toString();
       if (targetdoctype == "D")
-	targetdoctype = tr("D/M");
+	targetdoctype = tr("Debit Memo");
       else if (targetdoctype == "I")
 	targetdoctype = tr("Invoice");
+      else if (targetdoctype == "K")
+	targetdoctype = tr("A/P Check");
       else
 	targetdoctype = tr("Other");
 
