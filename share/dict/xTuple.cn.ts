@@ -245,12 +245,12 @@
     <message>
         <location filename="" line="0"/>
         <source>You may not apply more than the balance due to this document.</source>
-        <translation type="unfinished"></translation>
+        <translation>由于这个文件你的申请不能超过余额.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You may not apply more than the amount available to apply for this Credit Memo.</source>
-        <translation type="unfinished"></translation>
+        <translation>你不能申请超过可用的量来申请这个贷项申请单.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1044,17 +1044,17 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>%1::sInfo() not yet defined</source>
-        <translation type="unfinished"></translation>
+        <translation>%1::sInfo()还没有被定义</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Could not instantiate a List Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Could not instantiate a Search Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>不能用具体例证来说明一个搜索对话</translation>
     </message>
 </context>
 <context>
@@ -1178,12 +1178,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Expi&amp;red Components</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示过期成分</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1193,22 +1193,22 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Docu&amp;ment #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revisi&amp;on:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;更正:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revision Da&amp;te:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;更正日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Batch Size:</source>
-        <translation type="unfinished"></translation>
+        <translation>一次生产量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1233,7 +1233,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1268,7 +1268,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>E&amp;xpire</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1278,22 +1278,22 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Move &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;上移</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt+U</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+U</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Move Do&amp;wn</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;下移</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt+W</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+W</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1303,42 +1303,42 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Non-Pick List Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>不挑选清单项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Number Of Items</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Pick List Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>挑选清单项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于标准单位的总数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Current Std. Material Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>现在材料标准成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Current Act. Material Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>现在帐户材料成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Maximum Desired Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>最大预计成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Qty. Per should equal</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于标准单位的总数量应该等于</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1363,7 +1363,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Issue Method</source>
-        <translation type="unfinished"></translation>
+        <translation>签发方法</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1398,12 +1398,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Expire</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1448,13 +1448,13 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Total Qty. Per Required</source>
-        <translation type="unfinished"></translation>
+        <translation>要求的相对于标准单位的总数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A required total Qty. Per was specified but not met.
  Please correct the problem before continuing.</source>
-        <translation type="unfinished"></translation>
+        <translation>要求的相对于标准单位的总数量已确定但未满足.请在继续之前更正这个错误.</translation>
     </message>
 </context>
 <context>
@@ -1475,7 +1475,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>CRM Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理帐户</translation>
     </message>
 </context>
 <context>
@@ -1493,12 +1493,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First</source>
-        <translation type="unfinished"></translation>
+        <translation>第一</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last</source>
-        <translation type="unfinished"></translation>
+        <translation>最后</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1533,37 +1533,37 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search For Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Tax Authority</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索税务当局</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索卖主</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Customer or Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户或可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For CRM Account</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户关系管理帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A System Error Occurred at %1::%2</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误发生在%1::%2</translation>
     </message>
 </context>
 <context>
@@ -1571,12 +1571,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Primary Contact Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>主联系地址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Street Address</source>
-        <translation type="unfinished"></translation>
+        <translation>街道地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1601,12 +1601,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Contact Name</source>
-        <translation type="unfinished"></translation>
+        <translation>联系人姓名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Contact Phone #</source>
-        <translation type="unfinished"></translation>
+        <translation>联系人电话号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1616,7 +1616,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through:</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索路由:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1631,12 +1631,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First</source>
-        <translation type="unfinished"></translation>
+        <translation>第一</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last</source>
-        <translation type="unfinished"></translation>
+        <translation>最后</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1651,147 +1651,147 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search For Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Number</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Name</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客姓名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Billing Contact Name</source>
-        <translation type="unfinished"></translation>
+        <translation>帐单联系人姓名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Billing Contact Phone #</source>
-        <translation type="unfinished"></translation>
+        <translation>帐单联系人电话号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Billing Contact Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>帐单联系人地址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prospect Number</source>
-        <translation type="unfinished"></translation>
+        <translation>可能客户的号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prospect Name</source>
-        <translation type="unfinished"></translation>
+        <translation>可能客户的姓名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Tax Authority</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户或可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tax Authority Code</source>
-        <translation type="unfinished"></translation>
+        <translation>税务当局代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tax Authority Name</source>
-        <translation type="unfinished"></translation>
+        <translation>税务当局名称</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tax Authority Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>税务当局地址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索卖主</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Number</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Name</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主名称</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Main Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>主地址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Customer or Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户或可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Billing or Primary Contact Name</source>
-        <translation type="unfinished"></translation>
+        <translation>开帐单或主联系人姓名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Billing or Primary Contact Phone #</source>
-        <translation type="unfinished"></translation>
+        <translation>开帐单或主联系人电话号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Billing or Primary Contact Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>开帐单或主联系人地址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For CRM Account</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户关系管理帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>CRM Account Number</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理帐号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>CRM Account Name</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理帐户名称</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Primary Contact Name</source>
-        <translation type="unfinished"></translation>
+        <translation>主联系人姓名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Primary Contact Phone #</source>
-        <translation type="unfinished"></translation>
+        <translation>主联系人电话号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A System Error Occurred at %1::%2</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误发生在%1::%2</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search Combo</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索组合</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主类型:</translation>
     </message>
 </context>
 <context>
@@ -1837,22 +1837,22 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Used in Every Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>在每个配置中使用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Used only in Option:</source>
-        <translation type="unfinished"></translation>
+        <translation>只在选项中使用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Adjust Qty. Per per Config. Qty.</source>
-        <translation type="unfinished"></translation>
+        <translation>根据配置数量来调整相对于标准数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Attribute:</source>
-        <translation type="unfinished"></translation>
+        <translation>特性:</translation>
     </message>
 </context>
 <context>
@@ -1865,22 +1865,22 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>联系</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>First:</source>
-        <translation type="unfinished"></translation>
+        <translation>第一:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last:</source>
-        <translation type="unfinished"></translation>
+        <translation>最后:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initials:</source>
-        <translation type="unfinished"></translation>
+        <translation>初始:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1890,27 +1890,27 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Voice:</source>
-        <translation type="unfinished"></translation>
+        <translation>声音:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alternate:</source>
-        <translation type="unfinished"></translation>
+        <translation>替代物:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fax:</source>
-        <translation type="unfinished"></translation>
+        <translation>传真:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>E-Mail:</source>
-        <translation type="unfinished"></translation>
+        <translation>电子邮箱:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Web:</source>
-        <translation type="unfinished"></translation>
+        <translation>网址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1925,22 +1925,22 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>%1::sInfo() not yet defined</source>
-        <translation type="unfinished"></translation>
+        <translation>%1::sInfo()还没有被定义</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Could not instantiate a List Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>不能用具体例证来说明一个列表对话</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Could not instantiate a Search Dialog</source>
-        <translation type="unfinished"></translation>
+        <translation>不能用具体例证来说明一个搜索对话</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Job Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>工作头衔:</translation>
     </message>
 </context>
 <context>
@@ -1948,12 +1948,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name</source>
-        <translation type="unfinished"></translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1971,47 +1971,47 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search First Name</source>
-        <translation type="unfinished"></translation>
+        <translation>按名搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search Last Name</source>
-        <translation type="unfinished"></translation>
+        <translation>按姓搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search CRM Account</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户关系管理帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search Phone Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索电话号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search Email Address</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索电子邮箱地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search Web Address</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索网站地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Inactive Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>显示不活跃联系人</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>First Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name</source>
-        <translation type="unfinished"></translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2026,22 +2026,22 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Phone</source>
-        <translation type="unfinished"></translation>
+        <translation>备用电话</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fax</source>
-        <translation type="unfinished"></translation>
+        <translation>传真</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Email Address</source>
-        <translation type="unfinished"></translation>
+        <translation>电子邮箱地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Web Address</source>
-        <translation type="unfinished"></translation>
+        <translation>网址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2051,12 +2051,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search Title</source>
-        <translation type="unfinished"></translation>
+        <translation>按头衔搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>头衔</translation>
     </message>
 </context>
 <context>
@@ -2095,12 +2095,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>?</source>
-        <translation type="unfinished"></translation>
+        <translation>?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>$</source>
-        <translation type="unfinished"></translation>
+        <translation>$</translation>
     </message>
 </context>
 <context>
@@ -2121,12 +2121,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Department</source>
-        <translation type="unfinished"></translation>
+        <translation>部门</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Departments</source>
-        <translation type="unfinished"></translation>
+        <translation>部门</translation>
     </message>
 </context>
 <context>
@@ -2134,7 +2134,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Expense Category:</source>
-        <translation type="unfinished"></translation>
+        <translation>费用类别:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2147,7 +2147,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2157,12 +2157,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Account Number</source>
-        <translation type="unfinished"></translation>
+        <translation>无效帐号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The Account Number you entered is Invalid&lt;p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你输入的帐号无效&lt;p&gt;</translation>
     </message>
 </context>
 <context>
@@ -2175,7 +2175,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Incidents</source>
-        <translation type="unfinished"></translation>
+        <translation>事件</translation>
     </message>
 </context>
 <context>
@@ -2183,117 +2183,117 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Work Order #%1-%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描工作订单#%1-%2.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order #%1-%2 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单#%1-%2在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Work Order #%1-%2, Operation %3.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描工作订单#%1-%2,运行%3.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order #%1-%2, Operation %3 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单#%1-%2, 运行%3在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Sales Order #%1.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描销售订单#%1.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Order #%1 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>销售订单#%1在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Sales Order Line #%1-%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描销售订单行#%1-%2.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Order Line #%1-%2 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>销售订单行#%1-%2在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Item %1, Warehouse %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描项目%1,仓库%2.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item %1, Warehouse %2 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>项目%1,仓库%2在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Item %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描项目%1.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item %1 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>项目%1在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned UPC %1 for Item %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描项目%2的通用产品代码%1.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>UPC Code %1 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>通用产品代码%1在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Count Tag %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描数量标签%1.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Warehouse %1, Location %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描仓库%1,地点%2.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Warehouse %1, Location %2 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库%1,地点%2在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned User %1.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描用户%1.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>User %1 not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>用户%1在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Transfer Order #%1.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描转移订单#%1.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Transfer Order #%1 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>转移订单#%1在数据库中不存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scanned Transfer Order Line #%1-%2.</source>
-        <translation type="unfinished"></translation>
+        <translation>扫描转移订单行#%1-%2.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Transfer Order Line #%1-%2 does not exist in the Database.</source>
-        <translation type="unfinished"></translation>
+        <translation>转移订单行#%1-%2在数据库中不存在.</translation>
     </message>
 </context>
 <context>
@@ -2334,12 +2334,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Purch.</source>
-        <translation type="unfinished"></translation>
+        <translation>已购买的.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Mfg.</source>
-        <translation type="unfinished"></translation>
+        <translation>已生产的.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2354,17 +2354,17 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Prod.</source>
-        <translation type="unfinished"></translation>
+        <translation>共有产品.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>By-Prod.</source>
-        <translation type="unfinished"></translation>
+        <translation>副产品.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ref.</source>
-        <translation type="unfinished"></translation>
+        <translation>参照.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2374,17 +2374,17 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Tool</source>
-        <translation type="unfinished"></translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Outside Proc.</source>
-        <translation type="unfinished"></translation>
+        <translation>外部加工.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Assort.</source>
-        <translation type="unfinished"></translation>
+        <translation>分类.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2397,67 +2397,67 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sold </source>
-        <translation type="unfinished"></translation>
+        <translation>已卖出</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Active </source>
-        <translation type="unfinished"></translation>
+        <translation>活跃的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Multiply Located </source>
-        <translation type="unfinished"></translation>
+        <translation>存放于同一仓库的不同地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Lot/Serial # Controlled </source>
-        <translation type="unfinished"></translation>
+        <translation>批号已控制</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purchased and Manufactured </source>
-        <translation type="unfinished"></translation>
+        <translation>已购买的和已生产的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purchased </source>
-        <translation type="unfinished"></translation>
+        <translation>已购买</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured </source>
-        <translation type="unfinished"></translation>
+        <translation>已生产</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Breeder </source>
-        <translation type="unfinished"></translation>
+        <translation>用于制造的项目或程序</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product and By-Product </source>
-        <translation type="unfinished"></translation>
+        <translation>共有产品和副产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Costing </source>
-        <translation type="unfinished"></translation>
+        <translation>成本计算</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Component </source>
-        <translation type="unfinished"></translation>
+        <translation>零件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The Item Number you entered is Invalid.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你输入的项目号无效.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -2465,12 +2465,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Lot/Serial Number</source>
-        <translation type="unfinished"></translation>
+        <translation>批号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Lot/Serial Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>批号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2480,12 +2480,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Lot/Serial # Not Found</source>
-        <translation type="unfinished"></translation>
+        <translation>批号未找到</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>This Lot/Serial # was not found</source>
-        <translation type="unfinished"></translation>
+        <translation>此批号未找到</translation>
     </message>
 </context>
 <context>
@@ -2498,12 +2498,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Lot/Serial Creation Timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>批生产时间戳</translation>
     </message>
 </context>
 <context>
@@ -2516,12 +2516,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Lot/Serial Creation Timestamp</source>
-        <translation type="unfinished"></translation>
+        <translation>批生产时间戳</translation>
     </message>
 </context>
 <context>
@@ -2529,113 +2529,113 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Initializing Internal Data</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化内部数据</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A Critical Error occurred at %1::%2.
 Please immediately log and contact your Systems Adminitrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>在%1:;%2.出现了一个关键错误(新行).请立即记录并联系你的系统管理员.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading the Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载背景图</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing Internal Timers</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化内部定时器</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Completing Initialzation</source>
-        <translation type="unfinished"></translation>
+        <translation>正在完成初始化</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading Database Information</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载数据库信息</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unnamed Database</source>
-        <translation type="unfinished"></translation>
+        <translation>未命名数据库</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the I/M Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化库存管理模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the P/D Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化产品定义模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the M/S Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化生产计划调度模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the C/P Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化生产能力计划模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the W/O Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化工作定单模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the P/O Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化采购订单模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the S/O Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化销售订单模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the S/R Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化收发货模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the S/A Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化销售分析模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the P/M Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化项目管理模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the A/P Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化应付款帐户模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the A/R Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化应收款帐户模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the G/L Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化总帐模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the System Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化系统模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Custom</source>
-        <translation type="unfinished"></translation>
+        <translation>关税</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2661,22 +2661,22 @@ Please immediately log and contact your Systems Adminitrator.</source>
         <location filename="" line="0"/>
         <source>Before you can run a browser you must set the environment variable BROWSER to
 point to the browser executable.</source>
-        <translation type="unfinished"></translation>
+        <translation>在你运行一个浏览器之前你必须设定环境变量浏览器指向可执行的浏览器.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>%1 Evaluation Version %2 - Logged on as %3</source>
-        <translation type="unfinished"></translation>
+        <translation>%1评估版本%2-登录为%3</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>%1 Version %2 - %3 on %4/%5 AS %6</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 版本 %2 - %3 在 %4/%5 作为 %6</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the CRM Module</source>
-        <translation type="unfinished"></translation>
+        <translation>正在初始化客户关系管理模块</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2726,12 +2726,12 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Opportunity</source>
-        <translation type="unfinished"></translation>
+        <translation>机会</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Opportunities</source>
-        <translation type="unfinished"></translation>
+        <translation>机会</translation>
     </message>
 </context>
 <context>
@@ -2739,12 +2739,12 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Pattern:</source>
-        <translation type="unfinished"></translation>
+        <translation>模式:</translation>
     </message>
 </context>
 <context>
@@ -2765,7 +2765,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Planned Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>计划的订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2775,12 +2775,12 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Whs.:</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2798,7 +2798,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O #:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2811,12 +2811,12 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Item Missing Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>已选择项目的漏警成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The selected item has no Std. Costing information. Please see your controller to correct this situation before continuing.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;选择的项目没有标准的成本核算信息.在继续之前请联系你的控制员以更正此状况.</translation>
     </message>
 </context>
 <context>
@@ -2834,22 +2834,22 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Supplying Whs.</source>
-        <translation type="unfinished"></translation>
+        <translation>供应仓库.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vend Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vend Descrip</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主描述</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vend UOM</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主标准单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2869,7 +2869,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Freight</source>
-        <translation type="unfinished"></translation>
+        <translation>运费</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2879,72 +2879,72 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Project #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Expense Cat.</source>
-        <translation type="unfinished"></translation>
+        <translation>费用类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must specify an Expense Category for this non-Inventory Item before you may save it.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在你能够存储之前你必须为这个非库存项目确定一个费用类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must select an Item Number before you may save.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在可以存储之前你必须选择一个项目号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must select a Supplying Warehouse before you may save.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在你能够存储之前你必须选择一个供应仓库.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a quantity before you may save this Purchase Order Item.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在你能够存储这个采购订单之前你必须输入一个数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The quantity that you are ordering is below the Minimum Order Quantity for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations. </source>
-        <translation type="unfinished"></translation>
+        <translation>你正在订购的数量低于最低的订购此项目的数量.你可以继续订购但卖主可能不会报价给你.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The quantity that you are ordering does not fall within the Order Multiple for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations.</source>
-        <translation type="unfinished"></translation>
+        <translation>你正在订购的数量不满足此项目的订购乘数.你可以继续订购但卖主可能不会报价给你.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a due date.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你必须输入一个到期日.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The Due Date that you are requesting does not fall within the Lead Time Days for this Item Source.  You may continue but this Vendor may not honor pricing or delivery quotations or may not be able to deliver by the requested Due Date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你正在要求的到期日不在这个项目的订货至交货的日期之内.你可以继续但卖主可能不会报价或者在你要求的到期日交货.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;There is no Purchase Order header yet. Try entering a Vendor if you are using the Purchase Order window.</source>
-        <translation type="unfinished"></translation>
+        <translation>还没有采购订单标题.如果你正在使用采购订单窗口请输入一个卖主.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;There is no Item Site for this Warehouse (%1) and Item Number (%2).</source>
-        <translation type="unfinished"></translation>
+        <translation>没有这个仓库(%1)和项目号(%2)的项目地点.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>你确定要继续吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Do you wish to Save this Order?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你希望存储这个订单吗?</translation>
     </message>
 </context>
 <context>
@@ -2952,7 +2952,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Project #:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2969,17 +2969,20 @@ Host = %1
 Database = %2
 Username = %3
 </source>
-        <translation type="unfinished"></translation>
+        <translation>用所提供的用户名和密码不能登录到数据库!￼￼
+主机=%1￼￼
+数据库=%2￼￼
+用户名=%3￼</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Load Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>不能装载字典</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Version Mismatch</source>
-        <translation type="unfinished"></translation>
+        <translation>版本不匹配</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2991,43 +2994,47 @@ If you continue some or all functionality may not work properly
 or at all. You may also cause other problems on the database.
 
 Do you want to continue anyway?</source>
-        <translation type="unfinished"></translation>
+        <translation>你正在连接的数据库版本不是设计给这个客户工作于其上的版本.￼
+这个客户被设计工作于其上的版本%1.￼
+如果你继续的话,某些或所有的功能可能不会正常工作或根本就不工作.你也可能会导致数据库的其他问题.￼
+你想继续吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading Database Metrics</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载数据库度量标准</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading User Preferences</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载使用者参数选择</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading User Privileges</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载使用者特权</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading Translation Dictionary</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载字典</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The specified Translation Dictionary, &quot;dict/%1.qm&quot; cannot be loaded.
 Reverting to the default dictionary instead.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的翻译字典,&quot;dict/%1.qm&quot;不能被装载.￼
+转换到默认的字典.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading Database Encryption Metrics</source>
-        <translation type="unfinished"></translation>
+        <translation>正在装载数据库加密度量标准</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Additional Configuration Required</source>
-        <translation type="unfinished"></translation>
+        <translation>需要另外的配置</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3036,28 +3043,30 @@ Currency Gain/Loss Account and/or the G/L Series Discrepancy Account
 does not appear to be configured correctly. You should define these
 Accounts in &apos;System | Configure Modules | Configure G/L...&apos; before
 posting any transactions in the system.</source>
-        <translation type="unfinished"></translation>
+        <translation>你的系统被配置为可使用多种货币,但是货币的增加/减少帐户和/或总帐系列差异帐户似乎没有配置正确.￼
+在系统里记录任何交易之前,你应该在&apos;系统|配置模块|配置总帐...&apos;中定义这些帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>System Message</source>
-        <translation type="unfinished"></translation>
+        <translation>系统信息</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>
 Report this to your Systems Administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>￼
+将这个报告给你的系统管理员.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>System Message (%1 at %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>系统信息(%1在%2)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ready...</source>
-        <translation type="unfinished"></translation>
+        <translation>准备就绪...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3074,7 +3083,7 @@ A/R Distributions were NOT exported.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Export A/R Open Items</source>
-        <translation type="unfinished"></translation>
+        <translation>不能输出未决定的应收款项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3099,7 +3108,7 @@ A/R Open Items were NOT exported.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Export A/P Open Items</source>
-        <translation type="unfinished"></translation>
+        <translation>不能输出未决定的应付款项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3129,25 +3138,28 @@ A/P Open Items were NOT exported.</source>
     <message>
         <location filename="" line="0"/>
         <source>No Currency Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>没有货币汇率</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>This document uses a currency which has no valid Exchange Rate.
 Please review your Exchange Rates to correct the problem.
 (%1 on %2)</source>
-        <translation type="unfinished"></translation>
+        <translation>这个文件使用了一种没有有效汇率的货币.￼
+请检查你的汇率以更正这个问题.￼
+(%1在%2)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>No Base Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>没有基础货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>No base currency has been defined.
 Call your system administrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有基础货币没有被定义.￼
+联系你的系统管理员.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3157,47 +3169,47 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>All Class Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>所有等级代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Planner Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>所有计划员代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Product Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>所有产品类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Item Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>所有项目组</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Cost Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>所有成本类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Customer Types</source>
-        <translation type="unfinished"></translation>
+        <translation>所有客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Customer Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>所有客户组</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Foreign Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>所有外国货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>所有货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3207,17 +3219,17 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>All Users</source>
-        <translation type="unfinished"></translation>
+        <translation>所有用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Found %1 tables with mismatched serial values.</source>
-        <translation type="unfinished"></translation>
+        <translation>发现有不匹配序列值的%1表.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>No problems found</source>
-        <translation type="unfinished"></translation>
+        <translation>没有发现问题</translation>
     </message>
 </context>
 <context>
@@ -3243,12 +3255,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>XLineEdit</source>
-        <translation type="unfinished"></translation>
+        <translation>X行编辑</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>DLineEdit</source>
-        <translation type="unfinished"></translation>
+        <translation>D行编辑</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3263,12 +3275,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>QuoteLine</source>
-        <translation type="unfinished"></translation>
+        <translation>报价行</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>QuoteControl</source>
-        <translation type="unfinished"></translation>
+        <translation>报价控制</translation>
     </message>
 </context>
 <context>
@@ -3276,12 +3288,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>轮班</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shifts</source>
-        <translation type="unfinished"></translation>
+        <translation>轮班</translation>
     </message>
 </context>
 <context>
@@ -3289,7 +3301,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipment</source>
-        <translation type="unfinished"></translation>
+        <translation>货运</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3299,17 +3311,17 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Shipment Type</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的发货类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;ShipmentClusterLineEdit::setType received an invalid ShipmentType %1</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;发货串行编辑::设置类型收到一个无效的发货类型%1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>ShipmentClusterLineEdit::setType received an invalid ShipmentType %1</source>
-        <translation type="unfinished"></translation>
+        <translation>发货串行编辑::设置类型收到一个无效的发货类型%1</translation>
     </message>
 </context>
 <context>
@@ -3317,12 +3329,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipped Date</source>
-        <translation type="unfinished"></translation>
+        <translation>已发货日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tracking Number</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪号</translation>
     </message>
 </context>
 <context>
@@ -3330,22 +3342,22 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipped Date</source>
-        <translation type="unfinished"></translation>
+        <translation>已发货日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tracking Number</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Shipped Date</source>
-        <translation type="unfinished"></translation>
+        <translation>通过已发货日期搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Tracking Number</source>
-        <translation type="unfinished"></translation>
+        <translation>通过跟踪号搜索</translation>
     </message>
 </context>
 <context>
@@ -3353,7 +3365,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship-To #:</source>
-        <translation type="unfinished"></translation>
+        <translation>发货单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3379,7 +3391,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Transfer Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>转移订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3389,12 +3401,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation>来自:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>To:</source>
-        <translation type="unfinished"></translation>
+        <translation>到:</translation>
     </message>
 </context>
 <context>
@@ -3402,12 +3414,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>No Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>转移订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The selected item has no Standard Costing information. Please see your controller to correct this situation before continuing.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;选择的项目没有成本核算信息.在继续之前请联系你的控制员以更正这个状况.</translation>
     </message>
 </context>
 <context>
@@ -3430,12 +3442,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Std. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Freight</source>
-        <translation type="unfinished"></translation>
+        <translation>运费</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3445,37 +3457,37 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Project #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must select an Item Number before you may save.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在可以存储之前你必须选择一个项目号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a quantity before you may save this Purchase Order Item.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在你能够存储这个采购订单之前你必须输入一个数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a due date.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你必须输入一个到期日.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;There is no Transfer Order header yet. Try entering ????.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;还没有转移订单标题.试着输入????.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure you want to continue?</source>
-        <translation type="unfinished"></translation>
+        <translation>你确定要继续吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Do you wish to Save this Order?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你希望存储这个订单吗?</translation>
     </message>
 </context>
 <context>
@@ -3496,7 +3508,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor #:</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3509,7 +3521,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor #:</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3527,7 +3539,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>?</source>
-        <translation type="unfinished"></translation>
+        <translation>?</translation>
     </message>
 </context>
 <context>
@@ -3535,12 +3547,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Object</source>
-        <translation type="unfinished"></translation>
+        <translation>物体</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Objects</source>
-        <translation type="unfinished"></translation>
+        <translation>物体</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3550,17 +3562,17 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>%1::sList() not yet defined</source>
-        <translation type="unfinished"></translation>
+        <translation>%1::sList()还没有被定义</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>%1::sSearch() not yet defined</source>
-        <translation type="unfinished"></translation>
+        <translation>%1::sSearch()还没有被定义</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>%1::sInfo() not yet defined</source>
-        <translation type="unfinished"></translation>
+        <translation>%1::sInfo()还没有被定义</translation>
     </message>
 </context>
 <context>
@@ -3573,7 +3585,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3634,17 +3646,17 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>通过号码搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Names</source>
-        <translation type="unfinished"></translation>
+        <translation>按姓名搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3677,12 +3689,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>All Warehouses</source>
-        <translation type="unfinished"></translation>
+        <translation>所有仓库</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
 </context>
 <context>
@@ -3690,7 +3702,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Work Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3700,12 +3712,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Whs.:</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3723,7 +3735,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Component Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>零件项目号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3733,22 +3745,22 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per:</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于标准单位的数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scrap %:</source>
-        <translation type="unfinished"></translation>
+        <translation>废料%:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Required:</source>
-        <translation type="unfinished"></translation>
+        <translation>要求的数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Issued:</source>
-        <translation type="unfinished"></translation>
+        <translation>已签发的数量:</translation>
     </message>
 </context>
 <context>
@@ -3769,12 +3781,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter a Date</source>
-        <translation type="unfinished"></translation>
+        <translation>输入一个日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter a date:</source>
-        <translation type="unfinished"></translation>
+        <translation>输入一个日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3784,7 +3796,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>好</translation>
     </message>
 </context>
 <context>
@@ -3812,12 +3824,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>List:</source>
-        <translation type="unfinished"></translation>
+        <translation>列表:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>XListDialog</source>
-        <translation type="unfinished"></translation>
+        <translation>X列表对话</translation>
     </message>
 </context>
 <context>
@@ -3825,7 +3837,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Export Contents...</source>
-        <translation type="unfinished"></translation>
+        <translation>输出内容...</translation>
     </message>
 </context>
 <context>
@@ -3833,32 +3845,32 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Export Contents...</source>
-        <translation type="unfinished"></translation>
+        <translation>输出内容...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Export Save Filename</source>
-        <translation type="unfinished"></translation>
+        <translation>输出存储文件名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reset this Width</source>
-        <translation type="unfinished"></translation>
+        <translation>重新设置这个宽度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reset all Widths</source>
-        <translation type="unfinished"></translation>
+        <translation>重新设置所有宽度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Remember Widths</source>
-        <translation type="unfinished"></translation>
+        <translation>记住宽度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Do Not Remember Widths</source>
-        <translation type="unfinished"></translation>
+        <translation>不要记住宽度</translation>
     </message>
 </context>
 <context>
@@ -3866,17 +3878,17 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Absolute Calendar Item</source>
-        <translation type="unfinished"></translation>
+        <translation>绝对日历项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Calendar Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>日历名称:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Period Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>周期名称:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3886,7 +3898,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Period Length:</source>
-        <translation type="unfinished"></translation>
+        <translation>周期长度:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3904,12 +3916,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Account Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>帐号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Chart of Accounts:</source>
-        <translation type="unfinished"></translation>
+        <translation>帐户图表:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3924,17 +3936,17 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Company</source>
-        <translation type="unfinished"></translation>
+        <translation>公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Profit</source>
-        <translation type="unfinished"></translation>
+        <translation>利润</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3944,7 +3956,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sub.</source>
-        <translation type="unfinished"></translation>
+        <translation>子帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3962,12 +3974,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Account</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>No Account Number</source>
-        <translation type="unfinished"></translation>
+        <translation>没有帐号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3977,7 +3989,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;号码:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3987,12 +3999,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>E&amp;xt. Reference:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;外部参考:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>-</source>
-        <translation type="unfinished"></translation>
+        <translation>-</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4042,7 +4054,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sub Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>子类:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4052,12 +4064,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Allow Posting into Closed Periods</source>
-        <translation type="unfinished"></translation>
+        <translation>允许过帐到结清周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Automatically Forward Update Trial Balances</source>
-        <translation type="unfinished"></translation>
+        <translation>自动向前更新试算表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4067,12 +4079,12 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;This Account cannot be saved as an Account with the same number already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;这个帐户不能被储存因为有一个同号码的帐户存在.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must specify an account number before you may save this record.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在存储这个记录之前你必须确定一个帐号.</translation>
     </message>
 </context>
 <context>
@@ -4080,88 +4092,99 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete G/L Account</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除总帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Cost Categories.
 You must reassign these Cost Category assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正使用在一个或多个成本类别里.￼
+在可以删除被选择的总帐户前你必须重新分配这些成本类别任务.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Sales Account Assignment.
 You must reassign these Sales Account Assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正使用在一个或多个销售帐户任务里.￼
+￼在可以删除被选择的总帐户前你必须重新分配这些成本销售帐户任务.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/R Account assignments.
 You must reassign these Customer A/R Account assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正使用在一个或多个客户应收款帐户任务里.￼
+￼在可以删除被选择的总帐户前你必须重新分配这些客户应收款帐户任务.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used as the default Account one or more Warehouses.
 You must reassign the default Account for these Warehouses before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在作为一个或多个仓库的默认帐户使用.￼￼￼
+在可以删除被选择的总帐户前你必须为这些仓库重新分配默认帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Bank Accounts.
 You must reassign these Bank Accounts before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在一个或多个银行帐户里使用.￼￼￼
+在可以删除被选择的总帐户前你必须重新分配这些银行帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Expense Categories.
 You must reassign these Expense Categories before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在一个或多个费用类别里使用.￼￼￼
+在可以删除被选择的总帐户前你必须重新分配这些费用类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Tax Codes.
 You must reassign these Tax Codes before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在一个或多个税码中使用.￼￼￼
+在可以删除被选择的总帐户前你必须重新分配这些税码.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Standard Journals.
 You must reassign these Standard Journal Items before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在一个或多个标准分类帐中使用.￼￼￼
+在可以删除被选择的总帐户前你必须重新分配这些标准分类帐项目.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Customer A/P Account assignments.
 You must reassign these Customer A/P Account assignments before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正使用在一个或多个客户应付款帐户任务里.￼￼
+￼在可以删除被选择的总帐户前你必须重新分配这些客户应付款帐户任务.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more Currency definition.
 You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在一个或多个货币定义中使用.￼￼
+在可以删除被选择的总帐户前你必须重新分配这些货币定义.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as it is currently used in one or more A/R Open Items.
 You must reassign these Currency definitions before you may delete the selected G/L Account.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为它现在正在一个或多个未决定的应收款项目里使用.￼￼
+在可以删除被选择的总帐户前你必须重新分配这些货币定义.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected G/L Account cannot be deleted as there have been G/L Transactions posted aginst it.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的总帐户不能被删除因为有总帐户交易记录在里面.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Company</source>
-        <translation type="unfinished"></translation>
+        <translation>公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Profit</source>
-        <translation type="unfinished"></translation>
+        <translation>利润</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4171,7 +4194,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Sub.</source>
-        <translation type="unfinished"></translation>
+        <translation>子帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4186,12 +4209,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Chart of Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>帐户图表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;G/L Account Numbers:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;总帐号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4224,7 +4247,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>ALL</source>
-        <translation type="unfinished"></translation>
+        <translation>所有</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4254,12 +4277,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Company</source>
-        <translation type="unfinished"></translation>
+        <translation>公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Profit</source>
-        <translation type="unfinished"></translation>
+        <translation>利润</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4269,7 +4292,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Sub.</source>
-        <translation type="unfinished"></translation>
+        <translation>子帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4279,7 +4302,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Chart of Accounts Search</source>
-        <translation type="unfinished"></translation>
+        <translation>帐户搜索图表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4289,7 +4312,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Description contains:</source>
-        <translation type="unfinished"></translation>
+        <translation>描述包含:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4304,12 +4327,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>C&amp;lear</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>G/L Accounts:</source>
-        <translation type="unfinished"></translation>
+        <translation>总帐户:</translation>
     </message>
 </context>
 <context>
@@ -4322,12 +4345,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Accounting Period</source>
-        <translation type="unfinished"></translation>
+        <translation>会计周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4347,7 +4370,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Frozen</source>
-        <translation type="unfinished"></translation>
+        <translation>冻结</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4367,22 +4390,22 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Period</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Period dates are outside the selected Fiscal Year.</source>
-        <translation type="unfinished"></translation>
+        <translation>周期日期超过了选择的会计年度.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fiscal Year:</source>
-        <translation type="unfinished"></translation>
+        <translation>会计年度:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Quarter:</source>
-        <translation type="unfinished"></translation>
+        <translation>季度:</translation>
     </message>
 </context>
 <context>
@@ -4395,12 +4418,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>开始</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>End</source>
-        <translation type="unfinished"></translation>
+        <translation>结束</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4410,7 +4433,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Frozen</source>
-        <translation type="unfinished"></translation>
+        <translation>冻结</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4430,32 +4453,32 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Close...</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Freeze...</source>
-        <translation type="unfinished"></translation>
+        <translation>冻结...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Thaw...</source>
-        <translation type="unfinished"></translation>
+        <translation>解冻...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Accounting Periods</source>
-        <translation type="unfinished"></translation>
+        <translation>会计周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Accounting Periods:</source>
-        <translation type="unfinished"></translation>
+        <translation>会计周期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4485,12 +4508,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Close Period</source>
-        <translation type="unfinished"></translation>
+        <translation>结清周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Freeze Period</source>
-        <translation type="unfinished"></translation>
+        <translation>冻结周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4500,12 +4523,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Qtr</source>
-        <translation type="unfinished"></translation>
+        <translation>季度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Year</source>
-        <translation type="unfinished"></translation>
+        <translation>年</translation>
     </message>
 </context>
 <context>
@@ -4518,7 +4541,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Fiscal Year</source>
-        <translation type="unfinished"></translation>
+        <translation>会计年度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4556,12 +4579,12 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Start</source>
-        <translation type="unfinished"></translation>
+        <translation>开始</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>End</source>
-        <translation type="unfinished"></translation>
+        <translation>结束</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4586,22 +4609,22 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Close...</source>
-        <translation type="unfinished"></translation>
+        <translation>关闭...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fiscal Years</source>
-        <translation type="unfinished"></translation>
+        <translation>会计年度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fiscal Years:</source>
-        <translation type="unfinished"></translation>
+        <translation>会计年度:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4631,7 +4654,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Close Year</source>
-        <translation type="unfinished"></translation>
+        <translation>结清年度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4644,7 +4667,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Add Purchase Order Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>添加采购订单注释</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4702,7 +4725,7 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Uses of the Address</source>
-        <translation type="unfinished"></translation>
+        <translation>地址使用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4712,19 +4735,21 @@ You must reassign these Currency definitions before you may delete the selected 
     <message>
         <location filename="" line="0"/>
         <source>Used by</source>
-        <translation type="unfinished"></translation>
+        <translation>使用根据</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>First Name
 or Number</source>
-        <translation type="unfinished"></translation>
+        <translation>名￼
+或号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name
 or Name</source>
-        <translation type="unfinished"></translation>
+        <translation>姓￼
+或名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4739,22 +4764,22 @@ or Name</source>
     <message>
         <location filename="" line="0"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>替代物</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fax</source>
-        <translation type="unfinished"></translation>
+        <translation>传真</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>E-Mail</source>
-        <translation type="unfinished"></translation>
+        <translation>电子邮箱</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Web Address</source>
-        <translation type="unfinished"></translation>
+        <translation>网址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4770,7 +4795,8 @@ or Name</source>
         <location filename="" line="0"/>
         <source>There was an error creating a new address (%).
 Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建一个新地址是出现了一个错误(%).￼
+检查数据库服务器出错日志.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4780,19 +4806,21 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Saving Shared Address</source>
-        <translation type="unfinished"></translation>
+        <translation>正在存储共享地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>There are multiple Contacts sharing this Address.
 If you save this Address, the Address for all of these Contacts will be changed. Would you like to save this Address?</source>
-        <translation type="unfinished"></translation>
+        <translation>有多个联系人正在共享这个地址.￼
+如果你存储这个地址,这个为所有的这些联系人使用的地址将会改变.你想存储这个地址吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>There was an error saving this address (%1).
 Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>在存储这个地址时出现了一个错误(%).￼￼
+检查数据库服务器出错日志.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4812,12 +4840,12 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Address</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4835,17 +4863,17 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>List Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>地址列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Active Addresses Only</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示常用的地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Addresses:</source>
-        <translation type="unfinished"></translation>
+        <translation>地址:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4880,17 +4908,17 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Line 1</source>
-        <translation type="unfinished"></translation>
+        <translation>第一行</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Line 2</source>
-        <translation type="unfinished"></translation>
+        <translation>第二行</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Line 3</source>
-        <translation type="unfinished"></translation>
+        <translation>第三行</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4930,7 +4958,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Selected Address</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除被选择的地址</translation>
     </message>
 </context>
 <context>
@@ -4938,12 +4966,12 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Miscellaneous Adjustment</source>
-        <translation type="unfinished"></translation>
+        <translation>输入杂项调整</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous Adjustment</source>
-        <translation type="unfinished"></translation>
+        <translation>杂项调整</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4958,28 +4986,28 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Adjustment Quantitiy</source>
-        <translation type="unfinished"></translation>
+        <translation>输入调整数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Adjustment Quantity before entering this
 Adjustment Transaction.</source>
-        <translation type="unfinished"></translation>
+        <translation>在输入这个调整交易之前你必须输入一个有效的调整数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A System Error occurred at adjustmentTrans::%1, Item ID #%2, Warehouse ID #%3, Error #%4.</source>
-        <translation type="unfinished"></translation>
+        <translation>在调整交易::%1,项目ID#%2,仓库ID#%3,错误#%4出现了一个系统错误.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A System Error occurred at adjustmentTrans::%1, Item Site ID #%2, Warehouse ID #%3.</source>
-        <translation type="unfinished"></translation>
+        <translation>在调整交易::%1,项目地点ID#%2,仓库ID#%3出现了一个系统错误.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Adjustment Transaction</source>
-        <translation type="unfinished"></translation>
+        <translation>调整交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4999,12 +5027,12 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Document #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Relative</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;相关物</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5014,7 +5042,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Absolute</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;独立物</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5034,7 +5062,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Adjustment Qty.:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;调整数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5044,7 +5072,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Transaction &amp;Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;交易日期:</translation>
     </message>
 </context>
 <context>
@@ -5057,37 +5085,37 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save A/P Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存应付款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select an A/P Account before saving this A/P Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应付款帐户作业之前你必须选择一个应付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select a Prepaid Account before saving this A/P Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应付款帐户作业之前你必须选择一个预付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select a Discount Account before saving this A/P Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应付款帐户作业之前你必须选择一个折扣帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Create A/P Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建应付款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/P Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Vendor Types:</source>
-        <translation type="unfinished"></translation>
+        <translation>所有卖主类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5102,17 +5130,17 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prepaid Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>预付款帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Discount Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>折扣帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/P Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5137,7 +5165,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>You may not save this A/P Account Assignment as it already exists.</source>
-        <translation type="unfinished"></translation>
+        <translation>你不能保存这个应付款帐户因为它已经存在.</translation>
     </message>
 </context>
 <context>
@@ -5145,22 +5173,22 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/P Account</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prepaid Account</source>
-        <translation type="unfinished"></translation>
+        <translation>预付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Discount Account</source>
-        <translation type="unfinished"></translation>
+        <translation>折扣帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5170,12 +5198,12 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/P Account Assignments</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/P Account Assignments:</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款帐户作业:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5223,7 +5251,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/P Credit Memo Application</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款贷项通知单应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5238,7 +5266,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply-To Information</source>
-        <translation type="unfinished"></translation>
+        <translation>应用信息</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5258,7 +5286,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Doc. Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5268,7 +5296,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Paid:</source>
-        <translation type="unfinished"></translation>
+        <translation>已付款:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5278,12 +5306,12 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Available to Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>可应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Amount to Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>应用数量:</translation>
     </message>
 </context>
 <context>
@@ -5301,7 +5329,7 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply Date</source>
-        <translation type="unfinished"></translation>
+        <translation>应用日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5316,12 +5344,12 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source> - Enter Misc. Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>-输入杂项贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source> - Enter Misc. Debit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>-输入杂项借项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5336,32 +5364,32 @@ Adjustment Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save A/P Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存应付款通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a date for this A/P Memo before you may save it</source>
-        <translation type="unfinished"></translation>
+        <translation>在你可以存储之前你必须为这个应付款通知单输入一个日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter an amount for this A/P Memo before you may save it</source>
-        <translation type="unfinished"></translation>
+        <translation>在你可以存储之前你必须为这个应付款通知单输入一个数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must choose a valid Alternate Prepaid Account Number for this A/P Memo before you may save it.</source>
-        <translation type="unfinished"></translation>
+        <translation>在你能够存储之前你必须为这个应付款通知单选择一个有效的备用的预付帐号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Internal Error: _docType has an invalid document type %1</source>
-        <translation type="unfinished"></translation>
+        <translation>内部错误:_文件类型有一个无效的文件类型%1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/P Open Amount Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款未决定数量已改变</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5369,7 +5397,9 @@ Adjustment Transaction.</source>
 to distribute this change then the A/P Open Item total will be out of balance with the
 A/P Trial Balance(s).
 Are you sure that you want to save this change?</source>
-        <translation type="unfinished"></translation>
+        <translation>你正在改变这个未决定应付款项目的未决定数量.￼
+如果你不将总帐交易过帐来分摊这个变化,那么总的未决定应付款项目和应付款试算表将不平衡.￼
+你确定要保存这个变化吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5384,14 +5414,15 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Create A/P Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建应付款通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The A/P Memo cannot be created as there are missing A/P Account Assignments for the selected Vendor.
 You must create an A/P Account Assignment for the selected Vendor&apos;s Vendor Type before
 you may create this A/P Memo.</source>
-        <translation type="unfinished"></translation>
+        <translation>因为被选择的卖主的应付款帐户作业有丢失,所以应付款通知单不能被创建.￼
+在你可以创建这个应付款通知单之前,你必须为这个被选择的卖主的卖主类型创建一个应付款帐户作业.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5421,7 +5452,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/P Open Item</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应付款项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5436,7 +5467,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Document Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5446,7 +5477,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5456,12 +5487,12 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O #:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Journal #:</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5471,7 +5502,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Debit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>借项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5491,7 +5522,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Paid:</source>
-        <translation type="unfinished"></translation>
+        <translation>已付款:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5501,12 +5532,12 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Use Alternate Prepaid Account</source>
-        <translation type="unfinished"></translation>
+        <translation>使用备用的预付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alternate Prepaid Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>备用的预付款帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5516,7 +5547,7 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Applications:</source>
-        <translation type="unfinished"></translation>
+        <translation>应用:</translation>
     </message>
 </context>
 <context>
@@ -5554,39 +5585,39 @@ you may create this A/P Memo.</source>
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>There are no A/P Credit Memo applications to post.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有应付款贷项通知单应用需过帐.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The total value of the applications that are you attempting to post is greater
 than the value of the A/P Credit Memo itself.</source>
-        <translation type="unfinished"></translation>
+        <translation>你正试图过帐的应用总价值大于应付款贷项通知单本身价值.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>At least one A/P Credit Memo application cannot be posted
 because there is no current exchange rate for its currency.</source>
-        <translation type="unfinished"></translation>
+        <translation>因为这个货币没有当前汇率,至少有一个应付款贷项通知单应用不能被过帐.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The A/P Credit Memo to apply was not found.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有找到这个应付款贷项通知单的应用.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The amount to apply for this A/P Credit Memo is NULL.</source>
-        <translation type="unfinished"></translation>
+        <translation>应用在这个应付款贷项通知单的数量为空.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Post A/P Credit Memo Applications</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款贷项通知单应用不能过帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5606,7 +5637,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply A/P Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>应用应付款贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5621,12 +5652,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Available to Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>可应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Applied:</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5646,7 +5677,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply to &amp;Balance</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;应用到余额</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5656,7 +5687,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Clear Application</source>
-        <translation type="unfinished"></translation>
+        <translation>清除应用</translation>
     </message>
 </context>
 <context>
@@ -5694,7 +5725,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5714,7 +5745,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply A/R Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>应用应收款贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5729,12 +5760,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Available to Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>可应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Applied:</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5754,12 +5785,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Find Document:</source>
-        <translation type="unfinished"></translation>
+        <translation>发现文件:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Apply to &amp;Balance</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;应用到余额</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5769,7 +5800,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Clear Application</source>
-        <translation type="unfinished"></translation>
+        <translation>清除应用</translation>
     </message>
 </context>
 <context>
@@ -5777,7 +5808,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply A/P Discount</source>
-        <translation type="unfinished"></translation>
+        <translation>应用应付款折扣</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5787,12 +5818,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Discount Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>折扣日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Discount %:</source>
-        <translation type="unfinished"></translation>
+        <translation>折扣率%:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5802,7 +5833,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Doc. #:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5812,17 +5843,17 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Total Owed:</source>
-        <translation type="unfinished"></translation>
+        <translation>欠债合计:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Discounts Applied:</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用折扣:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Discount Amount:</source>
-        <translation type="unfinished"></translation>
+        <translation>折扣数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5860,27 +5891,27 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save A/R Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存应收款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select a A/R Account before saving this A/R Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应收款帐户作业之前你必须选择一个应收款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select a Prepaid Receivables Account before saving this A/R Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应收款帐户作业之前你必须选择一个应收预付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select a Freight Account before saving this A/R Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应收款帐户作业之前你必须选择一个运费帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/R Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5895,17 +5926,17 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prepaid Receivables Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>应收预付款帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Freight Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>运费帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5920,12 +5951,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must select a Deferred Revenue Account before saving this A/R Account Assignment</source>
-        <translation type="unfinished"></translation>
+        <translation>在保存这个应收款帐户作业之前你必须选择一个递延收入帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Deferred Revenue Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>递延收入帐户:</translation>
     </message>
 </context>
 <context>
@@ -5933,32 +5964,32 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/R Account</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prepaid Account</source>
-        <translation type="unfinished"></translation>
+        <translation>预付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Freight Account</source>
-        <translation type="unfinished"></translation>
+        <translation>运费帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/R Account Assignments</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款帐户作业</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/R Account Assignments:</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款帐户作业:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -5993,7 +6024,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Deferred Rev. Account</source>
-        <translation type="unfinished"></translation>
+        <translation>递延收入帐户</translation>
     </message>
 </context>
 <context>
@@ -6001,22 +6032,22 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Application</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You may not apply more than the balance due to this Document.</source>
-        <translation type="unfinished"></translation>
+        <translation>由于这个文件你的申请不能超过余额.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You may not apply more than the amount available to apply for this Credit Memo.</source>
-        <translation type="unfinished"></translation>
+        <translation>你不能申请超过可用的量来申请这个贷项申请单.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/R Credit Memo Application</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款贷项通知单应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6031,7 +6062,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply-To Information</source>
-        <translation type="unfinished"></translation>
+        <translation>应用信息</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6051,7 +6082,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Doc. Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6061,7 +6092,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Paid:</source>
-        <translation type="unfinished"></translation>
+        <translation>已付款:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6071,12 +6102,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Available To Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>可应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Amount To Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>应用数量:</translation>
     </message>
 </context>
 <context>
@@ -6094,7 +6125,7 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply Date</source>
-        <translation type="unfinished"></translation>
+        <translation>应用日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6109,12 +6140,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source> - Enter Misc. Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>-输入杂项贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source> - Enter Misc. Debit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>-输入杂项借项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6129,12 +6160,12 @@ because there is no current exchange rate for its currency.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save A/R Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存应收款通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a date for this A/R Memo before you may save it</source>
-        <translation type="unfinished"></translation>
+        <translation>在你可以存储之前你必须为这个应收款通知单输入一个日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6237,7 +6268,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Debit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>借项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6267,7 +6298,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6282,7 +6313,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Journal #:</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6292,7 +6323,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Document Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6327,7 +6358,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Paid:</source>
-        <translation type="unfinished"></translation>
+        <translation>已付款:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6342,7 +6373,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Use Alternate Prepaid Account</source>
-        <translation type="unfinished"></translation>
+        <translation>使用备用的预付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6362,7 +6393,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Applications:</source>
-        <translation type="unfinished"></translation>
+        <translation>应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6405,7 +6436,7 @@ Are you sure that you want to save this change?</source>
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6716,7 +6747,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Open Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应收款项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6741,7 +6772,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>C/D</source>
-        <translation type="unfinished"></translation>
+        <translation>现金存款</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6819,32 +6850,32 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Archive Sales History</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史存档</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Archive Freight, Sales Tax and Misc. Items</source>
-        <translation type="unfinished"></translation>
+        <translation>运费,销售税和杂项存档</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restore Sales History</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restore Freight, Sales Tax and Misc. Items</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复运费,销售税和杂项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Archive/Restore Sales History</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史存档/恢复</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act on Misc. Items</source>
-        <translation type="unfinished"></translation>
+        <translation>在杂项项目上的动作</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6867,7 +6898,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Assign Items to Planner Code by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>分配项目到计划员代码(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6887,7 +6918,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Planner Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>计划员代码:</translation>
     </message>
 </context>
 <context>
@@ -6895,7 +6926,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Assign Item to Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>分配项目到计划员代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -6910,7 +6941,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Planner Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;计划员代码:</translation>
     </message>
 </context>
 <context>
@@ -7097,7 +7128,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Expi&amp;red Components</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示过期成分</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7117,7 +7148,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Docu&amp;ment #:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8010,7 +8041,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation>在生产</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8035,7 +8066,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>All Users</source>
-        <translation type="unfinished"></translation>
+        <translation>所有用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8113,7 +8144,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cost %</source>
-        <translation type="unfinished"></translation>
+        <translation>成本%</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8133,12 +8164,12 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Breeder BOM Item</source>
-        <translation type="unfinished"></translation>
+        <translation>删除用于制造的项目或程序的材料清单项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure you want to delete this Breeder BOM Item?</source>
-        <translation type="unfinished"></translation>
+        <translation>你确信要删除这个用于制造的项目或程序的材料清单项目吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8173,7 +8204,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Breeder Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>用于制造的项目或程序的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8188,7 +8219,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costs Absorbed:</source>
-        <translation type="unfinished"></translation>
+        <translation>被吸收的成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8198,7 +8229,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product/By-Product Definitions:</source>
-        <translation type="unfinished"></translation>
+        <translation>共有产品/副产品定义:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8839,7 +8870,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Docu&amp;ment #:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9017,7 +9048,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous</source>
-        <translation>混杂</translation>
+        <translation>杂项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9260,7 +9291,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Clea&amp;r</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9386,12 +9417,12 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>BOO Item Image</source>
-        <translation type="unfinished"></translation>
+        <translation>线项目经营清单图像</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purpose:</source>
-        <translation type="unfinished"></translation>
+        <translation>目的:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9411,7 +9442,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous</source>
-        <translation>混杂</translation>
+        <translation>杂项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9670,7 +9701,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9861,12 +9892,12 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Carrier</source>
-        <translation type="unfinished"></translation>
+        <translation>运输公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Carrier &amp;Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;运送者姓名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9978,7 +10009,7 @@ You must delete these Rates before you may delete the selected Carrier.</source>
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -10023,7 +10054,7 @@ You must delete these Rates before you may delete the selected Carrier.</source>
     <message>
         <location filename="" line="0"/>
         <source>Expiration Date</source>
-        <translation type="unfinished"></translation>
+        <translation>过期日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -10436,7 +10467,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply to &amp;Balance</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;应用到余额</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -10579,7 +10610,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Doc. Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -10589,7 +10620,7 @@ Please contact your local support</source>
     <message>
         <location filename="" line="0"/>
         <source>Amount to Apply:</source>
-        <translation type="unfinished"></translation>
+        <translation>应用数量:</translation>
     </message>
 </context>
 <context>
@@ -10991,7 +11022,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11137,7 +11168,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除特性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11147,7 +11178,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Characteristics:</source>
-        <translation type="unfinished"></translation>
+        <translation>特征:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11264,7 +11295,7 @@ You must reassign these Bank Accounts before you may delete the selected Check F
     <message>
         <location filename="" line="0"/>
         <source>Forms:</source>
-        <translation type="unfinished"></translation>
+        <translation>表格:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11459,17 +11490,17 @@ You must reassign these Items before you may delete the selected Class Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Agent</source>
-        <translation type="unfinished"></translation>
+        <translation>代理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Date</source>
-        <translation type="unfinished"></translation>
+        <translation>订购日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>First Item</source>
-        <translation type="unfinished"></translation>
+        <translation>第一个项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11849,7 +11880,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Company Number</source>
-        <translation type="unfinished"></translation>
+        <translation>公司号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11877,7 +11908,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Option/Attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>选项/特性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11902,17 +11933,17 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Option</source>
-        <translation type="unfinished"></translation>
+        <translation>选项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Attribute</source>
-        <translation type="unfinished"></translation>
+        <translation>特性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Quantity</source>
-        <translation type="unfinished"></translation>
+        <translation>数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11922,7 +11953,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Item Configurator</source>
-        <translation type="unfinished"></translation>
+        <translation>项目配置员</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11947,7 +11978,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Suffix:</source>
-        <translation type="unfinished"></translation>
+        <translation>后缀:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11962,7 +11993,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Options:</source>
-        <translation type="unfinished"></translation>
+        <translation>选项:</translation>
     </message>
 </context>
 <context>
@@ -11970,12 +12001,12 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>A/P Module Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款模块配置</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Next A/P Memo #:</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个应付款通知单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -12013,7 +12044,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -12222,7 +12253,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Any</source>
-        <translation type="unfinished"></translation>
+        <translation>任一个</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -12563,7 +12594,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Next A/P Memo #:</source>
-        <translation type="unfinished"></translation>
+        <translation>下一个应付款通知单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -12593,7 +12624,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13281,7 +13312,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Shipped Date</source>
-        <translation type="unfinished"></translation>
+        <translation>已发货日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13326,7 +13357,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Customer Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13703,7 +13734,8 @@ What would you like to do?</source>
         <location filename="" line="0"/>
         <source>There was an error saving this Address (%1).
 Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>在存储这个地址时出现了一个错误(%).￼￼
+检查数据库服务器出错日志.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13714,7 +13746,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Used by</source>
-        <translation type="unfinished"></translation>
+        <translation>使用根据</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13809,12 +13841,12 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Address</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13957,22 +13989,22 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>替代物</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fax</source>
-        <translation type="unfinished"></translation>
+        <translation>传真</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>E-Mail</source>
-        <translation type="unfinished"></translation>
+        <translation>电子邮箱</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Web Address</source>
-        <translation type="unfinished"></translation>
+        <translation>网址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14579,7 +14611,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>复制销售订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14634,17 +14666,17 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Line Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>线项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Use Source Schedule Dates</source>
-        <translation type="unfinished"></translation>
+        <translation>使用来源计划日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule all Schedule Dates to:</source>
-        <translation type="unfinished"></translation>
+        <translation>将所有的计划日期重新计划到:</translation>
     </message>
 </context>
 <context>
@@ -15316,12 +15348,12 @@ Please verify the # of the Count Slip you are entering.</source>
     <message>
         <location filename="" line="0"/>
         <source>Count Slip</source>
-        <translation type="unfinished"></translation>
+        <translation>数量差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Count &amp;Tag #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量标签号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15446,7 +15478,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Count &amp;Tag #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量标签号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15527,7 +15559,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>Count Tag List</source>
-        <translation type="unfinished"></translation>
+        <translation>数量标签清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15547,7 +15579,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>Count Tags:</source>
-        <translation>盘点标签:</translation>
+        <translation>数量标签:</translation>
     </message>
 </context>
 <context>
@@ -15716,7 +15748,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>Run Buffer Status by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目运行缓冲状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15749,7 +15781,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>Run Buffer Status by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划者代码运行缓冲状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16170,7 +16202,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Planner Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;计划员代码:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16338,7 +16370,7 @@ You must enter a whole value to assign to this Lot/Serial number.</source>
         <location filename="" line="0"/>
         <source>You must enter a valid Cut Off Date before
 creating Planned Orders.</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建已计划的订单之前你必须输入一个有效的截止日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16392,7 +16424,7 @@ creating Planned Orders.</source>
         <location filename="" line="0"/>
         <source>You must enter a valid Cut Off Date before
 creating Planned Orders.</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建已计划的订单之前你必须输入一个有效的截止日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16738,7 +16770,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship-To #:</source>
-        <translation type="unfinished"></translation>
+        <translation>发货单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17305,22 +17337,22 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alternate</source>
-        <translation type="unfinished"></translation>
+        <translation>替代物</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Fax</source>
-        <translation type="unfinished"></translation>
+        <translation>传真</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>E-Mail</source>
-        <translation type="unfinished"></translation>
+        <translation>电子邮箱</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Web Address</source>
-        <translation type="unfinished"></translation>
+        <translation>网址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17629,7 +17661,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>CRM Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17752,7 +17784,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Additional Configuration Required</source>
-        <translation type="unfinished"></translation>
+        <translation>需要另外的配置</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17761,7 +17793,8 @@ Currency Gain/Loss Account and/or the G/L Series Discrepancy Account
 does not appear to be configured correctly. You should define these
 Accounts in &apos;System | Configure Modules | Configure G/L...&apos; before
 posting any transactions in the system.</source>
-        <translation type="unfinished"></translation>
+        <translation>你的系统被配置为可使用多种货币,但是货币的增加/减少帐户和/或总帐系列差异帐户似乎没有配置正确.￼
+在系统里记录任何交易之前,你应该在&apos;系统|配置模块|配置总帐...&apos;中定义这些帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17776,7 +17809,7 @@ posting any transactions in the system.</source>
     <message>
         <location filename="" line="0"/>
         <source>Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17866,7 +17899,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18262,7 +18295,7 @@ and make your selection.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/M</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案管理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18677,7 +18710,7 @@ in use by the Customer &apos;%1&apos;.  Please correct or enter a new Customer N
     <message>
         <location filename="" line="0"/>
         <source>Customer Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19196,7 +19229,7 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19289,12 +19322,12 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>客户组</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19309,7 +19342,7 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Member Customers:</source>
-        <translation type="unfinished"></translation>
+        <translation>会员客户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19337,12 +19370,12 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>客户组</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Groups:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户组:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19380,12 +19413,12 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Customer Type Code</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的客户类型代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Code for this Customer Type before creating it.</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建之前你必须为这个客户类型输入一个有效的代码.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19395,7 +19428,7 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19433,12 +19466,12 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Types</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Types:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19453,7 +19486,7 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Clea&amp;r</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19492,12 +19525,12 @@ You must reassign these Customers before you may delete the selected Customer Ty
     <message>
         <location filename="" line="0"/>
         <source>Customer Types</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Types:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19880,7 +19913,7 @@ You must return this material to stock before you can delete this Material Requi
     <message>
         <location filename="" line="0"/>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation>来自:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19953,7 +19986,7 @@ You must return this material to stock before you can delete this Material Requi
     <message>
         <location filename="" line="0"/>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation>来自:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20041,7 +20074,7 @@ You must return this material to stock before you can delete this Material Requi
     <message>
         <location filename="" line="0"/>
         <source>From:</source>
-        <translation type="unfinished"></translation>
+        <translation>来自:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20402,12 +20435,12 @@ You must delete these Rates before you may delete the selected Destination.</sou
     <message>
         <location filename="" line="0"/>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Before</source>
-        <translation type="unfinished"></translation>
+        <translation>之前的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20417,7 +20450,7 @@ You must delete these Rates before you may delete the selected Destination.</sou
     <message>
         <location filename="" line="0"/>
         <source>Qty. After</source>
-        <translation type="unfinished"></translation>
+        <translation>之后的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20509,7 +20542,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Valid Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>有效的地点:</translation>
     </message>
 </context>
 <context>
@@ -20585,7 +20618,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Period/Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>周期/卖主</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20620,7 +20653,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/P Aging Report</source>
-        <translation type="unfinished"></translation>
+        <translation>应付款成熟度报告</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20630,7 +20663,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Relative Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>相对日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20739,7 +20772,7 @@ You may not cancel this action.</source>
         <location filename="" line="0"/>
         <source>Balance
 (in %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>余额(在%1)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20774,7 +20807,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/P Open Items by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应付款项目(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20794,7 +20827,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/P Open Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应付款项目:</translation>
     </message>
 </context>
 <context>
@@ -20802,7 +20835,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Period/Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>周期/客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20837,7 +20870,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Aging Report</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款成熟度报告</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20847,7 +20880,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Relative Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>相对日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20995,7 +21028,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>M/C</source>
-        <translation type="unfinished"></translation>
+        <translation>管理货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21218,7 +21251,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Open Items</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应收款项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21243,7 +21276,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Open Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应收款项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21253,7 +21286,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>C/D</source>
-        <translation type="unfinished"></translation>
+        <translation>现金存款</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21327,7 +21360,7 @@ You may not cancel this action.</source>
         <location filename="" line="0"/>
         <source>Balance
 (in %1)</source>
-        <translation type="unfinished"></translation>
+        <translation>余额(在%1)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21362,7 +21395,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Open Items by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21382,7 +21415,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Open Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应收款项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21392,7 +21425,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>C/D</source>
-        <translation type="unfinished"></translation>
+        <translation>现金存款</translation>
     </message>
 </context>
 <context>
@@ -21593,7 +21626,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21701,7 +21734,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Amount $</source>
-        <translation type="unfinished"></translation>
+        <translation>数量 $</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21726,7 +21759,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21736,7 +21769,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21854,7 +21887,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21967,7 +22000,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>积压(按销售订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22012,7 +22045,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipment Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>发货状态:</translation>
     </message>
 </context>
 <context>
@@ -22135,7 +22168,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>周期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22471,7 +22504,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户的预订</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22589,7 +22622,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>根据客户组的预订</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22702,7 +22735,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的预订</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22800,7 +22833,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类别预订</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22898,7 +22931,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售代表的预订.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22986,12 +23019,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Enter Ship-To Number</source>
-        <translation type="unfinished"></translation>
+        <translation>输入发货单号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a valid Ship-To Number.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的发货单号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23016,7 +23049,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>按发货单的预订</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23260,7 +23293,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>All Sales Reps.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有销售代表.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23358,7 +23391,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户的简明销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23446,7 +23479,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户类型的简明销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23534,7 +23567,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售代表的简明销售历史.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23647,7 +23680,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲状态</translation>
     </message>
 </context>
 <context>
@@ -23926,7 +23959,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>M/C</source>
-        <translation type="unfinished"></translation>
+        <translation>管理货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24024,7 +24057,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Void</source>
-        <translation type="unfinished"></translation>
+        <translation>无效</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24157,7 +24190,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24177,7 +24210,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的数量小计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24388,7 +24421,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Ext&apos;d Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的数量小计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24403,7 +24436,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Costed Summarized Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>已估价的概括材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24453,7 +24486,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单:</translation>
     </message>
 </context>
 <context>
@@ -24521,7 +24554,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Count &amp;Tag #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量标签号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24649,7 +24682,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Treat Slip &amp;Numbers as Numeric</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;把差异数作为数值对待</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24812,7 +24845,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Count Tags:</source>
-        <translation>盘点标签:</translation>
+        <translation>数量标签:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24995,7 +25028,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Count Tags:</source>
-        <translation>盘点标签:</translation>
+        <translation>数量标签:</translation>
     </message>
 </context>
 <context>
@@ -25103,7 +25136,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Count Tags:</source>
-        <translation>盘点标签:</translation>
+        <translation>数量标签:</translation>
     </message>
 </context>
 <context>
@@ -25216,7 +25249,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Count Tags:</source>
-        <translation>盘点标签:</translation>
+        <translation>数量标签:</translation>
     </message>
 </context>
 <context>
@@ -25364,7 +25397,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Customer History</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -25389,7 +25422,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Customer History:</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客历史:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -25742,7 +25775,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -25892,7 +25925,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Invoices</source>
-        <translation type="unfinished"></translation>
+        <translation>发票</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26160,7 +26193,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>FAX</source>
-        <translation type="unfinished"></translation>
+        <translation>传真</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26248,12 +26281,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>价值:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Customers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示不活跃客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26278,12 +26311,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Value is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>价值是空的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Characteristic is set</source>
-        <translation type="unfinished"></translation>
+        <translation>特征已设定</translation>
     </message>
 </context>
 <context>
@@ -26326,7 +26359,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Customers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示不活跃客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26454,7 +26487,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Transactions:</source>
-        <translation type="unfinished"></translation>
+        <translation>交易:</translation>
     </message>
 </context>
 <context>
@@ -26532,12 +26565,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Qty. Before</source>
-        <translation type="unfinished"></translation>
+        <translation>之前的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. After</source>
-        <translation type="unfinished"></translation>
+        <translation>之后的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26567,7 +26600,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Detailed Inventory History by Location</source>
-        <translation type="unfinished"></translation>
+        <translation>详细的库存历史(按地点)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26577,12 +26610,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Netable:</source>
-        <translation type="unfinished"></translation>
+        <translation>列入库存净值的仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restricted:</source>
-        <translation type="unfinished"></translation>
+        <translation>被限制的:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26695,12 +26728,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Qty. Before</source>
-        <translation type="unfinished"></translation>
+        <translation>之前的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. After</source>
-        <translation type="unfinished"></translation>
+        <translation>之后的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26730,7 +26763,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Enter Lot/Serial #</source>
-        <translation type="unfinished"></translation>
+        <translation>输入组/序列号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26740,7 +26773,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Detailed Inventory History by Lot/Serial #</source>
-        <translation type="unfinished"></translation>
+        <translation>详细的库存历史(按批号/序列号)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26775,7 +26808,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a Lot/Serial to view Inventory Detail by Lot/Serial #.&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;你必须输入一个批号/序列号以便按批号/序列号来查看库存详情.&lt;/p&gt;</translation>
     </message>
 </context>
 <context>
@@ -26853,7 +26886,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>All Sales Reps.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有销售代表.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26984,7 +27017,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27039,7 +27072,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27059,12 +27092,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Expiration Date</source>
-        <translation type="unfinished"></translation>
+        <translation>过期日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Value</source>
-        <translation type="unfinished"></translation>
+        <translation>库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27164,12 +27197,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Debits</source>
-        <translation type="unfinished"></translation>
+        <translation>借方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Credits</source>
-        <translation type="unfinished"></translation>
+        <translation>贷方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27378,17 +27411,17 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Count Tag #</source>
-        <translation type="unfinished"></translation>
+        <translation>数量标签号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Thaw</source>
-        <translation type="unfinished"></translation>
+        <translation>解冻</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Frozen Item Sites</source>
-        <translation type="unfinished"></translation>
+        <translation>冻结的项目地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27403,7 +27436,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Count Tags:</source>
-        <translation>盘点标签:</translation>
+        <translation>数量标签:</translation>
     </message>
 </context>
 <context>
@@ -27471,7 +27504,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Source:</source>
-        <translation>已选择来源</translation>
+        <translation>已选择来源:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27521,17 +27554,17 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Journal Numbers Range</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号范围</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>End Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>结束号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Start Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>开始号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27619,7 +27652,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查采购订单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27629,7 +27662,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>G/L Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>总帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27654,7 +27687,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Source:</source>
-        <translation>已选择来源</translation>
+        <translation>已选择来源:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27719,7 +27752,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>G/L Transactions:</source>
-        <translation type="unfinished"></translation>
+        <translation>总帐交易:</translation>
     </message>
 </context>
 <context>
@@ -27837,7 +27870,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27960,7 +27993,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>差数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27995,7 +28028,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>周期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28038,7 +28071,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28058,7 +28091,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext.Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的数量小计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28078,7 +28111,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Indented Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>契约材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28118,7 +28151,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单:</translation>
     </message>
 </context>
 <context>
@@ -28126,7 +28159,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq. #</source>
-        <translation type="unfinished"></translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28146,7 +28179,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的数量小计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28166,12 +28199,12 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>View Item Inventory History...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查项目库存历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Indented Where Used</source>
-        <translation type="unfinished"></translation>
+        <translation>已约定使用场合</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28216,7 +28249,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单项目:</translation>
     </message>
 </context>
 <context>
@@ -28317,12 +28350,12 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>OUT Level</source>
-        <translation type="unfinished"></translation>
+        <translation>过标准水平</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28372,7 +28405,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Misc. Inventory Count...</source>
-        <translation>输入混杂库存量...</translation>
+        <translation>输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28382,18 +28415,18 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Valid Date</source>
-        <translation type="unfinished"></translation>
+        <translation>输入有效日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You have choosen to view Inventory Availabilty as of a given date but have not.
 indicated the date.  Please enter a valid date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已选择检查到某一天的可用库存,但你还未选择日期.请输入一个有效的日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>库存可用性(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28521,12 +28554,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>OUT Level.</source>
-        <translation type="unfinished"></translation>
+        <translation>过标准水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28536,17 +28569,17 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按等级代码的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划者代码的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目组的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28586,7 +28619,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Post Misc. Production...</source>
-        <translation type="unfinished"></translation>
+        <translation>混杂品转帐...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28601,23 +28634,23 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Misc. Inventory Count...</source>
-        <translation>输入混杂库存量...</translation>
+        <translation>输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Valid Date</source>
-        <translation type="unfinished"></translation>
+        <translation>输入有效日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You have choosen to view Inventory Availabilty as of a given date but have not.
 indicated the date.  Please enter a valid date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已选择检查到某一天的可用库存,但你还未选择日期.请输入一个有效的日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Parameter List</source>
-        <translation type="unfinished"></translation>
+        <translation>按参数列表的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28710,12 +28743,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>This Alloc.</source>
-        <translation type="unfinished"></translation>
+        <translation>这个分配.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Alloc.</source>
-        <translation>总分配</translation>
+        <translation>总分配.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28725,12 +28758,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>This Avail.</source>
-        <translation type="unfinished"></translation>
+        <translation>这个可用.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Avail.</source>
-        <translation type="unfinished"></translation>
+        <translation>总可用.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28740,7 +28773,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售订单的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28805,7 +28838,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show W/O Supply</source>
-        <translation type="unfinished"></translation>
+        <translation>显示工作订单供应</translation>
     </message>
 </context>
 <context>
@@ -28813,7 +28846,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor #</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28858,12 +28891,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>OUT Level</source>
-        <translation type="unfinished"></translation>
+        <translation>过标准水平</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28913,34 +28946,34 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Misc. Inventory Count...</source>
-        <translation>输入混杂库存量...</translation>
+        <translation>输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Valid Date</source>
-        <translation type="unfinished"></translation>
+        <translation>输入有效日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You have choosen to view Inventory Availabilty as of a given date but have not
 indicated the date.  Please enter a valid date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已选择检查到某一天的可用库存,但你还未选择日期.请输入一个有效的日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Dates</source>
-        <translation type="unfinished"></translation>
+        <translation>输入日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You have choosen to view Inventory Availabilty as of a given Start and End Date but have not
 indicated the dates.  Please enter valid dates.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已选择检查到某一给定的开始和结束日期的可用库存,但你还未选择日期.请输入一个有效的日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Source Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>按卖主来源的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29116,22 +29149,22 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Parameter List</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按参数列表)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Buffer Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>显示缓冲状态:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Greater than zero</source>
-        <translation type="unfinished"></translation>
+        <translation>大于零</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>In Emergency Zone:</source>
-        <translation type="unfinished"></translation>
+        <translation>在应急区域:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29211,12 +29244,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>OUT Level.</source>
-        <translation type="unfinished"></translation>
+        <translation>过标准水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29226,17 +29259,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按项目组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29276,7 +29309,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Post Misc. Production...</source>
-        <translation type="unfinished"></translation>
+        <translation>混杂品转帐...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29291,12 +29324,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Misc. Inventory Count...</source>
-        <translation>输入混杂库存量...</translation>
+        <translation>输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Stock</source>
-        <translation type="unfinished"></translation>
+        <translation>库存</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29329,7 +29362,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Order #/Location-Lot/Serial #</source>
-        <translation type="unfinished"></translation>
+        <translation>订单号/地点-组/序列号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29344,7 +29377,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>From Area</source>
-        <translation type="unfinished"></translation>
+        <translation>来自区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29354,7 +29387,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>To Area</source>
-        <translation type="unfinished"></translation>
+        <translation>送达区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29404,12 +29437,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Transaction Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑交易信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Work Order Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看工作订单信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29434,7 +29467,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>库存历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29497,7 +29530,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Whse.</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29572,12 +29605,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Order Search Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>输入订单搜索模式</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a Order # pattern to search for.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须输入一个订单号模式用于搜索.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29587,7 +29620,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a Start Date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须输入一个开始日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29597,12 +29630,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter an End Date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须输入一个结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory History by Order Number</source>
-        <translation type="unfinished"></translation>
+        <translation>库存历史(按订单号)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29690,7 +29723,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>From Area</source>
-        <translation type="unfinished"></translation>
+        <translation>来自区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29700,7 +29733,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>To Area</source>
-        <translation type="unfinished"></translation>
+        <translation>送达区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29745,17 +29778,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory History by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>库存历史(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory History by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>库存历史(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory History by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>库存历史(按项目组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29765,12 +29798,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Transaction Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑交易信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Work Order Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看工作订单信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29843,7 +29876,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29853,12 +29886,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Relocate...</source>
-        <translation type="unfinished"></translation>
+        <translation>重新部署...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reassign Lot/Serial #...</source>
-        <translation type="unfinished"></translation>
+        <translation>再分配组/序列号...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29883,7 +29916,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Location/Lot/Serial # Detail</source>
-        <translation type="unfinished"></translation>
+        <translation>地点/组/序列号详情</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29918,7 +29951,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>地点:</translation>
     </message>
 </context>
 <context>
@@ -29936,7 +29969,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Apply Date</source>
-        <translation type="unfinished"></translation>
+        <translation>应用日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30081,7 +30114,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Applications:</source>
-        <translation type="unfinished"></translation>
+        <translation>应用:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30129,7 +30162,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Transactions:</source>
-        <translation type="unfinished"></translation>
+        <translation>交易:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30239,7 +30272,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Debit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>借项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30443,7 +30476,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Std. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30511,7 +30544,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Std. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30546,7 +30579,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Only Show &amp;Zero Cost Items</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;只显示零成本项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30895,12 +30928,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>UOM Ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>度量单位比率</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item Sources by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>项目来源(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30948,7 +30981,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>UOM Ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>度量单位比率</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31006,32 +31039,32 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Master...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑项目所有者...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Item Master...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查项目所有者...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit Bill of Material...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑材料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Bill of Material...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查材料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑经营的项目清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Item Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查经营的项目清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31091,7 +31124,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Items by Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation>项目(按特征)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31101,7 +31134,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>价值:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31159,27 +31192,27 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Master...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑项目所有者...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit Bill of Material...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑材料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Bill of Material...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查材料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑经营的项目清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Item Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查经营的项目清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31239,7 +31272,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Items by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>项目(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31307,7 +31340,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Master...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑项目所有者...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31367,7 +31400,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Items by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>项目(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31533,7 +31566,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Operations Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>经营的项目清单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31571,7 +31604,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31659,7 +31692,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31747,7 +31780,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32071,12 +32104,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Proj. Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>已计划的相对于其它数量的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act. Iss.</source>
-        <translation>签发给一个工作订单的实际库存量</translation>
+        <translation>签发给一个工作订单的实际库存量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32086,7 +32119,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per Var.</source>
-        <translation>相对于其它数量的数量</translation>
+        <translation>相对于其它数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32096,12 +32129,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Material Usage Variance by Bill of Materials Item</source>
-        <translation type="unfinished"></translation>
+        <translation>材料使用差异(按材料清单项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Component Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>零件项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32159,12 +32192,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Proj. Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>已计划的相对于其它数量的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act. Iss.</source>
-        <translation>签发给一个工作订单的实际库存量</translation>
+        <translation>签发给一个工作订单的实际库存量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32174,7 +32207,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per Var.</source>
-        <translation>相对于其它数量的数量</translation>
+        <translation>相对于其它数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32184,7 +32217,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Material Usage Variance by Component Item</source>
-        <translation type="unfinished"></translation>
+        <translation>材料使用差异(按部件项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32262,12 +32295,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Proj. Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>已计划的相对于其它数量的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act. Iss.</source>
-        <translation>签发给一个工作订单的实际库存量</translation>
+        <translation>签发给一个工作订单的实际库存量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32277,7 +32310,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per Var.</source>
-        <translation>相对于其它数量的数量</translation>
+        <translation>相对于其它数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32287,7 +32320,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Material Usage Variance by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的材料使用差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32370,22 +32403,22 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Proj. Qty. per.</source>
-        <translation type="unfinished"></translation>
+        <translation>已计划的相对于其它数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act. Iss.</source>
-        <translation>签发给一个工作订单的实际库存量</translation>
+        <translation>签发给一个工作订单的实际库存量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act. Qty. per.</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的实际数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per Var.</source>
-        <translation>相对于其它数量的数量</translation>
+        <translation>相对于其它数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32395,7 +32428,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Material Usage Variance by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>材料使用差异(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32463,12 +32496,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Proj. Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>已计划的相对于其它数量的数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Act. Iss.</source>
-        <translation>签发给一个工作订单的实际库存量</translation>
+        <translation>签发给一个工作订单的实际库存量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32478,7 +32511,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per Var.</source>
-        <translation>相对于其它数量的数量</translation>
+        <translation>相对于其它数量的数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32488,7 +32521,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Material Usage Variance by Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>材料使用差异(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32521,7 +32554,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32689,7 +32722,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Types</source>
-        <translation type="unfinished"></translation>
+        <translation>显示类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32704,7 +32737,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32865,7 +32898,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Starting Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在开始到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32875,7 +32908,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ending Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在结束到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32920,7 +32953,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Please eneter a valid End Date.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32960,7 +32993,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/Os by Date</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单(按日期)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32975,12 +33008,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Closed P/O&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>显示关闭了的采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33000,7 +33033,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/Os:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单:</translation>
     </message>
 </context>
 <context>
@@ -33048,7 +33081,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Please eneter a valid End Date.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33088,7 +33121,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/Os by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33108,7 +33141,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Order Date</source>
-        <translation type="unfinished"></translation>
+        <translation>订购日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33118,7 +33151,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Receipt Date</source>
-        <translation type="unfinished"></translation>
+        <translation>收货日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33133,17 +33166,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Closed P/O&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>显示关闭了的采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Where Item Description contains</source>
-        <translation type="unfinished"></translation>
+        <translation>项目描述包含的地方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/Os:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单:</translation>
     </message>
 </context>
 <context>
@@ -33216,7 +33249,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33422,7 +33455,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33904,7 +33937,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Delivery Date Variances by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单交货期差异(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33919,7 +33952,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33939,7 +33972,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Item Receipts:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目收据:</translation>
     </message>
 </context>
 <context>
@@ -33987,7 +34020,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Delivery Date Variances by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单交货期差异(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34002,7 +34035,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34022,7 +34055,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Item Receipts:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目收据:</translation>
     </message>
 </context>
 <context>
@@ -34035,7 +34068,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item/Doc. #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目/文件号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34045,7 +34078,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Due/Recvd.</source>
-        <translation type="unfinished"></translation>
+        <translation>到期/收到.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34080,7 +34113,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order History</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34133,7 +34166,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Rcvd/Rtnd</source>
-        <translation type="unfinished"></translation>
+        <translation>已收到/已返回</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34143,12 +34176,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purch. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>采购成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Recv. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>已收到成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34173,7 +34206,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Receipts and Returns by Date</source>
-        <translation type="unfinished"></translation>
+        <translation>收货和退货(按日期)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34188,7 +34221,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34218,7 +34251,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O &amp;Receipts and Returns:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;采购订单收货和退货:</translation>
     </message>
 </context>
 <context>
@@ -34256,7 +34289,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Rcvd/Rtnd</source>
-        <translation type="unfinished"></translation>
+        <translation>已收到/已返回</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34266,12 +34299,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purch. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>采购成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Recv. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>已收到成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34291,7 +34324,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Receipts and Returns by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>收货和退货(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34306,7 +34339,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34331,7 +34364,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O &amp;Receipts and Returns:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;采购订单收货和退货:</translation>
     </message>
 </context>
 <context>
@@ -34364,7 +34397,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Rcvd/Rtnd</source>
-        <translation type="unfinished"></translation>
+        <translation>已收到/已返回</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34374,12 +34407,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purch. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>采购成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Recv. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>已收到成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34404,7 +34437,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Receipts and Returns by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>收货和退货(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34414,7 +34447,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34439,7 +34472,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O &amp;Receipts and Returns:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;采购订单收货和退货:</translation>
     </message>
 </context>
 <context>
@@ -34447,7 +34480,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按缓冲状态)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34467,7 +34500,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34507,12 +34540,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Buffer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34577,27 +34610,27 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>重新安排</translation>
+        <translation>重新安排...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改数量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Close Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>结清项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开的项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Stock</source>
-        <translation type="unfinished"></translation>
+        <translation>库存</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34635,7 +34668,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Starting Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在开始到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34645,7 +34678,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ending Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在结束到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34730,22 +34763,22 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>重新安排</translation>
+        <translation>重新安排...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改数量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Close Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>结清项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开的项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34755,7 +34788,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Date</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按日期)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34770,7 +34803,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34898,27 +34931,27 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>重新安排</translation>
+        <translation>重新安排...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改数量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Close Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>结清项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开的项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34943,7 +34976,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35066,22 +35099,22 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>重新安排</translation>
+        <translation>重新安排...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>更改数量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Close Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>结清项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>打开的项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35091,7 +35124,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35111,12 +35144,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>All PO #s</source>
-        <translation type="unfinished"></translation>
+        <translation>所有的采购订单号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected PO #:</source>
-        <translation type="unfinished"></translation>
+        <translation>已选择的采购订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35126,7 +35159,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35204,7 +35237,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>采购成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35239,7 +35272,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35259,7 +35292,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O &amp;Receipts and Returns:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;采购订单收货和退货:</translation>
     </message>
 </context>
 <context>
@@ -35292,7 +35325,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purch. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>采购成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35332,7 +35365,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35405,12 +35438,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reject Code</source>
-        <translation type="unfinished"></translation>
+        <translation>废品代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Rejected Material by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>不合格材料(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35425,7 +35458,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35445,7 +35478,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Rejected Material:</source>
-        <translation type="unfinished"></translation>
+        <translation>不合格材料:</translation>
     </message>
 </context>
 <context>
@@ -35473,7 +35506,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Price UOM</source>
-        <translation type="unfinished"></translation>
+        <translation>度量单位价格</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35498,7 +35531,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Mar. %</source>
-        <translation type="unfinished"></translation>
+        <translation>利润率%</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35523,7 +35556,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Type Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客类型模式</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35533,12 +35566,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>List Price</source>
-        <translation type="unfinished"></translation>
+        <translation>厂价</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prices by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>价格(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35608,7 +35641,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prices:</source>
-        <translation type="unfinished"></translation>
+        <translation>价格:</translation>
     </message>
 </context>
 <context>
@@ -35636,7 +35669,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Price UOM</source>
-        <translation type="unfinished"></translation>
+        <translation>度量单位价格</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35661,7 +35694,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Mar. %</source>
-        <translation type="unfinished"></translation>
+        <translation>利润率%</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35681,7 +35714,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Type Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客类型模式</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35691,17 +35724,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>List Price</source>
-        <translation type="unfinished"></translation>
+        <translation>厂价</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prices by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>价格(按客户类型)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35771,7 +35804,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prices:</source>
-        <translation type="unfinished"></translation>
+        <translation>价格:</translation>
     </message>
 </context>
 <context>
@@ -35789,7 +35822,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer/Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>客户/客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35814,7 +35847,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>差数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35829,7 +35862,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>发货至客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35839,7 +35872,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Type Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客类型模式</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35849,12 +35882,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>List Price</source>
-        <translation type="unfinished"></translation>
+        <translation>厂价</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prices by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>价格(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35914,12 +35947,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prices:</source>
-        <translation type="unfinished"></translation>
+        <translation>价格:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Ship-To Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>发货至客户模式</translation>
     </message>
 </context>
 <context>
@@ -36108,7 +36141,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36188,7 +36221,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36276,7 +36309,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Relocate...</source>
-        <translation type="unfinished"></translation>
+        <translation>重新部署...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36286,7 +36319,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Quantities on Hand by Location</source>
-        <translation type="unfinished"></translation>
+        <translation>现有数量(按地点)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36296,12 +36329,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Netable:</source>
-        <translation type="unfinished"></translation>
+        <translation>列入库存净值的仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restricted:</source>
-        <translation type="unfinished"></translation>
+        <translation>被限制的:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36336,7 +36369,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Quantities on Hand:</source>
-        <translation type="unfinished"></translation>
+        <translation>现有数量:</translation>
     </message>
 </context>
 <context>
@@ -36374,7 +36407,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36484,7 +36517,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37160,7 +37193,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill-To Name</source>
-        <translation type="unfinished"></translation>
+        <translation>结帐客户名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37250,12 +37283,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Bill-To Name</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按结帐客户名)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bill-To Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>结帐客户名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37358,7 +37391,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invoice Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>发票信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37398,7 +37431,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37531,7 +37564,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37609,17 +37642,17 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类别的销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户类型的销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按客户组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37679,7 +37712,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Parameter List</source>
-        <translation type="unfinished"></translation>
+        <translation>按参数目录的销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37807,7 +37840,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售代表的销售历史.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37930,12 +37963,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Ship-To Number</source>
-        <translation type="unfinished"></translation>
+        <translation>输入发货单号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a valid Ship-To Number.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的发货单号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37960,7 +37993,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按发货单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38387,7 +38420,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Order Date</source>
-        <translation type="unfinished"></translation>
+        <translation>订购日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38583,12 +38616,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>BOO Seq. #</source>
-        <translation type="unfinished"></translation>
+        <translation>经营清单排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>BOM Seq. #</source>
-        <translation type="unfinished"></translation>
+        <translation>经营清单排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38638,7 +38671,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sequenced Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>序列化的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38663,7 +38696,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单:</translation>
     </message>
 </context>
 <context>
@@ -38711,7 +38744,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Shipping Form...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印发货表格...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38761,7 +38794,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipments:</source>
-        <translation type="unfinished"></translation>
+        <translation>货运:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38834,7 +38867,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tracking Number</source>
-        <translation type="unfinished"></translation>
+        <translation>跟踪号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38844,7 +38877,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Shipping Form...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印发货表格...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38949,7 +38982,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipments:</source>
-        <translation type="unfinished"></translation>
+        <translation>货运:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39002,12 +39035,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>ECN #</source>
-        <translation type="unfinished"></translation>
+        <translation>工程改变号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Single Level Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>单一水平的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39052,7 +39085,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单:</translation>
     </message>
 </context>
 <context>
@@ -39065,7 +39098,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39115,12 +39148,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Master...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑项目所有者...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Item Inventory History...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查项目库存历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39150,7 +39183,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单项目:</translation>
     </message>
 </context>
 <context>
@@ -39233,7 +39266,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39258,7 +39291,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Value</source>
-        <translation type="unfinished"></translation>
+        <translation>库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39457,7 +39490,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39477,7 +39510,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Substitute Availability by Root Item</source>
-        <translation type="unfinished"></translation>
+        <translation>替代品可用性(按根项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39502,7 +39535,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Normalize to Parent UOM</source>
-        <translation type="unfinished"></translation>
+        <translation>规格化到母标准单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39522,7 +39555,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Substitute Availability:</source>
-        <translation type="unfinished"></translation>
+        <translation>替代品可用性:</translation>
     </message>
 </context>
 <context>
@@ -39545,12 +39578,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的数量小计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>已概括的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39590,7 +39623,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单:</translation>
     </message>
 </context>
 <context>
@@ -39643,7 +39676,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Margin</source>
-        <translation type="unfinished"></translation>
+        <translation>差数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39683,7 +39716,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>重新安排</translation>
+        <translation>重新安排...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39703,7 +39736,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39964,7 +39997,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Source:</source>
-        <translation>已选择来源</translation>
+        <translation>已选择来源:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40019,7 +40052,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40029,12 +40062,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Unposted Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>未过帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Posted Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>过帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40092,7 +40125,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40230,12 +40263,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Quantity Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>销售量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40263,7 +40296,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40474,7 +40507,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40519,12 +40552,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Quantity Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>销售量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40577,7 +40610,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40811,7 +40844,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Availability Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看可用性详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40841,7 +40874,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40866,7 +40899,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Availability:</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步可用性:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40937,7 +40970,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Bookings...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40957,7 +40990,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Bookings by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的预订(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41003,7 +41036,8 @@ These line items must be fixed before you may convert this quote.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedBookingsByCustomer&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户的时间同步预订&quot;未找到.￼
+请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41014,7 +41048,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41042,7 +41076,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Bookings...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41062,7 +41096,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Bookings by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的预订(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41118,7 +41152,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedBookingsByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按项目的时间同步预订&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41129,7 +41163,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41142,7 +41176,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prod. Cat.</source>
-        <translation type="unfinished"></translation>
+        <translation>产品类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41157,7 +41191,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Bookings...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41177,7 +41211,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Bookings by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类别的时间同步预订</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41187,12 +41221,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Capacity Units</source>
-        <translation>改变容量单位</translation>
+        <translation>改变生产能力单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41243,7 +41277,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedBookingsByProductCategory&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按产品类别的时间同步预订&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41254,7 +41288,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41272,7 +41306,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time Phased Capacity by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的生产能力(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41297,7 +41331,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity:</source>
-        <translation type="unfinished"></translation>
+        <translation>生产能力:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41345,7 +41379,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41634,7 +41668,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>A/R Open Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>未决定的应收款项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41811,12 +41845,12 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Transactions...</source>
-        <translation type="unfinished"></translation>
+        <translation>检查交易...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Production by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的生产量(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41841,7 +41875,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Production:</source>
-        <translation type="unfinished"></translation>
+        <translation>生产量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41874,12 +41908,12 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Transactions...</source>
-        <translation type="unfinished"></translation>
+        <translation>检查交易...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Production by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的生产量(按按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41889,12 +41923,12 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Capacity Units</source>
-        <translation>改变容量单位</translation>
+        <translation>改变生产能力单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41904,7 +41938,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inactive Item Sites</source>
-        <translation type="unfinished"></translation>
+        <translation>显示不活跃项目地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41924,7 +41958,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Production:</source>
-        <translation type="unfinished"></translation>
+        <translation>生产量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42025,7 +42059,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42035,7 +42069,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42096,7 +42130,7 @@ date range to evaluate the average price.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByCustomer&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42107,7 +42141,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42130,7 +42164,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42140,7 +42174,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42201,7 +42235,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByCustomerByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户按项目的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42212,7 +42246,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42235,7 +42269,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42245,7 +42279,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42306,7 +42340,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByCustomer&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42317,7 +42351,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42345,7 +42379,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42365,7 +42399,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42421,7 +42455,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按项目的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42432,7 +42466,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42445,7 +42479,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prod. Cat.</source>
-        <translation type="unfinished"></translation>
+        <translation>产品类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42460,7 +42494,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查销售详情...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42480,7 +42514,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42490,12 +42524,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Capacity Units</source>
-        <translation>改变容量单位</translation>
+        <translation>改变生产能力单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42525,7 +42559,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipments:</source>
-        <translation type="unfinished"></translation>
+        <translation>货运:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42546,7 +42580,8 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByProductCategory&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按产品类别的时间同步销售历史&quot;未找到.￼￼
+请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42557,7 +42592,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42570,7 +42605,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Transaction Type</source>
-        <translation type="unfinished"></translation>
+        <translation>交易类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42580,7 +42615,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Transactions...</source>
-        <translation type="unfinished"></translation>
+        <translation>检查交易...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42610,7 +42645,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Item Usage Statistics by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步项目使用统计(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42801,12 +42836,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Debits</source>
-        <translation type="unfinished"></translation>
+        <translation>借方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Credits</source>
-        <translation type="unfinished"></translation>
+        <translation>贷方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42889,12 +42924,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Unassigned Sales Accounts</source>
-        <translation type="unfinished"></translation>
+        <translation>未分配的销售帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unassigned Sold Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>未分配的已售出项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43163,7 +43198,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43339,7 +43374,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Usage Statistics by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按等级代码的项目使用统计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43417,7 +43452,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Usage Statistics by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的项目使用统计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43505,7 +43540,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Usage Statistics by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目组的项目使用统计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43568,7 +43603,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Transactions...</source>
-        <translation type="unfinished"></translation>
+        <translation>检查交易...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43593,7 +43628,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Usage Statistics by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>项目使用统计(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43641,7 +43676,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation>被限制的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43661,7 +43696,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Valid Locations by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>有效的地点(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43696,7 +43731,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Valid Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>有效的地点:</translation>
     </message>
 </context>
 <context>
@@ -43779,12 +43814,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Select Number</source>
-        <translation type="unfinished"></translation>
+        <translation>选择号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please select a valid Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>请选择一个有效的卖主.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43809,12 +43844,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor History</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Find Vend. Invoice #:</source>
-        <translation type="unfinished"></translation>
+        <translation>寻找卖主发票号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43849,12 +43884,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor History:</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主历史:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Void</source>
-        <translation type="unfinished"></translation>
+        <translation>无效</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44085,12 +44120,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Buffer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44249,7 +44284,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Stock</source>
-        <translation type="unfinished"></translation>
+        <translation>库存</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44568,7 +44603,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44618,7 +44653,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Work Order History by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>工作定单历史(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44716,7 +44751,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Work Order History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的工作订单历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44774,12 +44809,12 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sub. #</source>
-        <translation type="unfinished"></translation>
+        <translation>子帐号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44829,12 +44864,12 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Work Order History by W/O Number</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单历史(按工作订单号)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Work Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45193,7 +45228,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45299,7 +45334,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45407,7 +45442,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="" line="0"/>
         <source>Only Show W/O Operations with Load</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示有工作负荷量的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45495,7 +45530,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46317,12 +46352,12 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Close W/O...</source>
-        <translation>关闭(不含...)</translation>
+        <translation>关闭(不含)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Work Orders with Parent Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>打开附有母销售订单的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46405,12 +46440,12 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Close W/O...</source>
-        <translation>关闭(不含...)</translation>
+        <translation>关闭(不含)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Work Orders with Closed Parent Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>打开附有已关闭的母销售订单的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46443,12 +46478,12 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Company</source>
-        <translation type="unfinished"></translation>
+        <translation>公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Profit</source>
-        <translation type="unfinished"></translation>
+        <translation>利润</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46458,7 +46493,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sub.</source>
-        <translation type="unfinished"></translation>
+        <translation>子帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46734,7 +46769,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46866,7 +46901,7 @@ being referenced by one or more records.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46916,7 +46951,7 @@ being referenced by one or more records.</source>
     <message>
         <location filename="" line="0"/>
         <source>To:</source>
-        <translation type="unfinished"></translation>
+        <translation>到:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46931,7 +46966,7 @@ being referenced by one or more records.</source>
     <message>
         <location filename="" line="0"/>
         <source>Forms</source>
-        <translation type="unfinished"></translation>
+        <translation>表格</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47344,7 +47379,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Saving Shared Address</source>
-        <translation type="unfinished"></translation>
+        <translation>正在存储共享地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47359,7 +47394,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Create Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>创建贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47640,7 +47675,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Database Log</source>
-        <translation type="unfinished"></translation>
+        <translation>数据库日志</translation>
     </message>
 </context>
 <context>
@@ -47698,7 +47733,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47919,7 +47954,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Expense Category</source>
-        <translation type="unfinished"></translation>
+        <translation>费用类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -48209,22 +48244,22 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Failed Post List</source>
-        <translation type="unfinished"></translation>
+        <translation>未成功过帐列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Could not post these documents to the G/L because the accounting periods for the posting dates are closed:&lt;/p&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;不能将这些文件过帐到总帐因为这些过帐日期的会计周期已关闭:&lt;p&gt;</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>好</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Retry</source>
-        <translation type="unfinished"></translation>
+        <translation>重试</translation>
     </message>
 </context>
 <context>
@@ -48732,7 +48767,7 @@ Custom</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49046,7 +49081,7 @@ Would you like to continue anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sub Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>子类:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49132,7 +49167,7 @@ Would you like to continue anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49411,7 +49446,7 @@ but you may deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49616,7 +49651,7 @@ to be firmed.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49684,12 +49719,12 @@ to be firmed.</source>
     <message>
         <location filename="" line="0"/>
         <source>Forms</source>
-        <translation type="unfinished"></translation>
+        <translation>表格</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Forms:</source>
-        <translation type="unfinished"></translation>
+        <translation>表格:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49916,12 +49951,12 @@ to be firmed.</source>
     <message>
         <location filename="" line="0"/>
         <source>Debits</source>
-        <translation type="unfinished"></translation>
+        <translation>借方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Credits</source>
-        <translation type="unfinished"></translation>
+        <translation>贷方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49996,7 +50031,7 @@ to be firmed.</source>
     <message>
         <location filename="" line="0"/>
         <source>Document Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50083,7 +50118,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Doc. #:</source>
-        <translation type="unfinished"></translation>
+        <translation>文件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50166,7 +50201,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Journal Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50259,7 +50294,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>头衔</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50297,12 +50332,12 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Titles</source>
-        <translation type="unfinished"></translation>
+        <translation>头衔</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Titles:</source>
-        <translation type="unfinished"></translation>
+        <translation>头衔:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50337,7 +50372,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>头衔</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50580,7 +50615,7 @@ The file is not an image, an unknown image format or is corrupt</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50623,7 +50658,7 @@ The file is not an image, an unknown image format or is corrupt</source>
     <message>
         <location filename="" line="0"/>
         <source>Image List</source>
-        <translation type="unfinished"></translation>
+        <translation>图象清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51034,17 +51069,17 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Severity</source>
-        <translation type="unfinished"></translation>
+        <translation>激烈度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Priority</source>
-        <translation type="unfinished"></translation>
+        <translation>优先权</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51082,12 +51117,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>事件类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Categories:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件类别:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51203,12 +51238,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident Priorities</source>
-        <translation type="unfinished"></translation>
+        <translation>事件优先权</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Priorities:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件优先权:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51248,7 +51283,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Priority</source>
-        <translation type="unfinished"></translation>
+        <translation>优先权</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51372,12 +51407,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident Resolutions</source>
-        <translation type="unfinished"></translation>
+        <translation>事件解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Resolutions:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件解决:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51417,7 +51452,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Resolution</source>
-        <translation type="unfinished"></translation>
+        <translation>解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51445,12 +51480,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident Severities</source>
-        <translation type="unfinished"></translation>
+        <translation>事件激烈度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Severities:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件激烈度:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51490,7 +51525,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Severity</source>
-        <translation type="unfinished"></translation>
+        <translation>激烈度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51839,7 +51874,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship-To #:</source>
-        <translation type="unfinished"></translation>
+        <translation>发货单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52220,7 +52255,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation>发票日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52240,7 +52275,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Invoices</source>
-        <translation type="unfinished"></translation>
+        <translation>发票</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52353,7 +52388,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Transfer Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>转移订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52461,7 +52496,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Line Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>线项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52569,7 +52604,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Issue Method</source>
-        <translation type="unfinished"></translation>
+        <translation>签发方法</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52703,7 +52738,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Component Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>零件项目号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52766,7 +52801,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alias Number</source>
-        <translation type="unfinished"></translation>
+        <translation>别名号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52806,7 +52841,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation type="unfinished"></translation>
+        <translation>头衔</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52886,7 +52921,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous</source>
-        <translation>混杂</translation>
+        <translation>杂项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53359,7 +53394,7 @@ Do you wish to continue saving and delete the Item Costs?</source>
     <message>
         <location filename="" line="0"/>
         <source>Any</source>
-        <translation type="unfinished"></translation>
+        <translation>任一个</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53458,7 +53493,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53471,12 +53506,12 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Aliases</source>
-        <translation type="unfinished"></translation>
+        <translation>项目别名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Alias:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;别名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53496,12 +53531,12 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alias Number</source>
-        <translation type="unfinished"></translation>
+        <translation>别名号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53662,7 +53697,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Lvl.</source>
-        <translation>再订购库存水平</translation>
+        <translation>再订购库存水平.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53677,7 +53712,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53697,7 +53732,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于其它数量的数量小计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53752,7 +53787,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>From Area</source>
-        <translation type="unfinished"></translation>
+        <translation>来自区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53762,7 +53797,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>To Area</source>
-        <translation type="unfinished"></translation>
+        <translation>送达区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53822,7 +53857,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53932,13 +53967,13 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Valid Date</source>
-        <translation type="unfinished"></translation>
+        <translation>输入有效日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You have choosen to view Inventory Availabilty as of a given date but have not.
 indicated the date.  Please enter a valid date.</source>
-        <translation type="unfinished"></translation>
+        <translation>你已选择检查到某一天的可用库存,但你还未选择日期.请输入一个有效的日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54008,7 +54043,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Misc. Inventory Count...</source>
-        <translation>输入混杂库存量...</translation>
+        <translation>输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54033,22 +54068,22 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Transaction Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑交易信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Work Order Information...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看工作订单信息...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Relocate...</source>
-        <translation type="unfinished"></translation>
+        <translation>重新部署...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reassign Lot/Serial #...</source>
-        <translation type="unfinished"></translation>
+        <translation>再分配组/序列号...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54063,12 +54098,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Item Master...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑项目所有者...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Item Inventory History...</source>
-        <translation type="unfinished"></translation>
+        <translation>核查项目库存历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54243,7 +54278,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>地点:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54258,7 +54293,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>材料清单项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54428,7 +54463,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54471,12 +54506,12 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Item Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>项目组</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item Groups:</source>
-        <translation type="unfinished"></translation>
+        <translation>项目组:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54519,12 +54554,12 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Item Image</source>
-        <translation type="unfinished"></translation>
+        <translation>项目图像</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purpose:</source>
-        <translation type="unfinished"></translation>
+        <translation>目的:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54544,7 +54579,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous</source>
-        <translation>混杂</translation>
+        <translation>杂项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54587,7 +54622,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous</source>
-        <translation>混杂</translation>
+        <translation>杂项</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54625,7 +54660,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Item List</source>
-        <translation type="unfinished"></translation>
+        <translation>项目列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54650,7 +54685,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54980,7 +55015,7 @@ before saving it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prod. Cat.</source>
-        <translation type="unfinished"></translation>
+        <translation>产品类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54990,7 +55025,7 @@ before saving it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55278,7 +55313,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Search for Item</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55288,17 +55323,17 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>通过项目号搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 1</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述1搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 2</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述2搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55318,7 +55353,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55496,7 +55531,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>&amp;Planner Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;计划员代码:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56011,7 +56046,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ranking</source>
-        <translation type="unfinished"></translation>
+        <translation>排名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56021,7 +56056,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>项目来源</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56137,17 +56172,17 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>通过项目号搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 1</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述1搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 2</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述2搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56240,7 +56275,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>项目来源</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56601,7 +56636,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Any</source>
-        <translation type="unfinished"></translation>
+        <translation>任一个</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56947,7 +56982,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57070,7 +57105,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="" line="0"/>
         <source>Restricted</source>
-        <translation type="unfinished"></translation>
+        <translation>被限制的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57085,7 +57120,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="" line="0"/>
         <source>Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>地点:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57509,7 +57544,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57532,7 +57567,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Std. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57937,17 +57972,17 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Accounting Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>会计工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Accounts &amp;Payable</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;应付款帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purchase &amp;Order</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57957,62 +57992,62 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;List Unposted...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;未过帐列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Post...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;转帐...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Voucher</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;凭单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New &amp;Miscellaneous...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新杂项...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Memos</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;New Misc. Credit Memo...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新杂项贷项通知单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;List Unapplied Credit Memos...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;未应用的贷项通知单列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New &amp;Misc. Debit Memo...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新杂项借项通知单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Payments</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;付款</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Select...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;选择...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;List Selected...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;已选择的列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Prepare Check Run...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;准备支票运行...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58347,7 +58382,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Account</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58497,7 +58532,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58507,17 +58542,17 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Duplicate Account Numbers...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;复制帐号...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purge &amp;Invoices...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除发票...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Accounting</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;会计</translation>
     </message>
 </context>
 <context>
@@ -58525,12 +58560,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>CRM Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Incident</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;事件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58540,12 +58575,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Workbench...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作台...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;To-Do</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;做</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58555,12 +58590,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Pro&amp;ject</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;项目方案</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Opportunity</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;机会</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58570,37 +58605,37 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Order &amp;Activity by Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;订购活动(按项目方案)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Incidents by CRM Account...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;事件(按客户关系管理帐户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;To-Do List Items by User and Incident...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;做项目列表(按用户和事件)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Account</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Search...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;搜寻...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Contact</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;联系</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A&amp;ddress</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58610,52 +58645,52 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Titles...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;头衔...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Categories...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;种类...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Priorities...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;优先权...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Severities...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;激烈度...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Resolutions...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;解决...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Sources...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;来源...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>St&amp;ages...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;阶段...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;类型...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;haracteristics...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;特征...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;CRM</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;客户关系管理</translation>
     </message>
 </context>
 <context>
@@ -58663,7 +58698,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Inventory Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>库存工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58673,12 +58708,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Maintain...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;维护...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Transfer &amp;Order</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;转移订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58688,22 +58723,22 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Physical Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;实测库存量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Create Count Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;创建数量标签</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按计划员代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按等级代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58713,52 +58748,52 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Create C&amp;ycle Count Tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;创建循环数量标签...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Count &amp;Slip...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;输入数量差异...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Count &amp;Tag...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;输入数量标签...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter &amp;Misc. Inventory Count...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Zero Uncounted Count Tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;将未计数的数量标签清零...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tha&amp;w Item Sites...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;解冻项目地点...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Count S&amp;lips...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;过帐数量差异...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Count T&amp;ags...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;过帐数量差异...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Purge Posted Count Slips...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除转帐数量差异...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P&amp;urge Posted Count Tags...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除转帐数量差异...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58768,57 +58803,57 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Frozen Item Sites...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;冻结的项目地点...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Count S&amp;lip Edit List...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量差异编辑列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Count Ta&amp;g Edit List...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量差异编辑列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Count &amp;Slips...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量差异...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Count &amp;Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量标签</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按仓库...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;ClassCode...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按等级代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>R&amp;eceiving</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;收货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;New Receipt...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新收货...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;List Unposted Receipts...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;未过帐收据列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Return...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;返回...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58828,12 +58863,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Print Receiving Labels...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;打印收货标签...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Shipping</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;发货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59103,7 +59138,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Workbench...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作台...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59148,12 +59183,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>C&amp;haracteristics...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;特征...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59276,7 +59311,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Maintain...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;维护...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59391,12 +59426,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按计划员代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按等级代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59506,7 +59541,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按仓库...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59526,7 +59561,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59564,7 +59599,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按等级代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59639,7 +59674,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Search...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;搜寻...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59649,7 +59684,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Workbench...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作台...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59764,7 +59799,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>C&amp;haracteristics...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;特征...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59784,7 +59819,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59832,7 +59867,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按计划员代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59852,12 +59887,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;List Unposted...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;未过帐列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Post...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;转帐...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59887,12 +59922,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Voucher</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;凭单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New &amp;Miscellaneous...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;新杂项...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60022,12 +60057,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Search...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;搜寻...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;类型...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60067,7 +60102,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60185,7 +60220,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;List Unposted...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;未过帐列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60195,7 +60230,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Post...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;转帐...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60425,7 +60460,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Search...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;搜寻...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60435,12 +60470,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Workbench...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作台...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;类型...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60515,7 +60550,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>C&amp;haracteristics...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;特征...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60575,7 +60610,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60595,7 +60630,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Purge &amp;Invoices...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清除发票...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60720,7 +60755,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按计划员代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60765,7 +60800,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;按等级代码...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61233,32 +61268,32 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Cannot Create Miscellaneous Check</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建杂项支票</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a date for this check.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这张支票输入一个日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter an amount for this check.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这张支票输入一个数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select an Expense Category for this expensed check.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这张费用支票选择一个费用类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New A/P Check Created</source>
-        <translation type="unfinished"></translation>
+        <translation>新创建的应付款支票</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A new A/P Check has been created and assigned check #%1</source>
-        <translation type="unfinished"></translation>
+        <translation>一个新的应付款支票已被创建并被指派为支票#%1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61268,12 +61303,12 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Miscellaneous A/P Check</source>
-        <translation type="unfinished"></translation>
+        <translation>杂项应付款支票</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Check Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>支票号码:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61293,17 +61328,17 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Expense To:</source>
-        <translation type="unfinished"></translation>
+        <translation>费用至:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Expense Category</source>
-        <translation type="unfinished"></translation>
+        <translation>费用类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create Credit Memo</source>
-        <translation type="unfinished"></translation>
+        <translation>创建贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61318,7 +61353,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Memo:</source>
-        <translation type="unfinished"></translation>
+        <translation>通知单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61690,7 +61725,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61938,7 +61973,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Invoices</source>
-        <translation type="unfinished"></translation>
+        <translation>发票</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61986,37 +62021,37 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Capacity by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的生产能力(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Available Capacity by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的可用生产能力(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Load by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的工作量(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Demand by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的需求(按按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Production by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的生产量(按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Production by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的生产量(按按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Centers...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作中心...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62036,67 +62071,67 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;C/P</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;生产能力计划</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Run Buffer Status by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目运行缓冲状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Run Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划者代码运行缓冲状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Item Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按项目组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按等级代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Capacity Buffer Status by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>生产能力缓冲状态(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Item Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按项目组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按等级代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>W/O Operation Buffer Status by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单经营缓冲状态(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Buffer Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按缓冲状态)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Buffer Management</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲管理</translation>
     </message>
 </context>
 <context>
@@ -62104,47 +62139,47 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Address Book</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;住址名册</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New CRM Account...</source>
-        <translation type="unfinished"></translation>
+        <translation>新客户关系管理帐户...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List CRM Accounts...</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理帐户列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New Contact...</source>
-        <translation type="unfinished"></translation>
+        <translation>新联系人...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List Contacts...</source>
-        <translation type="unfinished"></translation>
+        <translation>联系人列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New Address...</source>
-        <translation type="unfinished"></translation>
+        <translation>新地址...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List Addresses...</source>
-        <translation type="unfinished"></translation>
+        <translation>地址列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Incident Management</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;事件管理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Workbench...</source>
-        <translation type="unfinished"></translation>
+        <translation>事件工作台...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62209,7 +62244,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62219,7 +62254,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>CRM Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62239,7 +62274,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Opportunity</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;机会</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62467,7 +62502,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62610,7 +62645,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Reassign Lot/Serial #...</source>
-        <translation type="unfinished"></translation>
+        <translation>再分配组/序列号...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62675,7 +62710,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Enter Misc. Inventory Count...</source>
-        <translation>输入混杂库存量...</translation>
+        <translation>输入杂项库存量...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62980,7 +63015,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62990,17 +63025,17 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Item Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按项目组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按等级代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63033,27 +63068,27 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Currency...</source>
-        <translation type="unfinished"></translation>
+        <translation>新货币...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Currencies...</source>
-        <translation type="unfinished"></translation>
+        <translation>货币...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Exchange Rate...</source>
-        <translation type="unfinished"></translation>
+        <translation>汇率过帐...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>货币</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Exchange Rates</source>
-        <translation type="unfinished"></translation>
+        <translation>汇率</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63068,7 +63103,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>M/C</source>
-        <translation type="unfinished"></translation>
+        <translation>管理货币</translation>
     </message>
 </context>
 <context>
@@ -63211,57 +63246,57 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Run Buffer Status by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目运行缓冲状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Run Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划者代码运行缓冲状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Item Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按项目组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按等级代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Capacity Buffer Status by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>生产能力缓冲状态(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Item Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按项目组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按等级代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>W/O Operation Buffer Status by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单经营缓冲状态(按工作中心)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Buffer Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按缓冲状态)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63286,7 +63321,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Buffer Management</source>
-        <translation type="unfinished"></translation>
+        <translation>缓冲管理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63554,7 +63589,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Work Centers...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作中心...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63619,7 +63654,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63642,22 +63677,22 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>新项目方案...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Projects...</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Activity by Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>订购活动(按项目方案)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Projects</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63672,12 +63707,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>P/M</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案管理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/M Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案管理工具</translation>
     </message>
 </context>
 <context>
@@ -63945,7 +63980,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63955,7 +63990,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Item Sources</source>
-        <translation type="unfinished"></translation>
+        <translation>项目来源</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63975,7 +64010,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63985,7 +64020,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>P/O Items by Buffer Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单项目(按缓冲状态)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64008,177 +64043,177 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按客户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Bill-To Name...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按结帐客户名)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Ship-To...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按发货单)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售代表的销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类别的销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Type...</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户类型的销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(按客户组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户的简明销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Customer Type...</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户类型的简明销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售代表的简明销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户的预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Customer Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>根据客户组的预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Ship-To...</source>
-        <translation type="unfinished"></translation>
+        <translation>按发货单的预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目的预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类别预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bookings by Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售代表的预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按客户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Customer Type...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按客户类型)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Customer by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按客户按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Customer Type by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按客户类型按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按销售代表)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Sales History by Shipping Zone by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的销售历史(按发货区域按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Bookings by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的预订(按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Bookings by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类别的时间同步预订...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Bookings by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的预订(按客户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按产品类别)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print S/A Special Calendar Form...</source>
-        <translation type="unfinished"></translation>
+        <translation>为特殊销售分析表打印报告...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Archive Sales History...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史存档...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restore Sales History...</source>
-        <translation type="unfinished"></translation>
+        <translation>恢复销售历史...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64193,12 +64228,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;S/A</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;销售分析</translation>
     </message>
 </context>
 <context>
@@ -64231,12 +64266,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Packing List Batch...</source>
-        <translation type="unfinished"></translation>
+        <translation>批处理装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64481,7 +64516,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64491,7 +64526,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按客户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64506,12 +64541,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按产品类别)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Backlog by Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的订单积压(按仓库)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64671,7 +64706,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具</translation>
+        <translation>&amp;软件工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64761,102 +64796,102 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Packing List Batch...</source>
-        <translation type="unfinished"></translation>
+        <translation>批处理装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List Batch by Ship Via...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印批处理装箱单(按货运公司)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Issue Stock to Shipping...</source>
-        <translation type="unfinished"></translation>
+        <translation>签发库存至发货...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Maintain Shipping Contents...</source>
-        <translation type="unfinished"></translation>
+        <translation>维护发货内容...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ship Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>发货订单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Recall Orders to Shipping...</source>
-        <translation type="unfinished"></translation>
+        <translation>召回订单至发货...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purge Shipping Records...</source>
-        <translation type="unfinished"></translation>
+        <translation>清除发货记录...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Receipt...</source>
-        <translation type="unfinished"></translation>
+        <translation>输入收据...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter Return...</source>
-        <translation type="unfinished"></translation>
+        <translation>输入返回...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Shipping Form...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印发货表格...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Shipping Forms...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印发货表格...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Shipping Labels by S/O #...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印发货标签(按销售订单号)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Shipping Labels by Invoice...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印发货标签(按发票)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Receiving Labels by P/O #...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印收货标签(按采购订单号)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Rates by Destination...</source>
-        <translation type="unfinished"></translation>
+        <translation>按目的地估价...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Rates by Carrier...</source>
-        <translation type="unfinished"></translation>
+        <translation>按运输公司估价...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Destinations...</source>
-        <translation type="unfinished"></translation>
+        <translation>目的地...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Carriers...</source>
-        <translation type="unfinished"></translation>
+        <translation>运输公司...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter New Rate...</source>
-        <translation type="unfinished"></translation>
+        <translation>输入新的费率...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64866,52 +64901,52 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按项目)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按客户)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Backlog by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>订单积压(按产品类别)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Backlog by Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>概括的订单积压(按仓库)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipments by Sales Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>发货(按销售订单)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipments by Date...</source>
-        <translation type="unfinished"></translation>
+        <translation>发货(按日期)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipping</source>
-        <translation type="unfinished"></translation>
+        <translation>发货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Receiving</source>
-        <translation type="unfinished"></translation>
+        <translation>收货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Forms</source>
-        <translation type="unfinished"></translation>
+        <translation>表格</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Rates</source>
-        <translation type="unfinished"></translation>
+        <translation>费率</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64921,17 +64956,17 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>S/&amp;R</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;发货和收货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>S/R Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>发货和收货工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List Unposted Receipts...</source>
-        <translation type="unfinished"></translation>
+        <translation>未过帐收据列表...</translation>
     </message>
 </context>
 <context>
@@ -65034,7 +65069,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Currencies...</source>
-        <translation type="unfinished"></translation>
+        <translation>货币...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65599,22 +65634,22 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Item Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按项目组)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Class Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按等级代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order Buffer Status by Planner Code...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单缓冲状态(按计划者代码)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>W/O Operation Buffer Status by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单经营缓冲状态(按工作中心)...</translation>
     </message>
 </context>
 <context>
@@ -65714,7 +65749,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>重新安排</translation>
+        <translation>重新安排...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65724,7 +65759,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66090,7 +66125,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66331,12 +66366,12 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Invalid Name</source>
-        <translation type="unfinished"></translation>
+        <translation>无效名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Name for this Opportunity Source.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个机会来源输入一个有效名.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66346,7 +66381,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Opportunity Source</source>
-        <translation type="unfinished"></translation>
+        <translation>机会来源</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66448,12 +66483,12 @@ You must reassign these Opportunities before you may delete the selected Opportu
     <message>
         <location filename="" line="0"/>
         <source>Invalid Name</source>
-        <translation type="unfinished"></translation>
+        <translation>无效名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Name for this Opportunity Stage.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个机会进程输入一个有效名.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66463,7 +66498,7 @@ You must reassign these Opportunities before you may delete the selected Opportu
     <message>
         <location filename="" line="0"/>
         <source>Opportunity Stage</source>
-        <translation type="unfinished"></translation>
+        <translation>机会进程</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66565,12 +66600,12 @@ You must reassign these Opportunities before you may delete the selected Opportu
     <message>
         <location filename="" line="0"/>
         <source>Invalid Name</source>
-        <translation type="unfinished"></translation>
+        <translation>无效名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Name for this Opportunity Type.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个机会类型输入一个有效名.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66580,7 +66615,7 @@ You must reassign these Opportunities before you may delete the selected Opportu
     <message>
         <location filename="" line="0"/>
         <source>Opportunity Type</source>
-        <translation type="unfinished"></translation>
+        <translation>机会类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67525,7 +67560,7 @@ You must reassign these Item Sites before you may delete the selected Planner Co
     <message>
         <location filename="" line="0"/>
         <source>Print Check Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>打印支票流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -68077,7 +68112,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Invoices to re-create the ARDI
     <message>
         <location filename="" line="0"/>
         <source>Post Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>汇率过帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -68087,12 +68122,12 @@ on the &apos;Do Not Post&apos; button and Re-Post Invoices to re-create the ARDI
     <message>
         <location filename="" line="0"/>
         <source>Current Rate:</source>
-        <translation type="unfinished"></translation>
+        <translation>当前汇率:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New Rate:</source>
-        <translation type="unfinished"></translation>
+        <translation>新汇率:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69046,7 +69081,7 @@ If so, you will be clocked out but nothing else will be posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Post Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单过帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69079,7 +69114,7 @@ If so, you will be clocked out but nothing else will be posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69127,7 +69162,7 @@ If so, you will be clocked out but nothing else will be posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Standard Journal:</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69406,7 +69441,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="" line="0"/>
         <source>Cust. Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>发货至客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69416,7 +69451,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="" line="0"/>
         <source>Cust. Type Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客类型模式</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69426,7 +69461,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="" line="0"/>
         <source>List Price</source>
-        <translation type="unfinished"></translation>
+        <translation>厂价</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69451,12 +69486,12 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Ship-To Pattern</source>
-        <translation type="unfinished"></translation>
+        <translation>发货至客户模式</translation>
     </message>
 </context>
 <context>
@@ -70548,7 +70583,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Item Labels by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按等级代码打印项目标签</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -70823,7 +70858,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List Batch by Ship Via</source>
-        <translation type="unfinished"></translation>
+        <translation>批打印装箱单(按货运公司)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -70871,7 +70906,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Purchase Order Form</source>
-        <translation type="unfinished"></translation>
+        <translation>打印采购订单表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -70909,7 +70944,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Form Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>表格名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71011,7 +71046,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71074,7 +71109,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print S/A Special Calendar Form</source>
-        <translation type="unfinished"></translation>
+        <translation>为特殊销售分析表打印报告</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71328,7 +71363,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Sales Order Form</source>
-        <translation type="unfinished"></translation>
+        <translation>打印销售订单表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71452,7 +71487,7 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Vendor Form</source>
-        <translation type="unfinished"></translation>
+        <translation>打印卖主表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71485,12 +71520,12 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Work Order Form</source>
-        <translation type="unfinished"></translation>
+        <translation>打印工作订单表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Form Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>表格名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71508,12 +71543,12 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print W/O Pick List</source>
-        <translation type="unfinished"></translation>
+        <translation>打印工作订单挑选列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;pies:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;副本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71541,12 +71576,12 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print W/O Routing</source>
-        <translation type="unfinished"></translation>
+        <translation>打印工作订单行程安排</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;pies:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;副本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71780,7 +71815,7 @@ You may not create a Product Category with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Profit Center Number</source>
-        <translation type="unfinished"></translation>
+        <translation>利润中心号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71887,22 +71922,22 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Project</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存项目方案</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>No Project Number was specified. You must specify a project number.</source>
-        <translation type="unfinished"></translation>
+        <translation>没有项目方案号被确定.你必须确定一个项目方案号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Project</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71922,7 +71957,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71937,12 +71972,12 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Concept</source>
-        <translation type="unfinished"></translation>
+        <translation>概念</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation>在生产</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71967,7 +72002,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Tasks</source>
-        <translation type="unfinished"></translation>
+        <translation>任务</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72022,7 +72057,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Assignable Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>可分配订单</translation>
     </message>
 </context>
 <context>
@@ -72030,7 +72065,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Project List</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72050,7 +72085,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>&amp;Projects:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;项目方案:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72129,12 +72164,12 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Concept</source>
-        <translation type="unfinished"></translation>
+        <translation>概念</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation>在生产</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72149,7 +72184,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>Projects</source>
-        <translation type="unfinished"></translation>
+        <translation>项目方案</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72567,7 +72602,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72622,7 +72657,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchasing Agent:</source>
-        <translation>采购代理</translation>
+        <translation>采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72972,7 +73007,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must select an Item Number before you may save.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在可以存储之前你必须选择一个项目号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72982,7 +73017,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a quantity before you may save this Purchase Order Item.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;在你能够存储这个采购订单之前你必须输入一个数量.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73040,12 +73075,12 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Purchase Orders:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;采购订单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73070,17 +73105,17 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>Agent</source>
-        <translation type="unfinished"></translation>
+        <translation>代理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Date</source>
-        <translation type="unfinished"></translation>
+        <translation>订购日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>First Item</source>
-        <translation type="unfinished"></translation>
+        <translation>第一个项目</translation>
     </message>
 </context>
 <context>
@@ -73093,12 +73128,12 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Purchase Order Type</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存采购订单类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid name for this Purchase Order Type before you may save it.</source>
-        <translation type="unfinished"></translation>
+        <translation>在你能够存储之前你必须为这个采购订单类型输入一个有效名.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73108,7 +73143,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order Type</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73146,12 +73181,12 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order Types</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order Types:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73301,7 +73336,7 @@ Warehouse before creating the Purchase Request.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purge Closed Work Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>清除已过帐的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73437,7 +73472,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Purge Posted Count Slips</source>
-        <translation type="unfinished"></translation>
+        <translation>清除转帐数量差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73465,7 +73500,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Purge Posted Count Tags</source>
-        <translation type="unfinished"></translation>
+        <translation>清除已过帐的数量标签</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73516,7 +73551,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quotes:</source>
-        <translation type="unfinished"></translation>
+        <translation>报价单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74334,17 +74369,17 @@ Please correct this before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Reject Code</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的不合格代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid code for this Reject Code.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个不合格代码输入一个有效的代码.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reject Code</source>
-        <translation type="unfinished"></translation>
+        <translation>废品代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75486,7 +75521,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Journal Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75529,7 +75564,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters -- A/P Aging Report</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应付款成熟报告</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75539,7 +75574,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Relative Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>相对日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75577,7 +75612,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - A/P Open Items by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应付款未决定项目(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75595,7 +75630,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters -- A/R Aging Report</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应收款成熟报告</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75605,7 +75640,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Relative Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>相对日期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75751,7 +75786,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - A/R Open Items</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应收款未决定项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75779,7 +75814,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - A/R Open Items by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应收款未决定项目(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75797,7 +75832,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Operations by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-经营(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75888,7 +75923,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Backlog by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-订单积压(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75954,7 +75989,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Backlog by Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-订单积压(按销售订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -75987,12 +76022,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Balance Sheet</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-资产负债表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>周期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76020,7 +76055,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bank Reconciliation History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-银行往来历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76058,7 +76093,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bill of Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-经营清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76111,7 +76146,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bookings by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-预订(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76159,7 +76194,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bookings by Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-预订(按客户组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76217,7 +76252,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bookings by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-预订(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76265,7 +76300,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bookings by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-预订(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76313,7 +76348,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bookings by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-预订(按销售代表).</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76366,7 +76401,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Bookings by Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-预订(按发货单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76394,7 +76429,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Breeder Distribution Variance by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-用于制造的项目或程序分配差异(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76422,7 +76457,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Breeder Distribution Variance by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-用于制造的项目或程序分配差异(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76445,7 +76480,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76455,7 +76490,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>All Sales Reps.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有销售代表.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76498,7 +76533,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Brief Sales History by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-简明销售历史(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76536,7 +76571,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Brief Sales History by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-简明销售历史(按客户类型)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76569,7 +76604,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Brief Sales History by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-简明销售历史(按销售代表).</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76663,7 +76698,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Capacity UOMs by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-度量单位生产能力(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76691,7 +76726,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Capacity UOMs by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-度量单位生产能力(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76855,12 +76890,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Was unable to create/collect the required information to create this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建/收集所需的信息来创建这个报告.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Costed Indented Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已估价的约定的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76888,7 +76923,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Costed Single Level Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已估价的单一水平的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76921,12 +76956,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Was unable to create/collect the required information to create this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建/收集所需的信息来创建这个报告.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Costed Summarized Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已估价的概括材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76979,12 +77014,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Count Slip Edit List</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-数量差异编辑列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Count &amp;Tag #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;数量标签号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77022,7 +77057,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Count Slips by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-数量差异(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77032,7 +77067,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Treat Slip &amp;Numbers as Numeric</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;把差异数作为数值对待</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77113,7 +77148,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Parameter List - Count Tags by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>参数列表-数量标签(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77146,7 +77181,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Count Tags by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-数量标签(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77179,7 +77214,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Count Tags by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-数量标签(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77232,7 +77267,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Customer History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-客户历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77260,7 +77295,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters -- Customer Information</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-客户信息</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77270,7 +77305,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77303,7 +77338,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Customers by Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-客户(按特征)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77313,12 +77348,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>价值:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Customers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示不活跃客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77333,12 +77368,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Characteristic is set</source>
-        <translation type="unfinished"></translation>
+        <translation>特征已设定</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Value is empty</source>
-        <translation type="unfinished"></translation>
+        <translation>价值是空的</translation>
     </message>
 </context>
 <context>
@@ -77346,12 +77381,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Customers by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-客户(按客户类型)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Customers</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示不活跃客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77374,7 +77409,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Deposits Register</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-存款登记簿</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77437,12 +77472,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Detailed Inventory History by Location</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-详细的库存历史(按地点)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77452,12 +77487,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Netable:</source>
-        <translation type="unfinished"></translation>
+        <translation>列入库存净值的仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restricted:</source>
-        <translation type="unfinished"></translation>
+        <translation>被限制的:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77520,12 +77555,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Detailed Inventory History by Lot/Serial #</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-详细的库存历史(按批号/序列号)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77568,27 +77603,27 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter a Valid Start and End Date</source>
-        <translation type="unfinished"></translation>
+        <translation>输入一个有效的开始日期和结束日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Earned Commissions</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-赚取的佣金</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Sales Reps.</source>
-        <translation type="unfinished"></translation>
+        <translation>所有销售代表.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77606,7 +77641,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Expedite Exceptions by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-例外加速(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77629,7 +77664,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Expired Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-过期库存</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77639,7 +77674,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77669,12 +77704,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Expiration Date</source>
-        <translation type="unfinished"></translation>
+        <translation>过期日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Value</source>
-        <translation type="unfinished"></translation>
+        <translation>库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77692,7 +77727,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Frozen Item Sites</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-冻结的项目地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77710,7 +77745,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - G/L Series</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-总帐系列</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77720,7 +77755,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Source:</source>
-        <translation>已选择来源</translation>
+        <translation>已选择来源:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77770,17 +77805,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Journal Numbers Range</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号范围</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>End Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>结束号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Start Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>开始号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77803,7 +77838,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - G/L Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-总帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77828,7 +77863,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Source:</source>
-        <translation>已选择来源</translation>
+        <translation>已选择来源:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77896,12 +77931,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Income Statement</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-损益计算书</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Period:</source>
-        <translation type="unfinished"></translation>
+        <translation>周期:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77934,12 +77969,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Was unable to create/collect the required information to create this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建/收集所需的信息来创建这个报告.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Indented Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-约定的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77987,12 +78022,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Was unable to create/collect the required information to create this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建/收集所需的信息来创建这个报告.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Indented Where Used</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-约定使用的地方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78020,7 +78055,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Data</source>
-        <translation type="unfinished"></translation>
+        <translation>无效数据</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78030,7 +78065,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory Availability by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存可用性(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78098,22 +78133,22 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按等级代码的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划者代码的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Availability by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目组的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory Availability by Parameter List</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存可用性(按参数列表)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78176,7 +78211,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory Availability by Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存可用性(按销售订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78239,7 +78274,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory Availability by Source Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-按卖主来源的库存可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78322,7 +78357,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory Availability by Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存可用性(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78345,22 +78380,22 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory Availability by Parameter List</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存可用性(按参数列表)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Buffer Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>显示缓冲状态:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Greater than zero</source>
-        <translation type="unfinished"></translation>
+        <translation>大于零</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>In Emergency Zone</source>
-        <translation type="unfinished"></translation>
+        <translation>在应急区域</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78380,17 +78415,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Buffer Status by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>库存缓冲状态(按项目组)</translation>
     </message>
 </context>
 <context>
@@ -78433,17 +78468,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Data</source>
-        <translation type="unfinished"></translation>
+        <translation>无效数据</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78501,17 +78536,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Data</source>
-        <translation type="unfinished"></translation>
+        <translation>无效数据</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter an Order Number along with a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个订单号并附有一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory History by Order Number</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存历史(按订单号)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78574,17 +78609,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory History by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存历史(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory History by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存历史(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory History by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存历史(按项目组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78594,12 +78629,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Inventory History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-库存历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78637,12 +78672,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Location/Lot/Serial # Detail</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-地点/组/序列号详情</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Zero-Level Locations</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;显示零库存水平地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78660,7 +78695,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Invoice Register</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-发票登记簿</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78693,7 +78728,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Costs History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目成本历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78716,7 +78751,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Costs Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目成本概括</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78739,12 +78774,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Costs by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目成本(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Only Show &amp;Zero Cost Items</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;只显示零成本项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78762,7 +78797,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sites by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目地点(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78790,22 +78825,22 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sites by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目地点(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sites by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目地点(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sites by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目地点(按项目组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sites by Cost Category</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目地点(按成本类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78828,7 +78863,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sources by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目来源(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78846,17 +78881,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>输入卖主</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a valid Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的卖主.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Sources by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目来源(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78874,7 +78909,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Items by Characteristic</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目(按特征)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78884,7 +78919,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Value:</source>
-        <translation type="unfinished"></translation>
+        <translation>价值:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78907,7 +78942,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Items by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78940,7 +78975,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Items by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78963,32 +78998,32 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Sales Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>打印销售流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Credit Memo Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>打印贷项通知单流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Payables Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>打印应付款流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Print Check Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>打印支票流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sales Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Journal Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>流水帐号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79016,12 +79051,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Labor Variance by Bill of Operations Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-劳动力差异(按经营的项目清单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Operations Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>经营的项目清单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79049,7 +79084,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Labor Variance by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-劳动力偏差(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79077,7 +79112,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Labor Variance by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-劳动力偏差(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79100,7 +79135,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Labor Variance By Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-劳动力偏差(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79128,17 +79163,17 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Print Location Dispatch List</source>
-        <translation type="unfinished"></translation>
+        <translation>不能打印地点派遣列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must select one or more Locations to print on the requested Location Dispatch List.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须选择一个或几个地点以打印在要求的地点派遣列表上.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Location Bar Code Dispatch List</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-地点条形码派遣列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79158,7 +79193,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>地点:</translation>
     </message>
 </context>
 <context>
@@ -79203,7 +79238,7 @@ be generated for an unknown reason.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79278,7 +79313,7 @@ be generated for an unknown reason.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79321,12 +79356,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Material Usage Variance by Bill of Materials Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-材料使用差异(按材料清单项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Component Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>零件项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79364,7 +79399,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Material Usage Variance by Component Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-材料使用差异(按零件项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79392,7 +79427,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Material Usage Variance by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-材料使用差异(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79420,7 +79455,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Material Usage Variance by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-材料使用差异(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79438,7 +79473,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Material Usage Variance by Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-材料使用差异(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79456,12 +79491,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters -- Order Activity by Project</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-订单活动(按项目方案)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Types</source>
-        <translation type="unfinished"></translation>
+        <translation>显示类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79476,7 +79511,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Orders</source>
-        <translation>购买订单</translation>
+        <translation>采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79514,7 +79549,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Partially Shipped Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-部分以发货订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79600,7 +79635,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Pending Bill of Materials Changes</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-待决的材料更改单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79623,7 +79658,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Planned Orders by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已计划的订单(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79641,7 +79676,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Planned Orders by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已计划的订单(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79772,7 +79807,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - P/O Delivery Date Variances by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单交货日偏差(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79810,7 +79845,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - P/O Delivery Date Variances by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单交货日偏差(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79820,7 +79855,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79838,7 +79873,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Purchase Order History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79866,7 +79901,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Receipts and Returns by Date</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-收货和退货(按日期)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79919,7 +79954,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Receipts and Returns by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-收货和退货(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79929,7 +79964,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79972,7 +80007,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Receipts and Returns by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-收货和退货(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79982,7 +80017,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80005,7 +80040,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - P/O Items by Buffer Status</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单项目(按缓冲状态)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80015,7 +80050,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Purchasing Agent:</source>
-        <translation type="unfinished"></translation>
+        <translation>已选择采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80038,7 +80073,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Starting Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在开始到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80048,7 +80083,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ending Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>正在结束到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80068,12 +80103,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Please eneter a valid End Date.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - P/O Items by Date</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单项目(按日期)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80083,7 +80118,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Purchasing Agent:</source>
-        <translation type="unfinished"></translation>
+        <translation>已选择采购代理:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80126,7 +80161,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - P/O Items by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单项目(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80136,7 +80171,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80169,17 +80204,17 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Vendor Number</source>
-        <translation type="unfinished"></translation>
+        <translation>输入卖主号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a valid Vendor Number.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入一个有效的卖主号.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - P/O Items by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购订单项目(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80189,17 +80224,17 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All PO #s</source>
-        <translation type="unfinished"></translation>
+        <translation>所有的采购订单号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected PO #:</source>
-        <translation type="unfinished"></translation>
+        <translation>已选择的采购订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80252,7 +80287,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Purchase Price Variances by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购价格偏差(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80262,7 +80297,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80290,7 +80325,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Purchase Price Variances by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购价格偏差(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80300,7 +80335,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80328,7 +80363,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Rejected Material by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-不合格材料(按卖主)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80338,7 +80373,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80356,7 +80391,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Prices by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-价格(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80409,12 +80444,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Prices by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-价格(按客户类型)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>客户类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80467,7 +80502,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Prices by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-价格(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80510,7 +80545,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Purchase Requests by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购要求(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80533,12 +80568,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Purchase Requests by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-采购要求(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80566,12 +80601,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Quantities on Hand by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-现有数量(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80609,7 +80644,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Location</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80630,12 +80665,12 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Netable:</source>
-        <translation type="unfinished"></translation>
+        <translation>列入库存净值的仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restricted:</source>
-        <translation type="unfinished"></translation>
+        <translation>被限制的:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80678,7 +80713,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80759,7 +80794,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Rough Cut Capacity Plan by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-大幅削减生产能力计划(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80890,12 +80925,12 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Paramaters - Sales History by Bill-To Name</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售历史(按结帐客户名)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bill-To Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>结帐客户名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80933,7 +80968,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sales History by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售历史(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80971,7 +81006,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sales History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81062,7 +81097,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sales History by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售历史(按销售代表).</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81105,7 +81140,7 @@ You must select a valid Location before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sales History by Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售历史(按发货单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81139,12 +81174,12 @@ You must select a valid Location before continuing.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;SalesOrderStatus&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;销售订单状态&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sales Order Status</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-销售订单状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81187,7 +81222,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sequenced Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已序列化的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81220,12 +81255,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Shipments by Date</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-发货(按日期)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81248,7 +81283,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Shipments by Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-发货(按销售订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81281,7 +81316,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Single Level Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-单一水平的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81367,7 +81402,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>显示库存和价值</translation>
+        <translation>&amp;显示库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81402,7 +81437,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inventory Value</source>
-        <translation type="unfinished"></translation>
+        <translation>库存价值</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81430,7 +81465,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Standard Journal History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-标准流水帐历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81448,7 +81483,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Standard Operations by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-标准经营(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81476,7 +81511,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Substitute Availability by Root Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-替代品的可用性(按母项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81519,12 +81554,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Was unable to create/collect the required information to create this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>不能创建/收集所需的信息来创建这个报告.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的材料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81610,7 +81645,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Bank Reconciliation History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的银行往来历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81643,7 +81678,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized G/L Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的总帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81653,7 +81688,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected Source:</source>
-        <translation>已选择来源</translation>
+        <translation>已选择来源:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81708,7 +81743,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show</source>
-        <translation type="unfinished"></translation>
+        <translation>显示</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81718,12 +81753,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Unposted Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>未过帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Posted Transactions</source>
-        <translation type="unfinished"></translation>
+        <translation>过帐交易</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81761,7 +81796,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Sales by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的销售(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81799,7 +81834,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Sales by Customer by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的销售(按客户按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81814,12 +81849,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Quantity Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>销售量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81862,7 +81897,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Sales by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的销售(按客户类型)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81900,7 +81935,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Sales by Customer Type by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的销售(按客户类型按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81938,7 +81973,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Sales History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的销售历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81953,12 +81988,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Quantity Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Volume</source>
-        <translation type="unfinished"></translation>
+        <translation>销售量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81996,7 +82031,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Sales by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-概括了的销售(按销售代表).</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82116,7 +82151,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82127,12 +82162,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedAvailability&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;时间同步的可用性&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步可用性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82176,12 +82211,12 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time Phased Available Capacity by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步的可用生产能力(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82215,7 +82250,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82226,12 +82261,13 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedBookingsByCustomer&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户的时间同步预订&quot;未找到.￼
+请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Bookings by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步预订(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82275,7 +82311,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82286,12 +82322,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedBookingsByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按项目的时间同步预订&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Bookings by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步预订(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82345,7 +82381,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82356,12 +82392,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedBookingsByProductCategory&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按产品类别的时间同步预订&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Bookings by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步预订(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82371,12 +82407,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Capacity Units</source>
-        <translation>改变容量单位</translation>
+        <translation>改变生产能力单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82415,12 +82451,12 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time Phased Capacity by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步的生产能力(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82454,7 +82490,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82480,7 +82516,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82529,12 +82565,12 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time Phased Load by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步的工作量(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82568,7 +82604,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82579,7 +82615,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedOpenAPItems&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;时间同步的未决定的应付款项目&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82634,7 +82670,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - A/P Aging</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应付款成熟</translation>
     </message>
 </context>
 <context>
@@ -82648,7 +82684,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82659,7 +82695,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedOpenARItems&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;时间同步的未决定的应收款项目&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82714,7 +82750,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - A/R Aging</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-应收款成熟</translation>
     </message>
 </context>
 <context>
@@ -82728,7 +82764,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82812,7 +82848,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82823,12 +82859,13 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedProductionByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按项目的时间同步生产量&quot;未找到.￼
+请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Production by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步生产量(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82872,7 +82909,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82883,12 +82920,13 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedProductionByPlannerCode&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按计划者代码的时间同步生产量&quot;未找到.￼
+请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Paramters - Time-Phased Production by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步生产量(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82898,12 +82936,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Capacity Units</source>
-        <translation>改变容量单位</translation>
+        <translation>改变生产能力单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82913,7 +82951,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inactive Item Sites</source>
-        <translation type="unfinished"></translation>
+        <translation>显示不活跃项目地点</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82952,12 +82990,12 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Planned Rough Cut by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步计划中的大幅削减(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -82996,7 +83034,7 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83007,12 +83045,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByCustomer&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Sales History by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步销售历史(按客户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83061,7 +83099,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83072,12 +83110,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByCustomerByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按客户按项目的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Sales History by Customer by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-按客户按项目的时间同步销售历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83145,7 +83183,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Time-Phased Sales History by Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>时间同步的销售历史(按客户组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83209,7 +83247,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83220,12 +83258,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按项目的时间同步销售历史&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Sales History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步销售历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83269,7 +83307,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83280,12 +83318,13 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedSalesHistoryByProductCategory&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按产品类别的时间同步销售历史&quot;未找到.￼￼
+请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Sales History by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-时间同步销售历史(按产品类别)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83295,12 +83334,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Capacity &amp;Units</source>
-        <translation>容量&amp;单位</translation>
+        <translation>生产能力&amp;单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt. Capacity Units</source>
-        <translation>改变容量单位</translation>
+        <translation>改变生产能力单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83339,7 +83378,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你指定的标准未完成.在运行报告前请确认所有的区域已正确填写.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83350,12 +83389,12 @@ fields are correctly filled out before running the report.</source>
         <location filename="" line="0"/>
         <source>The report defintions for this report, &quot;TimePhasedStatisticsByItem&quot; cannot be found.
 Please contact your Systems Administrator and report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>用于这个报告的定义,&quot;按项目的时间同步统计&quot;未找到.请联系你的系统管理员并报告这个问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Time-Phased Item Usage Statistics by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-按项目的时间同步项目使用统计</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83421,7 +83460,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Uninvoiced P/O Receipts</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-已收货但未开发票的采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83431,7 +83470,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Selected:</source>
-        <translation>已选择</translation>
+        <translation>已选择:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83454,12 +83493,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Usage Statistics by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目使用统计(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83482,7 +83521,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83515,12 +83554,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Usage Statistics by Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目使用统计(按项目组)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83543,12 +83582,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Start Date and End Date for this report.</source>
-        <translation type="unfinished"></translation>
+        <translation>你必须为这个报告输入一个有效的开始日期和结束日期.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Item Usage Statistics by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-项目使用统计(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83581,7 +83620,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Valid Locations by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-有效位置(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83609,12 +83648,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Select Number</source>
-        <translation type="unfinished"></translation>
+        <translation>选择号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please select a valid Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>请选择一个有效的卖主.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83639,7 +83678,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Vendor History</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-卖主历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83677,7 +83716,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Voucher Register</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-支付凭单登记</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83793,7 +83832,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Production Time Clock by User</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-生产考勤钟(按使用者)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83811,7 +83850,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Production Time Clock by Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-生产考勤钟(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83829,7 +83868,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Work Order History by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-工作订单历史(按等级代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83867,7 +83906,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Work Order History by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-工作订单历史(按项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83920,7 +83959,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Work Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83953,7 +83992,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Work Order Materials By Component Item</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-工作订单材料(按零件项目)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -83971,7 +84010,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - W/O Materials by Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-工作订单材料(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84032,7 +84071,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Work Order Operations by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-工作订单经营(按工作中心)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84047,7 +84086,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Only Show W/O Operations with Load</source>
-        <translation type="unfinished"></translation>
+        <translation>只显示有工作负荷量的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84065,7 +84104,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Work Order Operations By Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-工作订单经营(按工作订单)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84229,7 +84268,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Open Work Orders with Parent Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-附有母销售订单的未决定的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84247,7 +84286,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Open Work Orders with Closed Parent Sales Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>报告参数-附有已关闭的母销售订单的未决定的工作订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84306,7 +84345,7 @@ Please contact your Systems Administrator and report this issue.</source>
         <location filename="" line="0"/>
         <source>You must enter a valid Cut Off Date before
 creating Planned Orders.</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建已计划的订单之前你必须输入一个有效的截止日期.</translation>
     </message>
 </context>
 <context>
@@ -84538,7 +84577,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prod. Cat.</source>
-        <translation type="unfinished"></translation>
+        <translation>产品类别.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84767,12 +84806,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Prepaid Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>预付款帐户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A/R Account:</source>
-        <translation type="unfinished"></translation>
+        <translation>应收款帐户:</translation>
     </message>
 </context>
 <context>
@@ -84978,7 +85017,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Expiration Date</source>
-        <translation type="unfinished"></translation>
+        <translation>过期日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85435,7 +85474,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship-To #:</source>
-        <translation type="unfinished"></translation>
+        <translation>发货单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85470,7 +85509,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipping</source>
-        <translation type="unfinished"></translation>
+        <translation>发货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85685,7 +85724,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill-To Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>结帐客户名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86912,12 +86951,12 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>First</source>
-        <translation type="unfinished"></translation>
+        <translation>第一</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last</source>
-        <translation type="unfinished"></translation>
+        <translation>最后</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86962,7 +87001,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search For Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86997,7 +87036,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search For Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87017,7 +87056,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search For Tax Authority</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索客户或可能的客户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87290,17 +87329,17 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>通过项目号搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 1</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述1搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 2</source>
-        <translation type="unfinished"></translation>
+        <translation>按描述2搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87338,7 +87377,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Select Bank Account</source>
-        <translation type="unfinished"></translation>
+        <translation>选择银行帐户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87569,7 +87608,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Line Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>线项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87720,7 +87759,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Total Owed:</source>
-        <translation type="unfinished"></translation>
+        <translation>欠债合计:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87745,7 +87784,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O #:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87961,7 +88000,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Select Shipped Orders for Billing</source>
-        <translation type="unfinished"></translation>
+        <translation>选择已发货订单以便开帐单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -88115,7 +88154,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Shift</source>
-        <translation type="unfinished"></translation>
+        <translation>轮班</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -88175,7 +88214,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Shifts</source>
-        <translation type="unfinished"></translation>
+        <translation>轮班</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -88703,12 +88742,12 @@ before you may save it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship Vias</source>
-        <translation type="unfinished"></translation>
+        <translation>货运方式</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ship Vias:</source>
-        <translation type="unfinished"></translation>
+        <translation>货运方式:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -88758,7 +88797,7 @@ before you may save it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89061,7 +89100,7 @@ it is taken off of Hold.</source>
     <message>
         <location filename="" line="0"/>
         <source>Line Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>线项目:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89256,12 +89295,12 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Standard Journal</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89281,7 +89320,7 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Transactions:</source>
-        <translation type="unfinished"></translation>
+        <translation>交易:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89291,12 +89330,12 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Debits</source>
-        <translation type="unfinished"></translation>
+        <translation>借方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Credits</source>
-        <translation type="unfinished"></translation>
+        <translation>贷方</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89344,7 +89383,7 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89384,7 +89423,7 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89467,7 +89506,7 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Standard Journal:</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89510,12 +89549,12 @@ You must reassign these Ship-Tos to a different Shipping Zone before you may del
     <message>
         <location filename="" line="0"/>
         <source>Standard Journal Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐组</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Journal Groups:</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐组:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -89652,12 +89691,12 @@ Do you wish to convert %1 %2 at the current rate?</source>
     <message>
         <location filename="" line="0"/>
         <source>Standard Journals</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Journals:</source>
-        <translation type="unfinished"></translation>
+        <translation>标准流水帐:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -90098,7 +90137,7 @@ You must reassign these G/L Accounts before you may delete the selected G/L Suba
     <message>
         <location filename="" line="0"/>
         <source>Subaccount Number</source>
-        <translation type="unfinished"></translation>
+        <translation>子帐号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -90605,7 +90644,7 @@ You must reclass these Accounts before you may delete the selected Subaccount.</
     <message>
         <location filename="" line="0"/>
         <source>System Message</source>
-        <translation type="unfinished"></translation>
+        <translation>系统信息</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -90729,7 +90768,7 @@ You must reclass these Accounts before you may delete the selected Subaccount.</
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -90744,12 +90783,12 @@ You must reclass these Accounts before you may delete the selected Subaccount.</
     <message>
         <location filename="" line="0"/>
         <source>Concept</source>
-        <translation type="unfinished"></translation>
+        <translation>概念</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>In-Process</source>
-        <translation type="unfinished"></translation>
+        <translation>在生产</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -90926,7 +90965,7 @@ You must first re-assign these items before deleting the selected Tax Authority.
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -91230,12 +91269,12 @@ You must first re-assign these items before deleting the selected Tax Authority.
     <message>
         <location filename="" line="0"/>
         <source>Tax Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>税码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tax Codes:</source>
-        <translation type="unfinished"></translation>
+        <translation>税码:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -91482,12 +91521,12 @@ You must first re-assign these items before deleting the selected Tax Authority.
     <message>
         <location filename="" line="0"/>
         <source>Tax Selection</source>
-        <translation type="unfinished"></translation>
+        <translation>选税</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Any</source>
-        <translation type="unfinished"></translation>
+        <translation>任一个</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -91619,7 +91658,7 @@ You may not create a Tax Type with this name.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93131,7 +93170,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>Print Packing List...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印装箱单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93491,7 +93530,7 @@ creating this Transaction</source>
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93506,12 +93545,12 @@ creating this Transaction</source>
     <message>
         <location filename="" line="0"/>
         <source>Unapplied A/P Credit Memos</source>
-        <translation type="unfinished"></translation>
+        <translation>未应用的应付款贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unapplied A/P Credit Memos:</source>
-        <translation type="unfinished"></translation>
+        <translation>未应用的应付款贷项通知单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93559,7 +93598,7 @@ creating this Transaction</source>
     <message>
         <location filename="" line="0"/>
         <source>Applied</source>
-        <translation type="unfinished"></translation>
+        <translation>已应用</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93574,12 +93613,12 @@ creating this Transaction</source>
     <message>
         <location filename="" line="0"/>
         <source>Unapplied A/R Credit Memos</source>
-        <translation type="unfinished"></translation>
+        <translation>未应用的应收款贷项通知单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unapplied A/R Credit Memos:</source>
-        <translation type="unfinished"></translation>
+        <translation>未应用的应收款贷项通知单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94288,7 +94327,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Invoice Date</source>
-        <translation type="unfinished"></translation>
+        <translation>发票日期</translation>
     </message>
 </context>
 <context>
@@ -94341,7 +94380,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Receipt Date</source>
-        <translation type="unfinished"></translation>
+        <translation>收货日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94685,7 +94724,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>UOM</source>
-        <translation>标准单位</translation>
+        <translation>度量单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94695,12 +94734,12 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Units of Measure</source>
-        <translation type="unfinished"></translation>
+        <translation>度量单位</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>UOMs:</source>
-        <translation type="unfinished"></translation>
+        <translation>度量单位:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95211,7 +95250,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Order Up To Level by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目将订单更新到水平之上</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95231,7 +95270,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Fixed Days:</source>
-        <translation>已确定天数</translation>
+        <translation>已确定天数:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95274,7 +95313,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Order Up To Levels by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>更新订单直到库存水平(按计划者代码)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95294,7 +95333,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Fixed Days:</source>
-        <translation>已确定天数</translation>
+        <translation>已确定天数:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95327,7 +95366,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Order Up To Levels by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按登记代码将订单更新到水平之上</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95347,7 +95386,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Fixed Days:</source>
-        <translation>已确定天数</translation>
+        <translation>已确定天数:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95481,7 +95520,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Reorder Level by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按项目更新重订购水平</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95501,7 +95540,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Fixed Days:</source>
-        <translation>已确定天数</translation>
+        <translation>已确定天数:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95544,7 +95583,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Reorder Levels by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划者代码更新重订购水平</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95564,7 +95603,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Fixed Days:</source>
-        <translation>已确定天数</translation>
+        <translation>已确定天数:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95607,7 +95646,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Reorder Levels by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按等级代码更新重订购水平</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95627,7 +95666,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Fixed Days:</source>
-        <translation>已确定天数</translation>
+        <translation>已确定天数:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95931,7 +95970,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96612,7 +96651,7 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Vendor #:</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96891,7 +96930,8 @@ What would you like to do?</source>
         <location filename="" line="0"/>
         <source>There was an error saving this address (%1).
 Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>在存储这个地址时出现了一个错误(%).￼￼
+检查数据库服务器出错日志.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96941,7 +96981,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97014,7 +97054,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Address</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97024,7 +97064,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Name:</source>
-        <translation>名字</translation>
+        <translation>名字:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97113,7 +97153,8 @@ What would you like to do?</source>
         <location filename="" line="0"/>
         <source>There was an error saving this address (%1).
 Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>在存储这个地址时出现了一个错误(%).￼￼
+检查数据库服务器出错日志.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97146,7 +97187,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Address List</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主地址列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97166,7 +97207,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Addresses:</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主地址:</translation>
     </message>
 </context>
 <context>
@@ -97179,12 +97220,12 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Vendor Type Code</source>
-        <translation type="unfinished"></translation>
+        <translation>无效的卖主类型代码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid Code for this Vendor Type before creating it.</source>
-        <translation type="unfinished"></translation>
+        <translation>在创建之前你必须为这个卖主类型输入一个有效的代码.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97194,7 +97235,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97359,7 +97400,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="" line="0"/>
         <source>Void</source>
-        <translation type="unfinished"></translation>
+        <translation>无效</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97923,7 +97964,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>Receiving</source>
-        <translation type="unfinished"></translation>
+        <translation>收货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98237,7 +98278,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor #</source>
-        <translation type="unfinished"></translation>
+        <translation>卖主号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98350,7 +98391,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98559,7 +98600,8 @@ What would you like to do?</source>
         <location filename="" line="0"/>
         <source>There was an error saving this address (%1).
 Check the database server log for errors.</source>
-        <translation type="unfinished"></translation>
+        <translation>在存储这个地址时出现了一个错误(%).￼￼
+检查数据库服务器出错日志.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99057,17 +99099,17 @@ that the selected Work Order does.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per:</source>
-        <translation type="unfinished"></translation>
+        <translation>相对于标准单位的数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Scrap %:</source>
-        <translation type="unfinished"></translation>
+        <translation>废料%:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Required:</source>
-        <translation type="unfinished"></translation>
+        <translation>要求的数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99744,7 +99786,7 @@ Warehouse before creating the Work Order.</source>
     <message>
         <location filename="" line="0"/>
         <source>Work Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>工作订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100060,7 +100102,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq #</source>
-        <translation>按数字排序</translation>
+        <translation>排序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100173,7 +100215,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Work Center List</source>
-        <translation type="unfinished"></translation>
+        <translation>工作中心列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100193,7 +100235,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Work Centers:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;工作中心:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100274,7 +100316,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Zero Uncounted Count Tags by Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>将未计数的数量标签清零(按仓库)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100284,7 +100326,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Zero</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;清零</translation>
     </message>
     <message>
         <location filename="" line="0"/>
