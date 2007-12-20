@@ -103,6 +103,10 @@ configureIE::configureIE(QWidget* parent, const char* name, bool modal, Qt::WFla
   // TODO: fix these when support for an internal XSLT processor is enabled
   _internal->setEnabled(false);
   _internal->setVisible(false);
+  _external->setVisible(false);
+  _tabs->removePage(_tabs->page(2));
+  
+  resize(minimumSize());
 
   sPopulate();
 }
@@ -193,7 +197,8 @@ void configureIE::sPopulate()
   if (! _metrics->value("XSLTLibrary").isEmpty())
   {
     _internal->setChecked(_metrics->boolean("XSLTLibrary"));
-    _external->setChecked(! _metrics->boolean("XSLTLibrary"));
+    //_external->setChecked(! _metrics->boolean("XSLTLibrary"));
+    _external->setChecked(TRUE);
   }
 
   _linuxCmd->setText(_metrics->value("XSLTProcessorLinux"));

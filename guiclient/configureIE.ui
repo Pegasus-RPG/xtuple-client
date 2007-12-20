@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>676</width>
-    <height>743</height>
+    <width>674</width>
+    <height>712</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -157,20 +157,30 @@
            </property>
            <layout class="QGridLayout" >
             <item row="0" column="0" colspan="2" >
-             <widget class="QRadioButton" name="_internal" >
-              <property name="text" >
-               <string>Use Internal XSLT Processor</string>
-              </property>
-             </widget>
+             <layout class="QHBoxLayout" >
+              <item>
+               <widget class="QRadioButton" name="_internal" >
+                <property name="text" >
+                 <string>Use Internal XSLT Processor</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_external" >
+                <property name="text" >
+                 <string>Use External XSLT Processor. Commands:</string>
+                </property>
+                <property name="checked" >
+                 <bool>false</bool>
+                </property>
+               </widget>
+              </item>
+             </layout>
             </item>
-            <item row="1" column="0" colspan="2" >
-             <widget class="QRadioButton" name="_external" >
-              <property name="text" >
-               <string>Use External XSLT Processor. Commands:</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
+            <item row="1" column="0" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Horizontal</enum>
@@ -180,13 +190,13 @@
               </property>
               <property name="sizeHint" >
                <size>
-                <width>10</width>
-                <height>20</height>
+                <width>16</width>
+                <height>192</height>
                </size>
               </property>
              </spacer>
             </item>
-            <item row="2" column="1" >
+            <item row="1" column="1" >
              <layout class="QGridLayout" >
               <item row="4" column="0" >
                <widget class="QLabel" name="_sub1Symbol" >
@@ -467,19 +477,6 @@
         </layout>
        </widget>
       </widget>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>0</height>
-        </size>
-       </property>
-      </spacer>
      </item>
     </layout>
    </item>
