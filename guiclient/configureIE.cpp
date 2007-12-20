@@ -194,12 +194,15 @@ void configureIE::sPopulate()
   _xsltMacDir->setText(_metrics->value("XSLTDefaultDirMac"));
   _xsltWindowsDir->setText(_metrics->value("XSLTDefaultDirWindows"));
 
+  /*  Will implement this if/when Xalan is embedded
   if (! _metrics->value("XSLTLibrary").isEmpty())
   {
     _internal->setChecked(_metrics->boolean("XSLTLibrary"));
-    //_external->setChecked(! _metrics->boolean("XSLTLibrary"));
-    _external->setChecked(TRUE);
+    _external->setChecked(! _metrics->boolean("XSLTLibrary"));
   }
+  */
+
+  _external->setChecked(TRUE);
 
   _linuxCmd->setText(_metrics->value("XSLTProcessorLinux"));
   _macCmd->setText(_metrics->value("XSLTProcessorMac"));
