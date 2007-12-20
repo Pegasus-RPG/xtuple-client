@@ -59,7 +59,7 @@
 #define DISTRIBUTEINVENTORY_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 
 #include "ui_distributeInventory.h"
@@ -78,11 +78,12 @@ public slots:
     virtual enum SetResponse set( const ParameterList & pParams );
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void populate();
-    virtual void sSelectLocation();
-    virtual void sPost();
+    virtual void sBcDistribute();
     virtual void sDefault();
     virtual void sDefaultAndPost();
     virtual void sFillList();
+    virtual void sPost();
+    virtual void sSelectLocation();
 
 protected slots:
     virtual void languageChange();

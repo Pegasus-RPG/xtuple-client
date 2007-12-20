@@ -67,7 +67,9 @@ distributeToLocation::distributeToLocation(QWidget* parent, const char* name, bo
   setupUi(this);
 
   connect(_distribute, SIGNAL(clicked()), this, SLOT(sDistribute()));
-  _availToDistribute = 0;
+  _availToDistribute   =  0;
+  _sourceItemlocdistid = -1;
+  _itemlocdistid       = -1;
 }
 
 distributeToLocation::~distributeToLocation()
@@ -104,6 +106,13 @@ enum SetResponse distributeToLocation::set(const ParameterList &pParams)
   }
   
   populate();
+
+  param = pParams.value("distribute", &valid);
+  if (valid)
+  {
+    sDistribute();
+    return NoError;
+  }
 
   return NoError;
 }
@@ -335,4 +344,3 @@ void distributeToLocation::populate()
     return;
   }
 }
-

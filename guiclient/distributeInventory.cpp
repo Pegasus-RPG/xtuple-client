@@ -57,34 +57,31 @@
 
 #include "distributeInventory.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <QCloseEvent>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
+
 #include "distributeToLocation.h"
 #include "assignLotSerial.h"
 
 #define cIncludeLotSerial   0x01
 #define cNoIncludeLotSerial 0x02
 
-/*
- *  Constructs a distributeInventory as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 distributeInventory::distributeInventory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
-
-  // signals and slots connections
-  connect(_itemloc, SIGNAL(itemSelected(int)), this, SLOT(sSelectLocation()));
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_default, SIGNAL(clicked()), this, SLOT(sDefault()));
-  connect(_defaultAndPost, SIGNAL(clicked()), this, SLOT(sDefaultAndPost()));
+  connect(_bcDistribute,   SIGNAL(clicked()),         this, SLOT(sBcDistribute()));
+  connect(_default,        SIGNAL(clicked()),         this, SLOT(sDefault()));
+  connect(_defaultAndPost, SIGNAL(clicked()),         this, SLOT(sDefaultAndPost()));
+  connect(_distribute,     SIGNAL(clicked()),         this, SLOT(sSelectLocation()));
+  connect(_itemloc,        SIGNAL(itemSelected(int)), this, SLOT(sSelectLocation()));
+  connect(_post,           SIGNAL(clicked()),         this, SLOT(sPost()));
+  connect(_taggedOnly,     SIGNAL(toggled(bool)),     this, SLOT(sFillList()));
 
   _trapClose = TRUE;
 
@@ -112,23 +109,18 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
     _lotSerial->hide();
     _lotSerialLit->hide();
   }
+
+  _itemlocdistid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 distributeInventory::~distributeInventory()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void distributeInventory::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp)
@@ -275,7 +267,12 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
 
   param = pParams.value("includeLotSerialDetail", &valid);
   if (valid)
+  {
     _mode = cIncludeLotSerial;
+    _bc->setEnabled(true);
+    _bcQty->setEnabled(true);
+    _bcDistribute->setEnabled(true);
+  }
   else
     _mode = cNoIncludeLotSerial;
 
@@ -294,8 +291,9 @@ void distributeInventory::closeEvent(QCloseEvent *pEvent)
   if (_trapClose)
   {
     QMessageBox::critical( this, tr("Cannot Cancel Distribution"),
-                           tr( "You must select locations to distribute to/from and select the 'Post' button.\n"
-                               "You may not cancel this action." ) );
+                           tr( "<p>You must select locations to distribute to/from "
+			       "and select the 'Post' button. You may not cancel "
+			       "this action." ) );
     pEvent->ignore();
   }
   else
@@ -330,8 +328,8 @@ void distributeInventory::sPost()
   if (_qtyRemaining->text().toDouble() != 0.0)
   {
     QMessageBox::critical( this, tr("Cannot Perform Partial Distribution"),
-                           tr( "You must completely distribute the quantity before selecting the\n"
-                               "'Post' button." ) );
+                           tr( "<p>You must completely distribute the quantity "
+			       "before selecting the 'Post' button." ) );
     return;
   }
 
@@ -362,7 +360,9 @@ void distributeInventory::sDefaultAndPost()
 
 void distributeInventory::sFillList()
 {
-  q.prepare( "SELECT itemsite_id, COALESCE(itemsite_location_id,-1) AS itemsite_location_id, itemlocdist_lotserial,"
+  q.prepare( "SELECT itemsite_id, "
+	     "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
+	     "       itemlocdist_lotserial,"
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
@@ -397,99 +397,106 @@ void distributeInventory::sFillList()
     }
 
     QString sql( "SELECT id, type,"
-                 "       locationname, defaultlocation, netable, lotserial, f_expiration, expired,"
+                 "       locationname,"
+		 "       CASE WHEN defaultlocation THEN <? value(\"yes\") ?>"
+		 "            ELSE <? value(\"no\") ?>"
+		 "       END AS defaultlocation,"
+		 "       CASE WHEN (location_netable) THEN <? value(\"yes\") ?>"
+		 "            ELSE <? value(\"no\") ?>"
+		 "       END AS netable,"
+		 "       lotserial, f_expiration, expired,"
                  "       qty,"
                  "       qtytagged,"
                  "       (qty + qtytagged) AS balance "
-                 "FROM (" );
+                 "FROM (" 
+		 "<? if exists(\"cNoIncludeLotSerial\") ?>"
+		 "SELECT location_id AS id, <? value(\"locationType\") ?> AS type,"
+		 "       formatLocationName(location_id) AS locationname,"
+		 "       (location_id=itemsite_location_id) AS defaultlocation,"
+		 "       location_netable,"
+		 "       TEXT('') AS lotserial,"
+		 "       TEXT(<? value(\"na\") ?>) AS f_expiration, FALSE AS expired,"
+		 "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
+		 "         FROM itemloc "
+		 "         WHERE ( (itemloc_location_id=location_id)"
+		 "          AND (itemloc_itemsite_id=itemsite_id) ) ) AS qty,"
+		 "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
+		 "FROM itemlocdist, location, itemsite "
+		 "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
+		 " AND (itemsite_loccntrl)"
+		 " AND (itemsite_warehous_id=location_warehous_id)"
+		 " AND (validLocation(location_id, itemsite_id))"
+		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
+		 "<? elseif exists(\"cIncludeLotSerial\") ?>"
+		 "SELECT itemloc_id AS id, <? value(\"itemlocType\") ?> AS type,"
+		 "       COALESCE(formatLocationName(location_id),"
+		 "                <? value(\"undefined\") ?>) AS locationname,"
+		 "       (location_id IS NOT NULL"
+		 "        AND location_id=itemsite_location_id) AS defaultlocation,"
+		 "       COALESCE(location_netable, false) AS location_netable,"
+		 "       itemloc_lotserial AS lotserial,"
+		 "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
+		 "            ELSE <? value(\"na\") ?>"
+		 "       END AS f_expiration,"
+		 "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration < CURRENT_DATE)"
+		 "            ELSE FALSE" 
+		 "       END AS expired,"
+		 "       itemloc_qty AS qty,"
+		 "       ( SELECT COALESCE(SUM(target.itemlocdist_qty), 0)"
+		 "         FROM itemlocdist AS target"
+		 "         WHERE ( (target.itemlocdist_source_type='I')"
+		 "          AND (target.itemlocdist_source_id=itemloc_id)"
+		 "          AND (target.itemlocdist_itemlocdist_id=source.itemlocdist_id)) ) AS qtytagged "
+		 "FROM itemlocdist AS source, itemsite, itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
+		 "WHERE ( (source.itemlocdist_itemsite_id=itemsite_id)"
+		 " AND (itemloc_itemsite_id=itemsite_id)"
+		 " AND (source.itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
+		 " UNION "
+		 "SELECT location_id AS id, <? value(\"locationType\") ?> AS type,"
+		 "       formatLocationName(location_id) AS locationname,"
+		 "       (location_id=itemsite_location_id) AS defaultlocation,"
+		 "       location_netable,"
+		 "       TEXT('') AS lotserial,"
+		 "       TEXT(<? value(\"na\") ?>) AS f_expiration, FALSE AS expired,"
+		 "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
+		 "         FROM itemloc "
+		 "         WHERE ( (itemloc_location_id=location_id)"
+		 "          AND (itemloc_itemsite_id=itemsite_id) ) ) AS qty,"
+		 "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
+		 "FROM itemlocdist, location, itemsite "
+		 "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
+		 " AND (itemsite_loccntrl)"
+		 " AND (itemsite_warehous_id=location_warehous_id)"
+		 " AND (validLocation(location_id, itemsite_id))"
+		 " AND (location_id NOT IN (SELECT DISTINCT itemloc_location_id FROM itemloc WHERE (itemloc_itemsite_id=itemsite_id)))"
+		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
+		 "<? endif ?>"
+		 ") AS data "
+		 "<? if exists(\"showOnlyTagged\") ?>"
+		 "WHERE (qtytagged != 0) "
+		 "<? endif ?>"
+		 "ORDER BY locationname;");
+
+    ParameterList params;
 
     if (_mode == cNoIncludeLotSerial)
-      sql += "SELECT location_id AS id, :locationType AS type, formatLocationName(location_id) AS locationname,"
-             "       CASE WHEN (location_id=itemsite_location_id) THEN :yes"
-             "            ELSE :no"
-             "       END AS defaultlocation,"
-             "       CASE WHEN (location_netable) THEN :yes"
-             "            ELSE :no"
-             "       END AS netable,"
-             "       TEXT('') AS lotserial,"
-             "       TEXT(:na) AS f_expiration, FALSE AS expired,"
-             "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
-             "         FROM itemloc "
-             "         WHERE ( (itemloc_location_id=location_id)"
-             "          AND (itemloc_itemsite_id=itemsite_id) ) ) AS qty,"
-             "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
-             "FROM itemlocdist, location, itemsite "
-             "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-             " AND (itemsite_loccntrl)"
-             " AND (itemsite_warehous_id=location_warehous_id)"
-             " AND (validLocation(location_id, itemsite_id))"
-             " AND (itemlocdist_id=:itemlocdist_id) ) ";
-
+      params.append("cNoIncludeLotSerial");
     else if (_mode == cIncludeLotSerial)
-    {
-      sql += "SELECT itemloc_id AS id, :itemlocType AS type,"
-             "       COALESCE(formatLocationName(location_id), :undefined) AS locationname,"
-             "       CASE WHEN (location_id IS NULL) THEN :no"
-             "            WHEN (location_id=itemsite_location_id) THEN :yes"
-             "            ELSE :no"
-             "       END AS defaultlocation,"
-             "       CASE WHEN (location_netable IS NULL) THEN :no"
-             "            WHEN (location_netable) THEN :yes"
-             "            ELSE :no"
-             "       END AS netable,"
-             "       itemloc_lotserial AS lotserial,"
-             "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
-             "            ELSE :na"
-             "       END AS f_expiration,"
-             "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration < CURRENT_DATE)"
-             "            ELSE FALSE" 
-             "       END AS expired,"
-             "       itemloc_qty AS qty,"
-             "       ( SELECT COALESCE(SUM(target.itemlocdist_qty), 0)"
-             "         FROM itemlocdist AS target"
-             "         WHERE ( (target.itemlocdist_source_type='I')"
-             "          AND (target.itemlocdist_source_id=itemloc_id)"
-             "          AND (target.itemlocdist_itemlocdist_id=source.itemlocdist_id)) ) AS qtytagged "
-             "FROM itemlocdist AS source, itemsite, itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
-             "WHERE ( (source.itemlocdist_itemsite_id=itemsite_id)"
-             " AND (itemloc_itemsite_id=itemsite_id)"
-             " AND (source.itemlocdist_id=:itemlocdist_id) ) ";
-      sql += " UNION ";
-      sql += "SELECT location_id AS id, :locationType AS type, formatLocationName(location_id) AS locationname,"
-             "       CASE WHEN (location_id=itemsite_location_id) THEN :yes"
-             "            ELSE :no"
-             "       END AS defaultlocation,"
-             "       CASE WHEN (location_netable) THEN :yes"
-             "            ELSE :no"
-             "       END AS netable,"
-             "       TEXT('') AS lotserial,"
-             "       TEXT(:na) AS f_expiration, FALSE AS expired,"
-             "       ( SELECT COALESCE(SUM(itemloc_qty), 0)"
-             "         FROM itemloc "
-             "         WHERE ( (itemloc_location_id=location_id)"
-             "          AND (itemloc_itemsite_id=itemsite_id) ) ) AS qty,"
-             "       itemlocdistQty(location_id, itemlocdist_id) AS qtytagged "
-             "FROM itemlocdist, location, itemsite "
-             "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-             " AND (itemsite_loccntrl)"
-             " AND (itemsite_warehous_id=location_warehous_id)"
-             " AND (validLocation(location_id, itemsite_id))"
-             " AND (location_id NOT IN (SELECT DISTINCT itemloc_location_id FROM itemloc WHERE (itemloc_itemsite_id=itemsite_id)))"
-             " AND (itemlocdist_id=:itemlocdist_id) ) ";
-    }
+      params.append("cIncludeLotSerial");
 
-    sql += ") AS data "
-           "ORDER BY locationname;";
+    if (_taggedOnly->isChecked())
+      params.append("showOnlyTagged");
 
-    q.prepare(sql);
-    q.bindValue(":locationType", cLocation);
-    q.bindValue(":itemlocType", cItemloc);
-    q.bindValue(":yes", tr("Yes"));
-    q.bindValue(":no", tr("No"));
-    q.bindValue(":na", tr("N/A"));
-    q.bindValue(":undefined", tr("Undefined"));
-    q.bindValue(":itemlocdist_id", _itemlocdistid);
-    q.exec();
+    params.append("locationType",   cLocation);
+    params.append("itemlocType",    cItemloc);
+    params.append("yes",            tr("Yes"));
+    params.append("no",             tr("No"));
+    params.append("na",             tr("N/A"));
+    params.append("undefined",      tr("Undefined"));
+    params.append("itemlocdist_id", _itemlocdistid);
+
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
 
     _itemloc->clear();
     XTreeWidgetItem *last = 0;
@@ -509,3 +516,51 @@ void distributeInventory::sFillList()
   }
 }
 
+void distributeInventory::sBcDistribute()
+{
+  if (_bc->text().isEmpty())
+  {
+    QMessageBox::warning(this, tr("No Bar Code scanned"),
+			 tr("<p>Cannot search for Items by Bar Code without a "
+			    "Bar Code."));
+    _bc->setFocus();
+    return;
+  }
+
+  q.prepare( "SELECT itemloc_id "
+	     "FROM  itemlocdist, itemloc, itemsite "
+	     "WHERE ((itemlocdist_itemsite_id=itemloc_itemsite_id)"
+	     "  AND  (itemloc_itemsite_id=itemsite_id)"
+             "  AND  (itemsite_controlmethod IN ('L', 'S'))"
+	     "  AND  (itemloc_lotserial=:lotserial)"
+	     "  AND  (itemlocdist_id=:itemlocdist_id));");
+
+  q.bindValue(":itemlocdist_id", _itemlocdistid);
+  q.bindValue(":lotserial",      _bc->text());
+  q.exec();
+
+  if(!q.first())
+  {
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+    QMessageBox::warning(this, tr("No Match Found"),
+			 tr("<p>No available lines match the specified Barcode.")); 
+    _bc->clear();
+    return;
+  }
+
+  ParameterList params;
+  params.append("itemlocdist_id",        q.value("itemloc_id"));
+  params.append("source_itemlocdist_id", _itemlocdistid);
+  params.append("distribute");
+
+  distributeToLocation newdlg(this, "", TRUE);
+  if (newdlg.set(params) != NoError)
+    return;
+  sFillList();
+
+  _bc->clear();
+}

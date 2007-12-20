@@ -5,41 +5,23 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>648</width>
-    <height>294</height>
+    <width>757</width>
+    <height>354</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Distribute Stock To/From Warehouse Locations</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
-   <property name="spacing" >
-    <number>5</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>6</number>
-     </property>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>7</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -48,17 +30,11 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>5</number>
              </property>
@@ -105,17 +81,11 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>5</number>
              </property>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
@@ -147,9 +117,7 @@
              <item>
               <widget class="QLabel" name="_lotSerial" >
                <property name="sizePolicy" >
-                <sizepolicy>
-                 <hsizetype>7</hsizetype>
-                 <vsizetype>5</vsizetype>
+                <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
@@ -183,25 +151,16 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -239,9 +198,6 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -313,15 +269,19 @@
            </property>
           </spacer>
          </item>
+         <item>
+          <widget class="XCheckBox" name="_taggedOnly" >
+           <property name="text" >
+            <string>Only Show Tagged Lines</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
       </layout>
      </item>
      <item>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
@@ -343,17 +303,11 @@
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
@@ -407,36 +361,118 @@
    </item>
    <item>
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>0</number>
-     </property>
      <item>
-      <widget class="QLabel" name="_validLocationsLit" >
-       <property name="text" >
-        <string>Valid Locations:</string>
-       </property>
-      </widget>
+      <layout class="QHBoxLayout" >
+       <item>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="QLabel" name="_validLocationsLit" >
+           <property name="text" >
+            <string>Valid Locations:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_itemloc" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize" >
+            <size>
+             <width>0</width>
+             <height>100</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="QPushButton" name="_distribute" >
+           <property name="text" >
+            <string>Distribute</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </item>
      <item>
-      <widget class="XTreeWidget" name="_itemloc" >
-       <property name="sizePolicy" >
-        <sizepolicy>
-         <hsizetype>7</hsizetype>
-         <vsizetype>7</vsizetype>
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
+      <layout class="QHBoxLayout" >
+       <property name="rightMargin" >
+        <number>10</number>
        </property>
-       <property name="minimumSize" >
-        <size>
-         <width>0</width>
-         <height>100</height>
-        </size>
-       </property>
-      </widget>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QLabel" name="_bcLit" >
+         <property name="text" >
+          <string>Lot/Serial Number:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="_bc" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="_bcQtyLit" >
+         <property name="text" >
+          <string>Qty.</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="_bcQty" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="_bcDistribute" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+         <property name="text" >
+          <string>Find</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -454,6 +490,11 @@
    <class>WComboBox</class>
    <extends>XComboBox</extends>
    <header>wcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
