@@ -605,7 +605,10 @@ void distributeInventory::sCatchLotSerialNumber(const QString plotserial)
 {
   //qDebug("sCatchLotSerialNumber");
   _bc->setText(plotserial);
-  _bcQty->setFocus();
+  if (_controlMethod == "S")
+    _bcDistribute->setFocus();
+  else
+    _bcQty->setFocus();
 }
 
 void distributeInventory::sBcChanged(const QString p)
