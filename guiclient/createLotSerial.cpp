@@ -188,10 +188,17 @@ void createLotSerial::sAssign()
 
   if (_serial)
   {
-    q.prepare("SELECT COUNT(*) AS count "
-	      "FROM lsdetail "
-	      "WHERE ((lsdetail_itemsite_id=:itemsite_id)"
-	      "  AND  (lsdetail_lotserial=:lotserial));");
+	q.prepare("SELECT COUNT(*) AS count FROM "
+		  "(SELECT itemloc_id AS count "
+		  "FROM itemloc "
+		  "WHERE ((itemloc_itemsite_id=:itemsite_id)"
+		  "  AND (itemloc_lotserial=:lotserial))"
+		  "UNION "
+		  "SELECT itemlocdist_id "
+		  "FROM itemlocdist "
+		  "WHERE ((itemlocdist_itemsite_id=:itemsite_id) "
+		  "  AND (itemlocdist_lotserial=:lotserial) "
+		  "  AND (itemlocdist_source_type='D'))) as data;");
     q.bindValue(":itemsite_id", _itemsiteid);
     q.bindValue(":lotserial", _lotSerial->text());
     q.exec();
