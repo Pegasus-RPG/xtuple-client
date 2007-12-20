@@ -62,8 +62,7 @@
 #ifndef inputManager_h
 #define inputManager_h
 
-#include <qobject.h>
-//Added by qt3to4:
+#include <QObject>
 #include <QEvent>
 
 class InputManagerPrivate;
@@ -84,6 +83,7 @@ class InputManagerPrivate;
 #define cBCUser                0x00100000
 #define	cBCTransferOrder          0x00200000
 #define cBCTransferOrderLineItem  0x00400000
+#define cBCLotSerialNumber	  0x00800000
 
 class InputManager : public QObject
 {
@@ -111,6 +111,7 @@ class InputManager : public QObject
     void readLocation(int);
     void readLocationIssue(int);
     void readLocationContents(int);
+    void readLotSerialNumber(QString);
     void readUser(int);
 
   protected:
@@ -132,6 +133,7 @@ class InputManager : public QObject
     void dispatchLocation();
     void dispatchLocationIssue();
     void dispatchLocationContents();
+    void dispatchLotSerialNumber();
     void dispatchUser();
 };
 

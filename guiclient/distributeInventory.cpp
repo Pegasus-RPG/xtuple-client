@@ -64,8 +64,9 @@
 
 #include <metasql.h>
 
-#include "distributeToLocation.h"
 #include "assignLotSerial.h"
+#include "distributeToLocation.h"
+#include "inputManager.h"
 
 #define cIncludeLotSerial   0x01
 #define cNoIncludeLotSerial 0x02
@@ -75,13 +76,16 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
 {
   setupUi(this);
 
-  connect(_bcDistribute,   SIGNAL(clicked()),         this, SLOT(sBcDistribute()));
-  connect(_default,        SIGNAL(clicked()),         this, SLOT(sDefault()));
-  connect(_defaultAndPost, SIGNAL(clicked()),         this, SLOT(sDefaultAndPost()));
-  connect(_distribute,     SIGNAL(clicked()),         this, SLOT(sSelectLocation()));
-  connect(_itemloc,        SIGNAL(itemSelected(int)), this, SLOT(sSelectLocation()));
-  connect(_post,           SIGNAL(clicked()),         this, SLOT(sPost()));
-  connect(_taggedOnly,     SIGNAL(toggled(bool)),     this, SLOT(sFillList()));
+  connect(_bcDistribute,    SIGNAL(clicked()), this, SLOT(sBcDistribute()));
+  connect(_default,         SIGNAL(clicked()), this, SLOT(sDefault()));
+  connect(_defaultAndPost,  SIGNAL(clicked()), this, SLOT(sDefaultAndPost()));
+  connect(_distribute,      SIGNAL(clicked()), this, SLOT(sSelectLocation()));
+  connect(_itemloc, SIGNAL(itemSelected(int)), this, SLOT(sSelectLocation()));
+  connect(_post,            SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_taggedOnly,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_bc,   SIGNAL(textChanged(QString)), this, SLOT(sBcChanged(QString)));
+
+  omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
 
   _trapClose = TRUE;
 
@@ -108,6 +112,11 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   {
     _lotSerial->hide();
     _lotSerialLit->hide();
+    _bcLit->hide();
+    _bc->hide();
+    _bcQtyLit->hide();
+    _bcQty->hide();
+    _bcDistribute->hide();
   }
 
   _itemlocdistid = -1;
@@ -269,9 +278,6 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
   if (valid)
   {
     _mode = cIncludeLotSerial;
-    _bc->setEnabled(true);
-    _bcQty->setEnabled(true);
-    _bcDistribute->setEnabled(true);
   }
   else
     _mode = cNoIncludeLotSerial;
@@ -302,6 +308,30 @@ void distributeInventory::closeEvent(QCloseEvent *pEvent)
 
 void distributeInventory::populate()
 {
+  q.prepare("SELECT itemsite_controlmethod "
+	    "FROM itemsite, itemlocdist "
+	    "WHERE ((itemlocdist_itemsite_id=itemsite_id)"
+	    "  AND  (itemlocdist_id=:itemlocdist_id));");
+
+  q.bindValue(":itemlocdist_id", _itemlocdistid);
+  q.exec();
+  if (q.first())
+  {
+    _controlMethod = q.value("itemsite_controlmethod").toString();
+    _bc->setEnabled(_controlMethod == "L" || _controlMethod == "S");
+    _bcQty->setEnabled(_controlMethod == "L");
+    _bcDistribute->setEnabled(_controlMethod == "L" || _controlMethod == "S");
+    if (_controlMethod == "S")
+      _bcQty->setText("1");
+    else
+      _bcQty->clear();
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   sFillList();
 }
 
@@ -555,12 +585,31 @@ void distributeInventory::sBcDistribute()
   ParameterList params;
   params.append("itemlocdist_id",        q.value("itemloc_id"));
   params.append("source_itemlocdist_id", _itemlocdistid);
+  params.append("qty",                   _bcQty->text());
   params.append("distribute");
 
   distributeToLocation newdlg(this, "", TRUE);
   if (newdlg.set(params) != NoError)
     return;
-  sFillList();
 
   _bc->clear();
+  if (_controlMethod == "S")
+    _bcQty->setText("1");
+  else
+    _bcQty->clear();
+  sFillList();
+  _bc->setFocus();
+}
+
+void distributeInventory::sCatchLotSerialNumber(const QString plotserial)
+{
+  //qDebug("sCatchLotSerialNumber");
+  _bc->setText(plotserial);
+  _bcQty->setFocus();
+}
+
+void distributeInventory::sBcChanged(const QString p)
+{
+  _post->setDefault(p.isEmpty());
+  _bcDistribute->setDefault(! p.isEmpty());
 }

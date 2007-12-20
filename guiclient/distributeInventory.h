@@ -73,12 +73,14 @@ public:
     ~distributeInventory();
 
     static int SeriesAdjust( int pItemlocSeries, QWidget * pParent, const QString & = QString::null, const QDate & = QDate() );
+    virtual enum SetResponse set( const ParameterList & pParams );
 
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void populate();
+    virtual void sBcChanged(const QString);
     virtual void sBcDistribute();
+    virtual void sCatchLotSerialNumber(const QString);
     virtual void sDefault();
     virtual void sDefaultAndPost();
     virtual void sFillList();
@@ -89,9 +91,10 @@ protected slots:
     virtual void languageChange();
 
 private:
-    int _mode;
-    bool _trapClose;
-    int _itemlocdistid;
+    QString	_controlMethod;
+    int		_itemlocdistid;
+    int		_mode;
+    bool	_trapClose;
 
 };
 

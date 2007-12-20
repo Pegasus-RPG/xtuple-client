@@ -112,6 +112,7 @@ static InputEvent _eventList[] =
   { cBCLocationIssue,      "LOIS", 1, 2, 0 },
   { cBCLocationContents,   "LOCN", 1, 2, 0 },
   { cBCUser,               "USER", 1, 0, 0 },
+  { cBCLotSerialNumber,    "LSNX", 1, 0, 0 }, // TODO: itemloc? lsdetail?
   { -1,                    "",     0, 0, 0 }
 };
 
@@ -415,6 +416,10 @@ bool InputManager::eventFilter(QObject *, QEvent *pEvent)
             case cBCLocationContents:
               dispatchLocationContents();
               break;
+
+	    case cBCLotSerialNumber:
+	      dispatchLotSerialNumber();
+	      break;
 
             case cBCUser:
               dispatchUser();
@@ -1036,3 +1041,32 @@ void InputManager::dispatchUser()
   }
 }
 
+void InputManager::dispatchLotSerialNumber()
+{
+  // qDebug("dispatchLotSerialNumber");
+  ReceiverItem receiver = _private->findReceiver(cBCLotSerialNumber);
+  if (!receiver.isNull())
+  {
+    QString lotserial = _private->_buffer.left(_private->_length1);
+
+    XSqlQuery lsdetail;
+    lsdetail.prepare( "SELECT lsdetail_id "
+		      "FROM lsdetail "
+		      "WHERE (lsdetail_lotserial=:lotserial);" );
+    lsdetail.bindValue(":lotserial", lotserial);
+    lsdetail.exec();
+    if (lsdetail.first())
+    {
+      message( tr("Scanned Lot/Serial # %1.").arg(lotserial), 1000);
+
+      if (connect(this, SIGNAL(readLotSerialNumber(QString)), receiver.target(), receiver.slot()))
+      {
+        emit readLotSerialNumber(lotserial);
+        disconnect(this, SIGNAL(readLotSerialNumber(QString)), receiver.target(), receiver.slot());
+      }
+    }
+    else
+      message( tr("Lot/Serial # %1 does not exist in the Database.")
+               .arg(lotserial), 1000 );
+  }
+}

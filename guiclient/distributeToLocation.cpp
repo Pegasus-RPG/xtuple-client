@@ -104,8 +104,24 @@ enum SetResponse distributeToLocation::set(const ParameterList &pParams)
     _mode = cLocation;
     _locationid = param.toInt();
   }
-  
+
   populate();
+
+  param = pParams.value("qty", &valid);
+  if (valid)
+  {
+    // convert the sign of qty to match the desired outcome then choose the lesser of
+    // the qty available to distribute and the qty the caller requested
+    double locQty = _locationQty->text().toDouble();
+    if (_mode == cItemloc)	// lot/serial
+    {
+      if (locQty < 0 && param.toDouble() > 0)
+	locQty = qMax(-param.toDouble(), locQty);
+      else if (locQty < 0 && param.toDouble() < 0)
+	locQty = qMax(param.toDouble(), locQty);
+    }
+    _locationQty->setText(formatNumber(locQty, 6));
+  }
 
   param = pParams.value("distribute", &valid);
   if (valid)
