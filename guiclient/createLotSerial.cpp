@@ -136,13 +136,21 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 
 void createLotSerial::sAssign()
 {
-  if (_lotSerial->text().contains(QRegExp("\\s")) &&
+  if (_lotSerial->text().isEmpty())
+  {
+    QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
+                           tr("<p>You must enter a Lot/Serial number."));
+    _lotSerial->setFocus();
+    return;
+  }
+  else if (_lotSerial->text().contains(QRegExp("\\s")) &&
       QMessageBox::question(this, tr("Lot/Serial Number Contains Spaces"),
 			    tr("<p>The Lot/Serial Number contains spaces. Do "
 			       "you want to save it anyway?"),
 			    QMessageBox::Yes,
 			    QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
   {
+    _lotSerial->setFocus();
     return;
   }
 
