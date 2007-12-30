@@ -10971,11 +10971,11 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     </message>
     <message>
         <source>Single Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Одноуровневое</translation>
     </message>
     <message>
         <source>Multiple Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Многоуровневое</translation>
     </message>
     <message>
         <source>Defaults</source>
@@ -13898,11 +13898,11 @@ creating Planned Orders.</source>
     </message>
     <message>
         <source>Organization</source>
-        <translation type="unfinished"></translation>
+        <translation>Юр.Лицо</translation>
     </message>
     <message>
         <source>Individual</source>
-        <translation type="unfinished"></translation>
+        <translation>Физ.Лицо</translation>
     </message>
     <message>
         <source>Customer</source>
@@ -13910,11 +13910,11 @@ creating Planned Orders.</source>
     </message>
     <message>
         <source>Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>Перспективщик</translation>
     </message>
     <message>
         <source>Neither</source>
-        <translation type="unfinished"></translation>
+        <translation>Другое</translation>
     </message>
     <message>
         <source>Vendor</source>
@@ -13922,19 +13922,19 @@ creating Planned Orders.</source>
     </message>
     <message>
         <source>Partner</source>
-        <translation type="unfinished"></translation>
+        <translation>Партнёр</translation>
     </message>
     <message>
         <source>Competitor</source>
-        <translation type="unfinished"></translation>
+        <translation>Конкурент</translation>
     </message>
     <message>
         <source>Primary Contact:</source>
-        <translation type="unfinished"></translation>
+        <translation>Первоочередной Контакт:</translation>
     </message>
     <message>
         <source>Secondary Contact:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дополнительный Контакт:</translation>
     </message>
     <message>
         <source>Close</source>
@@ -13970,7 +13970,7 @@ creating Planned Orders.</source>
     </message>
     <message>
         <source>Contacts</source>
-        <translation type="unfinished"></translation>
+        <translation>Контакты</translation>
     </message>
     <message>
         <source>Detach</source>
@@ -17312,7 +17312,7 @@ You may not cancel this action.</source>
     </message>
     <message>
         <source>Total Qty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Общее Кол.</translation>
     </message>
     <message>
         <source>Relieved</source>
@@ -17344,7 +17344,7 @@ You may not cancel this action.</source>
     </message>
     <message>
         <source>Item Allocations</source>
-        <translation type="unfinished"></translation>
+        <translation>Размещение Поpиций</translation>
     </message>
     <message>
         <source>Show Availability as of:</source>
@@ -17364,11 +17364,11 @@ You may not cancel this action.</source>
     </message>
     <message>
         <source>Date Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Даты:</translation>
     </message>
     <message>
         <source>to</source>
-        <translation>в</translation>
+        <translation>по</translation>
     </message>
     <message>
         <source>Warehouse:</source>
@@ -17384,7 +17384,7 @@ You may not cancel this action.</source>
     </message>
     <message>
         <source>Item Allocations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Размещение Поpиций:</translation>
     </message>
     <message>
         <source>View Transfer Order...</source>
@@ -22675,7 +22675,7 @@ Total</source>
     </message>
     <message>
         <source>Indented Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>Древовидная Ведомость Материалов</translation>
     </message>
     <message>
         <source>Show &amp;Expired Components</source>
@@ -22707,14 +22707,14 @@ Total</source>
     </message>
     <message>
         <source>Bill Of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ведомость Материалов:</translation>
     </message>
 </context>
 <context>
     <name>dspIndentedWhereUsed</name>
     <message>
         <source>Seq. #</source>
-        <translation type="unfinished"></translation>
+        <translation>№ пп</translation>
     </message>
     <message>
         <source>Item Number</source>
@@ -22750,7 +22750,7 @@ Total</source>
     </message>
     <message>
         <source>Indented Where Used</source>
-        <translation type="unfinished"></translation>
+        <translation>Где Используется, Древовидное</translation>
     </message>
     <message>
         <source>Show &amp;Expired Components</source>
@@ -22786,7 +22786,7 @@ Total</source>
     </message>
     <message>
         <source>Bill of Materials Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиции Ведомости Материалов:</translation>
     </message>
 </context>
 <context>
@@ -22797,19 +22797,19 @@ Total</source>
     </message>
     <message>
         <source>Parent Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>Родительская позиция №</translation>
     </message>
     <message>
         <source>Component Item #</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиция компонента №</translation>
     </message>
     <message>
         <source>Component Item Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание Позиции Компонента</translation>
     </message>
     <message>
         <source>Edit Parent Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Родительскую позицию...</translation>
     </message>
     <message>
         <source>Edit Parent Item Site...</source>
@@ -31474,7 +31474,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Single Level Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>Одноуровневая Ведомость Материалов</translation>
     </message>
     <message>
         <source>Show &amp;Expired Components</source>
@@ -31510,7 +31510,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ведомость Материалов:</translation>
     </message>
 </context>
 <context>
@@ -31553,11 +31553,11 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Edit Bill of Materials...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Ведомость Материалов...</translation>
     </message>
     <message>
         <source>Edit Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Ведомость по Операциям...</translation>
     </message>
     <message>
         <source>Edit Item Master...</source>
@@ -31569,7 +31569,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Single Level Where Used</source>
-        <translation type="unfinished"></translation>
+        <translation>Где Используется, Одноуровневое</translation>
     </message>
     <message>
         <source>Effective:</source>
@@ -31589,7 +31589,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Bill of Materials Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиции Ведомости Материалов:</translation>
     </message>
 </context>
 <context>
@@ -31620,7 +31620,7 @@ These line items must be fixed before you may convert this quote.</source>
     </message>
     <message>
         <source>Transfer to another Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>Переместить на Другой Склад...</translation>
     </message>
     <message>
         <source>Adjust this QOH...</source>
@@ -38834,7 +38834,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     </message>
     <message>
         <source>Level</source>
-        <translation type="unfinished"></translation>
+        <translation>Уровень</translation>
     </message>
     <message>
         <source>&amp;Single Level Explosion</source>
@@ -40413,7 +40413,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     </message>
     <message>
         <source>Doc. #:</source>
-        <translation type="unfinished"></translation>
+        <translation>Док №:</translation>
     </message>
     <message>
         <source>Dist. Date:</source>
@@ -42828,15 +42828,15 @@ You may edit the Item Site and deactivate it.</source>
     </message>
     <message>
         <source>Capacity &amp;UOM:</source>
-        <translation type="unfinished"></translation>
+        <translation>Единицы &amp;Объёма:</translation>
     </message>
     <message>
         <source>Alt. Capacity UOM:</source>
-        <translation type="unfinished"></translation>
+        <translation>Альт. Единицы Объёма:</translation>
     </message>
     <message>
         <source>Shipping UOM:</source>
-        <translation type="unfinished"></translation>
+        <translation>Отгрузочные Единицы Объёма:</translation>
     </message>
     <message>
         <source>Capacity/Inventory UOM Ratio:</source>
@@ -43733,7 +43733,7 @@ indicated the date.  Please enter a valid date.</source>
     </message>
     <message>
         <source>Costed Indented BOM</source>
-        <translation>Себестоимость</translation>
+        <translation>Себестоимость древовидно</translation>
     </message>
     <message>
         <source>Use Standard Costs</source>
@@ -43895,23 +43895,23 @@ No new Item Costs can be created for it until more costing elements are defined.
     </message>
     <message>
         <source>Cannot Save Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно Сохранить Группу</translation>
     </message>
     <message>
         <source>You must enter a Name for this Item Group before you may save it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно Ввести Название Группы Перед Сохранением.</translation>
     </message>
     <message>
         <source>Cannot Add Item to Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Добавить Позицию в Группу</translation>
     </message>
     <message>
         <source>The selected Item is already a member of this Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранная Позиция Уже Принадлежит Данной Группе</translation>
     </message>
     <message>
         <source>Item Group</source>
-        <translation type="unfinished"></translation>
+        <translation>Группа</translation>
     </message>
     <message>
         <source>Name:</source>
@@ -43927,7 +43927,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     </message>
     <message>
         <source>Member Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиции Группы:</translation>
     </message>
     <message>
         <source>&amp;New</source>
@@ -43950,11 +43950,11 @@ No new Item Costs can be created for it until more costing elements are defined.
     </message>
     <message>
         <source>Item Groups</source>
-        <translation type="unfinished"></translation>
+        <translation>Группы</translation>
     </message>
     <message>
         <source>Item Groups:</source>
-        <translation type="unfinished"></translation>
+        <translation>Группы:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -43989,11 +43989,11 @@ No new Item Costs can be created for it until more costing elements are defined.
     </message>
     <message>
         <source>Item Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображение</translation>
     </message>
     <message>
         <source>Purpose:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цель:</translation>
     </message>
     <message>
         <source>Inventory Description</source>
@@ -44052,19 +44052,19 @@ No new Item Costs can be created for it until more costing elements are defined.
     </message>
     <message>
         <source>Item Images</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения</translation>
     </message>
     <message>
         <source>Image Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Описание Изображения:</translation>
     </message>
     <message>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;&lt;</translation>
     </message>
     <message>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;&gt;</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -44075,7 +44075,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <name>itemList</name>
     <message>
         <source>Item List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список позиций</translation>
     </message>
     <message>
         <source>S&amp;earch for:</source>
@@ -44095,7 +44095,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     </message>
     <message>
         <source>&amp;Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пози&amp;ции:</translation>
     </message>
     <message>
         <source>Item Number</source>
@@ -46437,7 +46437,7 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>Act. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущ.Стоимость</translation>
     </message>
     <message>
         <source>Updated</source>
@@ -46445,31 +46445,31 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>Update Actual Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить Текущую Себестоимость...</translation>
     </message>
     <message>
         <source>View Costing Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Деталей Стоимости...</translation>
     </message>
     <message>
         <source>Delete Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Себестоимость...</translation>
     </message>
     <message>
         <source>Post Actual Cost to Standard...</source>
-        <translation type="unfinished"></translation>
+        <translation>Задать Текущую Себестоимость как Стандартную...</translation>
     </message>
     <message>
         <source>Edit Actual Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Текущую Себестоимость...</translation>
     </message>
     <message>
         <source>New Actual Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая Текущая Себестоимость...</translation>
     </message>
     <message>
         <source>!ERROR!</source>
-        <translation type="unfinished"></translation>
+        <translation>!ОШИБКА!</translation>
     </message>
     <message>
         <source>Totals</source>
@@ -46489,23 +46489,23 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>Costing &amp;Elements:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Элементы Себестоимости:</translation>
     </message>
     <message>
         <source>&amp;New Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Создать Себестоимость</translation>
     </message>
     <message>
         <source>&amp;Edit Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Редактировать Себестоимость</translation>
     </message>
     <message>
         <source>&amp;Delete Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Удалить Себестоимость</translation>
     </message>
     <message>
         <source>Deletion of Costing Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>Удаление Элемента Себестоимости</translation>
     </message>
     <message>
         <source>&lt;p&gt;Before a Costing Element is deleted, the system will set the Actual Cost value to 0. This helps ensure Inventory is valued correctly. Once the 0 value Actual Cost is posted to Standard, the Costing Element will be removed.</source>
@@ -46630,7 +46630,7 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>&amp;Effective:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Актуальность:</translation>
     </message>
     <message>
         <source>EC&amp;N #:</source>
@@ -46642,7 +46642,7 @@ Report this to your Systems Administrator.</source>
     </message>
     <message>
         <source>&amp;Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Заменить</translation>
     </message>
 </context>
 <context>
@@ -48041,7 +48041,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <name>menuProducts</name>
     <message>
         <source>Products Tools</source>
-        <translation type="unfinished"></translation>
+        <translation>Инструментарий Продукции</translation>
     </message>
     <message>
         <source>&amp;Reports</source>
@@ -48069,19 +48069,19 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;Single Level...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Одноуровневое...</translation>
     </message>
     <message>
         <source>&amp;Indented...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Древовидно...</translation>
     </message>
     <message>
         <source>Summari&amp;zed...</source>
-        <translation type="unfinished"></translation>
+        <translation>Сум&amp;мированное...</translation>
     </message>
     <message>
         <source>Se&amp;quenced...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Последовательное...</translation>
     </message>
     <message>
         <source>&amp;Where Used</source>
@@ -48101,7 +48101,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Capacity &amp;UOMs</source>
-        <translation type="unfinished"></translation>
+        <translation>Единицы &amp;Объёма</translation>
     </message>
     <message>
         <source>&amp;Item</source>
@@ -48173,19 +48173,19 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;Post Actual Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Задать Текущую Себестоимость</translation>
     </message>
     <message>
         <source>Post &amp;Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>Задать С&amp;тандартную Себестоимость</translation>
     </message>
     <message>
         <source>&amp;Costed BOM</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Ведомость Себестоимости Материалов</translation>
     </message>
     <message>
         <source>&amp;Item Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>Себестоимость &amp;Позиции</translation>
     </message>
     <message>
         <source>&amp;Summary...</source>
@@ -48197,7 +48197,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>&amp;User-Defined Costing Elements...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Пользовательские Элементы Себестоимости...</translation>
     </message>
     <message>
         <source>&amp;Master Information</source>
@@ -48221,7 +48221,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Standard &amp;Labor Rates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартная &amp;Стоимость Работ...</translation>
     </message>
     <message>
         <source>&amp;Work Centers...</source>
@@ -48237,7 +48237,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     </message>
     <message>
         <source>Unused &amp;Purchased Items...</source>
-        <translation type="unfinished"></translation>
+        <translation>Неиспользованные &amp;Закупленные...</translation>
     </message>
     <message>
         <source>Undefined &amp;Manufactured Items...</source>
@@ -49767,7 +49767,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     </message>
     <message>
         <source>Purchase Orders</source>
-        <translation>Заrазы поставщикам</translation>
+        <translation>Заказы поставщикам</translation>
     </message>
     <message>
         <source>Vouchers</source>
@@ -51199,11 +51199,11 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     </message>
     <message>
         <source>Single Level Bill of Materials...</source>
-        <translation type="unfinished"></translation>
+        <translation>Одноуровневая Ведомость Материалов...</translation>
     </message>
     <message>
         <source>Indented Bill of Materials...</source>
-        <translation type="unfinished"></translation>
+        <translation>Древовидная Ведомость Материалов...</translation>
     </message>
     <message>
         <source>Summarized Bill of Materials...</source>
@@ -51215,11 +51215,11 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     </message>
     <message>
         <source>Single Level Where Used...</source>
-        <translation type="unfinished"></translation>
+        <translation>Где Используется, Одноуровневое...</translation>
     </message>
     <message>
         <source>Indented Where Used...</source>
-        <translation type="unfinished"></translation>
+        <translation>Где Используется, Древовидное...</translation>
     </message>
     <message>
         <source>Pending BOM Changes...</source>
@@ -51227,11 +51227,11 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     </message>
     <message>
         <source>Operations by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>Операции по Цехам...</translation>
     </message>
     <message>
         <source>Standard Operations by Work Center...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартные Операции по Цехам...</translation>
     </message>
     <message>
         <source>Capacity UOMs by Class Code...</source>
@@ -51577,7 +51577,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     </message>
     <message>
         <source>Purchase Orders</source>
-        <translation>Заrазы поставщикам</translation>
+        <translation>Заказы поставщикам</translation>
     </message>
     <message>
         <source>Vouchers</source>
@@ -58037,7 +58037,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     </message>
     <message>
         <source>Purchase Orders</source>
-        <translation>Заrазы поставщикам</translation>
+        <translation>Заказы поставщикам</translation>
     </message>
     <message>
         <source>Number:</source>
@@ -58499,7 +58499,7 @@ What would you like to do?</source>
     </message>
     <message>
         <source>Cannot Create P/O</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Создать Заказ</translation>
     </message>
     <message>
         <source>A Purchase Order cannot be automatically created for this Item as there are no
@@ -58541,7 +58541,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     </message>
     <message>
         <source>C&amp;lose</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Закрыть</translation>
     </message>
     <message>
         <source>Destination</source>
@@ -58549,7 +58549,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     </message>
     <message>
         <source>Enter Purchase Order #</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите № Заказа</translation>
     </message>
     <message>
         <source>The Purchase Order number you entered is already in use. Please enter a different number.</source>
@@ -58557,7 +58557,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     </message>
     <message>
         <source>Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ поставщику</translation>
     </message>
     <message>
         <source>&amp;Save</source>
@@ -58585,7 +58585,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     </message>
     <message>
         <source>Receiving Whse.:</source>
-        <translation type="unfinished"></translation>
+        <translation>На Склад:</translation>
     </message>
     <message>
         <source>Order Date:</source>
@@ -58695,7 +58695,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Delete Purchase Order?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Заказ?</translation>
     </message>
     <message>
         <source>&lt;p&gt;Are you sure you want to delete this Purchase Order and all of its associated Line Items?</source>
@@ -58703,11 +58703,11 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Save Quick Entry Data?</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить Данные Быстрого Ввода?</translation>
     </message>
     <message>
         <source>Do you want to save your Quick Entry changes?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы Действительно Хотите Сохранить Измененные Данные Быстрого Ввода?</translation>
     </message>
     <message>
         <source>Removing row from view failed</source>
@@ -58715,19 +58715,19 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Quick Entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрый Ввод</translation>
     </message>
     <message>
         <source>Save Quick Entries</source>
-        <translation type="unfinished"></translation>
+        <translation>Сохранить Быстрый Ввод</translation>
     </message>
     <message>
         <source>Delete Quick Entry</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Быстрый Ввод</translation>
     </message>
     <message>
         <source>Print P/O on Save</source>
-        <translation type="unfinished"></translation>
+        <translation>Распечатать Заказ при Сохранении</translation>
     </message>
 </context>
 <context>
@@ -58746,11 +58746,11 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>No Item Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выбрана позиция</translation>
     </message>
     <message>
         <source>No Warehouse Selected</source>
-        <translation type="unfinished"></translation>
+        <translation>Не выбран Склад</translation>
     </message>
     <message>
         <source>Cannot Save Purchase Order Item</source>
@@ -58758,7 +58758,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Invalid Order Quantity</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильное Количество в Заказе</translation>
     </message>
     <message>
         <source>Invalid Due Date</source>
@@ -58770,7 +58770,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Invalid Item/Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильная Позиция/Склад</translation>
     </message>
     <message>
         <source>Purchase Order Item</source>
@@ -58814,15 +58814,15 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Vend. Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>Артикул Поставщика:</translation>
     </message>
     <message>
         <source>Vendor Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>Название Поставщика:</translation>
     </message>
     <message>
         <source>Vendor UOM:</source>
-        <translation type="unfinished"></translation>
+        <translation>Единицы Поставщика:</translation>
     </message>
     <message>
         <source>Inv./Vend. UOM Ratio:</source>
@@ -58834,7 +58834,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Min. Order Qty.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Мин.Кол.Заказа:</translation>
     </message>
     <message>
         <source>Order Qty. Mult.:</source>
@@ -58850,7 +58850,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Unit Price:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цена Ед:</translation>
     </message>
     <message>
         <source>Due Date:</source>
@@ -58878,7 +58878,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>&lt;p&gt;You must specify an Expense Category for this non-Inventory Item before you may save it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно Задать Категорию Затрат перед сохранением этой некаталожной позиции.</translation>
     </message>
     <message>
         <source>&lt;p&gt;You must select an Item Number before you may save.</source>
@@ -58937,11 +58937,11 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <name>purchaseOrderList</name>
     <message>
         <source>Purchase Orders</source>
-        <translation>Заrазы поставщикам</translation>
+        <translation>Заказы поставщикам</translation>
     </message>
     <message>
         <source>&amp;Purchase Orders:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Заказы поставщикам:</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -58961,15 +58961,15 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     </message>
     <message>
         <source>Agent</source>
-        <translation type="unfinished"></translation>
+        <translation>Агент</translation>
     </message>
     <message>
         <source>Order Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата заказа</translation>
     </message>
     <message>
         <source>First Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Первая Позиция</translation>
     </message>
 </context>
 <context>
@@ -60268,7 +60268,7 @@ the Source and the Target.</source>
     </message>
     <message>
         <source>&amp;Move</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Переместить</translation>
     </message>
     <message>
         <source>Source:</source>
@@ -60276,11 +60276,11 @@ the Source and the Target.</source>
     </message>
     <message>
         <source>Target:</source>
-        <translation type="unfinished"></translation>
+        <translation>Куда:</translation>
     </message>
     <message>
         <source>Qty. to Move:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кол.Перемещения:</translation>
     </message>
     <message>
         <source>Notes:</source>
@@ -60288,19 +60288,19 @@ the Source and the Target.</source>
     </message>
     <message>
         <source>Not Enough Qty.</source>
-        <translation type="unfinished"></translation>
+        <translation>Недостаточное Кол.</translation>
     </message>
     <message>
         <source>You cannot Relocate more inventory than available.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нельзя Перемещать Больше Чем Есть в Наличии.</translation>
     </message>
     <message>
         <source>Unknown Error</source>
-        <translation type="unfinished"></translation>
+        <translation>Неизвестная Ошибка</translation>
     </message>
     <message>
         <source>There was an unknown error encountered while trying to relocate this inventory.</source>
-        <translation type="unfinished"></translation>
+        <translation>При Перемещении Возникла Неизвестная Ошибка.</translation>
     </message>
 </context>
 <context>
@@ -60319,7 +60319,7 @@ the Source and the Target.</source>
     </message>
     <message>
         <source>Error Loading Report</source>
-        <translation type="unfinished"></translation>
+        <translation>Ошибка Загрузки Отчета</translation>
     </message>
     <message>
         <source>ERROR parsing content:
@@ -60328,11 +60328,11 @@ the Source and the Target.</source>
     </message>
     <message>
         <source>Report Definitions</source>
-        <translation type="unfinished"></translation>
+        <translation>Определения Отчёта</translation>
     </message>
     <message>
         <source>Report Definitions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Определения Отчёта:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -60399,7 +60399,7 @@ the Source and the Target.</source>
     </message>
     <message>
         <source>Cannot Find Credit Memo Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Найти Форму Балансовой Записки</translation>
     </message>
     <message>
         <source>The Invoice Form &apos;%1&apos; cannot be found.
@@ -60417,15 +60417,15 @@ is updated to remove any references to this Credit Memo Form or this Credit Memo
     </message>
     <message>
         <source>Re-Print Credit Memos</source>
-        <translation type="unfinished"></translation>
+        <translation>Перепечатать Балансовую Записку</translation>
     </message>
     <message>
         <source>Credit Memos:</source>
-        <translation type="unfinished"></translation>
+        <translation>Бал.Записки:</translation>
     </message>
     <message>
         <source>Credit Memo Copies</source>
-        <translation type="unfinished"></translation>
+        <translation>Копии Бал.Записок</translation>
     </message>
     <message>
         <source># of Copies:</source>
@@ -60484,7 +60484,7 @@ is updated to remove any references to this Credit Memo Form or this Credit Memo
     </message>
     <message>
         <source>Cannot Find Invoice Form</source>
-        <translation type="unfinished"></translation>
+        <translation>Не могу Найти Форму Счёта</translation>
     </message>
     <message>
         <source>The Invoice Form &apos;%1&apos; cannot be found.
@@ -60502,7 +60502,7 @@ is updated to remove any references to this Invoice Form or this Invoice Form is
     </message>
     <message>
         <source>Re-Print Invoices</source>
-        <translation type="unfinished"></translation>
+        <translation>Перепечатать cчета</translation>
     </message>
     <message>
         <source>Invoices:</source>
@@ -60510,7 +60510,7 @@ is updated to remove any references to this Invoice Form or this Invoice Form is
     </message>
     <message>
         <source>Invoice Copies:</source>
-        <translation type="unfinished"></translation>
+        <translation>Копии Счетов:</translation>
     </message>
     <message>
         <source># of Copies:</source>
@@ -60883,7 +60883,7 @@ to return from the selected W/O to Inventory.</source>
     </message>
     <message>
         <source>Qty. to Return:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кол.Возврата:</translation>
     </message>
 </context>
 <context>
@@ -60906,7 +60906,7 @@ to return from the selected W/O to Inventory.</source>
     </message>
     <message>
         <source>You must enter some Notes to describe this transaction.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите Заметки для Описания Этой Транзакции.</translation>
     </message>
     <message>
         <source>Error Reversing G/L Series</source>
@@ -64236,7 +64236,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>&amp;Effective:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Актуальность:</translation>
     </message>
     <message>
         <source>&amp;Build Date</source>
@@ -66619,7 +66619,7 @@ Please contact your Systems Administrator and report this issue.</source>
     </message>
     <message>
         <source>&amp;Alt. Capacity Units</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Альт. Единицы Объёма</translation>
     </message>
     <message>
         <source>Calendar:</source>
@@ -66659,7 +66659,7 @@ fields are correctly filled out before running the report.</source>
     </message>
     <message>
         <source>Report Parameters - Time Phased Load by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры отчёта - ВременнАя Загрузка Цехов</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -66687,7 +66687,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <source>The criteria you specified is not complete. Please make sure all
 fields are correctly filled out before running the report.</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы Задали не все Критерии для формирования Отчёта.</translation>
     </message>
     <message>
         <source>Report Definition Not Found</source>
@@ -75096,7 +75096,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     </message>
     <message>
         <source>Item Characteristics</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры Позиции</translation>
     </message>
     <message>
         <source>Notes</source>
@@ -75108,7 +75108,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     </message>
     <message>
         <source>Pending Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь Наличия</translation>
     </message>
     <message>
         <source>Show Pending Availability as Indented BOM</source>
@@ -76695,7 +76695,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <name>updateActualCostsByItem</name>
     <message>
         <source>Update Standard Costs By Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить Стандартную Себестоимость по Позиции</translation>
     </message>
     <message>
         <source>&amp;Roll Up Standard Costs</source>
@@ -76711,7 +76711,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>Update Actual Costs by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновление Текущей Себестоимости по Позициям</translation>
     </message>
     <message>
         <source>&amp;Roll Up Actual Costs</source>
@@ -76767,34 +76767,34 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     </message>
     <message>
         <source>&amp;Select all Costs</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Выб&amp;рать Все</translation>
     </message>
 </context>
 <context>
     <name>updateCreditStatusByCustomer</name>
     <message>
         <source>In Good Standing</source>
-        <translation type="unfinished"></translation>
+        <translation>На Хорошем Счету</translation>
     </message>
     <message>
         <source>On Credit Warning</source>
-        <translation type="unfinished"></translation>
+        <translation>По Согласованию С Руководством</translation>
     </message>
     <message>
         <source>On Credit Hold</source>
-        <translation type="unfinished"></translation>
+        <translation>Отгрузки Запрещены</translation>
     </message>
     <message>
         <source>Update Credit Status by Customer</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновление Кредитного Статуса Клиента</translation>
     </message>
     <message>
         <source>Current Credit Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий Статус для Кредитования:</translation>
     </message>
     <message>
         <source>New Credit Status</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый Статус</translation>
     </message>
     <message>
         <source>&amp;Cancel</source>
@@ -80199,15 +80199,15 @@ that the selected Work Order does.</source>
     </message>
     <message>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <source>Quit the application?</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть Программу?</translation>
     </message>
     <message>
         <source>Are you sure you want to quit the application?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы Уверены, что хотите Закрыть Программу?</translation>
     </message>
     <message>
         <source>User %1 clocked out of %2 at %3
@@ -80276,11 +80276,11 @@ The Work Order may be closed</source>
     </message>
     <message>
         <source>Cannot Save Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Невозможно Сохранить Цех</translation>
     </message>
     <message>
         <source>You must select a Warehouse for this Work Center before you may save it.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно выбрать Склад для этого цеха перед сохранением.</translation>
     </message>
     <message>
         <source>A System Error occurred at %1::%2.</source>
@@ -80292,7 +80292,7 @@ The Work Order may be closed</source>
     </message>
     <message>
         <source>Work Center #:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цех №:</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -80300,7 +80300,7 @@ The Work Order may be closed</source>
     </message>
     <message>
         <source>Department:</source>
-        <translation type="unfinished"></translation>
+        <translation>Отдел:</translation>
     </message>
     <message>
         <source>Warehouse:</source>
@@ -80407,7 +80407,7 @@ The Work Order may be closed</source>
     </message>
     <message>
         <source>Work Cntr.</source>
-        <translation type="unfinished"></translation>
+        <translation>Цех.</translation>
     </message>
     <message>
         <source>Description</source>
@@ -80415,27 +80415,27 @@ The Work Order may be closed</source>
     </message>
     <message>
         <source>Edit Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Цех</translation>
     </message>
     <message>
         <source>View Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Цеха</translation>
     </message>
     <message>
         <source>Copy Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать Цех</translation>
     </message>
     <message>
         <source>Delete Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Цех</translation>
     </message>
     <message>
         <source>Work Centers</source>
-        <translation type="unfinished"></translation>
+        <translation>Цеха</translation>
     </message>
     <message>
         <source>Work Centers:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цеха:</translation>
     </message>
     <message>
         <source>&amp;Close</source>
@@ -80907,7 +80907,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <name>workcenterList</name>
     <message>
         <source>Work Center List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список Цехов</translation>
     </message>
     <message>
         <source>S&amp;earch for:</source>
@@ -80923,7 +80923,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     </message>
     <message>
         <source>&amp;Work Centers:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Цеха:</translation>
     </message>
     <message>
         <source>Work Center</source>
