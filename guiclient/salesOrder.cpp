@@ -3534,7 +3534,7 @@ void salesOrder::precheckCreditCard()
     {
 // Oops we don't have a usable pemfile        
       QMessageBox::warning( this, tr("Missing PEM FIle"),
-           tr("<p>Unable to verify that you have a PEM file for this"
+           tr("<p>Unable to verify that you have a PEM file for this "
               "application. Please contact your local support.") );
      _CCCVV->setFocus();
      _passPrecheck = false;
