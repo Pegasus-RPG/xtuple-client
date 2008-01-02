@@ -197,7 +197,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _mode = cNew;
       
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-      connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
 
       q.prepare( "SELECT (COALESCE(MAX(raitem_linenumber), 0) + 1) AS n_linenumber "
                  "FROM raitem "
@@ -264,7 +263,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 	  _disposition->setEnabled(FALSE);
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
-      connect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
  
       _save->setFocus();
     }
