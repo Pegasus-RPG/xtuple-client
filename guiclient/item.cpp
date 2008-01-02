@@ -427,8 +427,6 @@ void item::saveCore()
 
 void item::sSave()
 {
-  bool _zeroCosts = FALSE;
-  bool _inactivateSites = FALSE;
   QString sql;
   QString itemNumber = _itemNumber->text().stripWhiteSpace().upper();
 
@@ -550,8 +548,6 @@ void item::sSave()
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
         return;
-	  else
-	    _zeroCosts = TRUE;
 	}
 
     q.prepare( "SELECT itemsite_id "
@@ -570,10 +566,7 @@ void item::sSave()
                                    "Do you wish to continue saving and inactivate the Item Sites?"),
                                 QMessageBox::Ok,
                                 QMessageBox::Cancel | QMessageBox::Escape | QMessageBox::Default ) == QMessageBox::Cancel)
-      {
         return;
-      }
-	  _inactivateSites = TRUE;
     }
   }
 
@@ -624,11 +617,6 @@ void item::sSave()
                "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
                "    item_comments=:item_comments, item_extdescrip=:item_extdescrip "
                "WHERE (item_id=:item_id);";
-
-  if (_zeroCosts)
-    sql += "SELECT updateCost(itemcost_id, 0) FROM itemcost WHERE (itemcost_item_id=:item_id);";
-  if (_inactivateSites)
-    sql += "UPDATE itemsite SET itemsite_active=false WHERE (itemsite_item_id=:item_id);";
   q.prepare(sql);
   q.bindValue(":item_id", _itemid);
   q.bindValue(":item_number", itemNumber);
@@ -1710,7 +1698,7 @@ void item::sFillUOMList()
   _uomconv->clear();
   q.prepare("SELECT itemuomconv_id, itemuom_id,"
             "       (nuom.uom_name||'/'||duom.uom_name) AS uomname, uomtype_name,"
-            "       (itemuomconv_from_value||'/'||itemuomconv_to_value) AS uomvalue,"
+            "       (formatUOMRatio(itemuomconv_from_value)||'/'||formatUOMRatio(itemuomconv_to_value)) AS uomvalue,"
             "       formatBoolYN(uomconv_id IS NOT NULL) AS global,"
             "       formatBoolYN(itemuomconv_fractional) AS fractional"
             "  FROM item"

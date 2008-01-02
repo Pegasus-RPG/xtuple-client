@@ -298,6 +298,9 @@
                 <height>0</height>
                </size>
               </property>
+              <property name="currencyEditable" stdset="0" >
+               <bool>false</bool>
+              </property>
              </widget>
             </item>
             <item>
