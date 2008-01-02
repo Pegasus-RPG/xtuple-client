@@ -235,6 +235,11 @@ void boo::sPrint()
   ParameterList params;
   params.append("item_id", _item->id());
   params.append("revision_id", _revision->id());
+  if (_showExpired->isChecked())
+    params.append("showExpired");
+
+  if (_showFuture->isChecked())
+    params.append("showFuture");
 
   orReport report("BillOfOperations", params);
   if (report.isValid())
