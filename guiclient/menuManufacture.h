@@ -127,6 +127,7 @@ class menuManufacture : public QObject
     void sDspWoScheduleByClassCode();
     void sDspWoScheduleByPlannerCode();
     void sDspWoScheduleByWorkCenter();
+    void sDspWoScheduleByWorkOrder();
     void sDspWoBufferStatusByItem();
     void sDspWoBufferStatusByItemGroup();
     void sDspWoBufferStatusByClassCode();

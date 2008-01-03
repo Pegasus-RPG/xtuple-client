@@ -105,6 +105,7 @@
 
 #include "dspWoScheduleByItem.h"
 #include "dspWoScheduleByParameterList.h"
+#include "dspWoScheduleByWorkOrder.h"
 #include "dspWoBufferStatusByParameterList.h"
 #include "dspWoHistoryByItem.h"
 #include "dspWoHistoryByNumber.h"
@@ -244,6 +245,7 @@ menuManufacture::menuManufacture(OpenMFGGUIClient *Pparent) :
     { "wo.dspWoScheduleByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspWoScheduleByWorkCenter()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("Routings"), NULL },
     { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
     { "wo.dspWoScheduleByItem",		tr("by &Item..."),	SLOT(sDspWoScheduleByItem()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoScheduleByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoScheduleByWorkOrder()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
     //  Production | Reports | Buffer Status
     { "menu",				tr("&Buffer Status"),	(char*)reportsBufrStsMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("BufferMgt"), NULL },
@@ -626,6 +628,11 @@ void menuManufacture::sDspWoScheduleByWorkCenter()
   dspWoScheduleByParameterList *newdlg = new dspWoScheduleByParameterList();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void menuManufacture::sDspWoScheduleByWorkOrder()
+{
+  omfgThis->handleNewWindow(new dspWoScheduleByWorkOrder());
 }
 
 void menuManufacture::sDspWoBufferStatusByItem()

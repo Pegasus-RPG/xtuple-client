@@ -189,7 +189,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspWoMaterialsByItem.ui dspWoMaterialsByWorkOrder.ui                                   \
                dspWoOperationBufrStsByWorkCenter.ui                                                   \
                dspWoOperationsByWorkCenter.ui dspWoOperationsByWorkOrder.ui                           \
-               dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui                                 \
+               dspWoScheduleByItem.ui dspWoScheduleByParameterList.ui dspWoScheduleByWorkOrder.ui     \
                dspWoSoStatusMismatch.ui dspWoSoStatus.ui                                              \
                duplicateAccountNumbers.ui                                                             \
                ediForm.ui ediFormDetail.ui ediProfile.ui ediProfiles.ui                               \
@@ -495,7 +495,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                dspWoMaterialsByItem.h dspWoMaterialsByWorkOrder.h                                     \
                dspWoOperationBufrStsByWorkCenter.h                                                    \
                dspWoOperationsByWorkCenter.h dspWoOperationsByWorkOrder.h                             \
-               dspWoScheduleByItem.h dspWoScheduleByParameterList.h                                   \
+               dspWoScheduleByItem.h dspWoScheduleByParameterList.h dspWoScheduleByWorkOrder.h        \
                dspWoSoStatusMismatch.h dspWoSoStatus.h                                                \
                duplicateAccountNumbers.h                                                              \
                ediForm.h ediFormDetail.h ediProfile.h ediProfiles.h                                   \
@@ -803,7 +803,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                dspWoHistoryByClassCode.cpp dspWoHistoryByItem.cpp dspWoHistoryByNumber.cpp            \
                dspWoMaterialsByItem.cpp dspWoMaterialsByWorkOrder.cpp                                 \
                dspWoOperationsByWorkCenter.cpp dspWoOperationsByWorkOrder.cpp                         \
-               dspWoScheduleByItem.cpp dspWoScheduleByParameterList.cpp                               \
+               dspWoScheduleByItem.cpp dspWoScheduleByParameterList.cpp dspWoScheduleByWorkOrder.cpp  \
                dspWoSoStatusMismatch.cpp dspWoSoStatus.cpp                                            \
                dspCapacityBufferStatusByWorkCenter.cpp dspInventoryBufferStatusByParameterList.cpp    \
                dspPoItemsByBufferStatus.cpp dspWoBufferStatusByParameterList.cpp                      \

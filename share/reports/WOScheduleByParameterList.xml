@@ -39,6 +39,10 @@ WHERE ( (wo_itemsite_id=itemsite_id)
 
 &lt;? if exists(&quot;item_id&quot;) ?>
  AND (itemsite_item_id=&lt;? value(&quot;item_id&quot;) ?>)
+&lt;? elseif exists(&quot;wo_id&quot;) ?>
+ AND (wo_number IN (SELECT wo_number
+                    FROM wo
+                    WHERE (wo_id=&lt;? value(&quot;wo_id&quot;) ?>)))
 &lt;? endif ?>
 
 &lt;? if exists(&quot;plancode_id&quot;) ?>
