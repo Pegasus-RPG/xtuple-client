@@ -991,7 +991,7 @@
     <message>
         <location filename="" line="0"/>
         <source>Work Order %1 is closed.</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ-наряд  %1 закрыт.</translation>
     </message>
 </context>
 <context>
@@ -1349,7 +1349,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2302,7 +2302,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation>Номер позиции:</translation>
+        <translation>Артикул:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2320,7 +2320,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2530,28 +2530,28 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Initializing Internal Data</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Внутренних Связей</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A Critical Error occurred at %1::%2.
 Please immediately log and contact your Systems Adminitrator.</source>
-        <translation type="unfinished"></translation>
+        <translation>В %1::%2 произошла критическая ошибка.Немедленно сообщите об этом системному администратору.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Loading the Background Image</source>
-        <translation type="unfinished"></translation>
+        <translation>Загрузка Фонового Изображения</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing Internal Timers</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Внутренних Таймеров</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Completing Initialzation</source>
-        <translation type="unfinished"></translation>
+        <translation>Завершение Инициализации</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2566,72 +2566,72 @@ Please immediately log and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the I/M Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация I/M Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the P/D Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация P/D Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the M/S Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация M/S Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the C/P Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация C/P Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the W/O Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация W/O Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the P/O Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация P/O Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the S/O Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация S/O Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the S/R Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация S/R Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the S/A Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация S/A Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the P/M Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация P/M Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the A/P Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация A/P Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the A/R Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация A/R Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the G/L Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация G/L Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the System Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Системного Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2641,22 +2641,22 @@ Please immediately log and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Failed to open URL</source>
-        <translation type="unfinished"></translation>
+        <translation>Не могу открыть URL</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>OK</source>
-        <translation type="unfinished"></translation>
+        <translation>OK</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Справка</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Quick Help</source>
-        <translation type="unfinished"></translation>
+        <translation>Быстрая Справка</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2672,17 +2672,17 @@ point to the browser executable.</source>
     <message>
         <location filename="" line="0"/>
         <source>%1 Version %2 - %3 on %4/%5 AS %6</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 Версия %2 - %3 Подключен к БД %4/%5 Пользователь %6</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the CRM Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация CRM Модуля</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the Products Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Модуля Продукция</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2692,27 +2692,27 @@ point to the browser executable.</source>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the Scheduling Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Модуля Расписаний</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the Purchase Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Модуля Закупок</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the Manufacture Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Модуля Производство</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the Sales Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Модуля Продажи</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Initializing the Accounting Module</source>
-        <translation type="unfinished"></translation>
+        <translation>Инициализация Модуля Бухгалтерии</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2726,12 +2726,12 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Opportunity</source>
-        <translation type="unfinished"></translation>
+        <translation>Возможность</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Opportunities</source>
-        <translation type="unfinished"></translation>
+        <translation>Возможности</translation>
     </message>
 </context>
 <context>
@@ -2780,7 +2780,7 @@ Please immediately log out and contact your Systems Adminitrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation>Номер позиции:</translation>
+        <translation>Артикул:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3354,7 +3354,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship-To #:</source>
-        <translation type="unfinished"></translation>
+        <translation>Доставка в:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3706,7 +3706,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number:</source>
-        <translation>Номер позиции:</translation>
+        <translation>Артикул:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7023,7 +7023,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7093,7 +7093,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortment</source>
-        <translation type="unfinished"></translation>
+        <translation>Номенклатура</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7148,7 +7148,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortment Components:</source>
-        <translation type="unfinished"></translation>
+        <translation>Компоненты Номенклатуры:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7221,7 +7221,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortment Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Позиция Номенклатуры</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7249,7 +7249,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7259,7 +7259,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Assortment Definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Определение Номенклатуры</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7279,7 +7279,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortments</source>
-        <translation type="unfinished"></translation>
+        <translation>Номенклатура</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7304,7 +7304,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortments:</source>
-        <translation type="unfinished"></translation>
+        <translation>Номенклатура:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8079,7 +8079,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8302,7 +8302,7 @@ for the selected Co/By-Product without first expiring the other Breeder BOM Item
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8489,7 +8489,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8499,7 +8499,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Коэффициент</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8662,7 +8662,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9279,7 +9279,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11475,7 +11475,7 @@ You must reassign these Items before you may delete the selected Class Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order:</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ поставщику:</translation>
     </message>
 </context>
 <context>
@@ -13996,7 +13996,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Existing Assortment Definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Существующее Определение Номенклатуры</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14022,7 +14022,7 @@ You must first delete target Assortment Definition before attempting copy an exi
     <message>
         <location filename="" line="0"/>
         <source>Copy Assortment Definition</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать Определение Номенклатуры</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14467,17 +14467,17 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Could Not Copy Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Не могу скопировать заказ поставщику</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Copy Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Копировать Заказ Поставщику</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ поставщику:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14497,7 +14497,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Phone:</source>
-        <translation type="unfinished"></translation>
+        <translation>Тел. Поставщика:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14726,7 +14726,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14736,7 +14736,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>Кол.На</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15513,7 +15513,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16734,7 +16734,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy to Ship-to -&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>Скопировать данные -&gt;</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16759,7 +16759,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reason Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Код Причины:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16769,7 +16769,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Line Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Список позиций:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17733,7 +17733,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Основная</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17743,17 +17743,17 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Symbol</source>
-        <translation type="unfinished"></translation>
+        <translation>Символ</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Abbreviation</source>
-        <translation type="unfinished"></translation>
+        <translation>Сокращение</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Additional Configuration Required</source>
-        <translation type="unfinished"></translation>
+        <translation>Требуется Дополнительная Настройка</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17841,7 +17841,7 @@ posting any transactions in the system.</source>
     <message>
         <location filename="" line="0"/>
         <source>Abbreviation Too Long</source>
-        <translation type="unfinished"></translation>
+        <translation>Слишком Длинное Сокращение</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17882,7 +17882,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Base Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Основная Валюта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17902,7 +17902,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Select</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать</translation>
     </message>
 </context>
 <context>
@@ -17915,7 +17915,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Missing Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует Валюта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17925,7 +17925,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Missing Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует Дата Начала</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17935,7 +17935,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Missing End Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует Дата Окончания</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17945,7 +17945,7 @@ ISO abbreviations are exactly 3 characters long.</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Date Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильный Порядок Дат</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17961,12 +17961,12 @@ Please check the values of these dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Currency Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Курс Обмена Валюты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Exchange Rate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Курс Валюты:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17999,7 +17999,7 @@ Please check the values of these dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Курс Валюты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18024,17 +18024,17 @@ Please check the values of these dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Base x Exchange Rate = Foreign</source>
-        <translation type="unfinished"></translation>
+        <translation>Базовая x Курс = Иностранная Валюта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Foreign x Exchange Rate = Base</source>
-        <translation type="unfinished"></translation>
+        <translation>Иностранная x Курс =  Основная Валюта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>No Exchange Rate Direction Defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Не определено направление обмена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18047,7 +18047,7 @@ and make your selection.</source>
     <message>
         <location filename="" line="0"/>
         <source>No Foreign Currencies Defined</source>
-        <translation type="unfinished"></translation>
+        <translation>Не определены иностранные валюты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18077,22 +18077,22 @@ and make your selection.</source>
     <message>
         <location filename="" line="0"/>
         <source>Currency Exchange Rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсы Обмена Валют</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Base Currency:</source>
-        <translation type="unfinished"></translation>
+        <translation>Основная валюта:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>NONE DEFINED</source>
-        <translation type="unfinished"></translation>
+        <translation>НЕОПРЕДЕЛЕНО</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Foreign Currencies:</source>
-        <translation type="unfinished"></translation>
+        <translation>Иностранные Валюты:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18132,7 +18132,7 @@ and make your selection.</source>
     <message>
         <location filename="" line="0"/>
         <source>New Currency</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая Валюта</translation>
     </message>
 </context>
 <context>
@@ -20307,7 +20307,7 @@ You must delete these Rates before you may delete the selected Destination.</sou
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -20317,7 +20317,7 @@ You must delete these Rates before you may delete the selected Destination.</sou
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per.</source>
-        <translation type="unfinished"></translation>
+        <translation>Кол.На.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -21461,7 +21461,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22417,7 +22417,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22530,7 +22530,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22761,7 +22761,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22859,7 +22859,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -22952,7 +22952,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23661,7 +23661,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -23744,7 +23744,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24163,7 +24163,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24178,7 +24178,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего на</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24213,22 +24213,22 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>View Item Costing...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стоимость Позиций...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Общ.Себестоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Фактическая Стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартная стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24271,7 +24271,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24321,22 +24321,22 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>View Item Costing...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стоимость Позиций...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Общ.Себестоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Фактическая Стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартная стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24374,7 +24374,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24389,7 +24389,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Ext&apos;d Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего на</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24693,7 +24693,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26513,7 +26513,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26671,7 +26671,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26819,7 +26819,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26834,7 +26834,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Commission</source>
-        <translation type="unfinished"></translation>
+        <translation>Комиссия</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26849,17 +26849,17 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Earned Commissions</source>
-        <translation type="unfinished"></translation>
+        <translation>Заработанные Комиссионные</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>All Sales Reps.</source>
-        <translation type="unfinished"></translation>
+        <translation>Все Торг.преды.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранные Торг.Преды.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26879,7 +26879,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Earned Commissions:</source>
-        <translation type="unfinished"></translation>
+        <translation>Заработанные Комиссионные:</translation>
     </message>
 </context>
 <context>
@@ -26897,12 +26897,12 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Descriptions</source>
-        <translation type="unfinished"></translation>
+        <translation>Описания</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -26970,7 +26970,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27369,7 +27369,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27620,7 +27620,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Заказа Поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28044,7 +28044,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28059,7 +28059,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext.Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего на</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28132,7 +28132,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28147,7 +28147,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего на</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28348,27 +28348,27 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Running Availability...</source>
-        <translation>Наличие на данный момент</translation>
+        <translation>Наличие на данный момент...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create P/R...</source>
-        <translation>Создать заказ на закупку</translation>
+        <translation>Создать заказ на закупку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create P/O...</source>
-        <translation>Разместить заказ на закупку</translation>
+        <translation>Разместить заказ на закупку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create W/O...</source>
-        <translation>Создать наряд-заказ</translation>
+        <translation>Создать наряд-заказ...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Issue Count Tag...</source>
-        <translation>Создать счётчик</translation>
+        <translation>Создать счётчик...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28383,7 +28383,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Valid Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите правильные даты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28399,7 +28399,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28482,7 +28482,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28623,7 +28623,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28691,7 +28691,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28966,7 +28966,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29044,7 +29044,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29162,7 +29162,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29503,7 +29503,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29676,7 +29676,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30263,7 +30263,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30497,7 +30497,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30728,7 +30728,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30886,7 +30886,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30924,7 +30924,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30977,7 +30977,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31135,7 +31135,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31288,7 +31288,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31416,7 +31416,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31811,7 +31811,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31934,7 +31934,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31954,7 +31954,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Allocations</source>
-        <translation type="unfinished"></translation>
+        <translation>Места Хранения</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32517,7 +32517,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32542,7 +32542,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ведомость по Операциям...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32552,12 +32552,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Bill of Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Ведомость по Операциям...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Operations by Work Center</source>
-        <translation type="unfinished"></translation>
+        <translation>Операции по Цехам</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32582,7 +32582,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Operations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Операции:</translation>
     </message>
 </context>
 <context>
@@ -32615,7 +32615,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Sales Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Заказ Покупателя...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32625,12 +32625,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Quote...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Резерв...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Quote...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Резерва...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32793,7 +32793,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Change W/O Quantity...</source>
-        <translation>Изменить кол. нарядов</translation>
+        <translation>Изменить кол. нарядов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32808,7 +32808,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32828,7 +32828,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Date Range:</source>
-        <translation type="unfinished"></translation>
+        <translation>Даты:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33315,7 +33315,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33428,7 +33428,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33629,7 +33629,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33737,7 +33737,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34081,7 +34081,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order History</source>
-        <translation type="unfinished"></translation>
+        <translation>История Закупок</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34129,7 +34129,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34355,7 +34355,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34518,7 +34518,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34583,7 +34583,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Кол...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34676,7 +34676,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34736,17 +34736,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Кол...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Close Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрытб позицию...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть Позицию...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35012,7 +35012,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35072,17 +35072,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Change Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Кол...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Close Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>Закрыть Позицию...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Open Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть Позицию...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35278,7 +35278,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35464,7 +35464,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35627,7 +35627,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35996,7 +35996,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36252,7 +36252,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36355,7 +36355,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36852,7 +36852,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37123,7 +37123,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Order Up To Qty:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пополнить до:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37186,7 +37186,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37314,7 +37314,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37595,7 +37595,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37610,17 +37610,17 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Категории Продукции</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Типам Клиентов</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Group</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Группам Клиентов</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37743,7 +37743,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37808,7 +37808,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Торгпредам.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37871,7 +37871,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -37961,7 +37961,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Ship-To</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Адресам Доставки</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38594,7 +38594,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38968,7 +38968,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39164,7 +39164,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39428,7 +39428,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39483,7 +39483,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39531,7 +39531,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39546,7 +39546,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего на</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39945,7 +39945,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Заказа Поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40146,7 +40146,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40161,17 +40161,17 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Min. Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Мин.Цена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Max. Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Макс.Цена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Avg. Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Средн.Цена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40352,7 +40352,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40367,17 +40367,17 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Min. Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Мин.Цена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Max. Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Макс.Цена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Avg. Price</source>
-        <translation type="unfinished"></translation>
+        <translation>Средн.Цена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40515,7 +40515,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40641,7 +40641,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -40797,7 +40797,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41028,7 +41028,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41797,7 +41797,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41812,7 +41812,7 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Transactions...</source>
-        <translation type="unfinished"></translation>
+        <translation>Транзакции...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42331,7 +42331,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -42913,7 +42913,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43026,7 +43026,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43139,7 +43139,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43217,7 +43217,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43285,7 +43285,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43451,7 +43451,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43534,7 +43534,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43735,7 +43735,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Amount</source>
-        <translation>Количество:</translation>
+        <translation>Количество</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43785,7 +43785,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Please select a valid Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожалуйста введите правильного Поставщика.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43810,7 +43810,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor History</source>
-        <translation type="unfinished"></translation>
+        <translation>История Поставщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43928,7 +43928,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Заказа Поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44061,7 +44061,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45189,7 +45189,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45295,7 +45295,7 @@ selected W/O Operation?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45930,7 +45930,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46273,7 +46273,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46361,7 +46361,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47127,7 +47127,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47260,7 +47260,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49412,12 +49412,12 @@ but you may deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ поставщику</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Наряд-заказ</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52088,7 +52088,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer P/N:</source>
-        <translation type="unfinished"></translation>
+        <translation>Артикул Поставщика:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52372,7 +52372,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52387,7 +52387,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Scheduled Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Запланировано</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52555,7 +52555,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52782,12 +52782,12 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ratio</source>
-        <translation type="unfinished"></translation>
+        <translation>Коэффициент</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53507,7 +53507,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53603,7 +53603,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Source/Destination</source>
-        <translation type="unfinished"></translation>
+        <translation>Откуда/Куда</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53683,7 +53683,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53698,7 +53698,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Qty. Per</source>
-        <translation type="unfinished"></translation>
+        <translation>Всего на</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53753,7 +53753,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>From Area</source>
-        <translation type="unfinished"></translation>
+        <translation>Откуда</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53763,7 +53763,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>To Area</source>
-        <translation type="unfinished"></translation>
+        <translation>Куда</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53808,7 +53808,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Location</source>
-        <translation>Расположение:</translation>
+        <translation>Расположение</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53823,7 +53823,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Expiration</source>
-        <translation type="unfinished"></translation>
+        <translation>Устаревание</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53888,17 +53888,17 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Total Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Общ.Себестоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Фактическая Стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартная стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53933,7 +53933,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Valid Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите правильные данные</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53959,12 +53959,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Заказ...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Work Order Details...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Деталей Наряда...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53984,27 +53984,27 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Running Availability...</source>
-        <translation>Наличие на данный момент</translation>
+        <translation>Наличие на данный момент...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create P/R...</source>
-        <translation>Создать заказ на закупку</translation>
+        <translation>Создать заказ на закупку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create P/O...</source>
-        <translation>Разместить заказ на закупку</translation>
+        <translation>Разместить заказ на закупку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Create W/O...</source>
-        <translation>Создать наряд-заказ</translation>
+        <translation>Создать наряд-заказ...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Issue Count Tag...</source>
-        <translation>Создать счётчик</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54014,17 +54014,17 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Substitute Availability...</source>
-        <translation>Просмотр доступных замен...</translation>
+        <translation>Просмотр Доступных Замен...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Maintain Item Costs...</source>
-        <translation>Задать стоимость позиции</translation>
+        <translation>Задать Стоимость Позиций...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Item Costing...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стоимость Позиций...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54099,12 +54099,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Planned Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>Отобразить Запланированные Заказы</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>QOH:</source>
-        <translation type="unfinished"></translation>
+        <translation>В наличии:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54114,12 +54114,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Reorder Level:</source>
-        <translation type="unfinished"></translation>
+        <translation>Кол.дозаказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Up To Qty:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пополнить до:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54144,7 +54144,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54159,7 +54159,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cutoff Date:</source>
-        <translation type="unfinished">На Дату:</translation>
+        <translation>На Дату:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54224,7 +54224,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>История</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54244,7 +54244,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Locations:</source>
-        <translation type="unfinished"></translation>
+        <translation>Места Хранения:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54656,7 +54656,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55201,7 +55201,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Pricing Schedules</source>
-        <translation type="unfinished"></translation>
+        <translation>Прайс Расписание</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55279,7 +55279,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Search for Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск Позиции</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55289,17 +55289,17 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Искать по Артикулу</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по Описание 1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по Описание 2</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55314,17 +55314,17 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>&amp;Select</source>
-        <translation>&amp;Выбрать</translation>
+        <translation>Выб&amp;рать</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>Пози&amp;ции:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55342,7 +55342,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Location</source>
-        <translation>Расположение:</translation>
+        <translation>Расположение</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55352,7 +55352,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Allowed</source>
-        <translation type="unfinished"></translation>
+        <translation>Разрешён</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55557,12 +55557,12 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Location:</source>
-        <translation>Расположение</translation>
+        <translation>Расположение:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>User-Defined:</source>
-        <translation type="unfinished"></translation>
+        <translation>Опр.Пользователем:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55577,7 +55577,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Cost Cate&amp;gory:</source>
-        <translation type="unfinished"></translation>
+        <translation>Категория Се&amp;бестоимости:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55695,7 +55695,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56098,7 +56098,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56138,22 +56138,22 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Искать по Артикулу</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 1</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по Описание 1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Description 2</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по Описание 2</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Vend. Item Numbers</source>
-        <translation type="unfinished"></translation>
+        <translation>Искать по Артикулу Поставщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56163,7 +56163,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through Vend. Description</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск по Описанию Поставщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56186,7 +56186,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56344,7 +56344,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56479,7 +56479,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Assortment</source>
-        <translation type="unfinished"></translation>
+        <translation>Номенклатура</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56898,7 +56898,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56918,7 +56918,7 @@ You must reassign the Locales for these Users before you may delete the selected
     <message>
         <location filename="" line="0"/>
         <source>Select a Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать Склад</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59189,7 +59189,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Order Up To Levels</source>
-        <translation type="unfinished"></translation>
+        <translation>Пополнить &amp;До</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59843,7 +59843,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Заказ &amp;поставщику</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59953,7 +59953,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Purchase Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Заказы поставщикам</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59973,7 +59973,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order &amp;History...</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;История Закупок...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60256,7 +60256,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by Customer &amp;Type...</source>
-        <translation>По &amp;Типу Клиента...</translation>
+        <translation>по &amp;Типу Клиента...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60306,12 +60306,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by Customer &amp;Group...</source>
-        <translation>По &amp;Группе Клиента...</translation>
+        <translation>по &amp;Группе Клиента...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by Sales &amp;Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>по &amp;Заказам Продаж...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60331,12 +60331,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Earned Commissions...</source>
-        <translation type="unfinished"></translation>
+        <translation>Заработанн&amp;ые Комиссионные...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>B&amp;rief Earned Commissions...</source>
-        <translation type="unfinished"></translation>
+        <translation>Заработанные Комиссионные &amp;Кратко...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60366,12 +60366,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>по Тор&amp;г.предам...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by S&amp;hip-To...</source>
-        <translation type="unfinished"></translation>
+        <translation>по &amp;Адресам Доставки...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60461,7 +60461,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update List Prices...</source>
-        <translation>&amp;Обновить прайслист...</translation>
+        <translation>&amp;Общесистемное Изменение Прайса...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60531,12 +60531,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Ship &amp;Vias...</source>
-        <translation type="unfinished"></translation>
+        <translation>Грузопере&amp;возчики...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipping &amp;Charge Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>Типы Тарифов До&amp;ставки...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60551,7 +60551,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Sales Cate&amp;gories...</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории &amp;Продаж...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61523,7 +61523,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Print Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать Заказа поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62748,7 +62748,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Quantities On Hand by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>Факт.Наличие по Позиции...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62868,22 +62868,22 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Warehouses...</source>
-        <translation type="unfinished"></translation>
+        <translation>Склады...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Warehouse Locations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Места Хранения...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cost Categories...</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории Себестоимости...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Expense Categories...</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории Затрат...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63013,7 +63013,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>Склад...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63036,27 +63036,27 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Currency...</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая Валюта...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Currencies...</source>
-        <translation type="unfinished"></translation>
+        <translation>Валюты...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Exchange Rate...</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить Курс Обмена...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Currencies</source>
-        <translation type="unfinished"></translation>
+        <translation>Валюты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Exchange Rates</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсы Валюты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63407,7 +63407,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Item Costs by Class Code...</source>
-        <translation>Себестоимость Позиций По Коду Класса...</translation>
+        <translation>Себестоимость Позиций по Коду Класса...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63422,7 +63422,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Maintain Item Costs...</source>
-        <translation>Задать стоимость позиции</translation>
+        <translation>Задать Стоимость Позиции...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63537,37 +63537,37 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Class Codes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Коды Класса...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Product Categories...</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории Продукции...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Characteristics...</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Labor Rates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартная Стоимость Работ...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Work Centers...</source>
-        <translation type="unfinished"></translation>
+        <translation>Цеха...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Operations...</source>
-        <translation type="unfinished"></translation>
+        <translation>Стандартные Операции...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unused Purchased Items...</source>
-        <translation type="unfinished"></translation>
+        <translation>Неиспользованные Закупленные...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63592,17 +63592,17 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items</source>
-        <translation type="unfinished"></translation>
+        <translation>Пози&amp;ции</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Bills of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>Ведомость &amp;Материалов</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Bills of &amp;Operations</source>
-        <translation type="unfinished"></translation>
+        <translation>Ведомость по &amp;Операциям</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63612,7 +63612,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Costing</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Стоимость</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63645,22 +63645,22 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый Проект...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Projects...</source>
-        <translation type="unfinished"></translation>
+        <translation>Проекты...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Activity by Project...</source>
-        <translation type="unfinished"></translation>
+        <translation>Активность по Проектам...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Projects</source>
-        <translation type="unfinished"></translation>
+        <translation>Проекты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63703,7 +63703,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Print Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать Заказа поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63738,12 +63738,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Change Purchase Order Item Qty...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Количества в Закупке...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Add Comment to Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Доб. Коментарий к Заказу Поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64011,57 +64011,57 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>История продаж по Клиенту...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Bill-To Name...</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Плательщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Ship-To...</source>
-        <translation type="unfinished"></translation>
+        <translation>История продаж по Адресам Доставки...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Позициям...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Торгпредам...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Категории Продукции...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Type...</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Типам Клиентов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales History by Customer Group...</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж по Группам Клиентов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Краткая История продаж по Клиенту...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Customer Type...</source>
-        <translation type="unfinished"></translation>
+        <translation>Краткая История Продаж по Типам Клиентов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Brief Sales History by Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>Краткая История Продаж по Торгпредам...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64176,12 +64176,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Archive Sales History...</source>
-        <translation type="unfinished"></translation>
+        <translation>Архив Истории Продаж...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Restore Sales History...</source>
-        <translation type="unfinished"></translation>
+        <translation>Восстановить Историю Продаж...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64196,7 +64196,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Utilities</source>
-        <translation type="unfinished"></translation>
+        <translation>Утилиты</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64214,12 +64214,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Sales Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Заказ Покупателя...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List Open Sales Orders...</source>
-        <translation type="unfinished"></translation>
+        <translation>Открыть Список Заказов Покупателей...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64234,7 +64234,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Packing List Batch...</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь на Упаковку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64244,12 +64244,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Quote...</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Резерв...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List Quotes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Список Резервов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64289,7 +64289,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Print Invoices...</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать cчетов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64299,12 +64299,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Re-Print Invoices...</source>
-        <translation type="unfinished"></translation>
+        <translation>Повторная Печать cчетов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Schedule Invoice for Email Delivery...</source>
-        <translation type="unfinished"></translation>
+        <translation>Доставка Счетов по Email...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64319,12 +64319,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Invoices</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Счёта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New Credit Memo...</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Балансовую Записку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64359,7 +64359,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Credit Memos</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Балансовые Записки</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64404,7 +64404,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Sales...</source>
-        <translation type="unfinished"></translation>
+        <translation>Продажи...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64464,7 +64464,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Customers by Characteristic...</source>
-        <translation type="unfinished"></translation>
+        <translation>Клиенты по Параметрам...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64519,7 +64519,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Partially Shipped Orders...</source>
-        <translation type="unfinished"></translation>
+        <translation>Частично Отгруженные Заказы...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64549,62 +64549,62 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Search for Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск Клиента...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customers...</source>
-        <translation type="unfinished"></translation>
+        <translation>Покупатели...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Groups...</source>
-        <translation type="unfinished"></translation>
+        <translation>Группы Покупателей...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>Типы Покупателей...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Reps...</source>
-        <translation type="unfinished"></translation>
+        <translation>Торг.преды...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipping Zones...</source>
-        <translation type="unfinished"></translation>
+        <translation>Зоны Доставки...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ship Vias...</source>
-        <translation type="unfinished"></translation>
+        <translation>Грузоперевозчики...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipping Charge Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>Типы Тарифов Доставки...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tax Codes...</source>
-        <translation type="unfinished"></translation>
+        <translation>Коды налогов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Terms...</source>
-        <translation type="unfinished"></translation>
+        <translation>Условия...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipping Forms...</source>
-        <translation type="unfinished"></translation>
+        <translation>Формы на Отгрузку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Categories...</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории Продаж...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64639,7 +64639,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Export Customers...</source>
-        <translation type="unfinished"></translation>
+        <translation>Экспортировать Клиентов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64736,27 +64736,27 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Characteristics...</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Schedule S/O for Email Delivery...</source>
-        <translation type="unfinished"></translation>
+        <translation>Доставка Заказов по Email...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Enter New Prospect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Перспективщика...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search for Prospect...</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск Перспективщика...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prospects...</source>
-        <translation type="unfinished"></translation>
+        <translation>Перспективщики...</translation>
     </message>
 </context>
 <context>
@@ -64764,7 +64764,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Packing List Batch...</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь на Упаковку...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65012,17 +65012,17 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Images...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изображения...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reports...</source>
-        <translation type="unfinished"></translation>
+        <translation>Отчёты...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Forms...</source>
-        <translation type="unfinished"></translation>
+        <translation>Формы...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65032,27 +65032,27 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Calendars...</source>
-        <translation type="unfinished"></translation>
+        <translation>Календари...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Currencies...</source>
-        <translation type="unfinished"></translation>
+        <translation>Валюты...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Exchange Rates...</source>
-        <translation type="unfinished"></translation>
+        <translation>Курсы Валюты...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Locales...</source>
-        <translation type="unfinished"></translation>
+        <translation>Локаль...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Comment Types...</source>
-        <translation type="unfinished"></translation>
+        <translation>Тип Комментария...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65062,7 +65062,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Departments...</source>
-        <translation type="unfinished"></translation>
+        <translation>Отделы...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65082,7 +65082,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Event Manager...</source>
-        <translation type="unfinished"></translation>
+        <translation>Менеджер Событий...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65092,12 +65092,12 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Preferences...</source>
-        <translation type="unfinished"></translation>
+        <translation>Параметры...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Rescan Privileges...</source>
-        <translation type="unfinished"></translation>
+        <translation>Обновить Права...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65142,7 +65142,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Close Active Window</source>
-        <translation type="unfinished">Закрыть активное окно</translation>
+        <translation>Закрыть Активное Окно</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65267,7 +65267,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Create New Work Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Наряд-заказ...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65282,7 +65282,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Shop Floor Workbench...</source>
-        <translation type="unfinished"></translation>
+        <translation>Производство Рабочее Место...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65312,7 +65312,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Reprioritize Work Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Изм.Приоритет Наряд-заказов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65327,7 +65327,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Purge Closed Work Orders...</source>
-        <translation type="unfinished"></translation>
+        <translation>Очистить Закрытые Заказ-наряды...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65630,7 +65630,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Cust. #</source>
-        <translation>№ Кл.</translation>
+        <translation>Кл.№</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65640,7 +65640,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Cust. P/O Number</source>
-        <translation type="unfinished"></translation>
+        <translation>№ заказа у поставщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65655,12 +65655,12 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Delete Sales Order?</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Заказ Продажи?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure that you want to completely delete the selected Sales Order?</source>
-        <translation type="unfinished"></translation>
+        <translation>Вы уверены, что хотите полностью удалить выбранный Заказ Продажи?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65675,7 +65675,7 @@ Version %2
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Sales Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Удалить Заказ продажи</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65717,7 +65717,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Reschedule...</source>
-        <translation>Переупорядочить</translation>
+        <translation>Переупорядочить...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65807,7 +65807,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Schedule S/O for Email Delivery...</source>
-        <translation type="unfinished"></translation>
+        <translation>Доставка Заказов по Email...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65845,7 +65845,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>View Voucher...</source>
-        <translation>Просмотр расписки</translation>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66088,7 +66088,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Amount:</source>
-        <translation>Количество</translation>
+        <translation>Количество:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66113,7 +66113,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>CRM Account:</source>
-        <translation></translation>
+        <translation>Клиент:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66231,12 +66231,12 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Owner</source>
-        <translation type="unfinished"></translation>
+        <translation>Создал</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Stage</source>
-        <translation type="unfinished"></translation>
+        <translation>Стадия</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66251,12 +66251,12 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Prob.%</source>
-        <translation type="unfinished"></translation>
+        <translation>Вероятн.%</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Amount</source>
-        <translation>Количество:</translation>
+        <translation>Количество</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66296,7 +66296,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Opportunity List</source>
-        <translation type="unfinished"></translation>
+        <translation>Список Возможностей</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67001,7 +67001,7 @@ You must create Item Sites for these Component Items before you may explode this
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67014,7 +67014,7 @@ You must create Item Sites for these Component Items before you may explode this
     <message>
         <location filename="" line="0"/>
         <source>Production Plan</source>
-        <translation type="unfinished"></translation>
+        <translation>План производства</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67089,7 +67089,7 @@ You must create Item Sites for these Component Items before you may explode this
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -68080,7 +68080,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Invoices to re-create the ARDI
     <message>
         <location filename="" line="0"/>
         <source>Post Exchange Rate</source>
-        <translation type="unfinished"></translation>
+        <translation>Установить Курс Обмена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -68090,12 +68090,12 @@ on the &apos;Do Not Post&apos; button and Re-Post Invoices to re-create the ARDI
     <message>
         <location filename="" line="0"/>
         <source>Current Rate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Текущий Курс:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New Rate:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новый Курс:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -68591,7 +68591,7 @@ transfer the production to the intended Warehouse.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -68601,7 +68601,7 @@ transfer the production to the intended Warehouse.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>Кол.На</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73519,7 +73519,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quotes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Резервы:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73557,7 +73557,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>P/O Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер Заказа на закупку</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73567,12 +73567,12 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>Печать...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Convert...</source>
-        <translation type="unfinished"></translation>
+        <translation>Продать...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73592,17 +73592,17 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Convert Selected Quote(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>Продать Выбранные Резервы</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Convert Quote</source>
-        <translation type="unfinished"></translation>
+        <translation>Не могу продать данный резерв</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Delete Selected Quotes</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Выбранные Резервы</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73617,7 +73617,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quotes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Резервы:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73627,7 +73627,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Con&amp;vert</source>
-        <translation type="unfinished"></translation>
+        <translation>П&amp;родать</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73652,43 +73652,44 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Could not initialize printing system for multiple reports.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Не могу инициализировать систему печати нескольких отчётов.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Are you sure that you want to convert the selected Quote(s) to Sales Order(s)?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Вы уверены, что хотите оформить продажу выбранных резервов?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Quote for Prospect</source>
-        <translation type="unfinished"></translation>
+        <translation>Резерв для Перспективщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;This Quote is for a Prospect, not a Customer. Do you want to convert the Prospect to a Customer?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Это резерв на Перспективщика а не на Клиента. Желаете ли Вы Преобразовать Перспективщика в Клиента?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;The following Quotes could not be converted.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Следующие Резервы не могут быть Проданы.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Are you sure that you want to delete the selected Quotes?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Вы уверены, что следует удалить выбранные Резервы?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A System Error occurred deleting Quote #%1
 %2.</source>
-        <translation type="unfinished"></translation>
+        <translation>Во время удаления Резерва №%1 произошла системная ошибка
+%2.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Quotes For Prospects</source>
-        <translation type="unfinished"></translation>
+        <translation>Показать Резервы Перспективщика</translation>
     </message>
 </context>
 <context>
@@ -73731,7 +73732,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Price:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цена:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73746,7 +73747,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Destination:</source>
-        <translation type="unfinished"></translation>
+        <translation>Место Назначения:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73774,17 +73775,17 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Reason Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильный Код Причины</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a valid code for this Reason Code.</source>
-        <translation type="unfinished"></translation>
+        <translation>Введите Правильный Код Причины.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reason Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Код Причины</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73822,7 +73823,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Reason Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Удалить Код Причины</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73839,12 +73840,12 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Reason Codes</source>
-        <translation type="unfinished"></translation>
+        <translation>Коды Причины</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reason Codes:</source>
-        <translation type="unfinished"></translation>
+        <translation>Коды Причины:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73882,12 +73883,12 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Reassign Class Code by Class Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Код Класса</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected Class Code:</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбранный Код Класса:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73915,17 +73916,17 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Reassign Customer Type by Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Тип Клиента</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected Customer Type:</source>
-        <translation>Выбранный тип клиента</translation>
+        <translation>Выбранный Тип Клиента:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Type Pattern:</source>
-        <translation>_Образец типа клиента_</translation>
+        <translation>Образец:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73948,7 +73949,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Location</source>
-        <translation>Расположение:</translation>
+        <translation>Расположение</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74028,7 +74029,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Qty. to Reassign:</source>
-        <translation type="unfinished"></translation>
+        <translation>Количество:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74038,7 +74039,7 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>New Expiration Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Новая Дата Устаревания:</translation>
     </message>
 </context>
 <context>
@@ -74046,12 +74047,12 @@ You must purge these records before you may delete the selected Reason Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Reassign Product Category by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменение Категории Продукта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Selected Product Category:</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбрать Категорию Продукта:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74460,7 +74461,7 @@ You may not create duplicate Calendar Items.</source>
     <message>
         <location filename="" line="0"/>
         <source>Period Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>Название Периода:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74480,17 +74481,17 @@ You may not create duplicate Calendar Items.</source>
     <message>
         <location filename="" line="0"/>
         <source>Weeks</source>
-        <translation type="unfinished"></translation>
+        <translation>Недели</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Months</source>
-        <translation type="unfinished"></translation>
+        <translation>Месяцы</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Years</source>
-        <translation type="unfinished"></translation>
+        <translation>Годы</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74572,7 +74573,7 @@ submitting this job.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cutoff Date:</source>
-        <translation type="unfinished">На Дату:</translation>
+        <translation>На Дату:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -74600,7 +74601,7 @@ submitting this job.</source>
     <message>
         <location filename="" line="0"/>
         <source>Location</source>
-        <translation>Расположение:</translation>
+        <translation>Расположение</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77667,12 +77668,12 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Expiration Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата устаревания</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78121,7 +78122,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78267,7 +78268,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -78943,7 +78944,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Items by Product Category</source>
-        <translation>Параметры Отчета - Позиции По Категории Продукции</translation>
+        <translation>Параметры Отчета - Позиции по Категории Продукции</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79169,7 +79170,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79249,7 +79250,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79459,7 +79460,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters -- Order Activity by Project</source>
-        <translation>Параметры Отчета - Активность По Проектам</translation>
+        <translation>Параметры Отчета - Активность по Проектам</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81395,7 +81396,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81484,7 +81485,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability as of:</source>
-        <translation>Показать доступные_</translation>
+        <translation>Показать доступные:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81812,7 +81813,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81951,7 +81952,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84111,12 +84112,12 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sort by Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по Дате Начала</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sort by Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по к.Дате</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84194,17 +84195,17 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sort by Start Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по Дате Начала</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sort by Due Date</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по к.Дате</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sort by Item Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Сортировать по Артикулу</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84273,7 +84274,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cutoff Date:</source>
-        <translation type="unfinished">На Дату:</translation>
+        <translation>На Дату:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84377,7 +84378,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>End Date:</source>
-        <translation>Дата окончания</translation>
+        <translation>Дата Окончания:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84536,7 +84537,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cust. Type</source>
-        <translation>Тип  Кл.</translation>
+        <translation> Кл.Тип</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84652,12 +84653,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории Продаж</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Categories:</source>
-        <translation type="unfinished"></translation>
+        <translation>Категории Продаж:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84788,22 +84789,22 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales History Information</source>
-        <translation type="unfinished"></translation>
+        <translation>История Продаж</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>№ заказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Invoice Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>№ счёта:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Date:</source>
-        <translation>Дата заказа</translation>
+        <translation>Дата заказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84823,7 +84824,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill-To</source>
-        <translation type="unfinished"></translation>
+        <translation>Плательщик</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84838,7 +84839,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipped:</source>
-        <translation type="unfinished"></translation>
+        <translation>Отгружено:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84848,17 +84849,17 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Unit Price:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цена Ед:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Extended Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>Итого:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unit Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>Себестоимость Единицы:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85026,7 +85027,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Create Line Items for this Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Создание Позиций Для Этого Заказа</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85136,7 +85137,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Lock Record for Editing</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Заблокировать Запись для Редактирования</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85146,12 +85147,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>MasterCard</source>
-        <translation type="unfinished"></translation>
+        <translation>Мастеркард</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>VISA</source>
-        <translation type="unfinished"></translation>
+        <translation>Виза</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85191,12 +85192,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Bank Account Missing</source>
-        <translation type="unfinished"></translation>
+        <translation>Отсутствует Номер Банковского Счёта</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Credit Cards</source>
-        <translation type="unfinished"></translation>
+        <translation>Кредитки</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85206,7 +85207,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Encryption Key</source>
-        <translation type="unfinished"></translation>
+        <translation>Ключ Шифрования</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85216,7 +85217,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Credit Card</source>
-        <translation type="unfinished"></translation>
+        <translation>Плохая Кредитка</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85226,12 +85227,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Server Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильная Конфигурация Сервера</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Invalid Server Port Configuration</source>
-        <translation type="unfinished"></translation>
+        <translation>Неправильная Порт Сервера</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85296,7 +85297,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quit</source>
-        <translation type="unfinished"></translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85307,13 +85308,15 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
         <location filename="" line="0"/>
         <source>This transaction was approved
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Эта Транзакция Одобрена
+</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>This transaction was denied
 </source>
-        <translation type="unfinished"></translation>
+        <translation>Эта Транзакция отклонена
+</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85378,7 +85381,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Order Date:</source>
-        <translation>Дата заказа</translation>
+        <translation>Дата заказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85453,7 +85456,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship &amp;Via:</source>
-        <translation type="unfinished"></translation>
+        <translation>Грузопере&amp;возчик:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85493,7 +85496,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Ship Complete</source>
-        <translation type="unfinished"></translation>
+        <translation>Отгрузка Завершена</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85598,7 +85601,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Freight Weight:</source>
-        <translation type="unfinished"></translation>
+        <translation>Масса в Доставке:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85944,7 +85947,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source></source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85972,7 +85975,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Pack</source>
-        <translation type="unfinished"></translation>
+        <translation>Упаковка</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85992,12 +85995,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipping Whse.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Со склада:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Date:</source>
-        <translation>Дата заказа</translation>
+        <translation>Дата Заказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86007,12 +86010,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Pack Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата Упаковки:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ship &amp;Via:</source>
-        <translation type="unfinished"></translation>
+        <translation>Грузопере&amp;возчик:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86027,7 +86030,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill-To Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Адрес Плательщика:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86050,7 +86053,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86065,7 +86068,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Pend. Alloc.</source>
-        <translation type="unfinished"></translation>
+        <translation>Ожид. размещ.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86100,7 +86103,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующая</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86110,27 +86113,27 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quote Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Выбор Позиции для Резервирования</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Sales Order Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Сохранить Позицию Заказа</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Reschedule W/O?</source>
-        <translation type="unfinished"></translation>
+        <translation>Изм.Дату Наряда?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Change W/O Quantity?</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Кол. В Наряде?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Change P/R Quantity?</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Кол. В Запросе на Закупку?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86140,62 +86143,62 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;reate Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать &amp;Наряд-заказ</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>W/O Q&amp;ty.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Колич&amp;ество:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>W/O Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>W/O Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус Наряда:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;reate Purchase Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Создать Запрос на За&amp;купку</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/R Q&amp;ty.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Колич&amp;ество:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/R Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>P/R Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>Статус Запроса:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;reate Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Со&amp;здать Заказ</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Q&amp;ty.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Колич&amp;ество:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>Дата заказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>Состояние Заказа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86205,12 +86208,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Наряд-заказ</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Delete Purchase Request</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Запрос на Закупку</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86220,12 +86223,12 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Unsaved Changed</source>
-        <translation type="unfinished"></translation>
+        <translation>Несохранённые Изменены</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Order Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Детали Позиции в Заказе</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86240,37 +86243,37 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Customer P/N:</source>
-        <translation type="unfinished"></translation>
+        <translation>Артикул Поставщика:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>Наличие на складах</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>On Hand:</source>
-        <translation type="unfinished"></translation>
+        <translation>В наличии:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Allocated:</source>
-        <translation type="unfinished"></translation>
+        <translation>В резерве:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Unallocated:</source>
-        <translation type="unfinished"></translation>
+        <translation>Свободных:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>On Order:</source>
-        <translation type="unfinished"></translation>
+        <translation>На заказ:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Available:</source>
-        <translation type="unfinished"></translation>
+        <translation>Доступно:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86295,17 +86298,17 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущая</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cancel Item</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Позицию</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Substitute for:</source>
-        <translation type="unfinished"></translation>
+        <translation>Является Заменой для:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86315,17 +86318,17 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sold from &amp;Whs.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Со С&amp;клада:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Qty. Ordered:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Количество:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Net Unit Price:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цена единицы:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86335,27 +86338,27 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sc&amp;heduled Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Запланировано на Дату:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Promised Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Обещанная Дата:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Pricing UOM:</source>
-        <translation type="unfinished"></translation>
+        <translation>Единицы Измерения:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ratio:</source>
-        <translation type="unfinished"></translation>
+        <translation>Коэффициент:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Customer Price:</source>
-        <translation type="unfinished"></translation>
+        <translation>Цена Клиента:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86370,17 +86373,17 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Discount % from List:</source>
-        <translation type="unfinished"></translation>
+        <translation>Скидка в % от прайс листа:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Discount % from Cust.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Скидка в % от Стд. цены клиента:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Shipped to Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>На сегодня Отгружено:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86390,17 +86393,17 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>W/&amp;O Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Дата:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Supplying Whs.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Склад Запчастей:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Override P/O Price:</source>
-        <translation type="unfinished"></translation>
+        <translation>По цене:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86420,7 +86423,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Pending Availability</source>
-        <translation type="unfinished"></translation>
+        <translation>Очередь Наличия</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86430,22 +86433,22 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a valid Quantity Ordered before saving this Sales Order Item.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Нужно ввести правильное Количество Заказанных позиций перед сохранением.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a Price before saving this Sales Order Item.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Нужно ввести Цену позиции перед сохранением.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You must enter a valid Schedule Date before saving this Sales Order Item.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Нужно ввести правильную Планируемую Дату перед сохранением.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;p&gt;Before an Order may be created, a valid Supplied at Warehouse must be selected.</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Перед Созданием Заказа нужно выбрать правильный Склад.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86501,7 +86504,8 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
         <location filename="" line="0"/>
         <source>&lt;p&gt;You have made some changes which have not yet been saved!
 Would you like to save them now?</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;p&gt;Вы не сохранили сделанные Вами изменения!
+Желаете сохранить их сейчас?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86582,17 +86586,17 @@ Would you like to save them now?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Сохранить Торгового Представителя.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a Number for this Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно ввести правильный номер для этого Торгового Представителя.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must enter a Commission Rate for this Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно ввести Комисионные для этого Торгового Представителя.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86602,22 +86606,22 @@ Would you like to save them now?</source>
     <message>
         <location filename="" line="0"/>
         <source>Sales Representative</source>
-        <translation type="unfinished"></translation>
+        <translation>Торговый Представитель</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Номер:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>N&amp;ame:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Имя:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Comm. &amp;Prcnt.:</source>
-        <translation type="unfinished"></translation>
+        <translation>Ко&amp;миссионный %:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86660,7 +86664,7 @@ Would you like to save them now?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Selected Sales Rep.</source>
-        <translation type="unfinished"></translation>
+        <translation>Не Могу Удалить Торгового Представителя.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86688,27 +86692,27 @@ active status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Торг.Преда...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>Торг.пред...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Delete Sales Rep...</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Торг.преда...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Representatives</source>
-        <translation type="unfinished"></translation>
+        <translation>Торговые Представители</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Representatives:</source>
-        <translation type="unfinished"></translation>
+        <translation>Торговые Представители:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87005,27 +87009,27 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Prospect Number</source>
-        <translation type="unfinished"></translation>
+        <translation>Номер Перспективщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Prospect Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Имя/Название Перспективщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Inactive Prospects</source>
-        <translation type="unfinished"></translation>
+        <translation>Отобразить Неактивных Перспиктивщиков</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search For Tax Authority</source>
-        <translation type="unfinished"></translation>
+        <translation>Поиск Налогов. орган</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tax Authority Code</source>
-        <translation type="unfinished"></translation>
+        <translation>Код Налога</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87050,7 +87054,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Number</source>
-        <translation type="unfinished"></translation>
+        <translation>№ Поставщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87060,7 +87064,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Main Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>Адрес:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87193,12 +87197,12 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>View BOM...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ведомость Материалов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit BOM...</source>
-        <translation type="unfinished"></translation>
+        <translation>Редактировать Ведомость Материалов...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87273,7 +87277,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortment</source>
-        <translation type="unfinished"></translation>
+        <translation>Номенклатура</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87293,7 +87297,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation>Поиск по № Позиции</translation>
+        <translation>Искать по Артикулу</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -88211,7 +88215,7 @@ Would you like to use this Bank Account anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -90329,7 +90333,7 @@ You must reclass these Accounts before you may delete the selected Subaccount.</
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -92773,7 +92777,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93951,7 +93955,7 @@ creating this Transaction</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>Просмотр Заказа Поставщику...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94314,7 +94318,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94487,7 +94491,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Selected Purchase Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>Удалить Выбранные Заказы Поставщику</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95176,22 +95180,22 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter a Update Percentage</source>
-        <translation type="unfinished"></translation>
+        <translation>Процент Изменения Цены не Введён</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>You must indicate the percentage to update the selected Pricing Schedule.</source>
-        <translation type="unfinished"></translation>
+        <translation>Нужно ввести на сколько процентов изменить выбранные категории прайс листа.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Update List Prices by Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>Общесистемное Изменение Прайса по Категориям</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Update Prices by:</source>
-        <translation type="unfinished"></translation>
+        <translation>Изменить Цены на:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96569,12 +96573,12 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a Number for this new Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожалуйста введите номер для нового поставщика.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a Name for this new Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>Пожалуйста введите Имя нового поставщика.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96589,7 +96593,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Select Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation>Выберите тип поставщика</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96599,7 +96603,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Number Used</source>
-        <translation type="unfinished"></translation>
+        <translation>Этот номер для поставщика уже занят</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96660,7 +96664,7 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Default Ship Via:</source>
-        <translation type="unfinished"></translation>
+        <translation>Грузоперевозчик по умолчанию:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96720,7 +96724,7 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Contact Information</source>
-        <translation type="unfinished"></translation>
+        <translation>Контактная Информация</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96805,7 +96809,7 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Cc:</source>
-        <translation type="unfinished"></translation>
+        <translation>Копия:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96954,12 +96958,12 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Next</source>
-        <translation type="unfinished"></translation>
+        <translation>Следующий</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Previous</source>
-        <translation type="unfinished"></translation>
+        <translation>Предыдущий</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96969,7 +96973,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tax</source>
-        <translation type="unfinished"></translation>
+        <translation>Налог</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97538,7 +97542,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99025,7 +99029,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Number</source>
-        <translation>Номер позиции</translation>
+        <translation>Артикул</translation>
     </message>
     <message>
         <location filename="" line="0"/>
