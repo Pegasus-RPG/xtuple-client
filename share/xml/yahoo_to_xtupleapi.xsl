@@ -374,7 +374,7 @@
 
     <salesorder>
       <order_number>
-	<xsl:value-of select="substring-after(@id, concat(../@StoreAccountName, '-'))"/>
+	<xsl:value-of select="substring-after(@id, concat(/OrderList/@StoreAccountName, '-'))"/>
       </order_number>
 
       <!-- warehouse -->
@@ -626,9 +626,7 @@
   <xsl:template match="Item">
     <salesline>
       <order_number>
-	<xsl:call-template name="stripAlpha">
-	  <xsl:with-param name="number" select="../@id"/>
-	</xsl:call-template>
+	<xsl:value-of select="substring-after(../@id, concat(/OrderList/@StoreAccountName, '-'))"/>
       </order_number>
 
       <line_number>
@@ -686,9 +684,7 @@
     <xsl:param name="value"/>
     <saleslinechar>
       <order_number>
-	<xsl:call-template name="stripAlpha">
-	  <xsl:with-param name="number" select="$id"/>
-	</xsl:call-template>
+	<xsl:value-of select="substring-after($id, concat(/OrderList/@StoreAccountName, '-'))"/>
       </order_number>
 
       <line_number>
@@ -708,9 +704,7 @@
   <xsl:template match="Option">
     <xsl:call-template name="saleslinechar">
       <xsl:with-param name="id">
-	<xsl:call-template name="cleanSQLChars">
-	  <xsl:with-param name="inputStr" select="../../@id"/>
-	</xsl:call-template>
+	<xsl:value-of select="substring-after(../../@id, concat(/OrderList/@StoreAccountName, '-'))"/>
       </xsl:with-param>
       <xsl:with-param name="line-number"	select="../@num"	/>
       <xsl:with-param name="characteristic"	select="@name"		/>
@@ -726,9 +720,7 @@
     <xsl:for-each select="OptionValue">
       <xsl:call-template name="saleslinechar">
 	<xsl:with-param name="id">
-	  <xsl:call-template name="cleanSQLChars">
-	    <xsl:with-param name="inputStr" select="../../../../@id"/>
-	  </xsl:call-template>
+	  <xsl:value-of select="substring-after(../../../../@id, concat(/OrderList/@StoreAccountName, '-'))"/>
 	</xsl:with-param>
 	<xsl:with-param name="line-number"	select="../../../@num"	/>
 	<xsl:with-param name="characteristic"	select="../@name" 	/>
