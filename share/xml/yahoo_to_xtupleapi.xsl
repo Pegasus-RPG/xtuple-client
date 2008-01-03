@@ -374,9 +374,7 @@
 
     <salesorder>
       <order_number>
-	<xsl:call-template name="stripAlpha">
-	  <xsl:with-param name="number" select="@id"/>
-	</xsl:call-template>
+	<xsl:value-of select="substring-after(@id, concat(../@StoreAccountName, '-'))"/>
       </order_number>
 
       <!-- warehouse -->
