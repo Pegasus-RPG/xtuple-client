@@ -85,6 +85,9 @@ dspUsageStatisticsByItem::dspUsageStatisticsByItem(QWidget* parent, const char* 
   _usage->addColumn(tr("Sold"),        _qtyColumn, Qt::AlignRight  );
   _usage->addColumn(tr("Scrap"),       _qtyColumn, Qt::AlignRight  );
   _usage->addColumn(tr("Adjustments"), _qtyColumn, Qt::AlignRight  );
+
+  _dates->setStartNull(tr("Earliest"), omfgThis->startOfTime(), true);
+  _dates->setEndNull(tr("Latest"),     omfgThis->endOfTime(),   true);
 }
 
 dspUsageStatisticsByItem::~dspUsageStatisticsByItem()
@@ -95,6 +98,28 @@ dspUsageStatisticsByItem::~dspUsageStatisticsByItem()
 void dspUsageStatisticsByItem::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse dspUsageStatisticsByItem::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("item_id", &valid);
+  if (valid)
+    _item->setId(param.toInt());
+
+  param = pParams.value("warehous_id", &valid);
+  if (valid)
+    _warehouse->setId(param.toInt());
+
+  if (pParams.inList("run"))
+  {
+    sFillList();
+    return NoError_Run;
+  }
+
+  return NoError;
 }
 
 void dspUsageStatisticsByItem::sPrint()

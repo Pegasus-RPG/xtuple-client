@@ -129,6 +129,24 @@ void dspWoScheduleByWorkOrder::languageChange()
   retranslateUi(this);
 }
 
+enum SetResponse dspWoScheduleByWorkOrder::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool	   valid = false;
+
+  param = pParams.value("wo_id", &valid);
+  if (valid)
+    _workorder->setId(param.toInt());
+
+  if (pParams.inList("run"))
+  {
+    sFillList();
+    return NoError_Run;
+  }
+
+  return NoError;
+}
+
 bool dspWoScheduleByWorkOrder::setParams(ParameterList &pParams)
 {
   if (! _workorder->isValid())

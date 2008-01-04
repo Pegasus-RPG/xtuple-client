@@ -74,17 +74,18 @@ public:
     virtual void setParams(ParameterList&);
 
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-    virtual void sFirmOrder();
-    virtual void sSoftenOrder();
-    virtual void sReleaseOrder();
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sDeleteOrder();
+    virtual void sDspWoScheduleByWorkOrder();
+    virtual void sFillList();
+    virtual void sFirmOrder();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPrint();
+    virtual void sReleaseOrder();
+    virtual void sSoftenOrder();
     virtual void sViewSo();
     virtual void sViewTo();
     virtual void sViewWo();
-    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();

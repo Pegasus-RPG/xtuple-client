@@ -65,6 +65,7 @@
 #include <metasql.h>
 #include <openreports.h>
 
+#include "dspWoScheduleByWorkOrder.h"
 #include "firmPlannedOrder.h"
 #include "mqlutil.h"
 #include "purchaseRequest.h"
@@ -190,7 +191,12 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
   else if (pSelected->text(ORDERTYPE_COL).contains("W/O") &&
 	  !(pSelected->text(ORDERTYPE_COL) == tr("Planned W/O Req. (firmed)") ||
 	    pSelected->text(ORDERTYPE_COL) == tr("Planned W/O Req.")))
+  {
     pMenu->insertItem(tr("View Work Order Details..."), this, SLOT(sViewWo()), 0);
+    menuItem = pMenu->insertItem(tr("Work Order Schedule..."), this, SLOT(sDspWoScheduleByWorkOrder()), 0);
+    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWorkOrders") ||
+				    _privleges->check("ViewWorkOrders"));
+  }
   else if (pSelected->text(ORDERTYPE_COL) == "S/O")
   {
     menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSo()), 0);
@@ -398,4 +404,16 @@ void dspRunningAvailability::sFillList()
     _orderMultiple->setText("0.00");
     _orderToQty->setText("0.00");
   }
+}
+
+void dspRunningAvailability::sDspWoScheduleByWorkOrder()
+{
+  ParameterList params;
+  params.append("wo_id", _availability->id());
+  params.append("run");
+
+  dspWoScheduleByWorkOrder *newdlg = new dspWoScheduleByWorkOrder();
+  SetResponse setresp = newdlg->set(params);
+  if (setresp == NoError || setresp == NoError_Run)
+    omfgThis->handleNewWindow(newdlg);
 }

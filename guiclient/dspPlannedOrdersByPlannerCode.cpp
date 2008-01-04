@@ -58,15 +58,17 @@
 #include "dspPlannedOrdersByPlannerCode.h"
 
 #include <QMenu>
+#include <QSqlError>
 
 #include <openreports.h>
 #include <parameter.h>
 
-#include "dspRunningAvailability.h"
-#include "firmPlannedOrder.h"
-#include "workOrder.h"
-#include "purchaseRequest.h"
 #include "deletePlannedOrder.h"
+#include "dspRunningAvailability.h"
+#include "dspUsageStatisticsByItem.h"
+#include "firmPlannedOrder.h"
+#include "purchaseRequest.h"
+#include "workOrder.h"
 
 dspPlannedOrdersByPlannerCode::dspPlannedOrdersByPlannerCode(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -120,9 +122,11 @@ void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
+  pMenu->setItemEnabled(menuItem, _privleges->check("ViewInventoryAvailability"));
+  menuItem = pMenu->insertItem(tr("Usage Statistics..."), this, SLOT(sDspUsageStatistics()), 0);
+  pMenu->setItemEnabled(menuItem, _privleges->check("ViewInventoryHistory"));
+
   pMenu->insertSeparator();
-  if (!_privleges->check("ViewInventoryAvailability"))
-    pMenu->setItemEnabled(menuItem, FALSE);
 
   if (pSelected->text(8) == "No")
   {
@@ -254,3 +258,29 @@ void dspPlannedOrdersByPlannerCode::sFillList()
   _planord->populate(q, TRUE);
 }
 
+void dspPlannedOrdersByPlannerCode::sDspUsageStatistics()
+{
+  q.prepare("SELECT itemsite_item_id "
+	    "FROM itemsite "
+	    "WHERE (itemsite_id=:itemsite_id);");
+  q.bindValue(":itemsite_id", _planord->altId());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("item_id", q.value("itemsite_item_id"));
+    if (_warehouse->isSelected())
+      params.append("warehous_id", _warehouse->id());
+    params.append("run");
+
+    dspUsageStatisticsByItem *newdlg = new dspUsageStatisticsByItem();
+    SetResponse setresp = newdlg->set(params);
+    if (setresp == NoError || setresp == NoError_Run)
+      omfgThis->handleNewWindow(newdlg);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}

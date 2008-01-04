@@ -72,30 +72,37 @@ public:
     dspWoScheduleByItem(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
     ~dspWoScheduleByItem();
 
+    virtual bool setParams(ParameterList &);
+
 public slots:
-    virtual void sPrint();
-    virtual void sView();
-    virtual void sEdit();
-    virtual void sPostProduction();
-    virtual void sCorrectProductionPosting();
-    virtual void sPostOperations();
-    virtual void sCorrectOperationsPosting();
-    virtual void sReleaseWO();
-    virtual void sRecallWO();
-    virtual void sExplodeWO();
-    virtual void sImplodeWO();
-    virtual void sDeleteWO();
-    virtual void sCloseWO();
-    virtual void sPrintTraveler();
-    virtual void sReprioritizeWo();
-    virtual void sRescheduleWO();
     virtual void sChangeWOQty();
-    virtual void sViewWomatl();
-    virtual void sViewWooper();
-    virtual void sInventoryAvailabilityByWorkOrder();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sCloseWO();
+    virtual void sCorrectOperationsPosting();
+    virtual void sCorrectProductionPosting();
+    virtual void sDeleteWO();
+    virtual void sDspRunningAvailability();
+    virtual void sDspWoEffortByWorkOrder();
+    virtual void sEdit();
+    virtual void sExplodeWO();
     virtual void sFillList();
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
+    virtual void sImplodeWO();
+    virtual void sInventoryAvailabilityByWorkOrder();
+    virtual void sIssueWoMaterialItem();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * selected );
+    virtual void sPostOperations();
+    virtual void sPostProduction();
+    virtual void sPrint();
+    virtual void sPrintTraveler();
+    virtual void sRecallWO();
+    virtual void sReleaseWO();
+    virtual void sReprioritizeWo();
+    virtual void sRescheduleWO();
+    virtual void sView();
+    virtual void sViewBOM();
+    virtual void sViewBOO();
+    virtual void sViewWomatl();
+    virtual void sViewWooper();
 
 protected slots:
     virtual void languageChange();

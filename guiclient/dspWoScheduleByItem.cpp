@@ -57,34 +57,35 @@
 
 #include "dspWoScheduleByItem.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QMessageBox>
-#include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
 #include <QSqlError>
+
+#include <metasql.h>
 #include <openreports.h>
-#include "postProduction.h"
-#include "correctProductionPosting.h"
-#include "postOperations.h"
-#include "correctOperationsPosting.h"
-#include "implodeWo.h"
-#include "explodeWo.h"
+
+#include "bom.h"
+#include "boo.h"
+#include "changeWoQty.h"
 #include "closeWo.h"
+#include "correctOperationsPosting.h"
+#include "correctProductionPosting.h"
+#include "dspInventoryAvailabilityByWorkOrder.h"
+#include "dspRunningAvailability.h"
+#include "dspWoEffortByWorkOrder.h"
+#include "dspWoMaterialsByWorkOrder.h"
+#include "dspWoOperationsByWorkOrder.h"
+#include "explodeWo.h"
+#include "implodeWo.h"
+#include "issueWoMaterialItem.h"
+#include "postOperations.h"
+#include "postProduction.h"
 #include "printWoTraveler.h"
 #include "reprioritizeWo.h"
 #include "rescheduleWo.h"
-#include "changeWoQty.h"
+#include "storedProcErrorLookup.h"
 #include "workOrder.h"
-#include "dspWoMaterialsByWorkOrder.h"
-#include "dspWoOperationsByWorkOrder.h"
-#include "dspInventoryAvailabilityByWorkOrder.h"
 
-/*
- *  Constructs a dspWoScheduleByItem as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -92,12 +93,10 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_item, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
 
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cJob);
@@ -120,41 +119,56 @@ dspWoScheduleByItem::dspWoScheduleByItem(QWidget* parent, const char* name, Qt::
   _item->setFocus();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspWoScheduleByItem::~dspWoScheduleByItem()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspWoScheduleByItem::languageChange()
 {
   retranslateUi(this);
 }
 
+bool dspWoScheduleByItem::setParams(ParameterList &pParams)
+{
+  if (! _item->isValid())
+  {
+    QMessageBox::warning(this, tr("Missing Data"),
+			 tr("You must enter a item."));
+    _item->setFocus();
+    return false;
+  }
+  if (! _dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Missing Data"),
+			 tr("You must enter both a start and end date."));
+    _dates->setFocus();
+    return false;
+  }
+
+  _warehouse->appendValue(pParams);
+  _dates->appendValue(pParams);
+  pParams.append("item_id", _item->id());
+
+  if (_showOnlyRI->isChecked())
+    pParams.append("showOnlyRI");
+
+  if (_showOnlyTopLevel->isChecked())
+    pParams.append("showOnlyTopLevel");
+
+  if (_sortByStartDate->isChecked())
+    pParams.append("sortByStartDate");
+  else
+    pParams.append("sortByDueDate");
+
+  return true;
+}
+
 void dspWoScheduleByItem::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  _dates->appendValue(params);
-  params.append("item_id", _item->id());
-
-
-  if (_showOnlyRI->isChecked())
-    params.append("showOnlyRI");
-
-  if (_showOnlyTopLevel->isChecked())
-    params.append("showOnlyTopLevel");
-
-  if (_sortByStartDate->isChecked())
-    params.append("sortByStartDate");
-  else
-    params.append("sortByDueDate");
+  if (! setParams(params))
+    return;
 
   orReport report("WOScheduleByParameterList", params);
   if (report.isValid())
@@ -265,80 +279,60 @@ void dspWoScheduleByItem::sImplodeWO()
 
 void dspWoScheduleByItem::sDeleteWO()
 {
-  q.prepare( "SELECT wo_ordtype, wo_ordid, wo_status "
+  q.prepare( "SELECT wo_ordtype "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
   q.bindValue(":wo_id", _wo->id());
   q.exec();
   if (q.first())
   {
-    bool toDelete = FALSE;
-    QString woStatus = q.value("wo_status").toString();
-
+    QString question;
     if (q.value("wo_ordtype") == "W")
-    {
-      if (QMessageBox::warning( this, tr("Delete Work Order"),
-                                tr( "The Work Order that you selected to delete is a child\n"
-                                    "of another Work Order.  If you delete the selected\n"
-                                    "Work Order then the Work Order Materials Requirements for\n"
-                                    "the Component Item will remain but the Work Order to\n"
-                                    "relieve that demand will not.\n"
-                                    "Are you sure that you want to delete the selected Work Order?" ),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-        toDelete = TRUE;
-    }
+      question = tr("The Work Order that you selected to delete is a child of "
+		    "another Work Order.  If you delete the selected Work "
+		    "Order then the Work Order Materials Requirements for the "
+		    "Component Item will remain but the Work Order to relieve "
+		    "that demand will not. Are you sure that you want to "
+		    "delete the selected Work Order?" );
     else if (q.value("wo_ordtype") == "S")
-    {
-      if (QMessageBox::warning( this, tr("Delete Work Order"),
-                                tr( "The Work Order that you selected to delete was created\n"
-                                    "to satisfy a Sales Order demand.  If you delete the selected\n"
-                                    "Work Order then the Sales Order demand will remain but the\n"
-                                    "Work Order to relieve that demand will not.\n"
-                                    "Are you sure that you want to delete the selected Work Order?" ),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-        toDelete = TRUE;
-    }
+      question = tr("The Work Order that you selected to delete was created to "
+		    "satisfy a Sales Order demand.  If you delete the selected "
+		    "Work Order then the Sales Order demand will remain but "
+		    "the Work Order to relieve that demand will not. Are you "
+		    "sure that you want to delete the selected Work Order?" );
     else
-    {
-      if (QMessageBox::warning( this, tr("Delete Work Order"),
-                                tr( "Are you sure that you want to delete the selected Work Order?" ),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-        toDelete = TRUE;
-    }
+      question = tr("Are you sure that you want to delete the selected "
+		    "Work Order?");
 
-    if (toDelete)
+    if (QMessageBox::question(this, tr("Delete Work Order?"), "<p>" + question,
+			      QMessageBox::No | QMessageBox::Default,
+			      QMessageBox::Yes) == QMessageBox::No)
+      return;
+
+    q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+    q.bindValue(":wo_id", _wo->id());
+    q.exec();
+    if (q.first())
     {
-      q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
-      q.bindValue(":wo_id", _wo->id());
-      q.exec();
-      if (q.first() && q.value("returnVal").toInt() < 0)
+      int result = q.value("returnVal").toInt();
+      if (result < 0)
       {
-	QString msg;
-	if (q.value("returnVal").toInt() == -1)
-	{
-	  msg = tr("Work Order %1 cannot be deleted because time clock "
-			 "entries exist for it.\n")
-		   .arg(_wo->currentItem()->text(1));
-	  if (woStatus == "C")
-	    msg += "Please use Close Work Order instead of Delete Work Order.";
-	}
-	else 
-	  msg = tr("Work Order %1 cannot be deleted (reason %2).")
-		   .arg(_wo->currentItem()->text(1))
-		   .arg(q.value("returnVal").toString());
-
-	QMessageBox::information(this, tr("Work Order Postings Exist"), msg);
+	systemError(this, storedProcErrorLookup("deleteWo", result));
 	return;
       }
-      else if (q.lastError().type() != QSqlError::NoError)
-      {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
-	return;
-      }
-
-      omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
     }
+    else if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
+    omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -528,6 +522,11 @@ void dspWoScheduleByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
     menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
     if (!_privleges->check("PrintWorkOrderPaperWork"))
       pMenu->setItemEnabled(menuItem, FALSE);
+
+    pMenu->insertSeparator();
+
+    menuItem = pMenu->insertItem(tr("Issue Material Item..."), this, SLOT(sIssueWoMaterialItem()));
+    pMenu->setItemEnabled(menuItem, _privleges->check("IssueWoMaterials"));
   }
 
   if ((status == "O") || (status == "E"))
@@ -546,71 +545,89 @@ void dspWoScheduleByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
     if (!_privleges->check("ChangeWorkOrderQty"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
+
+  pMenu->insertSeparator();
+  
+  menuItem = pMenu->insertItem(tr("View Bill of Materials..."), this, SLOT(sViewBOM()), 0);
+  pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOMs"));
+  menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
+  pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOOs"));
+
+  pMenu->insertSeparator();
+
+  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
+
+  if (_metrics->boolean("Routings"))
+  {
+    menuItem = pMenu->insertItem(tr("Production Time Clock by Work Order..."), this, SLOT(sDspWoEffortByWorkOrder()), 0);
+    pMenu->setItemEnabled(menuItem, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")));
+  }
 }
 
 void dspWoScheduleByItem::sFillList()
 {
   _wo->clear();
 
-  if ((_item->isValid()) && (_dates->allValid()))
+  QString sql( "SELECT wo_id, itemsite_id,"
+	       " formatWONumber(wo_id) AS wonumber,"
+	       " wo_status, wo_priority, warehous_code,"
+	       " formatQty(wo_qtyord) AS qtyord,"
+	       " formatQty(wo_qtyrcv) AS qtyrcv,"
+	       " formatDate(wo_startdate) AS startdate,"
+	       " formatDate(wo_duedate) AS duedate,"
+	       " ((wo_startdate<=CURRENT_DATE) "
+	       "           AND (wo_status IN ('O','E','S','R'))) AS latestart,"
+	       " (wo_duedate<=CURRENT_DATE) AS latedue "
+	       "FROM wo, itemsite, warehous "
+	       "WHERE ((wo_itemsite_id=itemsite_id)"
+	       " AND (itemsite_warehous_id=warehous_id)"
+	       " AND (itemsite_item_id=<? value(\"item_id\") ?>)"
+	       " AND (wo_startdate BETWEEN <? value(\"startDate\") ?>"
+	       "                       AND <? value(\"endDate\") ?>)"
+	       "<? if exists(\"showOnlyRI\") ?>"
+	       " AND (wo_status IN ('R','I'))"
+	       "<? else ?>"
+	       " AND (wo_status<>'C')"
+	       "<? endif ?>"
+	       "<? if exists(\"showOnlyTopLevel\") ?>"
+	       " AND (wo_ordtype<>'W')"
+	       "<? endif ?>"
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       ") "
+	       "ORDER BY "
+	       "<? if exists(\"sortByStartDate\") ?>"
+	       "	wo_startdate,"
+	       "<? elseif exists(\"sortByDueDate\") ?>"
+	       "	wo_duedate,"
+	       "<? endif ?>"
+	       " wo_number, wo_subnumber" );
+
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
+  XTreeWidgetItem *last = 0;
+  while (q.next())
   {
-    QString sql( "SELECT wo_id,"
-                 " formatWONumber(wo_id) AS wonumber,"
-                 " wo_status, wo_priority, warehous_code,"
-                 " formatQty(wo_qtyord) AS qtyord,"
-                 " formatQty(wo_qtyrcv) AS qtyrcv,"
-                 " formatDate(wo_startdate) AS startdate,"
-                 " formatDate(wo_duedate) AS duedate,"
-                 " ((wo_startdate<=CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS latestart,"
-                 " (wo_duedate<=CURRENT_DATE) AS latedue "
-                 "FROM wo, itemsite, warehous "
-                 "WHERE ((wo_itemsite_id=itemsite_id)"
-                 " AND (itemsite_warehous_id=warehous_id)"
-                 " AND (itemsite_item_id=:item_id)"
-                 " AND (wo_startdate BETWEEN :startDate AND :endDate)" );
+    last = new XTreeWidgetItem(_wo, last, q.value("wo_id").toInt(),
+			       q.value("itemsite_id").toInt(),
+			       q.value("wonumber"),
+			       q.value("wo_status"),
+			       q.value("wo_priority"),
+			       q.value("warehous_code"),
+			       q.value("qtyord"),
+			       q.value("qtyrcv"),
+			       q.value("startdate"),
+			       q.value("duedate") );
 
-    if (_showOnlyRI->isChecked())
-      sql += " AND (wo_status IN ('R','I'))";
-    else
-      sql += " AND (wo_status<>'C')";
+    if (q.value("latestart").toBool())
+      last->setTextColor(6, "red");
 
-    if (_showOnlyTopLevel->isChecked())
-      sql += " AND (wo_ordtype<>'W')";
-
-    if (_warehouse->isSelected())
-      sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-    sql += ") ";
-
-    if (_sortByStartDate->isChecked())
-      sql += "ORDER BY wo_startdate, wo_number, wo_subnumber";
-    else
-      sql += "ORDER BY wo_duedate, wo_number, wo_subnumber";
-
-    q.prepare(sql);
-    _warehouse->bindValue(q);
-    _dates->bindValue(q);
-    q.bindValue(":item_id", _item->id());
-    q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_wo, last, q.value("wo_id").toInt(),
-				 q.value("wonumber"),
-				 q.value("wo_status"),
-				 q.value("wo_priority"),
-				 q.value("warehous_code"),
-				 q.value("qtyord"),
-				 q.value("qtyrcv"),
-				 q.value("startdate"),
-				 q.value("duedate") );
-
-      if (q.value("latestart").toBool())
-        last->setTextColor(6, "red");
-
-      if (q.value("latedue").toBool())
-        last->setTextColor(7, "red");
-    }
+    if (q.value("latedue").toBool())
+      last->setTextColor(7, "red");
   }
 }
 
@@ -620,4 +637,80 @@ void dspWoScheduleByItem::sHandleAutoUpdate(bool pAutoUpdate)
     connect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sFillList()));
+}
+
+void dspWoScheduleByItem::sDspWoEffortByWorkOrder()
+{
+  ParameterList params;
+  params.append("wo_id", _wo->id());
+  params.append("run");
+
+  dspWoEffortByWorkOrder *newdlg = new dspWoEffortByWorkOrder();
+  enum SetResponse setresp = newdlg->set(params);
+  if (setresp == NoError || setresp == NoError_Run)
+    omfgThis->handleNewWindow(newdlg);
+}
+
+void dspWoScheduleByItem::sIssueWoMaterialItem()
+{
+  issueWoMaterialItem newdlg(this);
+  ParameterList params;
+  params.append("wo_id", _wo->id());
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
+}
+
+void dspWoScheduleByItem::sDspRunningAvailability()
+{
+  ParameterList params;
+  params.append("itemsite_id", _wo->altId());
+  params.append("run");
+
+  dspRunningAvailability *newdlg = new dspRunningAvailability();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspWoScheduleByItem::sViewBOM()
+{
+  q.prepare("SELECT itemsite_item_id FROM itemsite WHERE (itemsite_id=:id);");
+  q.bindValue(":id", _wo->altId());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("item_id", q.value("itemsite_item_id"));
+    params.append("mode", "view");
+
+    BOM *newdlg = new BOM();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void dspWoScheduleByItem::sViewBOO()
+{
+  q.prepare("SELECT itemsite_item_id FROM itemsite WHERE (itemsite_id=:id);");
+  q.bindValue(":id", _wo->altId());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("item_id", q.value("itemsite_item_id"));
+    params.append("mode", "view");
+
+    boo *newdlg = new boo();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }

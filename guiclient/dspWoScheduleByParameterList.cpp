@@ -57,34 +57,36 @@
 
 #include "dspWoScheduleByParameterList.h"
 
-#include <QVariant>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMessageBox>
 #include <QSqlError>
+#include <QVariant>
+
+#include <metasql.h>
 #include <openreports.h>
-#include "postProduction.h"
-#include "correctProductionPosting.h"
-#include "postOperations.h"
-#include "correctOperationsPosting.h"
-#include "implodeWo.h"
-#include "explodeWo.h"
+
+#include "bom.h"
+#include "boo.h"
+#include "changeWoQty.h"
 #include "closeWo.h"
+#include "correctOperationsPosting.h"
+#include "correctProductionPosting.h"
+#include "dspInventoryAvailabilityByWorkOrder.h"
+#include "dspRunningAvailability.h"
+#include "dspWoEffortByWorkOrder.h"
+#include "dspWoMaterialsByWorkOrder.h"
+#include "dspWoOperationsByWorkOrder.h"
+#include "explodeWo.h"
+#include "implodeWo.h"
+#include "issueWoMaterialItem.h"
+#include "postOperations.h"
+#include "postProduction.h"
 #include "printWoTraveler.h"
 #include "reprioritizeWo.h"
 #include "rescheduleWo.h"
-#include "changeWoQty.h"
-#include "workOrder.h"
 #include "salesOrderInformation.h"
-#include "dspWoMaterialsByWorkOrder.h"
-#include "dspWoOperationsByWorkOrder.h"
-#include "dspInventoryAvailabilityByWorkOrder.h"
+#include "storedProcErrorLookup.h"
+#include "workOrder.h"
 
-/*
- *  Constructs a dspWoScheduleByParameterList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
@@ -92,9 +94,7 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_wo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
   connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate(bool)));
@@ -128,18 +128,11 @@ dspWoScheduleByParameterList::dspWoScheduleByParameterList(QWidget* parent, cons
     _postOperations->hide();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspWoScheduleByParameterList::~dspWoScheduleByParameterList()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspWoScheduleByParameterList::languageChange()
 {
   retranslateUi(this);
@@ -203,25 +196,33 @@ enum SetResponse dspWoScheduleByParameterList::set(const ParameterList &pParams)
   return NoError;
 }
 
+bool dspWoScheduleByParameterList::setParams(ParameterList &pParams)
+{
+  _warehouse->appendValue(pParams);
+  _parameter->appendValue(pParams);
+  _dates->appendValue(pParams);
+
+  if (_showOnlyRI->isChecked())
+    pParams.append("showOnlyRI");
+
+  if (_showOnlyTopLevel->isChecked())
+    pParams.append("showOnlyTopLevel");
+
+  if(_sortByStartDate->isChecked())
+    pParams.append("sortByStartDate");
+  else if(_sortByDueDate->isChecked())
+    pParams.append("sortByDueDate");
+  else
+    pParams.append("sortByItemNumber");
+
+  return true;
+}
+
 void dspWoScheduleByParameterList::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-  _parameter->appendValue(params);
-  _dates->appendValue(params);
-
-  if (_showOnlyRI->isChecked())
-    params.append("showOnlyRI");
-
-  if (_showOnlyTopLevel->isChecked())
-    params.append("showOnlyTopLevel");
-
-  if(_sortByStartDate->isChecked())
-    params.append("sortByStartDate");
-  else if(_sortByDueDate->isChecked())
-    params.append("sortByDueDate");
-  else
-    params.append("sortByItemNumber");
+  if (! setParams(params))
+    return;
 
   orReport report("WOScheduleByParameterList", params);
   if (report.isValid())
@@ -332,73 +333,53 @@ void dspWoScheduleByParameterList::sImplodeWO()
 
 void dspWoScheduleByParameterList::sDeleteWO()
 {
-  q.prepare( "SELECT wo_ordtype, wo_ordid, wo_status "
+  q.prepare( "SELECT wo_ordtype "
              "FROM wo "
              "WHERE (wo_id=:wo_id);" );
   q.bindValue(":wo_id", _wo->id());
   q.exec();
   if (q.first())
   {
-    bool toDelete = FALSE;
-    QString woStatus = q.value("wo_status").toString();
-
-    if (q.value("wo_ordtype").toString() == "W")
-    {
-      if (QMessageBox::warning( this, tr("Delete Work Order"),
-                                tr( "The Work Order that you selected to delete is a child\n"
-                                    "of another Work Order.  If you delete the selected\n"
-                                    "Work Order then the Work Order Materials Requirements for\n"
-                                    "the Component Item will remain but the Work Order to\n"
-                                    "relieve that demand will not.\n"
-                                    "Are you sure that you want to delete the selected Work Order?" ),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-        toDelete = TRUE;
-    }
-    else if (q.value("wo_ordtype").toString() == "S")
-    {
-      if (QMessageBox::warning( this, tr("Delete Work Order"),
-                                tr( "The Work Order that you selected to delete was created\n"
-                                    "to satisfy a Sales Order demand.  If you delete the selected\n"
-                                    "Work Order then the Sales Order demand will remain but the\n"
-                                    "Work Order to relieve that demand will not.\n"
-                                    "Are you sure that you want to delete the selected Work Order?" ),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-        toDelete = TRUE;
-    }
+    QString question;
+    if (q.value("wo_ordtype") == "W")
+      question = tr("The Work Order that you selected to delete is a child of "
+		    "another Work Order.  If you delete the selected Work "
+		    "Order then the Work Order Materials Requirements for the "
+		    "Component Item will remain but the Work Order to relieve "
+		    "that demand will not. Are you sure that you want to "
+		    "delete the selected Work Order?" );
+    else if (q.value("wo_ordtype") == "S")
+      question = tr("The Work Order that you selected to delete was created to "
+		    "satisfy a Sales Order demand.  If you delete the selected "
+		    "Work Order then the Sales Order demand will remain but "
+		    "the Work Order to relieve that demand will not. Are you "
+		    "sure that you want to delete the selected Work Order?" );
     else
-    {
-      if (QMessageBox::warning( this, tr("Delete Work Order"),
-                                tr( "Are you sure that you want to delete the selected Work Order?" ),
-                                tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
-        toDelete = TRUE;
-    }
+      question = tr("Are you sure that you want to delete the selected "
+		    "Work Order?");
 
-    if (toDelete)
-    {
-      q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal, formatwonumber(:wo_id) AS wo_number;");
-      q.bindValue(":wo_id", _wo->id());
-      q.exec();
+    q.prepare("SELECT deleteWo(:wo_id, TRUE) AS returnVal;");
+    q.bindValue(":wo_id", _wo->id());
+    q.exec();
 
-      if (q.first() && q.value("returnVal").toInt() < 0)
+    if (q.first())
+    {
+      int result = q.value("returnVal").toInt();
+      if (result < 0)
       {
-	QString msg;
-	if (q.value("returnVal").toInt() == -1)
-	  msg = tr("Work Order %1 cannot be deleted because time clock "
-		   "entries exist for it.\n")
-		   .arg(q.value("wo_number").toString());
-	else 
-	  msg = tr("Work Order %1 cannot be deleted (reason %2).")
-		   .arg(q.value("wo_number").toString())
-		   .arg(q.value("returnVal").toString());
-
-	QMessageBox::information(this, tr("Work Order Postings Exist"), msg);
+	systemError(this, storedProcErrorLookup("deleteWo", result));
 	return;
       }
-      else if (q.lastError().type() != QSqlError::NoError)
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
-      omfgThis->sWorkOrdersUpdated(-1, TRUE);
     }
+    else if (q.lastError().type() != QSqlError::NoError)
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+
+    omfgThis->sWorkOrdersUpdated(-1, TRUE);
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
@@ -612,6 +593,11 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
     menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
     if (!_privleges->check("PrintWorkOrderPaperWork"))
       pMenu->setItemEnabled(menuItem, FALSE);
+
+    pMenu->insertSeparator();
+
+    menuItem = pMenu->insertItem(tr("Issue Material Item..."), this, SLOT(sIssueWoMaterialItem()));
+    pMenu->setItemEnabled(menuItem, _privleges->check("IssueWoMaterials"));
   }
 
   if ((status == "O") || (status == "E"))
@@ -629,6 +615,23 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
     menuItem = pMenu->insertItem(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()), 0);
     if (!_privleges->check("ChangeWorkOrderQty"))
       pMenu->setItemEnabled(menuItem, FALSE);
+  }
+
+  pMenu->insertSeparator();
+  
+  menuItem = pMenu->insertItem(tr("View Bill of Materials..."), this, SLOT(sViewBOM()), 0);
+  pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOMs"));
+  menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
+  pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOOs"));
+
+  pMenu->insertSeparator();
+
+  menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
+
+  if (_metrics->boolean("Routings"))
+  {
+    menuItem = pMenu->insertItem(tr("Production Time Clock by Work Order..."), this, SLOT(sDspWoEffortByWorkOrder()), 0);
+    pMenu->setItemEnabled(menuItem, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")));
   }
 
   if (_wo->altId() != -1)
@@ -663,63 +666,60 @@ void dspWoScheduleByParameterList::sFillList()
                "       formatQty(wo_qtyrcv) as received,"
                "       formatDate(wo_startdate) as startdate,"
                "       formatDate(wo_duedate) as duedate,"
-               "       ((wo_startdate <= CURRENT_DATE) AND (wo_status IN ('O','E','S','R'))) AS latestart,"
+	       "       ((wo_startdate<=CURRENT_DATE)"
+	       "         AND (wo_status IN ('O','E','S','R'))) AS latestart,"
                "       (wo_duedate<=CURRENT_DATE) AS latedue "
                "FROM wo, itemsite, warehous, item, uom "
                "WHERE ( (wo_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"
                " AND (item_inv_uom_id=uom_id)"
                " AND (itemsite_warehous_id=warehous_id)"
-               " AND (wo_startdate BETWEEN :startDate AND :endDate)" );
+	       " AND (wo_startdate BETWEEN <? value(\"startDate\") ?>"
+	       "                       AND <? value(\"endDate\") ?>)"
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       "<? if exists(\"showOnlyRI\") ?>"
+	       " AND (wo_status IN ('R','I'))"
+	       "<? else ?>"
+	       " AND (wo_status<>'C')"
+	       "<? endif ?>"
+	       "<? if exists(\"showOnlyTopLevel\") ?>"
+	       " AND (wo_ordtype<>'W')"
+	       "<? endif ?>"
+	       "<? if exists(\"classcode_id\") ?>"
+	       " AND (item_classcode_id=<? value(\"classcode_id\") ?>)"
+	       "<? elseif exists(\"itemgrp_id\") ?>"
+	       " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=<? value(\"itemgrp_id\") ?>)))"
+	       "<? elseif exists(\"plancode_id\") ?>"
+	       " AND (itemsite_plancode_id=<? value(\"plancode_id\") ?>)"
+	       "<? elseif exists(\"wrkcnt_id\") ?>"
+	       " AND (wo_id IN (SELECT wooper_wo_id FROM wooper WHERE (wooper_wrkcnt_id=<? value(\"wrkcnt_id\") ?>)))"
+	       "<? elseif exists(\"classcode_pattern\") ?>"
+	       " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ <? value(\"classcode_pattern\") ?>)))"
+	       "<? elseif exists(\"itemgrp_pattern\") ?>"
+	       " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ <? value(\"itemgrp_pattern\") ?>) ) ))"
+	       "<? elseif exists(\"plancode_pattern\") ?>"
+	       " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ <? value(\"plancode_pattern\") ?>)))"
+	       "<? elseif exists(\"wrkcnt_pattern\") ?>"
+	       " AND (wo_id IN (SELECT wooper_wo_id FROM wooper, wrkcnt WHERE ((wooper_wrkcnt_id=wrkcnt_id) AND (wrkcnt_code ~ <? value(\"wrkcnt_pattern\") ?>))))"
+	       "<? endif ?>"
+	       ") "
+	       "ORDER BY "
+	       "<? if exists(\"sortByStartDate\") ?>"
+	       "	wo_startdate,"
+	       "<? elseif exists(\"sortByDueDate\") ?>"
+	       "	wo_duedate,"
+	       "<? elseif exists(\"sortByItemNumber\") ?>"
+	       "        item_number,"
+	       "<? endif ?>"
+	       " wo_number, wo_subnumber" );
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_parameter->isSelected())
-  {
-    if (_parameter->type() == ClassCode)
-      sql += " AND (item_classcode_id=:classcode_id)";
-    else if (_parameter->type() == ItemGroup)
-      sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem WHERE (itemgrpitem_itemgrp_id=:itemgrp_id)))";
-    else if (_parameter->type() == PlannerCode)
-      sql += " AND (itemsite_plancode_id=:plancode_id)";
-    else if (_parameter->type() == WorkCenter)
-      sql += " AND (wo_id IN (SELECT wooper_wo_id FROM wooper WHERE (wooper_wrkcnt_id=:wrkcnt_id)))";
-  }
-  else if (_parameter->isPattern())
-  {
-    if (_parameter->type() == ClassCode)
-      sql += " AND (item_classcode_id IN (SELECT classcode_id FROM classcode WHERE (classcode_code ~ :classcode_pattern)))";
-    else if (_parameter->type() == ItemGroup)
-      sql += " AND (item_id IN (SELECT itemgrpitem_item_id FROM itemgrpitem, itemgrp WHERE ( (itemgrpitem_itemgrp_id=itemgrp_id) AND (itemgrp_name ~ :itemgrp_pattern) ) ))";
-    else if (_parameter->type() == PlannerCode)
-      sql += " AND (itemsite_plancode_id IN (SELECT plancode_id FROM plancode WHERE (plancode_code ~ :plancode_pattern)))";
-    else if (_parameter->type() == WorkCenter)
-      sql += " AND (wo_id IN (SELECT wooper_wo_id FROM wooper, wrkcnt WHERE ((wooper_wrkcnt_id=wrkcnt_id) AND (wrkcnt_code ~ :wrkcnt_pattern))))";
-  }
-
-  if (_showOnlyRI->isChecked())
-    sql += " AND (wo_status IN ('R','I'))";
-  else
-    sql += " AND (wo_status<>'C')";
-
-  if (_showOnlyTopLevel->isChecked())
-    sql += " AND (wo_ordtype<>'W')";
-
-  sql += ") ";
-
-  if(_sortByStartDate->isChecked())
-    sql += " ORDER BY wo_startdate, wo_number, wo_subnumber";
-  else if(_sortByDueDate->isChecked())
-    sql += " ORDER BY wo_duedate, wo_number, wo_subnumber";
-  else
-    sql += " ORDER BY item_number, wo_number, wo_subnumber";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  _parameter->bindValue(q);
-  _dates->bindValue(q);
-  q.exec();
+  MetaSQLQuery mql(sql);
+  ParameterList params;
+  if (! setParams(params))
+    return;
+  q = mql.toQuery(params);
   while (q.next())
   {
     XTreeWidgetItem *last = new XTreeWidgetItem( _wo, q.value("wo_id").toInt(), q.value("orderid").toInt(),
@@ -777,3 +777,95 @@ void dspWoScheduleByParameterList::sHandleButtons()
   _printTraveler->setEnabled(false);
 }
 
+void dspWoScheduleByParameterList::sDspWoEffortByWorkOrder()
+{
+  ParameterList params;
+  params.append("wo_id", _wo->id());
+  params.append("run");
+
+  dspWoEffortByWorkOrder *newdlg = new dspWoEffortByWorkOrder();
+  enum SetResponse setresp = newdlg->set(params);
+  if (setresp == NoError || setresp == NoError_Run)
+    omfgThis->handleNewWindow(newdlg);
+}
+
+void dspWoScheduleByParameterList::sIssueWoMaterialItem()
+{
+  issueWoMaterialItem newdlg(this);
+  ParameterList params;
+  params.append("wo_id", _wo->id());
+  if (newdlg.set(params) == NoError)
+    newdlg.exec();
+}
+
+void dspWoScheduleByParameterList::sDspRunningAvailability()
+{
+  q.prepare("SELECT wo_itemsite_id FROM wo WHERE (wo_id=:id);");
+  q.bindValue(":id", _wo->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("itemsite_id", q.value("wo_itemsite_id"));
+    params.append("run");
+
+    dspRunningAvailability *newdlg = new dspRunningAvailability();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void dspWoScheduleByParameterList::sViewBOM()
+{
+  q.prepare("SELECT itemsite_item_id "
+	    "FROM wo, itemsite "
+	    "WHERE ((wo_itemsite_id=itemsite_id)"
+	    "  AND  (wo_id=:id));");
+  q.bindValue(":id", _wo->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("item_id", q.value("itemsite_item_id"));
+    params.append("mode", "view");
+
+    BOM *newdlg = new BOM();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void dspWoScheduleByParameterList::sViewBOO()
+{
+  q.prepare("SELECT itemsite_item_id "
+	    "FROM wo, itemsite "
+	    "WHERE ((wo_itemsite_id=itemsite_id)"
+	    "  AND  (wo_id=:id));");
+  q.bindValue(":id", _wo->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("item_id", q.value("itemsite_item_id"));
+    params.append("mode", "view");
+
+    boo *newdlg = new boo();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}

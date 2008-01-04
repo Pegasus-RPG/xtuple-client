@@ -72,14 +72,15 @@ public:
     ~dspPlannedOrdersByPlannerCode();
 
 public slots:
-    virtual void sPrint();
-    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
-    virtual void sDspRunningAvailability();
-    virtual void sFirmOrder();
-    virtual void sSoftenOrder();
-    virtual void sReleaseOrder();
     virtual void sDeleteOrder();
+    virtual void sDspRunningAvailability();
+    virtual void sDspUsageStatistics();
     virtual void sFillList();
+    virtual void sFirmOrder();
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem * pSelected );
+    virtual void sPrint();
+    virtual void sReleaseOrder();
+    virtual void sSoftenOrder();
 
 protected slots:
     virtual void languageChange();

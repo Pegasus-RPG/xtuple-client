@@ -623,6 +623,10 @@ void initErrorLookupHash()
 			 "create a valid Item Site for all of the Co-Product/"
 			 "By-Product Items before you may explode this "
 			 "Work Order."),				0, "" },
+  { "explodeWo",  -4, TR("Work Order %1 cannot be Exploded because it is not "
+			 "Open."),					0, "" },
+  { "explodeWo",  -9, TR("Work Order %1 cannot be Exploded because the quantity"
+			 "ordered is not valid."),			0, "" },
 
   { "freezeAccountingPeriod", -1, TR("Cannot freeze this Accounting Period "
 				     "because it is still open."),     0, "" },
