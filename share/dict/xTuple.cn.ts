@@ -1179,17 +1179,17 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials</source>
-        <translation>材料清单</translation>
+        <translation>物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Expi&amp;red Components</source>
-        <translation>&amp;显示过期成分</translation>
+        <translation>显示过期子项(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Future Components</source>
-        <translation>&amp;显示未来成分</translation>
+        <translation>显示未来子项(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1199,12 +1199,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Revisi&amp;on:</source>
-        <translation>&amp;更正:</translation>
+        <translation>更正(&amp;O):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revision Da&amp;te:</source>
-        <translation>&amp;更正日期:</translation>
+        <translation>更正日期(&amp;T):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1234,7 +1234,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials:</source>
-        <translation>材料清单:</translation>
+        <translation>物料清单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1269,7 +1269,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>E&amp;xpire</source>
-        <translation>&amp;过期</translation>
+        <translation>过期(&amp;X)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1304,7 +1304,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Non-Pick List Items:</source>
-        <translation>不挑选清单物料:</translation>
+        <translation>该物料不出现在领料单中:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1314,7 +1314,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Pick List Items:</source>
-        <translation>挑选清单物料:</translation>
+        <translation>该物料出现在领料单中:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1369,7 +1369,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1449,7 +1449,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Total Qty. Per Required</source>
-        <translation>要求的相对于标准单位的总数量</translation>
+        <translation>每个需求的总数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1494,12 +1494,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First</source>
-        <translation>第一</translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last</source>
-        <translation>最后</translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1632,12 +1632,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First</source>
-        <translation>第一</translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last</source>
-        <translation>最后</translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1805,7 +1805,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1871,12 +1871,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First:</source>
-        <translation>第一:</translation>
+        <translation>姓:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last:</source>
-        <translation>最后:</translation>
+        <translation>名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1891,7 +1891,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Voice:</source>
-        <translation>声音:</translation>
+        <translation>电话:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1941,7 +1941,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Job Title:</source>
-        <translation>工作头衔:</translation>
+        <translation>职务:</translation>
     </message>
 </context>
 <context>
@@ -1949,12 +1949,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First Name</source>
-        <translation>名</translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name</source>
-        <translation>姓</translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -1972,12 +1972,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search First Name</source>
-        <translation>按名搜索</translation>
+        <translation>按姓搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search Last Name</source>
-        <translation>按姓搜索</translation>
+        <translation>按名搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2007,12 +2007,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>First Name</source>
-        <translation>名</translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name</source>
-        <translation>姓</translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2052,12 +2052,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Search Title</source>
-        <translation>按头衔搜索</translation>
+        <translation>按职务搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation>头衔</translation>
+        <translation>职务</translation>
     </message>
 </context>
 <context>
@@ -2335,17 +2335,17 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Purch.</source>
-        <translation>已购买的.</translation>
+        <translation>采购.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Mfg.</source>
-        <translation>已生产的.</translation>
+        <translation>制造.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation>虚构件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2355,7 +2355,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Prod.</source>
-        <translation>共有产品.</translation>
+        <translation>共产品.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2428,12 +2428,12 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased </source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured </source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -2443,7 +2443,7 @@ Address:</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product and By-Product </source>
-        <translation>共有产品和副产品</translation>
+        <translation>共有产品和共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3415,7 +3415,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>No Standard Cost</source>
-        <translation>转移订单号:</translation>
+        <translation>非标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3609,7 +3609,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3642,7 +3642,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -3746,7 +3746,7 @@ Call your system administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per:</source>
-        <translation>相对于标准单位的数量:</translation>
+        <translation>单位数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -4742,14 +4742,14 @@ You must reassign these Currency definitions before you may delete the selected 
         <location filename="" line="0"/>
         <source>First Name
 or Number</source>
-        <translation>名￼
+        <translation>姓￼
 或号码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name
 or Name</source>
-        <translation>姓￼
+        <translation>名￼
 或名</translation>
     </message>
     <message>
@@ -7069,7 +7069,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7094,12 +7094,12 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Expire</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Replace</source>
-        <translation type="unfinished"></translation>
+        <translation>替换</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7129,7 +7129,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Expi&amp;red Components</source>
-        <translation>&amp;显示过期成分</translation>
+        <translation>显示过期子项(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7139,7 +7139,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Future Components</source>
-        <translation>&amp;显示未来成分</translation>
+        <translation>显示未来子项(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7149,17 +7149,17 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Docu&amp;ment #:</source>
-        <translation>文件号:</translation>
+        <translation>文件号(&amp;M):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revisi&amp;on:</source>
-        <translation type="unfinished"></translation>
+        <translation>更正(&amp;O):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revision Da&amp;te:</source>
-        <translation type="unfinished"></translation>
+        <translation>更正日期(&amp;T):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7199,17 +7199,17 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>E&amp;xpire</source>
-        <translation type="unfinished"></translation>
+        <translation>过期(&amp;X)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Move &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>上移(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Move Do&amp;wn</source>
-        <translation type="unfinished"></translation>
+        <translation>下移(&amp;A)</translation>
     </message>
 </context>
 <context>
@@ -7315,7 +7315,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -7360,7 +7360,7 @@ You may not cancel this action.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>复制(&amp;A)</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8017,7 +8017,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8165,12 +8165,12 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Breeder BOM Item</source>
-        <translation>删除用于制造的物料或程序的材料清单物料</translation>
+        <translation>删除用于制造的物料或程序的物料清单物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure you want to delete this Breeder BOM Item?</source>
-        <translation>你确信要删除这个用于制造的物料或程序的材料清单物料吗?</translation>
+        <translation>你确信要删除这个用于制造的物料或程序的物料清单物料吗?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8190,7 +8190,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>By-Product</source>
-        <translation>副产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8205,17 +8205,17 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Breeder Bill of Materials</source>
-        <translation>用于制造的物料或程序的材料清单</translation>
+        <translation>用于制造的物料或程序的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Expired Components</source>
-        <translation>&amp;显示过期成分</translation>
+        <translation>显示过期子项(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Future Components</source>
-        <translation>&amp;显示未来成分</translation>
+        <translation>显示未来子项(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8230,7 +8230,7 @@ Contact your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product/By-Product Definitions:</source>
-        <translation>共有产品/副产品定义:</translation>
+        <translation>共有产品/共产品定义:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8369,7 +8369,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8703,12 +8703,12 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Delete Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>删除物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure that you want to delete the selected Bill of Materials?</source>
-        <translation type="unfinished"></translation>
+        <translation>你确定要删除所选中的物料清单?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8723,17 +8723,17 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Bills of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show BOMs for &amp;Inactive Items</source>
-        <translation type="unfinished"></translation>
+        <translation>显示非活动物料的物料清单(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8748,7 +8748,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Bills of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料清单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8871,17 +8871,17 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Docu&amp;ment #:</source>
-        <translation>文件号:</translation>
+        <translation>文件号(&amp;M):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revisi&amp;on:</source>
-        <translation type="unfinished"></translation>
+        <translation>更正(&amp;O):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Revision Da&amp;te:</source>
-        <translation type="unfinished"></translation>
+        <translation>更正日期(&amp;T):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -8931,22 +8931,22 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>E&amp;xpire</source>
-        <translation type="unfinished"></translation>
+        <translation>过期(&amp;X)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Move &amp;Up</source>
-        <translation type="unfinished"></translation>
+        <translation>上移(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Move Do&amp;wn</source>
-        <translation type="unfinished"></translation>
+        <translation>下移(&amp;W)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Expire</source>
-        <translation type="unfinished"></translation>
+        <translation>过期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9345,7 +9345,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9471,7 +9471,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>End Date</source>
-        <translation type="unfinished"></translation>
+        <translation>结束日期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9486,12 +9486,12 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Budgets</source>
-        <translation type="unfinished"></translation>
+        <translation>预算</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Budgets:</source>
-        <translation type="unfinished"></translation>
+        <translation>预算:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9526,7 +9526,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cop&amp;y</source>
-        <translation type="unfinished"></translation>
+        <translation>复制(&amp;Y)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9642,7 +9642,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Period</source>
-        <translation type="unfinished"></translation>
+        <translation>周期</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9657,32 +9657,32 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Day(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>日</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Business Day(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>工作日</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Week(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>周</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Month(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>月</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Quarter(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>季度</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Year(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>年</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -9722,7 +9722,7 @@ Breeder Bill of Materials?</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+B</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+B</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -10124,12 +10124,12 @@ in the amount of $%2. Would you like to charge now?</source>
     <message>
         <location filename="" line="0"/>
         <source>MasterCard</source>
-        <translation type="unfinished"></translation>
+        <translation>MasterCard卡</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>VISA</source>
-        <translation type="unfinished"></translation>
+        <translation>VISA卡</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11252,7 +11252,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Report:</source>
-        <translation type="unfinished"></translation>
+        <translation>查询(&amp;R):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11506,7 +11506,7 @@ You must reassign these Items before you may delete the selected Class Code.</so
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单:</translation>
     </message>
 </context>
 <context>
@@ -11827,7 +11827,7 @@ Have those users clock out before closing this Work Order.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Company</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -11838,12 +11838,12 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Companies</source>
-        <translation type="unfinished"></translation>
+        <translation>公司</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Companies:</source>
-        <translation type="unfinished"></translation>
+        <translation>公司:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -12630,7 +12630,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Phone:</source>
-        <translation type="unfinished"></translation>
+        <translation>电话:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -12758,7 +12758,7 @@ You must reclass these Accounts before you may delete the selected Company.</sou
     <message>
         <location filename="" line="0"/>
         <source>Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>库存</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -13965,12 +13965,12 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>First Name</source>
-        <translation type="unfinished"></translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14059,12 +14059,12 @@ You must first delete target Assortment Definition before attempting copy an exi
     <message>
         <location filename="" line="0"/>
         <source>Source Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>源物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Target Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>目标物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14074,7 +14074,7 @@ You must first delete target Assortment Definition before attempting copy an exi
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
 </context>
 <context>
@@ -14120,17 +14120,17 @@ Cannot copy Bill of Material.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>复制物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Source Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>源物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Target Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>目标物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14140,7 +14140,7 @@ Cannot copy Bill of Material.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14182,12 +14182,12 @@ before attempting copy an existing BOO.</source>
     <message>
         <location filename="" line="0"/>
         <source>Source Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>源物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Target Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>目标物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14257,7 +14257,7 @@ the period inteval.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
 </context>
 <context>
@@ -14313,17 +14313,17 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy Item</source>
-        <translation type="unfinished"></translation>
+        <translation>复制物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Source Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>源物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Target Item Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>目标物料号(&amp;T):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14338,12 +14338,12 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy &amp;Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>复制物料清单(&amp;B)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt+B</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+B</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14368,7 +14368,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14421,12 +14421,12 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>%1 day(s)</source>
-        <translation type="unfinished"></translation>
+        <translation>%1 天</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14499,17 +14499,17 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Could Not Copy Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>不能复制采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Copy Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order #:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14529,7 +14529,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Phone:</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商电话:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14544,7 +14544,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14657,7 +14657,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14730,7 +14730,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -14768,7 +14768,7 @@ You may not copy over an existing item.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. per</source>
-        <translation type="unfinished"></translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15036,12 +15036,12 @@ You must, instead, adjust the Breeder&apos;s, Co-Product&apos;s and By-Product&a
     <message>
         <location filename="" line="0"/>
         <source>Delete Cost Category</source>
-        <translation type="unfinished"></translation>
+        <translation>删除成本类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Are you sure that you want to delete the selected Cost Category?</source>
-        <translation type="unfinished"></translation>
+        <translation>你确定要删除所选中的成本类别?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15056,7 +15056,7 @@ You must, instead, adjust the Breeder&apos;s, Co-Product&apos;s and By-Product&a
     <message>
         <location filename="" line="0"/>
         <source>Cost Category in Use</source>
-        <translation type="unfinished"></translation>
+        <translation>使用中的成本类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15067,17 +15067,17 @@ You must reassign these Items before deleting this Cost Category.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Inventory Cost Cateogry...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑库存成本类别...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Inventory Cost Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看库存成本类别...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Delete Inventory Cost Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>删除库存成本类别...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15087,12 +15087,12 @@ You must reassign these Items before deleting this Cost Category.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cost Categories</source>
-        <translation type="unfinished"></translation>
+        <translation>成本类别</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cost Categories:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本类别:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15122,7 +15122,7 @@ You must reassign these Items before deleting this Cost Category.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
 </context>
 <context>
@@ -15190,7 +15190,7 @@ You must reassign these Items before deleting this Cost Category.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Price Variance:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购价格差异:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15228,34 +15228,36 @@ You must reassign these Items before deleting this Cost Category.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costing Element</source>
-        <translation type="unfinished"></translation>
+        <translation>成本元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Selected User Costing Element</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除被选择的用户成本元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected User Costing Element cannot be deleted as it is being used by an existing Item Cost.
 You must first delete all Item Costs assigned to the selected User Costing Element before you may delete it.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的用户成本元素不能被删除，因为它被已经存在的物料成本所使用
+删除这个用户成本元素之前，你必须首先首先删除被指派到这一用户成本元素的所有物料.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected User Costing Element cannot be deleted as it is there is Costing History assigned to it.
 You may only deactivate the selected User Costing Element.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的用户成本元素不能被删除，因为有成本历史被指派到它
+你只能将被选中的用户成本元素设为非活动的.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>User-Defined Costing Elements</source>
-        <translation type="unfinished"></translation>
+        <translation>用户自定义成本元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>User Costing Elements:</source>
-        <translation type="unfinished"></translation>
+        <translation>用户成本元素:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15565,7 +15567,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15792,7 +15794,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;reate</source>
-        <translation>&amp;创建</translation>
+        <translation>创建(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -15845,7 +15847,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+Z</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Z</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16168,7 +16170,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>ABC Class:</source>
-        <translation type="unfinished"></translation>
+        <translation>ABC分类:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16188,17 +16190,17 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16228,7 +16230,7 @@ Please verify the Count Tag Qty. and attempt to post again.</source>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;ontrol Method:</source>
-        <translation type="unfinished"></translation>
+        <translation>控制方法(&amp;O):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16352,7 +16354,7 @@ You must enter a whole value to assign to this Lot/Serial number.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Assign</source>
-        <translation>&amp;指派</translation>
+        <translation>指派(&amp;A)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16430,7 +16432,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>Run MRP by Planner Code</source>
-        <translation type="unfinished"></translation>
+        <translation>按计划员代码运行ERP</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -16455,7 +16457,7 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;reate</source>
-        <translation>&amp;创建</translation>
+        <translation>创建(&amp;A)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17323,12 +17325,12 @@ creating Planned Orders.</source>
     <message>
         <location filename="" line="0"/>
         <source>First Name</source>
-        <translation type="unfinished"></translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last Name</source>
-        <translation type="unfinished"></translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17469,7 +17471,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17564,7 +17566,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>New To-Do Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>新建待处理列表项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17614,7 +17616,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>To-Do List</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17629,7 +17631,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show To-Do List</source>
-        <translation type="unfinished"></translation>
+        <translation>显示待处理列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -17639,7 +17641,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>New To-Do Item</source>
-        <translation type="unfinished"></translation>
+        <translation>新建待处理列表项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18676,12 +18678,12 @@ in use by the Customer &apos;%1&apos;.  Please correct or enter a new Customer N
     <message>
         <location filename="" line="0"/>
         <source>MasterCard</source>
-        <translation type="unfinished"></translation>
+        <translation>MasterCard卡</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>VISA</source>
-        <translation type="unfinished"></translation>
+        <translation>VISA卡</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -18716,7 +18718,7 @@ in use by the Customer &apos;%1&apos;.  Please correct or enter a new Customer N
     <message>
         <location filename="" line="0"/>
         <source>Customer Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客姓名:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -19515,13 +19517,13 @@ You may Edit the selected Ship-to and set its status to inactive.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Customer Type</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除客户类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected Customer Type cannot be deleted as there are one or more Customers assigned to it.
 You must reassign these Customers before you may delete the selected Customer Type.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">被选择的客户类型不能被删除，因为它现在正在一个或多个银行帐户里使用.￼￼￼在可以删除被选择的总帐户前你必须重新分配这些银行帐户.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24246,22 +24248,22 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>View Item Costing...</source>
-        <translation type="unfinished"></translation>
+        <translation>显示物料成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>总成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24291,7 +24293,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Costed Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本物料清单:</translation>
     </message>
 </context>
 <context>
@@ -24354,27 +24356,27 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>View Item Costing...</source>
-        <translation type="unfinished"></translation>
+        <translation>显示物料成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Total Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>总成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Costed Single Level Bill of Materials</source>
-        <translation type="unfinished"></translation>
+        <translation>单层成本物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24399,7 +24401,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Costed Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本物料清单:</translation>
     </message>
 </context>
 <context>
@@ -24437,7 +24439,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Costed Summarized Bill of Materials</source>
-        <translation>已估价的概括材料清单</translation>
+        <translation>已估价的概括物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24452,7 +24454,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Future Components</source>
-        <translation>&amp;显示未来成分</translation>
+        <translation>显示未来子项(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24487,7 +24489,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Materials:</source>
-        <translation>材料清单:</translation>
+        <translation>物料清单:</translation>
     </message>
 </context>
 <context>
@@ -24495,7 +24497,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24781,7 +24783,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -24811,7 +24813,7 @@ You must contact your Systems Administrator to have this corrected before you ma
     <message>
         <location filename="" line="0"/>
         <source>Alt+H</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+H</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27776,7 +27778,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Account Name</source>
-        <translation type="unfinished"></translation>
+        <translation>帐户名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27786,7 +27788,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>摘要</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27801,7 +27803,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Assigned To</source>
-        <translation type="unfinished"></translation>
+        <translation>指派到</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27831,22 +27833,22 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Incident...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑事件...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Incident...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看事件...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit To-Do Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑待处理列表项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View To-Do Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看待处理列表项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27856,7 +27858,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -27911,22 +27913,22 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation>反馈</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>已确认</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>已指派</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Resolved</source>
-        <translation type="unfinished"></translation>
+        <translation>已解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28112,7 +28114,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Indented Bill of Materials</source>
-        <translation>契约材料清单</translation>
+        <translation>契约物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28132,7 +28134,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Future Components</source>
-        <translation>&amp;显示未来成分</translation>
+        <translation>显示未来子项(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28152,7 +28154,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Materials:</source>
-        <translation>材料清单:</translation>
+        <translation>物料清单:</translation>
     </message>
 </context>
 <context>
@@ -28210,12 +28212,12 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Expired Components</source>
-        <translation>&amp;显示过期成分</translation>
+        <translation>显示过期子项(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Future Components</source>
-        <translation>&amp;显示未来成分</translation>
+        <translation>显示未来子项(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -28250,7 +28252,7 @@ Total</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials Items:</source>
-        <translation>材料清单物料:</translation>
+        <translation>物料清单物料:</translation>
     </message>
 </context>
 <context>
@@ -29348,7 +29350,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29521,7 +29523,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -29689,7 +29691,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30311,7 +30313,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30384,7 +30386,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Element</source>
-        <translation type="unfinished"></translation>
+        <translation>元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30404,12 +30406,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Old</source>
-        <translation type="unfinished"></translation>
+        <translation>旧的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30424,12 +30426,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Actual</source>
-        <translation type="unfinished"></translation>
+        <translation>实际</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>标准</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30439,7 +30441,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Costs History</source>
-        <translation type="unfinished"></translation>
+        <translation>物料成本历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30459,7 +30461,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costing History:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本历史:</translation>
     </message>
 </context>
 <context>
@@ -30467,7 +30469,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Element</source>
-        <translation type="unfinished"></translation>
+        <translation>元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30487,7 +30489,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Act. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30497,7 +30499,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Costing Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看成本细节...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30522,7 +30524,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costing &amp;Elements:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本元素(&amp;E):</translation>
     </message>
 </context>
 <context>
@@ -30550,7 +30552,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Act. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30565,12 +30567,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Actual Costs...</source>
-        <translation type="unfinished"></translation>
+        <translation>更新实际成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Actual Costs...</source>
-        <translation type="unfinished"></translation>
+        <translation>提交实际成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30580,7 +30582,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Only Show &amp;Zero Cost Items</source>
-        <translation>&amp;只显示零成本物料</translation>
+        <translation>只显示零成本物料(&amp;Z)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -30615,7 +30617,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料:</translation>
     </message>
 </context>
 <context>
@@ -31050,12 +31052,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Bill of Material...</source>
-        <translation>编辑材料清单...</translation>
+        <translation>编辑物料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Bill of Material...</source>
-        <translation>查看材料清单...</translation>
+        <translation>查看物料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31070,17 +31072,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured</source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation>虚构件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31090,7 +31092,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product</source>
-        <translation>共有产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31110,7 +31112,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tooling</source>
-        <translation>加工</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31140,7 +31142,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31198,12 +31200,12 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Bill of Material...</source>
-        <translation>编辑材料清单...</translation>
+        <translation>编辑物料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Bill of Material...</source>
-        <translation>查看材料清单...</translation>
+        <translation>查看物料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31218,17 +31220,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured</source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation>虚构件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31238,7 +31240,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product</source>
-        <translation>共有产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31258,7 +31260,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tooling</source>
-        <translation>加工</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31278,7 +31280,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31346,17 +31348,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured</source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation>虚构件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31366,7 +31368,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product</source>
-        <translation>共有产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31386,7 +31388,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tooling</source>
-        <translation>加工</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31406,7 +31408,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -31474,7 +31476,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation type="unfinished">采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32130,7 +32132,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Material Usage Variance by Bill of Materials Item</source>
-        <translation>材料使用差异(按材料清单物料)</translation>
+        <translation>材料使用差异(按物料清单物料)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -32763,7 +32765,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Orders:</source>
-        <translation type="unfinished"></translation>
+        <translation>订单:</translation>
     </message>
 </context>
 <context>
@@ -33476,7 +33478,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -33840,17 +33842,17 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Use Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>使用标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Use Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>使用实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34064,7 +34066,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>#</source>
-        <translation>数量</translation>
+        <translation>序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34134,7 +34136,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation>复制</translation>
     </message>
 </context>
 <context>
@@ -34227,7 +34229,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchase Price Variances</source>
-        <translation>显示购买价格差异</translation>
+        <translation>显示采购价格差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34345,7 +34347,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchase Price Variances</source>
-        <translation>显示购买价格差异</translation>
+        <translation>显示采购价格差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -34453,7 +34455,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchase Price Variances</source>
-        <translation>显示购买价格差异</translation>
+        <translation>显示采购价格差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35258,7 +35260,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Price Variances by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>采购价格差异按物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -35351,7 +35353,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Price Variances by Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>采购价格差异按供应商</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -36518,7 +36520,7 @@ indicated the dates.  Please enter valid dates.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>&amp;显示库存价值</translation>
+        <translation>显示库存价值(&amp;V)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38037,7 +38039,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>#</source>
-        <translation>数量</translation>
+        <translation>序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38072,17 +38074,17 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Balance/Close Date (User)</source>
-        <translation type="unfinished"></translation>
+        <translation>结余/关闭日期(用户)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Child Ord. #/Status</source>
-        <translation type="unfinished"></translation>
+        <translation>子订单号/状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Sales Order Status</source>
-        <translation type="unfinished"></translation>
+        <translation>销售订单状态</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38117,7 +38119,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Last Updated:</source>
-        <translation type="unfinished"></translation>
+        <translation>最后更新:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38137,12 +38139,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipment Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>发货状态:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Invoiced</source>
-        <translation type="unfinished"></translation>
+        <translation>发票</translation>
     </message>
 </context>
 <context>
@@ -38210,7 +38212,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>发货状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38338,7 +38340,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>发货状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38461,12 +38463,12 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Shipment Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>发货状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Shipments..</source>
-        <translation type="unfinished"></translation>
+        <translation>货运..</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38672,7 +38674,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sequenced Bill of Materials</source>
-        <translation>序列化的材料清单</translation>
+        <translation>序列化的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -38697,7 +38699,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials:</source>
-        <translation>材料清单:</translation>
+        <translation>物料清单:</translation>
     </message>
 </context>
 <context>
@@ -39016,7 +39018,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39041,7 +39043,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Single Level Bill of Materials</source>
-        <translation>单一水平的材料清单</translation>
+        <translation>单一水平的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39086,7 +39088,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials:</source>
-        <translation>材料清单:</translation>
+        <translation>物料清单:</translation>
     </message>
 </context>
 <context>
@@ -39119,7 +39121,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39184,7 +39186,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials Items:</source>
-        <translation>材料清单物料:</translation>
+        <translation>物料清单物料:</translation>
     </message>
 </context>
 <context>
@@ -39267,7 +39269,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Inventory &amp;Value</source>
-        <translation>&amp;显示库存价值</translation>
+        <translation>显示库存价值(&amp;V)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39584,7 +39586,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Summarized Bill of Materials</source>
-        <translation>已概括的材料清单</translation>
+        <translation>已概括的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -39624,7 +39626,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Materials:</source>
-        <translation>材料清单:</translation>
+        <translation>物料清单:</translation>
     </message>
 </context>
 <context>
@@ -39865,7 +39867,7 @@ These line items must be fixed before you may convert this quote.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -41753,17 +41755,17 @@ date range to evaluate the average price.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Use Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>使用标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Use Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>使用实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43908,12 +43910,12 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vend. #</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vend. Name</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商名称</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43963,7 +43965,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看采购订单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -43973,7 +43975,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Voucher Register</source>
-        <translation type="unfinished"></translation>
+        <translation>凭单登记人</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44008,7 +44010,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Vouchers:</source>
-        <translation type="unfinished"></translation>
+        <translation>凭单&gt;:</translation>
     </message>
 </context>
 <context>
@@ -44471,7 +44473,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -44948,7 +44950,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -45066,7 +45068,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -46265,7 +46267,7 @@ Are you sure that you want to delete the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+T</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+T</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47152,7 +47154,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>#</source>
-        <translation>数量</translation>
+        <translation>序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47177,17 +47179,17 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ordered</source>
-        <translation>已订购</translation>
+        <translation>订购数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Received</source>
-        <translation>已收到</translation>
+        <translation>收到数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>To Receive</source>
-        <translation type="unfinished"></translation>
+        <translation>待接收数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47242,7 +47244,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Enter Receipt</source>
-        <translation type="unfinished"></translation>
+        <translation>收货(&amp;E)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47252,7 +47254,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cancel Receipts?</source>
-        <translation type="unfinished"></translation>
+        <translation>取消接收?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47262,7 +47264,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Receive All</source>
-        <translation type="unfinished"></translation>
+        <translation>全部接收</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47290,7 +47292,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>#</source>
-        <translation>数量</translation>
+        <translation>序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47310,22 +47312,22 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Ordered</source>
-        <translation>已订购</translation>
+        <translation>订购数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Received</source>
-        <translation>已收到</translation>
+        <translation>收到数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Returned</source>
-        <translation>已返回</translation>
+        <translation>退回数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>To Return</source>
-        <translation type="unfinished"></translation>
+        <translation>待退回数</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47345,7 +47347,7 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Purchase Order Returns</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单退货</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47360,12 +47362,12 @@ You may not a Misc. Count until the current Count Tag has been posted.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Enter Return</source>
-        <translation type="unfinished"></translation>
+        <translation>退回(&amp;E)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -47421,12 +47423,12 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Print Return Report</source>
-        <translation type="unfinished"></translation>
+        <translation>打印退回报告</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Return Address:</source>
-        <translation type="unfinished"></translation>
+        <translation>退回地址:</translation>
     </message>
 </context>
 <context>
@@ -47902,7 +47904,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -48000,7 +48002,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>Purchase Price Variance:</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">采购价格差异:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -48018,7 +48020,7 @@ Would you like to automatically create a credit memo against this return?</sourc
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -49397,7 +49399,7 @@ Are you sure you want to continue?</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50295,12 +50297,12 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation>头衔</translation>
+        <translation>职务</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>职务:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50320,7 +50322,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Title</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存职务</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50333,12 +50335,12 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Titles</source>
-        <translation>头衔</translation>
+        <translation>职务</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Titles:</source>
-        <translation>头衔:</translation>
+        <translation>职务:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50373,7 +50375,7 @@ Do you wish to convert %1 %2 at the rate effective on %3?</source>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation>头衔</translation>
+        <translation>职务</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50792,7 +50794,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident #:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50802,12 +50804,12 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Contact:</source>
-        <translation type="unfinished"></translation>
+        <translation>联系人:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Severity:</source>
-        <translation type="unfinished"></translation>
+        <translation>严重性:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50822,22 +50824,22 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation>反馈</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>已确认</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>已指派</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Resolved</source>
-        <translation type="unfinished"></translation>
+        <translation>已解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50857,12 +50859,12 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Priority:</source>
-        <translation type="unfinished"></translation>
+        <translation>优先级:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Assigned To: </source>
-        <translation type="unfinished"></translation>
+        <translation>指派到:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50882,7 +50884,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Summary:</source>
-        <translation type="unfinished"></translation>
+        <translation>摘要:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50892,7 +50894,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>To-Do List Items</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理列表项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50912,7 +50914,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50922,7 +50924,7 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Date/Time</source>
-        <translation type="unfinished"></translation>
+        <translation>日期/时间</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -50932,12 +50934,12 @@ Are you sure that you want to Implode the selected Work Order?</source>
     <message>
         <location filename="" line="0"/>
         <source>Seq</source>
-        <translation type="unfinished"></translation>
+        <translation>序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51060,7 +51062,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>New Incident</source>
-        <translation type="unfinished"></translation>
+        <translation>新建事件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51070,12 +51072,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Severity</source>
-        <translation>激烈度</translation>
+        <translation>严重性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Priority</source>
-        <translation>优先权</translation>
+        <translation>优先级</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51085,7 +51087,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Assigned To</source>
-        <translation type="unfinished"></translation>
+        <translation>指派到</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51105,7 +51107,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Comment</source>
-        <translation type="unfinished"></translation>
+        <translation>备注</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51284,7 +51286,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Priority</source>
-        <translation>优先权</translation>
+        <translation>优先级</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51312,12 +51314,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident Priority</source>
-        <translation type="unfinished"></translation>
+        <translation>事件优先级</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Priority:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件优先级:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51526,7 +51528,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Severity</source>
-        <translation>激烈度</translation>
+        <translation>严重性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51554,12 +51556,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incident Severity</source>
-        <translation type="unfinished"></translation>
+        <translation>事件严重性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Incident Severity:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件严重性:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51589,7 +51591,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Incident Severity</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存事件严重性</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51612,12 +51614,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation>反馈</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Confirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>已确认</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51627,17 +51629,17 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Resolved</source>
-        <translation type="unfinished"></translation>
+        <translation>已解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Closed</source>
-        <translation>关闭了的</translation>
+        <translation>已关闭</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>已指派</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51667,7 +51669,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Incidents:</source>
-        <translation type="unfinished"></translation>
+        <translation>事件:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51692,12 +51694,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Assigned To</source>
-        <translation type="unfinished"></translation>
+        <translation>指派到</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Summary</source>
-        <translation type="unfinished"></translation>
+        <translation>摘要</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51727,12 +51729,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Feedback</source>
-        <translation type="unfinished"></translation>
+        <translation>反馈(&amp;F)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;onfirmed</source>
-        <translation type="unfinished"></translation>
+        <translation>已确认(&amp;O)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -51742,17 +51744,17 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Resolved</source>
-        <translation type="unfinished"></translation>
+        <translation>(&amp;R)已解决</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Closed</source>
-        <translation type="unfinished"></translation>
+        <translation>已关闭(&amp;C)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Assigned</source>
-        <translation type="unfinished"></translation>
+        <translation>已指派(&amp;A)</translation>
     </message>
 </context>
 <context>
@@ -52093,12 +52095,12 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Type</source>
-        <translation type="unfinished"></translation>
+        <translation>物料类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Item:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52168,7 +52170,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Unit Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>单位成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52402,7 +52404,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>#</source>
-        <translation>数量</translation>
+        <translation>序号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52512,7 +52514,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+L</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+L</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52527,7 +52529,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+B</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+B</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52542,7 +52544,7 @@ What would you like to do?</source>
     <message>
         <location filename="" line="0"/>
         <source>1</source>
-        <translation type="unfinished"></translation>
+        <translation>1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52787,7 +52789,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Image Name</source>
-        <translation type="unfinished"></translation>
+        <translation>图片名称</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52797,7 +52799,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purpose</source>
-        <translation type="unfinished"></translation>
+        <translation>目的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52842,12 +52844,12 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Title</source>
-        <translation>头衔</translation>
+        <translation>职务</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>URL</source>
-        <translation type="unfinished"></translation>
+        <translation>URL</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -52857,7 +52859,7 @@ sure there is sufficient Quantity on Hand before proceeding.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Item</source>
-        <translation type="unfinished"></translation>
+        <translation>无法保存物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53022,7 +53024,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item &amp;Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料号(&amp;N):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53032,12 +53034,12 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item &amp;Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料类型(&amp;T):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Inventory UOM:</source>
-        <translation type="unfinished"></translation>
+        <translation>库存单位(&amp;I):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53047,17 +53049,17 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured</source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation>虚构件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53067,7 +53069,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product</source>
-        <translation>共有产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53087,7 +53089,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tooling</source>
-        <translation>加工</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53097,7 +53099,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Pick List Item</source>
-        <translation type="unfinished"></translation>
+        <translation>该物料出现在领料单中</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53142,7 +53144,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item is Sold</source>
-        <translation type="unfinished"></translation>
+        <translation>可用于出售的物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53157,7 +53159,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Product C&amp;ategory:</source>
-        <translation type="unfinished"></translation>
+        <translation>产品类型(&amp;A):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53182,12 +53184,12 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Product &amp;Weight:</source>
-        <translation type="unfinished"></translation>
+        <translation>产品重量(&amp;W):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Pac&amp;kaging Weight:</source>
-        <translation type="unfinished"></translation>
+        <translation>包装重量(&amp;K):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53222,7 +53224,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>BOM</source>
-        <translation type="unfinished"></translation>
+        <translation>BOM</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53232,12 +53234,12 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Notes</source>
-        <translation>票据</translation>
+        <translation>注释</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Ext. Description</source>
-        <translation type="unfinished"></translation>
+        <translation>附加描述</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53277,12 +53279,12 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Images</source>
-        <translation type="unfinished"></translation>
+        <translation>图片</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Aliases</source>
-        <translation type="unfinished"></translation>
+        <translation>别名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53322,12 +53324,12 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Files</source>
-        <translation type="unfinished"></translation>
+        <translation>文件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Open</source>
-        <translation type="unfinished"></translation>
+        <translation>打开(&amp;O)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53347,12 +53349,12 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>MRP</source>
-        <translation type="unfinished"></translation>
+        <translation>MRP</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>MPS</source>
-        <translation type="unfinished"></translation>
+        <translation>MPS</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53372,7 +53374,7 @@ You may edit the Item Site and deactivate it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Tax Type</source>
-        <translation type="unfinished"></translation>
+        <translation>类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53400,7 +53402,7 @@ Do you wish to continue saving and delete the Item Costs?</source>
     <message>
         <location filename="" line="0"/>
         <source>Tax Types</source>
-        <translation type="unfinished"></translation>
+        <translation>税类</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53410,7 +53412,7 @@ Do you wish to continue saving and delete the Item Costs?</source>
     <message>
         <location filename="" line="0"/>
         <source>You must select a Product Category for this Sold Item before continuing.</source>
-        <translation type="unfinished"></translation>
+        <translation>在继续之前，你必须为这个可用于出售的物料选择一个物料类型.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53430,7 +53432,7 @@ Do you wish to continue saving and delete the Item Costs?</source>
     <message>
         <location filename="" line="0"/>
         <source>BOO</source>
-        <translation type="unfinished"></translation>
+        <translation>BOO</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53448,7 +53450,7 @@ Do you wish to continue saving and delete the Item Costs?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Create Item Alias</source>
-        <translation type="unfinished"></translation>
+        <translation>无法建立物料别名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53459,7 +53461,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Item Alias</source>
-        <translation type="unfinished"></translation>
+        <translation>物料别名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53499,7 +53501,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alias Number:</source>
-        <translation type="unfinished"></translation>
+        <translation>别名号:</translation>
     </message>
 </context>
 <context>
@@ -53512,12 +53514,12 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Alias:</source>
-        <translation>&amp;别名:</translation>
+        <translation>别名(&amp;A):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53532,7 +53534,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation>&amp;物料:</translation>
+        <translation>物料(&amp;I):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53580,12 +53582,12 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Option:</source>
-        <translation type="unfinished"></translation>
+        <translation>选项:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Default Value</source>
-        <translation type="unfinished"></translation>
+        <translation>省缺值(&amp;D)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53768,7 +53770,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53878,7 +53880,7 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -53923,17 +53925,17 @@ You may not create duplicate Item Aliases.</source>
     <message>
         <location filename="" line="0"/>
         <source>Total Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>总成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Standard Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54059,7 +54061,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>View Item Costing...</source>
-        <translation type="unfinished"></translation>
+        <translation>显示物料成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54089,7 +54091,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Edit Bill of Materials...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑物料清单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54254,12 +54256,12 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costed Bill of Materials:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本物料清单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>History</source>
-        <translation type="unfinished"></translation>
+        <translation>历史</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54284,7 +54286,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Where Used</source>
-        <translation type="unfinished"></translation>
+        <translation>用在哪里</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54294,7 +54296,7 @@ indicated the date.  Please enter a valid date.</source>
     <message>
         <location filename="" line="0"/>
         <source>Bill of Materials Items:</source>
-        <translation>材料清单物料:</translation>
+        <translation>物料清单物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54328,7 +54330,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Item Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>物料成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54348,7 +54350,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Costing Element:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本元素:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54358,7 +54360,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Actual Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54391,12 +54393,12 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Title:</source>
-        <translation type="unfinished"></translation>
+        <translation>职务:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>URL:</source>
-        <translation type="unfinished"></translation>
+        <translation>URL:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54633,22 +54635,22 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Item Images</source>
-        <translation type="unfinished"></translation>
+        <translation>物料图片</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Image Description:</source>
-        <translation type="unfinished"></translation>
+        <translation>图片描述:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&lt;&lt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&lt;&lt;</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&gt;&gt;</source>
-        <translation type="unfinished"></translation>
+        <translation>&gt;&gt;</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54666,12 +54668,12 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54749,7 +54751,7 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Cost:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -54764,12 +54766,12 @@ No new Item Costs can be created for it until more costing elements are defined.
     <message>
         <location filename="" line="0"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>标准</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual</source>
-        <translation type="unfinished"></translation>
+        <translation>实际</translation>
     </message>
 </context>
 <context>
@@ -54828,12 +54830,12 @@ before saving it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Option:</source>
-        <translation type="unfinished"></translation>
+        <translation>选项:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Default &amp;Option</source>
-        <translation type="unfinished"></translation>
+        <translation>省缺值选项(&amp;O)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55111,7 +55113,7 @@ You may not create duplicate Pricing Schedule Items.</source>
     <message>
         <location filename="" line="0"/>
         <source>Product Category</source>
-        <translation type="unfinished"></translation>
+        <translation>产品类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55161,12 +55163,12 @@ You may not create duplicate Pricing Schedule Items.</source>
     <message>
         <location filename="" line="0"/>
         <source>Standard</source>
-        <translation type="unfinished"></translation>
+        <translation>标准</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Actual</source>
-        <translation type="unfinished"></translation>
+        <translation>实际</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55301,7 +55303,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55319,7 +55321,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55339,7 +55341,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55354,7 +55356,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation>&amp;物料:</translation>
+        <translation>物料(&amp;I):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55512,17 +55514,17 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>A</source>
-        <translation type="unfinished"></translation>
+        <translation>A</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>B</source>
-        <translation type="unfinished"></translation>
+        <translation>B</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C</source>
-        <translation type="unfinished"></translation>
+        <translation>C</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -55860,7 +55862,7 @@ You must delete these assignments before you may delete the selected Pricing Sch
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation>复制</translation>
     </message>
 </context>
 <context>
@@ -56029,7 +56031,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Add</source>
-        <translation type="unfinished"></translation>
+        <translation>添加(&amp;A)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56168,7 +56170,7 @@ before you may save this Item Source.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56419,7 +56421,7 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     <message>
         <location filename="" line="0"/>
         <source>Copy...</source>
-        <translation type="unfinished"></translation>
+        <translation>复制...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56429,13 +56431,14 @@ You may edit the existing Substitution but you may not create a duplicate.</sour
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Item</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected Item cannot be deleted as is is currently used in one or more Bills of Materials.
 You must delete all occurrences of this Item in any Bill of Materials before you may delete it.</source>
-        <translation type="unfinished"></translation>
+        <translation>选中的物料不能被删除，因为一个或多个物料清单中使用了该物料
+要删除该物料，你必须首先在所有出现该物料的物料清单中将其删除.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56464,17 +56467,17 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured</source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation>虚构件</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56484,7 +56487,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Co-Product</source>
-        <translation>共有产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56504,7 +56507,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Tooling</source>
-        <translation>加工</translation>
+        <translation>工具</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56514,7 +56517,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Assortment</source>
-        <translation type="unfinished"></translation>
+        <translation>分类</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56529,32 +56532,32 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show All Item Types</source>
-        <translation type="unfinished"></translation>
+        <translation>显示所有物料类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchased Items</source>
-        <translation type="unfinished"></translation>
+        <translation>显示采购物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Manufactured Items</source>
-        <translation type="unfinished"></translation>
+        <translation>显示制造物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show Sold Items</source>
-        <translation type="unfinished"></translation>
+        <translation>显示出售物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56564,7 +56567,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56589,12 +56592,12 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Cop&amp;y</source>
-        <translation type="unfinished"></translation>
+        <translation>复制(&amp;Y)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Alt+Y</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+Y</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -56604,7 +56607,7 @@ You must delete all occurrences of this Item in any Assortment Definition before
     <message>
         <location filename="" line="0"/>
         <source>Planning</source>
-        <translation type="unfinished"></translation>
+        <translation>计划</translation>
     </message>
 </context>
 <context>
@@ -57286,7 +57289,7 @@ System Error &apos;%1&apos;</source>
         <location filename="" line="0"/>
         <source>The specified Username does not exist in the specified Database.
 Contact your Systems Administrator to report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的用户名在数据库中不存在。请向你的系统管理员报告这一问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57297,7 +57300,8 @@ Contact your Systems Administrator to report this issue.</source>
         <location filename="" line="0"/>
         <source>The specified Username does exists in the specified Database but is not Active.
 Contact your Systems Administrator to report this issue.</source>
-        <translation type="unfinished"></translation>
+        <translation>指定的用户名在数据库中存在，但是是非活动用户。
+请向你的系统管理员报告这一问题.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57393,7 +57397,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57559,7 +57563,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Element</source>
-        <translation type="unfinished"></translation>
+        <translation>元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57584,7 +57588,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Act. Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57594,37 +57598,37 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Actual Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>更新实际成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Costing Detail...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看成本细节...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Delete Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>删除成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Actual Cost to Standard...</source>
-        <translation type="unfinished"></translation>
+        <translation>提交实际成本到标准成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit Actual Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑实际成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New Actual Cost...</source>
-        <translation type="unfinished"></translation>
+        <translation>新建实际成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>!ERROR!</source>
-        <translation type="unfinished"></translation>
+        <translation>!EEROR!</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57639,7 +57643,7 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Maintain Item Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>维护物料成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -57649,22 +57653,22 @@ Report this to your Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Costing &amp;Elements:</source>
-        <translation type="unfinished"></translation>
+        <translation>成本元素(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;New Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>新建成本(&amp;N)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Edit Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑成本(&amp;E)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Delete Cost</source>
-        <translation type="unfinished"></translation>
+        <translation>删除成本(&amp;D)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58577,12 +58581,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Workbench...</source>
-        <translation>&amp;工作台...</translation>
+        <translation>工作台(&amp;W)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;To-Do</source>
-        <translation>做(&amp;T)</translation>
+        <translation>待处理(&amp;T)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58617,7 +58621,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;To-Do List Items by User and Incident...</source>
-        <translation>&amp;做物料列表(按用户和事件)...</translation>
+        <translation>待处理项目列表列表(按用户和事件)(&amp;T)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58647,7 +58651,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Titles...</source>
-        <translation>&amp;头衔...</translation>
+        <translation>职务(&amp;T)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58940,12 +58944,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>按顾客(&amp;C)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类型(&amp;P)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -58960,7 +58964,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by Sales &amp;Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售订单(&amp;O)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59095,7 +59099,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Order Number...</source>
-        <translation type="unfinished"></translation>
+        <translation>按订单号(&amp;O)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59125,7 +59129,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Warehouse</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库(&amp;W)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59458,12 +59462,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Material Requirements</source>
-        <translation type="unfinished"></translation>
+        <translation>材料需求(&amp;M)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Work Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>按工作中心(&amp;W)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59611,7 +59615,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Bills of Materials</source>
-        <translation>材料清单(&amp;B)</translation>
+        <translation>物料清单(&amp;B)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59681,12 +59685,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Copy...</source>
-        <translation type="unfinished"></translation>
+        <translation>复制(&amp;C)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Workbench...</source>
-        <translation>&amp;工作台...</translation>
+        <translation>工作台(&amp;W)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59701,17 +59705,17 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Bill Of Ma&amp;terials</source>
-        <translation>材料清单(&amp;T)</translation>
+        <translation>物料清单(&amp;T)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Mass &amp;Replace...</source>
-        <translation type="unfinished"></translation>
+        <translation>批量替换(&amp;R)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Mass E&amp;xpire...</source>
-        <translation type="unfinished"></translation>
+        <translation>批量过期(&amp;X)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59731,12 +59735,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Maintain Item Costs...</source>
-        <translation type="unfinished"></translation>
+        <translation>维护物料成本(&amp;M)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Update &amp;Actual Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>更新实际成本(&amp;A)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59746,37 +59750,37 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Post Actual Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>提交实际成本(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post &amp;Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>提交标准成本(&amp;S)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Costed BOM</source>
-        <translation type="unfinished"></translation>
+        <translation>成本物料清单(&amp;C)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Item Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>物料成本(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Summary...</source>
-        <translation type="unfinished"></translation>
+        <translation>摘要(&amp;S)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;History...</source>
-        <translation type="unfinished"></translation>
+        <translation>历史(&amp;H)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;User-Defined Costing Elements...</source>
-        <translation type="unfinished"></translation>
+        <translation>用户自定义成本元素(&amp;U)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59939,7 +59943,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Print Purchase &amp;Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印采购订单(&amp;O)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -59989,7 +59993,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Purchase Orders</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60009,7 +60013,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order &amp;History...</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单历史(&amp;H)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60132,12 +60136,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Sales Tools</source>
-        <translation></translation>
+        <translation>销售aahw</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Quote</source>
-        <translation type="unfinished"></translation>
+        <translation>报价(&amp;Q)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60282,7 +60286,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>按顾客(&amp;C)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60292,7 +60296,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by Customer &amp;Type...</source>
-        <translation type="unfinished"></translation>
+        <translation>按顾客类型(&amp;T)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60302,7 +60306,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Sales Order S&amp;tatus...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售订单状态(&amp;T)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60347,12 +60351,12 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>by Sales &amp;Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>按销售订单(&amp;O)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Product Category...</source>
-        <translation type="unfinished"></translation>
+        <translation>按产品类型(&amp;P)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60382,7 +60386,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>&amp;Customers</source>
-        <translation type="unfinished"></translation>
+        <translation>顾客(&amp;C)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60417,7 +60421,7 @@ there isn&apos;t a W/O Material Requirement for the selected W/O/Item combinatio
     <message>
         <location filename="" line="0"/>
         <source>Sales &amp;History</source>
-        <translation type="unfinished"></translation>
+        <translation>销售历史(&amp;H)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60747,12 +60751,12 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>Run M&amp;PS...</source>
-        <translation type="unfinished"></translation>
+        <translation>运行MPS(&amp;P)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Run &amp;MRP</source>
-        <translation type="unfinished"></translation>
+        <translation>运行MRP(&amp;M)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60762,7 +60766,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>by &amp;Item...</source>
-        <translation>根据&amp;物料...</translation>
+        <translation>按物料(&amp;I)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60792,12 +60796,12 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Inventory</source>
-        <translation type="unfinished"></translation>
+        <translation>库存(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60812,12 +60816,12 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>&amp;Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>采购订单(&amp;P)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Work Order</source>
-        <translation type="unfinished"></translation>
+        <translation>工作中心(&amp;W)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -60932,7 +60936,7 @@ Re-Post Invoices to re-create the ARDIST and AROPEN files.
     <message>
         <location filename="" line="0"/>
         <source>&amp;Planner Codes...</source>
-        <translation type="unfinished"></translation>
+        <translation>计划员代码(&amp;P)...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -61452,7 +61456,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Alt+1</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62144,7 +62148,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Address Book</source>
-        <translation>&amp;住址名册</translation>
+        <translation>地址簿(&amp;A)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62194,22 +62198,22 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;To-Do List Management</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理列表管理(&amp;T)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>To-Do List...</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>New To-Do List Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>新建待处理列表项目...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Displays</source>
-        <translation>&amp;显示</translation>
+        <translation>显示(&amp;D)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62219,7 +62223,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Titles...</source>
-        <translation type="unfinished"></translation>
+        <translation>职务...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62249,12 +62253,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具(&amp;U)</translation>
+        <translation>工具(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;RM</source>
-        <translation type="unfinished"></translation>
+        <translation>客户关系管理(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -62750,12 +62754,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Displays</source>
-        <translation>&amp;显示</translation>
+        <translation type="unfinished">显示(&amp;D)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Reports</source>
-        <translation>&amp;报告</translation>
+        <translation type="unfinished">查询(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63020,7 +63024,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Utilities</source>
-        <translation>软件工具(&amp;U)</translation>
+        <translation>工具(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63050,7 +63054,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Warehouse...</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63464,7 +63468,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Update Actual Costs by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>按物料更新实际成本...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -63484,17 +63488,17 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>&amp;Displays</source>
-        <translation>&amp;显示</translation>
+        <translation>显示(&amp;D)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Reports</source>
-        <translation>&amp;报告</translation>
+        <translation>查询(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>User-Defined Costing Elements...</source>
-        <translation type="unfinished"></translation>
+        <translation>用户自定义成本元素...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64281,12 +64285,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>New Quote...</source>
-        <translation type="unfinished"></translation>
+        <translation>新建报价...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>List Quotes...</source>
-        <translation type="unfinished"></translation>
+        <translation>报价列表...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64486,12 +64490,12 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Quote Lookup by Customer...</source>
-        <translation type="unfinished"></translation>
+        <translation>按客户查找报价...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Quote Lookup by Item...</source>
-        <translation type="unfinished"></translation>
+        <translation>按物料查找报价...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -64516,7 +64520,7 @@ Please verify the Vendor Invoice Number to ensure that this is not a duplicate e
     <message>
         <location filename="" line="0"/>
         <source>Sales Order Status...</source>
-        <translation type="unfinished"></translation>
+        <translation>销售订单状态...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65749,7 +65753,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Copy...</source>
-        <translation type="unfinished"></translation>
+        <translation>复制...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -65824,7 +65828,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -66175,7 +66179,7 @@ more of its line items.  You must return this stock before you may delete this S
     <message>
         <location filename="" line="0"/>
         <source>To-Do&apos;s</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67106,7 +67110,7 @@ You must create Item Sites for these Component Items before you may explode this
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation type="unfinished">复制</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67279,7 +67283,7 @@ range for this Planned Schedule. Please fix this before continuing.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copy</source>
-        <translation>副本</translation>
+        <translation>复制</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67719,12 +67723,12 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Roll Up Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动标准成本(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Material Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>提交材料成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67764,7 +67768,7 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Post User Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>提交用户定义成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67794,7 +67798,7 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Select all Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>选中所有成本(&amp;S)</translation>
     </message>
 </context>
 <context>
@@ -67802,7 +67806,7 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>A SystemError occurred at %1::%2</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误发生在 %1::%2</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67812,17 +67816,17 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Post Actual Costs by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按物料提交实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Roll Up Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动标准成本(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Post Material Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>提交材料成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67862,7 +67866,7 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>Post User Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>提交用户定义成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -67887,7 +67891,7 @@ Contact you Systems Administrator.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Select all Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>选中所有成本(&amp;S)</translation>
     </message>
 </context>
 <context>
@@ -69476,7 +69480,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="" line="0"/>
         <source>Quantity:</source>
-        <translation type="unfinished"></translation>
+        <translation>数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -69491,7 +69495,7 @@ on the &apos;Do Not Post&apos; button and Re-Post Vouchers to re-create the APDI
     <message>
         <location filename="" line="0"/>
         <source>&amp;Items:</source>
-        <translation>&amp;物料:</translation>
+        <translation>物料(&amp;I):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -70983,17 +70987,17 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Print Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>打印采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Copies:</source>
-        <translation type="unfinished"></translation>
+        <translation>复制:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商(&amp;V)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -71056,12 +71060,12 @@ Please wait until the Purchase Order has been completely saved.</source>
     <message>
         <location filename="" line="0"/>
         <source>Copies:</source>
-        <translation type="unfinished"></translation>
+        <translation>复制:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商(&amp;V)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72075,7 +72079,7 @@ You must reclass these Accounts before you may delete the selected Profit Center
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72562,7 +72566,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Save Purchase Order</source>
-        <translation type="unfinished"></translation>
+        <translation>不能保存采购订单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -72597,7 +72601,7 @@ OpenMFG can automatically create Purchase Orders for it.</source>
     <message>
         <location filename="" line="0"/>
         <source>Enter Purchase Order #</source>
-        <translation type="unfinished"></translation>
+        <translation>输入采购订单号</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73153,7 +73157,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Name:</source>
-        <translation>&amp;名字:</translation>
+        <translation>名字(&amp;N):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73186,7 +73190,7 @@ Click Yes to use the existing P/O otherwise a new one will be created.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchase Order Types</source>
-        <translation>采购订单类型:</translation>
+        <translation>采购订单类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -73654,7 +73658,7 @@ Are you sure that you want to delete the selected Invoice Records?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quotes:</source>
-        <translation type="unfinished"></translation>
+        <translation>报价单:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76900,7 +76904,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Costed Indented Bill of Materials</source>
-        <translation>报告参数-已估价的约定的材料清单</translation>
+        <translation>报告参数-已估价的约定的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76928,7 +76932,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Costed Single Level Bill of Materials</source>
-        <translation>报告参数-已估价的单一水平的材料清单</translation>
+        <translation>报告参数-已估价的单一水平的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -76966,7 +76970,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Costed Summarized Bill of Materials</source>
-        <translation>报告参数-已估价的概括材料清单</translation>
+        <translation>报告参数-已估价的概括物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -77979,7 +77983,7 @@ to return from the selected W/O to Inventory.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Indented Bill of Materials</source>
-        <translation>报告参数-约定的材料清单</translation>
+        <translation>报告参数-约定的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79361,7 +79365,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Material Usage Variance by Bill of Materials Item</source>
-        <translation>报告参数-材料使用差异(按材料清单物料)</translation>
+        <translation>报告参数-材料使用差异(按物料清单物料)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79921,7 +79925,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchase Price Variances</source>
-        <translation>显示购买价格差异</translation>
+        <translation>显示采购价格差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -79974,7 +79978,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchase Price Variances</source>
-        <translation>显示购买价格差异</translation>
+        <translation>显示采购价格差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -80027,7 +80031,7 @@ fields are correctly filled out before running the report.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show Purchase Price Variances</source>
-        <translation>显示购买价格差异</translation>
+        <translation>显示采购价格差异</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81227,7 +81231,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Sequenced Bill of Materials</source>
-        <translation>报告参数-已序列化的材料清单</translation>
+        <translation>报告参数-已序列化的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81321,7 +81325,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Single Level Bill of Materials</source>
-        <translation>报告参数-单一水平的材料清单</translation>
+        <translation>报告参数-单一水平的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -81564,7 +81568,7 @@ Please contact your Systems Administrator and report this issue.</source>
     <message>
         <location filename="" line="0"/>
         <source>Report Parameters - Summarized Bill of Materials</source>
-        <translation>报告参数-概括了的材料清单</translation>
+        <translation>报告参数-概括了的物料清单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -84728,7 +84732,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85027,7 +85031,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Quote</source>
-        <translation type="unfinished"></translation>
+        <translation>报价单</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -85167,7 +85171,7 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>Cancel Quote?</source>
-        <translation type="unfinished"></translation>
+        <translation>取消接收?</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86221,22 +86225,22 @@ Would you like to mark the selected Sales Category as inactive instead?</source>
     <message>
         <location filename="" line="0"/>
         <source>C&amp;reate Order</source>
-        <translation type="unfinished"></translation>
+        <translation>创建订单(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Q&amp;ty.:</source>
-        <translation type="unfinished"></translation>
+        <translation>订单数量(&amp;T):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Due Date:</source>
-        <translation type="unfinished"></translation>
+        <translation>订单到期日:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Order Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>订单状态:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -86956,12 +86960,12 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>First</source>
-        <translation>第一</translation>
+        <translation>姓</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Last</source>
-        <translation>最后</translation>
+        <translation>名</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87126,7 +87130,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87234,22 +87238,22 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>View BOM...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看BOM...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit BOM...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑MOB...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View BOO...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看BOO...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit BOO...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑MOO...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87264,17 +87268,17 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Purchased</source>
-        <translation>已购买</translation>
+        <translation>采购</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Manufactured</source>
-        <translation>已生产</translation>
+        <translation>制造</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Phantom</source>
-        <translation>幻影</translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87284,7 +87288,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Co-Product</source>
-        <translation>共有产品</translation>
+        <translation>共产品</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87314,7 +87318,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Assortment</source>
-        <translation type="unfinished"></translation>
+        <translation>分类</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87324,17 +87328,17 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Search for Items</source>
-        <translation type="unfinished"></translation>
+        <translation>搜索物料</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Search through Item Numbers</source>
-        <translation>通过物料号搜索</translation>
+        <translation>按物料号搜索</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87349,7 +87353,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Show &amp;Inactive Items</source>
-        <translation>&amp;显示非活动物料</translation>
+        <translation>显示非活动物料(&amp;I)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87364,7 +87368,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>物料:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -87445,7 +87449,7 @@ Scrap Transaction.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+L</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+L</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -91986,7 +91990,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>To-Do List Item</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理列表项目</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -92094,7 +92098,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>To-Do List</source>
-        <translation type="unfinished"></translation>
+        <translation>待处理列表</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -92169,7 +92173,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -92581,7 +92585,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>清除</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -92626,7 +92630,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>Order Status:</source>
-        <translation type="unfinished"></translation>
+        <translation>订单状态:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93170,7 +93174,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>Copy...</source>
-        <translation type="unfinished"></translation>
+        <translation>复制...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93255,7 +93259,7 @@ You must reassign these Vendors before you may delete the selected Terms Code.</
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -93992,7 +93996,7 @@ creating this Transaction</source>
     <message>
         <location filename="" line="0"/>
         <source>View Purchase Order...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看采购订单...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94563,7 +94567,7 @@ Would you like to post it anyway?</source>
     <message>
         <location filename="" line="0"/>
         <source>Print...</source>
-        <translation type="unfinished"></translation>
+        <translation>打印...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94893,7 +94897,7 @@ Class Codes or select a Class Code from the Class Code list.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -94906,13 +94910,14 @@ Class Codes or select a Class Code from the Class Code list.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Roll Up Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动标准成本(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>A System Error occurred at %1::%2.
 Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>一个系统错误发生在%1::%2.
+非法的&apos;成本类型&apos;参数值&apos;%3&apos;</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94967,7 +94972,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update User Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>更新用户定义成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94982,7 +94987,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -94992,7 +94997,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Select all Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>选中所有成本(&amp;S)</translation>
     </message>
 </context>
 <context>
@@ -95000,12 +95005,12 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Standard Costs By Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按物料更新标准成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Roll Up Standard Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动标准成本(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95020,12 +95025,12 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update Actual Costs by Item</source>
-        <translation type="unfinished"></translation>
+        <translation>按物料更新实际成本按物料更新实际成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Roll Up Actual Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>滚动实际成本(&amp;R)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95065,7 +95070,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>Update User Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>更新用户定义成本</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95080,7 +95085,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95090,7 +95095,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Select all Costs</source>
-        <translation type="unfinished"></translation>
+        <translation>选中所有成本(&amp;S)</translation>
     </message>
 </context>
 <context>
@@ -95138,7 +95143,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95181,7 +95186,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -95209,7 +95214,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -95247,7 +95252,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -95285,7 +95290,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95348,7 +95353,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95401,7 +95406,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95479,7 +95484,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -95517,7 +95522,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
 </context>
 <context>
@@ -95555,7 +95560,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95618,7 +95623,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -95681,7 +95686,7 @@ Illegal parameter value &apos;%3&apos; for &apos;costtype&apos;</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Update</source>
-        <translation>&amp;更新</translation>
+        <translation>更新(&amp;U)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96371,7 +96376,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>User</source>
-        <translation>使用者</translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96469,7 +96474,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96537,22 +96542,22 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Inactive</source>
-        <translation type="unfinished"></translation>
+        <translation>非活动的</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Users</source>
-        <translation type="unfinished"></translation>
+        <translation>用户</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Show Inactive Users</source>
-        <translation type="unfinished"></translation>
+        <translation>显示非活动用户(&amp;S)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Users:</source>
-        <translation type="unfinished"></translation>
+        <translation>用户:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96590,7 +96595,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>City, State, Zip</source>
-        <translation type="unfinished"></translation>
+        <translation>城市，国家，邮政编码</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96605,17 +96610,17 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Create Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>无法创建供应商</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a Number for this new Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入新供应商的编码.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Please enter a Name for this new Vendor.</source>
-        <translation type="unfinished"></translation>
+        <translation>请输入新供应商的名称.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96630,7 +96635,7 @@ You may not create a Costing Element with this code.</source>
     <message>
         <location filename="" line="0"/>
         <source>Select Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation>请选择供应商类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96661,12 +96666,12 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Vendor Type:</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Active</source>
-        <translation>&amp;活动的</translation>
+        <translation>活动的(&amp;A)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96746,7 +96751,7 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Alt+1</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -96766,7 +96771,7 @@ in use by the Vendor &apos;%1&apos;.  Please correct or enter a new Vendor Numbe
     <message>
         <location filename="" line="0"/>
         <source>Addresses</source>
-        <translation type="unfinished"></translation>
+        <translation>地址</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97278,23 +97283,24 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Vendor Type</source>
-        <translation type="unfinished"></translation>
+        <translation>无法删除供应商类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>The selected Vendor Type cannot be deleted as there are one or more Vendors assigned to it.
 You must reassign these Vendors before you may delete the selected Vendor Type.</source>
-        <translation type="unfinished"></translation>
+        <translation>被选择的供应商类型不能被删除，因为有在一个或多个供应商被指派到这一类型。
+要删除此供应商类型，你必须将这些供应商重新指派到其它类型.</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Types</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商类型</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendor Types:</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商类型:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97342,32 +97348,32 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="" line="0"/>
         <source>Cannot Delete Vendor</source>
-        <translation type="unfinished"></translation>
+        <translation>不能删除供应商</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Edit Vendor...</source>
-        <translation type="unfinished"></translation>
+        <translation>编辑供应商...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>View Vendor...</source>
-        <translation type="unfinished"></translation>
+        <translation>查看供应商...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Delete Vendor...</source>
-        <translation type="unfinished"></translation>
+        <translation>删除供应商...</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendors</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Vendors:</source>
-        <translation type="unfinished"></translation>
+        <translation>供应商:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97686,7 +97692,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="" line="0"/>
         <source>Voucher #:</source>
-        <translation type="unfinished"></translation>
+        <translation>凭单号:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97721,7 +97727,7 @@ You must reassign these Vendors before you may delete the selected Vendor Type.<
     <message>
         <location filename="" line="0"/>
         <source>Alt+1</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+1</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97921,7 +97927,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>&amp;Clear</source>
-        <translation type="unfinished"></translation>
+        <translation>清除(&amp;C)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -97939,7 +97945,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>Cost Element</source>
-        <translation type="unfinished"></translation>
+        <translation>成本元素</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98139,7 +98145,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>0.00</source>
-        <translation type="unfinished"></translation>
+        <translation>0.00</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98159,7 +98165,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>0</source>
-        <translation type="unfinished"></translation>
+        <translation>0</translation>
     </message>
 </context>
 <context>
@@ -98441,7 +98447,7 @@ Please distribute manually.</source>
     <message>
         <location filename="" line="0"/>
         <source>Alt+W</source>
-        <translation type="unfinished"></translation>
+        <translation>Alt+W</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98797,7 +98803,7 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Warehouses:</source>
-        <translation type="unfinished"></translation>
+        <translation>仓库:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -98956,37 +98962,37 @@ Check the database server log for errors.</source>
     <message>
         <location filename="" line="0"/>
         <source>Sunday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期日</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Monday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期一</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Tuesday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期二</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Wednesday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期三</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Thursday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期四</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Friday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期五</translation>
     </message>
     <message>
         <location filename="" line="0"/>
         <source>Saturday</source>
-        <translation type="unfinished"></translation>
+        <translation>星期六</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99104,7 +99110,7 @@ that the selected Work Order does.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per:</source>
-        <translation>相对于标准单位的数量:</translation>
+        <translation>单位数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99114,7 +99120,7 @@ that the selected Work Order does.</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Required:</source>
-        <translation>要求的数量:</translation>
+        <translation>需求数量:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99667,7 +99673,7 @@ The Work Order may be closed</source>
     <message>
         <location filename="" line="0"/>
         <source>Co&amp;py</source>
-        <translation>&amp;副本</translation>
+        <translation>复制(&amp;P)</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99801,7 +99807,7 @@ Warehouse before creating the Work Order.</source>
     <message>
         <location filename="" line="0"/>
         <source>Priority:</source>
-        <translation type="unfinished"></translation>
+        <translation>优先级:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -99934,7 +99940,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Qty. Per</source>
-        <translation>相对于标准单位的数量</translation>
+        <translation>单位数量</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100059,7 +100065,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Non-Pick List Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>该物料不出现在领料单中:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100069,7 +100075,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>Pick List Items:</source>
-        <translation type="unfinished"></translation>
+        <translation>该物料出现在领料单中:</translation>
     </message>
     <message>
         <location filename="" line="0"/>
@@ -100225,7 +100231,7 @@ Do you want to change the Order Quantity for this Work Order to %2?</source>
     <message>
         <location filename="" line="0"/>
         <source>S&amp;earch for:</source>
-        <translation>查找(&amp;A):</translation>
+        <translation>查找(&amp;E):</translation>
     </message>
     <message>
         <location filename="" line="0"/>
