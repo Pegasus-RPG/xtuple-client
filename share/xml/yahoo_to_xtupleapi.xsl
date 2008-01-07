@@ -544,7 +544,10 @@
       <!-- misc_charge_description -->
       <!-- misc_account_number -->
       <!-- misc_charge -->
-      <!-- freight -->
+
+      <freight>
+        <xsl:value-of select="Total/Line[@type='Shipping']"/>
+      </freight>
 
       <order_notes>
 	<xsl:if test="Comments">
@@ -630,7 +633,7 @@
       </order_number>
 
       <line_number>
-	<xsl:value-of select="@num"/>
+	<xsl:value-of select="@num + 1"/>
       </line_number>
 
       <item_number>
@@ -706,7 +709,7 @@
       <xsl:with-param name="id">
 	<xsl:value-of select="substring-after(../../@id, concat(/OrderList/@StoreAccountName, '-'))"/>
       </xsl:with-param>
-      <xsl:with-param name="line-number"	select="../@num"	/>
+      <xsl:with-param name="line-number"	select="../@num + 1"	/>
       <xsl:with-param name="characteristic"	select="@name"		/>
       <xsl:with-param name="value"		select="text()"		/>
     </xsl:call-template>
