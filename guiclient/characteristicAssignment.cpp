@@ -202,20 +202,6 @@ void characteristicAssignment::sSave()
     _char->setFocus();
     return;
   }
-
-  if(_default->isChecked())
-  {
-    q.prepare("UPDATE charass"
-              "   SET charass_default = false "
-              " WHERE ((charass_target_id=:charass_target_id)"
-              "   AND  (charass_target_type=:charass_target_type)"
-              "   AND  (charass_char_id=:charass_char_id))" );
-    q.bindValue(":charass_target_id", _targetId);
-    q.bindValue(":charass_target_type", _targetType);
-    q.bindValue(":charass_char_id", _char->id());
-    q.exec();
-  }
-
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('charass_charass_id_seq') AS charass_id;");
