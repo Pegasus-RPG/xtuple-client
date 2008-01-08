@@ -23,6 +23,8 @@ EOF
   echo "	$PROG runs qmake and make if the required binaries are missing "
   echo "	from the bin directory even if -b is not specified."
   echo "-d <file>	build and bundle a demo release, including the help file named <file>"
+  echo "	The help file for the demo is /not/ the regular application help"
+  echo "	To build a demo you must first edit some of the source files"
   echo "-x	turn on shell debugging output"
 }
 
@@ -71,7 +73,7 @@ bundle() {
     BINARY="${APPNAME}_Demo.app"
     if [ -d "$HELPFILE" ] ; then
       if ! cp -R -L "$HELPFILE" \
-	      "$BUNDLEDIR"/bin/"${BINARY}"/Contents/Resources/helpOpenMFGGUIClient ; then
+	      "$BUNDLEDIR"/bin/"${BINARY}"/Contents/Resources/helpXTupleGUIClient ; then
 	return 5
       fi
     elif [ -f "$HELPFILE" ] ; then
@@ -82,7 +84,7 @@ bundle() {
       if ! jar xf "$HELPFILE" ; then
 	return 5
       fi
-      if [ ! -d helpOpenMFGGUIClient ] ; then
+      if [ ! -d helpXTupleGUIClient ] ; then
 	echo "$PROG: help file $HELPFILE was not installed properly in demo client"
 	return 5
       fi
@@ -122,6 +124,14 @@ while [ "$1" != -- ] ; do
 	HELPFILE=$2
 	if ! expr ${HELPFILE} : "\/" ; then
 	  HELPFILE=`pwd`/"$HELPFILE"
+	fi
+	if egrep -i "_evaluation.*FALSE" guiclient/main.cpp ; then
+	  echo The sources do not appear to have been modified to build a demo
+	  echo
+	  echo Change guiclient/main.cpp: set _evaluation to TRUE
+	  echo Change common/login2.cpp: set the port in _evalDatabaseURL
+	  echo Change common/login2.cpp: set the passwd to the proper value
+	  exit 1
 	fi
 	shift
 	;;
