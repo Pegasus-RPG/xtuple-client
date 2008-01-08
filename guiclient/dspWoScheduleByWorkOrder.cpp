@@ -568,8 +568,11 @@ void dspWoScheduleByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   
   menuItem = pMenu->insertItem(tr("View Bill of Materials..."), this, SLOT(sViewBOM()), 0);
   pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOMs"));
-  menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOOs"));
+  if (_metrics->boolean("Routings"))
+  {
+    menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
+    pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOOs"));
+  }
 
   pMenu->insertSeparator();
 
