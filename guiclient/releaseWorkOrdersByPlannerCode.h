@@ -59,7 +59,7 @@
 #define RELEASEWORKORDERSBYPLANNERCODE_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include <parameter.h>
 #include "ui_releaseWorkOrdersByPlannerCode.h"
 
@@ -71,7 +71,7 @@ public:
     releaseWorkOrdersByPlannerCode(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~releaseWorkOrdersByPlannerCode();
 
-    virtual void init();
+    virtual bool setParams(ParameterList &);
 
 public slots:
     virtual void sRelease();
