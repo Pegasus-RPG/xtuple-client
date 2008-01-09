@@ -86,6 +86,7 @@ public slots:
     virtual void clear();
     virtual void sFillRestricted();
     virtual void sToggleRestricted();
+    virtual void sDefaultLocChanged();
 
 protected slots:
     virtual void languageChange();

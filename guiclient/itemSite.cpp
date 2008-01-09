@@ -79,6 +79,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillRestricted()));
   connect(_toggleRestricted, SIGNAL(clicked()), this, SLOT(sToggleRestricted()));
+  connect(_useDefaultLocation, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
 
   _itemType = 0;
 
@@ -790,12 +791,8 @@ void itemSite::populateLocations()
     query.bindValue(":item_id", _item->id());
     query.exec();
     _locations->populate(query);
-    
-    if (_locations->count() && _useDefaultLocation->isChecked())
-	  _location->setEnabled(TRUE);
-    else
-	  _location->setEnabled(FALSE);
-  sFillRestricted();
+    sDefaultLocChanged();
+    sFillRestricted();
 }
 
 void itemSite::populate()
@@ -1181,4 +1178,19 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
 		       "Item Site for this Transfer Order Item."),
 		      __FILE__, __LINE__);
   return -90;	// catchall: we didn't successfully find/create an itemsite
+}
+
+void itemSite::sDefaultLocChanged()
+{
+  if (_useDefaultLocation->isChecked())
+  {
+    if (_locations->count())
+	  _location->setEnabled(TRUE);
+    else
+    {
+	  _location->setEnabled(FALSE);
+      _locations->setEnabled(FALSE);
+      _miscLocation->setChecked(TRUE);
+    }
+  }
 }
