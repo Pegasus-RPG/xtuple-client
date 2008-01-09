@@ -57,8 +57,8 @@
 
 #include "postBillingSelections.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QVariant>
+#include <QMessageBox>
 #include <openreports.h>
 #include "rwInterface.h"
 #include "distributeInventory.h"
@@ -73,13 +73,13 @@
 postBillingSelections::postBillingSelections(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
+  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
-    // signals and slots connections
-    connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    init();
+  _customerType->setType(CustomerType);
+  _post->setFocus();
 }
 
 /*
@@ -87,7 +87,7 @@ postBillingSelections::postBillingSelections(QWidget* parent, const char* name, 
  */
 postBillingSelections::~postBillingSelections()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -96,19 +96,12 @@ postBillingSelections::~postBillingSelections()
  */
 void postBillingSelections::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void postBillingSelections::init()
-{
-  _customerType->setType(CustomerType);
-  _post->setFocus();
+  retranslateUi(this);
 }
 
 void postBillingSelections::sPost()
 {
-  QString sql("SELECT postBillingSelections(custtype_id) AS result"
+  QString sql("SELECT postBillingSelections(custtype_id, :consolidate) AS result"
               " FROM custtype" );
   if (_customerType->isSelected())
     sql += " WHERE (custtype_id=:custtype_id)";
@@ -116,6 +109,7 @@ void postBillingSelections::sPost()
     sql += " WHERE (custtype_code ~ :custtype_pattern)";
   q.prepare(sql);
   _customerType->bindValue(q);
+  q.bindValue(":consolidate", _consolidate->isChecked());
   q.exec();
   if (q.first())
   {
@@ -140,3 +134,4 @@ void postBillingSelections::sPost()
 
   accept();
 }
+

@@ -59,7 +59,7 @@
 #define POSTBILLINGSELECTIONS_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 #include "ui_postBillingSelections.h"
 
 class postBillingSelections : public QDialog, public Ui::postBillingSelections
@@ -69,8 +69,6 @@ class postBillingSelections : public QDialog, public Ui::postBillingSelections
 public:
     postBillingSelections(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~postBillingSelections();
-
-    virtual void init();
 
 public slots:
     virtual void sPost();
