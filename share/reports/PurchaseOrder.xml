@@ -2,7 +2,7 @@
 <report>
  <title>Purchase Order</title>
  <name>PurchaseOrder</name>
- <description>Updated for 2.1. This is an example Purchase Order report that can be used as an example for creating customized Purchase Order reports for customers.  This one will place the logo image in the images DB on the report. MA</description>
+ <description>Updated for 2.3.1 to use Warehouse Address as PO Head Address - This is an example Purchase Order report that can be used as an example for creating customized Purchase Order reports for customers.  This one will place the logo image in the images DB on the report. MA</description>
  <watermark>
   <data>
    <query>Head</query>
@@ -104,47 +104,26 @@ FROM
 WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
       pohead_curr_id = curr_id;</sql>
  </querysource>
+ <querysource>
+  <name>Address</name>
+  <sql>SELECT
+     warehous_descrip,
+     formatAddr(addr_line1, addr_line2, addr_line3, ( addr_city || '  ' || addr_state || '  ' || addr_postalcode), addr_country) AS warehouse_address
+FROM
+     whsinfo, 
+     addr, 
+     pohead
+WHERE 
+     addr_id = warehous_addr_id
+     and pohead_warehous_id = warehous_id
+     AND pohead_id=&lt;? value("pohead_id") ?> ;</sql>
+ </querysource>
  <pghead>
-  <height>371</height>
+  <height>374</height>
   <label>
    <rect>
-    <x>65</x>
-    <y>265</y>
-    <width>60</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>F.O.B.</string>
-  </label>
-  <field>
-   <rect>
-    <x>500</x>
-    <y>140</y>
-    <width>300</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>warehous_descrip</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>455</x>
-    <y>155</y>
+    <x>45</x>
+    <y>145</y>
     <width>19</width>
     <height>16</height>
    </rect>
@@ -154,197 +133,8 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
     <weight>bold</weight>
    </font>
    <left/>
-   <bottom/>
+   <top/>
    <string>TO:</string>
-  </label>
-  <image>
-   <rect>
-    <x>290</x>
-    <y>10</y>
-    <width>225</width>
-    <height>75</height>
-   </rect>
-   <mode>stretch</mode>
-   <data>
-    <query>Logo</query>
-    <column>image_data</column>
-   </data>
-  </image>
-  <label>
-   <rect>
-    <x>50</x>
-    <y>335</y>
-    <width>80</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>YOUR ITEM #</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>315</ystart>
-   <xend>805</xend>
-   <yend>315</yend>
-   <weight>0</weight>
-  </line>
-  <label>
-   <rect>
-    <x>550</x>
-    <y>45</y>
-    <width>80</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>P/O NUMBER</string>
-  </label>
-  <label>
-   <rect>
-    <x>125</x>
-    <y>90</y>
-    <width>120</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Helvetica</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>22134-1604</string>
-  </label>
-  <field>
-   <rect>
-    <x>444</x>
-    <y>290</y>
-    <width>205</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>terms_descrip</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>5</x>
-    <y>320</y>
-    <width>37</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>LINE</string>
-  </label>
-  <field>
-   <rect>
-    <x>655</x>
-    <y>290</y>
-    <width>119</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>username</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>530</x>
-    <y>325</y>
-    <width>85</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UNIT PRICE</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>30</y>
-    <width>405</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Helvetica</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Building 1</string>
-  </label>
-  <field>
-   <rect>
-    <x>205</x>
-    <y>290</y>
-    <width>255</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>11</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>pohead_shipvia</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>550</x>
-    <y>85</y>
-    <width>35</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>PAGE</string>
   </label>
   <field>
    <rect>
@@ -365,6 +155,26 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
     <column>page_number</column>
    </data>
   </field>
+  <text>
+   <rect>
+    <x>75</x>
+    <y>160</y>
+    <width>300</width>
+    <height>15</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Head</query>
+    <column>vend_address</column>
+   </data>
+  </text>
   <label>
    <rect>
     <x>540</x>
@@ -381,128 +191,28 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
    <vcenter/>
    <string>TERMS</string>
   </label>
-  <text>
-   <rect>
-    <x>500</x>
-    <y>160</y>
-    <width>300</width>
-    <height>15</height>
-   </rect>
-   <bottompad>10</bottompad>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <top/>
-   <data>
-    <query>Head</query>
-    <column>warehouse_address</column>
-   </data>
-  </text>
   <field>
    <rect>
-    <x>645</x>
-    <y>40</y>
-    <width>126</width>
+    <x>444</x>
+    <y>290</y>
+    <width>204</width>
     <height>19</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>pohead_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>550</x>
-    <y>65</y>
-    <width>44</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>DATE</string>
-  </label>
-  <label>
-   <rect>
-    <x>680</x>
-    <y>265</y>
-    <width>69</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
+    <size>11</size>
     <weight>normal</weight>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>ORDERED BY</string>
-  </label>
+   <data>
+    <query>Head</query>
+    <column>terms_descrip</column>
+   </data>
+  </field>
   <label>
    <rect>
-    <x>455</x>
-    <y>145</y>
-    <width>37</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>SHIP</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>5</y>
-    <width>254</width>
-    <height>33</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>14</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Purchase Order</string>
-  </label>
-  <label>
-   <rect>
-    <x>233</x>
-    <y>325</y>
-    <width>135</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>ITEM DESCRIPTION</string>
-  </label>
-  <label>
-   <rect>
-    <x>455</x>
+    <x>530</x>
     <y>325</y>
     <width>85</width>
     <height>16</height>
@@ -512,33 +222,10 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
-   <vcenter/>
-   <string>CURRENCY</string>
-  </label>
-  <label>
-   <rect>
-    <x>675</x>
-    <y>345</y>
-    <width>100</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
    <hcenter/>
    <vcenter/>
-   <string>REQ. DATE</string>
+   <string>UNIT PRICE</string>
   </label>
-  <line>
-   <xstart>535</xstart>
-   <ystart>0</ystart>
-   <xend>535</xend>
-   <yend>110</yend>
-   <weight>0</weight>
-  </line>
   <field>
    <rect>
     <x>75</x>
@@ -558,119 +245,6 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
     <column>vend_name</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>645</x>
-    <y>60</y>
-    <width>94</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>45</x>
-    <y>145</y>
-    <width>19</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <top/>
-   <string>TO:</string>
-  </label>
-  <line>
-   <xstart>0</xstart>
-   <ystart>110</ystart>
-   <xend>270</xend>
-   <yend>110</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>535</xstart>
-   <ystart>110</ystart>
-   <xend>805</xend>
-   <yend>110</yend>
-   <weight>0</weight>
-  </line>
-  <label>
-   <rect>
-    <x>680</x>
-    <y>325</y>
-    <width>100</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>EXTENDED PRICE</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>10</y>
-    <width>300</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>ProDiem Toys</string>
-  </label>
-  <label>
-   <rect>
-    <x>520</x>
-    <y>345</y>
-    <width>85</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QTY. ORDERED</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>50</y>
-    <width>300</width>
-    <height>19</height>
-   </rect>
-   <font>
-    <face>Helvetica</face>
-    <size>12</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Toyland Plaza</string>
-  </label>
   <field>
    <rect>
     <x>5</x>
@@ -693,7 +267,7 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
   <label>
    <rect>
     <x>50</x>
-    <y>320</y>
+    <y>335</y>
     <width>80</width>
     <height>16</height>
    </rect>
@@ -704,22 +278,8 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
    </font>
    <left/>
    <vcenter/>
-   <string>OUR ITEM #</string>
+   <string>YOUR ITEM #</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>285</ystart>
-   <xend>805</xend>
-   <yend>285</yend>
-   <weight>0</weight>
-  </line>
-  <line>
-   <xstart>5</xstart>
-   <ystart>360</ystart>
-   <xend>805</xend>
-   <yend>360</yend>
-   <weight>0</weight>
-  </line>
   <label>
    <rect>
     <x>610</x>
@@ -736,13 +296,333 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
    <vcenter/>
    <string>UOM</string>
   </label>
+  <text>
+   <rect>
+    <x>500</x>
+    <y>160</y>
+    <width>300</width>
+    <height>15</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Head</query>
+    <column>warehouse_address</column>
+   </data>
+  </text>
+  <label>
+   <rect>
+    <x>550</x>
+    <y>45</y>
+    <width>80</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>P/O NUMBER</string>
+  </label>
+  <label>
+   <rect>
+    <x>50</x>
+    <y>320</y>
+    <width>80</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>OUR ITEM #</string>
+  </label>
+  <label>
+   <rect>
+    <x>520</x>
+    <y>345</y>
+    <width>85</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QTY. ORDERED</string>
+  </label>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>320</y>
+    <width>37</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>LINE</string>
+  </label>
+  <label>
+   <rect>
+    <x>233</x>
+    <y>325</y>
+    <width>135</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>ITEM DESCRIPTION</string>
+  </label>
+  <field>
+   <rect>
+    <x>500</x>
+    <y>140</y>
+    <width>300</width>
+    <height>19</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>warehous_descrip</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>5</x>
+    <y>5</y>
+    <width>269</width>
+    <height>19</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Address</query>
+    <column>warehous_descrip</column>
+   </data>
+  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>315</ystart>
+   <xend>805</xend>
+   <yend>315</yend>
+   <weight>0</weight>
+  </line>
+  <text>
+   <rect>
+    <x>5</x>
+    <y>25</y>
+    <width>265</width>
+    <height>15</height>
+   </rect>
+   <bottompad>10</bottompad>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <top/>
+   <data>
+    <query>Address</query>
+    <column>warehouse_address</column>
+   </data>
+  </text>
+  <label>
+   <rect>
+    <x>550</x>
+    <y>85</y>
+    <width>35</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>PAGE</string>
+  </label>
   <line>
    <xstart>270</xstart>
    <ystart>0</ystart>
    <xend>270</xend>
-   <yend>110</yend>
+   <yend>130</yend>
    <weight>0</weight>
   </line>
+  <label>
+   <rect>
+    <x>550</x>
+    <y>65</y>
+    <width>44</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>DATE</string>
+  </label>
+  <field>
+   <rect>
+    <x>655</x>
+    <y>290</y>
+    <width>119</width>
+    <height>19</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>username</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>680</x>
+    <y>325</y>
+    <width>100</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>EXTENDED PRICE</string>
+  </label>
+  <label>
+   <rect>
+    <x>680</x>
+    <y>265</y>
+    <width>69</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>ORDERED BY</string>
+  </label>
+  <label>
+   <rect>
+    <x>675</x>
+    <y>345</y>
+    <width>100</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>REQ. DATE</string>
+  </label>
+  <line>
+   <xstart>0</xstart>
+   <ystart>130</ystart>
+   <xend>270</xend>
+   <yend>130</yend>
+   <weight>0</weight>
+  </line>
+  <line>
+   <xstart>5</xstart>
+   <ystart>285</ystart>
+   <xend>805</xend>
+   <yend>285</yend>
+   <weight>0</weight>
+  </line>
+  <line>
+   <xstart>5</xstart>
+   <ystart>360</ystart>
+   <xend>805</xend>
+   <yend>360</yend>
+   <weight>0</weight>
+  </line>
+  <label>
+   <rect>
+    <x>455</x>
+    <y>155</y>
+    <width>19</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <bottom/>
+   <string>TO:</string>
+  </label>
+  <field>
+   <rect>
+    <x>204</x>
+    <y>290</y>
+    <width>254</width>
+    <height>19</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>11</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>pohead_shipvia</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>290</x>
@@ -759,42 +639,135 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
    <vcenter/>
    <string>SHIP VIA:</string>
   </label>
-  <label>
+  <line>
+   <xstart>535</xstart>
+   <ystart>0</ystart>
+   <xend>535</xend>
+   <yend>130</yend>
+   <weight>0</weight>
+  </line>
+  <line>
+   <xstart>535</xstart>
+   <ystart>130</ystart>
+   <xend>810</xend>
+   <yend>130</yend>
+   <weight>0</weight>
+  </line>
+  <field>
    <rect>
-    <x>10</x>
-    <y>70</y>
-    <width>300</width>
+    <x>645</x>
+    <y>60</y>
+    <width>94</width>
     <height>19</height>
    </rect>
    <font>
-    <face>Helvetica</face>
+    <face>Arial</face>
     <size>12</size>
     <weight>normal</weight>
    </font>
    <left/>
    <vcenter/>
-   <string>Norfolk, VA</string>
-  </label>
-  <text>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
+  <label>
    <rect>
-    <x>75</x>
-    <y>160</y>
-    <width>300</width>
-    <height>15</height>
+    <x>65</x>
+    <y>265</y>
+    <width>60</width>
+    <height>16</height>
    </rect>
-   <bottompad>10</bottompad>
    <font>
     <face>Arial</face>
-    <size>10</size>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>F.O.B.</string>
+  </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>0</y>
+    <width>254</width>
+    <height>33</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>14</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Purchase Order</string>
+  </label>
+  <label>
+   <rect>
+    <x>455</x>
+    <y>145</y>
+    <width>37</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>SHIP</string>
+  </label>
+  <label>
+   <rect>
+    <x>455</x>
+    <y>325</y>
+    <width>85</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>CURRENCY</string>
+  </label>
+  <image>
+   <rect>
+    <x>290</x>
+    <y>10</y>
+    <width>225</width>
+    <height>75</height>
+   </rect>
+   <mode>stretch</mode>
+   <data>
+    <query>Logo</query>
+    <column>image_data</column>
+   </data>
+  </image>
+  <field>
+   <rect>
+    <x>645</x>
+    <y>40</y>
+    <width>126</width>
+    <height>19</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>12</size>
     <weight>normal</weight>
    </font>
    <left/>
-   <top/>
+   <vcenter/>
    <data>
     <query>Head</query>
-    <column>vend_address</column>
+    <column>pohead_number</column>
    </data>
-  </text>
+  </field>
  </pghead>
  <section>
   <name>detail</name>
@@ -802,122 +775,7 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
    <key>
     <query>Detail</query>
    </key>
-   <height>103</height>
-   <field>
-    <rect>
-     <x>50</x>
-     <y>45</y>
-     <width>750</width>
-     <height>19</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>9</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>poitem_characteristics</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>10</x>
-     <y>5</y>
-     <width>36</width>
-     <height>19</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>f_line</column>
-    </data>
-   </field>
-   <text>
-    <rect>
-     <x>150</x>
-     <y>5</y>
-     <width>350</width>
-     <height>19</height>
-    </rect>
-    <bottompad>0</bottompad>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>itemdescription</column>
-    </data>
-   </text>
-   <field>
-    <rect>
-     <x>625</x>
-     <y>25</y>
-     <width>55</width>
-     <height>16</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>itemuom</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>50</x>
-     <y>5</y>
-     <width>94</width>
-     <height>19</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>item_number</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>555</x>
-     <y>5</y>
-     <width>75</width>
-     <height>16</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>10</size>
-     <weight>normal</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>Detail</query>
-     <column>f_price</column>
-    </data>
-   </field>
+   <height>107</height>
    <field>
     <rect>
      <x>700</x>
@@ -956,14 +814,13 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
      <column>f_ordered</column>
     </data>
    </field>
-   <text>
+   <field>
     <rect>
      <x>50</x>
-     <y>65</y>
-     <width>605</width>
+     <y>5</y>
+     <width>94</width>
      <height>19</height>
     </rect>
-    <bottompad>0</bottompad>
     <font>
      <face>Arial</face>
      <size>10</size>
@@ -973,9 +830,9 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
     <vcenter/>
     <data>
      <query>Detail</query>
-     <column>poitem_comments</column>
+     <column>item_number</column>
     </data>
-   </text>
+   </field>
    <field>
     <rect>
      <x>700</x>
@@ -1014,6 +871,26 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
      <column>poitem_vend_item_number</column>
     </data>
    </field>
+   <text>
+    <rect>
+     <x>150</x>
+     <y>5</y>
+     <width>350</width>
+     <height>19</height>
+    </rect>
+    <bottompad>0</bottompad>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>itemdescription</column>
+    </data>
+   </text>
    <field>
     <rect>
      <x>505</x>
@@ -1033,200 +910,107 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
      <column>curr_symbol</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>625</x>
+     <y>25</y>
+     <width>55</width>
+     <height>16</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>itemuom</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>10</x>
+     <y>5</y>
+     <width>36</width>
+     <height>19</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>f_line</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>555</x>
+     <y>5</y>
+     <width>75</width>
+     <height>16</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>f_price</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>50</x>
+     <y>45</y>
+     <width>750</width>
+     <height>19</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>9</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>poitem_characteristics</column>
+    </data>
+   </field>
+   <text>
+    <rect>
+     <x>50</x>
+     <y>65</y>
+     <width>605</width>
+     <height>19</height>
+    </rect>
+    <bottompad>0</bottompad>
+    <font>
+     <face>Arial</face>
+     <size>10</size>
+     <weight>normal</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>Detail</query>
+     <column>poitem_comments</column>
+    </data>
+   </text>
   </detail>
  </section>
  <pgfoot>
   <lastpage/>
-  <height>111</height>
-  <field>
-   <rect>
-    <x>670</x>
-    <y>35</y>
-    <width>25</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <data>
-    <query>Currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>55</y>
-    <width>60</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <string>TAX</string>
-  </label>
-  <line>
-   <xstart>10</xstart>
-   <ystart>5</ystart>
-   <xend>805</xend>
-   <yend>5</yend>
-   <weight>0</weight>
-  </line>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>85</y>
-    <width>100</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <data>
-    <query>Foot</query>
-    <column>f_totaldue</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>670</x>
-    <y>55</y>
-    <width>25</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <data>
-    <query>Currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <text>
-   <rect>
-    <x>35</x>
-    <y>10</y>
-    <width>530</width>
-    <height>19</height>
-   </rect>
-   <bottompad>14</bottompad>
-   <font>
-    <face>helvetica</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Head</query>
-    <column>pohead_comments</column>
-   </data>
-  </text>
-  <field>
-   <rect>
-    <x>670</x>
-    <y>85</y>
-    <width>25</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <data>
-    <query>Currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>85</y>
-    <width>60</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <string>TOTAL</string>
-  </label>
-  <label>
-   <rect>
-    <x>580</x>
-    <y>35</y>
-    <width>60</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <string>FREIGHT</string>
-  </label>
-  <field>
-   <rect>
-    <x>670</x>
-    <y>13</y>
-    <width>25</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <data>
-    <query>Currency</query>
-    <column>curr_symbol</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>55</y>
-    <width>100</width>
-    <height>16</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <bottom/>
-   <data>
-    <query>Foot</query>
-    <column>f_tax</column>
-   </data>
-  </field>
+  <height>113</height>
   <line>
    <xstart>585</xstart>
    <ystart>75</ystart>
@@ -1272,6 +1056,137 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
     <column>f_subtotal</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>670</x>
+    <y>35</y>
+    <width>25</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <data>
+    <query>Currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>85</y>
+    <width>100</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <data>
+    <query>Foot</query>
+    <column>f_totaldue</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>55</y>
+    <width>60</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <string>TAX</string>
+  </label>
+  <field>
+   <rect>
+    <x>670</x>
+    <y>13</y>
+    <width>25</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <data>
+    <query>Currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>670</x>
+    <y>85</y>
+    <width>25</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <data>
+    <query>Currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>55</y>
+    <width>100</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <data>
+    <query>Foot</query>
+    <column>f_tax</column>
+   </data>
+  </field>
+  <text>
+   <rect>
+    <x>35</x>
+    <y>10</y>
+    <width>530</width>
+    <height>19</height>
+   </rect>
+   <bottompad>14</bottompad>
+   <font>
+    <face>helvetica</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Head</query>
+    <column>pohead_comments</column>
+   </data>
+  </text>
   <label>
    <rect>
     <x>580</x>
@@ -1288,9 +1203,67 @@ WHERE (pohead_id = &lt;? value("pohead_id") ?>) AND
    <bottom/>
    <string>SUB TOTAL</string>
   </label>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>85</y>
+    <width>60</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <string>TOTAL</string>
+  </label>
+  <field>
+   <rect>
+    <x>670</x>
+    <y>55</y>
+    <width>25</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <data>
+    <query>Currency</query>
+    <column>curr_symbol</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>580</x>
+    <y>35</y>
+    <width>60</width>
+    <height>16</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <bottom/>
+   <string>FREIGHT</string>
+  </label>
+  <line>
+   <xstart>10</xstart>
+   <ystart>5</ystart>
+   <xend>805</xend>
+   <yend>5</yend>
+   <weight>0</weight>
+  </line>
  </pgfoot>
  <pgfoot>
-  <height>56</height>
+  <height>57</height>
   <label>
    <rect>
     <x>33</x>
