@@ -89,7 +89,8 @@ dspVendorAPHistory::dspVendorAPHistory(QWidget* parent, const char* name, Qt::WF
   _vendhist->addColumn(tr("Open"),      _dateColumn,  Qt::AlignCenter );
   _vendhist->addColumn(tr("Doc. Type"), _itemColumn,  Qt::AlignCenter );
   _vendhist->addColumn(tr("Doc. #"),    _orderColumn, Qt::AlignRight  );
-  _vendhist->addColumn(tr("Invoice #"),    _orderColumn, Qt::AlignRight  );
+  _vendhist->addColumn(tr("Invoice #"), _orderColumn, Qt::AlignRight  );
+  _vendhist->addColumn(tr("P/O #"),     _orderColumn, Qt::AlignRight  );
   _vendhist->addColumn(tr("Doc. Date"), _dateColumn,  Qt::AlignCenter );
   _vendhist->addColumn(tr("Due Date"),  _dateColumn,  Qt::AlignCenter );
   _vendhist->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
@@ -154,7 +155,7 @@ void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
     pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
-    if(item->altId() == -1 && item->text(1)==tr("Voucher") && item->text(6)==item->text(7))
+    if(item->altId() == -1 && item->text(1)==tr("Voucher") && item->text(7)==item->text(8))
     {
       menuItem = pMenu->insertItem(tr("Void"), this, SLOT(sVoidVoucher()), 0);
       if (!_privleges->check("MaintainAPMemos"))
@@ -220,6 +221,7 @@ void dspVendorAPHistory::sFillList()
              "            ELSE :other"
              "       END AS documenttype,"
              "       apopen_invcnumber AS invoicenumber,"
+             "       apopen_ponumber AS ponumber,"
              "       formatDate(apopen_docdate) AS f_docdate,"
              "       formatDate(apopen_duedate) AS f_duedate,"
              "       formatMoney(apopen_amount) AS f_amount,"
@@ -238,6 +240,7 @@ void dspVendorAPHistory::sFillList()
              "            ELSE :other"
              "       END AS documenttype,"
              "       ' ' AS invoicenumber,"
+             "       '' AS ponumber,"
              "       formatDate(apapply_postdate) AS f_docdate,"
              "       '' AS f_duedate,"
              "       formatMoney(apapply_amount) AS f_amount,"
@@ -258,6 +261,7 @@ void dspVendorAPHistory::sFillList()
              "            ELSE :other"
              "       END AS documenttype,"
              "       apopen_invcnumber AS invoicenumber,"
+             "       '' AS ponumber,"
              "       formatDate(apapply_postdate) AS f_docdate,"
              "       '' AS f_duedate,"
              "       formatMoney(apapply_amount) AS f_amount,"
@@ -289,7 +293,8 @@ void dspVendorAPHistory::sFillList()
         document = new XTreeWidgetItem( _vendhist, document,
                                       q.value("apopen_id").toInt(), q.value("applyid").toInt(),
                                       q.value("f_open"), q.value("documenttype"),
-                                      q.value("docnumber"), q.value("invoicenumber"),q.value("f_docdate"),
+                                      q.value("docnumber"), q.value("invoicenumber"),
+                                      q.value("ponumber"), q.value("f_docdate"),
                                       q.value("f_duedate"), q.value("f_amount"),
                                       q.value("f_balance") );
       else if (document)
@@ -297,7 +302,7 @@ void dspVendorAPHistory::sFillList()
         new XTreeWidgetItem( document,
                            -1, q.value("applyid").toInt(),
                            "", q.value("documenttype"),
-                           q.value("docnumber"),q.value("invoicenumber"), q.value("f_docdate"),
+                           q.value("docnumber"),q.value("invoicenumber"), "", q.value("f_docdate"),
                            "", q.value("f_amount") );
       }
     }
