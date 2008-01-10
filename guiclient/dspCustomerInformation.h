@@ -106,9 +106,19 @@ public slots:
     virtual void sPopulateMenuArhist(QMenu*);
     virtual void sConvertQuote();
     virtual void sCreditMemoSelected(bool);
+    virtual void sFillARHistory();
+    virtual void sPopulateCustInfo();
+    virtual void sCRMAccount();
+    virtual void sARWorkbench();
+    virtual void sRefreshList();
+    virtual void sShipment();
+    virtual void sDspShipmentStatus();
 
 protected slots:
     virtual void languageChange();
+ 
+private:
+    int _crmacctId;
 
 };
 

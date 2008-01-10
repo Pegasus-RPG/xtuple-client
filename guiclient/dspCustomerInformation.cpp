@@ -73,6 +73,10 @@
 #include "arOpenItem.h"
 #include "customer.h"
 #include "dspInvoiceInformation.h"
+#include "crmaccount.h"
+#include "arWorkBench.h"
+#include "dspShipmentsBySalesOrder.h"
+#include "dspSalesOrderStatus.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     : QWidget(parent, fl)
@@ -104,6 +108,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_viewOrder, SIGNAL(clicked()), this, SLOT(sViewOrder()));
   connect(_viewQuote, SIGNAL(clicked()), this, SLOT(sViewQuote()));
   connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
+  connect(_crmButton, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
+  connect(_refreshButton, SIGNAL(clicked()), this, SLOT(sRefreshList()));
+  connect(_arworkbenchButton, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
 
 #ifndef Q_WS_MAC
   _custList->setMaximumWidth(25);
@@ -279,13 +286,11 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
   return NoError;
 }
 
-void dspCustomerInformation::sPopulate( int pCustid )
+void dspCustomerInformation::sPopulateCustInfo()
 {
-  _arhist->clear();
-
-  if (pCustid != -1)
+  if (_cust->id() != -1)
   {
-    _comment->setId(pCustid);
+    _comment->setId(_cust->id());
 
     XSqlQuery query;
     query.prepare( "SELECT cust_name,"
@@ -298,12 +303,13 @@ void dspCustomerInformation::sPopulate( int pCustid )
                    "       cust_corrcontact, cust_corrphone, cust_corrfax, cust_corremail,"
                    "       cust_creditstatus, cust_comments, cust_shipvia,"
                    "       (custtype_code || '-' || custtype_descrip) AS f_custtype,"
-                   "       (terms_code || '-' || terms_descrip) AS f_terms "
+                   "       (terms_code || '-' || terms_descrip) AS f_terms,"
+                   "       formatMoney(cust_creditlmt) AS f_custcreditlmt "
                    "  FROM cust, custtype, terms "
                    " WHERE ((cust_custtype_id=custtype_id)"
                    "   AND  (cust_terms_id=terms_id)"
                    "   AND  (cust_id=:cust_id));" );
-    query.bindValue(":cust_id", pCustid);
+    query.bindValue(":cust_id", _cust->id());
     query.exec();
     if (query.first())
     {
@@ -333,6 +339,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
       _type->setText(query.value("f_custtype").toString());
       _terms->setText(query.value("f_terms").toString());
       _shipvia->setText(query.value("cust_shipvia").toString());
+      _creditLimit->setText(query.value("f_custcreditlmt").toString());
 
       if (query.value("cust_creditstatus").toString() == "G")
       {
@@ -354,7 +361,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
                      "       formatDate(MAX(cohist_invcdate)) AS lastdate "
                      "FROM cohist "
                      "WHERE (cohist_cust_id=:cust_id);" );
-      query.bindValue(":cust_id", pCustid);
+      query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
       {
@@ -366,7 +373,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
                      "WHERE ( (cohist_invcdate BETWEEN (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 year') AND"
                      "                                 (DATE_TRUNC('year', CURRENT_TIMESTAMP) - INTERVAL '1 day'))"
                      " AND (cohist_cust_id=:cust_id) );" );
-      query.bindValue(":cust_id", pCustid);
+      query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
         _lastYearSales->setText(query.value("lysales").toString());
@@ -375,7 +382,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
                      "FROM cohist "
                      "WHERE ( (cohist_invcdate>=DATE_TRUNC('year', CURRENT_TIMESTAMP))"
                      " AND (cohist_cust_id=:cust_id) );" );
-      query.bindValue(":cust_id", pCustid);
+      query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
         _ytdSales->setText(query.value("ytdsales").toString());
@@ -388,7 +395,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
                      " AND (itemsite_item_id=item_id)"
                      " AND (coitem_status='O')"
                      " AND (cohead_cust_id=:cust_id) );" );
-      query.bindValue(":cust_id", pCustid);
+      query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
         _backlog->setText(query.value("backlog").toString());
@@ -399,7 +406,7 @@ void dspCustomerInformation::sPopulate( int pCustid )
                      "FROM aropen "
                      "WHERE ( (aropen_open)"
                      " AND (aropen_cust_id=:cust_id) );" );
-      query.bindValue(":cust_id", pCustid);
+      query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
         _openBalance->setText(query.value("f_balance").toString());
@@ -411,127 +418,18 @@ void dspCustomerInformation::sPopulate( int pCustid )
                      "WHERE ( (aropen_open)"
                      " AND (aropen_duedate < CURRENT_DATE)"
                      " AND (aropen_cust_id=:cust_id) );" );
-      query.bindValue(":cust_id", pCustid);
-      query.exec();
-      if (query.first())
-        _lateBalance->setText(query.value("f_balance").toString());
-
-      // Populate A/R History
-      query.prepare( "SELECT aropen_id AS aropenid, -1 AS applyid,"
-                     "       aropen_docnumber AS sortnumber,"
-                     "       aropen_docnumber AS docnumber,"
-                     "       formatBoolYN(aropen_open) AS f_open,"
-                     "       CASE WHEN (aropen_doctype='I') THEN :invoice"
-                     "            WHEN (aropen_doctype='C') THEN :creditMemo"
-                     "            WHEN (aropen_doctype='D') THEN :debitMemo"
-                     "            WHEN (aropen_doctype='R') THEN :cashdeposit"
-                     "            ELSE :other"
-                     "       END AS documenttype,"
-                     "       formatDate(aropen_docdate) AS f_docdate,"
-                     "       formatDate(aropen_duedate) AS f_duedate,"
-                     "       formatMoney(aropen_amount) AS f_amount,"
-                     "       formatMoney((aropen_amount - aropen_paid)) AS f_balance,"
-		     "       currConcat(aropen_curr_id) AS currAbbr "
-                     "FROM aropen "
-                     "WHERE (aropen_cust_id=:cust_id) "
-
-                     "UNION "
-                     "SELECT -1 AS aropenid, arapply_source_aropen_id AS applyid,"
-                     "       aropen_docnumber AS sortnumber,"
-                     "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
-                     "            WHEN (arapply_source_doctype='K') THEN arapply_refnumber"
-                     "            ELSE :error"
-                     "       END AS docnumber,"
-                     "       '' AS f_open,"
-                     "       CASE WHEN (arapply_source_doctype='C') THEN :creditMemo"
-                     "            WHEN (arapply_source_doctype='R') THEN :cashdeposit"
-                     "            WHEN (arapply_fundstype='C') THEN :check"
-                     "            WHEN (arapply_fundstype='T') THEN :certifiedCheck"
-                     "            WHEN (arapply_fundstype='M') THEN :masterCard"
-                     "            WHEN (arapply_fundstype='V') THEN :visa"
-                     "            WHEN (arapply_fundstype='A') THEN :americanExpress"
-                     "            WHEN (arapply_fundstype='D') THEN :discoverCard"
-                     "            WHEN (arapply_fundstype='R') THEN :otherCreditCard"
-                     "            WHEN (arapply_fundstype='K') THEN :cash"
-                     "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
-                     "            WHEN (arapply_fundstype='O') THEN :other"
-                     "       END AS documenttype,"
-                     "       formatDate(arapply_postdate) AS f_docdate,"
-                     "       '' AS f_duedate,"
-                     "       formatMoney(arapply_applied) AS f_amount,"
-                     "       '' AS f_balance,"
-		     "       currConcat(arapply_curr_id) AS currAbbr "
-                     "FROM arapply, aropen "
-                     "WHERE ( (arapply_target_doctype IN ('I', 'D'))"
-                     " AND (arapply_target_doctype=aropen_doctype)"
-                     " AND (arapply_target_docnumber=aropen_docnumber)"
-                     " AND (arapply_cust_id=:cust_id)"
-                     " AND (aropen_cust_id=:cust_id) ) "
-
-                     "UNION "
-                     "SELECT -1 AS aropenid, arapply_target_aropen_id AS applyid,"
-                     "       aropen_docnumber AS sortnumber,"
-                     "       arapply_target_docnumber AS docnumber,"
-                     "       '' AS f_open,"
-                     "       CASE WHEN (arapply_target_doctype='I') THEN :invoice"
-                     "            WHEN (arapply_target_doctype='D') THEN :debitMemo"
-                     "            ELSE :other"
-                     "       END AS documenttype,"
-                     "       formatDate(arapply_postdate) AS f_docdate,"
-                     "       '' AS f_duedate,"
-                     "       formatMoney(arapply_applied) AS f_amount,"
-                     "       '' AS f_balance,"
-		     "       currConcat(arapply_curr_id) AS currAbbr "
-                     "FROM arapply, aropen "
-                     "WHERE ( (arapply_source_doctype IN ('K', 'C', 'R'))"
-                     " AND (arapply_source_doctype=aropen_doctype)"
-                     " AND (arapply_source_docnumber=aropen_docnumber)"
-                     " AND (arapply_cust_id=:cust_id)"
-                     " AND (aropen_cust_id=:cust_id) ) "
-
-                     "ORDER BY sortnumber, applyid;" );
-
-      query.bindValue(":invoice", tr("Invoice"));
-      query.bindValue(":creditMemo", tr("C/M"));
-      query.bindValue(":debitMemo", tr("D/M"));
-      query.bindValue(":check", tr("Check"));
-      query.bindValue(":certifiedCheck", tr("Certified Check"));
-      query.bindValue(":masterCard", tr("Master Card"));
-      query.bindValue(":visa", tr("Visa"));
-      query.bindValue(":americanExpress", tr("American Express"));
-      query.bindValue(":discoverCard", tr("Discover Card"));
-      query.bindValue(":otherCreditCard", tr("Other Credit Card"));
-      query.bindValue(":cash", tr("Cash"));
-      query.bindValue(":wireTransfer", tr("Wire Transfer"));
-      query.bindValue(":cashdeposit", tr("Cash Deposit"));
-      query.bindValue(":other", tr("Other"));
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
-      {
-        XTreeWidgetItem *document = NULL;
-        do
-        {
-          if (query.value("applyid").toInt() == -1)
-            document = new XTreeWidgetItem( _arhist, document,
-                                          query.value("aropenid").toInt(), query.value("applyid").toInt(),
-                                          query.value("f_open"), query.value("documenttype"),
-                                          query.value("docnumber"), query.value("f_docdate"),
-                                          query.value("f_duedate"), query.value("f_amount"),
-                                          query.value("f_balance"), query.value("currAbbr") );
-           else if (document != NULL)
-            new XTreeWidgetItem( document,
-                               query.value("aropenid").toInt(), query.value("applyid").toInt(),
-                               "", query.value("documenttype"),
-                               query.value("docnumber"), query.value("f_docdate"),
-                               "", query.value("f_amount"),
-                               "" );
-        }
-        while (query.next());
-      }
-      // End Population of A/R History
+        _lateBalance->setText(query.value("f_balance").toString());
     }
   }
+}
+
+void dspCustomerInformation::sPopulate( int /*pCustid*/ )
+{
+  sPopulateCustInfo();
+  sFillARHistory();
   sFillQuoteList();
   sFillOrderList();
   sFillInvoiceList();
@@ -615,6 +513,128 @@ void dspCustomerInformation::sViewQuote()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspCustomerInformation::sFillARHistory()
+{
+  _arhist->clear();
+
+  if(_cust->id() == -1)
+    return;
+
+  XSqlQuery query;
+  query.prepare( "SELECT aropen_id AS aropenid, -1 AS applyid,"
+                 "       aropen_docnumber AS sortnumber,"
+                 "       aropen_docnumber AS docnumber,"
+                 "       formatBoolYN(aropen_open) AS f_open,"
+                 "       CASE WHEN (aropen_doctype='I') THEN :invoice"
+                 "            WHEN (aropen_doctype='C') THEN :creditMemo"
+                 "            WHEN (aropen_doctype='D') THEN :debitMemo"
+                 "            WHEN (aropen_doctype='R') THEN :cashdeposit"
+                 "            ELSE :other"
+                 "       END AS documenttype,"
+                 "       formatDate(aropen_docdate) AS f_docdate,"
+                 "       formatDate(aropen_duedate) AS f_duedate,"
+                 "       formatMoney(aropen_amount) AS f_amount,"
+                 "       formatMoney((aropen_amount - aropen_paid)) AS f_balance,"
+                 "       currConcat(aropen_curr_id) AS currAbbr "
+                 "FROM aropen "
+                 "WHERE (aropen_cust_id=:cust_id) "
+
+                 "UNION "
+                 "SELECT -1 AS aropenid, arapply_source_aropen_id AS applyid,"
+                 "       aropen_docnumber AS sortnumber,"
+                 "       CASE WHEN (arapply_source_doctype IN ('C','R')) THEN arapply_source_docnumber"
+                 "            WHEN (arapply_source_doctype='K') THEN arapply_refnumber"
+                 "            ELSE :error"
+                 "       END AS docnumber,"
+                 "       '' AS f_open,"
+                 "       CASE WHEN (arapply_source_doctype='C') THEN :creditMemo"
+                 "            WHEN (arapply_source_doctype='R') THEN :cashdeposit"
+                 "            WHEN (arapply_fundstype='C') THEN :check"
+                 "            WHEN (arapply_fundstype='T') THEN :certifiedCheck"
+                 "            WHEN (arapply_fundstype='M') THEN :masterCard"
+                 "            WHEN (arapply_fundstype='V') THEN :visa"
+                 "            WHEN (arapply_fundstype='A') THEN :americanExpress"
+                 "            WHEN (arapply_fundstype='D') THEN :discoverCard"
+                 "            WHEN (arapply_fundstype='R') THEN :otherCreditCard"
+                 "            WHEN (arapply_fundstype='K') THEN :cash"
+                 "            WHEN (arapply_fundstype='W') THEN :wireTransfer"
+                 "            WHEN (arapply_fundstype='O') THEN :other"
+                 "       END AS documenttype,"
+                 "       formatDate(arapply_postdate) AS f_docdate,"
+                 "       '' AS f_duedate,"
+                 "       formatMoney(arapply_applied) AS f_amount,"
+                 "       '' AS f_balance,"
+                 "       currConcat(arapply_curr_id) AS currAbbr "
+                 "FROM arapply, aropen "
+                 "WHERE ( (arapply_target_doctype IN ('I', 'D'))"
+                 " AND (arapply_target_doctype=aropen_doctype)"
+                 " AND (arapply_target_docnumber=aropen_docnumber)"
+                 " AND (arapply_cust_id=:cust_id)"
+                 " AND (aropen_cust_id=:cust_id) ) "
+
+                 "UNION "
+                 "SELECT -1 AS aropenid, arapply_target_aropen_id AS applyid,"
+                 "       aropen_docnumber AS sortnumber,"
+                 "       arapply_target_docnumber AS docnumber,"
+                 "       '' AS f_open,"
+                 "       CASE WHEN (arapply_target_doctype='I') THEN :invoice"
+                 "            WHEN (arapply_target_doctype='D') THEN :debitMemo"
+                 "            ELSE :other"
+                 "       END AS documenttype,"
+                 "       formatDate(arapply_postdate) AS f_docdate,"
+                 "       '' AS f_duedate,"
+                 "       formatMoney(arapply_applied) AS f_amount,"
+                 "       '' AS f_balance,"
+                 "       currConcat(arapply_curr_id) AS currAbbr "
+                 "FROM arapply, aropen "
+                 "WHERE ( (arapply_source_doctype IN ('K', 'C', 'R'))"
+                 " AND (arapply_source_doctype=aropen_doctype)"
+                 " AND (arapply_source_docnumber=aropen_docnumber)"
+                 " AND (arapply_cust_id=:cust_id)"
+                 " AND (aropen_cust_id=:cust_id) ) "
+
+                 "ORDER BY sortnumber, applyid;" );
+
+  query.bindValue(":invoice", tr("Invoice"));
+  query.bindValue(":creditMemo", tr("C/M"));
+  query.bindValue(":debitMemo", tr("D/M"));
+  query.bindValue(":check", tr("Check"));
+  query.bindValue(":certifiedCheck", tr("Certified Check"));
+  query.bindValue(":masterCard", tr("Master Card"));
+  query.bindValue(":visa", tr("Visa"));
+  query.bindValue(":americanExpress", tr("American Express"));
+  query.bindValue(":discoverCard", tr("Discover Card"));
+  query.bindValue(":otherCreditCard", tr("Other Credit Card"));
+  query.bindValue(":cash", tr("Cash"));
+  query.bindValue(":wireTransfer", tr("Wire Transfer"));
+  query.bindValue(":cashdeposit", tr("Cash Deposit"));
+  query.bindValue(":other", tr("Other"));
+  query.bindValue(":cust_id", _cust->id());
+  query.exec();
+  if (query.first())
+  {
+    XTreeWidgetItem *document = NULL;
+    do
+    {
+      if (query.value("applyid").toInt() == -1)
+        document = new XTreeWidgetItem( _arhist, document,
+                                      query.value("aropenid").toInt(), query.value("applyid").toInt(),
+                                      query.value("f_open"), query.value("documenttype"),
+                                      query.value("docnumber"), query.value("f_docdate"),
+                                      query.value("f_duedate"), query.value("f_amount"),
+                                      query.value("f_balance"), query.value("currAbbr") );
+       else if (document != NULL)
+        new XTreeWidgetItem( document,
+                           query.value("aropenid").toInt(), query.value("applyid").toInt(),
+                           "", query.value("documenttype"),
+                           query.value("docnumber"), query.value("f_docdate"),
+                           "", query.value("f_amount"),
+                           "" );
+    }
+    while (query.next());
+  }
+  // End Population of A/R History
+}
 void dspCustomerInformation::sFillOrderList()
 {
   q.prepare( "SELECT DISTINCT cohead_id, cohead_number,"
@@ -656,10 +676,10 @@ void dspCustomerInformation::sFillInvoiceList()
             "       formatBoolYN(invchead_posted) AS f_posted,"
             "       formatBoolYN(COALESCE(aropen_open, FALSE)) AS f_open,"
             "       text(invchead_invcnumber) AS invcnumber,"
-            "       text(invchead_ordernumber),"
+            "       text(invchead_ordernumber) AS invchead_ordernumber,"
             "       formatDate(invchead_invcdate),"
-            "       formatMoney(COALESCE(aropen_amount,0)),"
-            "       formatMoney(COALESCE(aropen_amount - aropen_paid,0)),"
+            "       formatMoney(COALESCE(aropen_amount,0)) AS amount,"
+            "       formatMoney(COALESCE(aropen_amount - aropen_paid,0)) AS balance,"
             "       currConcat(COALESCE(aropen_curr_id,-1))"
             "  FROM invchead LEFT OUTER JOIN aropen"
             "         ON (aropen_docnumber=invchead_invcnumber"
@@ -683,7 +703,7 @@ void dspCustomerInformation::sFillInvoiceList()
             " WHERE ((aropen_doctype='I')"
             "   AND  (invchead_id IS NULL)"
             "   AND  (aropen_cust_id=:cust_id) ) "
-            "ORDER BY invcnumber;" );
+            "ORDER BY invcnumber DESC;" );
   q.bindValue(":cust_id", _cust->id());
   q.exec();
   _invoice->clear();
@@ -1016,6 +1036,11 @@ void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
+
+  pMenu->insertSeparator();
+
+  pMenu->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
+  pMenu->insertItem(tr("Shipment..."), this, SLOT(sShipment()), 0);
 }
 
 void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu )
@@ -1197,5 +1222,62 @@ void dspCustomerInformation::sCreditMemoSelected(bool b)
     _editCreditMemo->setEnabled(false);
     _viewCreditMemo->setEnabled(false);
   }
+}
+
+void dspCustomerInformation::sARWorkbench()
+{
+  ParameterList params;
+  params.append("cust_id", _cust->id());
+
+  arWorkBench* newdlg = new arWorkBench();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspCustomerInformation::sCRMAccount()
+{
+  q.prepare("SELECT crmacct_id FROM crmacct "
+            "WHERE (crmacct_cust_id=:cust_id);");
+  q.bindValue(":cust_id", _cust->id());
+  q.exec();
+
+  if(q.first())
+    _crmacctId = q.value("crmacct_id").toInt();
+
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("crmacct_id", _crmacctId);
+
+  crmaccount* newdlg = new crmaccount();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspCustomerInformation::sRefreshList()
+{
+  sFillARHistory();
+  sFillPaymentsList();
+  sPopulateCustInfo();
+}
+
+void dspCustomerInformation::sDspShipmentStatus()
+{
+  ParameterList params;
+  params.append("sohead_id", _order->id());
+  params.append("run");
+
+  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void dspCustomerInformation::sShipment()
+{
+  ParameterList params;
+  params.append("sohead_id", _order->id());
+
+  dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 

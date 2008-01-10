@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>693</width>
+    <width>746</width>
     <height>592</height>
    </rect>
   </property>
@@ -327,6 +327,78 @@
           <size>
            <width>16</width>
            <height>16</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_crmButton" >
+           <property name="text" >
+            <string>CRM Account</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_arworkbenchButton" >
+           <property name="text" >
+            <string>A/R Workbench</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_refreshButton" >
+           <property name="text" >
+            <string>Query</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -970,6 +1042,13 @@
              </property>
             </widget>
            </item>
+           <item>
+            <widget class="QLabel" name="_backlogLit" >
+             <property name="text" >
+              <string>Backlog:</string>
+             </property>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -1010,6 +1089,13 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="text" >
+              <string/>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="_backlog" >
              <property name="text" >
               <string/>
              </property>
@@ -1092,9 +1178,9 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_backlogLit" >
+          <widget class="QLabel" name="_creditLimitLit" >
            <property name="text" >
-            <string>Backlog:</string>
+            <string>Credit Limit:</string>
            </property>
            <property name="alignment" >
             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1153,7 +1239,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QLabel" name="_backlog" >
+          <widget class="QLabel" name="_creditLimit" >
            <property name="sizePolicy" >
             <sizepolicy vsizetype="Preferred" hsizetype="Expanding" >
              <horstretch>0</horstretch>
