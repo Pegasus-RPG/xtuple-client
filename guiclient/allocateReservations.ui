@@ -329,6 +329,13 @@
            </property>
           </widget>
          </item>
+         <item>
+          <widget class="QPushButton" name="_submit" >
+           <property name="text" >
+            <string>&amp;Submit</string>
+           </property>
+          </widget>
+         </item>
         </layout>
        </item>
        <item>
@@ -389,6 +396,7 @@
   <tabstop>_dates</tabstop>
   <tabstop>_addPackingList</tabstop>
   <tabstop>_allocate</tabstop>
+  <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <includes>

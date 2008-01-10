@@ -60,6 +60,8 @@
 #include <QVariant>
 #include <QMessageBox>
 
+#include "submitAction.h"
+
 /*
  *  Constructs a allocateReservations as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
@@ -73,6 +75,7 @@ allocateReservations::allocateReservations(QWidget* parent, const char* name, bo
   setupUi(this);
 
   connect(_allocate, SIGNAL(clicked()), this, SLOT(sAllocate()));
+  connect(_submit, SIGNAL(clicked()), this, SLOT(sSubmit()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sCustomerSelected()));
 
   _customerTypes->setType(XComboBox::CustomerTypes);
@@ -118,6 +121,36 @@ void allocateReservations::sAllocate()
   q.exec();
 
   accept();
+}
+
+void allocateReservations::sSubmit()
+{
+  if(!_dates->allValid())
+  {
+    QMessageBox::warning(this, tr("Invalid Date Range"), tr("You must specify a valid date range."));
+    return;
+  }
+
+  ParameterList params;
+
+  params.append("action_name", "AllocateReservations");
+  params.append("addPackingList", _addPackingList->isChecked());
+  params.append("startDateOffset", QDate::currentDate().daysTo(_dates->startDate()));
+  params.append("endDateOffset", QDate::currentDate().daysTo(_dates->endDate()));
+  if (_selectedCustomer->isChecked())
+    params.append("cust_id", _cust->id());
+  if (_selectedCustomerShipto->isChecked())
+    params.append("shipto_id", _customerShipto->id());
+  if (_selectedCustomerType->isChecked())
+    params.append("custtype_id", _customerTypes->id());
+  if (_customerTypePattern->isChecked())
+    params.append("custtype_pattern", _customerType->text());
+
+  submitAction newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if(newdlg.exec() == QDialog::Accepted)
+    accept();
 }
 
 void allocateReservations::sCustomerSelected()

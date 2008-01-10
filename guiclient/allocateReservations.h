@@ -72,6 +72,7 @@ public:
 
 public slots:
     virtual void sAllocate();
+    virtual void sSubmit();
 
 protected slots:
     virtual void sCustomerSelected();
