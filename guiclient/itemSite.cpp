@@ -415,21 +415,17 @@ void itemSite::sSave()
       state += 4;
 
     XSqlQuery query;
-    if ( (state == 41) || (state == 43) )
+    if ( ( (state == 31) || (state == 32) || (state == 33) || (state == 34) ) &&
+       (_qohCache > 0) && ( (!_location->isChecked() || (!_location->isEnabled()) ) ) )
     {
-//  Consolidate to Lot/Serial itemlocs
-      query.prepare("SELECT consolidateLotSerial(:itemsite_id) AS result;");
-      query.bindValue(":itemsite_id", _itemsiteid);
-      query.exec();
+      QMessageBox::critical( this, tr("Cannot Save Item Site"),
+                             tr( "<p>You have indicated that this Item Site "
+				"should be mutiply located and there is existing quantity on hand."
+				 "<p>You must select a default location for the on hand balance to be relocated to." ) );
+      return;
     }
-    else if ( (state == 14) || (state == 34) )
-    {
-//  Consolidate to Location itemlocs
-      query.prepare("SELECT consolidateLocations(:itemsite_id) AS result;");
-      query.bindValue(":itemsite_id", _itemsiteid);
-      query.exec();
-    }
-    else if ( (state == 24) || (state == 42) || (state == 44) )
+    
+    if ( (state == 24) || (state == 42) || (state == 44) )
     {
       if ( QMessageBox::question(this, tr("Delete Inventory Detail Records?"),
                                  tr( "<p>You have indicated that detailed "
@@ -441,68 +437,14 @@ void itemSite::sSave()
 				  QMessageBox::Yes,
 				  QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
         return;
-
-      query.prepare( "SELECT SUM(itemloc_qty) AS qty "
-                     "  FROM itemloc, location "
-                     " WHERE ((itemloc_location_id=location_id) "
-                     "   AND (NOT location_netable) "
-                     "   AND (itemloc_itemsite_id=:itemsite_id));" );
-      query.bindValue(":itemsite_id", _itemsiteid);
-      query.exec();
-      if(query.first())
-      {
-        double nnqoh = query.value("qty").toDouble();
-        if(nnqoh != 0.0)
-        {
-          query.prepare("UPDATE itemsite "
-                        "   SET itemsite_qtyonhand = itemsite_qtyonhand + :qty, "
-                        "       itemsite_nnqoh = itemsite_nnqoh - :qty "
-                        " WHERE (itemsite_id=:itemsite_id);" );
-          query.bindValue(":itemsite_id", _itemsiteid);
-          query.bindValue(":qty", nnqoh);
-          query.exec();
-        }
-      }
-
-      query.prepare( "DELETE FROM itemloc "
-                     "WHERE (itemloc_itemsite_id=:itemsite_id);" );
-      query.bindValue(":itemsite_id", _itemsiteid);
-      query.exec();
     }
-
+    
     if (_qohCache != 0.0)
     {
-//  Handle detail creation
-//  Create itemloc records if they don't exist
-      if ( (state == 23) || (state == 32) || (state == 33) )
-      {
-        query.prepare( "INSERT INTO itemloc "
-                       "( itemloc_itemsite_id, itemloc_location_id,"
-                       "  itemloc_lotserial, itemloc_expiration, itemloc_qty ) "
-                       "VALUES "
-                       "( :itemsite_id, -1,"
-                       "  '', endOfTime(), :qoh );" );
-        query.bindValue(":itemsite_id", _itemsiteid);
-        query.bindValue(":qoh", _qohCache);
-        query.exec();
-      }
-
-//  Handle Location distribution
-      if ( (state == 31) || (state == 32) || (state == 33) || (state == 34) )
-      {
-        ParameterList params;
-        params.append("itemsite_id", _itemsiteid);
-
-        distributeInitialQOH newdlg(this, "", TRUE);
-        newdlg.set(params);
-        newdlg.exec();
-      }
- 
 //  Handle Lot/Serial distribution
       if ( (state == 13) || (state == 23) || (state == 33) || (state == 43) )
         QMessageBox::warning(this, tr("Assign Lot Numbers"),
-                             tr("<p>You should now use the Reassign Lot/Serial "
-				"# window to assign Lot/Serial #s.") );
+                             tr("<p>You should now use the Reassign Lot/Serial # window to assign Lot/Serial numbers.") );
     }
 
     newItemSite.prepare( "UPDATE itemsite "
