@@ -497,7 +497,7 @@
         <item row="1" column="0" >
          <widget class="QLabel" name="_priceUOMLit_2" >
           <property name="text" >
-           <string>&amp;Qty UOM:</string>
+           <string>&amp;Qty. UOM:</string>
           </property>
           <property name="alignment" >
            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -983,7 +983,7 @@
             <item row="5" column="0" >
              <widget class="QLabel" name="_leadtimeLit" >
               <property name="text" >
-               <string>Leadtime:</string>
+               <string>Lead Time:</string>
               </property>
               <property name="alignment" >
                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
