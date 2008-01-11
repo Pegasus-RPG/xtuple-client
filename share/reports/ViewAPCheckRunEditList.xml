@@ -11,7 +11,8 @@
  <leftmargin>50</leftmargin>
  <querysource>
   <name>detail</name>
-  <sql>SELECT checkhead_id AS primaryid,
+  <sql>SELECT checkhead_amount AS amt_check,
+       checkhead_id AS primaryid,
        -1 AS secondaryid,
        formatBoolYN(checkhead_void) AS f_void,
        formatBoolYN(checkhead_printed) AS f_printed,
@@ -29,7 +30,8 @@
    AND  (NOT checkhead_replaced)
    AND  (NOT checkhead_deleted) )
 
-UNION SELECT checkitem_checkhead_id AS primaryid,
+UNION SELECT 0 AS amt_check,
+             checkitem_checkhead_id AS primaryid,
              checkitem_id AS secondaryid,
              '' AS f_void,
              '' AS f_printed,
@@ -59,12 +61,12 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
  WHERE (bankaccnt_id=&lt;? value("bankaccnt_id") ?>);</sql>
  </querysource>
  <rpthead>
-  <height>121</height>
+  <height>127</height>
   <label>
    <rect>
-    <x>335</x>
+    <x>645</x>
     <y>100</y>
-    <width>125</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -72,33 +74,26 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <right/>
    <vcenter/>
-   <string>Invoice/Credit Memo #</string>
+   <string>Amount</string>
   </label>
   <label>
    <rect>
-    <x>65</x>
-    <y>100</y>
-    <width>55</width>
-    <height>15</height>
+    <x>280</x>
+    <y>5</y>
+    <width>465</width>
+    <height>38</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
+    <size>18</size>
+    <weight>bold</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Printed</string>
+   <string>A/P Check Run Edit List</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>114</ystart>
-   <xend>745</xend>
-   <yend>114</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
     <x>130</x>
@@ -117,9 +112,9 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
   </label>
   <label>
    <rect>
-    <x>645</x>
-    <y>100</y>
-    <width>100</width>
+    <x>335</x>
+    <y>84</y>
+    <width>125</width>
     <height>15</height>
    </rect>
    <font>
@@ -127,9 +122,9 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <string>Amount</string>
+   <string>Recipient</string>
   </label>
   <field>
    <rect>
@@ -152,38 +147,6 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
   </field>
   <label>
    <rect>
-    <x>540</x>
-    <y>100</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Check Date</string>
-  </label>
-  <label>
-   <rect>
-    <x>280</x>
-    <y>5</y>
-    <width>465</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>A/P Check Run Edit List</string>
-  </label>
-  <label>
-   <rect>
     <x>20</x>
     <y>55</y>
     <width>120</width>
@@ -200,9 +163,9 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
   </label>
   <label>
    <rect>
-    <x>335</x>
-    <y>84</y>
-    <width>125</width>
+    <x>65</x>
+    <y>100</y>
+    <width>55</width>
     <height>15</height>
    </rect>
    <font>
@@ -210,9 +173,32 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Recipient</string>
+   <string>Printed</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>112</ystart>
+   <xend>745</xend>
+   <yend>112</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>5</x>
+    <y>100</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Void</string>
   </label>
   <label>
    <rect>
@@ -232,9 +218,9 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
   </label>
   <label>
    <rect>
-    <x>5</x>
+    <x>540</x>
     <y>100</y>
-    <width>55</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -244,15 +230,31 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </font>
    <hcenter/>
    <vcenter/>
-   <string>Void</string>
+   <string>Check Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>335</x>
+    <y>100</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice/Credit Memo #</string>
   </label>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>5</height>
+  <height>11</height>
  </pghead>
  <pghead>
-  <height>25</height>
+  <height>29</height>
   <label>
    <rect>
     <x>540</x>
@@ -268,6 +270,38 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    <hcenter/>
    <vcenter/>
    <string>Check Date</string>
+  </label>
+  <label>
+   <rect>
+    <x>65</x>
+    <y>5</y>
+    <width>55</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Printed</string>
+  </label>
+  <label>
+   <rect>
+    <x>335</x>
+    <y>5</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Recipient/Invoice #</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -310,38 +344,6 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
   </label>
   <label>
    <rect>
-    <x>335</x>
-    <y>5</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Recipient/Invoice #</string>
-  </label>
-  <label>
-   <rect>
-    <x>65</x>
-    <y>5</y>
-    <width>55</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Printed</string>
-  </label>
-  <label>
-   <rect>
     <x>5</x>
     <y>5</y>
     <width>55</width>
@@ -367,12 +369,12 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    <key>
     <query>detail</query>
    </key>
-   <height>15</height>
+   <height>21</height>
    <field>
     <rect>
-     <x>645</x>
+     <x>65</x>
      <y>0</y>
-     <width>100</width>
+     <width>55</width>
      <height>15</height>
     </rect>
     <font>
@@ -380,11 +382,11 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_amount</column>
+     <column>f_printed</column>
     </data>
    </field>
    <field>
@@ -427,26 +429,7 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    </field>
    <field>
     <rect>
-     <x>65</x>
-     <y>0</y>
-     <width>55</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_printed</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>540</x>
+     <x>645</x>
      <y>0</y>
      <width>100</width>
      <height>15</height>
@@ -456,11 +439,11 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_checkdate</column>
+     <column>f_amount</column>
     </data>
    </field>
    <field>
@@ -482,45 +465,29 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
      <column>description</column>
     </data>
    </field>
+   <field>
+    <rect>
+     <x>540</x>
+     <y>0</y>
+     <width>100</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_checkdate</column>
+    </data>
+   </field>
   </detail>
  </section>
  <pgfoot>
-  <height>15</height>
-  <field>
-   <rect>
-    <x>705</x>
-    <y>0</y>
-    <width>40</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>page_number</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
+  <height>21</height>
   <field>
    <rect>
     <x>90</x>
@@ -542,6 +509,22 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
   </field>
   <label>
    <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <label>
+   <rect>
     <x>0</x>
     <y>0</y>
     <width>85</width>
@@ -556,5 +539,70 @@ ORDER BY checkhead_number, primaryid, orderby;</sql>
    <vcenter/>
    <string>Report Date:</string>
   </label>
+  <field>
+   <rect>
+    <x>705</x>
+    <y>0</y>
+    <width>40</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>page_number</column>
+   </data>
+  </field>
  </pgfoot>
+ <rptfoot>
+  <height>21</height>
+  <line>
+   <xstart>568</xstart>
+   <ystart>2</ystart>
+   <xend>745</xend>
+   <yend>2</yend>
+   <weight>2</weight>
+  </line>
+  <field>
+   <rect>
+    <x>645</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>detail</query>
+    <column>amt_check</column>
+   </data>
+   <tracktotal builtin="true" >qty</tracktotal>
+  </field>
+  <label>
+   <rect>
+    <x>550</x>
+    <y>5</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Report Total</string>
+  </label>
+ </rptfoot>
 </report>
