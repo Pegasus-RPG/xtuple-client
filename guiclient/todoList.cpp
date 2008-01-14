@@ -125,7 +125,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_todoList,	SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   connect(_todoList,	SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)),
 	    this,	SLOT(sPopulateMenu(QMenu*)));
-  connect(_todoList,	SIGNAL(currentItemChanged(QTreeWidgetItem*,QTreeWidgetItem*)),	this,	SLOT(handlePrivs()));
+  connect(_todoList,	SIGNAL(itemSelectionChanged()),	this,	SLOT(handlePrivs()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
