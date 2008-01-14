@@ -212,10 +212,10 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
     _workbench->hide();
     
   if (!_metrics->boolean("Transforms"))
-    _tab->removePage(_tab->page(8));
+    _tab->removePage(_tab->page(9));
     
   if (!_metrics->boolean("MultiWhs"))
-    _tab->removePage(_tab->page(3));
+    _tab->removePage(_tab->page(4));
  
   if (!_metrics->boolean("BBOM"))
   {
