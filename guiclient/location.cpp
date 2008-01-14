@@ -222,6 +222,31 @@ void location::sSave()
     return;
   }
 
+  q.prepare("SELECT location_id"
+            "  FROM location"
+            " WHERE((location_id != :location_id)"
+            "   AND (location_warehous_id=:location_warehous_id)"
+            "   AND (location_aisle=:location_aisle)"
+            "   AND (location_rack=:location_rack)"
+            "   AND (location_bin=:location_bin)"
+            "   AND (location_name=:location_name))");
+  q.bindValue(":location_id", _locationid);
+  q.bindValue(":location_warehous_id", _warehouse->id());
+  q.bindValue(":location_aisle", _aisle->text());
+  q.bindValue(":location_rack", _rack->text());
+  q.bindValue(":location_bin", _bin->text());
+  q.bindValue(":location_name", _location->text());
+  q.exec();
+  if(q.first())
+  {
+    QMessageBox::critical( this, tr("Duplicate Location Name"),
+                           tr("<p>You must enter a unique name to identify "
+			      "this Location in the specified Warehouse.") );
+    _location->setFocus();
+    return;
+  }
+  
+
   if (_mode == cNew)
     q.prepare( "INSERT INTO location "
                "( location_id, location_warehous_id,"
