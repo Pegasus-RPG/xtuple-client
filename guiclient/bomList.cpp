@@ -88,7 +88,7 @@ bomList::bomList(QWidget* parent, const char* name, Qt::WFlags fl)
   {
     connect(_bom, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_bom, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
-    connect(_bom, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_bom, SIGNAL(valid(bool)), this, SLOT(sHandleButtons()));
 
     connect(_bom, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
@@ -129,8 +129,7 @@ void bomList::sDelete()
                              tr( "Are you sure that you want to delete the selected Bill of Materials?"),
                              tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
   {
-    q.prepare( "DELETE FROM bomitem "
-               "WHERE (bomitem_parent_item_id=:item_id);" );
+    q.prepare( "SELECT deletebom(:item_id);" );
     q.bindValue(":item_id", _bom->id());
     q.exec();
 
@@ -153,7 +152,13 @@ void bomList::sFillList( int pItemid, bool pLocal )
 {
   QString sql;
 
-  sql = "SELECT DISTINCT item_id, item_number, (item_descrip1 || ' ' || item_descrip2) "
+  sql = "SELECT DISTINCT item_id, "
+        " CASE WHEN "
+        "  bomitem_rev_id=-1 THEN "
+        "   0 "
+        " ELSE 1 "
+        " END AS revcontrol, "
+        " item_number, (item_descrip1 || ' ' || item_descrip2) "
         "FROM item, bomitem "
         "WHERE ((bomitem_parent_item_id=item_id)";
 
@@ -166,7 +171,7 @@ void bomList::sFillList( int pItemid, bool pLocal )
   if ((pItemid != -1) && (pLocal))
     _bom->populate(sql, pItemid);
   else
-    _bom->populate(sql);
+    _bom->populate(sql, TRUE);
 }
 
 void bomList::sNew()
@@ -223,3 +228,14 @@ void bomList::sFillList()
 {
   sFillList(-1, TRUE);
 }
+
+void bomList::sHandleButtons()
+{
+qDebug("control = %d", _bom->altId());
+
+  if (_bom->altId() == 0)
+    _delete->setEnabled(TRUE);
+  else
+    _delete->setEnabled(FALSE);
+}
+

@@ -81,6 +81,7 @@ public slots:
     virtual void sSearch( const QString & pTarget );
     virtual void sView();
     virtual void sFillList();
+    virtual void sHandleButtons();
 
 protected slots:
     virtual void languageChange();
