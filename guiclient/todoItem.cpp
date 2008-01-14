@@ -289,6 +289,7 @@ void todoItem::sPopulate()
     _description->setText(q.value("todoitem_description").toString());
     _notes->setText(q.value("todoitem_notes").toString());
     _crmacct->setId(q.value("todoitem_crmacct_id").toInt());
+    _active->setChecked(q.value("todoitem_active").toBool());
 
     if (q.value("todoitem_status").toString() == "P")
       _pending->setChecked(true);
