@@ -444,11 +444,17 @@ void apOpenItem::populate()
 
 void apOpenItem::sPopulateVendInfo(int vend_id)
 {
-    XSqlQuery vendor;
-    vendor.prepare("SELECT vend_curr_id FROM vend WHERE vend_id = :vend_id;");
-    vendor.bindValue(":vend_id", vend_id);
-    vendor.exec();
-    if (vendor.first())
-	_amount->setId(vendor.value("vend_curr_id").toInt());
+  XSqlQuery vendor;
+  vendor.prepare("SELECT vend_curr_id,"
+                 "       vend_terms_id "
+                 "  FROM vend"
+                 " WHERE(vend_id = :vend_id);");
+  vendor.bindValue(":vend_id", vend_id);
+  vendor.exec();
+  if (vendor.first())
+  {
+    _amount->setId(vendor.value("vend_curr_id").toInt());
+    _terms->setId(vendor.value("vend_terms_id").toInt());
+  }
 }
 
