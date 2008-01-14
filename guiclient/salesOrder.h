@@ -119,12 +119,8 @@ public slots:
     virtual void sMoveUp();
     virtual void sMoveDown();
     virtual void sFillCcardList();
-    virtual void _authorizeCC_clicked();
-    virtual void _chargeCC_clicked();
-    virtual void precheckCreditCard();
-    virtual void processYourPay();
-    virtual void readFromStdout();
-    virtual void readFromStderr();
+    virtual void sAuthorizeCC();
+    virtual void sChargeCC();
     virtual void sReturnStock();
     virtual void sIssueStock();
     virtual void sIssueLineBalance();
@@ -139,44 +135,11 @@ protected:
 
 protected slots:
     virtual void languageChange();
+    virtual bool okToProcessCC();
 
 private:
     bool 	deleteForCancel();
 
-    QString saved_order;
-    QString _shipto_zip;
-    QString _shipto_state;
-    QString _shipto_city;
-    QString _shipto_address2;
-    QString _shipto_address1;
-    QString _shipto_name;
-    bool _noCVV;
-    int _cm_id;
-    int _chargeBankAccount;
-    double doDollars;
-    int _ccpay_id;
-    int _orderSeq;
-    QString _ccard_type;
-    QString addrnum;
-    int _numtospace;
-    int _cvv;
-    QString _ccv_x;
-    QString _credit_card_x;
-    char *pemfile;
-    char *host;
-    char *configfile;
-    QString _pemfile;
-    QString _storenum;
-    int _maxlinkshield;
-    bool _linkshield;
-    int port;
-    QString _ccard_address1;
-    int _ccard_year_expired;
-    int _ccard_month_expired;
-    QString _ccard_name;
-    QString _ccard_number;
-    QString key;
-    bool _doCharge;
     bool _saved;
     int _orderNumberGen;
     double _amountOutstanding;
@@ -192,21 +155,6 @@ private:
     int _soheadid;
     int _lineMode;
     int _mode;
-    bool _doAuthorize;
-    bool _passPrecheck;
-    bool _ccActive;
-    QString _ccard_address2;
-    QString _ccard_city;
-    QString _ccard_state;
-    QString _ccard_zip;
-    QString _ccard_country;
-    bool YourPay;
-    bool VeriSign;
-    QString doServer;
-    QString _response;
-    Q3Process * proc;
-    QString _port;
-    QString _oops;
     int _numSelected;
     int _originalPrjid;
     int _custtaxauthid;
@@ -217,7 +165,7 @@ private:
     enum Part { Line = 0, Freight = 1, Adj = 2, Total = 3 };
     double _taxCache[3][4];	// [Rate] vs. [Part]
 
-	bool _custEmail;
+    bool _custEmail;
 
 };
 

@@ -1,90 +1,82 @@
 /*
- * Common Public Attribution License Version 1.0. 
- * 
- * The contents of this file are subject to the Common Public Attribution 
- * License Version 1.0 (the "License"); you may not use this file except 
- * in compliance with the License. You may obtain a copy of the License 
- * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla 
- * Public License Version 1.1 but Sections 14 and 15 have been added to 
- * cover use of software over a computer network and provide for limited 
- * attribution for the Original Developer. In addition, Exhibit A has 
+ * Common Public Attribution License Version 1.0.
+ *
+ * The contents of this file are subject to the Common Public Attribution
+ * License Version 1.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla
+ * Public License Version 1.1 but Sections 14 and 15 have been added to
+ * cover use of software over a computer network and provide for limited
+ * attribution for the Original Developer. In addition, Exhibit A has
  * been modified to be consistent with Exhibit B.
- * 
- * Software distributed under the License is distributed on an "AS IS" 
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See 
- * the License for the specific language governing rights and limitations 
- * under the License. 
- * 
- * The Original Code is PostBooks Accounting, ERP, and CRM Suite. 
- * 
- * The Original Developer is not the Initial Developer and is __________. 
- * If left blank, the Original Developer is the Initial Developer. 
- * The Initial Developer of the Original Code is OpenMFG, LLC, 
- * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
- * 
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite.
+ *
+ * The Original Developer is not the Initial Developer and is __________.
+ * If left blank, the Original Developer is the Initial Developer.
+ * The Initial Developer of the Original Code is OpenMFG, LLC,
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved.
+ *
  * Contributor(s): ______________________.
- * 
- * Alternatively, the contents of this file may be used under the terms 
- * of the xTuple End-User License Agreeement (the xTuple License), in which 
- * case the provisions of the xTuple License are applicable instead of 
- * those above.  If you wish to allow use of your version of this file only 
- * under the terms of the xTuple License and not to allow others to use 
- * your version of this file under the CPAL, indicate your decision by 
- * deleting the provisions above and replace them with the notice and other 
- * provisions required by the xTuple License. If you do not delete the 
- * provisions above, a recipient may use your version of this file under 
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of the xTuple End-User License Agreeement (the xTuple License), in which
+ * case the provisions of the xTuple License are applicable instead of
+ * those above.  If you wish to allow use of your version of this file only
+ * under the terms of the xTuple License and not to allow others to use
+ * your version of this file under the CPAL, indicate your decision by
+ * deleting the provisions above and replace them with the notice and other
+ * provisions required by the xTuple License. If you do not delete the
+ * provisions above, a recipient may use your version of this file under
  * either the CPAL or the xTuple License.
- * 
+ *
  * EXHIBIT B.  Attribution Information
- * 
- * Attribution Copyright Notice: 
+ *
+ * Attribution Copyright Notice:
  * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
- * 
- * Attribution Phrase: 
+ *
+ * Attribution Phrase:
  * Powered by PostBooks, an open source solution from xTuple
- * 
- * Attribution URL: www.xtuple.org 
+ *
+ * Attribution URL: www.xtuple.org
  * (to be included in the "Community" menu of the application if possible)
- * 
- * Graphic Image as provided in the Covered Code, if any. 
+ *
+ * Graphic Image as provided in the Covered Code, if any.
  * (online at www.xtuple.com/poweredby)
- * 
- * Display of Attribution Information is required in Larger Works which 
- * are defined in the CPAL as a work which combines Covered Code or 
+ *
+ * Display of Attribution Information is required in Larger Works which
+ * are defined in the CPAL as a work which combines Covered Code or
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
 #include "cashReceipt.h"
 
-#include <QVariant>
-#include <QValidator>
-#include <QStatusBar>
 #include <QMessageBox>
-#include <QFileInfo>
-#include <QApplication>
 #include <QSqlError>
+#include <QVariant>
+
 #include <stdlib.h>
+
 #include "cashReceiptItem.h"
 #include "cashReceiptMiscDistrib.h"
 #include "creditCard.h"
+#include "creditcardprocessor.h"
+#include "storedProcErrorLookup.h"
 
 const char *_fundsTypes[] = { "C", "T", "M", "V", "A", "D", "R", "K", "W", "O" };
 const int _fundsTypeCount = 9;
 
-/*
- *  Constructs a cashReceipt as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulateCustomerInfo(int)));
@@ -116,8 +108,6 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   bg->addButton(_balCreditMemo);
   bg->addButton(_balCustomerDeposit);
 
-  statusBar()->hide();
-  
   _applied->clear();
 
   _cust->setAutoFocus(false);
@@ -126,7 +116,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _bankaccnt->setType(XComboBox::ARBankAccounts);
   _salescat->setType(XComboBox::SalesCategories);
-  
+
   _aropen->addColumn(tr("Doc. Type"), -1,              Qt::AlignCenter );
   _aropen->addColumn(tr("Doc. #"),    _orderColumn,    Qt::AlignCenter );
   _aropen->addColumn(tr("Ord. #"),    _orderColumn,    Qt::AlignCenter );
@@ -154,11 +144,10 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
     _aropen->hideColumn(8);
     _cashrcptmisc->hideColumn(3);
   }
-  
-  key = omfgThis->_key;
-  if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
-    _tab->removePage(_tab->page(1));
-  
+
+  if (!_metrics->boolean("CCAccept") && ! _privleges->check("ProcessCreditCards"))
+    _tab->removeTab(_tab->indexOf(_creditCardTab));
+
   if(_metrics->boolean("HideApplyToBalance"))
     _applyToBalance->hide();
 
@@ -172,18 +161,11 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   }
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 cashReceipt::~cashReceipt()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void cashReceipt::languageChange()
 {
   retranslateUi(this);
@@ -211,7 +193,11 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
       q.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
       if (q.first())
         _cashrcptid = q.value("cashrcpt_id").toInt();
-//  ToDo
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return UndefinedError;
+      }
 
       _distDate->setDate(omfgThis->dbDate(), true);
 
@@ -223,13 +209,18 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
                  "  '', -1 );" );
       q.bindValue(":cashrcpt_id", _cashrcptid);
       q.exec();
+      if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return UndefinedError;
+      }
 
       _cust->setFocus();
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
-     _tab->removePage(_tab->page(1));
+      _tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
 
@@ -238,7 +229,7 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-     _tab->removePage(_tab->page(1));
+      _tab->removeTab(_tab->indexOf(_creditCardTab));
 
       _cust->setReadOnly(TRUE);
       _received->setEnabled(FALSE);
@@ -261,22 +252,14 @@ enum SetResponse cashReceipt::set(const ParameterList &pParams)
 
       _close->setFocus();
     }
-    
-    _ccEdit = FALSE;
-    
-    if (_mode == cEdit)
-    {
-// We need to check and see if we are dealing a credit card cash receipt
-//  If so we need to shut everythin down so no changes can be made
-       if (_origFunds == "A" || _origFunds == "D" || _origFunds == "M" || _origFunds == "V")
-       {
-         _ccEdit = TRUE;
-       }
-    }
-    
+
+    // if this cash receipt was by credit card cash then prevent changes
+    _ccEdit = (_mode == cEdit) &&
+	      (_origFunds == "A" || _origFunds == "D" ||
+	       _origFunds == "M" || _origFunds == "V");
+
     if(_ccEdit)
     {
-// Ok let's shut it down for edits
       _received->setEnabled(FALSE);
       _fundsType->setEnabled(FALSE);
       _docNumber->setEnabled(FALSE);
@@ -343,7 +326,7 @@ void cashReceipt::sApply()
     if (newdlg.exec() != QDialog::Rejected)
       update = TRUE;
   }
-  
+
   if (update)
     sFillApplyList();
 }
@@ -355,12 +338,27 @@ void cashReceipt::sApplyLineBalance()
   for(int i = 0; i < list.size(); i++)
   {
     cursor = (XTreeWidgetItem*)list.at(i);
-    q.prepare( "SELECT applycashreceiptlinebalance(:cashrcpt_id,:cashrcptitem_aropen_id,:amount,:curr_id);" );
+    q.prepare( "SELECT applycashreceiptlinebalance(:cashrcpt_id,"
+	       "            :cashrcptitem_aropen_id,:amount,:curr_id) AS result;" );
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.bindValue(":cashrcptitem_aropen_id", cursor->id());
     q.bindValue(":amount", _received->localValue());
     q.bindValue(":curr_id", _received->id());
     q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+	systemError(this, storedProcErrorLookup("applyCashReceiptLineBalance", result), __FILE__, __LINE__);
+	return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   sFillApplyList();
@@ -379,6 +377,11 @@ void cashReceipt::sClear()
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.bindValue(":aropen_id", cursor->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   sFillApplyList();
@@ -394,7 +397,7 @@ void cashReceipt::sAdd()
 
   cashReceiptMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
-  
+
   if (newdlg.exec() != QDialog::Rejected)
     sFillMiscList();
 }
@@ -409,7 +412,7 @@ void cashReceipt::sEdit()
 
   cashReceiptMiscDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
-  
+
   if (newdlg.exec() != QDialog::Rejected)
     sFillMiscList();
 }
@@ -420,6 +423,11 @@ void cashReceipt::sDelete()
              "WHERE (cashrcptmisc_id=:cashrcptmisc_id);" );
   q.bindValue(":cashrcptmisc_id", _cashrcptmisc->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillMiscList();
 }
@@ -438,6 +446,11 @@ void cashReceipt::sClose()
                "WHERE (cashrcptmisc_cashrcpt_id=:cashrcpt_id);" );
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   close();
@@ -445,7 +458,7 @@ void cashReceipt::sClose()
 
 void cashReceipt::sSave()
 {
-  int _bankaccnt_curr_id;
+  int _bankaccnt_curr_id = -1;
   QString _bankaccnt_currAbbr;
   q.prepare( "SELECT bankaccnt_curr_id, "
              "       currConcat(bankaccnt_curr_id) AS currAbbr "
@@ -455,92 +468,89 @@ void cashReceipt::sSave()
   q.exec();
   if (q.first())
   {
-      _bankaccnt_curr_id = q.value("bankaccnt_curr_id").toInt();
-      _bankaccnt_currAbbr = q.value("currAbbr").toString();
+    _bankaccnt_curr_id = q.value("bankaccnt_curr_id").toInt();
+    _bankaccnt_currAbbr = q.value("currAbbr").toString();
   }
-  else
+  else if (q.lastError().type() != QSqlError::None)
   {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   if (_received->id() != _bankaccnt_curr_id &&
       QMessageBox::question(this, tr("Cash Receipt Transaction Not In Bank Currency"),
-                          tr("This transaction is specified in %1 while the "
-                             "Bank Account is specified in %2.\nDo you wish to "
-                             "convert at the current Exchange Rate?\n\nIf not, click NO "
+                          tr("<p>This transaction is specified in %1 while the "
+                             "Bank Account is specified in %2. Do you wish to "
+                             "convert at the current Exchange Rate?"
+			     "<p>If not, click NO "
                              "and change the Bank Account in the POST TO field.")
                           .arg(_received->currAbbr())
                           .arg(_bankaccnt_currAbbr),
                           QMessageBox::Yes|QMessageBox::Escape,
                           QMessageBox::No |QMessageBox::Default) != QMessageBox::Yes)
   {
-        _received->setFocus();
-        return;
+    _received->setFocus();
+    return;
   }
-    
-  myFunds = QString(*(_fundsTypes + _fundsType->currentItem()));
-  if (!_ccEdit)
+
+  QString fundsType = QString(*(_fundsTypes + _fundsType->currentItem()));
+  if (!_ccEdit &&
+      (fundsType == "A" || fundsType == "D" || fundsType == "M" || fundsType == "V"))
   {
-      if (myFunds == "A" || myFunds == "D" || myFunds == "M" || myFunds == "V")
-      {
-// We have a new credit card transaction to process  
-        _passPrecheck = true;
+    CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+    if (cardproc->checkConfiguration() < 0)
+    {
+      QMessageBox::warning( this, tr("Credit Card Error"),
+			    cardproc->errorMsg() );
+      _received->setFocus();
+      return;
+    }
 
-        precheckCreditCard();
-    
-        if (!_passPrecheck)
-          return;
-    
-        if (_metrics->value("CCConfirmTrans") == "A" || _metrics->value("CCConfirmTrans") == "B")
-        {
-          switch( QMessageBox::question( this, tr("Confirm Charge of Credit Card Purchase"),
-                    tr("You must confirm that you wish to charge credit card %1\n"
-                       "in the amount of $%2. Would you like to charge now?")
-                       .arg(_credit_card_x)
-                       .arg(_received->localValue()),
-                    QMessageBox::Yes | QMessageBox::Default,
-                    QMessageBox::No | QMessageBox::Escape ) )
-          {
-            case QMessageBox::Yes:
-                break;
-            case QMessageBox::No:
-            default:
-              return;
-          }
-        }
-    
-        _chargeBankAccount =   _metrics->value("CCDefaultBank").toInt();
-    
-        if (_chargeBankAccount < 1)
-        {
-          QMessageBox::warning( this, tr("Bank Account Missing"),
-                              tr("The bank default bank account for credit card processing has not been assigned.") );
-          _received->setFocus();
-          return;
-        }
-    
-        if(YourPay)
-        {
-          if(!processYourPay())
-            return;
-        }
-        if(VeriSign)
-        {
-          QMessageBox::warning( this, tr("VeriSign"),
-                 tr("VeriSign is not yet supported") );
-        }
-      }
+    _save->setEnabled(false);
+    int ccpayid = -1;
+    QString ordernum = _docNumber->text().isEmpty() ?
+		      QString::number(_cashrcptid) : _docNumber->text();
+    int returnVal = cardproc->charge(_cc->id(),
+				     _CCCVV->text().toInt(),
+				     _received->localValue(),
+				     _received->id(),
+				     ordernum, ordernum, ccpayid,
+				     QString("cashrcpt"), _cashrcptid);
+    if (returnVal < 0)
+      QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			    cardproc->errorMsg());
+    else if (returnVal > 0)
+      QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+			   cardproc->errorMsg());
+    else if (! cardproc->errorMsg().isEmpty())
+      QMessageBox::information(this, tr("Credit Card Processing Note"),
+			   cardproc->errorMsg());
+
+    _save->setEnabled(true);
+    if (returnVal)
+      return;
+
+    // cardproc->credit() does an update but doesn't have all the required data
+    q.prepare( "UPDATE cashrcpt "
+	       "SET cashrcpt_distdate=:cashrcpt_distdate,"
+	       "    cashrcpt_notes=:cashrcpt_notes || '\n' || cashrcpt_notes,"
+	       "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
+	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit "
+	       "WHERE (cashrcpt_id=:cashrcpt_id);" );
   }
-
-  q.prepare( "UPDATE cashrcpt "
-             "SET cashrcpt_cust_id=:cashrcpt_cust_id, cashrcpt_amount=:cashrcpt_amount,"
-             "    cashrcpt_fundstype=:cashrcpt_fundstype, cashrcpt_docnumber=:cashrcpt_docnumber,"
-             "    cashrcpt_bankaccnt_id=:cashrcpt_bankaccnt_id, cashrcpt_distdate=:cashrcpt_distdate,"
-             "    cashrcpt_notes=:cashrcpt_notes, "
-             "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
-             "    cashrcpt_curr_id=:curr_id, cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit "
-             "WHERE (cashrcpt_id=:cashrcpt_id);" );
+  else
+    q.prepare( "UPDATE cashrcpt "
+	       "SET cashrcpt_cust_id=:cashrcpt_cust_id,"
+	       "    cashrcpt_amount=:cashrcpt_amount,"
+	       "    cashrcpt_fundstype=:cashrcpt_fundstype,"
+	       "    cashrcpt_docnumber=:cashrcpt_docnumber,"
+	       "    cashrcpt_bankaccnt_id=:cashrcpt_bankaccnt_id,"
+	       "    cashrcpt_distdate=:cashrcpt_distdate,"
+	       "    cashrcpt_notes=:cashrcpt_notes, "
+	       "    cashrcpt_salescat_id=:cashrcpt_salescat_id, "
+	       "    cashrcpt_curr_id=:curr_id,"
+	       "    cashrcpt_usecustdeposit=:cashrcpt_usecustdeposit "
+	       "WHERE (cashrcpt_id=:cashrcpt_id);" );
 
   q.bindValue(":cashrcpt_id", _cashrcptid);
   q.bindValue(":cashrcpt_cust_id", _cust->id());
@@ -649,6 +659,11 @@ void cashReceipt::sFillMiscList()
   misc.bindValue(":cashrcpt_id", _cashrcptid);
   misc.exec();
   _cashrcptmisc->populate(misc);
+  if (misc.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   misc.prepare( "SELECT SUM(cashrcptmisc_amount) AS total "
              "FROM cashrcptmisc "
@@ -657,6 +672,11 @@ void cashReceipt::sFillMiscList()
   misc.exec();
   if (misc.first())
     _miscDistribs->setLocalValue(misc.value("total").toDouble());
+  else if (misc.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   else
     _miscDistribs->clear();
   _received->setCurrencyEditable(_applied->isZero() && _miscDistribs->isZero());
@@ -713,7 +733,11 @@ void cashReceipt::populate()
     sFillMiscList();
     setCreditCard();
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void cashReceipt::sSearchDocNumChanged()
@@ -751,16 +775,27 @@ void cashReceipt::sChangeCurrency( int newId)
 
 void cashReceipt::setCreditCard()
 {
-  key = omfgThis->_key;
-  
-  q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
+  q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key)) AS result;");
   q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":key", key);
-  q.exec(); 
-  
-//  QString myFunds;
-  myFunds = QString(*(_fundsTypes + _fundsType->currentItem()));
-  
+  q.bindValue(":key", omfgThis->_key);
+  q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("expireCreditCard", result),
+		  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+
   q.prepare( "SELECT ccard_id,"
              "       ccard_seq,"
              "       CASE WHEN (ccard_type='M') THEN :masterCard"
@@ -768,729 +803,30 @@ void cashReceipt::setCreditCard()
              "            WHEN (ccard_type='A') THEN :americanExpress"
              "            WHEN (ccard_type='D') THEN :discover"
              "            ELSE :other"
-             "       END AS creditcard," 
+             "       END AS creditcard,"
              "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
              "       formatBoolYN(ccard_active), "
              "       formatbytea(decrypt(setbytea(ccard_name), setbytea(:key), 'bf')) AS ccard_name,"
              "       formatbytea(decrypt(setbytea(ccard_month_expired), setbytea(:key), 'bf')) ||  '-' ||formatbytea(decrypt(setbytea(ccard_year_expired), setbytea(:key), 'bf')) AS ccard_expired "
              "FROM ccard "
              "WHERE ((ccard_cust_id=:cust_id) "
-             " AND       (ccard_type=:ccard_type)) "
+             " AND   (ccard_type=:ccard_type)) "
              "ORDER BY ccard_seq;" );
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":ccard_type", myFunds);
+  q.bindValue(":cust_id",    _cust->id());
+  q.bindValue(":ccard_type", QString(*(_fundsTypes + _fundsType->currentItem())));
   q.bindValue(":masterCard", tr("MasterCard"));
-  q.bindValue(":visa", tr("VISA"));
+  q.bindValue(":visa",       tr("VISA"));
   q.bindValue(":americanExpress", tr("American Express"));
-  q.bindValue(":discover", tr("Discover"));
-  q.bindValue(":other", tr("Other"));
-  q.bindValue(":key", key);
+  q.bindValue(":discover",   tr("Discover"));
+  q.bindValue(":other",      tr("Other"));
+  q.bindValue(":key",        omfgThis->_key);
   q.exec();
-//  _metrics->set("CCsql", q.executedQuery());
   _cc->populate(q);
-}
-
-void cashReceipt::precheckCreditCard()
-{
-  if(!_metrics->boolean("CCAccept"))
+  if (q.lastError().type() != QSqlError::None)
   {
-    QMessageBox::warning( this, tr("Credit Cards"),
-                          tr("The application is not set up to process credit cards") );
-    _received->setFocus();
-    _passPrecheck = false;
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
-  key =  omfgThis->_key;
-
-  if(key.length() == 0 || key.isEmpty() || key.isNull())
-  {
-    QMessageBox::warning( this, tr("Encryption Key"),
-                          tr("You do not have an encryption key defined") );
-    _received->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-
-  q.prepare( "SELECT ccard_active, "
-             "       formatbytea(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
-             "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number_x,"
-             "       formatbytea(decrypt(setbytea(ccard_name), setbytea(:key), 'bf')) AS ccard_name,"
-             "       formatbytea(decrypt(setbytea(ccard_address1), setbytea(:key), 'bf')) AS ccard_address1,"
-             "       formatbytea(decrypt(setbytea(ccard_address2), setbytea(:key), 'bf')) AS ccard_address2,"
-             "       formatbytea(decrypt(setbytea(ccard_city), setbytea(:key), 'bf')) AS ccard_city,"
-             "       formatbytea(decrypt(setbytea(ccard_state), setbytea(:key), 'bf')) AS ccard_state,"
-             "       formatbytea(decrypt(setbytea(ccard_zip), setbytea(:key), 'bf')) AS ccard_zip,"
-             "       formatbytea(decrypt(setbytea(ccard_country), setbytea(:key), 'bf')) AS ccard_country,"
-             "       formatbytea(decrypt(setbytea(ccard_month_expired), setbytea(:key), 'bf')) AS ccard_month_expired,"
-             "       formatbytea(decrypt(setbytea(ccard_year_expired), setbytea(:key), 'bf')) AS ccard_year_expired, "
-             "       ccard_type "
-             "  FROM ccard "
-             " WHERE (ccard_id=:ccard_id); ");
-  q.bindValue(":ccard_id", _cc->id());
-  q.bindValue(":key", key);
-  q.exec();
-  q.first();
-
-  _ccActive = q.value("ccard_active").toBool();
-
-  if (!_ccActive)
-  {
-    QMessageBox::warning( this, tr("Invalid Credit Card"),
-                          tr("The Credit Card you are attempting to use is not active.\n"
-                             "Make the card active or select another credit card.") );
-    _received->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-
-  _ccard_number = q.value("ccard_number").toString();
-  _credit_card_x = q.value("ccard_number_x").toString();
-  _ccard_name = q.value("ccard_name").toString();
-  _ccard_address1 = q.value("ccard_address1").toString();
-  _ccard_address2 = q.value("ccard_address2").toString();
-  _ccard_city = q.value("ccard_city").toString();
-  _ccard_state = q.value("ccard_state").toString();
-  _ccard_zip = q.value("ccard_zip").toString();
-  _ccard_country = q.value("ccard_country").toString();
-  _ccard_month_expired = q.value("ccard_month_expired").toInt();
-  _ccard_year_expired = q.value("ccard_year_expired").toInt();
-  _ccard_type = q.value("ccard_type").toString();
-
-  YourPay = false;
-  VeriSign = false;
-
-  if (_metrics->value("CCServer") == "test-payflow.verisign.com"  ||  _metrics->value("CCServer") == "payflow.verisign.com") 
-  {
-    VeriSign = true; 
-  }
-
-  if (_metrics->value("CCServer") == "staging.linkpt.net"  ||  _metrics->value("CCServer") == "secure.linkpt.net") 
-  {
-    YourPay = true; 
-  }
-
-  if (!YourPay && !VeriSign)
-  {
-    QMessageBox::warning( this, tr("Invalid Credit Card Service Selected"),
-                          tr("OpenMFG only supports YourPay and VeriSign.  You have not selected either of these as your credit card processors.") );
-    _received->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-
-  if (VeriSign)
-  {
-    if ((_metrics->boolean("CCTest") && _metrics->value("CCServer") == "test-payflow.verisign.com") || (!_metrics->boolean("CCTest") && _metrics->value("CCServer") == "payflow.verisign.com"))
-    {
-// This is OK - We are either running test and test or production and production on Verisign
-    }
-    else
-    {
-// Not OK - we have an error
-      QMessageBox::warning( this, tr("Invalid Server Configuration"),
-                            tr("If Credit Card test is selected you must select a test server.  If Credit Card Test is not selected you must select a production server") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  }
-
-
-  if (YourPay)
-  {
-    if ((_metrics->boolean("CCTest") && _metrics->value("CCServer") == "staging.linkpt.net") || (!_metrics->boolean("CCTest") && _metrics->value("CCServer") == "secure.linkpt.net"))
-    {
-// This is OK - We are either running test and test or production and production on Verisign
-    }
-    else
-    {
-// Not OK - we have an error
-      QMessageBox::warning( this, tr("Invalid Server Configuration"),
-                            tr("If Credit Card test is selected you must select a test server.  If Credit Card Test is not selected you must select a production server") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  }
- 
-  port = _metrics->value("CCPort").toInt();
-  
-  if (YourPay)
-    if (port != 1129)
-    {
-      QMessageBox::warning( this, tr("Invalid Server Port Configuration"),
-                            tr("You have an invalid port identified for the requested server") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  
-  if (VeriSign)
-    if (port != 443)
-    {
-      QMessageBox::warning( this, tr("Invalid Server Port Configuration"),
-                            tr("You have an invalid port identified for the requested server") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-
-  if (YourPay)
-  {
-// Set up all of the YourPay parameters and check them
-    _linkshield = _metrics->boolean("CCYPLinkShield");
-    _maxlinkshield = _metrics->value("CCYPLinkShieldMax").toInt();
-    _storenum = _metricsenc->value("CCYPStoreNum");
-
-#ifdef Q_WS_WIN
-    _pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
-    _pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
-    _pemfile = _metrics->value("CCYPLinPathPEM");
-#endif
-
-    if (_storenum.length() == 0 || _storenum.isEmpty() || _storenum.isNull())
-    {
-      QMessageBox::warning( this, tr("Store Number Missing"),
-                            tr("The YourPay Store Number is missing") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-
-    if (_pemfile.length() == 0 || _pemfile.isEmpty() || _pemfile.isNull())
-    {
-      QMessageBox::warning( this, tr("Pem File Missing"),
-                            tr("The YourPay pem file is missing") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-
-    if (_received->localValue() <= 0)
-    {
-      QMessageBox::warning( this, tr("Charge Amount Missing or incorrect"),
-                            tr("The Charge Amount must be greater than 0.00") );
-      _received->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-
-    _noCVV = false;
-
-    if ((int)_CCCVV->toDouble() < 100 || (int)_CCCVV->toDouble() > 9999)
-    {
-      if ((int)_CCCVV->toDouble() == 0)
-      {
-        switch( QMessageBox::question( this, tr("Confirm No CVV Code"),
-            tr("You must confirm that you wish to proceed without a CVV Code.\n"
-               "Would you like to continue now?"),
-            QMessageBox::Yes | QMessageBox::Default,
-            QMessageBox::No  | QMessageBox::Escape ) )
-        {
-          case QMessageBox::Yes:
-            _noCVV = true;
-            break;
-          case QMessageBox::No:
-          default:
-            _CCCVV->setFocus();
-            _passPrecheck = false;
-            return;
-        }
-      }
-      else
-      {
-        QMessageBox::warning( this, tr("Improper CVV Code"),
-                              tr("The CVV Code must be numeric and between 100 and 9999") );
-        _CCCVV->setFocus();
-        _passPrecheck = false;
-        return;
-      }
-    }
-
-    _cvv = (int)_CCCVV->toDouble();
-
-
-// We got this far time to load everything up.
-
-    configfile = new char[strlen(_storenum.latin1()) + 1];
-    strcpy(configfile, _storenum.latin1());
-    host = new char[strlen(_metrics->value("CCServer").latin1()) + 1];
-    strcpy(host, _metrics->value("CCServer").latin1());
-    pemfile = new char[strlen(_pemfile.latin1()) + 1];
-    strcpy(pemfile, _pemfile.latin1());
-
-    QFileInfo fileinfo( pemfile );
-
-    if (!fileinfo.isFile())
-    {
-// Oops we don't have a usable pemfile
-      QMessageBox::warning( this, tr("Missing PEM FIle"),
-           tr("Unable to verify that you have a PEM file for this application\nPlease contact your local support") );
-     _CCCVV->setFocus();
-     _passPrecheck = false;
-     return;
-    }
-
-    _numtospace = _ccard_address1.find(" ");
-    addrnum = _ccard_address1.left( _numtospace);
-
-  }
-  QString plogin;
-  QString ppassword;
-  QString pserver;
-  QString pport;
-    
-  plogin = _metricsenc->value("CCProxyLogin");
-  ppassword = _metricsenc->value("CCPassword");
-  pserver = _metrics->value("CCProxyServer");
-  pport = _metrics->value("CCProxyPort");
-
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    if (plogin.length() == 0 || plogin.isEmpty() || plogin.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a login") );
-     _passPrecheck = false;
-     return;
-    }
-    if (ppassword.length() == 0 || ppassword.isEmpty() || ppassword.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a password") );
-     _passPrecheck = false;
-     return;
-    }
-    if (pserver.length() == 0 || pserver.isEmpty() || pserver.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a proxy server to use") );
-     _passPrecheck = false;
-     return;
-    }
-    if (pport.length() == 0 || pport.isEmpty() || pport.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("You have selected proxy server support, yet you have not provided a lport to use") );
-     _passPrecheck = false;
-     return;
-    }
-  }
-}
-
-bool cashReceipt::processYourPay()
-{
-  bool good = true;
-  QDomDocument odoc;
-  // Build the order
-  QDomElement root = odoc.createElement("order");
-  odoc.appendChild(root);
-  QDomElement elem, sub;
-
-  // add the 'billing'
-  elem = odoc.createElement("billing");
-
-  sub = odoc.createElement("address1");
-  sub.appendChild(odoc.createTextNode(_ccard_address1));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("address2");
-  sub.appendChild(odoc.createTextNode(_ccard_address2));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("addrnum");
-  sub.appendChild(odoc.createTextNode(addrnum));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("city");
-  sub.appendChild(odoc.createTextNode(_ccard_city));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("name");
-  sub.appendChild(odoc.createTextNode(_ccard_name));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("state");
-  sub.appendChild(odoc.createTextNode(_ccard_state));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("zip");
-  sub.appendChild(odoc.createTextNode(_ccard_zip));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // add the 'credit card'
-  elem = odoc.createElement("creditcard");
-
-  QString work_month;
-  work_month.setNum(_ccard_month_expired);
-  if (work_month.length() == 1)
-      work_month = "0" + work_month;
-  sub = odoc.createElement("cardexpmonth");
-  sub.appendChild(odoc.createTextNode(work_month));
-  elem.appendChild(sub);
-
-  QString work_year;
-  work_year.setNum(_ccard_year_expired);
-  work_year = work_year.right(2);
-  sub = odoc.createElement("cardexpyear");
-  sub.appendChild(odoc.createTextNode(work_year));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("cardnumber");
-  sub.appendChild(odoc.createTextNode(_ccard_number));
-  elem.appendChild(sub);
-
-  QString work_cvv;
-  work_cvv.setNum(_cvv);
-  if (!_noCVV)
-  {
-    sub = odoc.createElement("cvmvalue");
-    sub.appendChild(odoc.createTextNode(work_cvv));
-    elem.appendChild(sub);
-  }
-
-  root.appendChild(elem);
-  
-  // Build 'merchantinfo'
-  elem = odoc.createElement("merchantinfo");
-
-  sub = odoc.createElement("configfile");
-  sub.appendChild(odoc.createTextNode(configfile));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // Build 'orderoptions'
-  elem = odoc.createElement("orderoptions");
-
-  sub = odoc.createElement("ordertype");
-  sub.appendChild(odoc.createTextNode("SALE"));
-  elem.appendChild(sub);
-  
-  sub = odoc.createElement("result");
-  sub.appendChild(odoc.createTextNode("LIVE"));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-
-  // Build 'payment'
-  elem = odoc.createElement("payment");
-
-  sub = odoc.createElement("chargetotal");
-  // Todo: change 2 to the appropriate precision for _received->id()
-  QString tmp;
-  sub.appendChild(odoc.createTextNode(tmp.setNum(_received->baseValue(), 'f', 2)));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-
-  // Build 'transaction details'
-  elem = odoc.createElement("transactiondetails");
-  // No Transaction details here
-  root.appendChild(elem);
-  
-  // Process the order
-      
-  saved_order = odoc.toString();
-
-  if (_metrics->boolean("CCTest"))
-  {
-    _metrics->set("CCOrder", saved_order);
-  }
-  
-  proc = new Q3Process( this );
-  QString curl_path;
-#ifdef Q_WS_WIN
-  curl_path = qApp->applicationDirPath() + "\\curl";
-#elif defined Q_WS_MACX
-  curl_path = "/usr/bin/curl";
-#elif defined Q_WS_X11
-  curl_path = "/usr/bin/curl";
-#endif
-  
-  proc->addArgument( curl_path );
-  proc->addArgument( "-k" );
-  proc->addArgument( "-d" );
-  proc->addArgument( saved_order );
-  proc->addArgument( "-E" );
-  proc->addArgument( pemfile );
-  
-  _port.setNum(port);
-  doServer = "https://" + _metrics->value("CCServer") + ":" + _port;
-  
-  proc->addArgument( doServer );
-  
-  QString proxy_login;
-  QString proxy_server;
-  
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    proxy_login =  _metricsenc->value("CCProxyLogin") + ":" + _metricsenc->value("CCPassword") ;
-    proxy_server = _metrics->value("CCProxyServer") + ":" + _metrics->value("CCProxyPort");
-    proc->addArgument( "-x" );
-    proc->addArgument( proxy_server );
-    proc->addArgument( "-U" );
-    proc->addArgument( proxy_login );
-  }
-  
-  _response = "";
-  
-  connect( proc, SIGNAL(readyReadStdout()),
-           this, SLOT(readFromStdout()) );
-  
-  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-  _save->setEnabled(false);
-  
-  if ( !proc->start() ) 
-  {
-    QMessageBox::critical( 0,
-        tr("Fatal error"),
-        tr("Could not start the curl command."),
-        tr("Quit") );
-    return false;
-  }
-  
-  while (proc->isRunning())
-    qApp->processEvents();
-  
-  _save->setEnabled(true);
-  QApplication::restoreOverrideCursor();
-  
-  _response =  "<myroot>" + _response + "</myroot>";
-  
-  QString whyMe;
-  
-  if (_metrics->boolean("CCTest"))
-  {
-    whyMe = _ccard_number + "  " + _response;
-    _metrics->set("CCTestMe", whyMe);
-  }
-  
-  /*if (_metrics->boolean("CCTest"))
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("The return code was ") + _response, QMessageBox::Ok);
-  }*/
-  QDomDocument doc;
-  doc.setContent(_response);
-  QDomNode node;
-  root = doc.documentElement();
-  
-  QString _r_avs;
-  QString _r_ordernum;
-  QString _r_error;
-  QString _r_approved;
-  QString _r_code;
-  QString _r_score;
-  QString _r_shipping;
-  QString _r_tax;
-  QString _r_tdate;
-  QString _r_ref;
-  QString _r_message;
-  QString _r_time;
-  
-  node = root.firstChild();
-  while ( !node.isNull() ) {
-    if ( node.isElement() && node.nodeName() == "r_avs" ) {
-      QDomElement r_avs = node.toElement();
-      _r_avs = r_avs.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_ordernum" ) {
-      QDomElement r_ordernum = node.toElement();
-      _r_ordernum = r_ordernum.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_error" ) {
-      QDomElement r_error = node.toElement();
-      _r_error = r_error.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_approved" ) {
-      QDomElement r_approved = node.toElement();
-      _r_approved = r_approved.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_code" ) {
-      QDomElement r_code = node.toElement();
-      _r_code = r_code.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_message" ) {
-      QDomElement r_message = node.toElement();
-      _r_message = r_message.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_time" ) {
-      QDomElement r_time = node.toElement();
-      _r_time = r_time.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_ref" ) {
-      QDomElement r_ref = node.toElement();
-      _r_ref = r_ref.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_tdate" ) {
-      QDomElement r_tdate = node.toElement();
-      _r_tdate = r_tdate.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_tax" ) {
-      QDomElement r_tax = node.toElement();
-      _r_tax = r_tax.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_shipping" ) {
-      QDomElement r_shipping = node.toElement();
-      _r_shipping = r_shipping.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_score") {
-      QDomElement r_score = node.toElement();
-      _r_score = r_score.text();
-    }
-    node = node.nextSibling();
-  }
-  
-  q.prepare( "SELECT nextval('ccpay_ccpay_id_seq') as ccpay_id;");
-  q.exec();
-  q.first();
-    
-  _ccpay_id = q.value("ccpay_id").toInt();
-    
-  q.prepare( "INSERT INTO ccpay"
-             "      (ccpay_id, "
-             "       ccpay_ccard_id, "
-             "       ccpay_cust_id, "
-             "       ccpay_amount, " 
-             "       ccpay_curr_id, " 
-             "       ccpay_auth, "
-             "       ccpay_status, "
-             "       ccpay_type, "
-             "       ccpay_auth_charge, "
-             "       ccpay_order_number, "
-             "       ccpay_order_number_seq, "
-             "       ccpay_yp_r_avs, "
-             "       ccpay_yp_r_ordernum, "
-             "       ccpay_yp_r_error, "
-             "       ccpay_yp_r_approved, "
-             "       ccpay_yp_r_code, "
-             "       ccpay_yp_r_message, "
-             "       ccpay_yp_r_time, "
-             "       ccpay_yp_r_ref, "
-             "       ccpay_yp_r_tdate, "
-             "       ccpay_yp_r_tax, "
-             "       ccpay_yp_r_shipping, "
-             "       ccpay_yp_r_score) "
-             "VALUES(:ccpay_id, "
-             "       :ccpay_ccard_id, "
-             "       :ccpay_cust_id, "
-             "       :ccpay_amount, " 
-             "       :ccpay_curr_id, " 
-             "       :ccpay_auth, "
-             "       :ccpay_status, "
-             "       :ccpay_type, "
-             "       :ccpay_auth_charge, "
-             "       :ccpay_order_number, "
-             "       :ccpay_order_number_seq, "
-             "       :ccpay_yp_r_avs, "
-             "       :ccpay_yp_r_ordernum, "
-             "       :ccpay_yp_r_error, "
-             "       :ccpay_yp_r_approved, "
-             "       :ccpay_yp_r_code, "
-             "       :ccpay_yp_r_message, "
-             "       :ccpay_yp_r_time, "
-             "       :ccpay_yp_r_ref, "
-             "       :ccpay_yp_r_tdate, "
-             "       :ccpay_yp_r_tax, "
-             "       :ccpay_yp_r_shipping, "
-             "       :ccpay_yp_r_score);");
-  q.bindValue(":ccpay_id", _ccpay_id);
-  q.bindValue(":ccpay_ccard_id", _cc->id());
-  q.bindValue(":ccpay_cust_id",_cust->id());
-  q.bindValue(":ccpay_amount",_received->baseValue()); // see comments marked
-  q.bindValue(":ccpay_curr_id",_received->baseId());   // ##### in salesOrder.ui.h
-  
-  /*if (_doAuthorize)
-  {
-    q.bindValue(":ccpay_auth",QVariant(TRUE, 0));
-  // Authorization or Charge for the initial transaction
-    q.bindValue(":ccpay_auth_charge","A");
-  }
-  else
-  {
-    q.bindValue(":ccpay_auth",QVariant(FALSE, 1));
-  // Authorization or Charge for the initial transaction
-    q.bindValue(":ccpay_auth_charge","C");
-  }*/
-  
-  doDollars = 0;
-  
-  if (_r_approved == "APPROVED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction was approved\n") + _r_ref, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","C");
-    doDollars = _received->baseValue();            // ##### localValue()?
-  }
-  
-  if (_r_approved == "DENIED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction was denied\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-    good = false;
-  }
-  
-  if (_r_approved == "DUPLICATE")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction is a duplicate\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-    good = false;
-  }
-  
-  if (_r_approved == "DECLINED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction is a declined\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-    good = false;
-  }
-  
-  if (_r_approved == "FRAUD")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction is denied because of possible fraud\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-    good = false;
-  }
-  
-  if (_r_approved.length() == 0 || _r_approved.isNull() || _r_approved.isEmpty())
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("No Approval Code\n") + _r_message, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","X");
-    good = false;
-  }
-  
-  // Credit Card for now - we may get Debit Cards in the future
-  q.bindValue(":ccpay_type","C");
-  // Originating Order Number
-  q.bindValue(":ccpay_order_number",0);
-  q.bindValue(":ccpay_order_number_seq",0);
-  q.bindValue(":ccpay_yp_r_avs",_r_avs);
-  q.bindValue(":ccpay_yp_r_ordernum",_r_ordernum);
-  q.bindValue(":ccpay_yp_r_error",_r_error);
-  q.bindValue(":ccpay_yp_r_approved",_r_approved);
-  q.bindValue(":ccpay_yp_r_code",_r_code);
-  q.bindValue(":ccpay_yp_r_score",_r_score.toInt());
-  q.bindValue(":ccpay_yp_r_shipping",_r_shipping);
-  q.bindValue(":ccpay_yp_r_tax",_r_tax);
-  QDateTime myTime;
-  myTime.setTime_t(_r_tdate.toInt());
-  // QDateTime myTime::setTime_t(_r_tdate.toInt());
-  //q.bindValue(":ccpay_yp_r_tdate",myTime);
-  q.bindValue(":ccpay_yp_r_tdate",_r_tdate);
-  q.bindValue(":ccpay_yp_r_ref",_r_ref);
-  q.bindValue(":ccpay_yp_r_message",_r_message);
-  q.bindValue(":ccpay_yp_r_time",_r_time);
-  q.exec();
-  
-  return good;
-}
-
-void cashReceipt::readFromStdout()
-{
-  _response += QString(proc->readStdout());
 }
 
 void cashReceipt::sNewCreditCard()
@@ -1507,7 +843,6 @@ void cashReceipt::sNewCreditCard()
 
 }
 
-
 void cashReceipt::sEditCreditCard()
 {
   ParameterList params;
@@ -1520,9 +855,7 @@ void cashReceipt::sEditCreditCard()
 
   if (newdlg.exec() != QDialog::Rejected)
     setCreditCard();
-
 }
-
 
 void cashReceipt::sViewCreditCard()
 {
@@ -1536,22 +869,20 @@ void cashReceipt::sViewCreditCard()
   newdlg.exec();
 }
 
-
 void cashReceipt::sMoveUp()
 {
   q.prepare("SELECT moveCcardUp(:ccard_id) AS result;");
   q.bindValue(":ccard_id", _cc->id());
   q.exec();
-  
+
   setCreditCard();
 }
-
 
 void cashReceipt::sMoveDown()
 {
   q.prepare("SELECT moveCcardDown(:ccard_id) AS result;");
   q.bindValue(":ccard_id", _cc->id());
   q.exec();
-  
+
   setCreditCard();
 }

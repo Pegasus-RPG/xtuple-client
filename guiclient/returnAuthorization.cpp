@@ -1673,12 +1673,13 @@ void returnAuthorization::sRefund()
 			      CreditCardProcessor::errorMsg());
       else
       {
+	QString docnum = ccq.value("cmhead_number").toString();
+        QString refnum = ccq.value("cohead_number").toString();
 	int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
+					   _CCCVV->text().toInt(),
 					   ccq.value("total").toDouble(),
 					   ccq.value("cmhead_curr_id").toInt(),
-					   ccq.value("cmhead_number").toString(),
-					   ccq.value("cohead_number").toString(),
-					   ccpayid);
+					   docnum, refnum, ccpayid);
 	if (returnValue < 0)
 	  QMessageBox::critical(this, tr("Credit Card Processing Error"),
 				cardproc->errorMsg());

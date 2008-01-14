@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>724</width>
-    <height>612</height>
+    <height>613</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -455,7 +455,7 @@
            </spacer>
           </item>
           <item row="0" column="1" >
-           <widget class="QPushButton" name="_editPreauth" >
+           <widget class="QPushButton" name="_postPreauth" >
             <property name="enabled" >
              <bool>false</bool>
             </property>
@@ -551,7 +551,7 @@
   <tabstop>_editAropen</tabstop>
   <tabstop>_viewAropen</tabstop>
   <tabstop>_preauth</tabstop>
-  <tabstop>_editPreauth</tabstop>
+  <tabstop>_postPreauth</tabstop>
   <tabstop>_CCAmount</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -630,7 +630,7 @@
   <connection>
    <sender>_preauth</sender>
    <signal>valid(bool)</signal>
-   <receiver>_editPreauth</receiver>
+   <receiver>_postPreauth</receiver>
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >

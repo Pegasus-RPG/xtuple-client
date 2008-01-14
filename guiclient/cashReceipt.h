@@ -73,31 +73,28 @@ public:
     ~cashReceipt();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void sApplyToBalance();
+    virtual SetResponse set(const ParameterList & pParams );
+    virtual void populate();
+    virtual void sAdd();
     virtual void sApply();
     virtual void sApplyLineBalance();
+    virtual void sApplyToBalance();
+    virtual void sChangeCurrency( int newId );
     virtual void sClear();
-    virtual void sAdd();
-    virtual void sEdit();
-    virtual void sDelete();
     virtual void sClose();
-    virtual void sSave();
-    virtual void sPopulateCustomerInfo( int );
+    virtual void sDelete();
+    virtual void sEdit();
+    virtual void sEditCreditCard();
     virtual void sFillApplyList();
     virtual void sFillMiscList();
-    virtual void sUpdateBalance();
-    virtual void populate();
-    virtual void sChangeCurrency( int newId );
-    virtual void setCreditCard();
-    virtual void precheckCreditCard();
-    virtual bool processYourPay();
-    virtual void readFromStdout();
-    virtual void sNewCreditCard();
-    virtual void sEditCreditCard();
-    virtual void sViewCreditCard();
-    virtual void sMoveUp();
     virtual void sMoveDown();
+    virtual void sMoveUp();
+    virtual void sNewCreditCard();
+    virtual void sPopulateCustomerInfo( int );
+    virtual void sSave();
+    virtual void sUpdateBalance();
+    virtual void sViewCreditCard();
+    virtual void setCreditCard();
 
 protected slots:
     virtual void languageChange();
@@ -106,50 +103,10 @@ protected slots:
 
 
 private:
-    int _mode;
-    double _totalApplied;
-    double _totalMisc;
-    int _cashrcptid;
-    QString key;
-    bool _ccEdit;
+    int     _mode;
+    int     _cashrcptid;
+    bool    _ccEdit;
     QString _origFunds;
-    QString myFunds;
-    bool _passPrecheck;
-    int _chargeBankAccount;
-    double doDollars;
-    Q3Process * proc;
-    QString _port;
-    char *pemfile;
-    char *host;
-    char *configfile;
-    QString _pemfile;
-    QString _storenum;
-    int _maxlinkshield;
-    bool YourPay;
-    bool VeriSign;
-    QString doServer;
-    QString _credit_card_x;
-    bool _ccActive;
-    QString _ccard_number;
-    QString _ccard_name;
-    QString _ccard_address1;
-    QString _ccard_address2;
-    QString _ccard_city;
-    QString _ccard_state;
-    QString _ccard_zip;
-    QString _ccard_country;
-    int _ccard_month_expired;
-    int _ccard_year_expired;
-    QString _ccard_type;
-    int port;
-    bool _linkshield;
-    bool _noCVV;
-    int _cvv;
-    int _numtospace;
-    QString addrnum;
-    QString saved_order;
-    int _ccpay_id;
-    QString _response;
 
 };
 

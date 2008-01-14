@@ -1832,7 +1832,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="TabPage" >
+      <widget class="QWidget" name="_commentsPage" >
        <attribute name="title" >
         <string>Comments</string>
        </attribute>
@@ -1886,7 +1886,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="Payment" >
+      <widget class="QWidget" name="_creditCardPage" >
        <attribute name="title" >
         <string>Payment</string>
        </attribute>

@@ -79,60 +79,31 @@ public:
     virtual SetResponse set( const ParameterList & pParams );
 
 public slots:
-    virtual void sFillList();
-    virtual void sFillAropenList();
-    virtual void sEditAropen();
-    virtual void sViewAropen();
-    virtual void sFillAropenCMList();
-    virtual void sEditAropenCM();
-    virtual void sViewAropenCM();
     virtual void sApplyAropenCM();
     virtual void sCCRefundCM();
-    virtual void sFillCashrcptList();
-    virtual void sNewCashrcpt();
-    virtual void sEditCashrcpt();
-    virtual void sViewCashrcpt();
     virtual void sDeleteCashrcpt();
-    virtual void sPostCashrcpt();
+    virtual void sEditAropen();
+    virtual void sEditAropenCM();
+    virtual void sEditCashrcpt();
+    virtual void sFillAropenCMList();
+    virtual void sFillAropenList();
+    virtual void sFillCashrcptList();
+    virtual void sFillList();
     virtual void sFillPreauthList();
-    virtual void sgetCCAmount();
-    virtual void _editPreauth_clicked();
-    virtual void precheckCreditCard();
-    virtual void processYourPay();
-    virtual void readFromStdout();
-    virtual void sPopulateAropenMenu(QMenu*);
+    virtual void sNewCashrcpt();
     virtual void sPopulateAropenCMMenu(QMenu*);
+    virtual void sPopulateAropenMenu(QMenu*);
     virtual void sPopulateCashRcptMenu(QMenu*);
     virtual void sPopulatePreauthMenu(QMenu*);
+    virtual void sPostCashrcpt();
+    virtual void sPostPreauth();
+    virtual void sViewAropen();
+    virtual void sViewAropenCM();
+    virtual void sViewCashrcpt();
+    virtual void sgetCCAmount();
 
 protected slots:
     virtual void languageChange();
-
-private:
-    QString _response;
-    QString doServer;
-    QString _port;
-    QProcess	*proc;
-    QString saved_order;
-    QString _backrefnum;
-    double doDollars;
-    double _ccInputAmount;
-    double _ccPayAmount;
-    bool _passPrecheck;
-    bool _ccActive;
-    QString _ccard_type;
-    int port;
-    QString _pemfile;
-    bool YourPay;
-    bool VeriSign;
-    QString _storenum;
-    char *configfile;
-    char *host;
-    char *pemfile;
-    QString key;
-    QString _ccard_number;
-    int _ccard_month_expired;
-    int _ccard_year_expired;
 
 };
 

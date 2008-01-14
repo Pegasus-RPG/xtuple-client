@@ -97,7 +97,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_deleteCashrcpt, SIGNAL(clicked()), this, SLOT(sDeleteCashrcpt()));
   connect(_postCashrcpt, SIGNAL(clicked()), this, SLOT(sPostCashrcpt()));
   connect(_preauth, SIGNAL(itemClicked(QTreeWidgetItem*, int)), this, SLOT(sgetCCAmount()));
-  connect(_editPreauth, SIGNAL(clicked()), this, SLOT(_editPreauth_clicked()));
+  connect(_postPreauth, SIGNAL(clicked()), this, SLOT(sPostPreauth()));
   connect(_aropen, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
           this, SLOT(sPopulateAropenMenu(QMenu*)));
   connect(_aropenCM, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)),
@@ -176,7 +176,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     _ccRefundCM->setEnabled(false);
     _preauthLit->setEnabled(false);
     _preauth->setEnabled(false);
-    _editPreauth->setEnabled(false);
+    _postPreauth->setEnabled(false);
     _CCAmountLit->setEnabled(false);
     _CCAmount->setEnabled(false);
   }
@@ -569,6 +569,7 @@ void arWorkBench::sFillPreauthList()
   _preauth->populate(q);
   
 }
+
 void arWorkBench::sgetCCAmount()
 {
   q.prepare("SELECT ccpay_amount, ccpay_curr_id "
@@ -592,476 +593,50 @@ void arWorkBench::sgetCCAmount()
     }
     else
       _CCAmount->setLocalValue(q.value("ccpay_amount").toDouble());
-
-    _ccPayAmount = _CCAmount->baseValue();
   }
   else if (q.lastError().type() != QSqlError::NoError)
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
   else
   {
     _CCAmount->clear();
-    _ccPayAmount = 0;
   }
 }
 
-
-void arWorkBench::_editPreauth_clicked()
-{
-  _ccInputAmount = _CCAmount->baseValue();   // ##### localValue()?
-    
-  if (_ccInputAmount > _ccPayAmount)
-  {
-    QMessageBox::information(this, tr("Amount"), tr("The amount to be used cannot be greater than the amount authorized"), QMessageBox::Ok);
-    return;
-  }
-    
-  _passPrecheck = true;
-
-  precheckCreditCard();
-  
-  if (!_passPrecheck)
-    return;
-    
-  if (_metrics->value("CCConfirmTrans") == "A" || _metrics->value("CCConfirmTrans") == "B")
-  {
-    switch( QMessageBox::question( this, tr("Confirm Post-authorization of Credit Card Purchase"),
-              tr("You must confirm that you wish to post authorize process "
-                 "this charge %1 %2. Would you like to post authorize now?")
-                 .arg(_CCAmount->baseCurrAbbr())
-                 .arg(_CCAmount->baseValue()),
-              QMessageBox::Yes | QMessageBox::Default,
-              QMessageBox::No  | QMessageBox::Escape ) )
-    {
-      case QMessageBox::Yes:
-        break;
-      case QMessageBox::No:
-      default:
-        return;
-    }
-  }
-    
-  if(YourPay)
-    processYourPay();
-}
-
-void arWorkBench::precheckCreditCard()
+void arWorkBench::sPostPreauth()
 {
   CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-
-  if (cardproc->checkConfiguration() < 0)
+  if (! cardproc->errorMsg().isEmpty())
   {
-    QMessageBox::warning( this, tr("Credit Card Error"),
-			  cardproc->errorMsg() );
+    QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
     _CCAmount->setFocus();
-    _passPrecheck = false;
-  }
-
-  q.prepare( "SELECT ccpay.*, "
-             "       ccard_active, "
-             "       formatbytea(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
-             "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number_x,"
-             "       formatbytea(decrypt(setbytea(ccard_month_expired), setbytea(:key), 'bf')) AS ccard_month_expired,"
-             "       formatbytea(decrypt(setbytea(ccard_year_expired), setbytea(:key), 'bf')) AS ccard_year_expired, "
-             "       ccard_type "
-             "FROM ccpay, ccard "
-             "WHERE ((ccpay_ccard_id=ccard_id) "
-             " AND (ccpay_id=:ccpay_id));");
-  q.bindValue(":ccpay_id", _preauth->id());
-  q.bindValue(":key",key);
-  q.exec();
-  q.first();
-  
-  _ccActive = q.value("ccard_active").toBool();
-  
-  if (!_ccActive)
-  {
-    QMessageBox::warning( this, tr("Invalid Credit Card"),
-                          tr("The Credit Card you are attempting to use is not active.") );
-    _CCAmount->setFocus();
-    _passPrecheck = false;
     return;
   }
-  
-  _ccard_type = q.value("ccard_type").toString();
-  _ccard_number = q.value("ccard_number").toString();
-  _ccard_month_expired = q.value("ccard_month_expired").toInt();
-  _ccard_year_expired = q.value("ccard_year_expired").toInt();
-  _ccard_type = q.value("ccard_type").toString();
-  _backrefnum = q.value("ccpay_yp_r_ordernum").toString();
-  
-  YourPay = false;
-  VeriSign = false;
-  
-  if (_metrics->value("CCServer") == "test-payflow.verisign.com"  ||  _metrics->value("CCServer") == "payflow.verisign.com") 
-  {
-    VeriSign = true; 
-  }
-  
-  if (_metrics->value("CCServer") == "staging.linkpt.net"  ||  _metrics->value("CCServer") == "secure.linkpt.net") 
-  {
-    YourPay = true; 
-  }
-  
-  if (!YourPay && !VeriSign)
-  {
-    QMessageBox::warning( this, tr("Invalid Credit Card Service Selected"),
-                            tr("OpenMFG only supports YourPay and VeriSign.  You have not selected either of these as your credit card processors.") );
-    _CCAmount->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-  
-  if (YourPay)
-  {
-    // Set up all of the YourPay parameters
-    _storenum = _metricsenc->value("CCYPStoreNum");
-     
-#ifdef Q_WS_WIN
-    _pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
-    _pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
-    _pemfile = _metrics->value("CCYPLinPathPEM");
-#endif
-      
-    if (_CCAmount->baseValue() <= 0)
-    {
-      QMessageBox::warning( this, tr("Charge Amount Missing or incorrect"),
-                            tr("The Charge Amount must be greater than 0.00") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-    
-    configfile = new char[strlen(_storenum.latin1()) + 1];
-    strcpy(configfile, _storenum.latin1());
-    host = new char[strlen(_metrics->value("CCServer").latin1()) + 1];
-    strcpy(host, _metrics->value("CCServer").latin1());
-    pemfile = new char[strlen(_pemfile.latin1()) + 1];
-    strcpy(pemfile, _pemfile.latin1());
-  }
-}
 
-// for multicurrency implementation see comments marked ##### in salesOrder.ui.h
-void arWorkBench::processYourPay()
-{
-  QDomDocument odoc;
-  // Build the order
-  QDomElement root = odoc.createElement("order");
-  odoc.appendChild(root);
-  QDomElement elem, sub;
-  
-  // add the 'credit card'
-  elem = odoc.createElement("creditcard");
+  _postPreauth->setEnabled(false);
+  int ccpayid   = _preauth->id();
+  QString ordernum;
+  int returnVal = cardproc->chargePreauthorized(-2,
+						_CCAmount->localValue(),
+						_CCAmount->id(),
+						ordernum, ordernum, ccpayid);
+  if (returnVal < 0)
+    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			  cardproc->errorMsg());
+  else if (returnVal > 0)
+    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+			 cardproc->errorMsg());
+  else if (! cardproc->errorMsg().isEmpty())
+    QMessageBox::information(this, tr("Credit Card Processing Note"),
+			 cardproc->errorMsg());
+  else
+    _CCAmount->clear();
 
-  QString work_month;
-  work_month.setNum(_ccard_month_expired);
-  if (work_month.length() == 1)
-    work_month = "0" + work_month;
-  sub = odoc.createElement("cardexpmonth");
-  sub.appendChild(odoc.createTextNode(work_month));
-  elem.appendChild(sub);
-
-  QString work_year;
-  work_year.setNum(_ccard_year_expired);
-  work_year = work_year.right(2);
-  sub = odoc.createElement("cardexpyear");
-  sub.appendChild(odoc.createTextNode(work_year));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("cardnumber");
-  sub.appendChild(odoc.createTextNode(_ccard_number));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // Build 'merchantinfo'
-  elem = odoc.createElement("merchantinfo");
-
-  sub = odoc.createElement("configfile");
-  sub.appendChild(odoc.createTextNode(configfile));
-  elem.appendChild(sub);
-  
-  root.appendChild(elem);
-  
-  // Build 'orderoptions'
-  elem = odoc.createElement("orderoptions");
-
-  sub = odoc.createElement("ordertype");
-  sub.appendChild(odoc.createTextNode("POSTAUTH"));
-  elem.appendChild(sub);
-  
-  sub = odoc.createElement("result");
-  sub.appendChild(odoc.createTextNode("LIVE"));
-  elem.appendChild(sub);
-  
-  root.appendChild(elem);
-  
-  // Build 'payment'
-  elem = odoc.createElement("payment");
-
-  QString tmp;
-  sub = odoc.createElement("chargetotal");
-  sub.appendChild(odoc.createTextNode(tmp.setNum(_CCAmount->baseValue(), 'f', 2))); // ##### localValue()?
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // Build 'transaction details'
-  elem = odoc.createElement("transactiondetails");
-
-  sub = odoc.createElement("oid");
-  sub.appendChild(odoc.createTextNode(_backrefnum));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // Process the order
-  saved_order = odoc.toString();
-  
-  if (_metrics->boolean("CCTest"))
-  {
-    _metrics->set("CCOrder", saved_order);
-  }
-  
-  proc = new QProcess( this );
-  QString curl_path;
-#ifdef Q_WS_WIN
-  curl_path = qApp->applicationDirPath() + "\\curl";
-#elif defined Q_WS_MACX
-  curl_path = "/usr/bin/curl";
-#elif defined Q_WS_X11
-  curl_path = "/usr/bin/curl";
-#endif
-  
-  QStringList curl_args;
-  curl_args.append( "-k" );
-  curl_args.append( "-d" );
-  curl_args.append( saved_order );
-  curl_args.append( "-E" );
-  curl_args.append( pemfile );
-  
-  _port.setNum(port);
-  doServer = "https://" + _metrics->value("CCServer") + ":" + _port;
-  
-  curl_args.append( doServer );
-  
-  QString proxy_login;
-  QString proxy_server;
-  
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    proxy_login =  _metricsenc->value("CCProxyLogin") + ":" + _metricsenc->value("CCPassword") ;
-    proxy_server = _metrics->value("CCProxyServer") + ":" + _metrics->value("CCProxyPort");
-    curl_args.append( "-x" );
-    curl_args.append( proxy_server );
-    curl_args.append( "-U" );
-    curl_args.append( proxy_login );
-  }
-  
-  _response = "";
-  
-  connect( proc, SIGNAL(readyReadStandardOutput()),
-           this, SLOT(readFromStdout()) );
-  
-  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-  _editPreauth->setEnabled(FALSE);
-  
-  proc->start(curl_path, curl_args);
-  if ( !proc->waitForStarted() ) 
-  {
-    QMessageBox::critical( 0,
-                  tr("Fatal error"),
-                  tr("Could not start the %1 command.").arg(curl_path),
-                  tr("Quit") );
-    return;
-  }
-  
-  while (proc->state() == QProcess::Running)
-    qApp->processEvents();
-  
-  _editPreauth->setEnabled(TRUE);
-  QApplication::restoreOverrideCursor();
-  
-  _response =  "<myroot>" + _response + "</myroot>";
-  
-  QString whyMe;
-  
-  if (_metrics->boolean("CCTest"))
-  {
-    whyMe = _ccard_number + "  " + _response;
-    _metrics->set("CCTestMe", whyMe);
-    _metrics->set("CCOrder", saved_order);
-  }
-  
-  /*if (_metrics->boolean("CCTest"))
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("The return code was ") + _response, QMessageBox::Ok);
-  }*/
-  QDomDocument doc;
-  doc.setContent(_response);
-  QDomNode node;
-  root = doc.documentElement();
-  
-  QString _r_avs;
-  QString _r_ordernum;
-  QString _r_error;
-  QString _r_approved;
-  QString _r_code;
-  QString _r_score;
-  QString _r_shipping;
-  QString _r_tax;
-  QString _r_tdate;
-  QString _r_ref;
-  QString _r_message;
-  QString _r_time;
-  
-  node = root.firstChild();
-  while ( !node.isNull() ) {
-    if ( node.isElement() && node.nodeName() == "r_avs" ) {
-      QDomElement r_avs = node.toElement();
-      _r_avs = r_avs.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_ordernum" ) {
-      QDomElement r_ordernum = node.toElement();
-      _r_ordernum = r_ordernum.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_error" ) {
-      QDomElement r_error = node.toElement();
-      _r_error = r_error.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_approved" ) {
-      QDomElement r_approved = node.toElement();
-      _r_approved = r_approved.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_code" ) {
-      QDomElement r_code = node.toElement();
-      _r_code = r_code.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_message" ) {
-      QDomElement r_message = node.toElement();
-      _r_message = r_message.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_time" ) {
-      QDomElement r_time = node.toElement();
-      _r_time = r_time.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_ref" ) {
-      QDomElement r_ref = node.toElement();
-      _r_ref = r_ref.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_tdate" ) {
-      QDomElement r_tdate = node.toElement();
-      _r_tdate = r_tdate.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_tax" ) {
-      QDomElement r_tax = node.toElement();
-      _r_tax = r_tax.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_shipping" ) {
-      QDomElement r_shipping = node.toElement();
-      _r_shipping = r_shipping.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_score") {
-      QDomElement r_score = node.toElement();
-      _r_score = r_score.text();
-    }
-    node = node.nextSibling();
-  }
-  
-  q.prepare( "UPDATE ccpay"
-             "   SET ccpay_amount = :ccpay_amount, "
-             "       ccpay_auth = FALSE, "
-             "       ccpay_status = :ccpay_status, "
-             "       ccpay_curr_id = :ccpay_curr_id "
-             " WHERE ccpay_id = :ccpay_id;" );
-  q.bindValue(":ccpay_id", _preauth->id());
-  q.bindValue(":ccpay_amount",_CCAmount->baseValue());    // ##### localValue()?
-  q.bindValue(":ccpay_curr_id",_CCAmount->baseId());      // ##### id()?
-  
-  doDollars = 0;
-  
-  if (_r_approved == "APPROVED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction was approved\n") + _r_ref, QMessageBox::Ok);  q.bindValue(":ccpay_status","C");
-    doDollars = _CCAmount->baseValue();                   // ##### localValue()?
-  }
-  
-  if (_r_approved == "DENIED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction was denied\n") + _r_message, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved == "DUPLICATE")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction is a duplicate\n") + _r_message, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved == "DECLINED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction is a declined\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved == "FRAUD")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction is denied because of possible fraud\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved.length() == 0 || _r_approved.isNull() || _r_approved.isEmpty())
-  {
-    QMessageBox::information(this, tr("YourPay"),
-                             tr("<p>No Approval Code<br>%1<br>%2<br>%3")
-                               .arg(_r_error).arg(_r_message).arg(_response),
-                               QMessageBox::Ok);
-    q.bindValue(":ccpay_status","X");
-  }
-  
-  q.exec();
-  
-  //We need to a charge here to do a cash receipt
-  //  We need some logic for a successful charge and for a non-successful charge
-  if (doDollars > 0)
-  {
-// This is a sucessful charge
-    q.prepare("INSERT INTO cashrcpt (cashrcpt_id,"
-              " cashrcpt_cust_id,"
-              " cashrcpt_amount,"
-              " cashrcpt_curr_id,"
-              " cashrcpt_fundstype, "
-              " cashrcpt_docnumber,"
-              " cashrcpt_bankaccnt_id,"
-              " cashrcpt_notes,"
-              "  cashrcpt_distdate) "
-              "VALUES (nextval('cashrcpt_cashrcpt_id_seq'), :cashrcpt_cust_id,"
-              "       :cashrcpt_amount, :cashrcpt_curr_id, :cashrcpt_fundstype,"
-              "       :cashrcpt_docnumber, :cashrcpt_bankaccnt_id,"
-              "       :cashrcpt_notes, current_date);");
-    q.bindValue(":cashrcpt_cust_id",_cust->id());
-    q.bindValue(":cashrcpt_amount",doDollars);
-    q.bindValue(":cashrcpt_curr_id", _CCAmount->baseId());      // ##### id()?
-    q.bindValue(":cashrcpt_fundstype",_ccard_type);
-    q.bindValue(":cashrcpt_docnumber",_backrefnum);
-    q.bindValue(":cashrcpt_bankaccnt_id",_metrics->value("CCDefaultBank").toInt());
-    q.bindValue(":cashrcpt_notes","Converted Pre-auth");
-    q.exec();
-  }
-  
-  //Clean up
   sFillCashrcptList();
   sFillAropenCMList();
   sFillAropenList();
   sFillPreauthList();
-  _CCAmount->clear();
-    
-}
 
-void arWorkBench::readFromStdout()
-{
-_response += QString(proc->readAllStandardOutput());
+  _postPreauth->setEnabled(true);
 }
 
 void arWorkBench::sPopulateAropenMenu(QMenu *pMenu)
@@ -1236,12 +811,12 @@ void arWorkBench::sCCRefundCM()
 			  CreditCardProcessor::errorMsg());
   else
   {
-    int returnValue = cardproc->credit(ccardid, total, currid,
-				       docnum, refnum, ccpayid);
-    if (returnValue < 0)
+    int returnVal = cardproc->credit(ccardid, -2, total, currid,
+				     docnum, refnum, ccpayid);
+    if (returnVal < 0)
       QMessageBox::critical(this, tr("Credit Card Processing Error"),
 			    cardproc->errorMsg());
-    else if (returnValue > 0)
+    else if (returnVal > 0)
       QMessageBox::warning(this, tr("Credit Card Processing Warning"),
 			   cardproc->errorMsg());
     else if (! cardproc->errorMsg().isEmpty())

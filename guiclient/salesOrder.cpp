@@ -77,6 +77,7 @@
 #include <metasql.h>
 
 #include "creditCard.h"
+#include "creditcardprocessor.h"
 #include "distributeInventory.h"
 #include "issueLineToShipping.h"
 #include "salesOrderItem.h"
@@ -110,9 +111,9 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 {
   setupUi(this);
 
-  connect(_action, SIGNAL(clicked()), this, SLOT(sAction()));
-  connect(_authorize, SIGNAL(clicked()), this, SLOT(_authorizeCC_clicked()));
-  connect(_charge, SIGNAL(clicked()), this, SLOT(_chargeCC_clicked()));
+  connect(_action,    SIGNAL(clicked()), this, SLOT(sAction()));
+  connect(_authorize, SIGNAL(clicked()), this, SLOT(sAuthorizeCC()));
+  connect(_charge,    SIGNAL(clicked()), this, SLOT(sChargeCC()));
   connect(_clear, SIGNAL(pressed()), this, SLOT(sClear()));
   connect(_copyToShipto, SIGNAL(clicked()), this, SLOT(sCopyToShipto()));
   connect(_cust, SIGNAL(addressChanged(const int)), _billToAddr, SLOT(setId(int)));
@@ -237,6 +238,11 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   if (!_metrics->boolean("EnableReturnAuth"))
     _holdType->removeItem(4);
+
+  if(!_metrics->boolean("CCAccept") && !_privleges->check("ProcessCreditCards"))
+  {
+    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
+  }
 }
 
 salesOrder::~salesOrder()
@@ -264,12 +270,6 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
       _cust->setType(CLineEdit::ActiveCustomers);
       _comments->setType(Comments::SalesOrder);
-
-      key = omfgThis->_key;
-      if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
-      {
-        _salesOrderInformation->removePage(_salesOrderInformation->page(5));
-      }
 
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
@@ -304,11 +304,6 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       _comments->setType(Comments::SalesOrder);
       _cust->setType(CLineEdit::AllCustomers);
 
-      key = omfgThis->_key;
-      if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
-      {
-        _salesOrderInformation->removePage(_salesOrderInformation->page(5));
-      }
       connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
     }
     else if (param.toString() == "editQuote")
@@ -336,12 +331,6 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     {
       setViewMode();
       _cust->setType(CLineEdit::AllCustomers);
-
-      key = omfgThis->_key;
-      if(!_metrics->boolean("CCAccept") || key.length() == 0 || key.isNull() || key.isEmpty())
-      {
-        _salesOrderInformation->removePage(_salesOrderInformation->page(5));
-      }
 
       _issueStock->hide();
       _issueLineBalance->hide();
@@ -414,7 +403,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
-  
+
     if (ISORDER(_mode))
     {
       populateCMInfo();
@@ -440,7 +429,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _orderCurrency->setEnabled(FALSE);
 
     connect(_cust, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
-  
+
     _new->setFocus();
   }
   else if (ISVIEW(_mode))
@@ -486,7 +475,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _shippingFormLit->hide();
     _printSO->hide();
 
-    _salesOrderInformation->removePage(_salesOrderInformation->page(5));
+    _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
     _showCanceled->hide();
     _total->setBaseVisible(true);
   }
@@ -504,7 +493,7 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
     _miscChargeAmountLit->hide();
     _miscCharge->hide();
   }
-  
+
   if(ISQUOTE(_mode) || !_metrics->boolean("EnableSOShipping"))
   {
     _requireInventory->hide();
@@ -1148,13 +1137,13 @@ void salesOrder::populateOrderNumber()
         q.prepare("SELECT fetchSoNumber() AS qunumber;");
       else
         q.prepare("SELECT fetchQuNumber() AS qunumber;");
-  
+
       q.exec();
       if (q.first())
       {
         _orderNumber->setText(q.value("qunumber"));
         _orderNumberGen = q.value("qunumber").toInt();
-  
+
         if (_metrics->value("QUNumberGeneration") == "A")
           _orderNumber->setEnabled(FALSE);
       }
@@ -1173,7 +1162,7 @@ void salesOrder::sSetUserEnteredOrderNumber()
 {
   _userEnteredOrderNumber = TRUE;
 }
-    
+  
 void salesOrder::sHandleOrderNumber()
 {
   if (_ignoreSignals || !isActiveWindow())
@@ -1381,7 +1370,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
           _cust->setId(-1);
           _cust->setFocus();
           return;
-        }        
+        }      
 
         if ( (cust.value("cust_creditstatus").toString() == "W") &&
              (!_privleges->check("CreateSOForWarnCustomer")) )
@@ -1397,13 +1386,13 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
           _cust->setId(-1);
           _cust->setFocus();
           return;
-        }        
+        }      
 
         if( (cust.value("cust_creditstatus").toString() == "H") || (cust.value("cust_creditstatus").toString() == "W") )
           _holdType->setCurrentItem(1);
       }
 
-      sFillCcardList();      
+      sFillCcardList();    
       _usesPos = cust.value("cust_usespos").toBool();
       _blanketPos = cust.value("cust_blanketpos").toBool();
       _salesRep->setId(cust.value("cust_salesrep_id").toInt());
@@ -1651,7 +1640,7 @@ void salesOrder::sHandleButtons()
   _numSelected = selectedlist.size();
   if (_numSelected > 0)
     selected = (XTreeWidgetItem*)(selectedlist[0]);
-  
+
   if (selected)
   {
     _issueStock->setEnabled(_privleges->check("IssueStockToShipping"));
@@ -2281,7 +2270,7 @@ void salesOrder::sFillItemList()
 
     if (!_showCanceled->isChecked())
       sql += QString(" AND (coitem_status != 'X') ");
-               
+             
     sql += QString(" AND (coitem_cohead_id=:cohead_id) ) "
                    "GROUP BY coitem_id, coitem_cohead_id, itemsite_id, itemsite_qtyonhand, coitem_qtyshipped,"
                    "         coitem_linenumber, item_id, item_number, item_descrip1, item_descrip2,"
@@ -2806,7 +2795,7 @@ void salesOrder::sTaxDetail()
 void salesOrder::setFreeFormShipto(bool pFreeForm)
 {
   _ffShipto = pFreeForm;
-  
+
   // If we are in view mode it doesn't matter as we
   // always want these fields disabled.
   if ( (_mode == cView) || (_mode == cViewQuote) )
@@ -2996,7 +2985,7 @@ void salesOrder::populateCMInfo()
     return;
 
   // Allocated C/M's
-  q.prepare("SELECT COALESCE(SUM(currToCurr(aropen_curr_id, :curr_id,"
+  q.prepare("SELECT COALESCE(SUM(currToCurr(aropenco_curr_id, :curr_id,"
             "                               aropenco_amount, :effective)),0) AS amount"
             "  FROM aropenco, aropen"
             " WHERE ( (aropenco_cohead_id=:cohead_id)"
@@ -3111,7 +3100,7 @@ void salesOrder::sMoveUp()
   q.prepare("SELECT moveCcardUp(:ccard_id) AS result;");
   q.bindValue(":ccard_id", _cc->id());
   q.exec();
-  
+
   sFillCcardList();
 }
 
@@ -3121,20 +3110,17 @@ void salesOrder::sMoveDown()
   q.prepare("SELECT moveCcardDown(:ccard_id) AS result;");
   q.bindValue(":ccard_id", _cc->id());
   q.exec();
-  
+
   sFillCcardList();
 }
 
 void salesOrder::sFillCcardList()
 {
-//  QString key;
-  key = omfgThis->_key;
-  
   q.prepare( "SELECT expireCreditCard(:cust_id, setbytea(:key));");
   q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":key", key);
+  q.bindValue(":key", omfgThis->_key);
   q.exec(); 
-  
+
   q.prepare( "SELECT ccard_id,"
              "       ccard_seq,"
              "       CASE WHEN (ccard_type='M') THEN :masterCard"
@@ -3156,104 +3142,98 @@ void salesOrder::sFillCcardList()
   q.bindValue(":americanExpress", tr("American Express"));
   q.bindValue(":discover", tr("Discover"));
   q.bindValue(":other", tr("Other"));
-  q.bindValue(":key", key);
+  q.bindValue(":key", omfgThis->_key);
   q.exec();
   _cc->populate(q);
 }
 
-
-void salesOrder::_authorizeCC_clicked()
+void salesOrder::sAuthorizeCC()
 {
-  _doAuthorize = true;
-  _doCharge = false;
-  _passPrecheck = true;
-
-  precheckCreditCard();
-  
-  if (!_passPrecheck)
+  if (! okToProcessCC())
     return;
-  
-  if (_metrics->value("CCConfirmTrans") == "A" || _metrics->value("CCConfirmTrans") == "B")
+
+  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+  if (! cardproc->errorMsg().isEmpty())
   {
-    if (QMessageBox::question(this,
-                      tr("Confirm Preauthorization of Credit Card Purchase"),
-                      tr("<p>You must confirm that you wish to preauthorize "
-                         "credit card %1 in the amount of %2 %3. Would you "
-                         "like to preauthorize now?")
-                        .arg(_credit_card_x)
-                        .arg(_CCAmount->currAbbr())
-                        .arg(_CCAmount->localValue()),
-              QMessageBox::Yes | QMessageBox::Default,
-              QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
-        return;
+    QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
+    return;
   }
-  
-  if(YourPay)
-    processYourPay();
-  
-  if(VeriSign)
-    QMessageBox::warning( this, tr("VeriSign"),
-             tr("VeriSign is not yet supported") );
+
+  _authorize->setEnabled(false);
+  _charge->setEnabled(false);
+
+  int ccpayid   = -1;
+  QString ordernum = _orderNumber->text();
+  int returnVal = cardproc->authorize(_cc->id(), _CCCVV->text().toInt(),
+				      _CCAmount->localValue(), _CCAmount->id(),
+				      ordernum, ccpayid,
+				      QString("cohead"), _soheadid);
+  if (returnVal < 0)
+    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			  cardproc->errorMsg());
+  else if (returnVal > 0)
+    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+			 cardproc->errorMsg());
+  else if (! cardproc->errorMsg().isEmpty())
+    QMessageBox::information(this, tr("Credit Card Processing Note"),
+			 cardproc->errorMsg());
+  else
+    _CCAmount->clear();
+
+  _authorize->setEnabled(true);
+  _charge->setEnabled(true);
+
+  populateCMInfo();
+  populateCCInfo();
+  sFillCcardList();
+  _CCCVV->clear();
 }
 
-
-void salesOrder::_chargeCC_clicked()
+void salesOrder::sChargeCC()
 {
-  _doAuthorize = false;
-  _doCharge = true;
-  _passPrecheck = true;
+  if (! okToProcessCC())
+    return;
 
-  precheckCreditCard();
-  
-  if (!_passPrecheck)
-    return;
-  
-  if (_metrics->value("CCConfirmTrans") == "A" || _metrics->value("CCConfirmTrans") == "B")
+  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+  if (! cardproc->errorMsg().isEmpty())
   {
-    if (QMessageBox::question(this,
-                              tr("Confirm Charge of Credit Card Purchase"),
-                              tr("<p>You must confirm that you wish to "
-                                 "charge credit card %1 in the amount of "
-                                 "%2 %3. Would you like to charge now?")
-                                .arg(_credit_card_x)
-                                .arg(_CCAmount->currAbbr())
-                                .arg(_CCAmount->localValue()),
-              QMessageBox::Yes | QMessageBox::Default,
-              QMessageBox::No | QMessageBox::Escape ) == QMessageBox::No)
-        return;
-  }
-  
-  _chargeBankAccount =   _metrics->value("CCDefaultBank").toInt();
-  
-  if (_chargeBankAccount < 1)
-  {
-    QMessageBox::warning( this, tr("Bank Account Missing"),
-                          tr("<p>The bank default bank account for credit "
-                             "card processing has not been assigned.") );
-    _CCAmount->setFocus();
+    QMessageBox::warning( this, tr("Credit Card Error"), cardproc->errorMsg() );
     return;
   }
-  
-  if(YourPay)
-    processYourPay();
-    
-  if(VeriSign)
-    QMessageBox::warning( this, tr("VeriSign"),
-             tr("VeriSign is not yet supported") );
+
+  _authorize->setEnabled(false);
+  _charge->setEnabled(false);
+
+  int ccpayid   = -1;
+  QString ordernum = _orderNumber->text();
+  QString refnum   = _custPONumber->text();
+  int returnVal    = cardproc->charge(_cc->id(), _CCCVV->text().toInt(),
+				      _CCAmount->localValue(), _CCAmount->id(),
+				      ordernum, refnum, ccpayid,
+				      QString("cohead"), _soheadid);
+  if (returnVal < 0)
+    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+			  cardproc->errorMsg());
+  else if (returnVal > 0)
+    QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+			 cardproc->errorMsg());
+  else if (! cardproc->errorMsg().isEmpty())
+    QMessageBox::information(this, tr("Credit Card Processing Note"),
+			 cardproc->errorMsg());
+  else
+    _CCAmount->clear();
+
+  _authorize->setEnabled(true);
+  _charge->setEnabled(true);
+
+  populateCMInfo();
+  populateCCInfo();
+  sFillCcardList();
+  _CCCVV->clear();
 }
 
-void salesOrder::precheckCreditCard()
+bool salesOrder::okToProcessCC()
 {
-  if(!_metrics->boolean("CCAccept"))
-  {
-    QMessageBox::warning( this, tr("Credit Cards"),
-                          tr("<p>The application is not set up to process "
-                             "credit cards") );
-    _CCAmount->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-    
   if (_usesPos)
   {
     if (_custPONumber->text().stripWhiteSpace().length() == 0)
@@ -3263,7 +3243,7 @@ void salesOrder::precheckCreditCard()
                                "Sales Order before you may process a credit"
                                "card transaction.") );
       _custPONumber->setFocus();
-      _passPrecheck = false;
+      return false;
     }
 
     if (!_blanketPos)
@@ -3293,912 +3273,12 @@ void salesOrder::precheckCreditCard()
                                  "enter a new P/O Number or add to the "
                                  "existing Sales Order." ) );
         _custPONumber->setFocus();
-        _passPrecheck = false;
+        return false;
       }
     }
   }
 
-  key =  omfgThis->_key;
-    
-  if(key.length() == 0 || key.isEmpty() || key.isNull())
-  {
-    QMessageBox::warning( this, tr("Encryption Key"),
-                          tr("You do not have an encryption key defined") );
-    _CCAmount->setFocus();
-    _passPrecheck = false;
-    return;
-  }
-
-  q.prepare( "SELECT ccard_active, "
-             "       formatbytea(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number,"
-             "       formatccnumber(decrypt(setbytea(ccard_number), setbytea(:key), 'bf')) AS ccard_number_x,"
-             "       formatbytea(decrypt(setbytea(ccard_name), setbytea(:key), 'bf')) AS ccard_name,"
-             "       formatbytea(decrypt(setbytea(ccard_address1), setbytea(:key), 'bf')) AS ccard_address1,"
-             "       formatbytea(decrypt(setbytea(ccard_address2), setbytea(:key), 'bf')) AS ccard_address2,"
-             "       formatbytea(decrypt(setbytea(ccard_city), setbytea(:key), 'bf')) AS ccard_city,"
-             "       formatbytea(decrypt(setbytea(ccard_state), setbytea(:key), 'bf')) AS ccard_state,"
-             "       formatbytea(decrypt(setbytea(ccard_zip), setbytea(:key), 'bf')) AS ccard_zip,"
-             "       formatbytea(decrypt(setbytea(ccard_country), setbytea(:key), 'bf')) AS ccard_country,"
-             "       formatbytea(decrypt(setbytea(ccard_month_expired), setbytea(:key), 'bf')) AS ccard_month_expired,"
-             "       formatbytea(decrypt(setbytea(ccard_year_expired), setbytea(:key), 'bf')) AS ccard_year_expired, "
-             "       ccard_type "
-             "FROM ccard "
-             "WHERE (ccard_id=:ccard_id); ");
-  q.bindValue(":ccard_id", _cc->id());
-  q.bindValue(":key", key);
-  q.exec();
-  q.first();
-  
-  _ccActive = q.value("ccard_active").toBool();
-  
-  if (!_ccActive)
-  {
-      QMessageBox::warning( this, tr("Invalid Credit Card"),
-                            tr("<p>The Credit Card you are attempting to use "
-                               "is not active. Make the card active or select "
-                               "another Credit Card.") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-  }
-  
-  _ccard_number = q.value("ccard_number").toString();
-  _credit_card_x = q.value("ccard_number_x").toString();
-  _ccard_name = q.value("ccard_name").toString();
-  _ccard_address1 = q.value("ccard_address1").toString();
-  _ccard_address2 = q.value("ccard_address2").toString();
-  _ccard_city = q.value("ccard_city").toString();
-  _ccard_state = q.value("ccard_state").toString();
-  _ccard_zip = q.value("ccard_zip").toString();
-  _ccard_country = q.value("ccard_country").toString();
-  _ccard_month_expired = q.value("ccard_month_expired").toInt();
-  _ccard_year_expired = q.value("ccard_year_expired").toInt();
-  _ccard_type = q.value("ccard_type").toString();
-  
-  YourPay = false;
-  VeriSign = false;
-  
-  if (_metrics->value("CCServer") == "test-payflow.verisign.com"  ||  _metrics->value("CCServer") == "payflow.verisign.com") 
-  {
-     VeriSign = true; 
-  }
-  
-  if (_metrics->value("CCServer") == "staging.linkpt.net"  ||  _metrics->value("CCServer") == "secure.linkpt.net") 
-  {
-     YourPay = true; 
-  }
-  
-  if (!YourPay && !VeriSign)
-  {
-      QMessageBox::warning( this, tr("Invalid Credit Card Service Selected"),
-                            tr("<p>OpenMFG only supports YourPay and VeriSign."
-                               "You have not selected either of these as your "
-                               "credit card processors.") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-  }
-  
-  if (VeriSign)
-  {
-    if ((_metrics->boolean("CCTest") && _metrics->value("CCServer") == "test-payflow.verisign.com") || (!_metrics->boolean("CCTest") && _metrics->value("CCServer") == "payflow.verisign.com"))
-    {
-// This is OK - We are either running test and test or production and production on Verisign
-    }
-    else
-    {
-// Not OK - we have an error
-      QMessageBox::warning( this, tr("Invalid Server Configuration"),
-                            tr("<p>If Credit Card test is selected you must "
-                               "select a test server. If Credit Card Test is "
-                               "not selected you must select a production"
-                               "server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  }
-  
-  
-  if (YourPay)
-  {
-    if ((_metrics->boolean("CCTest") && _metrics->value("CCServer") == "staging.linkpt.net") || (!_metrics->boolean("CCTest") && _metrics->value("CCServer") == "secure.linkpt.net"))
-    {
-// This is OK - We are either running test and test or production and production on Verisign
-    }
-    else
-    {
-// Not OK - we have an error
-      QMessageBox::warning( this, tr("Invalid Server Configuration"),
-                            tr("<p>If Credit Card test is selected you must "
-                               "select a test server. If Credit Card Test is "
-                               "not selected you must select a production "
-                               "server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  }
- 
-  port = _metrics->value("CCPort").toInt();
-  
-  if (YourPay)
-    if (port != 1129)
-    {
-      QMessageBox::warning( this, tr("Invalid Server Port Configuration"),
-                            tr("<p>You have an invalid port identified for the requested server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  
-  if (VeriSign)
-    if (port != 443)
-    {
-      QMessageBox::warning( this, tr("Invalid Server Port Configuration"),
-                            tr("<p>You have an invalid port identified for the requested server") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-  
-  if (YourPay)
-  {
-// Set up all of the YourPay parameters and check them
-    _linkshield = _metrics->boolean("CCYPLinkShield");
-    _maxlinkshield = _metrics->value("CCYPLinkShieldMax").toInt();
-    _storenum = _metricsenc->value("CCYPStoreNum");
-     
-#ifdef Q_WS_WIN
-    _pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
-    _pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
-    _pemfile = _metrics->value("CCYPLinPathPEM");
-#endif
-    
-    if (_storenum.length() == 0 || _storenum.isEmpty() || _storenum.isNull())
-    {
-      QMessageBox::warning( this, tr("Store Number Missing"),
-                            tr("The YourPay Store Number is missing") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-      
-    if (_pemfile.length() == 0 || _pemfile.isEmpty() || _pemfile.isNull())
-    {
-      QMessageBox::warning( this, tr("Pem File Missing"),
-                            tr("The YourPay pem file is missing") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-    
-    if (_CCAmount->localValue() <= 0)
-    {
-      QMessageBox::warning( this, tr("Charge Amount Missing or incorrect"),
-                            tr("The Charge Amount must be greater than 0.00") );
-      _CCAmount->setFocus();
-      _passPrecheck = false;
-      return;
-    }
-    
-    _noCVV = false;
-    
-    if ((int)_CCCVV->toDouble() < 100 || (int)_CCCVV->toDouble() > 9999)
-    {
-      if ((int)_CCCVV->toDouble() == 0)
-      {
-        switch( QMessageBox::question( this, tr("Confirm No CVV Code"),
-                tr("<p>You must confirm that you wish to proceed without a CVV Code. "
-                   "Would you like to continue now?"),
-                QMessageBox::Yes | QMessageBox::Default,
-                QMessageBox::No  | QMessageBox::Escape ) )
-        {
-          case QMessageBox::Yes:
-            _noCVV = true;
-            break;
-          case QMessageBox::No:
-          default:
-            _CCCVV->setFocus();
-            _passPrecheck = false;
-            return;
-        }
-      }
-      else
-      {
-        QMessageBox::warning( this, tr("Improper CVV Code"),
-                              tr("<p>The CVV Code must be numeric and between 100 and 9999") );
-        _CCCVV->setFocus();
-        _passPrecheck = false;
-        return;
-      }
-    }
-    
-    _cvv = (int)_CCCVV->toDouble();
-    
-    
-// We got this far time to load everything up.
-    
-    configfile = new char[strlen(_storenum.latin1()) + 1];
-    strcpy(configfile, _storenum.latin1());
-    host = new char[strlen(_metrics->value("CCServer").latin1()) + 1];
-    strcpy(host, _metrics->value("CCServer").latin1());
-    pemfile = new char[strlen(_pemfile.latin1()) + 1];
-    strcpy(pemfile, _pemfile.latin1());
-    
-    QFileInfo fileinfo( pemfile );
-    
-    if (!fileinfo.isFile())
-    {
-// Oops we don't have a usable pemfile        
-      QMessageBox::warning( this, tr("Missing PEM FIle"),
-           tr("<p>Unable to verify that you have a PEM file for this "
-              "application. Please contact your local support.") );
-     _CCCVV->setFocus();
-     _passPrecheck = false;
-     return;
-    }
-    
-    _numtospace = _ccard_address1.find(" ");
-    addrnum = _ccard_address1.left( _numtospace);
-
-  }
-  QString plogin;
-  QString ppassword;
-  QString pserver;
-  QString pport;
-  
-  plogin = _metricsenc->value("CCProxyLogin");
-  ppassword = _metricsenc->value("CCPassword");
-  pserver = _metrics->value("CCProxyServer");
-  pport = _metrics->value("CCProxyPort");
-
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    if (plogin.length() == 0 || plogin.isEmpty() || plogin.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("<p>You have selected proxy server support, yet you have not provided a login") );
-     _passPrecheck = false;
-     return;
-    }
-    if (ppassword.length() == 0 || ppassword.isEmpty() || ppassword.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("<p>You have selected proxy server support, yet you have not provided a password") );
-     _passPrecheck = false;
-     return;
-    }
-    if (pserver.length() == 0 || pserver.isEmpty() || pserver.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("<p>You have selected proxy server support, yet you have not provided a proxy server to use") );
-     _passPrecheck = false;
-     return;
-    }
-    if (pport.length() == 0 || pport.isEmpty() || pport.isNull())
-    {
-      QMessageBox::warning( this, tr("Missing Proxy Server Data"),
-           tr("<p>You have selected proxy server support, yet you have not provided a lport to use") );
-     _passPrecheck = false;
-     return;
-    }
-  }
-}
-
-/*
-  The first pass implementation of multicurrency credit card handling is to use
-  the baseValue and baseCurrency for all credit card transactions.  This is
-  based on the assumption that the OpenMFG user has an agreement with the
-  credit card company to transact in the base currency.  If there is a way
-  to transmit a standardized currency id with the credit card company then
-  we can change this and use the cohead_curr_id.  
-  Relevant lines are marked ##### below.
-
-  TODO: We lose less to rounding error if we store _CCAmount->localValue().
-  Should we save localValue() and id() in the payaropen and aropenco tables,
-  even if we don't do so in the payco and ccpay tables?
- */
-
-void salesOrder::processYourPay()
-{
-  QDomDocument odoc;
-  // Build the order
-  QDomElement root = odoc.createElement("order");
-  odoc.appendChild(root);
-  QDomElement elem, sub;
-          
-  // add the 'billing'
-  elem = odoc.createElement("billing");
-
-  sub = odoc.createElement("address1");
-  sub.appendChild(odoc.createTextNode(_ccard_address1));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("address2");
-  sub.appendChild(odoc.createTextNode(_ccard_address2));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("addrnum");
-  sub.appendChild(odoc.createTextNode(addrnum));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("city");
-  sub.appendChild(odoc.createTextNode(_ccard_city));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("name");
-  sub.appendChild(odoc.createTextNode(_ccard_name));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("state");
-  sub.appendChild(odoc.createTextNode(_ccard_state));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("zip");
-  sub.appendChild(odoc.createTextNode(_ccard_zip));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // add the 'credit card'
-  elem = odoc.createElement("creditcard");
-
-  QString work_month;
-  work_month.setNum(_ccard_month_expired);
-  if (work_month.length() == 1)
-    work_month = "0" + work_month;
-  sub = odoc.createElement("cardexpmonth");
-  sub.appendChild(odoc.createTextNode(work_month));
-  elem.appendChild(sub);
-
-  QString work_year;
-  work_year.setNum(_ccard_year_expired);
-  work_year = work_year.right(2);
-  sub = odoc.createElement("cardexpyear");
-  sub.appendChild(odoc.createTextNode(work_year));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("cardnumber");
-  sub.appendChild(odoc.createTextNode(_ccard_number));
-  elem.appendChild(sub);
-
-  QString work_cvv;
-  work_cvv.setNum(_cvv);
-  if (!_noCVV)
-  {
-    sub = odoc.createElement("cvmvalue");
-    sub.appendChild(odoc.createTextNode(work_cvv));
-    elem.appendChild(sub);
-  }
-
-  root.appendChild(elem);
-  
-  // Build 'merchantinfo'
-  elem = odoc.createElement("merchantinfo");
-
-  sub = odoc.createElement("configfile");
-  sub.appendChild(odoc.createTextNode(configfile));
-  elem.appendChild(sub);
-  
-  root.appendChild(elem);
-  
-  // Build 'orderoptions'
-  elem = odoc.createElement("orderoptions");
-
-  sub = odoc.createElement("ordertype");
-  if (_doAuthorize)
-    sub.appendChild(odoc.createTextNode("PREAUTH"));
-  else
-    sub.appendChild(odoc.createTextNode("SALE"));
-  elem.appendChild(sub);
-  
-  sub = odoc.createElement("result");
-  sub.appendChild(odoc.createTextNode("LIVE"));
-  elem.appendChild(sub);
-  
-  root.appendChild(elem);
-  
-  // Build 'payment'
-  elem = odoc.createElement("payment");
-
-  sub = odoc.createElement("chargetotal");
-  QString tmp;
-  sub.appendChild(odoc.createTextNode(tmp.setNum(_CCAmount->baseValue(), 'f', 2))); // ##### localValue()?
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // add the 'shipping'
-  elem = odoc.createElement("shipping");
-
-  _shipto_name = _shipToName->text();
-  _shipto_address1= _shipToAddr->line1();
-  _shipto_address2= _shipToAddr->line2();
-  _shipto_city = _shipToAddr->city();
-  _shipto_state = _shipToAddr->state();
-  _shipto_zip = _shipToAddr->postalCode();
-
-  sub = odoc.createElement("address1");
-  sub.appendChild(odoc.createTextNode(_shipto_address1));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("address2");
-  sub.appendChild(odoc.createTextNode(_shipto_address2));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("city");
-  sub.appendChild(odoc.createTextNode(_shipto_city));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("name");
-  sub.appendChild(odoc.createTextNode(_shipto_name));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("state");
-  sub.appendChild(odoc.createTextNode(_shipto_state));
-  elem.appendChild(sub);
-
-  sub = odoc.createElement("zip");
-  sub.appendChild(odoc.createTextNode(_shipto_zip));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // Build 'transaction details'
-  elem = odoc.createElement("transactiondetails");
-
-  QString oid_parm;
-  oid_parm = _orderNumber->text();
-  int myorder_int;
-  myorder_int = _orderNumber->text().toInt();
-  int _next_num;
-  QString doIT;
-  q.prepare( "SELECT MAX(COALESCE(ccpay_order_number_seq, 0)) AS next_seq "
-             "  FROM ccpay "
-             " WHERE (ccpay_order_number=:ccpay_order_number);");
-  q.bindValue(":ccpay_order_number", myorder_int);
-  q.exec();
-  if (q.first())
-  {
-    _next_num = q.value("next_seq").toInt() + 1;
-    oid_parm = oid_parm + "-" + doIT.setNum(_next_num);
-    _orderSeq = _next_num;
-  }
-  sub = odoc.createElement("oid");
-  sub.appendChild(odoc.createTextNode(oid_parm));
-  elem.appendChild(sub);
-
-  QString myPOnumber;
-  myPOnumber = _custPONumber->text().stripWhiteSpace();
-  sub = odoc.createElement("ponumber");
-  sub.appendChild(odoc.createTextNode(myPOnumber));
-  elem.appendChild(sub);
-
-  root.appendChild(elem);
-  
-  // Process the order
-      
-  saved_order = odoc.toString();
-  
-  if (_metrics->boolean("CCTest"))
-  {
-    _metrics->set("CCOrder", saved_order);
-  }
-  
-  proc = new Q3Process( this );
-  QString curl_path;
-#ifdef Q_WS_WIN
-  curl_path = qApp->applicationDirPath() + "\\curl";
-#elif defined Q_WS_MACX
-  curl_path = "/usr/bin/curl";
-#elif defined Q_WS_X11
-  curl_path = "/usr/bin/curl";
-#endif
-  
-  proc->addArgument( curl_path );
-  proc->addArgument( "-k" );
-  proc->addArgument( "-d" );
-  proc->addArgument( saved_order );
-  proc->addArgument( "-E" );
-  proc->addArgument( pemfile );
-  
-  QStringList list = proc->arguments();
-  QString allList = list.join( ", " );
-  
-  _port.setNum(port);
-  doServer = "https://" + _metrics->value("CCServer") + ":" + _port;
-  
-  proc->addArgument( doServer );
-  
-  QString proxy_login;
-  QString proxy_server;
-  
-  if(_metrics->boolean("CCUseProxyServer"))
-  {
-    proxy_login =  _metricsenc->value("CCProxyLogin") + ":" + _metricsenc->value("CCPassword") ;
-    proxy_server = _metrics->value("CCProxyServer") + ":" + _metrics->value("CCProxyPort");
-    proc->addArgument( "-x" );
-    proc->addArgument( proxy_server );
-    proc->addArgument( "-U" );
-    proc->addArgument( proxy_login );
-  }
-  
-  _response = "";
-  _oops = "";
-  
-  connect( proc, SIGNAL(readyReadStdout()),
-           this, SLOT(readFromStdout()) );
-  connect( proc, SIGNAL(readyReadStderr()),
-           this, SLOT(readFromStderr()) );
-  
-  QApplication::setOverrideCursor( QCursor(Qt::WaitCursor) );
-  _authorize->setEnabled(FALSE);
-  _charge->setEnabled(FALSE);
-  
-  if ( !proc->start() ) 
-  {
-    QMessageBox::critical(this, tr("Fatal error"),
-        tr("Could not start the curl command."),
-        tr("Quit") );
-    QApplication::restoreOverrideCursor();
-    return;
-  }
-  
-  while (proc->isRunning())
-    qApp->processEvents();
-  
-  QApplication::restoreOverrideCursor();
-  _authorize->setEnabled(TRUE);
-  _charge->setEnabled(TRUE);
-  
-  _response =  "<myroot>" + _response + "</myroot>";
-  
-  QString whyMe;
-  
-  if (_metrics->boolean("CCTest"))
-  {
-    whyMe = _ccard_number + "  " + _response;
-    _metrics->set("CCTestMe", whyMe);
-  }
-  
-  /*if (_metrics->boolean("CCTest"))
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("The return code was ") + _response, QMessageBox::Ok);
-  }*/
-  QDomDocument doc;
-  doc.setContent(_response);
-  QDomNode node;
-  root = doc.documentElement();
-  
-  QString _r_avs;
-  QString _r_ordernum;
-  QString _r_error;
-  QString _r_approved;
-  QString _r_code;
-  QString _r_score;
-  QString _r_shipping;
-  QString _r_tax;
-  QString _r_tdate;
-  QString _r_ref;
-  QString _r_message;
-  QString _r_time;
-  
-  node = root.firstChild();
-  while ( !node.isNull() ) {
-    if ( node.isElement() && node.nodeName() == "r_avs" ) {
-      QDomElement r_avs = node.toElement();
-      _r_avs = r_avs.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_ordernum" ) {
-      QDomElement r_ordernum = node.toElement();
-      _r_ordernum = r_ordernum.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_error" ) {
-      QDomElement r_error = node.toElement();
-      _r_error = r_error.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_approved" ) {
-      QDomElement r_approved = node.toElement();
-      _r_approved = r_approved.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_code" ) {
-      QDomElement r_code = node.toElement();
-      _r_code = r_code.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_message" ) {
-      QDomElement r_message = node.toElement();
-      _r_message = r_message.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_time" ) {
-      QDomElement r_time = node.toElement();
-      _r_time = r_time.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_ref" ) {
-      QDomElement r_ref = node.toElement();
-      _r_ref = r_ref.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_tdate" ) {
-      QDomElement r_tdate = node.toElement();
-      _r_tdate = r_tdate.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_tax" ) {
-      QDomElement r_tax = node.toElement();
-      _r_tax = r_tax.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_shipping" ) {
-      QDomElement r_shipping = node.toElement();
-      _r_shipping = r_shipping.text();
-    }
-    if ( node.isElement() && node.nodeName() == "r_score") {
-      QDomElement r_score = node.toElement();
-      _r_score = r_score.text();
-    }
-    node = node.nextSibling();
-  }
-  
-  q.prepare( "SELECT nextval('ccpay_ccpay_id_seq') as ccpay_id;");
-  q.exec();
-  q.first();
-    
-  _ccpay_id = q.value("ccpay_id").toInt();
-  
-  q.prepare( "INSERT INTO ccpay"
-             "      (ccpay_id, "
-             "       ccpay_ccard_id, "
-             "       ccpay_cust_id, "
-             "       ccpay_amount, "
-             "       ccpay_curr_id, " 
-             "       ccpay_auth, "
-             "       ccpay_status, "
-             "       ccpay_type, "
-             "       ccpay_auth_charge, "
-             "       ccpay_order_number, "
-             "       ccpay_order_number_seq, "
-             "       ccpay_yp_r_avs, "
-             "       ccpay_yp_r_ordernum, "
-             "       ccpay_yp_r_error, "
-             "       ccpay_yp_r_approved, "
-             "       ccpay_yp_r_code, "
-             "       ccpay_yp_r_message, "
-             "       ccpay_yp_r_time, "
-             "       ccpay_yp_r_ref, "
-             "       ccpay_yp_r_tdate, "
-             "       ccpay_yp_r_tax, "
-             "       ccpay_yp_r_shipping, "
-             "       ccpay_yp_r_score) "
-             "VALUES(:ccpay_id, "
-             "       :ccpay_ccard_id, "
-             "       :ccpay_cust_id, "
-             "       :ccpay_amount, " 
-             "       :ccpay_curr_id, " 
-             "       :ccpay_auth, "
-             "       :ccpay_status, "
-             "       :ccpay_type, "
-             "       :ccpay_auth_charge, "
-             "       :ccpay_order_number, "
-             "       :ccpay_order_number_seq, "
-             "       :ccpay_yp_r_avs, "
-             "       :ccpay_yp_r_ordernum, "
-             "       :ccpay_yp_r_error, "
-             "       :ccpay_yp_r_approved, "
-             "       :ccpay_yp_r_code, "
-             "       :ccpay_yp_r_message, "
-             "       :ccpay_yp_r_time, "
-             "       :ccpay_yp_r_ref, "
-             "       :ccpay_yp_r_tdate, "
-             "       :ccpay_yp_r_tax, "
-             "       :ccpay_yp_r_shipping, "
-             "       :ccpay_yp_r_score);");
-  q.bindValue(":ccpay_id", _ccpay_id);
-  q.bindValue(":ccpay_ccard_id", _cc->id());
-  q.bindValue(":ccpay_cust_id",_cust->id());
-  q.bindValue(":ccpay_amount",_CCAmount->baseValue()); // ##### localValue()?
-  q.bindValue(":ccpay_curr_id",_CCAmount->baseId());   // ##### id()?
-  
-  if (_doAuthorize)
-  {
-    q.bindValue(":ccpay_auth",QVariant(TRUE, 0));
-// Authorization or Charge for the initial transaction
-    q.bindValue(":ccpay_auth_charge","A");
-  }
-  else
-  {
-    q.bindValue(":ccpay_auth",QVariant(FALSE, 1));
-// Authorization or Charge for the initial transaction
-    q.bindValue(":ccpay_auth_charge","C");
-  }
-  
-  doDollars = 0;
-  
-  if (_r_approved == "APPROVED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction was approved\n") + _r_ref, QMessageBox::Ok);
-    if (_doAuthorize)
-    {
-      q.bindValue(":ccpay_status","A");
-      doDollars = _CCAmount->baseValue();     // ##### localValue()?
-    }
-    else
-    {
-      q.bindValue(":ccpay_status","C");
-      doDollars = _CCAmount->baseValue();     // ##### localValue()?
-    }
-  }
-  
-  if (_r_approved == "DENIED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("This transaction was denied\n") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved == "DUPLICATE")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("<p>This transaction is a duplicate: ") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved == "DECLINED")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("<p>This transaction is a declined: ") + _r_error, QMessageBox::Ok);
-    _metrics->set("CCdiag2", allList);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved == "FRAUD")
-  {
-    QMessageBox::information(this, tr("YourPay"), tr("<p>This transaction is denied because of possible fraud: ") + _r_error, QMessageBox::Ok);
-    q.bindValue(":ccpay_status","D");
-  }
-  
-  if (_r_approved.length() == 0 || _r_approved.isNull() || _r_approved.isEmpty())
-  {
-    QMessageBox::information(this, tr("YourPay"),
-        tr("<p>No Approval Code<br>%1<br>%2")
-          .arg(_r_error).arg(_oops), QMessageBox::Ok);
-    _metrics->set("CCdiag", _oops);
-    _metrics->set("CCdiag2", allList);
-    q.bindValue(":ccpay_status","X");
-  }
-  
-  // Credit Card for now - we may get Debit Cards in the future
-  q.bindValue(":ccpay_type","C");
-  // Originating Order Number
-  q.bindValue(":ccpay_order_number",_orderNumber->text().toInt());
-  q.bindValue(":ccpay_order_number_seq",_orderSeq);
-  q.bindValue(":ccpay_yp_r_avs",_r_avs);
-  q.bindValue(":ccpay_yp_r_ordernum",_r_ordernum);
-  q.bindValue(":ccpay_yp_r_error",_r_error);
-  q.bindValue(":ccpay_yp_r_approved",_r_approved);
-  q.bindValue(":ccpay_yp_r_code",_r_code);
-  q.bindValue(":ccpay_yp_r_score",_r_score.toInt());
-  q.bindValue(":ccpay_yp_r_shipping",_r_shipping);
-  q.bindValue(":ccpay_yp_r_tax",_r_tax);
-  QDateTime myTime;
-  myTime.setTime_t(_r_tdate.toInt());
-  // QDateTime myTime::setTime_t(_r_tdate.toInt());
-  //q.bindValue(":ccpay_yp_r_tdate",myTime);
-  q.bindValue(":ccpay_yp_r_tdate",_r_tdate);
-  q.bindValue(":ccpay_yp_r_ref",_r_ref);
-  q.bindValue(":ccpay_yp_r_message",_r_message);
-  if (! _r_time.isEmpty())
-    q.bindValue(":ccpay_yp_r_time",_r_time);
-  q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  
-//We need to a charge here to do a cash receipt and unapplied credit memo
-  if (_doAuthorize)
-  {
-// We generate a payco record
-    q.prepare("INSERT INTO payco VALUES"
-              " (:payco_ccpay_id, :payco_cohead_id,"
-              "  :payco_amount, :payco_curr_id);");
-    q.bindValue(":payco_ccpay_id",_ccpay_id);
-    q.bindValue(":payco_cohead_id",_soheadid);
-    q.bindValue(":payco_amount",doDollars);
-    q.bindValue(":payco_curr_id", _CCAmount->baseId());  // ##### id()?
-    q.exec();
-    if (q.lastError().type() != QSqlError::NoError)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
-  }
-  else
-  {
-//  We need some logic for a successful charge and for a non-successful charge
-    if (doDollars > 0)
-    {
-// This is a sucessful charge
-// First thing we need to get the  bank accnt id from the bank account
-/*      q.prepare("SELECT bankaccnt_accnt_id from bankaccnt WHERE bankaccnt_id = :bankaccnt_id;");
-      q.bindValue(":bankaccn_idt",_chargeBankAccount); 
-      q.exec();
-      q.first();
-      _chargeBankAccount = q.value("bankaccnt_accnt_id").toInt();*/
-   
-      q.prepare("SELECT postCCcashReceipt(:ccpayid, :bankaccnt) AS cm_id;");
-      q.bindValue(":ccpayid",_ccpay_id); 
-      q.bindValue(":bankaccnt",_chargeBankAccount); 
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-      q.first();
-      _cm_id = q.value("cm_id").toInt();
-
-      q.prepare("INSERT INTO payaropen VALUES"
-                " (:payco_ccpay_id, :payco_cohead_id,"
-                "  :payco_amount, :payco_curr_id);");
-      q.bindValue(":payco_ccpay_id",_ccpay_id);
-      q.bindValue(":payco_cohead_id",_cm_id);
-      q.bindValue(":payco_amount",doDollars);
-      q.bindValue(":payco_curr_id", _CCAmount->baseId());        // ##### id()?
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-           
-      q.prepare("INSERT INTO aropenco VALUES"
-                " (:payco_ccpay_id, :payco_cohead_id,"
-                "  :payco_amount, :payco_curr_id);");
-      q.bindValue(":payco_ccpay_id",_cm_id);
-      q.bindValue(":payco_cohead_id",_soheadid);
-      q.bindValue(":payco_amount",doDollars);
-      q.bindValue(":payco_curr_id", _CCAmount->baseId());        // ##### id()?
-      q.exec();
-      if (q.lastError().type() != QSqlError::NoError)
-      {
-        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-        return;
-      }
-    }
-    else
-    {
-      q.prepare("INSERT INTO payco VALUES"
-                " (:payco_ccpay_id, :payco_cohead_id,"
-                "  :payco_amount, :payco_curr_id);");
-      q.bindValue(":payco_ccpay_id",_ccpay_id);
-      q.bindValue(":payco_cohead_id",_soheadid);
-      q.bindValue(":payco_amount",doDollars);
-      q.bindValue(":payco_curr_id", _CCAmount->baseId());        // ##### id()?
-      q.exec();
-            if (q.lastError().type() != QSqlError::NoError)
-            {
-              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-              return;
-            }
-    }
-  }
-  
-  
-  //Clean up
-  populateCMInfo();
-  populateCCInfo();
-  sFillCcardList();
-  _CCCVV->clear();
-  //delete &op;    
-  //delete &order;
-}
-
-void salesOrder::readFromStdout()
-{
-_response += QString(proc->readStdout());
-}
-
-void salesOrder::readFromStderr()
-{
-_oops += QString(proc->readStderr());
+  return true;
 }
 
 void salesOrder::sReturnStock()
@@ -4552,4 +3632,3 @@ void salesOrder::sShowReservations()
     omfgThis->handleNewWindow(newdlg);
   }
 }
-

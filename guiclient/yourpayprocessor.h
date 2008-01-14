@@ -72,13 +72,17 @@ class YourPayProcessor : public CreditCardProcessor
     YourPayProcessor();
 
   protected:
+    virtual int  buildCommonXML(const int, const int, QString, QDomDocument&, QString);
     virtual int  doCheckConfiguration();
-    virtual int  doCredit(const int, const double, const int, const QString&, const QString&, int&);
+    virtual int  doAuthorize(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int  doCharge(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int  doCredit(const int, const int, const double, const int, QString&, QString&, int&);
     virtual bool isLive();
     virtual bool isTest();
 
   private:
-    virtual int  handleResponse(const QDomDocument&, const int, const QString&, const double, const int, const QString&, int&);
+    virtual int  handleResponse(const QDomDocument&, const int, const QString&, const double, const int, QString&, QString&, int&);
     QString	_pemfile;
     QString	_storenum;
 };

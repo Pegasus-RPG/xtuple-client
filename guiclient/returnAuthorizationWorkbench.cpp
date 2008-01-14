@@ -350,14 +350,18 @@ void returnAuthorizationWorkbench::sProcess()
 	  if (! cardproc)
 	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
 				  CreditCardProcessor::errorMsg());
+	  else if (! cardproc->errorMsg().isEmpty())
+	    QMessageBox::critical(this, tr("Credit Card Processing Warning"),
+				 cardproc->errorMsg());
 	  else
 	  {
+	    QString docnum = q.value("cmhead_number").toString();
+	    QString refnum = ccq.value("cohead_number").toString();
 	    int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
+					    -2,
 					    ccq.value("total").toDouble(),
 					    ccq.value("cmhead_curr_id").toInt(),
-					    q.value("cmhead_number").toString(),
-					    ccq.value("cohead_number").toString(),
-					    ccpayid);
+					    docnum, refnum, ccpayid);
 	    if (returnValue < 0)
 	      QMessageBox::critical(this, tr("Credit Card Processing Error"),
 				    cardproc->errorMsg());

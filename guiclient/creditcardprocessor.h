@@ -73,35 +73,35 @@ class CreditCardProcessor : public QObject
     // no public constructor for abstract class, just a factory
     static CreditCardProcessor	*getProcessor();
 
-    // the primary transactions:
-    virtual int		authorize();
-    virtual int		charge();
-    virtual int		chargePreauthorized(float, int, int = 0, int = 0);
-    virtual int		credit(const QString&, int&);
-    virtual int		credit(const int, const double, const int, const QString&, const QString&, int&);
-    virtual int		voidPrevious();
+    // these are the primary transaction handlers and should not be overridden:
+    virtual int	    authorize(const int, const int, const double, const int, QString&, int&, QString, int&);
+    virtual int	    charge(const int, const int, const double, const int, QString&, QString&, int&, QString, int&);
+    virtual int	    chargePreauthorized(const int, const double, const int, QString&, QString&, int&);
+    virtual int	    credit(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int	    voidPrevious(const int&);
 
-    virtual int		checkConfiguration();
-    virtual int		currencyId();
-    virtual QString	currencyName();
-    virtual QString	currencySymbol();
-    virtual bool	isLive();
-    virtual bool	isTest();
-    static  QString	errorMsg();		// most recent error
-    static  QString	errorMsg(const int);
+    // these are support methods that typically won't be overridden
+    virtual int	    checkConfiguration();
+    virtual int	    currencyId();
+    virtual QString currencyName();
+    virtual QString currencySymbol();
+    virtual bool    isLive();
+    virtual bool    isTest();
+    static  QString errorMsg();		// most recent error
+    static  QString errorMsg(const int);
 
   protected:
     CreditCardProcessor();
 
-    // these handle the processor-specific processing
-    virtual int doAuthorize()			{ return false; };
-    virtual int doCharge()			{ return false; };
-    virtual int doCheckConfiguration()		{ return false; };
-    virtual int doChargePreauthorized(QString&);
-    virtual int doCredit(const int, const double, const int, const QString&, const QString&, int&);
-    virtual int doVoidPrevious()		{ return false; };
+    // do* handle the processor-specific processing and are expected to be overridden
+    virtual int doAuthorize(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int doCharge(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int doCheckConfiguration();
+    virtual int doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int doCredit(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int doVoidPrevious(const int);
 
-    virtual int checkCreditCard(int);
+    virtual int checkCreditCard(const int, const int, QString&);
     virtual int checkCreditCardProcessor()	{ return false; };
     virtual int processXML(const QDomDocument&, QDomDocument&);
 
