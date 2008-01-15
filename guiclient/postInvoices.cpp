@@ -136,14 +136,15 @@ void postInvoices::sPost()
   bool inclZero = false;
   q.exec("SELECT COUNT(invchead_id) AS numZeroInvcs "
 	 "FROM ( SELECT invchead_id "
-	 "       FROM invchead, invcitem LEFT OUTER JOIN"
-	 "            item ON (invcitem_item_id=item_id)  "
-	 "       WHERE ((invchead_id=invcitem_invchead_id)"
-	 "         AND  (NOT invchead_posted)) "
-	 "       GROUP BY invchead_id "
-	 "       HAVING SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price /  "
+	 "         FROM invchead LEFT OUTER JOIN"
+         "              invcitem ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
+	 "              item ON (invcitem_item_id=item_id)  "
+	 "        WHERE(NOT invchead_posted) "
+	 "        GROUP BY invchead_id, invchead_freight, invchead_tax, invchead_misc_amount "
+	 "       HAVING (COALESCE(SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price /  "
 	 "     	     CASE WHEN (item_id IS NULL) THEN 1 "
-	 "     	     ELSE invcitem_price_invuomratio END), 2)) <= 0) AS foo;");
+	 "     	     ELSE invcitem_price_invuomratio END), 2)),0) + invchead_freight + invchead_tax + "
+         "                  invchead_misc_amount) <= 0) AS foo;");
   if (q.first() && q.value("numZeroInvcs").toInt() > 0)
   {
     int toPost = QMessageBox::question(this, tr("Invoices for 0 Amount"),

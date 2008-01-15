@@ -222,11 +222,18 @@ void printInvoicesByShipvia::sPrint()
       // if SUM becomes dependent on curr_id then move XRATE before it in the loop
 
       XSqlQuery sum;
-      sum.prepare("SELECT SUM(round((invcitem_billed * invcitem_qty_invuomratio) * (invcitem_price / "
-		  "                 CASE WHEN (item_id IS NULL) THEN 1"
-		  "                  ELSE invcitem_price_invuomratio END),2)) AS subtotal "
-		  "FROM invcitem LEFT OUTER JOIN item ON (invcitem_item_id=item_id) "
-		  "WHERE (invcitem_invchead_id=:invchead_id);");
+      sum.prepare("SELECT COALESCE(SUM(round((invcitem_billed * invcitem_qty_invuomratio) *"
+                  "                 (invcitem_price / "
+                  "                  CASE WHEN (item_id IS NULL) THEN 1"
+                  "                       ELSE invcitem_price_invuomratio"
+                  "                  END), 2)),0) + "
+                  "       invchead_freight + invchead_tax + "
+                  "       invchead_misc_amount AS subtotal "
+                  "  FROM invchead LEFT OUTER JOIN"
+                  "       invcitem ON (invcitem_invchead_id=invchead_id) LEFT OUTER JOIN"
+                  "       item ON (invcitem_item_id=item_id) "
+                  " WHERE(invchead_id=:invchead_id) "
+                  " GROUP BY invchead_freight, invchead_tax, invchead_misc_amount;");
       message( tr("Printing Invoice #%1...")
                .arg(invoiceNumber) );
 
