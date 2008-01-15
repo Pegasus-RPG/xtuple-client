@@ -239,7 +239,7 @@
        <item>
         <widget class="QCheckBox" name="_addPackingList" >
          <property name="text" >
-          <string>Automatically Add to PackingList Batch</string>
+          <string>Automatically Add to Packing List Batch</string>
          </property>
         </widget>
        </item>
