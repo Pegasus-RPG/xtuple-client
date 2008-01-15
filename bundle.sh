@@ -178,7 +178,7 @@ if [ ! -f "$VERFILE" ] ; then
   exit 2
 fi
 VERSION=`cpp $VERFILE | \
-	 awk '/QString.*_dbVersion/ { gsub("\"", "");
+	 awk '/QString.*_Version/ { gsub("\"", "");
 				      sub(";", "");
 				      ver=$NF
 	      }
