@@ -373,7 +373,7 @@ void dspInventoryAvailabilityByCustomerType::sFillList()
                "       atshipping,formatQty(atshipping) AS f_atshipping,"
                "       formatDate(coitem_scheddate) AS f_scheddate,"
                "       (coitem_qtyreserved > 0 AND sobalance > coitem_qtyreserved) AS partialreservation,"
-               "       ((sobalance - coitem_qtyreserved) = 0) AS fullreservation,"
+               "       ((sobalance <> 0) and ((sobalance - coitem_qtyreserved) = 0)) AS fullreservation,"
                "       onpacklist,"
                "       reorderlevel "
                "<? if exists(\"showWoSupply\") ?>, "        
