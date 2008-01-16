@@ -249,7 +249,7 @@ void bomItem::sSave()
   if (_qtyPer->toDouble() == 0.0)
   {
     QMessageBox::critical( this, tr("Enter Quantity Per"),
-                           tr("You must enter a Quantity Per value befor saving this BOM Item.") );
+                           tr("You must enter a Quantity Per value before saving this BOM Item.") );
     _qtyPer->setFocus();
     return;
   }
@@ -603,16 +603,24 @@ void bomItem::sItemIdChanged()
               "SELECT uom_id, uom_name"
               "  FROM item"
               "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id)"
+              "  JOIN uom ON (itemuomconv_to_uom_id=uom_id),"
+              "  itemuom, uomtype "
               " WHERE((itemuomconv_from_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id))"
+              "   AND (item_id=:item_id) "
+              "   AND (itemuom_itemuomconv_id=itemuomconv_id) "
+              "   AND (uomtype_id=itemuom_uomtype_id) "
+              "   AND (uomtype_name='MaterialIssue'))"
               " UNION "
               "SELECT uom_id, uom_name"
               "  FROM item"
               "  JOIN itemuomconv ON (itemuomconv_item_id=item_id)"
-              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id)"
+              "  JOIN uom ON (itemuomconv_from_uom_id=uom_id),"
+              "  itemuom, uomtype "
               " WHERE((itemuomconv_to_uom_id=item_inv_uom_id)"
-              "   AND (item_id=:item_id))"
+              "   AND (item_id=:item_id) "
+              "   AND (itemuom_itemuomconv_id=itemuomconv_id) "
+              "   AND (uomtype_id=itemuom_uomtype_id) "
+              "   AND (uomtype_name='MaterialIssue'))"
               " ORDER BY uom_name;");
   uom.bindValue(":item_id", _item->id());
   uom.exec();

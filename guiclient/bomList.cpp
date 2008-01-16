@@ -169,7 +169,7 @@ void bomList::sFillList( int pItemid, bool pLocal )
          "ORDER BY item_number;";
 
   if ((pItemid != -1) && (pLocal))
-    _bom->populate(sql, pItemid);
+    _bom->populate(sql, TRUE, pItemid);
   else
     _bom->populate(sql, TRUE);
 }
@@ -231,8 +231,6 @@ void bomList::sFillList()
 
 void bomList::sHandleButtons()
 {
-qDebug("control = %d", _bom->altId());
-
   if (_bom->altId() == 0)
     _delete->setEnabled(TRUE);
   else
