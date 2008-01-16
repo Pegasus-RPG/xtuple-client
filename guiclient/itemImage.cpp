@@ -131,6 +131,7 @@ enum SetResponse itemImage::set(const ParameterList &pParams)
     {
       _mode = cEdit;
       _save->setFocus();
+      _purpose->setEnabled(FALSE);
     }
   }
 
