@@ -269,7 +269,7 @@
        <item>
         <widget class="QCheckBox" name="_scheduleAtWooper" >
          <property name="text" >
-          <string>Schedule w/ W/O &amp;Operation</string>
+          <string>Schedule at W/O &amp;Operation</string>
          </property>
          <property name="shortcut" >
           <string>Alt+O</string>
