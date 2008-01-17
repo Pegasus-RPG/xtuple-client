@@ -62,8 +62,10 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QWorkspace>
+#include <QSqlError>
 #include "copyItem.h"
 #include "item.h"
+#include "storedProcErrorLookup.h"
 
 /*
  *  Constructs a items as a child of 'parent', with the
@@ -193,48 +195,18 @@ void items::sDelete()
   q.exec();
   if (q.first())
   {
-    switch (q.value("result").toInt())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-        QMessageBox::warning( this, tr("Cannot Delete Item"),
-                              tr( "The selected Item cannot be deleted as is is currently used in one or more Bills of Materials.\n"
-                                  "You must delete all occurrences of this Item in any Bill of Materials before you may delete it." ) );
-        return;
-
-      case -2:
-        QMessageBox::warning( this, tr("Cannot Delete Item"),
-                              tr( "The selected Item cannot be deleted as is is currently used in one or more Item Sites.\n"
-                                  "You must delete Item Sites that use this Item before you may delete it." ) );
-        return;
-
-      case -3:
-        QMessageBox::warning( this, tr("Cannot Delete Item"),
-                              tr( "The selected Item cannot be deleted as is is currently used in one or more Item Substitutions.\n"
-                                  "You must delete all occurrences of the Item in any Item Substitution before you may delete it." ) );
-        return;
-
-      case -4:
-        QMessageBox::warning( this, tr("Cannot Delete Item"),
-                              tr( "The selected Item cannot be deleted as is is currently used in one or more Breeder Bills of Materials.\n"
-                                  "You must delete all occurrences of this Item in any Breeder Bill of Materials before you may delete it." ) );
-        return;
-
-      case -5:
-        QMessageBox::warning( this, tr("Cannot Delete Item"),
-                              tr( "The selected Item cannot be deleted as is is currently used in one or more Assortment Definitions.\n"
-                                  "You must delete all occurrences of this Item in any Assortment Definition before you may delete it." ) );
-        return;
-
-
-      default:
-//  ToDo
-
-      case 0:
-        sFillList();
-        break;
+      systemError(this, storedProcErrorLookup("deleteItem", result), __FILE__, __LINE__);
+      return;
     }
   }
-//  ToDo
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void items::sFillList( int pItemid, bool pLocal )
