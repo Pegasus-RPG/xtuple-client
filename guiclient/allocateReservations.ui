@@ -16,7 +16,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle" >
-   <string>Allocate Reservation</string>
+   <string>Allocate Reservations</string>
   </property>
   <layout class="QHBoxLayout" >
    <item>
