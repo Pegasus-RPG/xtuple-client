@@ -228,7 +228,23 @@ void booItem::sSave()
     _wrkcnt->setFocus();
     return;
   }
+  
+  if (_setupReport->currentItem() == -1)
+  {
+    QMessageBox::critical( this, tr("Cannot Save BOO Item"),
+                           tr("You must select a Setup Cost reporting method for this BOO item before you may save it.") );
+    _setupReport->setFocus();
+    return;
+  }
 
+  if (_runReport->currentItem() == -1)
+  {
+    QMessageBox::critical( this, tr("Cannot Save BOO Item"),
+                           tr("You must select a Run Cost reporting method for this BOO item before you may save it.") );
+    _runReport->setFocus();
+    return;
+  }  
+  
   if (_receiveStock->isChecked())
   {
     q.prepare( "UPDATE booitem "
