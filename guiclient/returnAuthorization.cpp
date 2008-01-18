@@ -472,7 +472,7 @@ bool returnAuthorization::sSave()
   q.bindValue(":rahead_shipto_zipcode",	 _shipToAddr->postalCode());
   q.bindValue(":rahead_shipto_country",	 _shipToAddr->country());
   q.bindValue(":rahead_custponumber", _customerPO->text().stripWhiteSpace());
-  q.bindValue(":rahead_notess", _notes->text());
+  q.bindValue(":rahead_notes", _notes->text());
   q.bindValue(":rahead_misc", _miscCharge->localValue());
   if (_miscChargeAccount->id() != -1)
     q.bindValue(":rahead_misc_accnt_id", _miscChargeAccount->id());
