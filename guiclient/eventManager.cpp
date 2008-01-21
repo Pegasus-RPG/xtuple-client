@@ -77,6 +77,7 @@
 #include "salesOrder.h"
 #include "salesOrderItem.h"
 #include "storedProcErrorLookup.h"
+#include "purchaseOrderItem.h"
 
 eventManager::eventManager(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
@@ -157,6 +158,13 @@ void eventManager::sPopulateMenu(QMenu *menu)
     menu->insertSeparator();
 
     menuItem = menu->insertItem(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
+  }
+  
+  else if ( (_event->currentItem()->text(6) == "POitemCreate") )
+  {
+    menu->insertSeparator();
+
+    menuItem = menu->insertItem(tr("View Purchase Order Item..."), this, SLOT(sViewPurchaseOrderItem()), 0);
   }
 
   else if ( (_event->currentItem()->text(6) == "SoitemCreated") ||
@@ -247,6 +255,17 @@ void eventManager::sViewSalesOrderItem()
   params.append("soitem_id", _event->currentItem()->text(0).toInt());
       
   salesOrderItem newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
+
+void eventManager::sViewPurchaseOrderItem()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("poitem_id", _event->currentItem()->text(0).toInt());
+      
+  purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }

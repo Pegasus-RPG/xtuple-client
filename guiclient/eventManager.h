@@ -91,6 +91,8 @@ public slots:
     virtual void sFillList();
     virtual void sHandleAutoUpdate( bool pAutoUpdate );
     virtual void sHandleEventValid(bool);
+    virtual void sViewPurchaseOrderItem();
+
 
 protected slots:
     virtual void languageChange();
