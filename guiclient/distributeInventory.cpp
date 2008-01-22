@@ -84,6 +84,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   connect(_post,            SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_taggedOnly,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_bc,   SIGNAL(textChanged(QString)), this, SLOT(sBcChanged(QString)));
+  connect(_cancel,          SIGNAL(clicked()), this, SLOT(sCancel()));
 
   omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
 
@@ -132,8 +133,203 @@ void distributeInventory::languageChange()
   retranslateUi(this);
 }
 
+QList<QVariant> distributeInventory::SeriesAdjust(int pItemsiteid, double pQty, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp)
+{
+  QList<QVariant> itemlocSeriesList;
+  int c = 0;
+
+  q.exec("SELECT NEXTVAL('itemloc_series_seq') AS itemlocseries;");
+  q.first();
+  int itemlocSeries = q.value("itemlocseries").toInt();
+
+  q.prepare("INSERT INTO itemlocdist "	
+            "( itemlocdist_itemsite_id, itemlocdist_source_type, "
+            "  itemlocdist_reqlotserial, "
+            "  itemlocdist_distlotserial, "
+            "  itemlocdist_lotserial, itemlocdist_expiration, "
+            "  itemlocdist_qty, "
+            "  itemlocdist_series, itemlocdist_invhist_id ) "
+			" SELECT itemsite_id, 'O', "
+			" ((:qty > 0)  AND itemsite_controlmethod IN ('L','S')), "
+			" (:qty < 0), "
+            " '', endOfTime(), "
+			" :qty, "
+			" :itemlocseries, -1 "
+			" FROM itemsite "
+			" WHERE (itemsite_id=:itemsiteid);");
+  q.bindValue(":itemlocseries", itemlocSeries);
+  q.bindValue(":itemsiteid", pItemsiteid);
+  q.bindValue(":qty", pQty);
+  q.exec();
+  if (q.lastError().type() == QSqlError::None)
+  {
+    XSqlQuery itemloc;
+    itemloc.prepare( "SELECT itemlocdist_id, itemlocdist_reqlotserial," 
+                     "       itemlocdist_distlotserial, itemlocdist_qty,"
+                     "       itemsite_loccntrl, itemsite_controlmethod,"
+                     "       itemsite_perishable "
+                     "FROM itemlocdist, itemsite "
+                     "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
+                     " AND (itemlocdist_series=:itemlocdist_series) ) "
+                     "ORDER BY itemlocdist_id;" );
+    itemloc.bindValue(":itemlocdist_series", itemlocSeries);
+    itemloc.exec();
+    while (itemloc.next())
+    {
+      if (itemloc.value("itemlocdist_reqlotserial").toBool())
+      {
+        itemlocSeries = -1;
+        XSqlQuery query;
+        // Check to see if this is a lot controlled item and if we have
+        // a predefined lot#/expdate to use. If so assign that information
+        // with itemlocdist_qty and move on. otherwise do the normal dialog
+        // to ask the user for that information.
+        if(itemloc.value("itemsite_controlmethod").toString() == "L" && !pPresetLotnum.isEmpty())
+        {
+          query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
+          if(query.first())
+          {
+            itemlocSeries = query.value("_itemloc_series").toInt();
+            query.exec("SELECT NEXTVAL('itemlocdist_itemlocdist_id_seq') AS itemlocdist_id;");
+            query.first();
+            int itemlocdistid = query.value("itemlocdist_id").toInt();
+            query.prepare( "INSERT INTO itemlocdist "
+                           "( itemlocdist_id, itemlocdist_source_type, itemlocdist_source_id,"
+                           "  itemlocdist_itemsite_id, itemlocdist_lotserial, itemlocdist_expiration,"
+                           "  itemlocdist_qty, itemlocdist_series, itemlocdist_invhist_id ) "
+                           "SELECT :newItemlocdist_id, 'D', itemlocdist_id,"
+                           "       itemlocdist_itemsite_id, :lotSerialNumber, :itemsite_expiration,"
+                           "       :qtyToAssign, :itemlocdist_series, itemlocdist_invhist_id "
+                           "FROM itemlocdist "
+                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
+            if(itemloc.value("itemsite_perishable").toBool())
+              query.bindValue(":itemsite_expiration", pPresetLotexp);
+            else
+              query.bindValue(":itemsite_expiration", omfgThis->startOfTime());
+
+            query.bindValue(":newItemlocdist_id", itemlocdistid);
+            query.bindValue(":lotSerialNumber", pPresetLotnum);
+            query.bindValue(":qtyToAssign", itemloc.value("itemlocdist_qty"));
+            query.bindValue(":itemlocdist_series", itemlocSeries);
+            query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
+            query.exec();
+
+            query.prepare( "INSERT INTO lsdetail "
+                           "( lsdetail_itemsite_id, lsdetail_lotserial, lsdetail_created,"
+                           "  lsdetail_source_type, lsdetail_source_id, lsdetail_source_number ) "
+                           "SELECT itemlocdist_itemsite_id, :lotSerialNumber, CURRENT_TIMESTAMP,"
+                           "       'I', itemlocdist_id, '' "
+                           "FROM itemlocdist "
+                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
+            query.bindValue(":lotSerialNumber", pPresetLotnum);
+            query.bindValue(":itemlocdist_id", itemlocdistid);
+            query.exec();
+
+            query.prepare( "UPDATE itemlocdist "
+                           "SET itemlocdist_source_type='O' "
+                           "WHERE (itemlocdist_series=:itemlocdist_series);"
+              
+                           "DELETE FROM itemlocdist "
+                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
+            query.bindValue(":itemlocdist_series", itemlocSeries);
+            query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
+            query.exec();
+          }
+        }
+
+        if(itemlocSeries == -1)
+        {
+          ParameterList params;
+          params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+		  params.append("cancelVisible");
+
+          assignLotSerial newdlg(pParent, "", TRUE);
+          newdlg.set(params);
+		  itemlocSeries=newdlg.exec();
+          if (itemlocSeries == -1)	//Transaction was canceled
+		  {
+			itemlocSeriesList.prepend(-1);
+            return itemlocSeriesList;
+		  }
+        }
+
+        if (itemloc.value("itemsite_loccntrl").toBool())
+        {
+          query.prepare( "SELECT itemlocdist_id " 
+                         "FROM itemlocdist "
+                         "WHERE (itemlocdist_series=:itemlocdist_series) "
+                         "ORDER BY itemlocdist_id;" );
+          query.bindValue(":itemlocdist_series", itemlocSeries);
+          query.exec();
+          while (query.next())
+          {
+            ParameterList params;
+            params.append("itemlocdist_id", query.value("itemlocdist_id").toInt());
+		    params.append("cancelVisible");
+
+            distributeInventory newdlg(pParent, "", TRUE);
+            newdlg.set(params);
+		    itemlocSeriesList.prepend(newdlg.exec());
+            if (itemlocSeriesList.at(0) == -1) //Transaction was canceled
+			{
+			  for(c = 1; c < itemlocSeriesList.count(); c++)
+			  {
+				q.prepare( "DELETE FROM itemlocdist "
+						   "WHERE (itemlocdist_id=:itemlocdistid); "
+						   "DELETE FROM itemlocdist "
+						   "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
+				q.bindValue(":itemlocdistid", itemlocSeriesList.at(c));
+				q.exec();
+			  }
+			  return itemlocSeriesList;
+			}
+		  }
+        }
+        else
+		{
+          query.prepare( "UPDATE itemlocdist "
+                         "SET itemlocdist_source_type='L', itemlocdist_source_id=-1 "
+                         "WHERE (itemlocdist_series=:itemlocdist_series); ");
+          query.bindValue(":itemlocdist_series", itemlocSeries);
+          query.exec();
+
+		  itemlocSeriesList.prepend(itemlocSeries);
+        }
+      }
+      else
+      {
+        ParameterList params;
+        params.append("itemlocdist_id", itemloc.value("itemlocdist_id").toInt());
+
+        if (itemloc.value("itemlocdist_distlotserial").toBool())
+          params.append("includeLotSerialDetail");
+		  params.append("cancelVisible");
+
+        distributeInventory newdlg(pParent, "", TRUE);
+        newdlg.set(params);
+		itemlocSeriesList.prepend(newdlg.exec());
+        if (itemlocSeriesList.at(0) == -1)	//Transaction canceled
+		{
+          for(c = 1; c < itemlocSeriesList.count(); c++)
+		  {
+            q.prepare( "DELETE FROM itemlocdist "
+	                   "WHERE (itemlocdist_id=:itemlocdistid); "
+	                   "DELETE FROM itemlocdist "
+	                   "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
+            q.bindValue(":itemlocdistid", itemlocSeriesList.at(c));
+            q.exec();
+		  }
+          return itemlocSeriesList;
+		}
+      }
+    }
+  }
+  return itemlocSeriesList;
+}
+
 int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp)
 {
+  //This can be removed when cancel logic has been included in all transactions and db functions
   if (pItemlocSeries != 0)
   {
     XSqlQuery itemloc;
@@ -289,6 +485,9 @@ enum SetResponse distributeInventory::set(const ParameterList &pParams)
     populate();
   }
 
+  param = pParams.value("cancelVisible", &valid);
+  _cancel->setVisible(valid);
+
   return NoError;
 }
 
@@ -363,12 +562,17 @@ void distributeInventory::sPost()
     return;
   }
 
-  q.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
-  q.exec();
+  if (!_cancel->isVisible())
+  {
+    q.prepare("SELECT distributeToLocations(:itemlocdist_id) AS result;");
+    q.bindValue(":itemlocdist_id", _itemlocdistid);
+    q.exec();
 
-  _trapClose = FALSE;
-  accept();
+    _trapClose = FALSE;
+    accept();
+  }
+  else
+    done(_itemlocdistid);
 }
 
 void distributeInventory::sDefault()
@@ -615,4 +819,21 @@ void distributeInventory::sBcChanged(const QString p)
 {
   _post->setDefault(p.isEmpty());
   _bcDistribute->setDefault(! p.isEmpty());
+}
+
+void distributeInventory::sCancel()
+{
+  q.prepare( "DELETE FROM itemlocdist "
+	         "WHERE (itemlocdist_id=:itemlocdistid); "
+	         "DELETE FROM itemlocdist "
+	         "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
+  q.bindValue(":itemlocdistid", _itemlocdistid);
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  done(-1);
 }

@@ -72,6 +72,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+  connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancel()));
 
   _trapClose = TRUE;
 
@@ -128,6 +129,9 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
     }
   }
 
+  param = pParams.value("cancelVisible", &valid);
+  _cancel->setVisible(valid);
+
   return NoError;
 }
 
@@ -176,12 +180,19 @@ void assignLotSerial::sDelete()
   sFillList();
 }
 
-void assignLotSerial::sClose()
+void assignLotSerial::sCancel()
 {
   q.prepare( "DELETE FROM itemlocdist "
              "WHERE ( (itemlocdist_source_type='D')"
              " AND (itemlocdist_source_id=:source_id) );" );
-  q.bindValue(":source_id", _itemlocdistid);
+
+  q.prepare( "DELETE FROM itemlocdist "
+             "WHERE (itemlocdist_series=:itemlocdist_series);"
+
+             "DELETE FROM itemlocdist "
+             "WHERE (itemlocdist_id=:itemlocdist_id);" );
+  q.bindValue(":itemlocdist_series", _itemlocSeries);
+  q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -189,7 +200,7 @@ void assignLotSerial::sClose()
     return;
   }
 
-  reject();
+  done(-1);
 }
 
 void assignLotSerial::sAssign()
@@ -203,7 +214,7 @@ void assignLotSerial::sAssign()
     _new->setFocus();
     return;
   }
-
+  
   q.prepare( "UPDATE itemlocdist "
              "SET itemlocdist_source_type='O' "
              "WHERE (itemlocdist_series=:itemlocdist_series);"
@@ -218,6 +229,7 @@ void assignLotSerial::sAssign()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+
 
   _trapClose = FALSE;
   done(_itemlocSeries);

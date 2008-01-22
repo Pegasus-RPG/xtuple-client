@@ -72,6 +72,8 @@ public:
     distributeInventory(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~distributeInventory();
 
+    static QList<QVariant> SeriesAdjust( int pItemsiteid, double pQty, QWidget * pParent, const QString & = QString::null, const QDate & = QDate() );
+	//This  can be removed when all transaction windows/functions updated to handle cancel button:
     static int SeriesAdjust( int pItemlocSeries, QWidget * pParent, const QString & = QString::null, const QDate & = QDate() );
     virtual enum SetResponse set( const ParameterList & pParams );
 
@@ -86,6 +88,7 @@ public slots:
     virtual void sFillList();
     virtual void sPost();
     virtual void sSelectLocation();
+	virtual void sCancel();
 
 protected slots:
     virtual void languageChange();

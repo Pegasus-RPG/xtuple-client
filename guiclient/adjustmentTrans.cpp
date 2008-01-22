@@ -60,8 +60,10 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QValidator>
+#include <metasql.h>
 #include "inputManager.h"
 #include "distributeInventory.h"
+#include "mqlutil.h"
 
 /*
  *  Constructs a adjustmentTrans as a child of 'parent', with the
@@ -225,6 +227,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 
 void adjustmentTrans::sPost()
 {
+  QList<QVariant> itemlocSeriesList;
 
   if (_qty->text().length() == 0)
   {
@@ -242,19 +245,68 @@ void adjustmentTrans::sPost()
   else if (_relative->isChecked())
     qty = _qty->toDouble();
 
-  q.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber, :comments) AS result "
+  //Prepare transaction
+  QString sql ( "SELECT invAdjustment(itemsite_id, <? value(\"qty\") ?>,  "
+	         "<? if exists(\"itemlocSeriesList\") ?> "
+			 "  ARRAY[ "
+             "  <? foreach(\"itemlocSeriesList\") ?> "
+             "    <? if not isfirst(\"itemlocSeriesList\") ?> "
+             "    ,"
+             "    <? endif ?> "
+             "   <? value(\"itemlocSeriesList\") ?> "
+			 "  <? endforeach ?> ] "
+			 "<? else ?> "
+			 " NULL "
+			 "<? endif ?> "
+             " , <? value(\"docNumber\") ?>, <? value(\"comments\") ?>) AS result "
              "FROM itemsite "
-             "WHERE ( (itemsite_item_id=:item_id)"
-             " AND (itemsite_warehous_id=:warehous_id) );" );
-  q.bindValue(":qty", qty);
-  q.bindValue(":docNumber", _documentNum->text());
-  q.bindValue(":comments", _notes->text());
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":warehous_id", _warehouse->id());
-  q.exec();
-  if (q.first())
+             "WHERE ( (itemsite_item_id=<? value(\"item_id\") ?>)"
+             " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>) );" );
+  ParameterList params;
+
+
+  //See if we need to do some distribution first
+  XSqlQuery itemsite;
+  itemsite.prepare( "SELECT itemsite_id, ((itemsite_controlmethod IN ('L','S')) OR (itemsite_loccntrl)) AS distribute "
+	         "FROM itemsite "
+			 "WHERE ( (itemsite_item_id=:item_id ) "
+			 "AND (itemsite_warehous_id=:warehous_id) ); ");
+  itemsite.bindValue(":item_id", _item->id());
+  itemsite.bindValue(":warehous_id", _warehouse->id());
+  itemsite.exec();
+  if (itemsite.first())
   {
-    if (q.value("result").toInt() < 0)
+    if (itemsite.value("distribute").toBool())
+	{
+      itemlocSeriesList = distributeInventory::SeriesAdjust(itemsite.value("itemsite_id").toInt(), qty, this);
+	  if (itemlocSeriesList.at(0) == -1)
+	  {
+	    QMessageBox::information(  this, tr("Enter Adjustment Quantitiy"),
+                           tr(  "Transaction canceled."  ));
+	    return;
+	  }
+	  else
+        params.append("itemlocSeriesList", itemlocSeriesList);
+	}
+  }
+  else
+    systemError( this, tr("A System Error occurred at adjustmentTrans::%1, Item Site ID #%2, Warehouse ID #%3.")
+                       .arg(__LINE__)
+                       .arg(_item->id())
+                       .arg(_warehouse->id()) );
+  
+
+  params.append("qty", qty);
+  params.append("docNumber", _documentNum->text());
+  params.append("comments", _notes->text());
+  params.append("item_id", _item->id());
+  params.append("warehous_id", _warehouse->id());
+
+  MetaSQLQuery mql(sql);
+  XSqlQuery invadj = mql.toQuery(params);
+  if (invadj.first())
+  {
+    if (invadj.value("result").toInt() < 0)
       systemError( this, tr("A System Error occurred at adjustmentTrans::%1, Item ID #%2, Warehouse ID #%3, Error #%4.")
                          .arg(__LINE__)
                          .arg(_item->id())
@@ -262,7 +314,7 @@ void adjustmentTrans::sPost()
                          .arg(q.value("result").toInt()) );
     else
     {
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+//      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
 
       if (_captive)
         close();

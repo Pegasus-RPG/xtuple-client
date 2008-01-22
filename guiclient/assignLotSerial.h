@@ -77,7 +77,7 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sNew();
     virtual void sDelete();
-    virtual void sClose();
+    virtual void sCancel();
     virtual void sAssign();
     virtual void sFillList();
 
