@@ -78,13 +78,15 @@ class YourPayProcessor : public CreditCardProcessor
     virtual int  doCharge(const int, const int, const double, const int, QString&, QString&, int&);
     virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&);
     virtual int  doCredit(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual bool isLive();
-    virtual bool isTest();
+    virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int  fraudChecks();
+    virtual void reset();
 
   private:
     virtual int  handleResponse(const QDomDocument&, const int, const QString&, const double, const int, QString&, QString&, int&);
     QString	_pemfile;
     QString	_storenum;
+    bool	_passedLinkShield;
 };
 
 #endif // YOURPAYPROCESSOR_H

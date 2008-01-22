@@ -78,7 +78,6 @@ protected slots:
     virtual void languageChange();
 
 private:
-    virtual void init();
 
 };
 

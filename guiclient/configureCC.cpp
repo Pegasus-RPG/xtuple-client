@@ -57,52 +57,22 @@
 
 #include "configureCC.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
 
-/*
- *  Constructs a configureCC as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "creditcardprocessor.h"
+
 configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_ccCompany, SIGNAL(activated(int)), _ccWidgetStack, SLOT(setCurrentIndex(int)));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-configureCC::~configureCC()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void configureCC::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void configureCC::init()
-{
-  if(_metricsenc == 0)
+  if (_metricsenc == 0)
   {
-    QMessageBox::critical( this, tr("Cannot Read Configuration"), tr("Cannot read encrypted information from database."));
+    QMessageBox::critical( this, tr("Cannot Read Configuration"),
+		    tr("<p>Cannot read encrypted information from database."));
   }
 
   _ccDefaultBank->setType(XComboBox::ARBankAccounts);
@@ -111,12 +81,8 @@ void configureCC::init()
   _ccTest->setChecked(_metrics->boolean("CCTest"));
   _ccValidDays->setValue(_metrics->value("CCValidDays").toInt());
   
-  QString metric = _metrics->value("CCCompany");
-  if("YourPay" == metric)
-    _ccCompany->setCurrentItem(1);
-  else //if("Verisign" == metric)
-    _ccCompany->setCurrentItem(0);
-  _ccWidgetStack->setCurrentIndex(_ccCompany->currentItem());
+  _ccCompany->setCurrentIndex(_ccCompany->findText(_metrics->value("CCCompany")));
+  _ccWidgetStack->setCurrentIndex(_ccCompany->currentIndex());
 
   _ccServer->setText(_metrics->value("CCServer"));
   _ccPort->setText(_metrics->value("CCPort"));
@@ -135,46 +101,45 @@ void configureCC::init()
   _ccYPWinPathPEM->setText(_metrics->value("CCYPWinPathPEM"));
   _ccYPLinPathPEM->setText(_metrics->value("CCYPLinPathPEM"));
   _ccYPMacPathPEM->setText(_metrics->value("CCYPMacPathPEM"));
-  _ccYPLinkShield->setCurrentItem((_metrics->boolean("CCYPLinkShield")?1:0));
-  _ccYPLinkShieldMax->setText(_metrics->value("CCYPLinkShieldMax"));
+  _ccYPLinkShield->setChecked(_metrics->boolean("CCYPLinkShield"));
+  _ccYPLinkShieldMax->setValue(_metrics->value("CCYPLinkShieldMax").toInt());
 
-  QString str = _metrics->value("CCConfirmTrans");
-  if(str == "B")
-    _ccConfirmBoth->setChecked(true);
-  else if(str == "A")
-    _ccConfirmAuth->setChecked(true);
-  else if(str == "C")
-    _ccConfirmCharge->setChecked(true);
-  else // if(str == "X")
-    _ccConfirmNone->setChecked(true);
+  _confirmPreauth->setChecked(_metrics->boolean("CCConfirmPreauth"));
+  _confirmCharge->setChecked(_metrics->boolean("CCConfirmCharge"));
+  _confirmChargePreauth->setChecked(_metrics->boolean("CCConfirmChargePreauth"));
+  _confirmCredit->setChecked(_metrics->boolean("CCConfirmCredit"));
+
+  _enablePreauth->setChecked(_metrics->boolean("CCEnablePreauth"));
+  _enableCharge->setChecked(_metrics->boolean("CCEnableCharge"));
+  _enableChargePreauth->setChecked(_metrics->boolean("CCEnableChargePreauth"));
+  _enableCredit->setChecked(_metrics->boolean("CCEnableCredit"));
+
+  _cvvRequired->setChecked(_metrics->boolean("CCRequireCVV"));
+  QString str = _metrics->value("CCCVVCheck");
+  if (str == "F")
+    _cvvReject->setChecked(true);
+  else if (str == "W")
+    _cvvWarn->setChecked(true);
+  else // if (str == "X")
+    _cvvNone->setChecked(true);
 
   str = _metrics->value("CCAvsCheck");
-  if(str == "F")
-    _ccAvsCheckFull->setChecked(true);
-  else if(str == "P")
-    _ccAvsCheckPartial->setChecked(true);
-  else if(str == "A")
-    _ccAvsCheckAny->setChecked(true);
-  else // if(str == "X")
-    _ccAvsCheckNone->setChecked(true);
+  if (str == "F")
+    _avsReject->setChecked(true);
+  else if (str == "W")
+    _avsWarn->setChecked(true);
+  else // if (str == "X")
+    _avsNone->setChecked(true);
 
-  str = _metrics->value("CCSoOptions");
-  if(str == "A")
-    _ccSoOptionsAuth->setChecked(true);
-  else if(str == "C")
-    _ccSoOptionsCharge->setChecked(true);
-  else // if(str == "B")
-    _ccSoOptionsBoth->setChecked(true);
+  str = _metrics->value("CCTestResult");
+  if (str == "F")
+    _testsAllFail->setChecked(true);
+  else if (str == "S")
+    _testsSomeFail->setChecked(true);
+  else // if (str == "P")
+    _testsAllPass->setChecked(true);
 
-  str = _metrics->value("CCYPTestResult");
-  if(str == "D")
-    _ccYPTestResultDuplicate->setChecked(true);
-  else if(str == "X")
-    _ccYPTestResultDecline->setChecked(true);
-  else // if(str == "G")
-    _ccYPTestResultGood->setChecked(true);
-
-  if(0 != _metricsenc)
+  if (0 != _metricsenc)
   {
     _ccLogin->setText(_metricsenc->value("CCLogin"));
     _ccPassword->setText(_metricsenc->value("CCPassword"));
@@ -200,75 +165,163 @@ void configureCC::init()
   }
 }
 
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+configureCC::~configureCC()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void configureCC::languageChange()
+{
+    retranslateUi(this);
+}
+
 void configureCC::sSave()
 {
-  char *company[] = { "Verisign", "YourPay" };
+  CreditCardProcessor *cardproc =
+		  CreditCardProcessor::getProcessor(_ccCompany->currentText());
+  /* qDebug("_ccCompany %s, cardproc %x",
+	 _ccCompany->currentText().toAscii().data(), int(cardproc));
+  */
+  if (! cardproc)
+  {
+    QMessageBox::warning(this, tr("Error getting Credit Card Processor"),
+			 tr("Internal error finding the right Credit Card "
+			    "Processor. The application will save what it can "
+			    "but you should re-open this window and double-"
+			    "check all of the settings before continuing."));
+  }
+  else if (_ccServer->text() != cardproc->defaultServer(_ccTest->isChecked()) &&
+      _ccPort->text().toInt() != cardproc->defaultPort(_ccTest->isChecked()) )
+  {
+    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration?"),
+			      tr("<p>This configuration does not appear "
+				 "valid for %1 mode: the Server is %2 and is "
+				 "expected to be %3, while the Port is %4 "
+				 "and is expected to be %5. Credit Card "
+				 "processing transactions may fail.<p>Do you "
+				 "want to save this configuration anyway?")
+				.arg((_ccTest->isChecked() ? "Test" : "Live"))
+				.arg(_ccServer->text())
+				.arg(cardproc->defaultServer())
+				.arg(_ccPort->text())
+				.arg(cardproc->defaultPort()),
+			      QMessageBox::Yes,
+			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+  }
+  else if (_ccServer->text() != cardproc->defaultServer(_ccTest->isChecked()))
+  {
+    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration?"),
+			      tr("<p>This configuration does not appear "
+				 "valid for %1 mode: the Server is %2 and is "
+				 "expected to be %3. Credit Card "
+				 "processing transactions may fail.<p>Do you "
+				 "want to save this configuration anyway?")
+				.arg((_ccTest->isChecked() ? "Test" : "Live"))
+				.arg(_ccServer->text())
+				.arg(cardproc->defaultServer()),
+			      QMessageBox::Yes,
+			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+  }
+  else if (_ccPort->text().toInt() != cardproc->defaultPort(_ccTest->isChecked()))
+  {
+    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration?"),
+			      tr("<p>This configuration does not appear "
+				 "valid for %1 mode: the Port is %2 "
+				 "and is expected to be %3. Credit Card "
+				 "processing transactions may fail.<p>Do you "
+				 "want to save this configuration anyway?")
+				.arg((_ccTest->isChecked() ? "Test" : "Live"))
+				.arg(_ccPort->text())
+				.arg(cardproc->defaultPort()),
+			      QMessageBox::Yes,
+			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+      return;
+  }
 
-  _metrics->set("CCAccept", _ccAccept->isChecked());
-  _metrics->set("CCTest", _ccTest->isChecked());
-  _metrics->set("CCValidDays", _ccValidDays->value());
-  _metrics->set("CCCompany", QString(company[_ccCompany->currentItem()]));
-  _metrics->set("CCServer", _ccServer->text());
-  _metrics->set("CCPort", _ccPort->text());
-  _metrics->set("CCUseProxyServer", _ccUseProxyServer->isChecked());
-  _metrics->set("CCProxyServer", _ccProxyServer->text());
-  _metrics->set("CCProxyPort", _ccProxyPort->text());
-  _metrics->set("CCDefaultBank", _ccDefaultBank->id());
-  _metrics->set("CCEncKeyName", _ccEncKeyName->text());
-  _metrics->set("CCWinEncKey", _ccWinEncKey->text());
-  _metrics->set("CCLinEncKey", _ccLinEncKey->text());
-  _metrics->set("CCMacEncKey", _ccMacEncKey->text());
-  _metrics->set("CCYPWinPathPEM", _ccYPWinPathPEM->text());
-  _metrics->set("CCYPLinPathPEM", _ccYPLinPathPEM->text());
-  _metrics->set("CCYPMacPathPEM", _ccYPMacPathPEM->text());
-  _metrics->set("CCYPLinkShield", (_ccYPLinkShield->currentItem()==1));
+  if (_ccYPLinkShield->isChecked() && _ccYPLinkShieldMax->value() <= 0)
+  {
+    QMessageBox::critical(this, tr("Invalid Credit Card Configuration"),
+			  tr("<p>If LinkShield is enabled then you must enter "
+			     "a cutoff score between 1 and 100. Higher Numbers "
+			     "indicate higher risk."));
+    return;
+  }
+
+  _metrics->set("CCAccept",          _ccAccept->isChecked());
+  _metrics->set("CCTest",            _ccTest->isChecked());
+  _metrics->set("CCValidDays",       _ccValidDays->value());
+  _metrics->set("CCCompany",         _ccCompany->currentText());
+  _metrics->set("CCServer",          _ccServer->text());
+  _metrics->set("CCPort",            _ccPort->text());
+  _metrics->set("CCUseProxyServer",  _ccUseProxyServer->isChecked());
+  _metrics->set("CCProxyServer",     _ccProxyServer->text());
+  _metrics->set("CCProxyPort",       _ccProxyPort->text());
+  _metrics->set("CCDefaultBank",     _ccDefaultBank->id());
+  _metrics->set("CCEncKeyName",      _ccEncKeyName->text());
+  _metrics->set("CCWinEncKey",       _ccWinEncKey->text());
+  _metrics->set("CCLinEncKey",       _ccLinEncKey->text());
+  _metrics->set("CCMacEncKey",       _ccMacEncKey->text());
+
+  _metrics->set("CCYPWinPathPEM",    _ccYPWinPathPEM->text());
+  _metrics->set("CCYPLinPathPEM",    _ccYPLinPathPEM->text());
+  _metrics->set("CCYPMacPathPEM",    _ccYPMacPathPEM->text());
+  _metrics->set("CCYPLinkShield",    _ccYPLinkShield->isChecked());
   _metrics->set("CCYPLinkShieldMax", _ccYPLinkShieldMax->text());
 
-  if(_ccConfirmNone->isChecked())
-    _metrics->set("CCConfirmTrans", QString("X"));
-  if(_ccConfirmAuth->isChecked())
-    _metrics->set("CCConfirmTrans", QString("A"));
-  if(_ccConfirmBoth->isChecked())
-    _metrics->set("CCConfirmTrans", QString("B"));
-  if(_ccConfirmCharge->isChecked())
-    _metrics->set("CCConfirmTrans", QString("C"));
+  _metrics->set("CCConfirmPreauth",       _confirmPreauth->isChecked());
+  _metrics->set("CCConfirmCharge",        _confirmCharge->isChecked());
+  _metrics->set("CCConfirmChargePreauth", _confirmChargePreauth->isChecked());
+  _metrics->set("CCConfirmCredit",        _confirmCredit->isChecked());
 
-  if(_ccAvsCheckNone->isChecked())
+  _metrics->set("CCEnablePreauth",       _enablePreauth->isChecked());
+  _metrics->set("CCEnableCharge",        _enableCharge->isChecked());
+  _metrics->set("CCEnableChargePreauth", _enableChargePreauth->isChecked());
+  _metrics->set("CCEnableCredit",        _enableCredit->isChecked());
+
+  _metrics->set("CCRequireCVV", _cvvRequired->isChecked());
+  if(_cvvNone->isChecked())
+    _metrics->set("CCCVVCheck", QString("X"));
+  else if(_cvvWarn->isChecked())
+    _metrics->set("CCCVVCheck", QString("W"));
+  else if(_cvvReject->isChecked())
+    _metrics->set("CCCVVCheck", QString("F"));
+
+  if(_avsNone->isChecked())
     _metrics->set("CCAvsCheck", QString("X"));
-  if(_ccAvsCheckAny->isChecked())
-    _metrics->set("CCAvsCheck", QString("A"));
-  if(_ccAvsCheckFull->isChecked())
+  else if(_avsWarn->isChecked())
+    _metrics->set("CCAvsCheck", QString("W"));
+  else if(_avsReject->isChecked())
     _metrics->set("CCAvsCheck", QString("F"));
-  if(_ccAvsCheckPartial->isChecked())
-    _metrics->set("CCAvsCheck", QString("P"));
 
-  if(_ccSoOptionsBoth->isChecked())
-    _metrics->set("CCSoOptions", QString("B"));
-  if(_ccSoOptionsAuth->isChecked())
-    _metrics->set("CCSoOptions", QString("A"));
-  if(_ccSoOptionsCharge->isChecked())
-    _metrics->set("CCSoOptions", QString("C"));
-
-  if(_ccYPTestResultGood->isChecked())
-    _metrics->set("CCYPTestResult", QString("G"));
-  if(_ccYPTestResultDuplicate->isChecked())
-    _metrics->set("CCYPTestResult", QString("D"));
-  if(_ccYPTestResultDecline->isChecked())
-    _metrics->set("CCYPTestResult", QString("X"));
+  if(_testsAllFail->isChecked())
+    _metrics->set("CCTestResult", QString("F"));
+  else if(_testsSomeFail->isChecked())
+    _metrics->set("CCTestResult", QString("S"));
+  else if(_testsAllPass->isChecked())
+    _metrics->set("CCTestResult", QString("P"));
 
   _metrics->load();
 
-  if(0 != _metricsenc)
+  if (0 != _metricsenc)
   {
-    _metricsenc->set("CCLogin", _ccLogin->text());
-    _metricsenc->set("CCPassword", _ccPassword->text());
-    _metricsenc->set("CCProxyLogin", _ccProxyLogin->text());
+    _metricsenc->set("CCLogin",         _ccLogin->text());
+    _metricsenc->set("CCPassword",      _ccPassword->text());
+    _metricsenc->set("CCProxyLogin",    _ccProxyLogin->text());
     _metricsenc->set("CCProxyPassword", _ccProxyPassword->text());
-    _metricsenc->set("CCVSUser", _ccVSUser->text());
-    _metricsenc->set("CCVSVendor", _ccVSVendor->text());
-    _metricsenc->set("CCVSPartner", _ccVSPartner->text());
-    _metricsenc->set("CCVSPassword", _ccVSPassword->text());
-    _metricsenc->set("CCYPStoreNum", _ccYPStoreNum->text());
+    _metricsenc->set("CCVSUser",        _ccVSUser->text());
+    _metricsenc->set("CCVSVendor",      _ccVSVendor->text());
+    _metricsenc->set("CCVSPartner",     _ccVSPartner->text());
+    _metricsenc->set("CCVSPassword",    _ccVSPassword->text());
+    _metricsenc->set("CCYPStoreNum",    _ccYPStoreNum->text());
 
     _metricsenc->load();
   }

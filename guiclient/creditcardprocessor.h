@@ -71,22 +71,26 @@ class CreditCardProcessor : public QObject
     virtual ~CreditCardProcessor();
 
     // no public constructor for abstract class, just a factory
-    static CreditCardProcessor	*getProcessor();
+    static CreditCardProcessor	*getProcessor(const QString = QString());
 
     // these are the primary transaction handlers and should not be overridden:
     virtual int	    authorize(const int, const int, const double, const int, QString&, int&, QString, int&);
     virtual int	    charge(const int, const int, const double, const int, QString&, QString&, int&, QString, int&);
     virtual int	    chargePreauthorized(const int, const double, const int, QString&, QString&, int&);
     virtual int	    credit(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int	    voidPrevious(const int&);
+    virtual int	    voidPrevious(int &);
 
     // these are support methods that typically won't be overridden
     virtual int	    checkConfiguration();
     virtual int	    currencyId();
     virtual QString currencyName();
     virtual QString currencySymbol();
+    virtual int     defaultPort(bool = false);
+    virtual QString defaultServer(bool = false);
     virtual bool    isLive();
     virtual bool    isTest();
+    virtual void    reset();
+
     static  QString errorMsg();		// most recent error
     static  QString errorMsg(const int);
 
@@ -99,17 +103,24 @@ class CreditCardProcessor : public QObject
     virtual int doCheckConfiguration();
     virtual int doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&);
     virtual int doCredit(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int doVoidPrevious(const int);
+    virtual int doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&);
 
-    virtual int checkCreditCard(const int, const int, QString&);
-    virtual int checkCreditCardProcessor()	{ return false; };
-    virtual int processXML(const QDomDocument&, QDomDocument&);
+    virtual int     checkCreditCard(const int, const int, QString&);
+    virtual int     checkCreditCardProcessor()	{ return false; };
+    virtual int     fraudChecks();
+    virtual int     processXML(const QDomDocument&, QDomDocument&);
 
     int			_currencyId;
     QString		_currencyName;
     QString		_currencySymbol;
+    QString		_defaultLiveServer;
+    QString		_defaultTestServer;
+    int			_defaultLivePort;
+    int			_defaultTestPort;
     static QString	_errorMsg;
     static QHash<int, QString>	_msgHash;
+    bool		_passedAvs;
+    bool		_passedCvv;
     QString		_plogin;
     QString		_ppassword;
     QString		_pport;

@@ -498,20 +498,12 @@ void cashReceipt::sSave()
       (fundsType == "A" || fundsType == "D" || fundsType == "M" || fundsType == "V"))
   {
     CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
-    if (cardproc->checkConfiguration() < 0)
-    {
-      QMessageBox::warning( this, tr("Credit Card Error"),
-			    cardproc->errorMsg() );
-      _received->setFocus();
-      return;
-    }
-
     _save->setEnabled(false);
     int ccpayid = -1;
     QString ordernum = _docNumber->text().isEmpty() ?
 		      QString::number(_cashrcptid) : _docNumber->text();
     int returnVal = cardproc->charge(_cc->id(),
-				     _CCCVV->text().toInt(),
+				     _CCCVV->text().isEmpty() ? -1 : _CCCVV->text().toInt(),
 				     _received->localValue(),
 				     _received->id(),
 				     ordernum, ordernum, ccpayid,

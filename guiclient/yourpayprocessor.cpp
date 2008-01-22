@@ -55,16 +55,6 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-/* TODO: add CCYPLinkShield and CCYPLinkShieldMax to config and this to code:
-         if CCYPLinkShield && r_score == empty string
-	   void the transaction: we expect linkshield to be enabled and it isn't
-	 else if CCYPLinkShield &&
-		 r_score != empty string &&
-		 r_score < CCYPLlinkShieldMax (0 <= x <= 100)
-	   continue processing
-	 else if r_score >= CCYPLinkShieldMax (0 <= x <= 100)
-	   void the transaction because it's too risky
- */
  /* TODO: add more elements:
 	  transactiondetails
 	    taxexempt		required for LEVEL 2
@@ -127,10 +117,21 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
     _currencySymbol = CurrDisplay::baseCurrAbbr();
   }
 
+  _defaultLivePort   = 1129;
+  _defaultLiveServer = "secure.linkpt.net";
+  _defaultTestPort   = 1129;
+  _defaultTestServer = "staging.linkpt.net";
+
   _msgHash.insert(-100, tr("No Approval Code\n%1\n%2\n%3"));
   _msgHash.insert(-103, tr("The YourPay Store Number is not set."));
   _msgHash.insert(-104, tr("The digital certificate (.pem file) is not set."));
   _msgHash.insert(-105, tr("Could not open digital certificate (.pem file) %1."));
+  _msgHash.insert(-106, tr("Transaction failed LinkShield check. Either the "
+			   "score was greater than the maximum configured "
+			   "allowed score or the score was empty (this may "
+			   "happen if the application is configured to "
+			   "check the LinkShield score but you have not "
+			   "subscribed to this service)."));
 }
 
 int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QDomDocument &prequest, QString pordertype)
@@ -191,16 +192,21 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
     resultText = "LIVE";
   else if (isTest())
   {
-    switch (qrand() % 10)
-    {
-      case 0: resultText = "DECLINE";
-	      break;
-      case 1: resultText = "DUPLICATE";
-	      break;
-      default:
-	      resultText = "GOOD";
-	      break;
-    }
+    if (_metrics->value("CCTestResult") == "G")
+      resultText = "GOOD";
+    else if (_metrics->value("CCTestResult") == "F")
+      resultText = (qrand() % 2) ? "DECLINE" : "DUPLICATE";
+    else if (_metrics->value("CCTestResult") == "S")
+      switch (qrand() % 10)
+      {
+	case 0: resultText = "DECLINE";
+		break;
+	case 1: resultText = "DUPLICATE";
+		break;
+	default:
+		resultText = "GOOD";
+		break;
+      }
   }
   else
   {
@@ -225,7 +231,10 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
   CREATECHILDTEXTNODE(elem,  "cardexpyear",
 		      ypq.value("ccard_year_expired").toString().right(2));
   if (pcvv > 0)
-    CREATECHILDTEXTNODE(elem,  "cvmvalue", QString::number(pcvv));
+  {
+    CREATECHILDTEXTNODE(elem, "cvmvalue", QString::number(pcvv));
+    CREATECHILDTEXTNODE(elem, "cvmindicator", "provided");
+  }
 
   elem = prequest.createElement("billing");
   order.appendChild(elem);
@@ -533,6 +542,62 @@ int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double 
   return returnValue;
 }
 
+int YourPayProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+{
+  if (DEBUG)
+    qDebug("YP:doVoidPrevious(%d, %d, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(),
+	   pccpayid);
+  XSqlQuery ypq;
+  ypq.prepare( "SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
+	       "              :amount, CURRENT_DATE), 2) AS ccpay_amount_yp;");
+  ypq.bindValue(":curr_id",    pcurrid);
+  ypq.bindValue(":yp_curr_id", _currencyId);
+  ypq.bindValue(":amount",     pamount);
+  ypq.exec();
+  if (ypq.first())
+  {
+    ; // we'll use the result later
+  }
+  else if (ypq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = ypq.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-17);
+    return -17;
+  }
+
+  QString tmpErrorMsg = _errorMsg;
+
+  QDomDocument request;
+
+  int returnValue = buildCommonXML(pccardid, pcvv,
+				   ypq.value("ccpay_amount_yp").toString(),
+				   request, "VOID");
+  if (returnValue != 0)
+    return returnValue;
+
+  QDomElement elem = request.createElement("transactiondetails");
+  request.documentElement().appendChild(elem);
+  CREATECHILDTEXTNODE(elem, "oid",              pneworder);
+  CREATECHILDTEXTNODE(elem, "terminaltype",     "UNSPECIFIED");
+
+  QDomDocument response;
+  returnValue = processXML(request, response);
+  _errorMsg = tmpErrorMsg;
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = handleResponse(response, pccardid, "V", pamount, pcurrid,
+			       pneworder, preforder, pccpayid);
+  _errorMsg = tmpErrorMsg;
+  return returnValue;
+}
+
 int YourPayProcessor::handleResponse(const QDomDocument &response, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
 {
   if (DEBUG)
@@ -619,7 +684,12 @@ int YourPayProcessor::handleResponse(const QDomDocument &response, const int pcc
   if (r_approved == "APPROVED")
   {
     _errorMsg = errorMsg(0).arg(r_ref);
-    status = (ptype == "A") ? "A" : "C";	// "A"uthorized || "C"ompleted
+    if (ptype == "A")
+      status = "A";	// Authorized
+    else if (ptype == "V")
+      status = "V";	// Voided
+    else
+      status = "C";	// Completed/Charged
   }
 
   else if (r_approved == "DENIED")
@@ -657,6 +727,39 @@ int YourPayProcessor::handleResponse(const QDomDocument &response, const int pcc
     returnValue = -100;
     status = "X";
   }
+
+  // YP encodes AVS and CVV checking in the r_avs response field
+  _passedAvs = r_avs.contains(QRegExp("^[XY][XY]"));
+  if (_passedAvs)
+  {
+    XSqlQuery ypq;
+    ypq.prepare("SELECT ccard_type FROM ccard WHERE ccard_id=:ccardid;");
+    ypq.bindValue(":ccardid", pccardid);
+    ypq.exec();
+    if (ypq.first())
+    {
+      QString cardtype = ypq.value("ccard_type").toString();
+      QString cardspecificpart = r_avs.mid(2, 1);
+      if (cardtype == "V")
+	_passedAvs = cardspecificpart.contains(QRegExp("[YZANURSEG]"));
+      else if (cardtype == "M")
+	_passedAvs = cardspecificpart.contains(QRegExp("[YZANXWURS]"));
+      else if (cardtype == "D")
+	_passedAvs = cardspecificpart.contains(QRegExp("[AXYNWU]"));
+      else if (cardtype == "A")
+	_passedAvs = cardspecificpart.contains(QRegExp("[YZANURS]"));
+    }
+  }
+
+  _passedCvv = r_avs.contains(QRegExp("[MPSUXZ ]$"));
+
+  _passedLinkShield = (! _metrics->boolean("CCYPLinkShield")) ||
+	      (! r_score.isEmpty() &&
+	       r_score.toInt() <= _metrics->value("CCYPLinkShieldMax").toInt());
+
+  if (DEBUG)
+    qDebug("YP:%s\t_passedAvs %d\t_passedCvv %d\t_passedLinkShield %d",
+	    r_avs.toAscii().data(), _passedAvs, _passedCvv, _passedLinkShield);
 
   /* From here on, treat errors as warnings:
      do as much as possible,
@@ -812,23 +915,6 @@ int YourPayProcessor::doCheckConfiguration()
 {
   if (DEBUG)
     qDebug("YP:doCheckConfiguration()");
-  if ((_metrics->value("CCServer") != "staging.linkpt.net") &&
-      (_metrics->value("CCServer") != "secure.linkpt.net"))
-  {
-    _errorMsg = errorMsg(-15)
-		.arg(_metrics->value("CCServer"))
-		.arg(_metrics->value("CCCompany"));
-    return -15;
-
-  }
-
-  if (_metrics->value("CCPort").toInt() != 1129)
-  {
-    _errorMsg = errorMsg(-16)
-		  .arg(_metrics->value("CCPort"))
-		  .arg(_metrics->value("CCCompany"));
-    return -16;
-  }
 
   _storenum = _metricsenc->value("CCYPStoreNum");
   if (_storenum.isEmpty())
@@ -861,14 +947,26 @@ int YourPayProcessor::doCheckConfiguration()
   return 0;
 }
 
-bool YourPayProcessor::isLive()
+void YourPayProcessor::reset()
 {
-  return (!_metrics->boolean("CCTest") &&
-	   _metrics->value("CCServer") == "secure.linkpt.net");
+  CreditCardProcessor::reset();
+  _passedLinkShield = true;
 }
 
-bool YourPayProcessor::isTest()
+int YourPayProcessor::fraudChecks()
 {
-  return (_metrics->boolean("CCTest") &&
-	  _metrics->value("CCServer") == "staging.linkpt.net");
+  if (DEBUG)
+    qDebug("YP:fraudChecks()");
+
+  int returnValue = CreditCardProcessor::fraudChecks();
+  if (returnValue < 0)
+    return returnValue;
+
+  else if (!_passedLinkShield)
+  {
+    _errorMsg = errorMsg(-106);
+    returnValue = -106;
+  }
+
+  return returnValue;
 }

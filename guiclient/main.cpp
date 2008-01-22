@@ -369,18 +369,18 @@ int main(int argc, char *argv[])
 #endif
   
   if (keypath.isEmpty())
-  {
-  	keypath = app.applicationDirPath() + "/";
-  }
+    keypath = app.applicationDirPath();
+
+  if (! keypath.endsWith(QDir::separator()))
+    keypath += QDir::separator();
 
   keyname = _metrics->value("CCEncKeyName");
   if (keyname.isEmpty())
-  {
-  	keyname = "OpenMFG.key";
-  }
+    keyname = "OpenMFG.key";
   
   keytogether = keypath + keyname;
   
+  // qDebug("keytogether: %s", keytogether.toAscii().data());
   QFile keyFile(keytogether);
 
   if(keyFile.exists())
@@ -396,11 +396,7 @@ int main(int argc, char *argv[])
   omfgThis = new OpenMFGGUIClient(databaseURL, username);
   omfgThis->_key = key;
 
-/*
-  QString mymess;
-  mymess = key.latin1();
-  QMessageBox::warning( 0, "Encyrption Key", mymess );
-*/
+// qDebug("Encryption Key: %s", key.toAscii().data() );
   
   if (key.length() > 0) {
 	_splash->showMessage(QObject::tr("Loading Database Encryption Metrics"), SplashTextAlignment, SplashTextColor);

@@ -1,48 +1,45 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>configureCC</class>
  <widget class="QDialog" name="configureCC" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>468</width>
-    <height>419</height>
+    <width>506</width>
+    <height>434</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Credit Card Configuration</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
+   <property name="spacing" >
     <number>5</number>
    </property>
-   <property name="spacing" >
+   <property name="leftMargin" >
+    <number>5</number>
+   </property>
+   <property name="topMargin" >
+    <number>5</number>
+   </property>
+   <property name="rightMargin" >
+    <number>5</number>
+   </property>
+   <property name="bottomMargin" >
     <number>5</number>
    </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>5</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -64,9 +61,6 @@
        </item>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -79,22 +73,22 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
             <widget class="QComboBox" name="_ccCompany" >
              <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>3</hsizetype>
-               <vsizetype>0</vsizetype>
+              <sizepolicy vsizetype="Fixed" hsizetype="MinimumExpanding" >
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <item>
+              <property name="text" >
+               <string>Authorize.Net</string>
+              </property>
+             </item>
              <item>
               <property name="text" >
                <string>Verisign</string>
@@ -131,17 +125,11 @@
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
@@ -188,150 +176,113 @@
     </layout>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget2" >
+    <widget class="QTabWidget" name="tabWidget" >
      <property name="currentIndex" >
-      <number>3</number>
+      <number>0</number>
      </property>
-     <widget class="QWidget" name="general" >
+     <widget class="QWidget" name="_generalPage" >
       <attribute name="title" >
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>5</number>
-             </property>
              <item>
-              <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
+              <widget class="QGroupBox" name="_ccConfirmGroup" >
+               <property name="title" >
+                <string>Confirm Transaction</string>
                </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QGroupBox" name="_ccConfirmGroup" >
-                 <property name="title" >
-                  <string>Confirm Transaction</string>
-                 </property>
-                 <layout class="QGridLayout" >
-                  <property name="margin" >
-                   <number>5</number>
+               <layout class="QVBoxLayout" >
+                <item>
+                 <widget class="QCheckBox" name="_confirmPreauth" >
+                  <property name="text" >
+                   <string>Pre-Authorization</string>
                   </property>
-                  <property name="spacing" >
-                   <number>5</number>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_confirmCharge" >
+                  <property name="text" >
+                   <string>Direct Charge</string>
                   </property>
-                  <item row="0" column="1" >
-                   <widget class="QRadioButton" name="_ccConfirmAuth" >
-                    <property name="text" >
-                     <string>Authorize</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="0" column="0" >
-                   <widget class="QRadioButton" name="_ccConfirmNone" >
-                    <property name="text" >
-                     <string>None</string>
-                    </property>
-                    <property name="checked" >
-                     <bool>true</bool>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="1" >
-                   <widget class="QRadioButton" name="_ccConfirmCharge" >
-                    <property name="text" >
-                     <string>Charge</string>
-                    </property>
-                   </widget>
-                  </item>
-                  <item row="1" column="0" >
-                   <widget class="QRadioButton" name="_ccConfirmBoth" >
-                    <property name="text" >
-                     <string>Both</string>
-                    </property>
-                   </widget>
-                  </item>
-                 </layout>
-                </widget>
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Vertical</enum>
-                 </property>
-                 <property name="sizeType" >
-                  <enum>QSizePolicy::MinimumExpanding</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>20</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_confirmChargePreauth" >
+                  <property name="text" >
+                   <string>Charge Pre-Authorization</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_confirmCredit" >
+                  <property name="text" >
+                   <string>Credit</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
              </item>
              <item>
               <widget class="QGroupBox" name="_ccSoOptionsGroup" >
                <property name="title" >
-                <string>Enable Trans.</string>
+                <string>Enable Transaction on Sales Order</string>
                </property>
                <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>5</number>
-                </property>
                 <property name="spacing" >
                  <number>0</number>
                 </property>
                 <item>
-                 <widget class="QRadioButton" name="_ccSoOptionsAuth" >
+                 <widget class="QCheckBox" name="_enablePreauth" >
                   <property name="text" >
-                   <string>Authorize</string>
+                   <string>Pre-Authorization</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="_ccSoOptionsCharge" >
+                 <widget class="QCheckBox" name="_enableCharge" >
                   <property name="text" >
-                   <string>Charge</string>
+                   <string>Direct Charge</string>
                   </property>
                  </widget>
                 </item>
                 <item>
-                 <widget class="QRadioButton" name="_ccSoOptionsBoth" >
-                  <property name="text" >
-                   <string>Both</string>
+                 <widget class="QCheckBox" name="_enableChargePreauth" >
+                  <property name="enabled" >
+                   <bool>false</bool>
                   </property>
-                  <property name="checked" >
-                   <bool>true</bool>
+                  <property name="text" >
+                   <string>Charge Pre-Authorization</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QCheckBox" name="_enableCredit" >
+                  <property name="enabled" >
+                   <bool>false</bool>
+                  </property>
+                  <property name="text" >
+                   <string>Credit</string>
                   </property>
                  </widget>
                 </item>
@@ -360,87 +311,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QGroupBox" name="_ccAvsCheckGroup" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="title" >
-              <string>AVS Check</string>
-             </property>
-             <layout class="QGridLayout" >
-              <property name="margin" >
-               <number>5</number>
-              </property>
-              <property name="spacing" >
-               <number>5</number>
-              </property>
-              <item row="0" column="0" >
-               <widget class="QRadioButton" name="_ccAvsCheckNone" >
-                <property name="text" >
-                 <string>None</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="0" >
-               <widget class="QRadioButton" name="_ccAvsCheckAny" >
-                <property name="text" >
-                 <string>Any</string>
-                </property>
-                <property name="checked" >
-                 <bool>false</bool>
-                </property>
-               </widget>
-              </item>
-              <item row="0" column="1" >
-               <widget class="QRadioButton" name="_ccAvsCheckFull" >
-                <property name="text" >
-                 <string>Only Accept Full</string>
-                </property>
-               </widget>
-              </item>
-              <item row="1" column="1" >
-               <widget class="QRadioButton" name="_ccAvsCheckPartial" >
-                <property name="text" >
-                 <string>Accept Partial</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Horizontal</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::MinimumExpanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>0</width>
-               <height>20</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
@@ -478,9 +348,6 @@
          </item>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
@@ -494,9 +361,7 @@
            <item>
             <widget class="XComboBox" name="_ccDefaultBank" >
              <property name="sizePolicy" >
-              <sizepolicy>
-               <hsizetype>7</hsizetype>
-               <vsizetype>0</vsizetype>
+              <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                <horstretch>0</horstretch>
                <verstretch>0</verstretch>
               </sizepolicy>
@@ -506,6 +371,51 @@
           </layout>
          </item>
         </layout>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="_testResultsGroup" >
+         <property name="title" >
+          <string>In Test Mode, transactions should</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QRadioButton" name="_testsAllFail" >
+            <property name="toolTip" >
+             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">tooltip&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+            <property name="whatsThis" >
+             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis&lt;/p>&lt;/body>&lt;/html></string>
+            </property>
+            <property name="text" >
+             <string>Always Fail</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_testsSomeFail" >
+            <property name="text" >
+             <string>Sometimes Fail</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_testsAllPass" >
+            <property name="text" >
+             <string>Always Succeed</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
        </item>
        <item>
         <spacer>
@@ -525,38 +435,192 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="server" >
+     <widget class="QWidget" name="_fraudPage" >
+      <attribute name="title" >
+       <string>Fraud Detection</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <layout class="QHBoxLayout" >
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QGroupBox" name="_cvvCheckGroup" >
+             <property name="title" >
+              <string>Card Verification</string>
+             </property>
+             <layout class="QVBoxLayout" >
+              <item>
+               <widget class="QCheckBox" name="_cvvRequired" >
+                <property name="text" >
+                 <string>Require CVV</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Line" name="line" >
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_cvvNone" >
+                <property name="text" >
+                 <string>Do not check</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_cvvWarn" >
+                <property name="text" >
+                 <string>Warn if failure</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_cvvReject" >
+                <property name="text" >
+                 <string>Reject if failure</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <item>
+            <widget class="QGroupBox" name="_avsCheckGroup" >
+             <property name="enabled" >
+              <bool>true</bool>
+             </property>
+             <property name="title" >
+              <string>Address Verification Service</string>
+             </property>
+             <layout class="QVBoxLayout" >
+              <item>
+               <widget class="QRadioButton" name="_avsNone" >
+                <property name="text" >
+                 <string>Do not check</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_avsWarn" >
+                <property name="text" >
+                 <string>Warn if not Complete</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QRadioButton" name="_avsReject" >
+                <property name="text" >
+                 <string>Reject if not Complete</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>0</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_serverPage" >
       <attribute name="title" >
        <string>Server</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
          <item>
           <layout class="QHBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
            </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
@@ -594,26 +658,18 @@
            </item>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>0</number>
              </property>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>5</number>
                </property>
                <item>
                 <widget class="QLineEdit" name="_ccServer" >
                  <property name="sizePolicy" >
-                  <sizepolicy>
-                   <hsizetype>7</hsizetype>
-                   <vsizetype>0</vsizetype>
+                  <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                    <horstretch>1</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -680,17 +736,23 @@
             <bool>false</bool>
            </property>
            <layout class="QHBoxLayout" >
-            <property name="margin" >
+            <property name="spacing" >
              <number>5</number>
             </property>
-            <property name="spacing" >
+            <property name="leftMargin" >
+             <number>5</number>
+            </property>
+            <property name="topMargin" >
+             <number>5</number>
+            </property>
+            <property name="rightMargin" >
+             <number>5</number>
+            </property>
+            <property name="bottomMargin" >
              <number>5</number>
             </property>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
@@ -728,26 +790,18 @@
             </item>
             <item>
              <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
               <property name="spacing" >
                <number>0</number>
               </property>
               <item>
                <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
                 <property name="spacing" >
                  <number>5</number>
                 </property>
                 <item>
                  <widget class="QLineEdit" name="_ccProxyServer" >
                   <property name="sizePolicy" >
-                   <sizepolicy>
-                    <hsizetype>7</hsizetype>
-                    <vsizetype>0</vsizetype>
+                   <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
                     <horstretch>1</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
@@ -823,40 +877,74 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="other" >
+     <widget class="QWidget" name="_optionsPage" >
       <attribute name="title" >
        <string>Service Options</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
        <item>
         <widget class="QStackedWidget" name="_ccWidgetStack" >
-         <widget class="QWidget" name="VerisignOptions" >
+         <property name="currentIndex" >
+          <number>0</number>
+         </property>
+         <widget class="QWidget" name="_authorizeDotNetStack" >
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
+           <item>
+            <widget class="QLabel" name="_ccYPLit_2" >
+             <property name="text" >
+              <string>Authorize.Net Options:</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="_verisignStack" >
+          <layout class="QVBoxLayout" >
            <property name="spacing" >
             <number>5</number>
            </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
            <item>
             <widget class="QLabel" name="_ccVSLit" >
-             <property name="font" >
-              <font>
-               <family>Sans Serif</family>
-               <pointsize>9</pointsize>
-               <weight>75</weight>
-               <italic>false</italic>
-               <bold>true</bold>
-               <underline>false</underline>
-               <strikeout>false</strikeout>
-              </font>
-             </property>
              <property name="text" >
               <string>Verisign Options:</string>
              </property>
@@ -864,17 +952,11 @@
            </item>
            <item>
             <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>5</number>
              </property>
              <item>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
@@ -922,9 +1004,6 @@
              </item>
              <item>
               <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>0</number>
                </property>
@@ -962,35 +1041,30 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="YourPayOptions" >
+         <widget class="QWidget" name="_yourPayStack" >
           <layout class="QVBoxLayout" >
-           <property name="margin" >
+           <property name="spacing" >
             <number>0</number>
            </property>
-           <property name="spacing" >
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
             <number>0</number>
            </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
              <property name="spacing" >
               <number>5</number>
              </property>
              <item>
               <widget class="QLabel" name="_ccYPLit" >
-               <property name="font" >
-                <font>
-                 <family>Sans Serif</family>
-                 <pointsize>9</pointsize>
-                 <weight>75</weight>
-                 <italic>false</italic>
-                 <bold>true</bold>
-                 <underline>false</underline>
-                 <strikeout>false</strikeout>
-                </font>
-               </property>
                <property name="text" >
                 <string>YourPay Options:</string>
                </property>
@@ -998,17 +1072,11 @@
              </item>
              <item>
               <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
                <property name="spacing" >
                 <number>5</number>
                </property>
                <item>
                 <layout class="QVBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
                  <property name="spacing" >
                   <number>0</number>
                  </property>
@@ -1045,23 +1113,10 @@
                  <item>
                   <widget class="QLabel" name="_ccYPLinkShieldLit" >
                    <property name="enabled" >
-                    <bool>false</bool>
+                    <bool>true</bool>
                    </property>
                    <property name="text" >
                     <string>Link Shield:</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="_ccYPLinkShieldMaxLit" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                   <property name="text" >
-                    <string>Link Shield Max:</string>
                    </property>
                    <property name="alignment" >
                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1082,9 +1137,6 @@
                </item>
                <item>
                 <layout class="QVBoxLayout" >
-                 <property name="margin" >
-                  <number>0</number>
-                 </property>
                  <property name="spacing" >
                   <number>0</number>
                  </property>
@@ -1099,35 +1151,11 @@
                  </item>
                  <item>
                   <layout class="QHBoxLayout" >
-                   <property name="margin" >
-                    <number>0</number>
-                   </property>
-                   <property name="spacing" >
-                    <number>0</number>
-                   </property>
                    <item>
-                    <widget class="QComboBox" name="_ccYPLinkShield" >
-                     <property name="enabled" >
-                      <bool>false</bool>
+                    <widget class="QCheckBox" name="_ccYPLinkShield" >
+                     <property name="text" >
+                      <string>Enabled</string>
                      </property>
-                     <property name="sizePolicy" >
-                      <sizepolicy>
-                       <hsizetype>3</hsizetype>
-                       <vsizetype>0</vsizetype>
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                     <item>
-                      <property name="text" >
-                       <string>False</string>
-                      </property>
-                     </item>
-                     <item>
-                      <property name="text" >
-                       <string>True</string>
-                      </property>
-                     </item>
                     </widget>
                    </item>
                    <item>
@@ -1136,24 +1164,37 @@
                       <enum>Qt::Horizontal</enum>
                      </property>
                      <property name="sizeType" >
-                      <enum>QSizePolicy::Expanding</enum>
+                      <enum>QSizePolicy::Fixed</enum>
                      </property>
                      <property name="sizeHint" >
                       <size>
-                       <width>0</width>
+                       <width>10</width>
                        <height>20</height>
                       </size>
                      </property>
                     </spacer>
                    </item>
+                   <item>
+                    <widget class="QLabel" name="_ccYPLinkShieldMaxLit" >
+                     <property name="enabled" >
+                      <bool>false</bool>
+                     </property>
+                     <property name="text" >
+                      <string>Reject if Score Exceeds:</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QSpinBox" name="_ccYPLinkShieldMax" >
+                     <property name="enabled" >
+                      <bool>false</bool>
+                     </property>
+                     <property name="maximum" >
+                      <number>100</number>
+                     </property>
+                    </widget>
+                   </item>
                   </layout>
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="_ccYPLinkShieldMax" >
-                   <property name="enabled" >
-                    <bool>false</bool>
-                   </property>
-                  </widget>
                  </item>
                  <item>
                   <widget class="QLineEdit" name="_ccYPStoreNum" />
@@ -1161,48 +1202,6 @@
                 </layout>
                </item>
               </layout>
-             </item>
-             <item>
-              <widget class="QGroupBox" name="_ccYPTestResultGroup" >
-               <property name="enabled" >
-                <bool>false</bool>
-               </property>
-               <property name="title" >
-                <string>Test Mode Result</string>
-               </property>
-               <layout class="QHBoxLayout" >
-                <property name="margin" >
-                 <number>5</number>
-                </property>
-                <property name="spacing" >
-                 <number>5</number>
-                </property>
-                <item>
-                 <widget class="QRadioButton" name="_ccYPTestResultGood" >
-                  <property name="text" >
-                   <string>Good</string>
-                  </property>
-                  <property name="checked" >
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="_ccYPTestResultDuplicate" >
-                  <property name="text" >
-                   <string>Duplicate</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="_ccYPTestResultDecline" >
-                  <property name="text" >
-                   <string>Decline</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
              </item>
             </layout>
            </item>
@@ -1228,30 +1227,33 @@
        </item>
       </layout>
      </widget>
-     <widget class="QWidget" name="TabPage" >
+     <widget class="QWidget" name="_keyPage" >
       <attribute name="title" >
        <string>Key File</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
@@ -1263,15 +1265,27 @@
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
              </property>
+             <property name="buddy" >
+              <cstring>_ccEncKeyName</cstring>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QLabel" name="_ccWinEncKeyLit" >
+             <property name="whatsThis" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis for a label with a buddy that's an empty text field&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
              <property name="text" >
               <string>Windows Location:</string>
              </property>
              <property name="alignment" >
               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+             <property name="buddy" >
+              <cstring>_ccWinEncKey</cstring>
              </property>
             </widget>
            </item>
@@ -1299,21 +1313,37 @@
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
             <widget class="QLineEdit" name="_ccEncKeyName" >
+             <property name="toolTip" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">tooltip&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+             <property name="whatsThis" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
              <property name="text" >
               <string>keyfile.txt</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="_ccWinEncKey" />
+            <widget class="QLineEdit" name="_ccWinEncKey" >
+             <property name="whatsThis" >
+              <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whats this for an empty field&lt;/p>&lt;/body>&lt;/html></string>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QLineEdit" name="_ccLinEncKey" />
@@ -1354,20 +1384,15 @@
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_ccAccept</tabstop>
   <tabstop>_ccTest</tabstop>
   <tabstop>_ccCompany</tabstop>
-  <tabstop>_ccConfirmNone</tabstop>
-  <tabstop>_ccSoOptionsBoth</tabstop>
-  <tabstop>_ccAvsCheckNone</tabstop>
   <tabstop>_ccValidDays</tabstop>
   <tabstop>_ccDefaultBank</tabstop>
-  <tabstop>tabWidget2</tabstop>
+  <tabstop>tabWidget</tabstop>
   <tabstop>_ccServer</tabstop>
   <tabstop>_ccPort</tabstop>
   <tabstop>_ccLogin</tabstop>
@@ -1383,18 +1408,13 @@
   <tabstop>_ccYPWinPathPEM</tabstop>
   <tabstop>_ccYPLinPathPEM</tabstop>
   <tabstop>_ccYPMacPathPEM</tabstop>
-  <tabstop>_ccYPLinkShield</tabstop>
-  <tabstop>_ccYPLinkShieldMax</tabstop>
   <tabstop>_ccYPStoreNum</tabstop>
-  <tabstop>_ccYPTestResultGood</tabstop>
   <tabstop>_ccEncKeyName</tabstop>
   <tabstop>_ccWinEncKey</tabstop>
   <tabstop>_ccLinEncKey</tabstop>
   <tabstop>_ccMacEncKey</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
-  <tabstop>_ccAvsCheckAny</tabstop>
-  <tabstop>_ccSoOptionsCharge</tabstop>
  </tabstops>
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>
@@ -1430,6 +1450,38 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ccYPLinkShield</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_ccYPLinkShieldMaxLit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>200</x>
+     <y>214</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>325</x>
+     <y>213</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_ccYPLinkShield</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_ccYPLinkShieldMax</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>205</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>458</x>
+     <y>216</y>
     </hint>
    </hints>
   </connection>

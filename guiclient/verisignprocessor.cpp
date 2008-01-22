@@ -96,46 +96,15 @@ VerisignProcessor::VerisignProcessor() : CreditCardProcessor()
     _currencyName   = CurrDisplay::baseCurrAbbr();
     _currencySymbol = CurrDisplay::baseCurrAbbr();
   }
+
+  _defaultLivePort   = 443;
+  _defaultLiveServer = "payflow.verisign.com";
+  _defaultTestPort   = 443;
+  _defaultTestServer = "test-payflow.verisign.com";
 }
 
 int VerisignProcessor::doCheckConfiguration()
 {
-  _errorMsg = tr("Verisign is not yet supported as a Credit Card Processor.");
-  return false;
-
-  /* even though this isn't reachable code, hold everything we already know
-     about Verisign in here so we can remove it from elsewhere in the app.
-  */
-
-  if ((_metrics->value("CCServer") != "payflow.verisign.com") &&
-      (_metrics->value("CCServer") != "test-payflow.verisign.com"))
-  {
-    _errorMsg = errorMsg(-15)
-		  .arg(_metrics->value("CCServer"))
-		  .arg(_metrics->value("CCCompany"));
-    return -15;
-
-  }
-
-  if (_metrics->value("CCPort").toInt() != 443)
-  {
-    _errorMsg = errorMsg(-16)
-		  .arg(_metrics->value("CCPort"))
-		  .arg(_metrics->value("CCCompany"));
-    return -16;
-  }
-
-  return 0;
-}
-
-bool VerisignProcessor::isLive()
-{
-  return (!_metrics->boolean("CCTest") &&
-	   _metrics->value("CCServer") == "payflow.verisign.com");
-}
-
-bool VerisignProcessor::isTest()
-{
-  return (_metrics->boolean("CCTest") &&
-	  _metrics->value("CCServer") == "test-payflow.verisign.com");
+  _errorMsg = errorMsg(-19).arg("Verisign");
+  return -19;
 }

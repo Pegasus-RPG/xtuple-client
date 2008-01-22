@@ -74,6 +74,14 @@
 			      "successfully but the application encountered " \
 			      "an error and did not record this correctly:\n%1")
 
+/* NOTE TO SUBCLASSERS:
+  It is your job to make sure that all of the configuration options available
+  on the Credit Card Configuration window are implemented either here or in
+  your subclass. An example of an option that /must/ be implemented in your
+  subclass is CCTestResult, as requesting error responses from the credit card
+  processor is different for every processor.
+*/
+
 // TODO: make this a static method of CurrDisplay
 static QString currSymbol(int pcurrid)
 {
@@ -87,9 +95,9 @@ static QString currSymbol(int pcurrid)
   return "";
 }
 
-CreditCardProcessor	*CreditCardProcessor::_processor = 0;
 QString			 CreditCardProcessor::_errorMsg = "";
 QHash<int, QString>	 CreditCardProcessor::_msgHash;
+CreditCardProcessor	*CreditCardProcessor::_processor = 0;
 
 /*
    > 0 => credit card transaction processing completed but there is a warning
@@ -128,8 +136,6 @@ static struct {
 	    "cannot determine whether to run in Test or Live mode.")	},
   { -14, TR("Could not figure out which Credit Card Processor to set up "
 	    "(based on %1).") 						},
-  { -15, TR("The CCServer %1 is not valid for %2.")			},
-  { -16, TR("The CCPort %1 is not valid for %2.")			},
   { -17, TR("Could not find a Credit Card with internal ID %1.")	},
   { -18, TR("Error with message transfer program:\n%1 %2\n\n%3")	},
   { -19, TR("%1 is not implemented.")					},
@@ -153,9 +159,13 @@ static struct {
   { -50, TR("Could not find original Credit Card payment to credit.")	},
 
   // voids
-  //{ -60, TR("")							},
+  { -60, TR("Could not find the Credit Card transaction to void.")	},
 
   // other misc errors
+  { -96, TR("This transaction failed the CVV check.")			},
+  { -97, TR("This transaction failed the Address Verification check.")	},
+  { -98, TR("You may not process this transaction without a CVV code. "
+	    "Please enter one and try again.")				},
   { -99, TR("The CVV value is not valid.")				},
   {-100, TR("No approval code was received:\n%1\n%2\n%3")		},
 
@@ -170,8 +180,12 @@ static struct {
 	    "because of possible fraud.\n%1")				},
   {  20, TR("User chose not to process the preauthorization.")		},
   {  30, TR("User chose not to post-authorize process the charge.")	},
-  {  40, TR("User chose not to process the charge.")	},
+  {  40, TR("User chose not to process the charge.")			},
   {  50, TR("User chose not to process the credit.")			},
+  {  96, TR("This transaction failed the CVV check but will be "
+	    "processed anyway.")					},
+  {  97, TR("This transaction failed the Address Verification check "
+	    "but will be processed anyway.")				},
   {  99, TR("User chose not to proceed without CVV code.")		},
 
 };
@@ -183,6 +197,10 @@ CreditCardProcessor::CreditCardProcessor()
   _currencyId     = 0;
   _currencyName   = "";
   _currencySymbol = "";
+  _defaultLivePort    = 0;
+  _defaultLiveServer  = "live.creditcardprocessor.com";
+  _defaultTestPort    = 0;
+  _defaultTestServer  = "test.creditcardprocessor.com";
   _errorMsg       = "";
 
   for (unsigned int i = 0; i < sizeof(messages) / sizeof(messages[0]); i++)
@@ -193,14 +211,23 @@ CreditCardProcessor::~CreditCardProcessor()
 {
 }
 
-CreditCardProcessor * CreditCardProcessor::getProcessor()
+// pcompany should be "" except when checking for errors in configCC
+CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 {
   if (DEBUG)
     qDebug("CCP:getProcessor()");
-  _errorMsg = "";
   if (! _processor)
   {
-    if ((_metrics->value("CCCompany") == "YourPay"))
+    if (pcompany == "YourPay")
+      _processor = new YourPayProcessor();
+
+    else if (pcompany == "Verisign")
+      _processor = new VerisignProcessor();
+
+    else if (! pcompany.isEmpty())
+      _errorMsg = errorMsg(-14).arg(pcompany);
+
+    else if ((_metrics->value("CCCompany") == "YourPay"))
       _processor = new YourPayProcessor();
 
     else if (_metrics->value("CCCompany") == "Verisign")
@@ -216,6 +243,8 @@ CreditCardProcessor * CreditCardProcessor::getProcessor()
     _processor = 0;
   }
 
+  _processor->reset();
+
   return _processor;
 }
 
@@ -224,7 +253,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
   if (DEBUG)
     qDebug("CCP:authorize(%d, %d, %f, %d, %s, %d)",
 	   pccardid, pcvv, pamount, pcurrid, porder.toAscii().data(), pccpayid);
-  _errorMsg = "";
+  reset();
 
   if (pamount <= 0)
   {
@@ -237,23 +266,19 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
   if (returnVal < 0)
     return returnVal;
 
-  if (_metrics->value("CCConfirmTrans") == "A" ||
-      _metrics->value("CCConfirmTrans") == "B")
-  {
-    if (QMessageBox::question(0,
+  if (_metrics->boolean("CCConfirmPreauth") &&
+      QMessageBox::question(0,
 		    tr("Confirm Preauthorization of Credit Card Purchase"),
-		    tr("You must confirm that you wish to preauthorize "
-		       "credit card %1 in the amount of %2 %3. "
-		       "Would you like to preauthorize now?")
+		    tr("<p>Are you sure that you want to preauthorize "
+		       "a charge to credit card %1 in the amount of %2 %3?")
 		       .arg(ccard_x)
 		       .arg((pcurrid == _currencyId) ? _currencySymbol : "")
 		       .arg(pamount),
 		    QMessageBox::Yes | QMessageBox::Default,
 		    QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
-    {
-      _errorMsg = errorMsg(20);
-      return 20;
-    }
+  {
+    _errorMsg = errorMsg(20);
+    return 20;
   }
 
   returnVal = doAuthorize(pccardid, pcvv, pamount, pcurrid, porder, porder, pccpayid);
@@ -261,6 +286,14 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
     _errorMsg = CCPOSTPROC_WARNING.arg(_errorMsg);
   else if (returnVal == 0)
   {
+
+    returnVal = fraudChecks();
+    if (returnVal < 0)
+    {
+      int voidReturnVal = voidPrevious(pccpayid);
+      return (voidReturnVal < 0) ? voidReturnVal : returnVal;
+    }
+
     XSqlQuery cashq;
     if (preftype == "cashrcpt")
     {
@@ -344,7 +377,7 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
 	   pccardid, pcvv, pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
 	   preftype.toAscii().data());
-  _errorMsg = "";
+  reset();
 
   if (pamount <= 0)
   {
@@ -363,28 +396,33 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
   if (returnVal < 0)
     return returnVal;
 
-  if (_metrics->value("CCConfirmTrans") == "A" ||
-      _metrics->value("CCConfirmTrans") == "B")
-  {
-    if (QMessageBox::question(0, tr("Confirm Charge of Credit Card Purchase"),
-	      tr("You must confirm that you wish to charge credit card %1 "
-		 "in the amount of %2 %3. Would you like to charge now?")
+  if (_metrics->boolean("CCConfirmCharge") &&
+      QMessageBox::question(0, tr("Confirm Charge of Credit Card Purchase"),
+	      tr("Are you sure that you want to charge credit card %1 "
+		 "in the amount of %2 %3?")
 		 .arg(ccard_x)
 		 .arg((pcurrid == _currencyId) ? _currencySymbol : "")
 		 .arg(pamount),
 	      QMessageBox::Yes | QMessageBox::Default,
 	      QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
-    {
-      _errorMsg = errorMsg(40);
-      return 40;
-    }
+  {
+    _errorMsg = errorMsg(40);
+    return 40;
   }
 
   returnVal = doCharge(pccardid, pcvv, pamount, pcurrid, pneworder, preforder, pccpayid);
   if (returnVal > 0)
     _errorMsg = CCPOSTPROC_WARNING.arg(_errorMsg);
-  else if (returnVal == 0) // TODO: move this logic to postCCCashReceipt
+  else if (returnVal == 0)
   {
+    returnVal = fraudChecks();
+    if (returnVal < 0)
+    {
+      int voidReturnVal = voidPrevious(pccpayid);
+      return (voidReturnVal < 0) ? voidReturnVal : returnVal;
+    }
+
+    // TODO: move this logic to postCCCashReceipt?
     XSqlQuery cashq;
     if (preftype == "cashrcpt")
     {
@@ -523,10 +561,10 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     qDebug("CCP:chargePreauthorized(%d, %f, %d, %s, %s, %d)",
 	   pcvv, pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
-  _errorMsg = "";
+  reset();
 
   int ccValidDays = _metrics->value("CCValidDays").toInt();
-  if(ccValidDays < 1)
+  if (ccValidDays < 1)
     ccValidDays = 7;
 
   if (pamount <= 0)
@@ -585,23 +623,19 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
   if (returnVal < 0)
     return returnVal;
 
-  if (_metrics->value("CCConfirmTrans") == "A" ||
-      _metrics->value("CCConfirmTrans") == "B")
-  {
-    if (QMessageBox::question(0,
+  if (_metrics->boolean("CCConfirmChargePreauth") &&
+      QMessageBox::question(0,
 	      tr("Confirm Post-authorization of Credit Card Purchase"),
-              tr("You must confirm that you wish to post-authorize process "
-                 "a charge to credit card %1 in the amount of %2 %3. "
-		 "Would you like to post-authorize now?")
+              tr("Are you sure that you want to charge a pre-authorized "
+                 "transaction to credit card %1 in the amount of %2 %3?")
 		 .arg(ccard_x)
                  .arg(_currencySymbol)
                  .arg(pamount),
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
-    {
-      _errorMsg = errorMsg(30);
-      return 30;
-    }
+  {
+    _errorMsg = errorMsg(30);
+    return 30;
   }
 
   returnVal = doChargePreauthorized(ccardid, pcvv, pamount, pcurrid, pneworder, preforder, pccpayid);
@@ -610,6 +644,14 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
 
   else if (returnVal == 0)
   {
+
+    returnVal = fraudChecks();
+    if (returnVal < 0)
+    {
+      int voidReturnVal = voidPrevious(pccpayid);
+      return (voidReturnVal < 0) ? voidReturnVal : returnVal;
+    }
+
     q.prepare("INSERT INTO cashrcpt ("
 	      "  cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id,"
 	      "  cashrcpt_fundstype, cashrcpt_docnumber,"
@@ -639,7 +681,7 @@ int CreditCardProcessor::checkConfiguration()
 {
   if (DEBUG)
     qDebug("CCP:checkConfiguration()");
-  _errorMsg = "";
+  reset();
 
   if (!_privleges->check("ProcessCreditCards"))
   {
@@ -659,9 +701,7 @@ int CreditCardProcessor::checkConfiguration()
     return -4;
   }
 
-  QString key = omfgThis->_key;
-
-  if (key.isEmpty())
+  if (omfgThis->_key.isEmpty())
   {
     _errorMsg = errorMsg(-5);
     return -5;
@@ -714,29 +754,25 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
     qDebug("CCP:credit(%d, %d, %f, %d, %s, %s, %d)",
 	   pccardid, pcvv, pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
-  _errorMsg = "";
+  reset();
 
   QString ccard_x;
   int returnVal = checkCreditCard(pccardid, pcvv,  ccard_x);
   if (returnVal < 0)
     return returnVal;
 
-  if (_metrics->value("CCConfirmTrans") == "R" ||
-      _metrics->value("CCConfirmTrans") == "B")
-  {
-    if (QMessageBox::question(0,
+  if (_metrics->boolean("CCConfirmCredit") &&
+      QMessageBox::question(0,
 	      tr("Confirm Credit Card Credit"),
-              tr("You must confirm that you wish to credit card %1 in the "
-                 "amount of %2 %3. Would you like to credit this amount now?")
+              tr("Are you sure that you want to refund %2 %3 to credit card %1?")
 		 .arg(ccard_x)
                  .arg(currSymbol(pcurrid))
                  .arg(pamount),
               QMessageBox::Yes | QMessageBox::Default,
               QMessageBox::No  | QMessageBox::Escape ) == QMessageBox::No)
-      {
-	_errorMsg = errorMsg(50);
-	return 50;
-      }
+  {
+    _errorMsg = errorMsg(50);
+    return 50;
   }
 
   if (pccpayid > 0)
@@ -807,6 +843,13 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
   else if (returnVal > 0)
     _errorMsg = CCPOSTPROC_WARNING.arg(_errorMsg);
 
+  returnVal = fraudChecks();
+  if (returnVal < 0)
+  {
+    int voidReturnVal = voidPrevious(pccpayid);
+    return (voidReturnVal < 0) ? voidReturnVal : returnVal;
+  }
+
   if (pccpayid > 0)
   {
     XSqlQuery cq;
@@ -834,42 +877,94 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
   return returnVal;
 }
 
-int CreditCardProcessor::voidPrevious(const int &pccpayid)
+int CreditCardProcessor::voidPrevious(int &pccpayid)
 {
   if (DEBUG)
     qDebug("CCP:voidPrevious(%d)", pccpayid);
-  _errorMsg = "";
-  return doVoidPrevious(pccpayid);
+  // don't reset(); because we're probably voiding because of a previous error
+
+  int ccv = -2;
+
+  XSqlQuery ccq;
+  ccq.prepare("SELECT * FROM ccpay WHERE (ccpay_id=:ccpayid);");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+
+  int ccardid;
+  if (ccq.first())
+    ccardid = ccq.value("ccpay_ccard_id").toInt();
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    _errorMsg = q.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-60);
+    return -60;
+  }
+
+  // don't checkCreditCard because we want to void the transaction regardless
+
+  QString neworder = ccq.value("ccpay_order_number").toString();
+  QString reforder;
+  int returnVal = doVoidPrevious(ccardid, ccv,
+				 ccq.value("ccpay_amount").toDouble(),
+				 ccq.value("ccpay_curr_id").toInt(),
+				 neworder, reforder, pccpayid);
+  if (returnVal < 0)
+    return returnVal;
+  else if (returnVal > 0)
+  {
+    _errorMsg = CCPOSTPROC_WARNING.arg(_errorMsg);
+  }
+
+  ccq.prepare("SELECT postCCVoid(:ccpayid) AS result;");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+  if (ccq.first())
+  {
+    int result = ccq.value("result").toInt();
+    if (result < 0)
+    {
+      _errorMsg = "<p>" +
+		  CCPOSTPROC_WARNING.arg(storedProcErrorLookup("postCCVoid",
+							       result));
+      returnVal = 1;
+    }
+  }
+  else if (ccq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = CCPOSTPROC_WARNING.arg(ccq.lastError().databaseText());
+    returnVal = 1;
+  }
+
+  return returnVal;
 }
 
 int CreditCardProcessor::currencyId()
 {
-  _errorMsg = "";
   return _currencyId;
 }
 
 QString CreditCardProcessor::currencyName()
 {
-  _errorMsg = "";
   return _currencyName;
 }
 
 QString CreditCardProcessor::currencySymbol()
 {
-  _errorMsg = "";
   return _currencySymbol;
 }
 
 bool CreditCardProcessor::isLive()
 {
-  _errorMsg = "";
-  return true;	// safest assumption
+  return (!_metrics->boolean("CCTest"));
 }
 
 bool CreditCardProcessor::isTest()
 {
-  _errorMsg = "";
-  return false;	// safest assumption
+  return (_metrics->boolean("CCTest"));
 }
 
 QString CreditCardProcessor::errorMsg()
@@ -886,11 +981,9 @@ int CreditCardProcessor::checkCreditCard(int pccid, int pcvv, QString &pccard_x)
 {
   if (DEBUG)
     qDebug("CCP:checkCreditCard(%d, %d)", pccid, pcvv);
-  _errorMsg = "";
+  reset();
 
-  QString key = omfgThis->_key;
-
-  if(key.isEmpty())
+  if(omfgThis->_key.isEmpty())
   {
     _errorMsg = errorMsg(-5);
     return -5;
@@ -907,7 +1000,7 @@ int CreditCardProcessor::checkCreditCard(int pccid, int pcvv, QString &pccard_x)
              "FROM ccard "
              "WHERE (ccard_id=:ccardid);");
   q.bindValue(":ccardid", pccid);
-  q.bindValue(":key",     key);
+  q.bindValue(":key",     omfgThis->_key);
   q.exec();
   if (q.first())
   {
@@ -934,7 +1027,12 @@ int CreditCardProcessor::checkCreditCard(int pccid, int pcvv, QString &pccard_x)
     }
   }
 
-  if (pcvv == -1)
+  if (pcvv == -1 && _metrics->boolean("CCRequireCVV"))
+  {
+    _errorMsg = errorMsg(-98);
+    return -98;
+  }
+  else if (pcvv == -1)
   {
     if (QMessageBox::question(0,
 	      tr("Confirm No CVV Code"),
@@ -1005,10 +1103,13 @@ int CreditCardProcessor::doCredit(const int pccardid, const int pcvv, const doub
   return -19;
 }
 
-int CreditCardProcessor::doVoidPrevious(const int pccpayid)
+int CreditCardProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
 {
   if (DEBUG)
-    qDebug("CCP:doVoidPrevious(%d)", pccpayid);
+    qDebug("CCP:doVoidPrevious(%d, %d, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(),
+	   pccpayid);
   _errorMsg = errorMsg(-19).arg("doVoidPrevious");
   return -19;
 }
@@ -1019,7 +1120,6 @@ int CreditCardProcessor::processXML(const QDomDocument &prequest,
   if (DEBUG)
     qDebug("CCP:processXML(input, output) with input:\n%s",
 	   prequest.toString().toAscii().data());
-  _errorMsg = "";
   QString transactionString = prequest.toString();
 
   // TODO: find a better place to save this
@@ -1124,4 +1224,64 @@ int CreditCardProcessor::processXML(const QDomDocument &prequest,
   presponse.setContent(responseString);
 
   return 0;
+}
+
+int CreditCardProcessor::defaultPort(bool ptestmode)
+{
+  if (ptestmode)
+    return _defaultTestPort;
+  else
+    return _defaultLivePort;
+}
+
+QString CreditCardProcessor::defaultServer(bool ptestmode)
+{
+  if (ptestmode)
+    return _defaultTestServer;
+  else
+    return _defaultLiveServer;
+}
+
+void CreditCardProcessor::reset()
+{
+  _errorMsg = "";
+  _passedAvs = true;
+  _passedCvv = true;
+}
+
+int CreditCardProcessor::fraudChecks()
+{
+  if (DEBUG)
+    qDebug("CCP:fraudChecks()");
+
+  int returnValue = 0;
+
+  if (! _passedAvs && _metrics->value("CCAvsCheck") == "F")
+  {
+    _errorMsg = errorMsg(-97);
+    returnValue = -97;
+  }
+  else if (! _passedAvs && _metrics->value("CCAvsCheck") == "W")
+  {
+    _errorMsg = errorMsg(97);
+    returnValue = 97;
+  }
+
+  // not "else if" - maybe this next check will be fatal
+  if (! _passedCvv && _metrics->value("CCCVVCheck") == "F")
+  {
+    _errorMsg = errorMsg(-96);
+    returnValue = -96;
+  }
+  else if (! _passedCvv && _metrics->value("CCCVVCheck") == "W")
+  {
+    _errorMsg = errorMsg(96);
+    returnValue = 96;
+  }
+
+  if (DEBUG)
+    qDebug("CCP:fraudChecks() returning %d with _errorMsg %s",
+	   returnValue, _errorMsg.toAscii().data());
+
+  return returnValue;
 }

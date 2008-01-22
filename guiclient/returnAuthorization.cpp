@@ -1676,7 +1676,7 @@ void returnAuthorization::sRefund()
 	QString docnum = ccq.value("cmhead_number").toString();
         QString refnum = ccq.value("cohead_number").toString();
 	int returnValue = cardproc->credit(ccq.value("ccard_id").toInt(),
-					   _CCCVV->text().toInt(),
+					   (_CCCVV->text().isEmpty()) ? -1 : _CCCVV->text().toInt(),
 					   ccq.value("total").toDouble(),
 					   ccq.value("cmhead_curr_id").toInt(),
 					   docnum, refnum, ccpayid);

@@ -2449,14 +2449,8 @@ void salesOrder::sCalculateTotal()
   }
   else
   {
-    if (_metrics->value("CCSoOptions") == "A" || _metrics->value("CCSoOptions") == "B")
-    {
-      _authorize->show();
-    }
-    if (_metrics->value("CCSoOptions") == "C" || _metrics->value("CCSoOptions") == "B")
-    {
-      _charge->show();
-    }
+    _authorize->setVisible(_metrics->boolean("CCEnablePreauth"));
+    _charge->setVisible(_metrics->boolean("CCEnableCharge"));
   }
 }
 
