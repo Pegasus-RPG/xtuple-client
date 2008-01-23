@@ -5,7 +5,7 @@ CONFIG   += qt warn_on assistant
 TEMPLATE = app
 
 INCLUDEPATH += ../common ../widgets .
-LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lrenderer -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon
+LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
 win32 {
