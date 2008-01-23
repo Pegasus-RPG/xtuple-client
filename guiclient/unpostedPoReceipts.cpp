@@ -217,6 +217,7 @@ void unpostedPoReceipts::sPost()
 {
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
+  QList<QVariant> itemlocSeriesList;
 
   if (_privleges->check("ChangePORecvPostDate"))
   {
@@ -249,13 +250,26 @@ void unpostedPoReceipts::sPost()
       setDate.exec();
       if (setDate.lastError().type() != QSqlError::None)
       {
-	systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
   
+  //Prepare Post Transaction  
+  QString post ( "SELECT postReceipt(<? value(\"recv_id\") ?>,  "
+                "<? if exists(\"itemlocSeriesList\") ?> "
+                "  ARRAY[ "
+                "  <? foreach(\"itemlocSeriesList\") ?> "
+                "    <? if not isfirst(\"itemlocSeriesList\") ?> "
+                "    ,"
+                "    <? endif ?> "
+                "   <? value(\"itemlocSeriesList\") ?> "
+                "  <? endforeach ?> ] "
+                "<? else ?> "
+                " NULL::INTEGER[] "
+                "<? endif ?> "
+                ") AS result;" );
   XSqlQuery postLine;
-  postLine.prepare("SELECT postReceipt(:id, NULL) AS result;");
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -264,39 +278,76 @@ void unpostedPoReceipts::sPost()
     for (int i = 0; i < selected.size(); i++)
     {
       int id = ((XTreeWidgetItem*)(selected[i]))->id();
-
+      
+      //Post the Transaction
       q.exec("BEGIN;");
-      postLine.bindValue(":id", id);
-      postLine.exec();
+      ParameterList params;
+      params.append("recv_id", id);
+
+      //Fetch receipt and see if we need to distribute lot, serial or location
+      QString receipt (   "SELECT recv_id, recv_itemsite_id, recv_qty * orderitem_qty_invuomratio as recv_qty, "
+                       "( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L','S')) ) AS dist "
+                       "FROM recv, orderitem, itemsite "
+                       "WHERE ((recv_orderitem_id=orderitem_id) "
+                       "AND  (itemsite_id=recv_itemsite_id) "
+                       "AND  (recv_id=<? value (\"recv_id\") ?>)); " );                       
+      ParameterList rparams;
+      rparams.append("recv_id", id);
+      MetaSQLQuery receiptm(receipt);
+      XSqlQuery r;
+      r = receiptm.toQuery(rparams);
+      if (r.first())
+      {
+        if (r.value("dist").toBool()) //We need to distribute, so get parameters for that
+        {
+          itemlocSeriesList = distributeInventory::SeriesAdjust(r.value("recv_itemsite_id").toInt(), r.value("recv_qty").toDouble(), this);
+          if (itemlocSeriesList.at(0) == -1)  // If true, distribution was canceled
+          {
+            QMessageBox::information(  this, tr("Enter Receipt"), tr(  "Post canceled."  ));
+            rollback.exec();
+            return;
+          }
+          else
+            params.append("itemlocSeriesList", itemlocSeriesList);     
+        }
+      }
+      else if (q.lastError().type() != QSqlError::None)
+      {
+        rollback.exec();
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      
+      MetaSQLQuery postm(post);
+      postLine = postm.toQuery(params);
       if (postLine.first())
       {
-	int result = postLine.value("result").toInt();
-	if (result < 0)
-	{
-	  rollback.exec();
-	  systemError(this, storedProcErrorLookup("postReceipt", result),
-		      __FILE__, __LINE__);
-	  continue;
-	}
-	q.exec("COMMIT;");
-
-	distributeInventory::SeriesAdjust(result, this);
+        int result = postLine.value("result").toInt();
+        if (result < 0)
+        {
+          rollback.exec();
+          systemError(this, storedProcErrorLookup("postReceipt", result),
+                __FILE__, __LINE__);
+          continue;
+        }
+        q.exec("COMMIT;");
+        omfgThis->sPurchaseOrderReceiptsUpdated();
       }
       // contains() string is hard-coded in stored procedure
       else if (postLine.lastError().databaseText().contains("posted to closed period"))
       {
-	if (changeDate)
-	{
-	  triedToClosed = selected;
-	  break;
-	}
-	else
-	  triedToClosed.append(selected[i]);
+        if (changeDate)
+        {
+          triedToClosed = selected;
+          break;
+        }
+        else
+          triedToClosed.append(selected[i]);
       }
       else if (postLine.lastError().type() != QSqlError::None)
       {
-	rollback.exec();
-	systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);
+        rollback.exec();
+        systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);
       }
     } // for each selected line
 
@@ -309,8 +360,6 @@ void unpostedPoReceipts::sPost()
       triedToClosed.clear();
     }
   } while (tryagain);
-
-  omfgThis->sPurchaseOrderReceiptsUpdated();
 }
 
 void unpostedPoReceipts::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *pItem)
