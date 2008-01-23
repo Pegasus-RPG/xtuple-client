@@ -247,47 +247,47 @@ void adjustmentTrans::sPost()
 
   //Prepare transaction
   QString sql ( "SELECT invAdjustment(itemsite_id, <? value(\"qty\") ?>,  "
-	         "<? if exists(\"itemlocSeriesList\") ?> "
-			 "  ARRAY[ "
-             "  <? foreach(\"itemlocSeriesList\") ?> "
-             "    <? if not isfirst(\"itemlocSeriesList\") ?> "
-             "    ,"
-             "    <? endif ?> "
-             "   <? value(\"itemlocSeriesList\") ?> "
-			 "  <? endforeach ?> ] "
-			 "<? else ?> "
-			 " NULL "
-			 "<? endif ?> "
-             " , <? value(\"docNumber\") ?>, <? value(\"comments\") ?>) AS result "
-             "FROM itemsite "
-             "WHERE ( (itemsite_item_id=<? value(\"item_id\") ?>)"
-             " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>) );" );
+                "<? if exists(\"itemlocSeriesList\") ?> "
+                "  ARRAY[ "
+                "  <? foreach(\"itemlocSeriesList\") ?> "
+                "    <? if not isfirst(\"itemlocSeriesList\") ?> "
+                "    ,"
+                "    <? endif ?> "
+                "   <? value(\"itemlocSeriesList\") ?> "
+                "  <? endforeach ?> ] "
+                "<? else ?> "
+                " NULL "
+                "<? endif ?> "
+                " , <? value(\"docNumber\") ?>, <? value(\"comments\") ?>) AS result "
+                "FROM itemsite "
+                "WHERE ( (itemsite_item_id=<? value(\"item_id\") ?>)"
+                " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>) );" );
   ParameterList params;
 
 
   //See if we need to do some distribution first
   XSqlQuery itemsite;
   itemsite.prepare( "SELECT itemsite_id, ((itemsite_controlmethod IN ('L','S')) OR (itemsite_loccntrl)) AS distribute "
-	         "FROM itemsite "
-			 "WHERE ( (itemsite_item_id=:item_id ) "
-			 "AND (itemsite_warehous_id=:warehous_id) ); ");
+                    "FROM itemsite "
+                    "WHERE ( (itemsite_item_id=:item_id ) "
+                    "AND (itemsite_warehous_id=:warehous_id) ); ");
   itemsite.bindValue(":item_id", _item->id());
   itemsite.bindValue(":warehous_id", _warehouse->id());
   itemsite.exec();
   if (itemsite.first())
   {
     if (itemsite.value("distribute").toBool())
-	{
+    {
       itemlocSeriesList = distributeInventory::SeriesAdjust(itemsite.value("itemsite_id").toInt(), qty, this);
-	  if (itemlocSeriesList.at(0) == -1)
-	  {
-	    QMessageBox::information(  this, tr("Enter Adjustment Quantitiy"),
-                           tr(  "Transaction canceled."  ));
-	    return;
-	  }
-	  else
+      if (itemlocSeriesList.at(0) == -1)
+      {
+        QMessageBox::information(  this, tr("Enter Adjustment Quantitiy"),
+                            tr(  "Transaction canceled."  ));
+        return;
+      }
+      else
         params.append("itemlocSeriesList", itemlocSeriesList);
-	}
+    }
   }
   else
     systemError( this, tr("A System Error occurred at adjustmentTrans::%1, Item Site ID #%2, Warehouse ID #%3.")

@@ -209,13 +209,17 @@ void enterPoReceipt::sPost()
 {
   ParameterList params;	// shared by several queries
   setParams(params);
+  QList<QVariant> itemlocSeriesList;
+  QString lotnum = QString::null;
+  QDate expdate = omfgThis->startOfTime();
 
+ // Check that there is something to receive
   QString checks = "SELECT SUM(qtyToReceive(recv_order_type,"
-		   "                        recv_orderitem_id)) AS qtyToRecv "
-		   "FROM recv, orderitem "
-		   "WHERE ((recv_order_type=<? value(\"ordertype\") ?>)"
-		   "  AND  (recv_orderitem_id=orderitem_id)"
-		   "  AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>));";
+                   "                        recv_orderitem_id)) AS qtyToRecv "
+                   "FROM recv, orderitem "
+                   "WHERE ((recv_order_type=<? value(\"ordertype\") ?>)"
+                   "  AND  (recv_orderitem_id=orderitem_id)"
+                   "  AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>));";
   MetaSQLQuery checkm(checks);
   q = checkm.toQuery(params);
   if (q.first())
@@ -235,98 +239,140 @@ void enterPoReceipt::sPost()
     return;
   }
 
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  q.exec("BEGIN;");	// because of possible insertgltransaction failures
-  QString posts = "SELECT postReceipts(<? value (\"ordertype\") ?>,"
-		  "                    <? value(\"orderid\") ?>,0) AS result;" ;
-  MetaSQLQuery postm(posts);
-  q = postm.toQuery(params);
-  if (q.first())
+  // Handle single lot distribution option
+  if ( _singleLot->isChecked() )
   {
-    int result = q.value("result").toInt();
-    if (result < 0)
+    // first find out if we have any lot controlled items that need distribution
+    QString itemlocSerial (  "SELECT COUNT(*) "
+                             "FROM recv, orderitem, itemsite "
+                             "WHERE ((recv_orderitem_id=orderitem_id) "
+                             "AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>) "
+                             "AND  (orderitem_orderhead_type=pordertype) "
+                             "AND  (NOT recv_posted) "
+                             "AND  (itemsite_loccntrl) "
+                             "AND  (itemsite_id=recv_itemsite_id) "
+                             "AND  (recv_order_type=<? value (\"ordertype\") ?>)); " );
+    MetaSQLQuery distm(itemlocSerial);
+    q = distm.toQuery(params);
+    if (q.first())
     {
-      rollback.exec();
-      systemError(this, storedProcErrorLookup("postReceipts", result),
-		  __FILE__, __LINE__);
-      return;
-    }
-    q.exec("COMMIT;");
-    // TODO: update this to sReceiptsUpdated?
-    omfgThis->sPurchaseOrderReceiptsUpdated();
-
-    QString lotnum = QString::null;
-    QDate expdate = omfgThis->startOfTime();
-    if(result > 0 && _singleLot->isChecked())
-    {
-      // first find out if we have any lot controlled items that need distribution
-      q.prepare("SELECT count(*) AS result"
-		"  FROM itemlocdist, itemsite"
-		" WHERE ((itemlocdist_itemsite_id=itemsite_id)"
-		"   AND  (itemlocdist_reqlotserial)"
-		"   AND  (itemsite_controlmethod='L')"
-		"   AND  (itemlocdist_series=:itemlocdist_series) ); ");
-      q.bindValue(":itemlocdist_series", result);
-      q.exec();
-      // if we have any then ask for a lot# and optionally expiration date.
-      if(q.first() && (q.value("result").toInt() > 0) )
-      {
-	getLotInfo newdlg(this, "", TRUE);
-
-	// find out if any itemsites that are lot controlled are perishable
-	q.prepare("SELECT (count(*) > 0) AS result"
-		  "  FROM itemlocdist, itemsite"
-		  " WHERE ((itemlocdist_itemsite_id=itemsite_id)"
-		  "   AND  (itemlocdist_reqlotserial)"
-		  "   AND  (itemsite_controlmethod='L')"
-		  "   AND  (itemsite_perishable)"
-		  "   AND  (itemlocdist_series=:itemlocdist_series) ); ");
-	q.bindValue(":itemlocdist_series", result);
-	q.exec();
-	if(q.first())
-	  newdlg.enableExpiration(q.value("result").toBool());       
-	else if (q.lastError().type() != QSqlError::None)
-	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
-
-	if(newdlg.exec() == QDialog::Accepted)
-	{
-	  lotnum = newdlg.lot();
-	  expdate = newdlg.expiration();
-	}
-      }
+      getLotInfo newdlg(this, "", TRUE);
+       
+      // if we have distribution then ask for a lot# and optionally expiration date.
+      itemlocSerial =  "SELECT COUNT(*) "
+                       "FROM recv, orderitem, itemsite "
+                       "WHERE ((recv_orderitem_id=orderitem_id) "
+                       "AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>) "
+                       "AND  (orderitem_orderhead_type=pordertype) "
+                       "AND  (NOT recv_posted) "
+                       "AND  (itemsite_perishable) "
+                       "AND  (itemsite_loccntrl) "
+                       "AND  (itemsite_id=recv_itemsite_id) "
+                       "AND  (recv_order_type=<? value (\"ordertype\") ?>)); " ;
+      distm.setQuery(itemlocSerial);
+      q = distm.toQuery(params);
+      if (q.first())                    
+        newdlg.enableExpiration(TRUE);  
       else if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+
+      if(newdlg.exec() == QDialog::Accepted)
+      {
+        lotnum = newdlg.lot();
+        expdate = newdlg.expiration();
       }
     }
-
-    distributeInventory::SeriesAdjust(result, this, lotnum, expdate);
-
-    if (_captive)
+    else if (q.lastError().type() != QSqlError::None)
     {
-      _orderitem->clear();
-      close();
-    }
-    else
-    {
-      _order->setId(-1);
-      _close->setText(tr("&Close"));
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
-  else if (q.lastError().type() != QSqlError::None)
+
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+  q.exec("BEGIN;");	// because of possible insertgltransaction failures
+  
+  //Fetch receipts and loop through them
+  QString receipts (   "SELECT recv_id, recv_itemsite_id, recv_qty * orderitem_qty_invuomratio as recv_qty, "
+                       "( (itemsite_loccntrl) OR (itemsite_controlmethod IN ('L','S')) ) AS dist "
+                       "FROM recv, orderitem, itemsite "
+                       "WHERE ((recv_orderitem_id=orderitem_id) "
+                       "AND  (orderitem_orderhead_id=<? value(\"orderid\") ?>) "
+                       "AND  (orderitem_orderhead_type=<? value (\"ordertype\") ?>) "
+                       "AND  (NOT recv_posted) "
+                       "AND  (itemsite_id=recv_itemsite_id) "
+                       "AND  (recv_order_type=<? value (\"ordertype\") ?>)); " );
+  MetaSQLQuery receiptm(receipts);
+  XSqlQuery r;
+  r = receiptm.toQuery(params);
+  if (q.lastError().type() != QSqlError::None)
   {
     rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  else // select succeeded but returned no rows
-    q.exec("COMMIT;");
+
+  while (r.next())
+  {
+    //Prepare transaction
+    QString posts ( "SELECT postReceipt(<? value(\"recv_id\") ?>,  "
+                    "<? if exists(\"itemlocSeriesList\") ?> "
+                    "  ARRAY[ "
+                    "  <? foreach(\"itemlocSeriesList\") ?> "
+                    "    <? if not isfirst(\"itemlocSeriesList\") ?> "
+                    "    ,"
+                    "    <? endif ?> "
+                    "   <? value(\"itemlocSeriesList\") ?> "
+                    "  <? endforeach ?> ] "
+                    "<? else ?> "
+                    " NULL::INTEGER[] "
+                    "<? endif ?> "
+                    ") AS result;" );
+    ParameterList rparams;
+    rparams.append("recv_id", r.value("recv_id").toInt());
+    rparams.append("recv_qty", r.value("recv_qty").toInt());
+    
+    if (r.value("dist").toBool())  //Need to request distribution info
+    {
+      itemlocSeriesList = distributeInventory::SeriesAdjust(r.value("recv_itemsite_id").toInt(), r.value("recv_qty").toDouble(), this, lotnum, expdate);
+      if (itemlocSeriesList.at(0) == -1)  // If true, distribution was canceled
+      {
+        QMessageBox::information(  this, tr("Enter Receipt"), tr(  "Post canceled."  ));
+        rollback.exec();
+        return;
+      }
+      else
+        rparams.append("itemlocSeriesList", itemlocSeriesList);
+    }
+    
+    MetaSQLQuery postm(posts);
+    q = postm.toQuery(rparams);
+    if (q.lastError().type() != QSqlError::None)
+    {
+      rollback.exec();
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+  // Looks like everything is okay, so let's commit
+  q.exec("COMMIT;");
+  
+  if (_captive)
+  {
+    _orderitem->clear();
+    close();
+  }
+  else
+  {
+    _order->setId(-1);
+    _close->setText(tr("&Close"));
+  }
+    
+  omfgThis->sPurchaseOrderReceiptsUpdated();
 }
 
 void enterPoReceipt::sSave()
@@ -392,12 +438,12 @@ void enterPoReceipt::close()
       q = delm.toQuery(params);
       if (q.first())
       {
-	int result = q.value("result").toInt();
-	if (result < 0)
-	{
-	  systemError(this, storedProcErrorLookup("deleteRecvForOrder", result), __FILE__, __LINE__);
-	  return;
-	}
+        int result = q.value("result").toInt();
+        if (result < 0)
+        {
+          systemError(this, storedProcErrorLookup("deleteRecvForOrder", result), __FILE__, __LINE__);
+          return;
+        }
       }
       else if (q.lastError().type() != QSqlError::None)
       {

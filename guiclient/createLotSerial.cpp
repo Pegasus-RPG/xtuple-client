@@ -72,7 +72,6 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
 
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
 
-  _qtyToAssign->setValidator(omfgThis->qtyVal());
   _serial = false;
   _itemsiteid = -1;
 }
@@ -113,12 +112,12 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
     {
       if (q.value("itemsite_controlmethod").toString() == "S")
       {
-	_serial = true;
+        _serial = true;
         _qtyToAssign->setText("1");
         _qtyToAssign->setEnabled(FALSE);
       }
       else
-	_serial = false;
+      _serial = false;
 
       _itemsiteid = q.value("itemsite_id").toInt();
       _expiration->setEnabled(q.value("itemsite_perishable").toBool());
