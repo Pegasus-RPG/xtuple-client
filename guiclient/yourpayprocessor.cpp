@@ -123,6 +123,9 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
   _defaultTestServer = "staging.linkpt.net";
 
   _msgHash.insert(-100, tr("No Approval Code\n%1\n%2\n%3"));
+  _msgHash.insert(-102, tr("If LinkShield is enabled then the cutoff score "
+			   "should be set between 1 and 100 but it is currently"
+			   " set to %1. Higher Numbers indicate higher risk."));
   _msgHash.insert(-103, tr("The YourPay Store Number is not set."));
   _msgHash.insert(-104, tr("The digital certificate (.pem file) is not set."));
   _msgHash.insert(-105, tr("Could not open digital certificate (.pem file) %1."));
@@ -192,9 +195,7 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
     resultText = "LIVE";
   else if (isTest())
   {
-    if (_metrics->value("CCTestResult") == "G")
-      resultText = "GOOD";
-    else if (_metrics->value("CCTestResult") == "F")
+    if (_metrics->value("CCTestResult") == "F")
       resultText = (qrand() % 2) ? "DECLINE" : "DUPLICATE";
     else if (_metrics->value("CCTestResult") == "S")
       switch (qrand() % 10)
@@ -207,6 +208,8 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
 		resultText = "GOOD";
 		break;
       }
+    else // if (_metrics->value("CCTestResult") == "P")
+      resultText = "GOOD";
   }
   else
   {
@@ -942,6 +945,13 @@ int YourPayProcessor::doCheckConfiguration()
   {
     _errorMsg = errorMsg(-105).arg(fileinfo.fileName());
    return -105;
+  }
+
+  if (_metrics->boolean("CCYPLinkShield") &&
+      _metrics->value("CCYPLinkShieldMax").toInt() <= 0)
+  {
+    _errorMsg = errorMsg(-102).arg(_metrics->value("CCYPLinkShieldMax"));
+    return -102;
   }
 
   return 0;
