@@ -272,15 +272,21 @@ QList<QVariant> distributeInventory::SeriesAdjust(int pItemsiteid, double pQty, 
             itemlocSeriesList.prepend(newdlg.exec());
             if (itemlocSeriesList.at(0) == -1) //Transaction was canceled
             {
-              for(c = 1; c < itemlocSeriesList.count(); c++)
-              {
               q.prepare(  "DELETE FROM lsdetail "
                           "WHERE ((lsdetail_source_type='I') "
-                          "AND (lsdetail_source_id=:itemlocdistid);"
-                          "DELETE FROM itemlocdist "
-                          "WHERE (itemlocdist_id=:itemlocdistid); "
-                          "DELETE FROM itemlocdist "
-                          "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
+                          "AND (lsdetail_source_id IN ( "
+                          "     SELECT itemlocdist_id "
+                          "     FROM itemlocdist "
+                          "     WHERE itemlocdist_series=:itemlocdist_series)));" );
+              q.bindValue(":itemlocdist_series", itemlocSeries);
+              q.exec();
+              
+              for(c = 1; c < itemlocSeriesList.count(); c++)
+              {
+                q.prepare(  "DELETE FROM itemlocdist "
+                            "WHERE (itemlocdist_id=:itemlocdistid); "
+                            "DELETE FROM itemlocdist "
+                            "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
                 q.bindValue(":itemlocdistid", itemlocSeriesList.at(c));
                 q.exec();
               }
@@ -315,10 +321,7 @@ QList<QVariant> distributeInventory::SeriesAdjust(int pItemsiteid, double pQty, 
 		    {
           for(c = 1; c < itemlocSeriesList.count(); c++)
           {
-            q.prepare("DELETE FROM lsdetail "
-                      "WHERE ((lsdetail_source_type='I') "
-                      "AND (lsdetail_source_id=:itemlocdistid);"
-                      "DELETE FROM itemlocdist "
+            q.prepare("DELETE FROM itemlocdist "
                       "WHERE (itemlocdist_id=:itemlocdistid); "
                       "DELETE FROM itemlocdist "
                       "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
@@ -829,10 +832,13 @@ void distributeInventory::sBcChanged(const QString p)
 
 void distributeInventory::sCancel()
 {
-  q.prepare( "DELETE FROM itemlocdist "
-	         "WHERE (itemlocdist_id=:itemlocdistid); "
-	         "DELETE FROM itemlocdist "
-	         "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
+  q.prepare( "DELETE FROM lsdetail "
+             "WHERE ((lsdetail_source_type='I') "
+             "AND (lsdetail_source_id=:itemlocdistid));"
+             "DELETE FROM itemlocdist "
+	           "WHERE (itemlocdist_id=:itemlocdistid); "
+	           "DELETE FROM itemlocdist "
+	           "WHERE (itemlocdist_itemlocdist_id=:itemlocdistid); ");
   q.bindValue(":itemlocdistid", _itemlocdistid);
   q.exec();
   if (q.lastError().type() != QSqlError::None)
