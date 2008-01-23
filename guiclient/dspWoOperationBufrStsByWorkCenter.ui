@@ -249,7 +249,7 @@
            </sizepolicy>
           </property>
           <property name="text" >
-           <string>Only Show W/O Operations with Qty Avail</string>
+           <string>Only Show W/O Operations with Qty. Avail.</string>
           </property>
          </widget>
         </item>
