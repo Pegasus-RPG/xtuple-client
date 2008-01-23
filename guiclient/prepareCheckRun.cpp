@@ -66,26 +66,29 @@
 prepareCheckRun::prepareCheckRun(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
-    connect(_prepare, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
+  connect(_prepare, SIGNAL(clicked()), this, SLOT(sPrint()));
 
-    _checkDate->setDate(omfgThis->dbDate());
+  _checkDate->setDate(omfgThis->dbDate());
+  _nextCheckNum->setEnabled(false);
 }
 
 prepareCheckRun::~prepareCheckRun()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 void prepareCheckRun::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void prepareCheckRun::sPrint()
 {
+// This should be moved to the print phase
+/*
   q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
   q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
@@ -105,6 +108,7 @@ void prepareCheckRun::sPrint()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
   }
+*/
 
   q.prepare("SELECT createChecks(:bankaccnt_id, :checkDate) AS result;");
   q.bindValue(":bankaccnt_id", _bankaccnt->id());
@@ -145,8 +149,8 @@ void prepareCheckRun::sPopulate()
       _nextCheckNum->setText(checkNumber.value("bankaccnt_nextchknum").toString());
     else if (q.lastError().type() != QSqlError::NoError)
     {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
   else
