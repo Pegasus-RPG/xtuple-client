@@ -169,7 +169,7 @@ void salesAccount::sSave()
     return;
   }
 
-  if (_metrics->value("Application") == "OpenMFG")
+  if (_metrics->value("Application") == "OpenMFG" && _metrics->boolean("EnableReturnAuth"))
   {
 
     if (!_returns->isValid())
