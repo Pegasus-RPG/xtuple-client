@@ -237,13 +237,15 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
       _errorMsg = errorMsg(-14).arg(_metrics->value("CCServer"));
   }
 
-  if (_processor && _processor->checkConfiguration() != 0)
+  // reset to 0 if the config is bad and we're not configuring the system
+  if (_processor && _processor->checkConfiguration() != 0 && pcompany.isEmpty())
   {
     delete _processor;
     _processor = 0;
   }
 
-  _processor->reset();
+  if (_processor)
+    _processor->reset();
 
   return _processor;
 }
