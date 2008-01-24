@@ -420,10 +420,10 @@ menuAccounting::menuAccounting(OpenMFGGUIClient *Pparent) :
     
     // Accounting | Account
     { "menu", tr("&Account"), (char*)coaMenu, mainMenu,	true,	NULL, NULL, true, NULL },
+    { "gl.accountNumbers",	tr("&Chart of Accounts..."),	SLOT(sAccountNumbers()), coaMenu,	_privleges->check("MaintainChartOfAccounts"),	NULL, NULL, true, NULL },
     { "gl.companies",		tr("C&ompanies..."),		SLOT(sCompanies()),		coaMenu,	(_privleges->check("MaintainChartOfAccounts") && (_metrics->value("GLCompanySize").toInt() > 0)), NULL, NULL, true, NULL },
     { "gl.profitCenterNumber",	tr("&Profit Center Numbers..."),	SLOT(sProfitCenters()),	coaMenu,	(_privleges->check("MaintainChartOfAccounts") && (_metrics->value("GLProfitSize").toInt() > 0)), NULL, NULL, true, NULL },
     { "gl.subaccountNumbers",	tr("&Subaccount Numbers..."),	SLOT(sSubaccounts()), coaMenu,	(_privleges->check("MaintainChartOfAccounts") && (_metrics->value("GLSubaccountSize").toInt() > 0)), NULL, NULL, true, NULL },
-    { "gl.accountNumbers",	tr("&Chart of Accounts..."),	SLOT(sAccountNumbers()), coaMenu,	_privleges->check("MaintainChartOfAccounts"),	NULL, NULL, true, NULL },
     { "gl.subAccntTypes",	tr("Su&baccount Types..."),	SLOT(sSubAccntTypes()),	coaMenu,	_privleges->check("MaintainChartOfAccounts"),	NULL, NULL, true, NULL },
 
     // Accounting | Budget
