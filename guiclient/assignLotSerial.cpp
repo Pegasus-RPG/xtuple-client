@@ -129,9 +129,6 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
     }
   }
 
-  param = pParams.value("cancelVisible", &valid);
-  _cancel->setVisible(valid);
-
   return NoError;
 }
 
@@ -180,19 +177,12 @@ void assignLotSerial::sDelete()
   sFillList();
 }
 
-void assignLotSerial::sCancel()
+void assignLotSerial::sClose()
 {
   q.prepare( "DELETE FROM itemlocdist "
              "WHERE ( (itemlocdist_source_type='D')"
              " AND (itemlocdist_source_id=:source_id) );" );
-
-  q.prepare( "DELETE FROM itemlocdist "
-             "WHERE (itemlocdist_series=:itemlocdist_series);"
-
-             "DELETE FROM itemlocdist "
-             "WHERE (itemlocdist_id=:itemlocdist_id);" );
-  q.bindValue(":itemlocdist_series", _itemlocSeries);
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
+  q.bindValue(":source_id", _itemlocdistid);
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
@@ -200,7 +190,7 @@ void assignLotSerial::sCancel()
     return;
   }
 
-  done(-1);
+  reject();
 }
 
 void assignLotSerial::sAssign()
@@ -214,7 +204,7 @@ void assignLotSerial::sAssign()
     _new->setFocus();
     return;
   }
-  
+
   q.prepare( "UPDATE itemlocdist "
              "SET itemlocdist_source_type='O' "
              "WHERE (itemlocdist_series=:itemlocdist_series);"
@@ -229,7 +219,6 @@ void assignLotSerial::sAssign()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-
 
   _trapClose = FALSE;
   done(_itemlocSeries);
@@ -287,4 +276,9 @@ void assignLotSerial::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void assignLotSerial::sCancel()
+{
+  done(-1);
 }

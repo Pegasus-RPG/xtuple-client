@@ -555,5 +555,21 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>_cancel</sender>
+   <signal>clicked()</signal>
+   <receiver>distributeInventory</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>703</x>
+     <y>56</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>381</x>
+     <y>181</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
 </ui>

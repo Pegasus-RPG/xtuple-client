@@ -77,9 +77,10 @@ public slots:
     virtual void closeEvent( QCloseEvent * pEvent );
     virtual void sNew();
     virtual void sDelete();
-    virtual void sCancel();
+    virtual void sClose();
     virtual void sAssign();
     virtual void sFillList();
+	virtual void sCancel();
 
 protected slots:
     virtual void languageChange();
