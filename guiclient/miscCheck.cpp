@@ -241,10 +241,15 @@ void miscCheck::sSave()
     check.bindValue(":check_id", _checkid);
     check.exec();
     if (check.first())
+    {
+// Since we are no longer assigning check number at creation this is not needed
+/*
       QMessageBox::information( this, tr("New Check Created"),
                                 tr("<p>A new Check has been created and "
 				   "assigned #%1")
                                 .arg(check.value("checkhead_number").toString()) );
+*/
+    }
     else if (check.lastError().type() != QSqlError::None)
     {
       systemError(this, check.lastError().databaseText(), __FILE__, __LINE__);

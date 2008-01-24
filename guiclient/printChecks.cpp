@@ -61,8 +61,11 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QPrintDialog>
 
-#include <openreports.h>
+#include <orprerender.h>
+#include <orprintrender.h>
+#include <renderobjects.h>
 
 #include "printChecksReview.h"
 #include "storedProcErrorLookup.h"
@@ -75,6 +78,8 @@ printChecks::printChecks(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sHandleBankAccount(int)));
   connect(_bankaccnt, SIGNAL(newID(int)), this, SLOT(sPopulate()));
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+
+  _setCheckNumber = -1;
 
   _bankaccnt->setAllowNull(TRUE);
   _bankaccnt->setType(XComboBox::APBankAccounts);
@@ -111,7 +116,6 @@ void printChecks::sPrint()
   ParameterList params;
   params.append("bankaccnt_id", _bankaccnt->id());
 
-  QPrinter printer;
   bool setup = true;
 
   XSqlQuery checks;
@@ -128,6 +132,7 @@ void printChecks::sPrint()
   checks.bindValue(":bankaccnt_id", _bankaccnt->id());
   checks.bindValue(":numtoprint", _numberOfChecks->value());
   checks.exec();
+/*
   bool userCanceled = false;
   if (orReport::beginMultiPrint(&printer, userCanceled) == false)
   {
@@ -136,25 +141,132 @@ void printChecks::sPrint()
 			   "multiple reports."));
     return;
   }
+*/
+  QDomDocument docReport;
+  QPrinter printer(QPrinter::HighResolution);
+  ORPrintRender render;
   while (checks.next())
   {
+    if(setup)
+    {
+      // get the report definition out of the database
+      // this should somehow be condensed into a common code call or something
+      // in the near future to facilitate easier conversion in other places
+      // of the application to use the new rendering engine directly
+      XSqlQuery report;
+      report.prepare( "SELECT report_source "
+                      "  FROM report "
+                      " WHERE (report_name=:report_name) "
+                      "ORDER BY report_grade DESC LIMIT 1;" );
+      report.bindValue(":report_name", checks.value("report_name").toString());
+      report.exec();
+      if (report.first())
+      {
+        QString errorMessage;
+        int     errorLine;
+  
+        if (!docReport.setContent(report.value("report_source").toString(), &errorMessage, &errorLine))
+        {
+          systemError(this, errorMessage, __FILE__, __LINE__);
+          return;
+        }
+      }
+      else
+      {
+        systemError(this, report.lastError().databaseText(), __FILE__, __LINE__);
+        return;
+      }
+      // end getting the report definition out the database
+
+      if(_setCheckNumber != -1 && _setCheckNumber != _nextCheckNum->text().toInt())
+      {
+        q.prepare("SELECT setNextCheckNumber(:bankaccnt_id, :nextCheckNumber) AS result;");
+        q.bindValue(":bankaccnt_id", _bankaccnt->id());
+        q.bindValue(":nextCheckNumber", _nextCheckNum->text().toInt());
+        q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            systemError(this, storedProcErrorLookup("setNextCheckNumber", result),
+                        __FILE__, __LINE__);
+            return;
+          }
+        }
+        else if (q.lastError().type() != QSqlError::NoError)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
+    }
+
+    q.prepare("UPDATE checkhead SET checkhead_number=fetchNextCheckNumber(checkhead_bankaccnt_id)"
+              " WHERE(checkhead_id=:checkhead_id);");
+    q.bindValue(":checkhead_id", checks.value("checkhead_id").toInt());
+    q.exec();
+    if (q.lastError().type() != QSqlError::NoError)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+
     ParameterList params;
     params.append("checkhead_id", checks.value("checkhead_id").toInt());
     params.append("apchk_id", checks.value("checkhead_id").toInt());
 
-    orReport report(checks.value("report_name").toString(), params);
-    if (report.isValid() && report.print(&printer, setup))
+    ORPreRender pre;
+    pre.setDom(docReport);
+    pre.setParamList(params);
+    ORODocument * doc = pre.generate();
+
+    if(setup)
     {
+      render.setupPrinter(doc, &printer);
+
+      QPrintDialog pd(&printer);
+      pd.setMinMax(1, doc->pages());
+      if(pd.exec() != QDialog::Accepted)
+        return;
+      render.setPrinter(&printer);
       setup = false;
-      printedChecks.append(checks.value("checkhead_id").toInt());
     }
-    else
+
+    render.render(doc);
+    printedChecks.append(checks.value("checkhead_id").toInt());
+
+    int page_num = 1;
+    while(page_num < doc->pages())
     {
-      report.reportError(this);
-      break;
+      page_num++;
+
+      XSqlQuery qq;
+      qq.prepare("INSERT INTO checkhead"
+                 "      (checkhead_recip_id, checkhead_recip_type,"
+                 "       checkhead_bankaccnt_id, checkhead_printed,"
+                 "       checkhead_checkdate, checkhead_number,"
+                 "       checkhead_amount, checkhead_void,"
+                 "       checkhead_misc,"
+                 "       checkhead_for, checkhead_notes,"
+                 "       checkhead_curr_id, checkhead_deleted) "
+                 "SELECT checkhead_recip_id, checkhead_recip_type,"
+                 "       checkhead_bankaccnt_id, TRUE,"
+                 "       checkhead_checkdate, fetchNextCheckNumber(checkhead_bankaccnt_id),"
+                 "       checkhead_amount, TRUE, TRUE,"
+                 "       'Continuation of Check #'||checkhead_number,"
+                 "       'Continuation of Check #'||checkhead_number,"
+                 "       checkhead_curr_id, TRUE"
+                 "  FROM checkhead"
+                 " WHERE(checkhead_id=:checkhead_id);");
+      qq.bindValue(":checkhead_id", checks.value("checkhead_id").toInt());
+      if(!qq.exec())
+      {
+        systemError(this, "Received error but will continue anyway:\n"+qq.lastError().databaseText(), __FILE__, __LINE__);
+      }
     }
   }
-  orReport::endMultiPrint(&printer);
+  //orReport::endMultiPrint(&printer);
   if (checks.lastError().type() != QSqlError::None)
   {
     systemError(this, checks.lastError().databaseText(), __FILE__, __LINE__);
@@ -226,17 +338,19 @@ void printChecks::sPrint()
 
 void printChecks::sHandleBankAccount(int pBankaccntid)
 {
-  q.prepare( "SELECT TEXT(MIN(checkhead_number)) as checknumber,"
+  q.prepare( "SELECT bankaccnt_nextchknum,"
              "       COUNT(*) AS numofchecks "
-             "FROM checkhead "
-             "WHERE ( (NOT checkhead_void)"
-             " AND (NOT checkhead_printed)"
-             " AND (checkhead_bankaccnt_id=:bankaccnt_id) );" );
+             "  FROM checkhead, bankaccnt "
+             " WHERE((NOT checkhead_void)"
+             "   AND (NOT checkhead_printed)"
+             "   AND (checkhead_bankaccnt_id=bankaccnt_id)"
+             "   AND (checkhead_bankaccnt_id=:bankaccnt_id))"
+             " GROUP BY bankaccnt_nextchknum;" );
   q.bindValue(":bankaccnt_id", pBankaccntid);
   q.exec();
   if (q.first())
   {
-    _checkNumber->setText(q.value("checknumber").toString());
+    _nextCheckNum->setText(q.value("bankaccnt_nextchknum").toString());
     _numberOfChecks->setMaxValue(q.value("numofchecks").toInt());
     _numberOfChecks->setValue(q.value("numofchecks").toInt());
   }

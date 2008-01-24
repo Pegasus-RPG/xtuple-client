@@ -82,7 +82,7 @@ protected slots:
 
 private:
     bool _captive;
-
+    int  _setCheckNumber;
 };
 
 #endif // PRINTCHECKS_H

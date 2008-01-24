@@ -236,11 +236,11 @@ void printCheck::sPrint()
                  "       checkhead_curr_id, checkhead_deleted) "
                  "SELECT checkhead_recip_id, checkhead_recip_type,"
                  "       checkhead_bankaccnt_id, TRUE,"
-                 "       checkhead_checkdate, fetchNextCheckNumber(),"
-                 "       0.0, TRUE, TRUE,"
+                 "       checkhead_checkdate, fetchNextCheckNumber(checkhead_bankaccnt_id),"
+                 "       checkhead_amount, TRUE, TRUE,"
                  "       'Continuation of Check #'||checkhead_number,"
                  "       'Continuation of Check #'||checkhead_number,"
-                 "       checkhead_curr_id, FALSE"
+                 "       checkhead_curr_id, TRUE"
                  "  FROM checkhead"
                  " WHERE(checkhead_id=:checkhead_id);");
       qq.bindValue(":checkhead_id", _check->id());
