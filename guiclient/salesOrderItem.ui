@@ -27,6 +27,12 @@
   <layout class="QGridLayout" >
    <item row="0" column="0" >
     <layout class="QGridLayout" >
+     <property name="horizontalSpacing" >
+      <number>12</number>
+     </property>
+     <property name="verticalSpacing" >
+      <number>12</number>
+     </property>
      <item row="0" column="0" colspan="2" >
       <layout class="QHBoxLayout" >
        <item>
