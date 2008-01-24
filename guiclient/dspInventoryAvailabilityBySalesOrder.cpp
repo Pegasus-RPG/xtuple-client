@@ -212,11 +212,11 @@ void dspInventoryAvailabilityBySalesOrder::sPopulateMenu(QMenu *pMenu,  QTreeWid
   if (_avail->altId() != -1)
   {
     menuItem = pMenu->insertItem("View Allocations...", this, SLOT(sViewAllocations()), 0);
-    if (selected->text(6).toDouble() == 0.0)
+    if (selected->text(5).toDouble() == 0.0)
       pMenu->setItemEnabled(menuItem, FALSE);
     
     menuItem = pMenu->insertItem("View Orders...", this, SLOT(sViewOrders()), 0);
-    if (selected->text(7).toDouble() == 0.0)
+    if (selected->text(6).toDouble() == 0.0)
      pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem("Running Availability...", this, SLOT(sRunningAvailability()), 0);
