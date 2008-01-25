@@ -63,8 +63,13 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QMenu>
+
 #include <openreports.h>
+
 #include "apOpenItem.h"
+#include "voucher.h"
+#include "miscVoucher.h"
+#include "dspGLSeries.h"
 
 /*
  *  Constructs a dspVendorAPHistory as a child of 'parent', with the
@@ -153,13 +158,26 @@ void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     if (!_privleges->check("EditSalesHistory"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
-    pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+    pMenu->insertItem(tr("View A/P Open..."), this, SLOT(sView()), 0);
 
-    if(item->altId() == -1 && item->text(1)==tr("Voucher") && item->text(7)==item->text(8))
+    menuItem = pMenu->insertItem(tr("View G/L Series..."), this, SLOT(sViewGLSeries()), 0);
+    if (!_privleges->check("ViewGLTransactions"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    if(item->altId() == -1 && item->text(1)==tr("Voucher"))
     {
-      menuItem = pMenu->insertItem(tr("Void"), this, SLOT(sVoidVoucher()), 0);
-      if (!_privleges->check("MaintainAPMemos"))
+      menuItem = pMenu->insertItem(tr("View Voucher..."), this, SLOT(sViewVoucher()), 0);
+      if (!_privleges->check("ViewVouchers"))
         pMenu->setItemEnabled(menuItem, FALSE);
+
+      if(item->text(7)==item->text(8))
+      {
+        pMenu->insertSeparator();
+  
+        menuItem = pMenu->insertItem(tr("Void"), this, SLOT(sVoidVoucher()), 0);
+        if (!_privleges->check("MaintainAPMemos"))
+          pMenu->setItemEnabled(menuItem, FALSE);
+      }
     } 
   }
 }
@@ -389,5 +407,58 @@ void dspVendorAPHistory::sVoidVoucher()
   else
     systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
 
+}
+
+void dspVendorAPHistory::sViewVoucher()
+{
+  q.prepare("SELECT vohead_id, COALESCE(pohead_id, -1) AS pohead_id"
+            "  FROM apopen, vohead LEFT OUTER JOIN pohead ON (vohead_pohead_id=pohead_id)"
+            " WHERE((vohead_number=apopen_docnumber)"
+            "   AND (apopen_id=:apopen_id));");
+  q.bindValue(":apopen_id", _vendhist->id());
+  q.exec();
+  if(q.first())
+  {
+    ParameterList params;
+    params.append("mode", "view");
+    params.append("vohead_id", q.value("vohead_id").toInt());
+  
+    if (q.value("pohead_id").toInt() == -1)
+    {
+      miscVoucher *newdlg = new miscVoucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+    else
+    {
+      voucher *newdlg = new voucher();
+      newdlg->set(params);
+      omfgThis->handleNewWindow(newdlg);
+    }
+  }
+  else
+    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+}
+
+void dspVendorAPHistory::sViewGLSeries()
+{
+  q.prepare("SELECT apopen_docdate, apopen_journalnumber"
+            "  FROM apopen"
+            " WHERE(apopen_id=:apopen_id);");
+  q.bindValue(":apopen_id", _vendhist->id());
+  q.exec();
+  if(q.first())
+  {
+    ParameterList params;
+    params.append("startDate", q.value("apopen_docdate").toDate());
+    params.append("endDate", q.value("apopen_docdate").toDate());
+    params.append("journalnumber", q.value("apopen_journalnumber").toInt());
+  
+    dspGLSeries *newdlg = new dspGLSeries();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else
+    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
 }
 

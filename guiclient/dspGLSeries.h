@@ -72,6 +72,7 @@ public:
     ~dspGLSeries();
 
 public slots:
+    virtual enum SetResponse set(const ParameterList &);
     virtual void sPopulateMenu( QMenu * );
     virtual void sPrint();
     virtual void sFillList();

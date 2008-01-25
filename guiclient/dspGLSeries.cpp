@@ -61,8 +61,10 @@
 #include <QStatusBar>
 #include <QMessageBox>
 #include <QMenu>
+
 #include <openreports.h>
 #include <parameter.h>
+
 #include "reverseGLSeries.h"
 
 /*
@@ -111,6 +113,32 @@ dspGLSeries::~dspGLSeries()
 void dspGLSeries::languageChange()
 {
   retranslateUi(this);
+}
+
+enum SetResponse dspGLSeries::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("startDate", &valid);
+  if(valid)
+    _dates->setStartDate(param.toDate());
+
+  param = pParams.value("endDate", &valid);
+  if(valid)
+    _dates->setEndDate(param.toDate());
+
+  param = pParams.value("journalnumber", &valid);
+  if(valid)
+  {
+    _jrnlGroup->setChecked(true);
+    _startJrnlnum->setText(param.toString());
+    _endJrnlnum->setText(param.toString());
+  }
+
+  sFillList();
+
+  return NoError;
 }
 
 void dspGLSeries::sPopulateMenu(QMenu * pMenu)

@@ -82,6 +82,8 @@ public slots:
     virtual void sPrint();
     virtual void sFillList();
     virtual void sVoidVoucher();
+    virtual void sViewVoucher();
+    virtual void sViewGLSeries();
 
 protected slots:
     virtual void languageChange();
