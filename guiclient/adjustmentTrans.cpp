@@ -262,14 +262,14 @@ void adjustmentTrans::sPost()
   if (q.first())
   {
     if (q.value("result").toInt() < 0)
-	{
-	  rollback.exec();
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at adjustmentTrans::%1, Item ID #%2, Warehouse ID #%3, Error #%4.")
-                         .arg(__LINE__)
-                         .arg(_item->id())
-                         .arg(_warehouse->id())
-                         .arg(q.value("result").toInt()) );
-	}
+                           .arg(__LINE__)
+                           .arg(_item->id())
+                           .arg(_warehouse->id())
+                           .arg(q.value("result").toInt()) );
+    }
     else
     {
       if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
@@ -279,25 +279,25 @@ void adjustmentTrans::sPost()
         return;
       }
 
-	  tx.exec("COMMIT;");
+      tx.exec("COMMIT;");
 
-	  //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
-	  if (q.value("result").toInt() > 0)
-	  {   
-		  XSqlQuery post;
-		  post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-		  post.bindValue(":itemlocseries", q.value("result").toInt());
-		  post.exec();
-		  if (post.first())
-		    if (!post.value("result").toBool())
-			        QMessageBox::warning( this, tr("Inventory Adjustment"), 
-					tr("There was an error posting the transaction.  Contact your administrator") );
-		  else if (post.lastError().type() != QSqlError::None)
-		  {
-			systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
-			return;
-		  }
-	  }
+      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
+      if (q.value("result").toInt() > 0)
+      {   
+        XSqlQuery post;
+        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+        post.bindValue(":itemlocseries", q.value("result").toInt());
+        post.exec();
+        if (post.first())
+          if (!post.value("result").toBool())
+                QMessageBox::warning( this, tr("Inventory Adjustment"), 
+            tr("There was an error posting the transaction.  Contact your administrator") );
+        else if (post.lastError().type() != QSqlError::None)
+        {
+          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
 
       if (_captive)
         close();

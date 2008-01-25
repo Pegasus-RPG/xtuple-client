@@ -217,8 +217,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           assignLotSerial newdlg(pParent, "", TRUE);
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
-		  if (itemlocSeries == -1)
-		    return QDialog::Rejected;
+          if (itemlocSeries == -1)
+            return QDialog::Rejected;
         }
 
         if (itemloc.value("itemsite_loccntrl").toBool())
@@ -237,7 +237,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             distributeInventory newdlg(pParent, "", TRUE);
             newdlg.set(params);
             if (newdlg.exec() == QDialog::Rejected)
-				return QDialog::Rejected;
+              return QDialog::Rejected;
           }
         }
         else

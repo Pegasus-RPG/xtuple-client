@@ -249,13 +249,13 @@ void unpostedPoReceipts::sPost()
       setDate.exec();
       if (setDate.lastError().type() != QSqlError::None)
       {
-	systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this, setDate.lastError().databaseText(), __FILE__, __LINE__);
       }
     }
   }
   
   XSqlQuery postLine;
-  postLine.prepare("SELECT postReceipt(:id, NULL) AS result;");
+  postLine.prepare("SELECT postReceipt(:id, NULL::integer) AS result;");
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
@@ -270,38 +270,56 @@ void unpostedPoReceipts::sPost()
       postLine.exec();
       if (postLine.first())
       {
-		int result = postLine.value("result").toInt();
-		if (result < 0)
-		{
-		  rollback.exec();
-		  systemError(this, storedProcErrorLookup("postReceipt", result),
-				  __FILE__, __LINE__);
-		  continue;
-		}
+        int result = postLine.value("result").toInt();
+        if (result < 0)
+        {
+          rollback.exec();
+          systemError(this, storedProcErrorLookup("postReceipt", result),
+              __FILE__, __LINE__);
+          continue;
+        }
 
-	    if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
-	    {
-	  	  QMessageBox::information( this, tr("Unposted Receipts"), tr("Post Canceled") );
-		  rollback.exec();
-		  return;
-	    }
-		q.exec("COMMIT;");
+        if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+        {
+          QMessageBox::information( this, tr("Unposted Receipts"), tr("Post Canceled") );
+          rollback.exec();
+          return;
+        }
+        q.exec("COMMIT;");
+        
+        //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
+        if (result > 0)
+        {   
+          XSqlQuery post;
+          post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+          post.bindValue(":itemlocseries", result);
+          post.exec();
+          if (post.first())
+            if (!post.value("result").toBool())
+                  QMessageBox::warning( this, tr("Inventory Adjustment"), 
+              tr("There was an error posting the transaction.  Contact your administrator") );
+          else if (post.lastError().type() != QSqlError::None)
+          {
+            systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+          }
+        }        
       }
       // contains() string is hard-coded in stored procedure
       else if (postLine.lastError().databaseText().contains("posted to closed period"))
       {
-	if (changeDate)
-	{
-	  triedToClosed = selected;
-	  break;
-	}
-	else
-	  triedToClosed.append(selected[i]);
+        if (changeDate)
+        {
+          triedToClosed = selected;
+          break;
+        }
+        else
+          triedToClosed.append(selected[i]);
       }
       else if (postLine.lastError().type() != QSqlError::None)
       {
-	rollback.exec();
-	systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);
+        rollback.exec();
+        systemError(this, postLine.lastError().databaseText(), __FILE__, __LINE__);
       }
     } // for each selected line
 
