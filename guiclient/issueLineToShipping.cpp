@@ -156,36 +156,36 @@ void issueLineToShipping::sIssue()
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	ParameterList errp;
-	if (_ordertype == "SO")
-	  errp.append("soitem_id", _itemid);
-	else if (_ordertype == "TO")
-	  errp.append("toitem_id", _itemid);
+        ParameterList errp;
+        if (_ordertype == "SO")
+          errp.append("soitem_id", _itemid);
+        else if (_ordertype == "TO")
+          errp.append("toitem_id", _itemid);
 
-	QString errs = "<? if exists(\"soitem_id\") ?>"
-		  "SELECT item_number, warehous_code "
-		  "  FROM coitem, item, itemsite, whsinfo "
-		  " WHERE ((coitem_itemsite_id=itemsite_id)"
-		  "   AND  (itemsite_item_id=item_id)"
-		  "   AND  (itemsite_warehous_id=warehous_id)"
-		  "   AND  (coitem_id=<? value(\"soitem_id\") ?>));"
-		  "<? elseif exists(\"toitem_id\")?>"
-		  "SELECT item_number, tohead_srcname AS warehous_code "
-		  "  FROM toitem, tohead, item "
-		  " WHERE ((toitem_item_id=item_id)"
-		  "   AND  (toitem_tohead_id=tohead_id)"
-		  "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
-		  "<? endif ?>" ;
-	MetaSQLQuery errm(errs);
-	q = errm.toQuery(errp);
-	if (! q.first() && q.lastError().type() != QSqlError::None)
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	systemError(this,
-		    storedProcErrorLookup("sufficientInventoryToShipItem",
-					  result)
-		    .arg(q.value("item_number").toString())
-		    .arg(q.value("warehous_code").toString()), __FILE__, __LINE__);
-	return;
+        QString errs = "<? if exists(\"soitem_id\") ?>"
+            "SELECT item_number, warehous_code "
+            "  FROM coitem, item, itemsite, whsinfo "
+            " WHERE ((coitem_itemsite_id=itemsite_id)"
+            "   AND  (itemsite_item_id=item_id)"
+            "   AND  (itemsite_warehous_id=warehous_id)"
+            "   AND  (coitem_id=<? value(\"soitem_id\") ?>));"
+            "<? elseif exists(\"toitem_id\")?>"
+            "SELECT item_number, tohead_srcname AS warehous_code "
+            "  FROM toitem, tohead, item "
+            " WHERE ((toitem_item_id=item_id)"
+            "   AND  (toitem_tohead_id=tohead_id)"
+            "   AND  (toitem_id=<? value(\"toitem_id\") ?>));"
+            "<? endif ?>" ;
+        MetaSQLQuery errm(errs);
+        q = errm.toQuery(errp);
+        if (! q.first() && q.lastError().type() != QSqlError::None)
+            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        systemError(this,
+              storedProcErrorLookup("sufficientInventoryToShipItem",
+                  result)
+              .arg(q.value("item_number").toString())
+              .arg(q.value("warehous_code").toString()), __FILE__, __LINE__);
+        return;
       }
     }
     else if (q.lastError().type() != QSqlError::None)
@@ -238,7 +238,11 @@ void issueLineToShipping::sIssue()
     return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   XSqlQuery issue;
+  issue.exec("BEGIN;");
   issue.prepare("SELECT issueToShipping(:ordertype, :lineitem_id, :qty, 0, CURRENT_TIMESTAMP) AS result;");
   issue.bindValue(":ordertype", _ordertype);
   issue.bindValue(":lineitem_id", _itemid);
@@ -250,18 +254,45 @@ void issueLineToShipping::sIssue()
     int result = issue.value("result").toInt();
     if (result < 0)
     {
+      rollback.exec();
       systemError( this, storedProcErrorLookup("issueToShipping", result),
 		  __FILE__, __LINE__);
       return;
     }
     else
     {
-      distributeInventory::SeriesAdjust(result, this);
+      if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        return;
+      }
+      
+      issue.exec("COMMIT;");
+      
+      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
+      if (result > 0)
+      {   
+        XSqlQuery post;
+        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+        post.bindValue(":itemlocseries", result);
+        post.exec();
+        if (post.first())
+          if (!post.value("result").toBool())
+                QMessageBox::warning( this, tr("Issue to Shipping"), 
+            tr("There was an error posting the transaction.  Contact your administrator") );
+        else if (post.lastError().type() != QSqlError::None)
+        {
+          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
       accept();
     }
   }
   else if (issue.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, issue.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }

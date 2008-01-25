@@ -508,7 +508,11 @@ void issueToShipping::sIssueLineBalance()
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
     if (! sufficientItemInventory(cursor->id()))
       return;
-
+    
+    XSqlQuery rollback;
+    rollback.prepare("ROLLBACK;");
+      
+    q.exec("BEGIN;");
     q.prepare("SELECT issueLineBalanceToShipping(:ordertype, :soitem_id, CURRENT_TIMESTAMP) AS result;");
     q.bindValue(":ordertype", _ordertype);
     q.bindValue(":soitem_id", cursor->id());
@@ -518,15 +522,41 @@ void issueToShipping::sIssueLineBalance()
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
-		    __FILE__, __LINE__);
-	return;
+        rollback.exec();
+        systemError(this, storedProcErrorLookup("issueLineBalanceToShipping", result),
+              __FILE__, __LINE__);
+        return;
       }
-      else
-	distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      else if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        return;
+      }
+      
+      q.exec("COMMIT;");
+      
+      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
+      if (result > 0)
+      {   
+        XSqlQuery post;
+        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+        post.bindValue(":itemlocseries", result);
+        post.exec();
+        if (post.first())
+          if (!post.value("result").toBool())
+                QMessageBox::warning( this, tr("Issue to Shipping"), 
+            tr("There was an error posting the transaction.  Contact your administrator") );
+        else if (post.lastError().type() != QSqlError::None)
+        {
+          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
     }
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -546,6 +576,10 @@ void issueToShipping::sIssueAllBalance()
   if (! sufficientInventory(orderid))
     return;
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN");
   q.prepare("SELECT issueAllBalanceToShipping(:ordertype, :order_id, 0, CURRENT_TIMESTAMP) AS result;");
   q.bindValue(":ordertype", _ordertype);
   q.bindValue(":order_id", orderid);
@@ -555,15 +589,44 @@ void issueToShipping::sIssueAllBalance()
     int result = q.value("result").toInt();
     if (result < 0)
     {
+      rollback.exec();
       systemError(this, storedProcErrorLookup("issueAllBalanceToShipping", result),
                   __FILE__, __LINE__);
       return;
     }
     else
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+    {
+      if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
+        return;
+      }
+      
+      q.exec("COMMIT;"); 
+      
+      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
+      if (result > 0)
+      {   
+        XSqlQuery post;
+        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+        post.bindValue(":itemlocseries", result);
+        post.exec();
+        if (post.first())
+          if (!post.value("result").toBool())
+                QMessageBox::warning( this, tr("Issue to Shipping"), 
+            tr("There was an error posting the transaction.  Contact your administrator") );
+        else if (post.lastError().type() != QSqlError::None)
+        {
+          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
+    }
   }
   else if (q.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -577,6 +640,11 @@ void issueToShipping::sReturnStock()
   for (int i = 0; i < selected.size(); i++)
   {
     XTreeWidgetItem *cursor = (XTreeWidgetItem*)selected[i];
+    
+    XSqlQuery rollback;
+    rollback.prepare("ROLLBACK;");
+
+    q.exec("BEGIN");
     q.prepare("SELECT returnItemShipments(:ordertype, :soitem_id, 0, CURRENT_TIMESTAMP) AS result;");
     q.bindValue(":ordertype", _ordertype);
     q.bindValue(":soitem_id", cursor->id());
@@ -586,15 +654,41 @@ void issueToShipping::sReturnStock()
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	systemError( this, storedProcErrorLookup("returnItemShipments", result),
-		    __FILE__, __LINE__);
-	return;
+        systemError( this, storedProcErrorLookup("returnItemShipments", result),
+              __FILE__, __LINE__);
+        return;
       }
       else
-	distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
+        return;
+      }
+      
+      q.exec("COMMIT;"); 
+      
+      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
+      if (result > 0)
+      {   
+        XSqlQuery post;
+        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+        post.bindValue(":itemlocseries", result);
+        post.exec();
+        if (post.first())
+          if (!post.value("result").toBool())
+                QMessageBox::warning( this, tr("Issue to Shipping"), 
+            tr("There was an error posting the transaction.  Contact your administrator") );
+        else if (post.lastError().type() != QSqlError::None)
+        {
+          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
     }
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
