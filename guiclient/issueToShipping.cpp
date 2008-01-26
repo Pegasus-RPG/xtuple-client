@@ -486,8 +486,8 @@ bool issueToShipping::sufficientInventory(int porderheadid)
       int result = q.value("result").toInt();
       if (result < 0)
       {
-	systemError(this, storedProcErrorLookup("sufficientInventoryToShipOrder", result), __FILE__, __LINE__);
-	return false;
+        systemError(this, storedProcErrorLookup("sufficientInventoryToShipOrder", result), __FILE__, __LINE__);
+        return false;
       }
     }
     else if (q.lastError().type() != QSqlError::None)
@@ -533,26 +533,7 @@ void issueToShipping::sIssueLineBalance()
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
         return;
       }
-      
       q.exec("COMMIT;");
-      
-      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
-      if (result > 0)
-      {   
-        XSqlQuery post;
-        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-        post.bindValue(":itemlocseries", result);
-        post.exec();
-        if (post.first())
-          if (!post.value("result").toBool())
-                QMessageBox::warning( this, tr("Issue to Shipping"), 
-            tr("There was an error posting the transaction.  Contact your administrator") );
-        else if (post.lastError().type() != QSqlError::None)
-        {
-          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
-      }
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -602,26 +583,7 @@ void issueToShipping::sIssueAllBalance()
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Issue Canceled") );
         return;
       }
-      
       q.exec("COMMIT;"); 
-      
-      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
-      if (result > 0)
-      {   
-        XSqlQuery post;
-        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-        post.bindValue(":itemlocseries", result);
-        post.exec();
-        if (post.first())
-          if (!post.value("result").toBool())
-                QMessageBox::warning( this, tr("Issue to Shipping"), 
-            tr("There was an error posting the transaction.  Contact your administrator") );
-        else if (post.lastError().type() != QSqlError::None)
-        {
-          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
-      }
     }
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -654,37 +616,18 @@ void issueToShipping::sReturnStock()
       int result = q.value("result").toInt();
       if (result < 0)
       {
+        rollback.exec();
         systemError( this, storedProcErrorLookup("returnItemShipments", result),
               __FILE__, __LINE__);
         return;
       }
-      else
-      if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+      else if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
       {
         rollback.exec();
         QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
         return;
-      }
-      
+      }      
       q.exec("COMMIT;"); 
-      
-      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
-      if (result > 0)
-      {   
-        XSqlQuery post;
-        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-        post.bindValue(":itemlocseries", result);
-        post.exec();
-        if (post.first())
-          if (!post.value("result").toBool())
-                QMessageBox::warning( this, tr("Issue to Shipping"), 
-            tr("There was an error posting the transaction.  Contact your administrator") );
-        else if (post.lastError().type() != QSqlError::None)
-        {
-          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
-      }
     }
     else if (q.lastError().type() != QSqlError::None)
     {

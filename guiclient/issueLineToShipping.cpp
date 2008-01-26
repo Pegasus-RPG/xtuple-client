@@ -269,24 +269,6 @@ void issueLineToShipping::sIssue()
       }
       
       issue.exec("COMMIT;");
-      
-      //Since everything accepted, post G/L transactions to trial balance if item location or lot serial distributions
-      if (result > 0)
-      {   
-        XSqlQuery post;
-        post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-        post.bindValue(":itemlocseries", result);
-        post.exec();
-        if (post.first())
-          if (!post.value("result").toBool())
-                QMessageBox::warning( this, tr("Issue to Shipping"), 
-            tr("There was an error posting the transaction.  Contact your administrator") );
-        else if (post.lastError().type() != QSqlError::None)
-        {
-          systemError(this, post.lastError().databaseText(), __FILE__, __LINE__);
-          return;
-        }
-      }
       accept();
     }
   }
