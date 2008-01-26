@@ -199,6 +199,10 @@ void maintainShipping::sShipOrder()
 
 void maintainShipping::sReturnAllOrderStock()
 {
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN");
   q.prepare("SELECT returnCompleteShipment(:ship_id) AS result;");
   q.bindValue(":ship_id", _ship->id());
   q.exec();
@@ -207,18 +211,23 @@ void maintainShipping::sReturnAllOrderStock()
     int result = q.value("result").toInt();
     if (result < 0)
     {
+      rollback.exec();
       systemError(this, storedProcErrorLookup("returnCompleteShipment", result),
 		  __FILE__, __LINE__);
       return;
     }
-    else
+    else if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
     {
-      distributeInventory::SeriesAdjust(result, this);
-      sFillList();
+      rollback.exec();
+      QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
+      return;
     }
+    q.exec("COMMIT;"); 
+    sFillList();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -267,6 +276,10 @@ void maintainShipping::sIssueStock()
 
 void maintainShipping::sReturnAllLineStock()
 {
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN");
   q.prepare("SELECT returnItemShipments(:ship_id) AS result;");
   q.bindValue(":ship_id", _ship->altId());
   q.exec();
@@ -275,18 +288,23 @@ void maintainShipping::sReturnAllLineStock()
     int result = q.value("result").toInt();
     if (q.value("result").toInt() < 0)
     {
+      rollback.exec();
       systemError(this, storedProcErrorLookup("returnItemShipments", result),
 		  __FILE__, __LINE__);
       return;
     }
-    else
+    else if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
     {
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
-      sFillList();
-    }
+      rollback.exec();
+      QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
+      return;
+    }    
+    q.exec("COMMIT;"); 
+    sFillList();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -305,6 +323,10 @@ void maintainShipping::sViewLine()
 
 void maintainShipping::sReturnAllStock()
 {
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN");
   q.prepare("SELECT returnShipmentTransaction(:ship_id) AS result;");
   q.bindValue(":ship_id", _ship->altId());
   q.exec();
@@ -313,19 +335,24 @@ void maintainShipping::sReturnAllStock()
     int result = q.value("result").toInt();
     if (q.value("result").toInt() < 0)
     {
+      rollback.exec();
       systemError(this,
 		  storedProcErrorLookup("returnShipmentTransaction", result),
 		  __FILE__, __LINE__);
       return;
     }
-    else
+    else if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
     {
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
-      sFillList();
-    }
+      rollback.exec();
+      QMessageBox::information( this, tr("Issue to Shipping"), tr("Return Canceled") );
+      return;
+    }    
+    q.exec("COMMIT;"); 
+    sFillList();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
