@@ -199,6 +199,10 @@ void expenseTrans::sPost()
     return;
   }
   
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare( "SELECT invExpense(itemsite_id, :qty, :expcatid, :docNumber, :comments) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
@@ -214,15 +218,24 @@ void expenseTrans::sPost()
   if (q.first())
   {
     if (q.value("result").toInt() < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at %1::%2, Item ID #%3, Warehouse ID #%4, Error #%5.")
                          .arg(__FILE__)
                          .arg(__LINE__)
                          .arg(_item->id())
                          .arg(_warehouse->id())
                          .arg(q.value("result").toInt()) );
+      return;
+    }
     else
     {
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Expense Transaction"), tr("Transaction Canceled") );
+        return;
+      }
 
       if (_captive)
         close();
@@ -241,11 +254,14 @@ void expenseTrans::sPost()
     }
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred at %1::%2, Item Site ID #%3, Warehouse ID #%4.")
                        .arg(__FILE__)
                        .arg(__LINE__)
                        .arg(_item->id())
                        .arg(_warehouse->id()) );
+  }
 }
 
 void expenseTrans::sPopulateQOH(int pWarehousid)

@@ -1742,6 +1742,10 @@ void transferOrder::sReturnStock()
   QList<QTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
   {
+    XSqlQuery rollback;
+    rollback.prepare("ROLLBACK;");
+
+    q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
     q.bindValue(":toitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     q.exec();
     if (q.first())
@@ -1749,15 +1753,24 @@ void transferOrder::sReturnStock()
       int result = q.value("result").toInt();
       if (result < 0)
       {
+        rollback.exec();
         systemError(this, storedProcErrorLookup("returnItemShipments", result) +
                           tr("<br>Line Item %1").arg(selected[i]->text(0)),
                            __FILE__, __LINE__);
         return;
       }
-      distributeInventory::SeriesAdjust(result, this);
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Return Stock"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
     }
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                         q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -1804,38 +1817,44 @@ void transferOrder::sIssueLineBalance()
 
       if(_requireInventory->isChecked())
       {
-	q.prepare("SELECT sufficientInventoryToShipItem('TO', :toitem_id) AS result;");
-	q.bindValue(":toitem_id", toitem->id());
-	q.exec();
-	if (q.first())
-	{
-	  int result = q.value("result").toInt();
-	  if (result < 0)
-	  {
-	    q.prepare("SELECT item_number, tohead_srcname "
-		      "  FROM toitem, tohead, item "
-		      " WHERE ((toitem_item_id=item_id)"
-		      "   AND  (toitem_tohead_id=tohead_id)"
-		      "   AND  (toitem_id=:toitem_id)); ");
-	    q.bindValue(":toitem_id", toitem->id());
-	    q.exec();
-	    if (! q.first() && q.lastError().type() != QSqlError::None)
-		systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	    systemError(this,
-			storedProcErrorLookup("sufficientInventoryToShipItem",
-					      result)
-			.arg(q.value("item_number").toString())
-			.arg(q.value("tohead_srcname").toString()), __FILE__, __LINE__);
-	    return;
-	  }
-	}
-	else if (q.lastError().type() != QSqlError::None)
-	{
-	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	  return;
-	}
+        q.prepare("SELECT sufficientInventoryToShipItem('TO', :toitem_id) AS result;");
+        q.bindValue(":toitem_id", toitem->id());
+        q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            q.prepare("SELECT item_number, tohead_srcname "
+                "  FROM toitem, tohead, item "
+                " WHERE ((toitem_item_id=item_id)"
+                "   AND  (toitem_tohead_id=tohead_id)"
+                "   AND  (toitem_id=:toitem_id)); ");
+            q.bindValue(":toitem_id", toitem->id());
+            q.exec();
+            if (! q.first() && q.lastError().type() != QSqlError::None)
+            {
+              systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+                systemError(this,
+                storedProcErrorLookup("sufficientInventoryToShipItem",
+                          result)
+                .arg(q.value("item_number").toString())
+                .arg(q.value("tohead_srcname").toString()), __FILE__, __LINE__);
+              return;
+            }
+          }
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
       }
 
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
+
+      q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
       q.prepare("SELECT issueLineBalanceToShipping('TO', :toitem_id, CURRENT_TIMESTAMP) AS result;");
       q.bindValue(":toitem_id", toitem->id());
       q.exec();
@@ -1844,15 +1863,24 @@ void transferOrder::sIssueLineBalance()
         int result = q.value("result").toInt();
         if (result < 0)
         {
+          rollback.exec();
           systemError(this, storedProcErrorLookup("issueLineBalance", result) +
                             tr("<br>Line Item %1").arg(selected[i]->text(0)),
                       __FILE__, __LINE__);
           return;
         }
-        distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Issue to Shipping"), tr("Transaction Canceled") );
+          return;
+        }
+
+        q.exec("COMMIT;");
       }
       else
       {
+        rollback.exec();
         systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                           q.lastError().databaseText(), __FILE__, __LINE__);
         return;

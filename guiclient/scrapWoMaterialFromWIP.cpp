@@ -187,6 +187,11 @@ void scrapWoMaterialFromWIP::sScrap()
     return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+
   if (_scrapComponent->isChecked())
   {
     q.prepare("SELECT scrapWoMaterial(:womatl_id, :qty, :issueRepl) AS result;");
@@ -206,33 +211,50 @@ void scrapWoMaterialFromWIP::sScrap()
   if (q.first())
   {
     if (q.value("result").toInt() < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred scrapping material for "
 			    "Work Order ID #%1, Error #%2.")
 			   .arg(_wo->id())
 			   .arg(q.value("result").toInt()),
 		   __FILE__, __LINE__);
+       return;
+    }
     else
     {
       // scrapWoMaterial() returns womatlid, not itemlocSeries
       if (_scrapTopLevel->isChecked())
-	distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      {
+        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Scrap Work Order Material"), tr("Transaction Canceled") );
+          return;
+        }
+      }
+
+      q.exec("COMMIT;");
 
       if (_captive)
-	accept();
+        accept();
       else
       {
-	_qty->clear();
-	_womatl->setId(-1);
-	_womatl->setFocus();
+        _qty->clear();
+        _womatl->setId(-1);
+        _womatl->setFocus();
       }
     }
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred scrapping material for "
 			  "Work Order ID #%1\n\n%2")
 			  .arg(_wo->id())
 			  .arg(q.lastError().databaseText()),
 		 __FILE__, __LINE__ );
+    return;
+  }
 }
 
 void scrapWoMaterialFromWIP::sHandleButtons()

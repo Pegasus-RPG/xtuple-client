@@ -146,12 +146,30 @@ enum SetResponse distributeBreederProduction::set(ParameterList &pParams)
 void distributeBreederProduction::sDistribute()
 {
 //  Issue the Breeder Item and Receive the Co-Products/By-Products
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT distributeBreederProduction(:wo_id) AS result;");
   q.bindValue(":wo_id", _woid);
   q.exec();
   if (q.first())
-    distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
-//  ToDo
+  {
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Distribute Breeder Production"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
+  }
+  else
+  {
+    rollback.exec();
+    systemError( this, tr("A System Error occurred at distributeBreederProduction::%1.")
+                       .arg(__LINE__) );
+  }
 
   accept();
 }

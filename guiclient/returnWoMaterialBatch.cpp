@@ -146,23 +146,40 @@ void returnWoMaterialBatch::sReturn()
     }
     else
     {
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
+
+      q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
       q.prepare("SELECT returnWoMaterialBatch(:wo_id) AS result;");
       q.bindValue(":wo_id", _wo->id());
       q.exec();
       if (q.first())
       {
         if (q.value("result").toInt() < 0)
+        {
+          rollback.exec();
           systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2, Error #%3.")
                              .arg(__LINE__)
                              .arg(_wo->id())
                              .arg(q.value("result").toInt()) );
-        else
-          distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+        }
+        else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
+          return;
+        }
+
+        q.exec("COMMIT;");
       }
       else
+      {
+        rollback.exec();
         systemError( this, tr("A System Error occurred at returnWoMaterialBatch::%1, W/O ID #%2.")
                            .arg(__LINE__)
                            .arg(_wo->id()) );
+        return;
+      }
     }
   }
 

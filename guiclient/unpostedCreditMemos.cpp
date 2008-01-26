@@ -250,6 +250,9 @@ void unpostedCreditMemos::sPost()
     }
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+    
   XSqlQuery postq;
   postq.prepare("SELECT postCreditMemo(:cmhead_id, 0) AS result;");
 
@@ -258,36 +261,54 @@ void unpostedCreditMemos::sPost()
     for (int i = 0; i < selected.size(); i++)
     {
       int id = ((XTreeWidgetItem*)(selected[i]))->id();
-
+ 
+      XSqlQuery tx;
+      tx.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
+      
       postq.bindValue(":cmhead_id", id);
       postq.exec();
       if (postq.first())
       {
-	int result = postq.value("result").toInt();
-	if (result < 0)
-	  systemError( this, storedProcErrorLookup("postCreditMemo", result),
-		      __FILE__, __LINE__);
-	else
-	{
-	  distributeInventory::SeriesAdjust(result, this);
-	}
+        int result = postq.value("result").toInt();
+        if (result < 0)
+        {
+          rollback.exec();
+          systemError( this, storedProcErrorLookup("postCreditMemo", result),
+                __FILE__, __LINE__);
+          return;
+        }
+        else
+        {
+          if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+          {
+            rollback.exec();
+            QMessageBox::information( this, tr("Post Credit Memo"), tr("Transaction Canceled") );
+            return;
+          }
+
+          q.exec("COMMIT;");
+        }
       }
       // contains() string is hard-coded in stored procedure
       else if (postq.lastError().databaseText().contains("post to closed period"))
       {
-	if (changeDate)
-	{
-	  triedToClosed = selected;
-	  break;
-	}
-	else
-	  triedToClosed.append(selected[i]);
+        rollback.exec();
+        if (changeDate)
+        {
+          triedToClosed = selected;
+          break;
+        }
+        else
+          triedToClosed.append(selected[i]);
       }
       else if (postq.lastError().type() != QSqlError::None)
-	systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
-			    .arg(selected[i]->text(0))
-			    .arg(postq.lastError().databaseText()),
-		    __FILE__, __LINE__);
+      {
+        rollback.exec();
+        systemError(this, tr("A System Error occurred posting Credit Memo#%1.\n%2")
+                .arg(selected[i]->text(0))
+                .arg(postq.lastError().databaseText()),
+              __FILE__, __LINE__);
+      }
     }
 
     if (triedToClosed.size() > 0)

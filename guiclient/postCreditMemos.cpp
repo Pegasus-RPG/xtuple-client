@@ -135,6 +135,11 @@ void postCreditMemos::sPost()
   }
 
   int journalNumber = q.value("result").toInt();
+  
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT postCreditMemos(:postUnprinted, :journalNumber) AS result;");
   q.bindValue(":postUnprinted", QVariant(_postUnprinted->isChecked(), 0));
   q.bindValue(":journalNumber", journalNumber);
@@ -144,17 +149,31 @@ void postCreditMemos::sPost()
     int result = q.value("result").toInt();
 
     if (result == -5)
+    {
+      rollback.exec();
       QMessageBox::critical( this, tr("Cannot Post one or more Credit Memos"),
                              tr( "The G/L Account Assignments for one or more of the Credit Memos that you are trying to post are not\n"
                                  "configured correctly.  Because of this, G/L Transactions cannot be posted for these Credit Memos.\n"
                                  "You must contact your Systems Administrator to have this corrected before you may\n"
                                  "post these Credit Memos." ) );
+      return;
+    }
     else if (result < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at postCreditMemos::%1, Error #%2.")
                          .arg(__LINE__)
                          .arg(q.value("result").toInt()) );
-    else
-      distributeInventory::SeriesAdjust(result, this);
+      return;
+    }
+    else if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Post Credit Memos"), tr("Transaction Canceled") );
+      return;
+    }
+
+    q.exec("COMMIT;");
 
     if (_printJournal->isChecked())
     {
@@ -169,8 +188,12 @@ void postCreditMemos::sPost()
     }
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred at postCreditMemos::%1.")
                        .arg(__LINE__) );
+    return;
+  }
 
   omfgThis->sCreditMemosUpdated();
 

@@ -61,8 +61,6 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include "rwInterface.h"
-#include "distributeInventory.h"
-
 /*
  *  Constructs a postPoReturnCreditMemo as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.

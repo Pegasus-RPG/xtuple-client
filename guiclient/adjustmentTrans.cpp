@@ -246,9 +246,7 @@ void adjustmentTrans::sPost()
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
-  XSqlQuery tx;
-  tx.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
-
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare( "SELECT invAdjustment(itemsite_id, :qty, :docNumber, :comments) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
@@ -274,12 +272,12 @@ void adjustmentTrans::sPost()
     {
       if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
       {
-        QMessageBox::information( this, tr("Inventory Adjustment"), tr("Transaction Canceled") );
         rollback.exec();
+        QMessageBox::information( this, tr("Inventory Adjustment"), tr("Transaction Canceled") );
         return;
       }
 
-      tx.exec("COMMIT;");
+      q.exec("COMMIT;");
       if (_captive)
         close();
       else

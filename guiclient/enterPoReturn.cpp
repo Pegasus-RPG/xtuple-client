@@ -250,9 +250,14 @@ void enterPoReturn::sPost()
     }
   }
 
+  if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+  {
+    rollback.exec();
+    QMessageBox::information( this, tr("Enter PO Return"), tr("Transaction Canceled") );
+    return;
+  }
+  
   q.exec("COMMIT;");
-
-  distributeInventory::SeriesAdjust(result, this);
 
   //Offer option to post credit memo for closed line items.	
 

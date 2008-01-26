@@ -3277,6 +3277,10 @@ bool salesOrder::okToProcessCC()
 
 void salesOrder::sReturnStock()
 {
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT returnItemShipments(:soitem_id) AS result;");
   QList<QTreeWidgetItem*> selected = _soitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -3288,15 +3292,24 @@ void salesOrder::sReturnStock()
       int result = q.value("result").toInt();
       if (result < 0)
       {
+        rollback.exec();
         systemError(this, storedProcErrorLookup("returnItemShipments", result) +
                           tr("<br>Line Item %1").arg(selected[i]->text(0)),
                            __FILE__, __LINE__);
         return;
       }
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Return Stock"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
     }
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                         q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -3406,6 +3419,10 @@ void salesOrder::sIssueLineBalance()
         }
       }
 
+      XSqlQuery rollback;
+      rollback.prepare("ROLLBACK;");
+
+      q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
       q.prepare("SELECT issueLineBalanceToShipping(:soitem_id) AS result;");
       q.bindValue(":soitem_id", soitem->id());
       q.exec();
@@ -3414,15 +3431,25 @@ void salesOrder::sIssueLineBalance()
         int result = q.value("result").toInt();
         if (result < 0)
         {
+          rollback.exec();
           systemError(this, storedProcErrorLookup("issueLineBalance", result) +
                             tr("<br>Line Item %1").arg(selected[i]->text(0)),
                       __FILE__, __LINE__);
           return;
         }
-        distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+        
+        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Issue to Shipping"), tr("Transaction Canceled") );
+          return;
+        }
+
+        q.exec("COMMIT;");
       }
       else
       {
+        rollback.exec();
         systemError(this, tr("Line Item %1\n").arg(selected[i]->text(0)) +
                           q.lastError().databaseText(), __FILE__, __LINE__);
         return;

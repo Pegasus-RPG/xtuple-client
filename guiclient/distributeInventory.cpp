@@ -267,20 +267,20 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           return QDialog::Rejected;
       }
     }
-  }
-  
-  XSqlQuery post;
-  post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
-  post.bindValue(":itemlocseries",  pItemlocSeries);
-  post.exec();
-  if (post.first())
-    if (!post.value("result").toBool())
-          QMessageBox::warning( 0, tr("Inventory Distribution"), 
-      tr("There was an error posting the transaction.  Contact your administrator") );
-  else if (post.lastError().type() != QSqlError::None)
-  {
-    systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
-    return QDialog::Rejected;
+    
+    XSqlQuery post;
+    post.prepare("SELECT postItemlocseries(:itemlocseries) AS result;");
+    post.bindValue(":itemlocseries",  pItemlocSeries);
+    post.exec();
+    if (post.first())
+      if (!post.value("result").toBool())
+            QMessageBox::warning( 0, tr("Inventory Distribution"), 
+        tr("There was an error posting the transaction.  Contact your administrator") );
+    else if (post.lastError().type() != QSqlError::None)
+    {
+      systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
+      return QDialog::Rejected;
+    }
   }
   
   return QDialog::Accepted;

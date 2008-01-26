@@ -64,7 +64,6 @@
 #include <openreports.h>
 
 #include "rwInterface.h"
-#include "distributeInventory.h"
 #include "submitAction.h"
 
 postInvoices::postInvoices(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)

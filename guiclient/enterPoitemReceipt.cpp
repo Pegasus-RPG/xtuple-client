@@ -242,6 +242,9 @@ void enterPoitemReceipt::populate()
 
 void enterPoitemReceipt::sReceive()
 {
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+    
   if(_metrics->boolean("DisallowReceiptExcessQty") && _receivable < _toReceive->toDouble())
   {
     QMessageBox::critical( this, tr("Cannot Receive"),
@@ -273,12 +276,14 @@ void enterPoitemReceipt::sReceive()
   }
   else if (_mode == cEdit)
   {
+    q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
     q.prepare("UPDATE recv SET recv_notes = :notes WHERE (recv_id=:recv_id);" );
     q.bindValue(":notes",	_notes->text());
     q.bindValue(":recv_id",	_recvid);
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -300,21 +305,30 @@ void enterPoitemReceipt::sReceive()
     result = q.value("result").toInt();
     if (result < 0)
     {
+      rollback.exec();
       systemError(this, storedProcErrorLookup(storedProc, result),
 		  __FILE__, __LINE__);
       return;
     }
-    omfgThis->sPurchaseOrderReceiptsUpdated();
   }
   else if (q.lastError().type() != QSqlError::NoError)
   {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
   }
 
   if(cEdit == _mode)
   {
-    distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+    if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Enterp PO Receipt"), tr("Transaction Canceled") );
+      return;
+    }
+
+    q.exec("COMMIT;");
+    omfgThis->sPurchaseOrderReceiptsUpdated();
   }
 
   accept();

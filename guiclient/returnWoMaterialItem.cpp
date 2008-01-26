@@ -151,7 +151,11 @@ void returnWoMaterialItem::sReturn()
     return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
   XSqlQuery returnItem;
+  returnItem.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   returnItem.prepare("SELECT returnWoMaterial(:womatl_id, :qty) AS result;");
   returnItem.bindValue(":womatl_id", _womatl->id());
   returnItem.bindValue(":qty", _qty->toDouble());
@@ -159,17 +163,31 @@ void returnWoMaterialItem::sReturn()
   if (returnItem.first())
   {
     if (returnItem.value("result").toInt() < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at returnWoMaterialItem::%1, Work Order ID #%2, Error #%3.")
                          .arg(__LINE__)
                          .arg(_wo->id())
                          .arg(returnItem.value("result").toInt()) );
-    else
-      distributeInventory::SeriesAdjust(returnItem.value("result").toInt(), this);
+      return;
+    }
+    else if (distributeInventory::SeriesAdjust(returnItem.value("result").toInt(), this) == QDialog::Rejected)
+    {
+      rollback.exec();
+      QMessageBox::information( this, tr("Material Return"), tr("Transaction Canceled") );
+      return;
+    }
+
+  returnItem.exec("COMMIT;");
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred at returnWoMaterialItem::%1, Work Order ID #%2.")
                        .arg(__LINE__)
                        .arg(_wo->id()) );
+    return;
+  }
 
   if (_captive)
     accept();

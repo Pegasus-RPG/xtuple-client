@@ -249,6 +249,10 @@ void transferTrans::sPost()
     return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare( "SELECT interWarehouseTransfer( :item_id, :from_warehous_id, :to_warehous_id,"
              "                               :qty, 'Misc', :docNumber, :comments ) AS result;");
   q.bindValue(":item_id", _item->id());
@@ -261,16 +265,27 @@ void transferTrans::sPost()
   if (q.first())
   {
     if (q.value("result").toInt() < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at transferTrans::%1, Item ID #%2, To Warehouse ID #%3, From Warehouse ID #%4, Error #%5.")
                          .arg(__LINE__)
                          .arg(_item->id())
                          .arg(_toWarehouse->id())
                          .arg(_fromWarehouse->id())
                          .arg(q.value("result").toInt()) );
+      return;
+    }
     else
     {
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Transfer Transaction"), tr("Transaction Canceled") );
+        return;
+      }
 
+      q.exec("COMMIT;");
+      
       if (_captive)
         close();
       else
@@ -289,11 +304,15 @@ void transferTrans::sPost()
     }
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred at transferTrans::%1, Item Site ID #%2, To Warehouse ID #%3, From Warehouse #%4.")
                        .arg(__LINE__)
                        .arg(_item->id())
                        .arg(_toWarehouse->id())
                        .arg(_fromWarehouse->id()) );
+    return;
+  }
 }
 
 void transferTrans::sPopulateFromQty(int pWarehousid)

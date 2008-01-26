@@ -795,6 +795,10 @@ void postOperations::sPost()
       return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare( "SELECT postOperation( :wooper_id, :qty, :issueComponents, :receiveInventory,"
              "                      :setupUser, :setupTime, :setupComplete, "
 	     "                      :runUser, :runTime, :runComplete, :wotc_id ) AS result;");
@@ -815,6 +819,7 @@ void postOperations::sPost()
     int itemlocSeries = q.value("result").toInt();
     if (itemlocSeries < 0)
     {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at postOperations::%1, Work Order Operation ID #2, Error #%3.")
                          .arg(__LINE__)
                          .arg(_wooper->id())
@@ -823,39 +828,50 @@ void postOperations::sPost()
     }
     else
     {
-      omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
       if (qty > 0.0)
       {
-	distributeInventory::SeriesAdjust(itemlocSeries, this);
+        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+        {
+          rollback.exec();
+          QMessageBox::information( this, tr("Post Operation"), tr("Transaction Canceled") );
+          return;
+        }
 
-	// If this is a breeder item and we receive inventory at this operation
-	// then distribute the production
-	if (_receiveInventory->isChecked())
-	{
-	  q.prepare( "SELECT item_type "
-		     "FROM wo, itemsite, item "
-		     "WHERE ( (wo_itemsite_id=itemsite_id)"
-		     " AND (itemsite_item_id=item_id)"
-		     " AND (wo_id=:wo_id) );" );
-	  q.bindValue(":wo_id", _wo->id());
-	  q.exec();
-	  if (q.first() && q.value("item_type").toString() == "B")
-	  {
-	    ParameterList params;
-	    params.append("mode", "new");
-	    params.append("wo_id", _wo->id());
+        q.exec("COMMIT;");
+          
+        omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
 
-	    distributeBreederProduction newdlg(this, "", TRUE);
-	    newdlg.set(params);
-	    newdlg.exec();
-	  }
-	  else if (q.lastError().type() != QSqlError::None)
-	  {
-	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	    return;
-	  }
-	} // receiveInventory
+        // If this is a breeder item and we receive inventory at this operation
+        // then distribute the production
+        if (_receiveInventory->isChecked())
+        {
+          q.prepare( "SELECT item_type "
+               "FROM wo, itemsite, item "
+               "WHERE ( (wo_itemsite_id=itemsite_id)"
+               " AND (itemsite_item_id=item_id)"
+               " AND (wo_id=:wo_id) );" );
+          q.bindValue(":wo_id", _wo->id());
+          q.exec();
+          if (q.first() && q.value("item_type").toString() == "B")
+          {
+            ParameterList params;
+            params.append("mode", "new");
+            params.append("wo_id", _wo->id());
+
+            distributeBreederProduction newdlg(this, "", TRUE);
+            newdlg.set(params);
+            newdlg.exec();
+          }
+          else if (q.lastError().type() != QSqlError::None)
+          {
+            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+            return;
+          }
+        } // receiveInventory
       } // qty to receive
+      else
+        q.exec("COMMIT;");
+        
       if (_closeWO->isChecked())
       {
         ParameterList params;
@@ -869,6 +885,7 @@ void postOperations::sPost()
   } // postOperation query returned a row
   else
   {
+    rollback.exec();
     systemError(this, tr("A System Error occurred posting Work Order Operation ID #%1.\n%2")
 		  .arg(_wooper->id())
 		  .arg(q.lastError().databaseText()),

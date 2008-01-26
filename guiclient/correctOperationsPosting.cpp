@@ -317,6 +317,10 @@ void correctOperationsPosting::sPost()
   else
     qty = _qty->toDouble();
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT correctOperationsPosting(:wooper_id, :qty, :returnComponents, :correctInventory, :correctSuTime, :setupTime, :clearSetupComplete, :correctRnTime, :runTime, :clearRunComplete) AS result;");
   q.bindValue(":wooper_id", _wooper->id());
   q.bindValue(":qty", qty);
@@ -353,6 +357,7 @@ void correctOperationsPosting::sPost()
   q.first();
   if (q.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -368,6 +373,7 @@ void correctOperationsPosting::sPost()
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -381,14 +387,23 @@ void correctOperationsPosting::sPost()
     q.bindValue(":wooper_id", _wooper->id());
     q.exec();
     if (q.lastError().type() != QSqlError::None)
-    {
+    { 
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
   
+  if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+  {
+    rollback.exec();
+    QMessageBox::information( this, tr("Correct Operation Posting"), tr("Transaction Canceled") );
+    return;
+  }
+
+  q.exec("COMMIT;");
+  
   omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
-  distributeInventory::SeriesAdjust(result, this);
 
   if (_captive)
     accept();

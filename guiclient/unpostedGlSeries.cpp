@@ -66,7 +66,6 @@
 #include <parameter.h>
 #include <openreports.h>
 
-#include "distributeInventory.h"
 #include "failedPostList.h"
 #include "getGLDistDate.h"
 #include "glSeries.h"

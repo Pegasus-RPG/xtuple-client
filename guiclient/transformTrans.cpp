@@ -171,6 +171,10 @@ void transformTrans::sPost()
     return;
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare( "SELECT postTransformTrans(s.itemsite_id, t.itemsite_id, :itemloc_id, :qty, :docnumber, :comments) AS result "
              "FROM itemsite AS s, itemsite AS t "
              "WHERE ( (s.itemsite_warehous_id=t.itemsite_warehous_id)"
@@ -189,12 +193,25 @@ void transformTrans::sPost()
     qDebug(QString("result=%1").arg(result));
 
     if (result < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at %1::%2, Error #%3.")
                          .arg(__FILE__)
                          .arg(__LINE__)
                          .arg(result) );
+      return;
+    }
     else
-      distributeInventory::SeriesAdjust(result, this);
+    {
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Inventory Adjustment"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
+    }
   }
 
   if (_captive)

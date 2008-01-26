@@ -201,6 +201,10 @@ void scrapTrans::sPost()
     return;
   }
   
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare( "SELECT invScrap(itemsite_id, :qty, :docNumber, :comments) AS result "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
@@ -214,15 +218,26 @@ void scrapTrans::sPost()
   if (q.first())
   {
     if (q.value("result").toInt() < 0)
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at %1::%2, Item ID #%3, Warehouse ID #%4, Error #%5.")
                          .arg(__FILE__)
                          .arg(__LINE__)
                          .arg(_item->id())
                          .arg(_warehouse->id())
                          .arg(q.value("result").toInt()) );
+      return;
+    }
     else
     {
-      distributeInventory::SeriesAdjust(q.value("result").toInt(), this);
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Scrap Transaction"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
 
       if (_captive)
         close();
@@ -241,11 +256,15 @@ void scrapTrans::sPost()
     }
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred at %1::%2, Item Site ID #%3, Warehouse ID #%4.")
                        .arg(__FILE__)
                        .arg(__LINE__)
                        .arg(_item->id())
                        .arg(_warehouse->id()) );
+    return;
+  }
 }
 
 void scrapTrans::sPopulateQOH(int pWarehousid)

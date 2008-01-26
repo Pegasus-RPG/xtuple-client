@@ -65,7 +65,6 @@
 #include <metasql.h>
 
 #include "xmessagebox.h"
-#include "distributeInventory.h"
 #include "storedProcErrorLookup.h"
 
 reserveSalesOrderItem::reserveSalesOrderItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)

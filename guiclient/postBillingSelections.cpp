@@ -61,7 +61,6 @@
 #include <QMessageBox>
 #include <openreports.h>
 #include "rwInterface.h"
-#include "distributeInventory.h"
 
 /*
  *  Constructs a postBillingSelections as a child of 'parent', with the

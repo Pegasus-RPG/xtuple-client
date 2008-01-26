@@ -164,6 +164,10 @@ void correctProductionPosting::sCorrect()
     }
   }
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT correctProduction(:wo_id, :qty, :backflushMaterials, :backflushOperations) AS result;");
   q.bindValue(":wo_id", _wo->id());
   q.bindValue(":qty", _qty->toDouble());
@@ -176,19 +180,34 @@ void correctProductionPosting::sCorrect()
 
     if (result > 0)
     {
+      if (distributeInventory::SeriesAdjust(result, this) == QDialog::Rejected)
+      {
+        rollback.exec();
+        QMessageBox::information( this, tr("Correct Production Posting"), tr("Transaction Canceled") );
+        return;
+      }
+
+      q.exec("COMMIT;");
       omfgThis->sWorkOrdersUpdated(_wo->id(), TRUE);
-      distributeInventory::SeriesAdjust(result, this);
     }
     else
+    {
+      rollback.exec();
       systemError( this, tr("A System Error occurred at correctProductionPosting::%1, Work Order ID #2, Error #%3.")
                          .arg(__LINE__)
                          .arg(_wo->id())
                          .arg(result) );
+      return;
+    }
   }
   else
+  {
+    rollback.exec();
     systemError( this, tr("A System Error occurred at correctProductionPosting::%1, Work Order ID #%2.")
                        .arg(__LINE__)
                        .arg(_wo->id()) );
+    return;
+  }
 
   if (_captive)
     accept();
