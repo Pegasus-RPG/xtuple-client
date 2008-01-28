@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>594</width>
+    <width>591</width>
     <height>351</height>
    </rect>
   </property>
@@ -22,7 +22,11 @@
          <number>0</number>
         </property>
         <item>
-         <widget class="DateCluster" name="_dates" />
+         <widget class="DateCluster" name="_dates" >
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
+         </widget>
         </item>
         <item>
          <spacer>
@@ -35,7 +39,7 @@
           <property name="sizeHint" >
            <size>
             <width>16</width>
-            <height>32</height>
+            <height>0</height>
            </size>
           </property>
          </spacer>
@@ -65,6 +69,9 @@
         </item>
         <item>
          <layout class="QVBoxLayout" >
+          <property name="spacing" >
+           <number>-1</number>
+          </property>
           <item>
            <widget class="QPushButton" name="_close" >
             <property name="text" >
@@ -102,36 +109,62 @@
      </layout>
     </item>
     <item>
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
+     <widget class="QFrame" name="frame" >
+      <property name="sizePolicy" >
+       <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
       </property>
-      <item>
-       <widget class="QLabel" name="_arOpenItemsLit" >
-        <property name="sizePolicy" >
-         <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize" >
-         <size>
-          <width>0</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="text" >
-         <string>A/R Open Items:</string>
-        </property>
-        <property name="alignment" >
-         <set>Qt::AlignVCenter</set>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="XTreeWidget" name="_aropen" />
-      </item>
-     </layout>
+      <property name="frameShape" >
+       <enum>QFrame::NoFrame</enum>
+      </property>
+      <property name="frameShadow" >
+       <enum>QFrame::Plain</enum>
+      </property>
+      <layout class="QVBoxLayout" >
+       <property name="spacing" >
+        <number>0</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="_arOpenItemsLit" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="text" >
+          <string>A/R Open Items:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="XTreeWidget" name="_aropen" />
+       </item>
+      </layout>
+     </widget>
     </item>
    </layout>
   </widget>
