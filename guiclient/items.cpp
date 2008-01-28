@@ -201,6 +201,7 @@ void items::sDelete()
       systemError(this, storedProcErrorLookup("deleteItem", result), __FILE__, __LINE__);
       return;
     }
+    sFillList();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
