@@ -95,6 +95,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
   connect(_item,          SIGNAL(newId(int)),     this, SLOT(sPopulateItemInfo()));
+  connect(_item, SIGNAL(privateIdChanged(int)), this, SLOT(sPopulateItemsiteInfo()));
+  connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sPopulateItemsiteInfo()));
   connect(_listPrices,    SIGNAL(clicked()),      this, SLOT(sListPrices()));
   connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateDiscountPrcnt()));
   connect(_netUnitPrice,  SIGNAL(valueChanged()), this, SLOT(sCalculateExtendedPrice()));
@@ -110,7 +112,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sPopulateOrderInfo()));
   connect(_pricingUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
   connect(_disposition, SIGNAL(currentIndexChanged(int)), this, SLOT(sDispositionChanged()));
-  connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
+  connect(_shipWhs, SIGNAL(newID(int)), this, SLOT(sDetermineAvailability()));
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
   connect(_qtyAuth, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
   connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
@@ -121,11 +123,13 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _taxCode->setEnabled(_privleges->check("OverrideTax"));
   _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
   
-  //If not multi-warehouse hide whs control
+  //If not multi-warehouse hide whs controls
   if (!_metrics->boolean("MultiWhs"))
   {
     _warehouseLit->hide();
     _warehouse->hide();
+    _shipWhs->hide();
+    _shipWhsLit->hide();
   } 
 
   //Remove lot/serial for now until we get to advanced warranty tracking
@@ -259,8 +263,9 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
+      _shipWhs->setEnabled(FALSE);
       _qtyAuth->setFocus();
-	  _disposition->setEnabled(FALSE);
+	    _disposition->setEnabled(FALSE);
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
  
@@ -272,6 +277,7 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
 
       _item->setReadOnly(TRUE);
       _warehouse->setEnabled(FALSE);
+      _shipWhs->setEnabled(FALSE);
       _disposition->setEnabled(FALSE);
       _qtyAuth->setEnabled(FALSE);
       _qtyUOM->setEnabled(FALSE);
@@ -310,7 +316,10 @@ void returnAuthorizationItem::sSave()
     return;
   }
 
-  
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;");
+
+  q.exec("BEGIN;"); //In case of problems saving w/o.
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('raitem_raitem_id_seq') AS _raitem_id");
@@ -318,6 +327,7 @@ void returnAuthorizationItem::sSave()
       _raitemid  = q.value("_raitem_id").toInt();
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -329,17 +339,21 @@ void returnAuthorizationItem::sSave()
                "  raitem_price_uom_id, raitem_price_invuomratio,"
                "  raitem_unitprice, raitem_tax_id,raitem_taxtype_id, "
                "  raitem_notes, raitem_rsncode_id, raitem_cos_accnt_id, "
-               "  raitem_scheddate, raitem_warranty) "
-               "SELECT :raitem_id, :rahead_id, :raitem_linenumber, itemsite_id,"
+               "  raitem_scheddate, raitem_warranty, raitem_coitem_itemsite_id) "
+               "SELECT :raitem_id, :rahead_id, :raitem_linenumber, rcv.itemsite_id,"
                "       :raitem_disposition, :raitem_qtyauthorized,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       :price_uom_id, :price_invuomratio,"
                "       :raitem_unitprice, :raitem_tax_id, :raitem_taxtype_id, "
                "       :raitem_notes, :raitem_rsncode_id, :raitem_cos_accnt_id, "
-               "       :raitem_scheddate, :raitem_warranty "
-               "FROM itemsite "
-               "WHERE ( (itemsite_item_id=:item_id)"
-               " AND (itemsite_warehous_id=:warehous_id) );" );
+               "       :raitem_scheddate, :raitem_warranty, "
+               "       shp.itemsite_id "
+               "FROM itemsite rcv "
+               "  LEFT OUTER JOIN itemsite shp ON "
+               "        (shp.itemsite_item_id=rcv.itemsite_item_id) "
+               "    AND (shp.itemsite_warehous_id=COALESCE(:shipWhs_id,-1)) "
+               "WHERE ( (rcv.itemsite_item_id=:item_id)"
+               " AND (rcv.itemsite_warehous_id=:warehous_id) );" );
   }
   else
     q.prepare( "UPDATE raitem "
@@ -379,6 +393,8 @@ void returnAuthorizationItem::sSave()
     q.bindValue(":raitem_rsncode_id", _rsnCode->id());
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
+  if (_disposition->currentIndex() >= 2)
+    q.bindValue(":shipWhs_id", _shipWhs->id());
   if (_altcosAccntid->id() != -1)
     q.bindValue(":raitem_cos_accnt_id", _altcosAccntid->id()); 
   q.bindValue(":raitem_scheddate", _scheduledDate->date());
@@ -386,6 +402,7 @@ void returnAuthorizationItem::sSave()
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
+    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
@@ -412,6 +429,7 @@ void returnAuthorizationItem::sSave()
           int result = q.value("result").toInt();
           if (result < 0)
           {
+            rollback.exec();
             systemError(this, storedProcErrorLookup("changeWoDates", result),
             __FILE__, __LINE__);
             return;
@@ -419,6 +437,7 @@ void returnAuthorizationItem::sSave()
         }
         else if (q.lastError().type() != QSqlError::None)
         {
+          rollback.exec();
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
@@ -446,6 +465,7 @@ void returnAuthorizationItem::sSave()
             int result = q.value("result").toInt();
             if (result < 0)
             {
+              rollback.exec();
               systemError(this, storedProcErrorLookup("changeWoQty", result),
               __FILE__, __LINE__);
               return;
@@ -453,6 +473,7 @@ void returnAuthorizationItem::sSave()
           }
           else if (q.lastError().type() != QSqlError::None)
           {
+            rollback.exec();
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
             return;
           }
@@ -494,9 +515,9 @@ void returnAuthorizationItem::sSave()
           q.bindValue(":dueDate", _scheduledDate->date());
           q.bindValue(":comments", so.value("cust_name").toString() + "\n" + _notes->text());
           q.bindValue(":item_id", _item->id());
-          q.bindValue(":warehous_id", _warehouse->id());
-	      q.bindValue(":parent_type", QString("S"));
-	      q.bindValue(":parent_id", so.value("raitem_new_coitem_id").toInt());
+          q.bindValue(":warehous_id", _shipWhs->id());
+          q.bindValue(":parent_type", QString("S"));
+          q.bindValue(":parent_id", so.value("raitem_new_coitem_id").toInt());
           q.exec();
         }
         if (q.first())
@@ -505,10 +526,11 @@ void returnAuthorizationItem::sSave()
           if (_orderId < 0)
           {
             QString procname;
-            if ((_item->itemType() == "M") && (_item->itemType() == "J"))
+            if ((_item->itemType() == "M") || (_item->itemType() == "J"))
               procname = "createWo";
             else
               procname = "unnamed stored procedure";
+            rollback.exec();
             systemError(this, storedProcErrorLookup(procname, _orderId),
                 __FILE__, __LINE__);
             return;
@@ -527,6 +549,7 @@ void returnAuthorizationItem::sSave()
             q.exec();
             if (q.lastError().type() != QSqlError::None)
             {
+              rollback.exec();
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
               return;
             }
@@ -536,6 +559,7 @@ void returnAuthorizationItem::sSave()
     }
   }
 
+  q.exec("COMMIT;");
   done(_raitemid); 
 }
 
@@ -621,7 +645,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
                       "WHERE ( (itemsite_item_id=item_id)"
                       " AND (itemsite_warehous_id=:warehous_id)"
                       " AND (item_id=:item_id) );" );
-    itemsite.bindValue(":warehous_id", _warehouse->id());
+    itemsite.bindValue(":warehous_id", _shipWhs->id());
     itemsite.bindValue(":item_id", _item->id());
     itemsite.exec();
     if (itemsite.first())
@@ -633,11 +657,11 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
         if (_item->itemType() == "M")
           _createOrder->setChecked(itemsite.value("itemsite_createwo").toBool());
 
-        if (_item->itemType() == "J")
-		{
+        else if (_item->itemType() == "J")
+        {
           _createOrder->setChecked(TRUE);
-		  _createOrder->setEnabled(FALSE);
-		}
+          _createOrder->setEnabled(FALSE);
+        }
 
         else
         {
@@ -651,9 +675,6 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
       systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    _warehouse->findItemsites(_item->id());
-    if(_preferredWarehouseid > 0)
-      _warehouse->setId(_preferredWarehouseid);
   }
 }
 
@@ -673,17 +694,19 @@ void returnAuthorizationItem::populate()
                  "       item_inv_uom_id, "
                  "       COALESCE(nc.coitem_order_id,-1) AS coitem_order_id, "
                  "       nc.coitem_order_type AS coitem_order_type, "
-                 "       itemsite_warehous_id "
+                 "       rcv.itemsite_warehous_id AS itemsite_warehous_id, "
+                 "       shp.itemsite_warehous_id AS shipWhs_id "
                  "FROM raitem "
                  "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
                  "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
                  "  LEFT OUTER JOIN coitem nc ON (raitem_new_coitem_id=nc.coitem_id) "
-                 "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id),"
-                 "  rahead, itemsite, item "
+                 "  LEFT OUTER JOIN cohead nch ON (nc.coitem_cohead_id=nch.cohead_id)"
+                 "  LEFT OUTER JOIN itemsite shp ON (raitem_coitem_itemsite_id=shp.itemsite_id),"
+                 "  rahead, itemsite rcv, item "
                  "WHERE ((raitem_rahead_id=rahead_id)"
                  " AND  (raitem_id=:raitem_id) "
-                 " AND  (raitem_itemsite_id=itemsite_id) "
-                 " AND  (item_id=itemsite_item_id) );" );
+                 " AND  (raitem_itemsite_id=rcv.itemsite_id) "
+                 " AND  (item_id=rcv.itemsite_item_id) );" );
   raitem.bindValue(":raitem_id", _raitemid);
   raitem.exec();
   if (raitem.first())
@@ -712,7 +735,7 @@ void returnAuthorizationItem::populate()
       _disposition->setCurrentItem(3);
     else if (raitem.value("raitem_disposition").toString() == "S")
       _disposition->setCurrentItem(4);
-	_orderId = raitem.value("coitem_order_id").toInt();
+	  _orderId = raitem.value("coitem_order_id").toInt();
     _netUnitPrice->setId(raitem.value("rahead_curr_id").toInt());
     _netUnitPrice->setEffective(raitem.value("rahead_authdate").toDate());
     _netUnitPrice->setLocalValue(raitem.value("raitem_unitprice").toDouble());
@@ -720,6 +743,7 @@ void returnAuthorizationItem::populate()
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
     _warehouse->setId(raitem.value("itemsite_warehous_id").toInt());
+    _shipWhs->setId(raitem.value("shipWhs_id").toInt());
     _taxType->setId(raitem.value("raitem_taxtype_id").toInt());
     _tax->setId(raitem.value("taxcurr").toInt());
     _invuomid=raitem.value("item_inv_uom_id").toInt();
@@ -1153,6 +1177,8 @@ void returnAuthorizationItem::sDispositionChanged()
     _tab->setTabEnabled(0,TRUE);
     _scheduledDate->setEnabled(TRUE);
     _altcosAccntid->setEnabled(TRUE);
+    _shipWhs->setVisible(TRUE);
+    _shipWhs->setVisible(TRUE);
   }
   else
   {
@@ -1160,6 +1186,8 @@ void returnAuthorizationItem::sDispositionChanged()
     _scheduledDate->clear();
     _scheduledDate->setEnabled(FALSE);
     _altcosAccntid->setEnabled(FALSE);
+    _shipWhsLit->setVisible(FALSE);
+    _shipWhs->setVisible(FALSE);
   } 
 
   if (_creditmethod == "N")
@@ -1260,7 +1288,7 @@ void returnAuthorizationItem::sPopulateOrderInfo()
                    " AND (itemsite_warehous_id=:warehous_id));" );
       qty.bindValue(":qty", _qtyAuth->toDouble() * _qtyinvuomratio);
       qty.bindValue(":item_id", _item->id());
-      qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _warehouse->id() : _warehouse->id()));
+      qty.bindValue(":warehous_id", ((_item->itemType() == "M") || (_item->itemType() == "J") ? _shipWhs->id() : _shipWhs->id()));
       qty.exec();
       if (qty.first())
         _orderQty->setText(qty.value("qty").toString());
@@ -1277,14 +1305,14 @@ void returnAuthorizationItem::sPopulateOrderInfo()
 void returnAuthorizationItem::sDetermineAvailability()
 {
   if(  (_item->id()==_availabilityLastItemid)
-    && (_warehouse->id()==_availabilityLastWarehousid)
+    && (_shipWhs->id()==_availabilityLastWarehousid)
     && (_scheduledDate->date()==_availabilityLastSchedDate)
     && (_showAvailability->isChecked()==_availabilityLastShow)
     && ((_qtyAuth->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered) )
     return;
 
   _availabilityLastItemid = _item->id();
-  _availabilityLastWarehousid = _warehouse->id();
+  _availabilityLastWarehousid = _shipWhs->id();
   _availabilityLastSchedDate = _scheduledDate->date();
   _availabilityLastShow = _showAvailability->isChecked();
   _availabilityQtyOrdered = (_qtyAuth->toDouble() * _qtyinvuomratio);
@@ -1310,7 +1338,7 @@ void returnAuthorizationItem::sDetermineAvailability()
                           "        AND (itemsite_warehous_id=:warehous_id)) ) AS data;" );
     availability.bindValue(":date", _scheduledDate->date());
     availability.bindValue(":item_id", _item->id());
-    availability.bindValue(":warehous_id", _warehouse->id());
+    availability.bindValue(":warehous_id", _shipWhs->id());
     availability.exec();
     if (availability.first())
     {

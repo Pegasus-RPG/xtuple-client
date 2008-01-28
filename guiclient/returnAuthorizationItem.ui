@@ -9,7 +9,7 @@
     <x>0</x>
     <y>0</y>
     <width>725</width>
-    <height>799</height>
+    <height>802</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -312,6 +312,12 @@
         </item>
         <item row="0" column="3" >
          <widget class="XComboBox" name="_rsnCode" >
+          <property name="maximumSize" >
+           <size>
+            <width>200</width>
+            <height>16777215</height>
+           </size>
+          </property>
           <property name="allowNull" >
            <bool>true</bool>
           </property>
@@ -354,7 +360,7 @@
           <item row="0" column="0" >
            <widget class="QLabel" name="_warehouseLit" >
             <property name="text" >
-             <string>&amp;Whs:</string>
+             <string>&amp; Recv. Whs:</string>
             </property>
             <property name="alignment" >
              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -371,7 +377,7 @@
             </property>
            </widget>
           </item>
-          <item row="1" column="1" >
+          <item row="2" column="1" >
            <spacer>
             <property name="orientation" >
              <enum>Qt::Vertical</enum>
@@ -383,6 +389,19 @@
              </size>
             </property>
            </spacer>
+          </item>
+          <item row="1" column="1" >
+           <widget class="WComboBox" name="_shipWhs" />
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_shipWhsLit" >
+            <property name="text" >
+             <string>Ship Whs:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -1586,6 +1605,7 @@
  <tabstops>
   <tabstop>_item</tabstop>
   <tabstop>_warehouse</tabstop>
+  <tabstop>_shipWhs</tabstop>
   <tabstop>_qtyAuth</tabstop>
   <tabstop>_qtyUOM</tabstop>
   <tabstop>_discountFromSale</tabstop>
@@ -1790,6 +1810,22 @@
     <hint type="destinationlabel" >
      <x>248</x>
      <y>427</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>newId(int)</signal>
+   <receiver>_shipWhs</receiver>
+   <slot>findItemsites(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>213</x>
+     <y>189</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>545</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>
