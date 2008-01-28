@@ -1295,7 +1295,7 @@
             </sizepolicy>
            </property>
            <property name="type" >
-            <enum>XComboBox::Terms</enum>
+            <enum>XComboBox::ARTerms</enum>
            </property>
           </widget>
          </item>
