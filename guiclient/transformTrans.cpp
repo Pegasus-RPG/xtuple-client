@@ -206,7 +206,7 @@ void transformTrans::sPost()
       if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
       {
         rollback.exec();
-        QMessageBox::information( this, tr("Inventory Adjustment"), tr("Transaction Canceled") );
+        QMessageBox::information( this, tr("Transform Transaction"), tr("Transaction Canceled") );
         return;
       }
 

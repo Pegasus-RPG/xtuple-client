@@ -1738,6 +1738,7 @@ void transferOrder::viewTransferOrder( int pId )
 
 void transferOrder::sReturnStock()
 {
+  q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
   q.prepare("SELECT returnItemShipments('TO', :toitem_id, 0, CURRENT_TIMESTAMP) AS result;");
   QList<QTreeWidgetItem*> selected = _toitem->selectedItems();
   for (int i = 0; i < selected.size(); i++)
@@ -1745,7 +1746,6 @@ void transferOrder::sReturnStock()
     XSqlQuery rollback;
     rollback.prepare("ROLLBACK;");
 
-    q.exec("BEGIN;");	// because of possible lot, serial, or location distribution cancelations
     q.bindValue(":toitem_id", ((XTreeWidgetItem*)(selected[i]))->id());
     q.exec();
     if (q.first())

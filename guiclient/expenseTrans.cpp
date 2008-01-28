@@ -236,6 +236,8 @@ void expenseTrans::sPost()
         QMessageBox::information( this, tr("Expense Transaction"), tr("Transaction Canceled") );
         return;
       }
+      
+      q.exec("COMMIT;");
 
       if (_captive)
         close();
