@@ -1132,16 +1132,13 @@ void returnAuthorizationItem::sDispositionChanged()
                               "ORDER BY item_number;" )
                      .arg(_custid).arg(_shiptoid) );
 
-  if (_disposition->currentIndex() >= 2)
+  if (_disposition->currentIndex() > 2)
   {
     _netUnitPrice->setLocalValue(0);
     _netUnitPrice->setEnabled(FALSE);
     _listPrices->setEnabled(FALSE);
     _pricingUOM->setEnabled(FALSE);
     _discountFromSale->setEnabled(FALSE);
-    _tab->setTabEnabled(0,TRUE);
-    _scheduledDate->setEnabled(TRUE);
-    _altcosAccntid->setEnabled(TRUE);
   }
   else
   {
@@ -1149,6 +1146,16 @@ void returnAuthorizationItem::sDispositionChanged()
     _listPrices->setEnabled(TRUE);
     _pricingUOM->setEnabled(TRUE);
     _discountFromSale->setEnabled(TRUE);
+  } 
+  
+  if (_disposition->currentIndex() >= 2)
+  {
+    _tab->setTabEnabled(0,TRUE);
+    _scheduledDate->setEnabled(TRUE);
+    _altcosAccntid->setEnabled(TRUE);
+  }
+  else
+  {
     _tab->setTabEnabled(0,FALSE);
     _scheduledDate->clear();
     _scheduledDate->setEnabled(FALSE);
