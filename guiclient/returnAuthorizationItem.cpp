@@ -672,7 +672,8 @@ void returnAuthorizationItem::populate()
                  "       rahead_curr_id AS taxcurr, "
                  "       item_inv_uom_id, "
                  "       COALESCE(nc.coitem_order_id,-1) AS coitem_order_id, "
-                 "       nc.coitem_order_type AS coitem_order_type "
+                 "       nc.coitem_order_type AS coitem_order_type, "
+                 "       itemsite_warehous_id "
                  "FROM raitem "
                  "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
                  "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
@@ -718,6 +719,7 @@ void returnAuthorizationItem::populate()
     // do _item and _taxauth before other tax stuff because of signal cascade
     _taxauthid = raitem.value("rahead_taxauth_id").toInt();
     _item->setItemsiteid(raitem.value("raitem_itemsite_id").toInt());
+    _warehouse->setId(raitem.value("itemsite_warehous_id").toInt());
     _taxType->setId(raitem.value("raitem_taxtype_id").toInt());
     _tax->setId(raitem.value("taxcurr").toInt());
     _invuomid=raitem.value("item_inv_uom_id").toInt();
