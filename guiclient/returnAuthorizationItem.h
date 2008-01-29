@@ -88,11 +88,11 @@ public slots:
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
-	virtual void sDispositionChanged();
+    virtual void sDispositionChanged();
     virtual void sDetermineAvailability();
     virtual void sHandleWo( bool pCreate );
     virtual void sPopulateOrderInfo();
-	virtual void sCalcWoUnitCost();
+    virtual void sCalcWoUnitCost();
 
 protected slots:
     virtual void languageChange();
@@ -107,7 +107,7 @@ private:
     int _raitemid;
     int _raheadid;
     int _custid;
-	int _coitemid;
+    int _coitemid;
     int _shiptoid;
     QString _creditmethod;
     double _priceRatio;
@@ -119,20 +119,21 @@ private:
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
-	double _qtySoldCache;
-	int _orderId;
+    double _qtySoldCache;
+    int _orderId;
 
     int _availabilityLastItemid;
     int _availabilityLastWarehousid;
     QDate _availabilityLastSchedDate;
     bool _availabilityLastShow;
     double _availabilityQtyOrdered;
-	int _leadTime;
-	QDate _cScheduledDate;
+    int _leadTime;
+    QDate _cScheduledDate;
     double _cQtyOrdered;
-	int _preferredWarehouseid;
+    int _preferredWarehouseid;
     double _qtycredited;
     QString _status;
+    double _soldQty;
 
 };
 

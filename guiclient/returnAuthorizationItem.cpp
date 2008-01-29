@@ -91,6 +91,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   _preferredWarehouseid = -1;
   _status = "O";
   _qtycredited = 0;
+  _soldQty = 0;
+  _coitemid = -1;
 
   connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
   connect(_extendedPrice, SIGNAL(valueChanged()), this, SLOT(sLookupTax()));
@@ -315,6 +317,19 @@ void returnAuthorizationItem::sSave()
                           tr("<p>You must enter a valid Schedule Date before saving.") );
     _scheduledDate->setFocus();
     return;
+  }
+  
+  if ( (_coitemid != -1) && (_qtyAuth->toDouble() > _soldQty) )
+    if (QMessageBox::question(this, tr("Over Authorize"),
+            tr("<p>The authorized quantity exceeds "
+                "the original sold quantity on the "
+                "original Sales Order.  "
+                "Do you want to correct the quantity?"),
+               QMessageBox::Yes | QMessageBox::Default,
+               QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+  {
+      _qtyAuth->setFocus();
+      return;
   }
 
   XSqlQuery rollback;
@@ -774,6 +789,7 @@ void returnAuthorizationItem::populate()
       _origSoNumber->setText(raitem.value("orig_number").toString());
       _origSoLineNumber->setText(raitem.value("orig_linenumber").toString());
       _qtySold->setText(raitem.value("qtysold").toString());
+      _soldQty=raitem.value("qtysold").toDouble();
       _qtyUOM->setEnabled(FALSE);
       _pricingUOM->setEnabled(FALSE);
       _salePrice->setId(raitem.value("rahead_curr_id").toInt());
