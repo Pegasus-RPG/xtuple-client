@@ -1,302 +1,308 @@
-<ui version="4.0" stdsetdef="1" >
-  <author></author>
-  <comment></comment>
-  <exportmacro></exportmacro>
-  <class>expenseCategory</class>
-  <widget class="QDialog" name="expenseCategory" >
-    <property name="geometry" >
-      <rect>
-        <x>0</x>
-        <y>0</y>
-        <width>564</width>
-        <height>212</height>
-      </rect>
-    </property>
-    <property name="windowTitle" >
-      <string>Expense Category</string>
-    </property>
+<ui version="4.0" >
+ <class>expenseCategory</class>
+ <widget class="QDialog" name="expenseCategory" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>564</width>
+    <height>270</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Expense Category</string>
+  </property>
+  <layout class="QVBoxLayout" >
+   <property name="spacing" >
+    <number>0</number>
+   </property>
+   <item>
     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-        <number>0</number>
-      </property>
-      <item>
+     <item>
+      <layout class="QHBoxLayout" >
+       <item>
         <layout class="QVBoxLayout" >
-          <property name="margin" >
-            <number>0</number>
-          </property>
-          <item>
-            <layout class="QHBoxLayout" >
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item>
-                <layout class="QVBoxLayout" >
-                  <property name="spacing" >
-                    <number>0</number>
-                  </property>
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <layout class="QHBoxLayout" >
-                      <property name="margin" >
-                        <number>0</number>
-                      </property>
-                      <item>
-                        <layout class="QVBoxLayout" >
-                          <property name="margin" >
-                            <number>0</number>
-                          </property>
-                          <item>
-                            <widget class="QLabel" name="_categoryLit" >
-                              <property name="text" >
-                                <string>Ca&amp;tegory:</string>
-                              </property>
-                              <property name="alignment" >
-                                <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                              </property>
-                              <property name="buddy" stdset="0" >
-                                <cstring>_category</cstring>
-                              </property>
-                            </widget>
-                          </item>
-                          <item>
-                            <widget class="QLabel" name="_descriptionLit" >
-                              <property name="text" >
-                                <string>&amp;Description:</string>
-                              </property>
-                              <property name="alignment" >
-                                <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                              </property>
-                              <property name="buddy" stdset="0" >
-                                <cstring>_description</cstring>
-                              </property>
-                            </widget>
-                          </item>
-                        </layout>
-                      </item>
-                      <item>
-                        <layout class="QVBoxLayout" >
-                          <property name="margin" >
-                            <number>0</number>
-                          </property>
-                          <item>
-                            <layout class="QHBoxLayout" >
-                              <property name="margin" >
-                                <number>0</number>
-                              </property>
-                              <item>
-                                <widget class="XLineEdit" name="_category" />
-                              </item>
-                              <item>
-                                <layout class="QHBoxLayout" >
-                                  <property name="spacing" >
-                                    <number>0</number>
-                                  </property>
-                                  <property name="margin" >
-                                    <number>0</number>
-                                  </property>
-                                  <item>
-                                    <widget class="QCheckBox" name="_active" >
-                                      <property name="text" >
-                                        <string>&amp;Active</string>
-                                      </property>
-                                      <property name="shortcut" >
-                                        <string>Alt+A</string>
-                                      </property>
-                                      <property name="checked" >
-                                        <bool>true</bool>
-                                      </property>
-                                    </widget>
-                                  </item>
-                                  <item>
-                                    <spacer name="Spacer72" >
-                                      <property name="sizeHint" >
-                                        <size>
-                                          <width>65</width>
-                                          <height>20</height>
-                                        </size>
-                                      </property>
-                                      <property name="sizeType" >
-                                        <enum>Expanding</enum>
-                                      </property>
-                                      <property name="orientation" >
-                                        <enum>Horizontal</enum>
-                                      </property>
-                                    </spacer>
-                                  </item>
-                                </layout>
-                              </item>
-                            </layout>
-                          </item>
-                          <item>
-                            <widget class="XLineEdit" name="_description" />
-                          </item>
-                        </layout>
-                      </item>
-                    </layout>
-                  </item>
-                  <item>
-                    <spacer name="Spacer12" >
-                      <property name="sizeHint" >
-                        <size>
-                          <width>20</width>
-                          <height>0</height>
-                        </size>
-                      </property>
-                      <property name="sizeType" >
-                        <enum>Preferred</enum>
-                      </property>
-                      <property name="orientation" >
-                        <enum>Vertical</enum>
-                      </property>
-                    </spacer>
-                  </item>
-                </layout>
-              </item>
-              <item>
-                <layout class="QVBoxLayout" >
-                  <property name="margin" >
-                    <number>0</number>
-                  </property>
-                  <item>
-                    <widget class="QPushButton" name="_close" >
-                      <property name="text" >
-                        <string>&amp;Cancel</string>
-                      </property>
-                    </widget>
-                  </item>
-                  <item>
-                    <widget class="QPushButton" name="_save" >
-                      <property name="text" >
-                        <string>&amp;Save</string>
-                      </property>
-                      <property name="autoDefault" >
-                        <bool>true</bool>
-                      </property>
-                      <property name="default" >
-                        <bool>true</bool>
-                      </property>
-                    </widget>
-                  </item>
-                </layout>
-              </item>
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <layout class="QVBoxLayout" >
+             <item>
+              <widget class="QLabel" name="_categoryLit" >
+               <property name="text" >
+                <string>Ca&amp;tegory:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_category</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="_descriptionLit" >
+               <property name="text" >
+                <string>&amp;Description:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_description</cstring>
+               </property>
+              </widget>
+             </item>
             </layout>
-          </item>
-          <item>
-            <layout class="QGridLayout" >
-              <property name="margin" >
-                <number>0</number>
-              </property>
-              <item row="3" column="1" >
-                <widget class="GLCluster" name="_freight" />
-              </item>
-              <item row="1" column="1" >
-                <widget class="GLCluster" name="_purchasePrice" />
-              </item>
-              <item row="3" column="0" >
-                <widget class="QLabel" name="_freightLit" >
-                  <property name="text" >
-                    <string>PO Line Freight Expense:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                  <property name="buddy" stdset="0" >
-                    <cstring>_liability</cstring>
-                  </property>
-                </widget>
-              </item>
-              <item row="0" column="0" >
-                <widget class="QLabel" name="_expenseLit" >
-                  <property name="text" >
-                    <string>E&amp;xpense:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                  <property name="buddy" stdset="0" >
-                    <cstring>_expense</cstring>
-                  </property>
-                </widget>
-              </item>
-              <item row="1" column="0" >
-                <widget class="QLabel" name="_purchasePriceLit" >
-                  <property name="text" >
-                    <string>Purchase Price Variance:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                  <property name="buddy" stdset="0" >
-                    <cstring>_expense</cstring>
-                  </property>
-                </widget>
-              </item>
-              <item row="0" column="1" >
-                <widget class="GLCluster" name="_expense" />
-              </item>
-              <item row="2" column="0" >
-                <widget class="QLabel" name="_poLiabilityClearingLit" >
-                  <property name="text" >
-                    <string>P/O &amp;Liability Clearing:</string>
-                  </property>
-                  <property name="alignment" >
-                    <set>Qt::AlignVCenter|Qt::AlignRight</set>
-                  </property>
-                  <property name="buddy" stdset="0" >
-                    <cstring>_liability</cstring>
-                  </property>
-                </widget>
-              </item>
-              <item row="2" column="1" >
-                <widget class="GLCluster" name="_liability" />
-              </item>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" >
+             <item>
+              <layout class="QHBoxLayout" >
+               <item>
+                <widget class="XLineEdit" name="_category" />
+               </item>
+               <item>
+                <layout class="QHBoxLayout" >
+                 <property name="spacing" >
+                  <number>0</number>
+                 </property>
+                 <item>
+                  <widget class="QCheckBox" name="_active" >
+                   <property name="text" >
+                    <string>&amp;Active</string>
+                   </property>
+                   <property name="shortcut" >
+                    <string>Alt+A</string>
+                   </property>
+                   <property name="checked" >
+                    <bool>true</bool>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer>
+                   <property name="orientation" >
+                    <enum>Qt::Vertical</enum>
+                   </property>
+                   <property name="sizeType" >
+                    <enum>QSizePolicy::Expanding</enum>
+                   </property>
+                   <property name="sizeHint" >
+                    <size>
+                     <width>65</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                </layout>
+               </item>
+              </layout>
+             </item>
+             <item>
+              <widget class="XLineEdit" name="_description" />
+             </item>
             </layout>
-          </item>
-        </layout>
-      </item>
-      <item>
-        <spacer name="spacer6" >
-          <property name="sizeHint" >
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
             <size>
-              <width>16</width>
-              <height>16</height>
+             <width>20</width>
+             <height>0</height>
             </size>
-          </property>
-          <property name="sizeType" >
-            <enum>Expanding</enum>
-          </property>
-          <property name="orientation" >
-            <enum>Vertical</enum>
-          </property>
-        </spacer>
-      </item>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="QPushButton" name="_close" >
+           <property name="text" >
+            <string>&amp;Cancel</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_save" >
+           <property name="text" >
+            <string>&amp;Save</string>
+           </property>
+           <property name="autoDefault" >
+            <bool>true</bool>
+           </property>
+           <property name="default" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item>
+      <layout class="QGridLayout" >
+       <item row="3" column="1" >
+        <widget class="GLCluster" name="_freight" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="GLCluster" name="_purchasePrice" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" >
+        <widget class="QLabel" name="_freightLit" >
+         <property name="text" >
+          <string>PO Line Freight Expense:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_liability</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0" >
+        <widget class="QLabel" name="_expenseLit" >
+         <property name="text" >
+          <string>E&amp;xpense:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_expense</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_purchasePriceLit" >
+         <property name="text" >
+          <string>Purchase Price Variance:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_expense</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <widget class="GLCluster" name="_expense" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_poLiabilityClearingLit" >
+         <property name="text" >
+          <string>P/O &amp;Liability Clearing:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_liability</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="GLCluster" name="_liability" >
+         <property name="focusPolicy" >
+          <enum>Qt::TabFocus</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
     </layout>
-  </widget>
-  <layoutdefault spacing="5" margin="5" />
-  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
-  <tabstops>
-    <tabstop>_category</tabstop>
-    <tabstop>_active</tabstop>
-    <tabstop>_description</tabstop>
-    <tabstop>_expense</tabstop>
-    <tabstop>_purchasePrice</tabstop>
-    <tabstop>_liability</tabstop>
-    <tabstop>_freight</tabstop>
-    <tabstop>_save</tabstop>
-    <tabstop>_close</tabstop>
-  </tabstops>
-  <includes>
-    <include location="local" >OpenMFGGUIClient.h</include>
-    <include location="global" >parameter.h</include>
-  </includes>
-  <connections>
-    <connection>
-      <sender>_close</sender>
-      <signal>clicked()</signal>
-      <receiver>expenseCategory</receiver>
-      <slot>reject()</slot>
-    </connection>
-  </connections>
+   </item>
+   <item>
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>16</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
+ <customwidgets>
+  <customwidget>
+   <class>GLCluster</class>
+   <extends>QWidget</extends>
+   <header>glcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_category</tabstop>
+  <tabstop>_active</tabstop>
+  <tabstop>_description</tabstop>
+  <tabstop>_expense</tabstop>
+  <tabstop>_purchasePrice</tabstop>
+  <tabstop>_liability</tabstop>
+  <tabstop>_freight</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+ </tabstops>
+ <includes>
+  <include location="local" >OpenMFGGUIClient.h</include>
+  <include location="global" >parameter.h</include>
+ </includes>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>_close</sender>
+   <signal>clicked()</signal>
+   <receiver>expenseCategory</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>20</x>
+     <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
