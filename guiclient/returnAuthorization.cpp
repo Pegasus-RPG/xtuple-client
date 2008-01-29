@@ -1461,8 +1461,8 @@ void returnAuthorization::sAuthorizeLine()
 
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
-  else
-    sFillList();
+    
+  populate();
 }
 void returnAuthorization::sClearAuthorization()
 {
@@ -1485,8 +1485,8 @@ void returnAuthorization::sClearAuthorization()
 
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
-  else
-    sFillList();
+
+  populate();
 }
 
 void returnAuthorization::sAuthorizeAll()
@@ -1509,8 +1509,8 @@ void returnAuthorization::sAuthorizeAll()
 
   if (_newso->isValid())
     omfgThis->sSalesOrdersUpdated(_newso->id());
-  else
-    sFillList();
+		
+  populate();
 }
 
 void returnAuthorization::sEnterReceipt()
