@@ -361,7 +361,7 @@
             <string>Amount to Distribute:</string>
            </property>
            <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
            </property>
            <property name="buddy" >
             <cstring>_amountToDistribute</cstring>
