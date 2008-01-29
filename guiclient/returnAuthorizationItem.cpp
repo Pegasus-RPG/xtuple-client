@@ -116,6 +116,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_scheduledDate, SIGNAL(newDate(const QDate&)), this, SLOT(sDetermineAvailability()));
   connect(_qtyAuth, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
   connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
+  connect(_showAvailability, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
 
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
