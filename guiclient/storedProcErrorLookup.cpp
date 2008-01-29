@@ -263,9 +263,8 @@ void initErrorLookupHash()
 			       "the Task Name is blank."),	0, "" },
   { "createTodoItem",	-3, TR("The To-Do List Item cannot be created as "
 			       "there is no Due Date."),	0, "" },
-
-  { "deleteAccountingPeriod", -1, TR("The selected Accounting Period is closed "
-				     "and, thus, cannot be deleted."), 0, "" },
+  { "createWo",	-2, TR("Work Order can not be exploded because items on "
+			       "the BOM exist without itemsites."),	0, "" }, 
   { "deleteAccountingPeriod", -4, TR("The selected Accounting Period has G/L "
 				     "Transactions posted against it and, thus, "
 				     "cannot be deleted."), 0, "" },
