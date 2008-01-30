@@ -178,11 +178,12 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
   {
     _hotkeyList << hotkey;
+    setShortcutContext(Qt::ApplicationShortcut);
     if (hotkey.left(1) == "C")
-      setAccel(QString("Ctrl+%1").arg(hotkey.right(1)));
+      setShortcut(QString("Ctrl+%1").arg(hotkey.right(1)));
 
     else if (hotkey.left(1) == "F")
-      setAccel(hotkey);
+      setShortcut(hotkey);
   }
 
   connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
@@ -203,11 +204,12 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
   {
     _hotkeyList << hotkey;
+    setShortcutContext(Qt::ApplicationShortcut);
     if (hotkey.left(1) == "C")
-      setAccel(QString("Ctrl+%1").arg(hotkey.right(1)));
+      setShortcut(QString("Ctrl+%1").arg(hotkey.right(1)));
 
     else if (hotkey.left(1) == "F")
-      setAccel(hotkey);
+      setShortcut(hotkey);
   }
 
   connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
@@ -232,11 +234,12 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
   if (!hotkey.isNull() && !_hotkeyList.contains(hotkey))
   {
     _hotkeyList << hotkey;
+    setShortcutContext(Qt::ApplicationShortcut);
     if (hotkey.left(1) == "C")
-      setAccel(QString("Ctrl+%1").arg(hotkey.right(1)));
+      setShortcut(QString("Ctrl+%1").arg(hotkey.right(1)));
 
     else if (hotkey.left(1) == "F")
-      setAccel(hotkey);
+      setShortcut(hotkey);
   }
 
   connect(this, SIGNAL(activated()), pTarget, pActivateSlot);
