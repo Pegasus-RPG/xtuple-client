@@ -3159,7 +3159,11 @@ void salesOrder::sAuthorizeCC()
   int ccpayid   = -1;
   QString ordernum = _orderNumber->text();
   int returnVal = cardproc->authorize(_cc->id(), _CCCVV->text().toInt(),
-				      _CCAmount->localValue(), _CCAmount->id(),
+				      _CCAmount->localValue(),
+				      _tax->localValue(),
+				      (_tax->isZero() && _taxAuth->id() == -1),
+				      _freight->localValue(), 0,
+				      _CCAmount->id(),
 				      ordernum, ccpayid,
 				      QString("cohead"), _soheadid);
   if (returnVal < 0)
@@ -3202,7 +3206,11 @@ void salesOrder::sChargeCC()
   QString ordernum = _orderNumber->text();
   QString refnum   = _custPONumber->text();
   int returnVal    = cardproc->charge(_cc->id(), _CCCVV->text().toInt(),
-				      _CCAmount->localValue(), _CCAmount->id(),
+				      _CCAmount->localValue(),
+				      _tax->localValue(),
+				      (_tax->isZero() && _taxAuth->id() == -1),
+				      _freight->localValue(), 0,
+				      _CCAmount->id(),
 				      ordernum, refnum, ccpayid,
 				      QString("cohead"), _soheadid);
   if (returnVal < 0)

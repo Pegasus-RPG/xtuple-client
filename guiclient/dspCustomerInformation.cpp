@@ -957,13 +957,15 @@ void dspCustomerInformation::sViewAropen()
 void dspCustomerInformation::sFillPaymentsList()
 {
   q.prepare("SELECT ccpay_id, cohead_id,"
-	    "       CASE WHEN (ccpay_type='C') THEN :charge"
+	    "       CASE WHEN (ccpay_type='A') THEN :preauth"
+	    "            WHEN (ccpay_type='C') THEN :charge"
 	    "            WHEN (ccpay_type='R') THEN :refund"
 	    "            ELSE ccpay_type"
 	    "       END AS f_type,"
             "       CASE WHEN (ccpay_status='A') THEN :authorized"
             "            WHEN (ccpay_status='C') THEN :approved"
             "            WHEN (ccpay_status='D') THEN :declined"
+            "            WHEN (ccpay_status='V') THEN :voided"
             "            WHEN (ccpay_status='X') THEN :noapproval"
             "            ELSE ccpay_status"
             "       END AS f_status,"
@@ -971,7 +973,7 @@ void dspCustomerInformation::sFillPaymentsList()
             "       ccpay_by_username, ccpay_amount,"
             "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
 	    "       COALESCE(cohead_number, ccpay_order_number),"
-	    "       ccpay_yp_r_ref,"
+	    "       ccpay_r_ref,"
 	    "       COALESCE(payco_amount, ccpay_amount),"
 	    "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
             "  FROM ccpay LEFT OUTER JOIN "
@@ -980,11 +982,13 @@ void dspCustomerInformation::sFillPaymentsList()
             " WHERE ((ccpay_cust_id=:cust_id))"
             " ORDER BY ccpay_transaction_datetime;");
   q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":charge", tr("Charge"));
-  q.bindValue(":refund", tr("Refund"));
+  q.bindValue(":preauth", tr("Preauthorization"));
+  q.bindValue(":charge",  tr("Charge"));
+  q.bindValue(":refund",  tr("Refund"));
   q.bindValue(":authorized", tr("Authorized"));
-  q.bindValue(":approved", tr("Approved"));
-  q.bindValue(":declined", tr("Declined"));
+  q.bindValue(":approved",   tr("Approved"));
+  q.bindValue(":declined",   tr("Declined"));
+  q.bindValue(":voided",     tr("Voided"));
   q.bindValue(":noapproval", tr("No Approval Code"));
   q.exec();
 

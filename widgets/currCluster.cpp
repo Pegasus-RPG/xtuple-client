@@ -787,6 +787,20 @@ QString	CurrDisplay::currAbbr() const
     return returnValue;
 }
 
+QString CurrDisplay::currSymbol(const int pid)
+{
+  XSqlQuery symq;
+  symq.prepare("SELECT curr_symbol FROM curr_symbol WHERE (curr_id=:id);");
+  symq.bindValue(":id", pid);
+  if (symq.first())
+      return symq.value("curr_symbol").toString();
+  else if (symq.lastError().type() != QSqlError::None)
+      QMessageBox::critical(0, tr("A System Error occurred at %1::%2.")
+						  .arg(__FILE__).arg(__LINE__),
+			    symq.lastError().databaseText());
+  return "";
+}
+
 void CurrDisplay::setPaletteForegroundColor(const QColor & newColor)
 {
     _valueLocalWidget->setPaletteForegroundColor(newColor);

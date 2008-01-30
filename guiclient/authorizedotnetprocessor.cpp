@@ -1,0 +1,748 @@
+/*
+ * Common Public Attribution License Version 1.0.
+ *
+ * The contents of this file are subject to the Common Public Attribution
+ * License Version 1.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License
+ * at http://www.xTuple.com/CPAL.  The License is based on the Mozilla
+ * Public License Version 1.1 but Sections 14 and 15 have been added to
+ * cover use of software over a computer network and provide for limited
+ * attribution for the Original Developer. In addition, Exhibit A has
+ * been modified to be consistent with Exhibit B.
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See
+ * the License for the specific language governing rights and limitations
+ * under the License.
+ *
+ * The Original Code is PostBooks Accounting, ERP, and CRM Suite.
+ *
+ * The Original Developer is not the Initial Developer and is __________.
+ * If left blank, the Original Developer is the Initial Developer.
+ * The Initial Developer of the Original Code is OpenMFG, LLC,
+ * d/b/a xTuple. All portions of the code written by xTuple are Copyright
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved.
+ *
+ * Contributor(s): ______________________.
+ *
+ * Alternatively, the contents of this file may be used under the terms
+ * of the xTuple End-User License Agreeement (the xTuple License), in which
+ * case the provisions of the xTuple License are applicable instead of
+ * those above.  If you wish to allow use of your version of this file only
+ * under the terms of the xTuple License and not to allow others to use
+ * your version of this file under the CPAL, indicate your decision by
+ * deleting the provisions above and replace them with the notice and other
+ * provisions required by the xTuple License. If you do not delete the
+ * provisions above, a recipient may use your version of this file under
+ * either the CPAL or the xTuple License.
+ *
+ * EXHIBIT B.  Attribution Information
+ *
+ * Attribution Copyright Notice:
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ *
+ * Attribution Phrase:
+ * Powered by PostBooks, an open source solution from xTuple
+ *
+ * Attribution URL: www.xtuple.org
+ * (to be included in the "Community" menu of the application if possible)
+ *
+ * Graphic Image as provided in the Covered Code, if any.
+ * (online at www.xtuple.com/poweredby)
+ *
+ * Display of Attribution Information is required in Larger Works which
+ * are defined in the CPAL as a work which combines Covered Code or
+ * portions thereof with code not governed by the terms of the CPAL.
+ */
+
+/* TODO:
+   support Visa ECI, MasterCard UCAF for x_authentication_indicator?
+   support Visa CAVV or MasterCard UCAF for x_cardholder_authentication_value?
+*/
+#include <QSqlError>
+
+#include <currcluster.h>
+
+#include "OpenMFGGUIClient.h"
+#include "authorizedotnetprocessor.h"
+
+#define DEBUG true
+
+// convenience macro to add Name and Content to the Request
+#define APPENDFIELD(Request, Name, Content) 			\
+	{ 							\
+	  QString encap = _metrics->value("CCANEncap"); 	\
+	  if (! Request.isEmpty())				\
+	    Request += (_metrics->value("CCANDelim").isEmpty()) ? "," :	     \
+					      _metrics->value("CCANDelim");  \
+	  Request += QString(Name) + "=" + encap + QString(Content) + encap; \
+	}
+
+AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
+{
+  _defaultLivePort   = 443;
+  _defaultLiveServer = "secure.authorize.net/gateway/transact.dll";
+  _defaultTestPort   = 443;
+  _defaultTestServer = "certification.authorize.net/gateway/transact.dll";
+
+  _msgHash.insert(-200, tr("A Login is required."));
+  _msgHash.insert(-201, tr("The Login must be 20 characters or less."));
+  _msgHash.insert(-202, tr("The Transaction Key must be 16 characters or less."));
+  _msgHash.insert(-203, tr("The Delimiting Character must be exactly 1 character."));
+  _msgHash.insert(-204, tr("The Delimiting Character must be exactly 1 character."));
+  _msgHash.insert(-205, tr("The response from the Gateway appears to be "
+			   "incorrectly formatted (could not find field %1 "
+			   "as there are only %2 fields present)."));
+  _msgHash.insert(-206, tr("The response from the Gateway failed the MD5 "
+			   "security check."));
+  _msgHash.insert( 206, tr("The response from the Gateway has failed the MD5 "
+			   "security check but will be processed anyway."));
+}
+
+int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
+{
+  // TODO: if check and not credit card transaction do something else
+  XSqlQuery anq;
+  anq.prepare(
+    "SELECT ccard_active,"
+    "  formatbytea(decrypt(setbytea(ccard_number),   setbytea(:key),'bf')) AS ccard_number,"
+    "  formatccnumber(decrypt(setbytea(ccard_number),setbytea(:key),'bf')) AS ccard_number_x,"
+    "  formatbytea(decrypt(setbytea(ccard_name),     setbytea(:key),'bf')) AS ccard_name,"
+    "  formatbytea(decrypt(setbytea(ccard_address1), setbytea(:key),'bf')) AS ccard_address1,"
+    "  formatbytea(decrypt(setbytea(ccard_address2), setbytea(:key),'bf')) AS ccard_address2,"
+    "  formatbytea(decrypt(setbytea(ccard_city),     setbytea(:key),'bf')) AS ccard_city,"
+    "  formatbytea(decrypt(setbytea(ccard_state),    setbytea(:key),'bf')) AS ccard_state,"
+    "  formatbytea(decrypt(setbytea(ccard_zip),      setbytea(:key),'bf')) AS ccard_zip,"
+    "  formatbytea(decrypt(setbytea(ccard_country),  setbytea(:key),'bf')) AS ccard_country,"
+    "  formatbytea(decrypt(setbytea(ccard_month_expired),setbytea(:key),'bf')) AS ccard_month_expired,"
+    "  formatbytea(decrypt(setbytea(ccard_year_expired),setbytea(:key), 'bf')) AS ccard_year_expired,"
+    "  cust.* "
+    "  FROM ccard, cust "
+    "WHERE ((ccard_id=:ccardid)"
+    "  AND  (ccard_cust_id=cust_id));");
+  // note use of the cust view instead of the custinfo table
+  anq.bindValue(":ccardid", pccardid);
+  anq.bindValue(":key",     omfgThis->_key);
+  anq.exec();
+
+  if (anq.first())
+  {
+    if (!anq.value("ccard_active").toBool())
+    {
+      _errorMsg = errorMsg(-10);
+      return -10;
+    }
+  }
+  else if (anq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = anq.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-17).arg(pccardid);
+    return -17;
+  }
+
+  if (! _metrics->boolean("CCANVerSetOnGateway"))
+    APPENDFIELD(prequest, "x_version",      _metrics->value("CCANVer"));
+
+  APPENDFIELD(prequest, "x_delim_data", "TRUE");
+
+  if (! _metrics->boolean("CCANDelimSetOnGateway") &&
+      ! _metrics->value("CCANDelim").isEmpty())
+    APPENDFIELD(prequest, "x_delim_char", _metrics->value("CCANDelim"));
+
+  if (! _metrics->boolean("CCANEncapSetOnGateway"))
+    APPENDFIELD(prequest, "x_encap_char", _metrics->value("CCANEncap"));
+
+  APPENDFIELD(prequest, "x_login",    _metricsenc->value("CCLogin"));
+  APPENDFIELD(prequest, "x_tran_key", _metricsenc->value("CCANTransactionKey"));
+  APPENDFIELD(prequest, "x_amount",   QString::number(pamount));
+  // TODO: if check and not credit card transaction do something else
+  APPENDFIELD(prequest, "x_card_num", anq.value("ccard_number").toString());
+  APPENDFIELD(prequest, "x_test_request", isLive() ? "FALSE" : "TRUE");
+
+  // TODO: if check and not credit card transaction do something else
+  QString work_month;
+  work_month.setNum(anq.value("ccard_month_expired").toDouble());
+  if (work_month.length() == 1)
+    work_month = "0" + work_month;
+  APPENDFIELD(prequest, "x_exp_date",
+	      work_month + anq.value("ccard_year_expired").toString().right(2));
+
+  APPENDFIELD(prequest, "x_relay_response", "FALSE");
+  APPENDFIELD(prequest, "x_duplicate_window",
+			_metrics->value("CCANDuplicateWindow"));
+
+  QStringList name = anq.value("ccard_name").toString().split(QRegExp("\\s+"));
+  APPENDFIELD(prequest, "x_first_name", name.at(0));
+  APPENDFIELD(prequest, "x_last_name",  name.at(name.size() - 1));
+  APPENDFIELD(prequest, "x_company",    anq.value("cust_name").toString());
+  APPENDFIELD(prequest, "x_address",    anq.value("ccard_address1").toString());
+  APPENDFIELD(prequest, "x_city",       anq.value("ccard_city").toString());
+  APPENDFIELD(prequest, "x_state",      anq.value("ccard_state").toString());
+  APPENDFIELD(prequest, "x_zip",        anq.value("ccard_zip").toString());
+  APPENDFIELD(prequest, "x_country",    anq.value("ccard_country").toString());
+
+  if (_metrics->boolean("CCANWellsFargoSecureSource"))
+  {
+    APPENDFIELD(prequest, "x_phone",    anq.value("cust_phone").toString());
+    APPENDFIELD(prequest, "x_email",    anq.value("cust_email").toString());
+  }
+
+  if ((_metrics->value("CCANCurrency") == "TRANS") ||
+       ! _metrics->boolean("CCANCurrencySetOnGateway"))
+  {
+    anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
+    anq.bindValue(":currid", pcurrid);
+    anq.exec();
+    if (anq.first())
+    {
+      APPENDFIELD(prequest, "x_currency_code", anq.value("curr_abbr").toString());
+    }
+    else if (anq.lastError().type() != QSqlError::NoError)
+    {
+      _errorMsg = anq.lastError().databaseText();
+      return -1;
+    }
+    else
+    {
+      _errorMsg = errorMsg(-17).arg(pccardid);
+      return -17;
+    }
+  }
+
+  // TODO: if check and not credit card transaction do something else
+  APPENDFIELD(prequest, "x_method",     "CC");
+
+  APPENDFIELD(prequest, "x_type",       pordertype);
+
+  if (pcvv > 0)
+    APPENDFIELD(prequest, "x_card_code", pcvv);
+
+  if (DEBUG)
+    qDebug("AN:buildCommon built %s\n", prequest.toAscii().data());
+  return 0;
+}
+
+int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+{
+  if (DEBUG)
+    qDebug("AN:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+
+  int    returnValue = 0;
+  double amount  = pamount;
+  double tax     = ptax;
+  double freight = pfreight;
+  double duty    = pduty;
+  int    currid  = pcurrid;
+
+  if (_metrics->value("CCANCurrency") != "TRANS")
+  {
+    currid = _metrics->value("CCANCurrency").toInt();
+    amount = currToCurr(pcurrid, currid, pamount,   &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    tax     = currToCurr(pcurrid, currid, ptax,     &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    duty    = currToCurr(pcurrid, currid, pduty,    &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+  }
+
+  QString request;
+  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "AUTH_ONLY");
+  if (returnValue != 0)
+    return returnValue;
+
+  APPENDFIELD(request, "x_tax",        QString::number(tax));
+  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
+  APPENDFIELD(request, "x_freight",    QString::number(freight));
+  APPENDFIELD(request, "x_duty",       QString::number(duty));
+
+  if (! preforder.isEmpty())
+    APPENDFIELD(request, "x_po_num", preforder.left(20));
+
+  QString response;
+
+  returnValue = sendViaHTTP(request, response);
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = handleResponse(response, pccardid, "A", pamount, pcurrid,
+			       pneworder, preforder, pccpayid, pparams);
+
+  return returnValue;
+}
+
+int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
+{
+  if (DEBUG)
+    qDebug("AN:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount,  ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+
+  int    returnValue = 0;
+  double amount  = pamount;
+  double tax     = ptax;
+  double freight = pfreight;
+  double duty    = pduty;
+  int    currid  = pcurrid;
+
+  if (_metrics->value("CCANCurrency") != "TRANS")
+  {
+    currid = _metrics->value("CCANCurrency").toInt();
+    amount = currToCurr(pcurrid, currid, pamount,   &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    tax     = currToCurr(pcurrid, currid, ptax,     &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    duty    = currToCurr(pcurrid, currid, pduty,    &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+  }
+
+  QString request;
+
+  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "AUTH_CAPTURE");
+  if (returnValue !=  0)
+    return returnValue;
+
+  APPENDFIELD(request, "x_tax",        QString::number(tax));
+  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
+  APPENDFIELD(request, "x_freight",    QString::number(freight));
+  APPENDFIELD(request, "x_duty",       QString::number(duty));
+
+  if (! preforder.isEmpty())
+    APPENDFIELD(request, "x_po_num",   preforder);
+
+  QString response;
+
+  returnValue = sendViaHTTP(request, response);
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = handleResponse(response, pccardid, "C", pamount, pcurrid,
+			       pneworder, preforder, pccpayid, pparams);
+
+  return returnValue;
+}
+
+int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+{
+  if (DEBUG)
+    qDebug("AN:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount,  pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+
+  int    returnValue = 0;
+  double amount  = pamount;
+  int    currid  = pcurrid;
+
+  if (_metrics->value("CCANCurrency") != "TRANS")
+  {
+    currid = _metrics->value("CCANCurrency").toInt();
+    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+  }
+
+  QString request;
+
+  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "PRIOR_AUTH_CAPTURE");
+  if (returnValue !=  0)
+    return returnValue;
+
+  APPENDFIELD(request, "x_trans_id", preforder);
+
+  QString response;
+
+  returnValue = sendViaHTTP(request, response);
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = handleResponse(response, pccardid, "CP", pamount, pcurrid,
+			       pneworder, preforder, pccpayid, pparams);
+
+  return returnValue;
+}
+
+int AuthorizeDotNetProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+{
+  if (DEBUG)
+    qDebug("AN:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, ptax, ptaxexempt,  pfreight,  pduty, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+
+  int    returnValue = 0;
+  double amount  = pamount;
+  double tax     = ptax;
+  double freight = pfreight;
+  double duty    = pduty;
+  int    currid  = pcurrid;
+
+  if (_metrics->value("CCANCurrency") != "TRANS")
+  {
+    currid = _metrics->value("CCANCurrency").toInt();
+    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    tax = currToCurr(pcurrid, currid, ptax, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    freight = currToCurr(pcurrid, currid, pfreight, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+    duty = currToCurr(pcurrid, currid, pduty, &returnValue);
+    if (returnValue < 0)
+      return returnValue;
+  }
+
+  QString request;
+
+  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "CREDIT");
+  if (returnValue !=  0)
+    return returnValue;
+
+  APPENDFIELD(request, "x_trans_id", );
+  APPENDFIELD(request, "x_tax",        QString::number(tax));
+  APPENDFIELD(request, "x_tax_exempt", ptaxexempt ? "TRUE" : "FALSE");
+  APPENDFIELD(request, "x_freight",    QString::number(freight));
+  APPENDFIELD(request, "x_duty",       QString::number(duty));
+
+  QString response;
+  returnValue = sendViaHTTP(request, response);
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = handleResponse(response, pccardid, "R", pamount, pcurrid,
+			       pneworder, preforder, pccpayid, pparams);
+
+  return returnValue;
+}
+
+int AuthorizeDotNetProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+{
+  if (DEBUG)
+    qDebug("AN:doVoidPrevious(%d, %d, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(),
+	   pccpayid);
+
+  QString tmpErrorMsg = _errorMsg;
+
+  int    returnValue = 0;
+  double amount = pamount;
+  int    currid = pcurrid;
+
+  if (_metrics->value("CCANCurrency") != "TRANS")
+  {
+    currid = _metrics->value("CCANCurrency").toInt();
+    amount = currToCurr(pcurrid, currid, pamount, &returnValue);
+    if (returnValue < 0)
+    {
+      _errorMsg = tmpErrorMsg;
+      return returnValue;
+    }
+  }
+
+  QString request;
+
+  returnValue = buildCommon(pccardid, pcvv, amount, currid, request, "VOID");
+  if (returnValue != 0)
+    return returnValue;
+
+  APPENDFIELD(request, "x_trans_id", );
+
+  QString response;
+
+  returnValue = sendViaHTTP(request, response);
+  _errorMsg = tmpErrorMsg;
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = handleResponse(response, pccardid, "V", pamount, pcurrid,
+			       pneworder, preforder, pccpayid, pparams);
+  _errorMsg = tmpErrorMsg;
+  return returnValue;
+}
+
+int AuthorizeDotNetProcessor::fieldValue(const QStringList plist, const int pindex, QString &pvalue)
+{
+  if (plist.size() < pindex)
+  {
+    _errorMsg = errorMsg(-205).arg(pindex).arg(plist.size());
+    return -205;
+  }
+
+  if (_metrics->value("CCANEncap").isEmpty())
+    pvalue = plist.at(pindex - 1);
+  else
+  {
+    pvalue = plist.at(pindex - 1);
+    // now strip of the encapsulating char from front and back
+    pvalue = pvalue.mid(plist.at(pindex - 1)
+			   .indexOf(_metrics->value("CCANEncap"))+1,
+		        plist.at(pindex - 1)
+			 .lastIndexOf(_metrics->value("CCANEncap")) -
+			 plist.at(pindex - 1)
+			 .indexOf(_metrics->value("CCANEncap")));
+  }
+  return 0;
+}
+  
+
+int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
+{
+  if (DEBUG)
+    qDebug("AN::handleResponse(%s, %d, %s, %f, %d, %s, %d, pparams)",
+	   presponse.toAscii().data(), pccardid,
+	   ptype.toAscii().data(), pamount, pcurrid,
+	   preforder.toAscii().data(), pccpayid);
+
+  QString delim = _metrics->value("CCANDelim").isEmpty() ? "," :
+						  _metrics->value("CCANDelim");
+  QString encap = _metrics->value("CCANEncap");
+
+  QString r_approved;
+  QString r_avs;
+  QString r_code;
+  QString r_cvv;
+  QString r_error;
+  QString r_message;
+  QString r_ordernum;
+  QString r_ref;
+  QString r_shipping;
+  QString r_tax;
+
+  QString status;
+
+  // TODO: explore using encap here and code from CSV Import to properly split
+
+  /* add an extra field at the beginning. otherwise we'll be off by one
+     because the Advanced Integration Method (AIM) Implementation Guide
+     numbers fields starting at 1 but QString::split() creates a list
+     starting at 0.
+   */
+  QStringList responseFields = presponse.split(delim);
+  
+  QString r_response;
+  int returnValue = fieldValue(responseFields, 1, r_response);
+  if (returnValue < 0)
+    return returnValue;
+
+  if (r_response.toInt() == 1)
+    r_approved = "APPROVED";
+  else if (r_response.toInt() == 2)
+    r_approved == "DECLINED";
+  else if (r_response.toInt() == 3)
+    r_approved == "ERROR";
+  else if (r_response.toInt() == 4)
+    r_approved == "HELDFORREVIEW";
+
+  // fieldValue(responseFields, 2);		// response subcode
+
+  returnValue = fieldValue(responseFields, 3, r_code);	// response reason code
+  if (returnValue < 0)
+    return returnValue;
+  returnValue = fieldValue(responseFields, 4, r_message);	// response reason text
+  if (returnValue < 0)
+    return returnValue;
+
+  returnValue = fieldValue(responseFields, 5, r_ref);		// response approval code
+  if (returnValue < 0)
+    return returnValue;
+  returnValue = fieldValue(responseFields, 6, r_avs);		// response avs result
+  if (returnValue < 0)
+    return returnValue;
+  returnValue = fieldValue(responseFields, 7, r_ordernum);	// xaction id for future changes
+  if (returnValue < 0)
+    return returnValue;
+
+  // fieldValue(responseFields, 8-10);	// echo x_invoice_number description amount 
+  // fieldValue(responseFields, 11-13);	// echo x_method type cust_id
+  // fieldValue(responseFields, 14-17);	// echo x_first_name last_name company address
+  // fieldValue(responseFields, 18-24);	// echo x_city state zip country phone fax email
+  // fieldValue(responseFields, 25-27);	// echo x_ship_to_first_name last_name company
+  // fieldValue(responseFields, 28-32);	// echo x_ship_to_address city state zip country
+
+  returnValue = fieldValue(responseFields, 33, r_tax);	// echo x_tax
+  if (returnValue < 0)
+    return returnValue;
+
+  // fieldValue(responseFields, 34);	// echo x_duty
+
+  returnValue = fieldValue(responseFields, 35, r_shipping);	// echo x_freight
+  if (returnValue < 0)
+    return returnValue;
+
+  // fieldValue(responseFields, 36);	// echo x_tax_exempt
+  // fieldValue(responseFields, 37);	// echo x_po_num
+
+  returnValue = fieldValue(responseFields, 39, r_cvv); // ccv response code
+  if (returnValue < 0)
+    return returnValue;
+
+  // fieldValue(responseFields, 40);	// cavv response code
+  // fieldValue(responseFields, 41-68);	// reserved for future use
+  // fieldValue(responseFields, 69+);	// echo of merchant-defined fields
+
+  /* treat heldforreview as approved because the AIM doc says response
+     reason codes 252 and 253 are both approved but being reviewed.
+     the intent of the other heldforreview, 193, is ambiguous.
+   */
+  if (r_approved == "APPROVED" || r_approved == "HELDFORREVIEW")
+  {
+    _errorMsg = errorMsg(0).arg(r_ref);
+    if (ptype == "A")
+      status = "A";	// Authorized
+    else if (ptype == "V")
+      status = "V";	// Voided
+    else
+      status = "C";	// Completed/Charged
+  }
+  else if (r_approved == "DECLINED")
+  {
+    _errorMsg = errorMsg(12).arg(r_message);
+    returnValue = 12;
+    status = "D";
+  }
+  else if (r_approved == "ERROR")
+  {
+    r_error = r_message;
+    _errorMsg = errorMsg(-12).arg(r_error);
+    returnValue = -12;
+  }
+
+  else if (r_approved.isEmpty())
+  {
+    _errorMsg = errorMsg(-100).arg(r_error).arg(r_message).arg(presponse);
+    returnValue = -100;
+    status = "X";
+  }
+
+  // always use the AVS checking configured on the gateway
+  _passedAvs = ((r_code.toInt() != 27) &&
+	        (r_code.toInt() != 127));
+
+  // always use the CVV checking configured on the gateway
+  _passedCvv = (r_code.toInt() != 78);
+
+  if (DEBUG)
+    qDebug("AN:%s _passedAvs %d\t%s _passedCvv %d",
+	    r_avs.toAscii().data(), _passedAvs,
+	    r_cvv.toAscii().data(), _passedCvv);
+
+  pparams.append("currid",      pcurrid);
+  pparams.append("auth_charge", ptype);
+  pparams.append("type",        ptype);
+  pparams.append("reforder",    (preforder.isEmpty()) ? pneworder : preforder);
+  pparams.append("status",      status);
+  pparams.append("avs",         r_avs);
+  pparams.append("ordernum",    r_ordernum);
+  pparams.append("error",       r_error);
+  pparams.append("approved",    r_approved);
+  pparams.append("code",        r_code);
+  pparams.append("shipping",    r_shipping);
+  pparams.append("tax",         r_tax);
+  pparams.append("ref",         r_ref);
+  pparams.append("message",     r_message);
+  pparams.append("ccard_id",    pccardid);
+
+  if (ptype == "A")
+    pparams.append("auth", QVariant(true, 0));
+  else
+    pparams.append("auth", QVariant(false, 1));
+
+  if (DEBUG)
+    qDebug("AN:r_error.isEmpty() = %d", r_error.isEmpty());
+
+  if (returnValue == 0)
+    pparams.append("amount",   pamount);
+  else
+    pparams.append("amount",   0);	// no money changed hands this attempt
+
+  if (_metrics->boolean("CCANMD5HashSetOnGateway"))
+  {
+    QString expected_hash;
+    QString r_hash;
+
+    returnValue = fieldValue(responseFields, 38, r_hash);	// md5 hash
+    XSqlQuery anq;
+    anq.prepare("SELECT md5(:inputstr) AS expected;");
+    anq.bindValue(":inputstr", _metrics->value("CCANMD5Hash") +
+			       _metrics->value("CCLogin") +
+			       r_ordernum +
+			       QString::number(pamount, 'f', 2));
+    anq.exec();
+    if (anq.first())
+      expected_hash = anq.value("expected").toString();
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      _errorMsg = errorMsg(-1).arg(anq.lastError().databaseText());
+      returnValue = -1;
+    }
+    if (DEBUG)
+      qDebug("AN:handleResponse expected md5 %s and got %s",
+	      expected_hash.toAscii().data(), r_hash.toAscii().data());
+
+    if (_metrics->value("CCANMD5HashAction") == "F" && expected_hash != r_hash)
+    {
+      _errorMsg = errorMsg(-206);
+      returnValue = -206;
+    }
+    else if (_metrics->value("CCANMD5HashAction") == "W" && expected_hash != r_hash)
+    {
+      _errorMsg = errorMsg(206);
+      returnValue = 206;
+    }
+  }
+
+  return returnValue;
+}
+
+int AuthorizeDotNetProcessor::doTestConfiguration()
+{
+  if (DEBUG)
+    qDebug("AN:doTestConfiguration()");
+
+  int returnValue = 0;
+
+  if (_metricsenc->value("CCLogin").isEmpty())
+  {
+    _errorMsg = errorMsg(-200);
+    returnValue = -200;
+  }
+  else if (_metricsenc->value("CCLogin").size() > 20)
+  {
+    _errorMsg = errorMsg(-201);
+    returnValue = -201;
+  }
+  else if (_metricsenc->value("CCANTransactionKey").size() > 16)
+  {
+    _errorMsg = errorMsg(-202);
+    returnValue = -202;
+  }
+  else if (_metricsenc->value("CCANDelim").size() > 1)
+  {
+    _errorMsg = errorMsg(-203);
+    returnValue = -203;
+  }
+  return returnValue;
+}
+
+bool AuthorizeDotNetProcessor::handlesCreditCards()
+{
+  return true;
+}

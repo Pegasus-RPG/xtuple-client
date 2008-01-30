@@ -89,6 +89,7 @@ class OPENMFGWIDGETS_EXPORT CurrDisplay : public QWidget
         virtual inline bool     isEmpty()       const { return (New == _state); };
 	static QString		baseCurrAbbr();
 	virtual QString		currAbbr()	const;
+	static QString		currSymbol(const int);
 
 	virtual inline int	id()		const { return _localId; };
 	static int		baseId();

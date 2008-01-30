@@ -505,6 +505,7 @@ void cashReceipt::sSave()
     int returnVal = cardproc->charge(_cc->id(),
 				     _CCCVV->text().isEmpty() ? -1 : _CCCVV->text().toInt(),
 				     _received->localValue(),
+				     0, false, 0, 0,
 				     _received->id(),
 				     ordernum, ordernum, ccpayid,
 				     QString("cashrcpt"), _cashrcptid);
@@ -519,7 +520,7 @@ void cashReceipt::sSave()
 			   cardproc->errorMsg());
 
     _save->setEnabled(true);
-    if (returnVal)
+    if (returnVal < 0)
       return;
 
     // cardproc->credit() does an update but doesn't have all the required data

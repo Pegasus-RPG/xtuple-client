@@ -5,29 +5,14 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>506</width>
-    <height>434</height>
+    <width>735</width>
+    <height>496</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Credit Card Configuration</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>5</number>
-   </property>
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
      <property name="spacing" >
@@ -326,6 +311,9 @@
              <property name="minimum" >
               <number>1</number>
              </property>
+             <property name="maximum" >
+              <number>30</number>
+             </property>
             </widget>
            </item>
            <item>
@@ -373,51 +361,6 @@
         </layout>
        </item>
        <item>
-        <widget class="QGroupBox" name="_testResultsGroup" >
-         <property name="title" >
-          <string>In Test Mode, transactions should</string>
-         </property>
-         <layout class="QVBoxLayout" >
-          <item>
-           <widget class="QRadioButton" name="_testsAllFail" >
-            <property name="toolTip" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">tooltip&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
-            <property name="whatsThis" >
-             <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
-p, li { white-space: pre-wrap; }
-&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
-&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis&lt;/p>&lt;/body>&lt;/html></string>
-            </property>
-            <property name="text" >
-             <string>Always Fail</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_testsSomeFail" >
-            <property name="text" >
-             <string>Sometimes Fail</string>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QRadioButton" name="_testsAllPass" >
-            <property name="text" >
-             <string>Always Succeed</string>
-            </property>
-            <property name="checked" >
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </item>
-       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -439,150 +382,191 @@ p, li { white-space: pre-wrap; }
       <attribute name="title" >
        <string>Fraud Detection</string>
       </attribute>
-      <layout class="QVBoxLayout" >
-       <item>
-        <layout class="QHBoxLayout" >
-         <item>
-          <layout class="QVBoxLayout" >
-           <item>
-            <widget class="QGroupBox" name="_cvvCheckGroup" >
-             <property name="title" >
-              <string>Card Verification</string>
-             </property>
-             <layout class="QVBoxLayout" >
-              <item>
-               <widget class="QCheckBox" name="_cvvRequired" >
-                <property name="text" >
-                 <string>Require CVV</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="Line" name="line" >
-                <property name="orientation" >
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_cvvNone" >
-                <property name="text" >
-                 <string>Do not check</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_cvvWarn" >
-                <property name="text" >
-                 <string>Warn if failure</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_cvvReject" >
-                <property name="text" >
-                 <string>Reject if failure</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <item>
-            <widget class="QGroupBox" name="_avsCheckGroup" >
-             <property name="enabled" >
-              <bool>true</bool>
-             </property>
-             <property name="title" >
-              <string>Address Verification Service</string>
-             </property>
-             <layout class="QVBoxLayout" >
-              <item>
-               <widget class="QRadioButton" name="_avsNone" >
-                <property name="text" >
-                 <string>Do not check</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_avsWarn" >
-                <property name="text" >
-                 <string>Warn if not Complete</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_avsReject" >
-                <property name="text" >
-                 <string>Reject if not Complete</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
+      <layout class="QGridLayout" >
+       <property name="leftMargin" >
+        <number>5</number>
+       </property>
+       <property name="topMargin" >
+        <number>5</number>
+       </property>
+       <property name="rightMargin" >
+        <number>5</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>5</number>
+       </property>
+       <item row="0" column="0" >
+        <widget class="QCheckBox" name="_cvvRequired" >
+         <property name="text" >
+          <string>Require Card Verification Value/Code (CVV)</string>
+         </property>
+        </widget>
        </item>
-       <item>
+       <item row="1" column="0" >
+        <widget class="QGroupBox" name="_cvvCheckGroup" >
+         <property name="title" >
+          <string>Card Verification</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QRadioButton" name="_cvvNone" >
+            <property name="text" >
+             <string>Do not check</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_cvvWarn" >
+            <property name="text" >
+             <string>Warn if failure</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_cvvReject" >
+            <property name="text" >
+             <string>Reject if failure</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QGroupBox" name="_avsCheckGroup" >
+         <property name="enabled" >
+          <bool>true</bool>
+         </property>
+         <property name="title" >
+          <string>Address Verification Service</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QRadioButton" name="_avsNone" >
+            <property name="text" >
+             <string>Do not check</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_avsWarn" >
+            <property name="text" >
+             <string>Warn on Failed AVS Check</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_avsReject" >
+            <property name="text" >
+             <string>Reject on Failed AVS Check</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="0" >
+        <widget class="QGroupBox" name="_cvvFailGroup" >
+         <property name="title" >
+          <string>Fail CVV Check If:</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QCheckBox" name="_cvvNotMatch" >
+            <property name="text" >
+             <string>Code Does Not Match</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_cvvNotProcessed" >
+            <property name="text" >
+             <string>CVV Was Not Processed</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_cvvNotOnCard" >
+            <property name="text" >
+             <string>Card Has No Code</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_cvvInvalidIssuer" >
+            <property name="text" >
+             <string>Card Issuer Is Not Certified</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QGroupBox" name="_avsFailGroup" >
+         <property name="title" >
+          <string>Fail AVS check If:</string>
+         </property>
+         <layout class="QVBoxLayout" >
+          <item>
+           <widget class="QCheckBox" name="_avsAddrNotMatch" >
+            <property name="text" >
+             <string>Address Does Not Match</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_avsAddrNotAvail" >
+            <property name="text" >
+             <string>Address Comparison Not Available</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_avsZIPNotMatch" >
+            <property name="text" >
+             <string>ZIP Does Not Match</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="_avsZIPNotAvail" >
+            <property name="text" >
+             <string>ZIP Comparison Not Available</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item row="3" column="0" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>20</width>
-           <height>40</height>
+           <width>350</width>
+           <height>0</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="3" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>331</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -594,20 +578,17 @@ p, li { white-space: pre-wrap; }
        <string>Server</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="spacing" >
-        <number>0</number>
-       </property>
        <property name="leftMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="topMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="rightMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
@@ -860,6 +841,54 @@ p, li { white-space: pre-wrap; }
         </layout>
        </item>
        <item>
+        <widget class="QGroupBox" name="_certificateGroup" >
+         <property name="title" >
+          <string>Digital Certificate (PEM File) Location:</string>
+         </property>
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QLabel" name="_ccYPWinPathPEMLit" >
+            <property name="text" >
+             <string>Windows:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QLineEdit" name="_ccYPWinPathPEM" />
+          </item>
+          <item row="1" column="0" >
+           <widget class="QLabel" name="_ccYPLinPathPEMLit" >
+            <property name="text" >
+             <string>Linux:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QLineEdit" name="_ccYPLinPathPEM" />
+          </item>
+          <item row="2" column="0" >
+           <widget class="QLabel" name="_ccYPMacPathPEMLit" >
+            <property name="text" >
+             <string>Mac:</string>
+            </property>
+            <property name="alignment" >
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QLineEdit" name="_ccYPMacPathPEM" />
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -882,20 +911,17 @@ p, li { white-space: pre-wrap; }
        <string>Service Options</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="spacing" >
+       <property name="leftMargin" >
         <number>5</number>
        </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
        <property name="topMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="rightMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <property name="bottomMargin" >
-        <number>0</number>
+        <number>5</number>
        </property>
        <item>
         <widget class="QStackedWidget" name="_ccWidgetStack" >
@@ -904,12 +930,283 @@ p, li { white-space: pre-wrap; }
          </property>
          <widget class="QWidget" name="_authorizeDotNetStack" >
           <layout class="QVBoxLayout" >
+           <property name="leftMargin" >
+            <number>5</number>
+           </property>
+           <property name="topMargin" >
+            <number>5</number>
+           </property>
+           <property name="rightMargin" >
+            <number>5</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>5</number>
+           </property>
            <item>
             <widget class="QLabel" name="_ccYPLit_2" >
              <property name="text" >
               <string>Authorize.Net Options:</string>
              </property>
             </widget>
+           </item>
+           <item>
+            <layout class="QGridLayout" >
+             <item row="2" column="0" >
+              <widget class="QLabel" name="_anDelimLit" >
+               <property name="text" >
+                <string>Delimiting Character:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_anDelim</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" >
+              <widget class="QLabel" name="_anEncapLit" >
+               <property name="text" >
+                <string>Encapsulating Character:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_anEncapLit</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1" >
+              <widget class="QLineEdit" name="_anDelim" >
+               <property name="text" >
+                <string>,</string>
+               </property>
+               <property name="maxLength" >
+                <number>1</number>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="1" >
+              <widget class="QLineEdit" name="_anEncap" >
+               <property name="maxLength" >
+                <number>1</number>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="2" >
+              <widget class="QCheckBox" name="_anDelimSetOnGateway" >
+               <property name="text" >
+                <string>Set on Gateway</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="2" >
+              <widget class="QCheckBox" name="_anEncapSetOnGateway" >
+               <property name="text" >
+                <string>Set on Gateway</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" >
+              <widget class="QLabel" name="_anTransactionKeyLit" >
+               <property name="text" >
+                <string>Transaction Key:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_anTransactionKey</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1" >
+              <widget class="QSpinBox" name="_anDuplicateWindow" >
+               <property name="maximum" >
+                <number>28000</number>
+               </property>
+               <property name="value" >
+                <number>120</number>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" >
+              <widget class="QLabel" name="_anDuplicateWindowLit" >
+               <property name="text" >
+                <string>Duplicate Window:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_anDuplicateWindow</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="2" >
+              <widget class="QLabel" name="_anDuplicateWindowAsHMS" >
+               <property name="text" >
+                <string>00:00:00</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="1" colspan="2" >
+              <widget class="QLineEdit" name="_anTransactionKey" />
+             </item>
+             <item rowspan="3" row="6" column="0" colspan="2" >
+              <widget class="QGroupBox" name="_anCurrencyGroup" >
+               <property name="title" >
+                <string>Currency of Transactions:</string>
+               </property>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" colspan="2" >
+                 <widget class="QRadioButton" name="_anCurrTransaction" >
+                  <property name="text" >
+                   <string>Same as Order</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <widget class="QRadioButton" name="_anCurrFixed" >
+                  <property name="text" >
+                   <string>Always Use:</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="1" >
+                 <widget class="XComboBox" name="_anCurrFixedValue" >
+                  <property name="enabled" >
+                   <bool>false</bool>
+                  </property>
+                  <property name="type" >
+                   <enum>XComboBox::Currencies</enum>
+                  </property>
+                 </widget>
+                </item>
+                <item row="2" column="1" >
+                 <widget class="QCheckBox" name="_anCurrFixedSetOnGateway" >
+                  <property name="enabled" >
+                   <bool>false</bool>
+                  </property>
+                  <property name="text" >
+                   <string>Set on Gateway</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="9" column="0" colspan="2" >
+              <widget class="QGroupBox" name="_anExtrasGroup" >
+               <property name="title" >
+                <string>Additional Options:</string>
+               </property>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <widget class="QCheckBox" name="_anUsingWellsFargoSecureSource" >
+                  <property name="text" >
+                   <string>Using Wells Fargo SecureSource</string>
+                  </property>
+                 </widget>
+                </item>
+                <item row="1" column="0" >
+                 <spacer>
+                  <property name="orientation" >
+                   <enum>Qt::Vertical</enum>
+                  </property>
+                  <property name="sizeHint" >
+                   <size>
+                    <width>20</width>
+                    <height>40</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item row="0" column="0" >
+              <widget class="QLabel" name="_anVersionLit" >
+               <property name="text" >
+                <string>Transaction Version:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_anVersion</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="0" column="1" >
+              <widget class="QComboBox" name="_anVersion" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <item>
+                <property name="text" >
+                 <string>3.1</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="0" column="2" >
+              <widget class="QCheckBox" name="_anVersionSetOnGateway" >
+               <property name="text" >
+                <string>Set on Gateway</string>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="0" >
+              <widget class="QLabel" name="_anMD5HashLit" >
+               <property name="text" >
+                <string>MD5 Hash:</string>
+               </property>
+               <property name="alignment" >
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+               <property name="buddy" >
+                <cstring>_anMD5Hash</cstring>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1" >
+              <widget class="QLineEdit" name="_anMD5Hash" />
+             </item>
+             <item rowspan="3" row="5" column="2" >
+              <widget class="QGroupBox" name="_anMD5HashSetOnGateway" >
+               <property name="title" >
+                <string>Set on Gateway</string>
+               </property>
+               <property name="checkable" >
+                <bool>true</bool>
+               </property>
+               <property name="checked" >
+                <bool>false</bool>
+               </property>
+               <layout class="QVBoxLayout" >
+                <item>
+                 <widget class="QRadioButton" name="_anMD5HashWarn" >
+                  <property name="text" >
+                   <string>Warn if MD5 check fails</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_anMD5HashFail" >
+                  <property name="text" >
+                   <string>Fail if MD5 check fails</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
             <spacer>
@@ -932,16 +1229,16 @@ p, li { white-space: pre-wrap; }
             <number>5</number>
            </property>
            <property name="leftMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <item>
             <widget class="QLabel" name="_ccVSLit" >
@@ -1043,26 +1340,20 @@ p, li { white-space: pre-wrap; }
          </widget>
          <widget class="QWidget" name="_yourPayStack" >
           <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
            <property name="leftMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="topMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="rightMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <property name="bottomMargin" >
-            <number>0</number>
+            <number>5</number>
            </property>
            <item>
             <layout class="QVBoxLayout" >
-             <property name="spacing" >
-              <number>5</number>
-             </property>
              <item>
               <widget class="QLabel" name="_ccYPLit" >
                <property name="text" >
@@ -1080,36 +1371,6 @@ p, li { white-space: pre-wrap; }
                  <property name="spacing" >
                   <number>0</number>
                  </property>
-                 <item>
-                  <widget class="QLabel" name="_ccYPWinPathPEMLit" >
-                   <property name="text" >
-                    <string>Windows PEM Location:</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="_ccYPLinPathPEMLit" >
-                   <property name="text" >
-                    <string>Linux PEM Location:</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="_ccYPMacPathPEMLit" >
-                   <property name="text" >
-                    <string>Mac PEM Location:</string>
-                   </property>
-                   <property name="alignment" >
-                    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                   </property>
-                  </widget>
-                 </item>
                  <item>
                   <widget class="QLabel" name="_ccYPLinkShieldLit" >
                    <property name="enabled" >
@@ -1140,15 +1401,6 @@ p, li { white-space: pre-wrap; }
                  <property name="spacing" >
                   <number>0</number>
                  </property>
-                 <item>
-                  <widget class="QLineEdit" name="_ccYPWinPathPEM" />
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="_ccYPLinPathPEM" />
-                 </item>
-                 <item>
-                  <widget class="QLineEdit" name="_ccYPMacPathPEM" />
-                 </item>
                  <item>
                   <layout class="QHBoxLayout" >
                    <item>
@@ -1203,23 +1455,68 @@ p, li { white-space: pre-wrap; }
                </item>
               </layout>
              </item>
+             <item>
+              <widget class="QGroupBox" name="_testResultsGroup" >
+               <property name="title" >
+                <string>In Test Mode, transactions should</string>
+               </property>
+               <layout class="QVBoxLayout" >
+                <item>
+                 <widget class="QRadioButton" name="_testsAllFail" >
+                  <property name="toolTip" >
+                   <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">tooltip&lt;/p>&lt;/body>&lt;/html></string>
+                  </property>
+                  <property name="whatsThis" >
+                   <string>&lt;html>&lt;head>&lt;meta name="qrichtext" content="1" />&lt;style type="text/css">
+p, li { white-space: pre-wrap; }
+&lt;/style>&lt;/head>&lt;body style=" font-family:'Lucida Grande'; font-size:13pt; font-weight:400; font-style:normal;">
+&lt;p style=" margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;">whatsthis&lt;/p>&lt;/body>&lt;/html></string>
+                  </property>
+                  <property name="text" >
+                   <string>Always Fail (Be Declined or Marked as Duplicates)</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_testsSomeFail" >
+                  <property name="text" >
+                   <string>Sometimes Fail</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QRadioButton" name="_testsAllPass" >
+                  <property name="text" >
+                   <string>Always Succeed If Possible</string>
+                  </property>
+                  <property name="checked" >
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Expanding</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
             </layout>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>21</height>
-              </size>
-             </property>
-            </spacer>
            </item>
           </layout>
          </widget>
@@ -1405,9 +1702,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>_ccVSVendor</tabstop>
   <tabstop>_ccVSPartner</tabstop>
   <tabstop>_ccVSPassword</tabstop>
-  <tabstop>_ccYPWinPathPEM</tabstop>
-  <tabstop>_ccYPLinPathPEM</tabstop>
-  <tabstop>_ccYPMacPathPEM</tabstop>
   <tabstop>_ccYPStoreNum</tabstop>
   <tabstop>_ccEncKeyName</tabstop>
   <tabstop>_ccWinEncKey</tabstop>
@@ -1482,6 +1776,38 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel" >
      <x>458</x>
      <y>216</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_anCurrFixed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_anCurrFixedValue</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>91</x>
+     <y>369</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>199</x>
+     <y>369</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_anCurrFixed</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_anCurrFixedSetOnGateway</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>83</x>
+     <y>338</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>192</x>
+     <y>366</y>
     </hint>
    </hints>
   </connection>

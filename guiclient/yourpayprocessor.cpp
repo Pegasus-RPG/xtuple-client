@@ -55,16 +55,8 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
- /* TODO: add more elements:
-	  transactiondetails
-	    taxexempt		required for LEVEL 2
-
-	  payment
-	    tax		required for LEVEL 2; set to calculated tax value or 0
- */
 
 
-#include <QFileInfo>
 #include <QSqlError>
 
 #include <currcluster.h>
@@ -72,7 +64,7 @@
 #include "OpenMFGGUIClient.h"
 #include "yourpayprocessor.h"
 
-#define DEBUG true
+#define DEBUG false
 
 // convenience macro to add <ChildName>Content</ChildName> to the Parent node
 #define CREATECHILDTEXTNODE(Parent, ChildName, Content) \
@@ -87,11 +79,7 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
   XSqlQuery currq;
   currq.exec("SELECT * FROM curr_symbol WHERE (curr_abbr='USD');");
   if (currq.first())
-  {
-    _currencyId     = currq.value("curr_id").toInt();
-    _currencyName   = currq.value("curr_name").toString();
-    _currencySymbol = currq.value("curr_symbol").toString();
-  }
+    _ypcurrid = currq.value("curr_id").toInt();
   else if (currq.lastError().type() != QSqlError::None)
     _errorMsg = currq.lastError().databaseText();
   else if (currq.exec("SELECT * "
@@ -100,21 +88,15 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 		      "  AND  (curr_symbol ~ '\\$')"
 		      "  AND  (curr_name ~* 'dollar'));") &&
 	   currq.first())
-  {
-    _currencyId     = currq.value("curr_id").toInt();
-    _currencyName   = currq.value("curr_name").toString();
-    _currencySymbol = currq.value("curr_symbol").toString();
-  }
+    _ypcurrid = currq.value("curr_id").toInt();
   else if (currq.lastError().type() != QSqlError::None)
     _errorMsg = currq.lastError().databaseText();
 
-  if (_currencyId <= 0)
+  if (_ypcurrid <= 0)
   {
     _errorMsg = tr("Could not find US $ in the curr_symbol table; "
 		    "defaulting to base currency.") + "\n\n" + _errorMsg;
-    _currencyId     = CurrDisplay::baseId();
-    _currencyName   = CurrDisplay::baseCurrAbbr();
-    _currencySymbol = CurrDisplay::baseCurrAbbr();
+    _ypcurrid = CurrDisplay::baseId();
   }
 
   _defaultLivePort   = 1129;
@@ -127,8 +109,6 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 			   "should be set between 1 and 100 but it is currently"
 			   " set to %1. Higher Numbers indicate higher risk."));
   _msgHash.insert(-103, tr("The YourPay Store Number is not set."));
-  _msgHash.insert(-104, tr("The digital certificate (.pem file) is not set."));
-  _msgHash.insert(-105, tr("Could not open digital certificate (.pem file) %1."));
   _msgHash.insert(-106, tr("Transaction failed LinkShield check. Either the "
 			   "score was greater than the maximum configured "
 			   "allowed score or the score was empty (this may "
@@ -137,11 +117,12 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
 			   "subscribed to this service)."));
 }
 
-int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QDomDocument &prequest, QString pordertype)
+int YourPayProcessor::buildCommon(int pccardid, int pcvv, const double pamount, QDomDocument &prequest, QString pordertype)
 {
   QDomElement order = prequest.createElement("order");
   prequest.appendChild(order);
 
+  // TODO: if check and not credit card transaction, do a different select
   XSqlQuery ypq;
   ypq.prepare(
     "SELECT ccard_active,"
@@ -185,7 +166,8 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
 
   elem = prequest.createElement("merchantinfo");
   order.appendChild(elem);
-  CREATECHILDTEXTNODE(elem, "configfile", _storenum.toLatin1());
+  CREATECHILDTEXTNODE(elem, "configfile",
+		      _metricsenc->value("CCYPStoreNum").toLatin1());
 
   elem = prequest.createElement("orderoptions");
   order.appendChild(elem);
@@ -220,8 +202,9 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
 
   elem = prequest.createElement("payment");
   order.appendChild(elem);
-  CREATECHILDTEXTNODE(elem, "chargetotal", pamount);
+  CREATECHILDTEXTNODE(elem, "chargetotal", QString::number(pamount));
 
+  // TODO: if check and not credit card transaction do something else
   elem = prequest.createElement("creditcard");
   order.appendChild(elem);
   CREATECHILDTEXTNODE(elem, "cardnumber", ypq.value("ccard_number").toString());
@@ -249,50 +232,31 @@ int YourPayProcessor::buildCommonXML(int pccardid, int pcvv, QString pamount, QD
   CREATECHILDTEXTNODE(elem, "city",     ypq.value("ccard_city").toString());
   CREATECHILDTEXTNODE(elem, "state",    ypq.value("ccard_state").toString());
   CREATECHILDTEXTNODE(elem, "zip",      ypq.value("ccard_zip").toString());
-    // TODO: country // should be 2-char country code abbr
-    // TODO: phone, fax, email
+  // TODO: country // should be 2-char country code abbr
+  // TODO: phone, fax, email
   CREATECHILDTEXTNODE(elem, "addrnum",
 		    ypq.value("ccard_address1").toString().section(" ", 0, 0));
 
   if (DEBUG)
-    qDebug("YP:buildCommonXML built %s", prequest.toString().toAscii().data());
+    qDebug("YP:buildCommon built %s", prequest.toString().toAscii().data());
   return 0;
 }
 
-int  YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid)
+int  YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doAuthorize(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("YP:doAuthorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
-  XSqlQuery ypq;
-  ypq.prepare("SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
-	      "                :amount, CURRENT_DATE), 2) AS ccpay_amount_yp;");
-  ypq.bindValue(":curr_id",    pcurrid);
-  ypq.bindValue(":yp_curr_id", _currencyId);
-  ypq.bindValue(":amount",     pamount);
-  ypq.exec();
 
-  if (ypq.first())
-  {
-    ; // we'll use the result later
-  }
-  else if (ypq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = ypq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
+  int returnValue = 0;
+  double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
+  if (returnValue < 0)
+    return returnValue;
 
   QDomDocument request;
 
-  int returnValue = buildCommonXML(pccardid, pcvv,
-				   ypq.value("ccpay_amount_yp").toString(),
-				   request, "PREAUTH");
+  returnValue = buildCommon(pccardid, pcvv, amount, request, "PREAUTH");
   if (returnValue !=  0)
     return returnValue;
 
@@ -303,6 +267,7 @@ int  YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, const dou
 
   // in case we're reusing an order number
   QString oidstr = pneworder;
+  XSqlQuery ypq;
   ypq.prepare("SELECT MAX(COALESCE(ccpay_order_number_seq, -1)) + 1"
 	      "       AS next_seq "
 	      "  FROM ccpay "
@@ -318,6 +283,7 @@ int  YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, const dou
   }
   CREATECHILDTEXTNODE(elem, "oid",          oidstr);
   CREATECHILDTEXTNODE(elem, "terminaltype", "UNSPECIFIED");
+  CREATECHILDTEXTNODE(elem, "taxexempt",    ptaxexempt ? "Y" : "N");
 
   if (! preforder.isEmpty())
     CREATECHILDTEXTNODE(elem, "ponumber", preforder);
@@ -334,52 +300,35 @@ int  YourPayProcessor::doAuthorize(const int pccardid, const int pcvv, const dou
   CREATECHILDTEXTNODE(elem, "zip",      _shipto_zip);
   */
 
-  QDomDocument response;
+  CREATECHILDTEXTNODE(request.elementsByTagName("payment").at(0),
+		      "tax", QString::number(ptax));
 
-  returnValue = processXML(request, response);
+  QString response;
+  returnValue = sendViaHTTP(request.toString(), response);
   if (returnValue < 0)
     return returnValue;
 
   returnValue = handleResponse(response, pccardid, "A", pamount, pcurrid,
-			       pneworder, preforder, pccpayid);
+			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
 }
 
-int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid)
+int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString& pneworder, QString& preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doCharge(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("YP:doCharge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
-  XSqlQuery ypq;
-  ypq.prepare("SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
-	      "                :amount, CURRENT_DATE), 2) AS ccpay_amount_yp;");
-  ypq.bindValue(":curr_id",    pcurrid);
-  ypq.bindValue(":yp_curr_id", _currencyId);
-  ypq.bindValue(":amount",     pamount);
-  ypq.exec();
 
-  if (ypq.first())
-  {
-    ; // we'll use the result later
-  }
-  else if (ypq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = ypq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
+  int returnValue = 0;
+  double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
+  if (returnValue < 0)
+    return returnValue;
 
   QDomDocument request;
 
-  int returnValue = buildCommonXML(pccardid, pcvv,
-				   ypq.value("ccpay_amount_yp").toString(),
-				   request, "SALE");
+  returnValue = buildCommon(pccardid, pcvv, amount, request, "SALE");
   if (returnValue !=  0)
     return returnValue;
 
@@ -390,6 +339,7 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
 
   // in case we're reusing an order number
   QString oidstr = pneworder;
+  XSqlQuery ypq;
   ypq.prepare("SELECT MAX(COALESCE(ccpay_order_number_seq, -1)) + 1"
 	      "       AS next_seq "
 	      "  FROM ccpay "
@@ -405,6 +355,7 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
   }
   CREATECHILDTEXTNODE(elem, "oid",          oidstr);
   CREATECHILDTEXTNODE(elem, "terminaltype", "UNSPECIFIED");
+  CREATECHILDTEXTNODE(elem, "taxexempt",    ptaxexempt ? "Y" : "N");
 
   if (! preforder.isEmpty())
     CREATECHILDTEXTNODE(elem, "ponumber", preforder);
@@ -423,56 +374,35 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
   CREATECHILDTEXTNODE(elem, "zip",      _shipto_zip);
   */
 
-  QDomDocument response;
-  returnValue = processXML(request, response);
+  CREATECHILDTEXTNODE(request.elementsByTagName("payment").at(0),
+		      "tax", QString::number(ptax));
+
+  QString response;
+  returnValue = sendViaHTTP(request.toString(), response);
   if (returnValue < 0)
     return returnValue;
 
   returnValue = handleResponse(response, pccardid, "C", pamount, pcurrid,
-			       pneworder, preforder, pccpayid);
+			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
 }
 
-int YourPayProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+int YourPayProcessor::doChargePreauthorized(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
     qDebug("YP:doChargePreauthorized(%d, %d, %f, %d, %s, %s, %d)",
-	    pccardid, pcvv, pamount, pcurrid,
-	    pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
-  XSqlQuery ypq;
-  ypq.prepare( "SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
-	       "              :amount, CURRENT_DATE), 2) AS ccpay_amount_yp "
-	       "FROM ccard, ccpay "
-	       "WHERE ((ccard_id=:ccardid)"
-	       "  AND  (ccpay_id=:ccpayid));");
-  ypq.bindValue(":curr_id",    pcurrid);
-  ypq.bindValue(":yp_curr_id", _currencyId);
-  ypq.bindValue(":amount",     pamount);
-  ypq.bindValue(":key",        omfgThis->_key);
-  ypq.bindValue(":ccardid",    pccardid);
-  ypq.bindValue(":ccpayid",    pccpayid);
-  ypq.exec();
-  if (ypq.first())
-  {
-    ; // we'll use the result later
-  }
-  else if (ypq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = ypq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17).arg(pccardid);
-    return -17;
-  }
+	   pccardid, pcvv, pamount, pcurrid,
+	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+
+  int returnValue = 0;
+  double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
+  if (returnValue < 0)
+    return returnValue;
 
   QDomDocument request;
 
-  int returnValue = buildCommonXML(pccardid, pcvv,
-				   ypq.value("ccpay_amount_yp").toString(),
-				   request, "POSTAUTH");
+  returnValue = buildCommon(pccardid, pcvv, amount, request, "POSTAUTH");
   if (returnValue !=  0)
     return returnValue;
 
@@ -481,50 +411,32 @@ int YourPayProcessor::doChargePreauthorized(const int pccardid, const int pcvv, 
   CREATECHILDTEXTNODE(elem, "oid",          preforder);
   CREATECHILDTEXTNODE(elem, "terminaltype", "UNSPECIFIED");
 
-  QDomDocument response;
-  returnValue = processXML(request, response);
+  QString response;
+  returnValue = sendViaHTTP(request.toString(), response);
   if (returnValue < 0)
     return returnValue;
 
   returnValue = handleResponse(response, pccardid, "CP", pamount, pcurrid,
-			       pneworder, preforder, pccpayid);
+			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
 }
 
-int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP:doCredit(%d, %d, %f, %d, %s, %s, %d)",
-	   pccardid, pcvv, pamount, pcurrid,
+    qDebug("YP:doCredit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
-  XSqlQuery ypq;
-  ypq.prepare( "SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
-	       "              :amount, CURRENT_DATE), 2) AS ccpay_amount_yp;");
-  ypq.bindValue(":curr_id",    pcurrid);
-  ypq.bindValue(":yp_curr_id", _currencyId);
-  ypq.bindValue(":amount",     pamount);
-  ypq.exec();
-  if (ypq.first())
-  {
-    ; // we'll use the result later
-  }
-  else if (ypq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = ypq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17);
-    return -17;
-  }
+
+  int returnValue = 0;
+  double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
+  if (returnValue < 0)
+    return returnValue;
 
   QDomDocument request;
 
-  int returnValue = buildCommonXML(pccardid, pcvv,
-				   ypq.value("ccpay_amount_yp").toString(),
-				   request, "CREDIT");
+  returnValue = buildCommon(pccardid, pcvv, amount, request, "CREDIT");
   if (returnValue !=  0)
     return returnValue;
 
@@ -533,54 +445,41 @@ int YourPayProcessor::doCredit(const int pccardid, const int pcvv, const double 
   CREATECHILDTEXTNODE(elem, "oid",              preforder);
   CREATECHILDTEXTNODE(elem, "reference_number", pneworder);
   CREATECHILDTEXTNODE(elem, "terminaltype",     "UNSPECIFIED");
+  CREATECHILDTEXTNODE(elem, "taxexempt",        ptaxexempt ? "Y" : "N");
 
-  QDomDocument response;
-  returnValue = processXML(request, response);
+  CREATECHILDTEXTNODE(request.elementsByTagName("payment").at(0),
+		      "tax", QString::number(ptax));
+
+  QString response;
+  returnValue = sendViaHTTP(request.toString(), response);
   if (returnValue < 0)
     return returnValue;
 
   returnValue = handleResponse(response, pccardid, "R", pamount, pcurrid,
-			       pneworder, preforder, pccpayid);
+			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
 }
 
-int YourPayProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+int YourPayProcessor::doVoidPrevious(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
     qDebug("YP:doVoidPrevious(%d, %d, %f, %d, %s, %s, %d)",
 	   pccardid, pcvv, pamount, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(),
 	   pccpayid);
-  XSqlQuery ypq;
-  ypq.prepare( "SELECT ROUND(currToCurr(:curr_id, :yp_curr_id,"
-	       "              :amount, CURRENT_DATE), 2) AS ccpay_amount_yp;");
-  ypq.bindValue(":curr_id",    pcurrid);
-  ypq.bindValue(":yp_curr_id", _currencyId);
-  ypq.bindValue(":amount",     pamount);
-  ypq.exec();
-  if (ypq.first())
-  {
-    ; // we'll use the result later
-  }
-  else if (ypq.lastError().type() != QSqlError::NoError)
-  {
-    _errorMsg = ypq.lastError().databaseText();
-    return -1;
-  }
-  else
-  {
-    _errorMsg = errorMsg(-17);
-    return -17;
-  }
 
+  int returnValue = 0;
+  double amount = currToCurr(pcurrid, _ypcurrid, pamount, &returnValue);
+  if (returnValue < 0)
+    return returnValue;
+
+  // distinguish void errors from errors from problems that cause us to void
   QString tmpErrorMsg = _errorMsg;
 
   QDomDocument request;
 
-  int returnValue = buildCommonXML(pccardid, pcvv,
-				   ypq.value("ccpay_amount_yp").toString(),
-				   request, "VOID");
+  returnValue = buildCommon(pccardid, pcvv, amount, request, "VOID");
   if (returnValue != 0)
     return returnValue;
 
@@ -589,25 +488,29 @@ int YourPayProcessor::doVoidPrevious(const int pccardid, const int pcvv, const d
   CREATECHILDTEXTNODE(elem, "oid",              pneworder);
   CREATECHILDTEXTNODE(elem, "terminaltype",     "UNSPECIFIED");
 
-  QDomDocument response;
-  returnValue = processXML(request, response);
+  QString response;
+  returnValue = sendViaHTTP(request.toString(), response);
   _errorMsg = tmpErrorMsg;
   if (returnValue < 0)
     return returnValue;
 
   returnValue = handleResponse(response, pccardid, "V", pamount, pcurrid,
-			       pneworder, preforder, pccpayid);
+			       pneworder, preforder, pccpayid, pparams);
   _errorMsg = tmpErrorMsg;
   return returnValue;
 }
 
-int YourPayProcessor::handleResponse(const QDomDocument &response, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+int YourPayProcessor::handleResponse(const QString &presponse, const int pccardid, const QString &ptype, const double pamount, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, ParameterList &pparams)
 {
   if (DEBUG)
-    qDebug("YP::handleResponse(%s, %d, %s, %f, %d, %s, %d)",
-	   response.toString().toAscii().data(), pccardid,
+    qDebug("YP::handleResponse(%s, %d, %s, %f, %d, %s, %d, pparams)",
+	   presponse.toAscii().data(), pccardid,
 	   ptype.toAscii().data(), pamount, pcurrid,
 	   preforder.toAscii().data(), pccpayid);
+
+  QDomDocument response;
+  // YP doesn't even send back a valid XML doc!
+  response.setContent("<yp_wrapper>" + presponse + "</yp_wrapper>");
 
   QDomNode node;
   QDomElement root = response.documentElement();
@@ -672,15 +575,48 @@ int YourPayProcessor::handleResponse(const QDomDocument &response, const int pcc
     node = node.nextSibling();
   }
 
-  /* YP in test mode is inconsistent in the responses it sends.
-     Sometimes it sends a complete message and sometimes it doesn't,
-     so try to make the app behave in TEST mode like it will in LIVE mode
-     (but we have to guess how YP will actually behave in LIVE mode!-{ )
-    */
-  if (isTest() && r_approved == "APPROVED")
+  if (isTest())
   {
-    if (r_code.isEmpty())
-      r_code = "00000";
+    // in test mode YP doesn't send an approval code
+    if (r_approved == "APPROVED" && r_code.isEmpty())
+    r_code = "12345";
+
+    // inject failures to test AVS and CVV checking but ONLY IN TEST MODE
+    if (r_avs.isEmpty() && _metrics->value("CCTestResult") == "S")
+    {
+      switch (qrand() % 50)
+      {
+	case 0: r_avs = "NN";
+		break;
+	case 1: r_avs = "XN";
+		break;
+	case 2: r_avs = "YN";
+		break;
+	case 3: r_avs = "NX";
+		break;
+	case 4: r_avs = "XX";
+		break;
+	case 5: r_avs = "YX";
+		break;
+	default:
+		r_avs = "YY";
+		break;
+      }
+      switch (qrand() % 50)
+      {
+	case 0: r_avs += "N";
+		break;
+	case 1: r_avs += "P";
+		break;
+	case 2: r_avs += "S";
+		break;
+	case 3: r_avs += "U";
+		break;
+	default:
+		r_avs += "M";
+		break;
+      }
+    }
   }
 
   int returnValue = 0;
@@ -726,35 +662,21 @@ int YourPayProcessor::handleResponse(const QDomDocument &response, const int pcc
   else if (r_approved.isEmpty())
   {
     _errorMsg = errorMsg(-100)
-		     .arg(r_error).arg(r_message).arg(response.toString());
+		     .arg(r_error).arg(r_message).arg(presponse);
     returnValue = -100;
     status = "X";
   }
 
   // YP encodes AVS and CVV checking in the r_avs response field
-  _passedAvs = r_avs.contains(QRegExp("^[XY][XY]"));
-  if (_passedAvs)
-  {
-    XSqlQuery ypq;
-    ypq.prepare("SELECT ccard_type FROM ccard WHERE ccard_id=:ccardid;");
-    ypq.bindValue(":ccardid", pccardid);
-    ypq.exec();
-    if (ypq.first())
-    {
-      QString cardtype = ypq.value("ccard_type").toString();
-      QString cardspecificpart = r_avs.mid(2, 1);
-      if (cardtype == "V")
-	_passedAvs = cardspecificpart.contains(QRegExp("[YZANURSEG]"));
-      else if (cardtype == "M")
-	_passedAvs = cardspecificpart.contains(QRegExp("[YZANXWURS]"));
-      else if (cardtype == "D")
-	_passedAvs = cardspecificpart.contains(QRegExp("[AXYNWU]"));
-      else if (cardtype == "A")
-	_passedAvs = cardspecificpart.contains(QRegExp("[YZANURS]"));
-    }
-  }
+  QRegExp avsRegExp("^[" + _metrics->value("CCAvsAddr") +
+		    "][" + _metrics->value("CCAvsZIP") + "]");
 
-  _passedCvv = r_avs.contains(QRegExp("[MPSUXZ ]$"));
+  _passedAvs = _metrics->value("CCAvsCheck") == "X" ||
+	       ! r_avs.contains(avsRegExp); // avsregexp matches failures
+
+  _passedCvv = _metrics->value("CCCVVCheck") == "X" ||
+	       ! r_avs.contains(QRegExp("[" + _metrics->value("CCCVVErrors") +
+					"]$"));
 
   _passedLinkShield = (! _metrics->boolean("CCYPLinkShield")) ||
 	      (! r_score.isEmpty() &&
@@ -764,143 +686,38 @@ int YourPayProcessor::handleResponse(const QDomDocument &response, const int pcc
     qDebug("YP:%s\t_passedAvs %d\t_passedCvv %d\t_passedLinkShield %d",
 	    r_avs.toAscii().data(), _passedAvs, _passedCvv, _passedLinkShield);
 
-  /* From here on, treat errors as warnings:
-     do as much as possible,
-     set _errorMsg if there are problems, and
-     return a warning unless YourPay already gave an error.
-  */
+  pparams.append("ccard_id",    pccardid);
+  pparams.append("auth_charge", ptype);
+  pparams.append("type",        ptype);
+  pparams.append("reforder",    preforder.isEmpty() ? pneworder : preforder);
+  pparams.append("status",      status);
+  pparams.append("avs",         r_avs);
+  pparams.append("ordernum",    r_ordernum.isEmpty() ? pneworder : r_ordernum);
+  pparams.append("error",       r_error);
+  pparams.append("approved",    r_approved);
+  pparams.append("code",        r_code);
+  pparams.append("score",       r_score.toInt());
+  pparams.append("shipping",    r_shipping);
+  pparams.append("tax",         r_tax);
+  pparams.append("tdate",       r_tdate);
+  pparams.append("ref",         r_ref);
+  pparams.append("message",     r_message);
 
-  /* TODO: try implementing a second cc processor to see if from here on can be
-	   moved to CreditCardProcessor
-   */
-  XSqlQuery ypq;
-  int next_seq = 0;
-
-  if (pccpayid > 0)
+  if (pcurrid != _ypcurrid)
   {
-    ypq.prepare( "UPDATE ccpay"
-		 "   SET ccpay_amount = ROUND(currToCurr(:curr_id, :yp_curr_id,"
-		 "                                  :amount, CURRENT_DATE), 2),"
-		 "       ccpay_auth=:auth,"
-		 "       ccpay_status=:status,"
-		 "       ccpay_curr_id=:yp_curr_id,"
-		 "       ccpay_yp_r_avs=:avs,"
-		 "       ccpay_yp_r_ordernum=:ordernum,"
-		 "       ccpay_yp_r_error=:error,"
-		 "       ccpay_yp_r_approved=:approved,"
-		 "       ccpay_yp_r_code=:code,"
-		 "       ccpay_yp_r_score=:score,"
-		 "       ccpay_yp_r_shipping=:shipping,"
-		 "       ccpay_yp_r_tax=:tax,"
-		 "       ccpay_yp_r_tdate=:tdate,"
-		 "       ccpay_yp_r_ref=:ref,"
-		 "       ccpay_yp_r_message=:message,"
-		 "       ccpay_yp_r_time=:time"
-		 " WHERE (ccpay_id=:ccpay_id);" );
+    pparams.append("fromcurr",  pcurrid);
+    pparams.append("tocurr",    _ypcurrid);
   }
   else
-  {
-    ypq.exec("SELECT NEXTVAL('ccpay_ccpay_id_seq') AS ccpay_id;");
-    if (ypq.first())
-      pccpayid = ypq.value("ccpay_id").toInt();
-    else if (ypq.lastError().type() != QSqlError::None && r_error.isEmpty())
-    {
-      _errorMsg = ypq.lastError().databaseText();
-      return 1;
-    }
-    else if (ypq.lastError().type() == QSqlError::None && r_error.isEmpty())
-    {
-      _errorMsg = errorMsg(2);
-      return 2;
-    }
-    else	// no rows found and YP reported an error
-    {
-      _errorMsg = errorMsg(-12).arg(r_error);
-      return -12;
-    }
-
-    ypq.prepare("SELECT MAX(COALESCE(ccpay_order_number_seq, -1)) + 1"
-		"       AS next_seq "
-	        "  FROM ccpay "
-	        " WHERE (ccpay_order_number=:ccpay_order_number);");
-    ypq.bindValue(":ccpay_order_number", pneworder.toInt());
-    ypq.exec();
-    if (ypq.first())
-      next_seq = ypq.value("next_seq").toInt();
-    // ignore errors because there's only a tiny chance that a future
-    // transaction might have trouble if we don't have a sequence number now
-
-    ypq.prepare("INSERT INTO ccpay ("
-	       "    ccpay_id, ccpay_ccard_id, ccpay_cust_id,"
-	       "    ccpay_auth_charge, ccpay_auth,"
-	       "    ccpay_amount,"
-	       "    ccpay_curr_id, ccpay_type,"
-	       "    ccpay_order_number, ccpay_order_number_seq,"
-	       "    ccpay_status,"
-	       "    ccpay_yp_r_avs, ccpay_yp_r_ordernum, ccpay_yp_r_error,"
-	       "    ccpay_yp_r_approved, ccpay_yp_r_code, ccpay_yp_r_score,"
-	       "    ccpay_yp_r_shipping, ccpay_yp_r_tax, ccpay_yp_r_tdate,"
-	       "    ccpay_yp_r_ref, ccpay_yp_r_message, ccpay_yp_r_time"
-	       ") SELECT :ccpay_id, ccard_id, cust_id,"
-	       "    :auth_charge, :auth,"
-	       "    ROUND(currToCurr(:curr_id,:yp_curr_id,:amount,CURRENT_DATE), 2),"
-	       "    :yp_curr_id, :type,"
-	       "    :reference, :next_seq,"
-	       "    :status,"
-	       "    :avs, :ordernum, :error,"
-	       "    :approved, :code, :score,"
-	       "    :shipping, :tax, :tdate,"
-	       "    :ref, :message, :time"
-	       "  FROM ccard, custinfo"
-	       "  WHERE ((ccard_cust_id=cust_id)"
-	       "    AND  (ccard_id=:ccard_id));");
-  }
-
-  ypq.bindValue(":ccpay_id",   pccpayid);
-  ypq.bindValue(":curr_id",    pcurrid);
-  ypq.bindValue(":yp_curr_id", _currencyId);
-
-  ypq.bindValue(":auth_charge", ptype);
+    pparams.append("currid",    pcurrid);
 
   if (ptype == "A")
-    ypq.bindValue(":auth", QVariant(true, 0));
+    pparams.append("auth", QVariant(true, 0));
   else
-    ypq.bindValue(":auth", QVariant(false, 1));
+    pparams.append("auth", QVariant(false, 1));
 
-  if (returnValue == 0)
-    ypq.bindValue(":amount",   pamount);
-  else
-    ypq.bindValue(":amount",   0);	// no money changed hands this attempt
-
-  ypq.bindValue(":type",       ptype);
-  ypq.bindValue(":reference",  (preforder.isEmpty()) ? pneworder : preforder);
-  ypq.bindValue(":status",     status);
-  ypq.bindValue(":avs",        r_avs);
-  ypq.bindValue(":ordernum",   r_ordernum);
-  ypq.bindValue(":next_seq",   next_seq);
-  ypq.bindValue(":error",      r_error);
-  ypq.bindValue(":approved",   r_approved);
-  ypq.bindValue(":code",       r_code);
-  ypq.bindValue(":score",      r_score.toInt());
-  ypq.bindValue(":shipping",   r_shipping);
-  ypq.bindValue(":tax",        r_tax);
-  ypq.bindValue(":tdate",      r_tdate);
-  ypq.bindValue(":ref",        r_ref);
-  ypq.bindValue(":message",    r_message);
   if (! r_time.isEmpty())
-    ypq.bindValue(":time",     r_time);
-  ypq.bindValue(":ccard_id",   pccardid);
-
-  ypq.exec();
-  if (ypq.lastError().type() != QSqlError::None)
-  {
-    pccpayid = -1;
-    if (returnValue == 0)
-    {
-      _errorMsg = ypq.lastError().databaseText();
-      returnValue = 1;
-    }
-  }
+    pparams.append("time",     r_time);
 
   if (DEBUG)
     qDebug("YP:r_error.isEmpty() = %d", r_error.isEmpty());
@@ -908,43 +725,26 @@ int YourPayProcessor::handleResponse(const QDomDocument &response, const int pcc
   if (! r_error.isEmpty())
   {
     _errorMsg = errorMsg(-12).arg(r_error);
-    return -12;
+    returnValue = -12;
   }
+
+  if (returnValue == 0)
+    pparams.append("amount",   pamount);
+  else
+    pparams.append("amount",   0);	// no money changed hands this attempt
 
   return returnValue;
 }
 
-int YourPayProcessor::doCheckConfiguration()
+int YourPayProcessor::doTestConfiguration()
 {
   if (DEBUG)
-    qDebug("YP:doCheckConfiguration()");
+    qDebug("YP:doTestConfiguration()");
 
-  _storenum = _metricsenc->value("CCYPStoreNum");
-  if (_storenum.isEmpty())
+  if (_metricsenc->value("CCYPStoreNum").isEmpty())
   {
     _errorMsg = errorMsg(-103);
     return -103;
-  }
-
-#ifdef Q_WS_WIN
-  _pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
-  _pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
-  _pemfile = _metrics->value("CCYPLinPathPEM");
-#endif
-
-  if (_pemfile.isEmpty())
-  {
-    _errorMsg = errorMsg(-104);
-    return -104;
-  }
-
-  QFileInfo fileinfo(_pemfile.toLatin1());
-  if (!fileinfo.isFile())
-  {
-    _errorMsg = errorMsg(-105).arg(fileinfo.fileName());
-   return -105;
   }
 
   if (_metrics->boolean("CCYPLinkShield") &&
@@ -979,4 +779,9 @@ int YourPayProcessor::fraudChecks()
   }
 
   return returnValue;
+}
+
+bool YourPayProcessor::handlesCreditCards()
+{
+  return true;
 }

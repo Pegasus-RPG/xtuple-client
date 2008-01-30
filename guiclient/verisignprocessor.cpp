@@ -62,48 +62,17 @@
 #include "OpenMFGGUIClient.h"
 #include "verisignprocessor.h"
 
+#define DEBUG false
+
 VerisignProcessor::VerisignProcessor() : CreditCardProcessor()
 {
-  XSqlQuery currq;
-  currq.exec("SELECT * FROM curr_symbol WHERE (curr_abbr='USD');");
-  if (currq.first())
-  {
-    _currencyId     = currq.value("curr_id").toInt();
-    _currencyName   = currq.value("curr_name").toString();
-    _currencySymbol = currq.value("curr_symbol").toString();
-  }
-  else if (currq.lastError().type() != QSqlError::None)
-    _errorMsg = currq.lastError().databaseText();
-  else if (currq.exec("SELECT * "
-		      "FROM curr_symbol "
-		      "WHERE ((curr_abbr ~* 'US')"
-		      "  AND  (curr_symbol ~ '\\$')"
-		      "  AND  (curr_name ~* 'dollar'));") &&
-	   currq.first())
-  {
-    _currencyId     = currq.value("curr_id").toInt();
-    _currencyName   = currq.value("curr_name").toString();
-    _currencySymbol = currq.value("curr_symbol").toString();
-  }
-  else if (currq.lastError().type() != QSqlError::None)
-    _errorMsg = currq.lastError().databaseText();
-
-  if (_currencyId <= 0)
-  {
-    _errorMsg = tr("Could not find US $ in the curr_symbol table; "
-		    "defaulting to base currency.") + "\n\n" + _errorMsg;
-    _currencyId     = CurrDisplay::baseId();
-    _currencyName   = CurrDisplay::baseCurrAbbr();
-    _currencySymbol = CurrDisplay::baseCurrAbbr();
-  }
-
   _defaultLivePort   = 443;
   _defaultLiveServer = "payflow.verisign.com";
   _defaultTestPort   = 443;
   _defaultTestServer = "test-payflow.verisign.com";
 }
 
-int VerisignProcessor::doCheckConfiguration()
+int VerisignProcessor::doTestConfiguration()
 {
   _errorMsg = errorMsg(-19).arg("Verisign");
   return -19;

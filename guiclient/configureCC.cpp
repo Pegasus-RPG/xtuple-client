@@ -66,6 +66,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
 {
   setupUi(this);
 
+  connect(_anDuplicateWindow, SIGNAL(valueChanged(int)), this, SLOT(sDuplicateWindow(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
@@ -98,6 +99,33 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   _ccLinEncKey->setText(_metrics->value("CCLinEncKey"));
   _ccMacEncKey->setText(_metrics->value("CCMacEncKey"));
 
+  if (_metrics->value("CCANVer").isEmpty())
+    _anVersion->setCurrentText("3.1");
+  else
+    _anVersion->setCurrentText(_metrics->value("CCANVer"));
+  _anVersionSetOnGateway->setChecked(_metrics->boolean("CCANVerSetOnGateway"));
+  _anDelim->setText(_metrics->value("CCANDelim"));
+  _anDelimSetOnGateway->setChecked(_metrics->boolean("CCANDelimSetOnGateway"));
+  _anEncap->setText(_metrics->value("CCANEncap"));
+  _anEncapSetOnGateway->setChecked(_metrics->boolean("CCANEncapSetOnGateway"));
+  _anDuplicateWindow->setValue(_metrics->value("CCANDuplicateWindow").toInt());
+
+  _anMD5Hash->setText(_metrics->value("CCANMD5Hash"));
+  _anMD5HashSetOnGateway->setChecked(_metrics->boolean("CCANMD5HashSetOnGateway"));
+  _anMD5HashWarn->setChecked(_metrics->value("CCANMD5HashAction") == "W");
+  _anMD5HashFail->setChecked(_metrics->value("CCANMD5HashAction") == "F");
+  
+  if (_metrics->value("CCANCurrency") == "TRANS")
+    _anCurrTransaction->setChecked(true);
+  else if (! _metrics->value("CCANCurrency").isEmpty())
+  {
+    _anCurrFixed->setChecked(true);
+    _anCurrFixedValue->setId(_metrics->value("CCANCurrency").toInt());
+  }
+  _anCurrFixedSetOnGateway->setChecked(_metrics->boolean("CCANCurrencySetOnGateway"));
+
+  _anUsingWellsFargoSecureSource->setChecked(_metrics->boolean("CCANWellsFargoSecureSource"));
+
   _ccYPWinPathPEM->setText(_metrics->value("CCYPWinPathPEM"));
   _ccYPLinPathPEM->setText(_metrics->value("CCYPLinPathPEM"));
   _ccYPMacPathPEM->setText(_metrics->value("CCYPMacPathPEM"));
@@ -123,6 +151,12 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   else // if (str == "X")
     _cvvNone->setChecked(true);
 
+  str = _metrics->value("CCCVVErrors");
+  _cvvNotMatch->setChecked(str.contains("N"));
+  _cvvNotProcessed->setChecked(str.contains("P"));
+  _cvvNotOnCard->setChecked(str.contains("S"));
+  _cvvInvalidIssuer->setChecked(str.contains("U"));
+
   str = _metrics->value("CCAvsCheck");
   if (str == "F")
     _avsReject->setChecked(true);
@@ -130,6 +164,14 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _avsWarn->setChecked(true);
   else // if (str == "X")
     _avsNone->setChecked(true);
+
+  str = _metrics->value("CCAvsAddr");
+  _avsAddrNotMatch->setChecked(str.contains("N"));
+  _avsAddrNotAvail->setChecked(str.contains("X"));
+
+  str = _metrics->value("CCAvsZIP");
+  _avsZIPNotMatch->setChecked(str.contains("N"));
+  _avsZIPNotAvail->setChecked(str.contains("X"));
 
   str = _metrics->value("CCTestResult");
   if (str == "F")
@@ -150,6 +192,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccVSPartner->setText(_metricsenc->value("CCVSPartner"));
     _ccVSPassword->setText(_metricsenc->value("CCVSPassword"));
     _ccYPStoreNum->setText(_metricsenc->value("CCYPStoreNum"));
+    _anTransactionKey->setText(_metricsenc->value("CCANTransactionKey"));
   }
   else
   {
@@ -162,37 +205,30 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccVSPartner->setEnabled(false);
     _ccVSPassword->setEnabled(false);
     _ccYPStoreNum->setEnabled(false);
+    _anTransactionKey->setEnabled(false);
   }
+
+  sDuplicateWindow(_anDuplicateWindow->value());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 configureCC::~configureCC()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void configureCC::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void configureCC::sSave()
 {
   CreditCardProcessor *cardproc =
 		  CreditCardProcessor::getProcessor(_ccCompany->currentText());
-  /* qDebug("_ccCompany %s, cardproc %x",
-	 _ccCompany->currentText().toAscii().data(), int(cardproc));
-  */
   if (! cardproc)
   {
     QMessageBox::warning(this, tr("Error getting Credit Card Processor"),
-			 tr("Internal error finding the right Credit Card "
+			 tr("<p>Internal error finding the right Credit Card "
 			    "Processor. The application will save what it can "
 			    "but you should re-open this window and double-"
 			    "check all of the settings before continuing."));
@@ -209,9 +245,9 @@ void configureCC::sSave()
 				 "want to save this configuration anyway?")
 				.arg((_ccTest->isChecked() ? "Test" : "Live"))
 				.arg(_ccServer->text())
-				.arg(cardproc->defaultServer())
+				.arg(cardproc->defaultServer(_ccTest->isChecked()))
 				.arg(_ccPort->text())
-				.arg(cardproc->defaultPort()),
+				.arg(cardproc->defaultPort(_ccTest->isChecked())),
 			      QMessageBox::Yes,
 			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
@@ -226,7 +262,7 @@ void configureCC::sSave()
 				 "want to save this configuration anyway?")
 				.arg((_ccTest->isChecked() ? "Test" : "Live"))
 				.arg(_ccServer->text())
-				.arg(cardproc->defaultServer()),
+				.arg(cardproc->defaultServer(_ccTest->isChecked())),
 			      QMessageBox::Yes,
 			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
@@ -241,18 +277,20 @@ void configureCC::sSave()
 				 "want to save this configuration anyway?")
 				.arg((_ccTest->isChecked() ? "Test" : "Live"))
 				.arg(_ccPort->text())
-				.arg(cardproc->defaultPort()),
+				.arg(cardproc->defaultPort(_ccTest->isChecked())),
 			      QMessageBox::Yes,
 			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
       return;
   }
-
-  if (_ccYPLinkShield->isChecked() && _ccYPLinkShieldMax->value() <= 0)
+  else if (_ccAccept->isChecked() && ! cardproc->handlesCreditCards())
   {
-    QMessageBox::critical(this, tr("Invalid Credit Card Configuration"),
-			  tr("<p>If LinkShield is enabled then you must enter "
-			     "a cutoff score between 1 and 100. Higher Numbers "
-			     "indicate higher risk."));
+    QMessageBox::warning(this, tr("Invalid Credit Card Configuration"),
+			  tr("<p>%1 is checked but the application does "
+			     "not support credit card processing by %2. "
+			     "Either choose a different credit card "
+			     "processing company or uncheck %1.")
+				.arg(_ccAccept->name())
+				.arg(_ccCompany->currentText()));
     return;
   }
 
@@ -270,6 +308,27 @@ void configureCC::sSave()
   _metrics->set("CCWinEncKey",       _ccWinEncKey->text());
   _metrics->set("CCLinEncKey",       _ccLinEncKey->text());
   _metrics->set("CCMacEncKey",       _ccMacEncKey->text());
+
+  _metrics->set("CCANVer",               _anVersion->currentText());
+  _metrics->set("CCANVerSetOnGateway",   _anVersionSetOnGateway->isChecked());
+  _metrics->set("CCANDelim",             _anDelim->text());
+  _metrics->set("CCANDelimSetOnGateway", _anDelimSetOnGateway->isChecked());
+  _metrics->set("CCANEncap",             _anEncap->text());
+  _metrics->set("CCANEncapSetOnGateway", _anEncapSetOnGateway->isChecked());
+  _metrics->set("CCANDuplicateWindow",   _anDuplicateWindow->cleanText());
+  _metrics->set("CCANMD5Hash",           _anMD5Hash->text());
+  _metrics->set("CCANMD5HashSetOnGateway", _anMD5HashSetOnGateway->isChecked());
+  if (_anMD5HashWarn->isChecked())
+    _metrics->set("CCANMD5HashAction", QString("W"));
+  else if (_anMD5HashFail->isChecked())
+    _metrics->set("CCANMD5HashAction", QString("F"));
+
+  if (_anCurrFixed->isChecked())
+    _metrics->set("CCANCurrency", _anCurrFixedValue->id());
+  else // if (_anCurrTransaction->isChecked())
+    _metrics->set("CCANCurrency", "TRANS");
+  _metrics->set("CCANCurrencySetOnGateway", _anCurrFixedSetOnGateway->isChecked());
+  _metrics->set("CCANWellsFargoSecureSource", _anUsingWellsFargoSecureSource->isChecked());
 
   _metrics->set("CCYPWinPathPEM",    _ccYPWinPathPEM->text());
   _metrics->set("CCYPLinPathPEM",    _ccYPLinPathPEM->text());
@@ -302,6 +361,31 @@ void configureCC::sSave()
   else if(_avsReject->isChecked())
     _metrics->set("CCAvsCheck", QString("F"));
 
+  QString str;
+  if (_cvvNotMatch->isChecked())
+    str += "N";
+  if (_cvvNotProcessed->isChecked())
+    str += "P";
+  if (_cvvNotOnCard->isChecked())
+    str += "S";
+  if (_cvvInvalidIssuer->isChecked())
+    str += "U";
+  _metrics->set("CCCVVErrors", str);
+
+  if (_avsAddrNotMatch->isChecked() && _avsAddrNotAvail->isChecked())
+    _metrics->set("CCAvsAddr", QString("NX"));
+  else if (_avsAddrNotMatch->isChecked())
+    _metrics->set("CCAvsAddr", QString("N"));
+  else if (_avsAddrNotAvail->isChecked())
+    _metrics->set("CCAvsAddr", QString("X"));
+
+  if (_avsZIPNotMatch->isChecked() && _avsZIPNotAvail->isChecked())
+    _metrics->set("CCAvsZIP", QString("NX"));
+  else if (_avsZIPNotMatch->isChecked())
+    _metrics->set("CCAvsZIP", QString("N"));
+  else if (_avsZIPNotAvail->isChecked())
+    _metrics->set("CCAvsZIP", QString("X"));
+
   if(_testsAllFail->isChecked())
     _metrics->set("CCTestResult", QString("F"));
   else if(_testsSomeFail->isChecked())
@@ -322,9 +406,30 @@ void configureCC::sSave()
     _metricsenc->set("CCVSPartner",     _ccVSPartner->text());
     _metricsenc->set("CCVSPassword",    _ccVSPassword->text());
     _metricsenc->set("CCYPStoreNum",    _ccYPStoreNum->text());
+    _metricsenc->set("CCANTransactionKey", _anTransactionKey->text());
 
     _metricsenc->load();
   }
 
+  if (cardproc->testConfiguration() != 0)
+  {
+    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration"),
+			      tr("<p>The configuration has been saved but "
+				 "at least one configuration option appears "
+				 "to be invalid:<p>%1"
+				 "<p>Would you like to fix it now?")
+			      .arg(cardproc->errorMsg()),
+			      QMessageBox::Yes | QMessageBox::Default,
+			      QMessageBox::No) == QMessageBox::Yes)
+      return;
+  }
+
   accept();
+}
+
+void configureCC::sDuplicateWindow(int p)
+{
+  QTime time;
+  time.addSecs(p);
+  _anDuplicateWindowAsHMS->setText(time.toString("HH:mm:ss"));
 }

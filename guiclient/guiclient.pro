@@ -636,7 +636,8 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                workOrder.h workOrderMaterials.h woTimeClock.h wotc.h                                  \
                woOperation.h workOrderOperations.h                                                    \
                zeroUncountedCountTagsByWarehouse.h                                                    \
-	       creditcardprocessor.h verisignprocessor.h yourpayprocessor.h                           \
+	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
+	       yourpayprocessor.h                                                                     \
                idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h xsltMap.h
 
 
@@ -949,7 +950,8 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                workOrder.cpp workOrderMaterials.cpp woTimeClock.cpp wotc.cpp                          \
                woOperation.cpp workOrderOperations.cpp                                                \
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
-	       creditcardprocessor.cpp verisignprocessor.cpp yourpayprocessor.cpp                     \
+	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
+	       yourpayprocessor.cpp                                                                   \
                idleShutdown.cpp storedProcErrorLookup.cpp xdateinputdialog.cpp xsltMap.cpp
 
 QT += xml  assistant sql

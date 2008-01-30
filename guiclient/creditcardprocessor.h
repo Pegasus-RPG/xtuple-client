@@ -58,10 +58,11 @@
 #ifndef CREDITCARDPROCESSOR_H
 #define CREDITCARDPROCESSOR_H
 
-#include <QDomDocument>
 #include <QHash>
 #include <QObject>
 #include <QString>
+
+#include <parameter.h>
 
 class CreditCardProcessor : public QObject
 {
@@ -74,19 +75,18 @@ class CreditCardProcessor : public QObject
     static CreditCardProcessor	*getProcessor(const QString = QString());
 
     // these are the primary transaction handlers and should not be overridden:
-    virtual int	    authorize(const int, const int, const double, const int, QString&, int&, QString, int&);
-    virtual int	    charge(const int, const int, const double, const int, QString&, QString&, int&, QString, int&);
+    virtual int	    authorize(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, int&, QString, int&);
+    virtual int	    charge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, QString, int&);
     virtual int	    chargePreauthorized(const int, const double, const int, QString&, QString&, int&);
-    virtual int	    credit(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int	    credit(const int, const int, const double, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int, QString&, QString&, int&);
     virtual int	    voidPrevious(int &);
 
     // these are support methods that typically won't be overridden
-    virtual int	    checkConfiguration();
-    virtual int	    currencyId();
-    virtual QString currencyName();
-    virtual QString currencySymbol();
+    virtual int	    testConfiguration();
     virtual int     defaultPort(bool = false);
     virtual QString defaultServer(bool = false);
+    virtual bool    handlesChecks();
+    virtual bool    handlesCreditCards();
     virtual bool    isLive();
     virtual bool    isTest();
     virtual void    reset();
@@ -98,21 +98,20 @@ class CreditCardProcessor : public QObject
     CreditCardProcessor();
 
     // do* handle the processor-specific processing and are expected to be overridden
-    virtual int doAuthorize(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int doCharge(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int doCheckConfiguration();
-    virtual int doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int doCredit(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int doAuthorize(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int doCharge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int doCredit(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int doTestConfiguration();
 
     virtual int     checkCreditCard(const int, const int, QString&);
     virtual int     checkCreditCardProcessor()	{ return false; };
+    static  double  currToCurr(const int, const int, const double, int * = 0);
     virtual int     fraudChecks();
-    virtual int     processXML(const QDomDocument&, QDomDocument&);
+    virtual int     sendViaHTTP(const QString&, QString&);
+    virtual int     updateCCPay(int &, ParameterList &);
 
-    int			_currencyId;
-    QString		_currencyName;
-    QString		_currencySymbol;
     QString		_defaultLiveServer;
     QString		_defaultTestServer;
     int			_defaultLivePort;
@@ -126,8 +125,6 @@ class CreditCardProcessor : public QObject
     QString		_pport;
     QString		_pserver;
 
-  private:
-    static CreditCardProcessor *_processor;
 };
 
 #endif // CREDITCARDPROCESSOR_H

@@ -729,7 +729,11 @@ void arWorkBench::sCCRefundCM()
   
   int     ccardid = -1;
   double  total   =  0.0;
+  double  tax     =  0.0;
+  double  freight =  0.0;
+  double  duty    =  0.0;
   int     currid  = -1;
+  bool    taxexempt = false;
   QString docnum;
   QString refnum;
   int     ccpayid = -1;
@@ -749,6 +753,9 @@ void arWorkBench::sCCRefundCM()
     {
       ccardid = ccq.value("ccard_id").toInt();
       total   = ccq.value("total").toDouble();
+      tax     = ccq.value("tax_in_cmcurr").toDouble();
+      taxexempt = ccq.value("cmhead_tax_id").isNull();
+      freight = ccq.value("cmhead_freight").toDouble();
       currid  = ccq.value("cmhead_curr_id").toInt();
       docnum  = ccq.value("cmhead_number").toString();
       refnum  = ccq.value("cohead_number").toString();
@@ -811,7 +818,8 @@ void arWorkBench::sCCRefundCM()
 			  CreditCardProcessor::errorMsg());
   else
   {
-    int returnVal = cardproc->credit(ccardid, -2, total, currid,
+    int returnVal = cardproc->credit(ccardid, -2, total, tax, taxexempt,
+				     freight, duty, currid,
 				     docnum, refnum, ccpayid);
     if (returnVal < 0)
       QMessageBox::critical(this, tr("Credit Card Processing Error"),

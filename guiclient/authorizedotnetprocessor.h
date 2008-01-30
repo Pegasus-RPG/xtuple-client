@@ -55,31 +55,34 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef CONFIGURECC_H
-#define CONFIGURECC_H
+#ifndef AUTHORIZEDOTNETPROCESSOR_H
+#define AUTHORIZEDOTNETPROCESSOR_H
 
-#include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QObject>
+#include <QString>
 
-#include "ui_configureCC.h"
+#include "creditcardprocessor.h"
 
-class configureCC : public QDialog, public Ui::configureCC
+class AuthorizeDotNetProcessor : public CreditCardProcessor
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
-    configureCC(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~configureCC();
+  public:
+    AuthorizeDotNetProcessor();
 
-public slots:
-    virtual void sDuplicateWindow(int);
-    virtual void sSave();
+  protected:
+    virtual int  buildCommon(const int, const int, const double, const int, QString&, QString);
+    virtual int  doTestConfiguration();
+    virtual int  doAuthorize(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doCharge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doCredit(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&, ParameterList &);
+    virtual bool handlesCreditCards();
+    virtual int  handleResponse(const QString&, const int, const QString&, const double, const int, QString&, QString&, int&, ParameterList&);
 
-protected slots:
-    virtual void languageChange();
-
-private:
-
+  private:
+    int fieldValue(const QStringList, const int, QString &);
 };
 
-#endif // CONFIGURECC_H
+#endif // AUTHORIZEDOTNETPROCESSOR_H

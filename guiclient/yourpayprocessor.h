@@ -72,21 +72,21 @@ class YourPayProcessor : public CreditCardProcessor
     YourPayProcessor();
 
   protected:
-    virtual int  buildCommonXML(const int, const int, QString, QDomDocument&, QString);
-    virtual int  doCheckConfiguration();
-    virtual int  doAuthorize(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int  doCharge(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int  doCredit(const int, const int, const double, const int, QString&, QString&, int&);
-    virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&);
+    virtual int  buildCommon(const int, const int, const double, QDomDocument&, QString);
+    virtual int  doTestConfiguration();
+    virtual int  doAuthorize(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int  doCharge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int  doChargePreauthorized(const int, const int, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int  doCredit(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual int  doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&, ParameterList&);
     virtual int  fraudChecks();
+    virtual int  handleResponse(const QString&, const int, const QString&, const double, const int, QString&, QString&, int&, ParameterList&);
+    virtual bool handlesCreditCards();
     virtual void reset();
 
   private:
-    virtual int  handleResponse(const QDomDocument&, const int, const QString&, const double, const int, QString&, QString&, int&);
-    QString	_pemfile;
-    QString	_storenum;
     bool	_passedLinkShield;
+    int		_ypcurrid;
 };
 
 #endif // YOURPAYPROCESSOR_H
