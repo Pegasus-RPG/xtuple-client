@@ -160,19 +160,12 @@ void returnAuthCheck::sSave()
                "WHERE (checkhead_id=:check_id);" );
       q.bindValue(":check_id", _checkid);
       q.exec();
-      if (q.first())
-      {
-        QMessageBox::information( this, tr("New Check Created"),
-                                tr("<p>A new Check has been created and "
-				                   "assigned #%1")
-                                   .arg(q.value("checkhead_number").toString()) );
-	    done(TRUE);
-	  }
-      else if (q.lastError().type() != QSqlError::None)
+      if (q.lastError().type() != QSqlError::None)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return;
       }
+	  done(TRUE);
 	}
     else if (q.lastError().type() != QSqlError::None)
     {
