@@ -268,7 +268,6 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
       _warehouse->setEnabled(FALSE);
       _shipWhs->setEnabled(FALSE);
       _qtyAuth->setFocus();
-	    _disposition->setEnabled(FALSE);
 
       connect(_discountFromSale, SIGNAL(lostFocus()), this, SLOT(sCalculateFromDiscount()));
  
@@ -646,8 +645,6 @@ void returnAuthorizationItem::sPopulateItemInfo()
 
   else
     _createOrder->setEnabled(FALSE);
-
-  _disposition->setEnabled(_item->id() == -1);
 }
 
 void returnAuthorizationItem::sPopulateItemsiteInfo()
@@ -711,7 +708,8 @@ void returnAuthorizationItem::populate()
                  "       COALESCE(nc.coitem_order_id,-1) AS coitem_order_id, "
                  "       nc.coitem_order_type AS coitem_order_type, "
                  "       rcv.itemsite_warehous_id AS itemsite_warehous_id, "
-                 "       shp.itemsite_warehous_id AS shipWhs_id "
+                 "       shp.itemsite_warehous_id AS shipWhs_id, "
+				 "       qtyToReceive('RA', raitem_id) AS qtytorcv "
                  "FROM raitem "
                  "  LEFT OUTER JOIN coitem oc ON (raitem_orig_coitem_id=oc.coitem_id) "
                  "  LEFT OUTER JOIN cohead och ON (oc.coitem_cohead_id=och.cohead_id) "
@@ -815,7 +813,8 @@ void returnAuthorizationItem::populate()
     
     if (raitem.value("qtyrcvd").toDouble() > 0 || 
         raitem.value("qtyshipd").toDouble() > 0 ||
-        _qtycredited > 0 || _orderId != -1)
+		raitem.value("qtytorcv").toDouble() > 0 ||
+        _qtycredited > 0)
       _disposition->setEnabled(FALSE); 
 
     if (_orderId != -1)
@@ -1149,6 +1148,27 @@ void returnAuthorizationItem::updatePriceInfo()
 
 void returnAuthorizationItem::sDispositionChanged()
 {
+  if ( (_disposition->currentIndex() == 3) && 
+	  (_item->itemType() != "J") )
+  {
+    QMessageBox::warning( this, tr("Cannot use Service Disposition"),
+      tr("<p>Only Items of type Job may have a disposition of Service.") );
+	_disposition->setFocus();
+	_disposition->setCurrentIndex(_dispositionCache);
+	return;
+  }
+
+  if ( (_disposition->currentIndex() < 2) && 
+	  (_orderId != -1) )
+  {
+    QMessageBox::warning( this, tr("Cannot change Disposition"),
+      tr("<p>A work order is associated with this Return. "
+	     "First delete the work order, then change this disposition.") );
+	_disposition->setFocus();
+	_disposition->setCurrentIndex(_dispositionCache);
+	return;
+  }
+
   if (_disposition->currentIndex() == 3)
   _item->setQuery( QString( "SELECT DISTINCT item_id, item_number, item_descrip1, item_descrip2,"
                               "                uom_name, item_type, item_config "
@@ -1216,6 +1236,8 @@ void returnAuthorizationItem::sDispositionChanged()
     _discountFromSale->setEnabled(FALSE); 
     disconnect(_item, SIGNAL(valid(bool)), _listPrices, SLOT(setEnabled(bool)));
   }
+
+  _dispositionCache = _disposition->currentIndex();
 }
 
 void returnAuthorizationItem::sHandleWo(bool pCreate)

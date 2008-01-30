@@ -103,37 +103,39 @@ protected slots:
 
 private:
 	
-    int _mode;
-    int _raitemid;
-    int _raheadid;
-    int _custid;
-    int _coitemid;
-    int _shiptoid;
-    QString _creditmethod;
-    double _priceRatio;
-    double _listPriceCache;
-    double _salePriceCache;
-    double _qtyAuthCache;
-    int	_taxauthid;
+    int      _mode;
+    int      _raitemid;
+    int	     _raheadid;
+    int      _custid;
+    int	     _coitemid;
+    int	     _shiptoid;
+    QString  _creditmethod;
+    double   _priceRatio;
+    double   _listPriceCache;
+    double   _salePriceCache;
+    double   _qtyAuthCache;
+    int	     _taxauthid;
     taxCache _taxCache;
-    int _invuomid;
-    double _qtyinvuomratio;
-    double _priceinvuomratio;
-    double _qtySoldCache;
-    int _orderId;
+    double	 _qtySoldCache;
+    double   _qtycredited;
+	int	     _dispositionCache;
+    int      _invuomid;
+    double   _qtyinvuomratio;
+    double   _priceinvuomratio;
 
-    int _availabilityLastItemid;
-    int _availabilityLastWarehousid;
-    QDate _availabilityLastSchedDate;
-    bool _availabilityLastShow;
-    double _availabilityQtyOrdered;
-    int _leadTime;
-    QDate _cScheduledDate;
-    double _cQtyOrdered;
-    int _preferredWarehouseid;
-    double _qtycredited;
-    QString _status;
-    double _soldQty;
+    int      _orderId;
+
+    int      _availabilityLastItemid;
+    int      _availabilityLastWarehousid;
+    QDate    _availabilityLastSchedDate;
+    bool     _availabilityLastShow;
+    double   _availabilityQtyOrdered;
+    int      _leadTime;
+    QDate    _cScheduledDate;
+    double   _cQtyOrdered;
+    int      _preferredWarehouseid;
+    QString  _status;
+    double   _soldQty;
 
 };
 
