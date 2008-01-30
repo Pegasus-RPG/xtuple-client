@@ -329,13 +329,12 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 		       "SET cashrcpt_cust_id=ccard_cust_id,"
 		       "    cashrcpt_amount=:amount,"
 		       "    cashrcpt_fundstype=ccard_type,"
-		       "    cashrcpt_docnumber=:docnum,"
 		       "    cashrcpt_bankaccnt_id=:bankaccnt_id,"
 		       "    cashrcpt_distdate=CURRENT_DATE,"
 		       "    cashrcpt_notes=:notes, "
 		       "    cashrcpt_curr_id=:curr_id "
 		       "FROM ccard "
-		       "WHERE ((cashrcpt_id=:cashrcpt_id)"
+		       "WHERE ((cashrcpt_id=:cashrcptid)"
 		       "  AND  (ccard_id=:ccardid));" );
 
       cashq.bindValue(":cashrcptid",   prefid);
@@ -343,7 +342,7 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
       cashq.bindValue(":amount",       pamount);
       cashq.bindValue(":curr_id",      pcurrid);
       cashq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
-      cashq.bindValue(":notes",        "Credit Card Charge");
+      cashq.bindValue(":notes",        "Credit Card Pre-Authorization");
       cashq.exec();
       if (cashq.lastError().type() != QSqlError::None)
       {
@@ -377,10 +376,10 @@ int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const dou
 int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
-    qDebug("CCP:charge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s)",
+    qDebug("CCP:charge(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
 	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
 	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
-	   preftype.toAscii().data());
+	   preftype.toAscii().data(), prefid);
   reset();
 
   if (pamount <= 0)
@@ -464,13 +463,12 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
 		       "SET cashrcpt_cust_id=ccard_cust_id,"
 		       "    cashrcpt_amount=:amount,"
 		       "    cashrcpt_fundstype=ccard_type,"
-		       "    cashrcpt_docnumber=:docnum,"
 		       "    cashrcpt_bankaccnt_id=:bankaccntid,"
 		       "    cashrcpt_distdate=CURRENT_DATE,"
 		       "    cashrcpt_notes=:notes, "
 		       "    cashrcpt_curr_id=:curr_id "
 		       "FROM ccard "
-		       "WHERE ((cashrcpt_id=:cashrcpt_id)"
+		       "WHERE ((cashrcpt_id=:cashrcptid)"
 		       "  AND  (ccard_id=:ccardid));" );
 
       cashq.bindValue(":cashrcptid",   prefid);
