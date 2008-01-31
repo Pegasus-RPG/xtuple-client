@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>700</width>
-    <height>600</height>
+    <width>807</width>
+    <height>509</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -18,366 +18,39 @@
   <property name="windowTitle" >
    <string>CRM Account</string>
   </property>
-  <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>9</number>
-   </property>
-   <property name="spacing" >
-    <number>6</number>
-   </property>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <layout class="QGridLayout" >
+     <property name="horizontalSpacing" >
+      <number>12</number>
      </property>
-     <property name="spacing" >
-      <number>2</number>
+     <property name="verticalSpacing" >
+      <number>12</number>
      </property>
-     <item>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>2</number>
-       </property>
+     <item row="0" column="0" colspan="2" >
+      <layout class="QHBoxLayout" >
        <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
+        <layout class="QGridLayout" >
+         <property name="topMargin" >
           <number>5</number>
          </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QGridLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>2</number>
-             </property>
-             <item row="2" column="0" colspan="2" >
-              <widget class="QCheckBox" name="_active" >
-               <property name="text" >
-                <string>Active</string>
-               </property>
-               <property name="checked" >
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1" >
-              <widget class="XLineEdit" name="_name" />
-             </item>
-             <item row="1" column="0" >
-              <widget class="QLabel" name="_nameLit" >
-               <property name="text" >
-                <string>Account Name:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="buddy" >
-                <cstring>_name</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="0" >
-              <widget class="QLabel" name="_numberLit" >
-               <property name="text" >
-                <string>Account Number:</string>
-               </property>
-               <property name="alignment" >
-                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-               </property>
-               <property name="buddy" >
-                <cstring>_number</cstring>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1" >
-              <layout class="QHBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="XLineEdit" name="_number" />
-               </item>
-               <item>
-                <spacer>
-                 <property name="orientation" >
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                 <property name="sizeHint" >
-                  <size>
-                   <width>40</width>
-                   <height>20</height>
-                  </size>
-                 </property>
-                </spacer>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>2</number>
-           </property>
-           <item>
-            <widget class="CRMAcctCluster" name="_parentCrmacct" >
-             <property name="focusPolicy" >
-              <enum>Qt::StrongFocus</enum>
-             </property>
-             <property name="label" >
-              <string>Parent Account:</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>16</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QGroupBox" name="_typeBox" >
-             <property name="title" >
-              <string>Type</string>
-             </property>
-             <layout class="QVBoxLayout" >
-              <property name="margin" >
-               <number>0</number>
-              </property>
-              <property name="spacing" >
-               <number>0</number>
-              </property>
-              <item>
-               <widget class="QRadioButton" name="_organization" >
-                <property name="text" >
-                 <string>Organization</string>
-                </property>
-                <property name="checked" >
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QRadioButton" name="_individual" >
-                <property name="text" >
-                 <string>Individual</string>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <widget class="QLabel" name="label" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_numberLit" >
            <property name="text" >
-            <string>Relationships:</string>
+            <string>Account Number:</string>
            </property>
            <property name="alignment" >
-            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_number</cstring>
            </property>
           </widget>
          </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QGroupBox" name="_custProspectGroupBox" >
-               <layout class="QVBoxLayout" >
-                <property name="margin" >
-                 <number>0</number>
-                </property>
-                <property name="spacing" >
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QRadioButton" name="_customer" >
-                  <property name="text" >
-                   <string>Customer</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="_prospect" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                  <property name="text" >
-                   <string>Prospect</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QRadioButton" name="_neither" >
-                  <property name="text" >
-                   <string>Neither</string>
-                  </property>
-                  <property name="checked" >
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </widget>
-             </item>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="margin" >
-                <number>0</number>
-               </property>
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="_vendor" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Vendor</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="_partner" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Partner</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="_competitor" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Competitor</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QCheckBox" name="_taxauth" >
-                 <property name="enabled" >
-                  <bool>false</bool>
-                 </property>
-                 <property name="text" >
-                  <string>Tax Authority</string>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>0</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
+         <item row="0" column="1" >
+          <widget class="XLineEdit" name="_number" />
          </item>
-         <item>
+         <item row="0" column="2" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -385,7 +58,46 @@
            <property name="sizeHint" >
             <size>
              <width>40</width>
-             <height>10</height>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QLabel" name="_nameLit" >
+           <property name="text" >
+            <string>Account Name:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_name</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1" colspan="2" >
+          <widget class="XLineEdit" name="_name" />
+         </item>
+         <item row="1" column="3" >
+          <widget class="QCheckBox" name="_active" >
+           <property name="text" >
+            <string>Active</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -393,46 +105,38 @@
         </layout>
        </item>
        <item>
-        <widget class="ContactCluster" name="_primary" >
-         <property name="label" >
-          <string>Primary Contact:</string>
-         </property>
-         <property name="listVisible" >
-          <bool>true</bool>
-         </property>
-         <property name="minimalLayout" >
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="ContactCluster" name="_secondary" >
-         <property name="label" >
-          <string>Secondary Contact:</string>
-         </property>
-         <property name="listVisible" >
-          <bool>true</bool>
-         </property>
-         <property name="minimalLayout" >
-          <bool>true</bool>
-         </property>
-        </widget>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="CRMAcctCluster" name="_parentCrmacct" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+           <property name="label" >
+            <string>Parent Account:</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
       </layout>
      </item>
-     <item>
+     <item row="0" column="2" >
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
@@ -453,359 +157,469 @@
         </layout>
        </item>
        <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_customerButton" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Customer</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_prospectButton" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Prospect</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_vendorButton" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Vendor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_partnerButton" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Partner</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_competitorButton" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Competitor</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_taxauthButton" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Tax Authority</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeHint" >
           <size>
-           <width>109</width>
-           <height>51</height>
+           <width>20</width>
+           <height>0</height>
           </size>
          </property>
         </spacer>
        </item>
       </layout>
      </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="QTabWidget" name="_tab" >
-     <property name="tabShape" >
-      <enum>QTabWidget::Rounded</enum>
-     </property>
-     <property name="currentIndex" >
-      <number>0</number>
-     </property>
-     <widget class="QWidget" name="_notesTab" >
-      <attribute name="title" >
-       <string>Notes</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
+     <item row="1" column="0" >
+      <widget class="QGroupBox" name="_typeBox" >
+       <property name="title" >
+        <string>Type</string>
        </property>
-       <property name="spacing" >
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <layout class="QHBoxLayout" >
+          <property name="spacing" >
+           <number>12</number>
+          </property>
+          <item>
+           <widget class="QRadioButton" name="_organization" >
+            <property name="text" >
+             <string>Organization</string>
+            </property>
+            <property name="checked" >
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="_individual" >
+            <property name="text" >
+             <string>Individual</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>331</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item rowspan="2" row="1" column="1" colspan="2" >
+      <widget class="QGroupBox" name="_relationshipsGroup" >
+       <property name="title" >
+        <string>Relationships</string>
+       </property>
+       <layout class="QGridLayout" >
+        <item row="0" column="0" >
+         <layout class="QGridLayout" >
+          <item row="0" column="0" >
+           <widget class="QCheckBox" name="_prospect" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1" >
+           <widget class="QPushButton" name="_prospectButton" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Prospect</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" >
+           <widget class="QCheckBox" name="_customer" >
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1" >
+           <widget class="QPushButton" name="_customerButton" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Customer</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1" >
+           <widget class="QPushButton" name="_custInfoButton" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Workbench</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="1" >
+           <widget class="QPushButton" name="_vendorButton" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Vendor</string>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" >
+           <widget class="QCheckBox" name="_vendor" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" >
+           <widget class="QCheckBox" name="_taxauth" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="1" >
+           <widget class="QPushButton" name="_taxauthButton" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string>Tax Authority</string>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" >
+           <widget class="QCheckBox" name="_competitor" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="1" >
+           <widget class="QLabel" name="_competitorLit" >
+            <property name="text" >
+             <string>Competitor</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" >
+           <widget class="QCheckBox" name="_partner" >
+            <property name="enabled" >
+             <bool>false</bool>
+            </property>
+            <property name="text" >
+             <string/>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="1" >
+           <widget class="QLabel" name="_partnerLit" >
+            <property name="text" >
+             <string>Partner</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item row="1" column="0" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>156</width>
+            <height>51</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item row="2" column="0" >
+      <widget class="QTabWidget" name="_tab" >
+       <property name="sizePolicy" >
+        <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+         <horstretch>0</horstretch>
+         <verstretch>1</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="tabShape" >
+        <enum>QTabWidget::Rounded</enum>
+       </property>
+       <property name="currentIndex" >
         <number>0</number>
        </property>
-       <item>
-        <widget class="QTextEdit" name="_notes" />
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_commentsTab" >
-      <attribute name="title" >
-       <string>Comments</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="Comments" name="_comments" >
-         <property name="type" >
-          <enum>Comments::CRMAccount</enum>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_characteristicsTab" >
-      <attribute name="title" >
-       <string>Characteristics</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XTreeWidget" name="_charass" />
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_newCharacteristic" >
-           <property name="text" >
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_editCharacteristic" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_deleteCharacteristic" >
-           <property name="enabled" >
-            <bool>false</bool>
-           </property>
-           <property name="text" >
-            <string>Delete</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_contactsTab" >
-      <attribute name="title" >
-       <string>Contacts</string>
-      </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>5</number>
-       </property>
-       <property name="spacing" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XTreeWidget" name="_contacts" />
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QPushButton" name="_new" >
-           <property name="text" >
-            <string>New</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_edit" >
-           <property name="text" >
-            <string>Edit</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_detach" >
-           <property name="text" >
-            <string>Detach</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_attach" >
-           <property name="text" >
-            <string>Attach</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </widget>
-     <widget class="QWidget" name="_todoIncdtTab" >
-      <attribute name="title" >
-       <string>To-Do List</string>
-      </attribute>
-      <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>2</number>
-       </property>
-       <item>
+       <widget class="QWidget" name="tab" >
+        <attribute name="title" >
+         <string>Main Contacts</string>
+        </attribute>
         <layout class="QGridLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item row="1" column="1" >
-          <widget class="XCheckBox" name="_completedTodoIncdt" >
-           <property name="text" >
-            <string>Completed</string>
+         <item row="0" column="0" >
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>12</number>
            </property>
-          </widget>
+           <item>
+            <widget class="QRadioButton" name="_primaryButton" >
+             <property name="text" >
+              <string>Primary</string>
+             </property>
+             <property name="checked" >
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_SecondaryButton" >
+             <property name="text" >
+              <string>Secondary</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>391</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
          </item>
          <item row="1" column="0" >
-          <widget class="XCheckBox" name="_showIncdt" >
-           <property name="text" >
-            <string>Show Incidents</string>
+          <widget class="QStackedWidget" name="_widgetStack" >
+           <property name="currentIndex" >
+            <number>0</number>
            </property>
-          </widget>
-         </item>
-         <item row="0" column="0" >
-          <widget class="XCheckBox" name="_showTodo" >
-           <property name="text" >
-            <string>Show To-Do List</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <widget class="XCheckBox" name="_activeTodoIncdt" >
-           <property name="text" >
-            <string>Active Only</string>
-           </property>
+           <widget class="QWidget" name="page" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="ContactCluster" name="_primary" >
+               <property name="label" >
+                <string/>
+               </property>
+               <property name="listVisible" >
+                <bool>true</bool>
+               </property>
+               <property name="accountVisible" >
+                <bool>true</bool>
+               </property>
+               <property name="activeVisible" >
+                <bool>true</bool>
+               </property>
+               <property name="minimalLayout" >
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_2" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="ContactCluster" name="_secondary" />
+             </item>
+            </layout>
+           </widget>
           </widget>
          </item>
         </layout>
-       </item>
-       <item>
+       </widget>
+       <widget class="QWidget" name="_contactsTab" >
+        <attribute name="title" >
+         <string>All Contacts</string>
+        </attribute>
         <layout class="QHBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>0</number>
          </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
          <item>
-          <widget class="XTreeWidget" name="_todo" />
+          <widget class="XTreeWidget" name="_contacts" />
          </item>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_newTodo" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
+            <widget class="QPushButton" name="_new" >
              <property name="text" >
-              <string>New To-Do Item</string>
+              <string>New</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_newIncdt" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
+            <widget class="QPushButton" name="_edit" >
              <property name="text" >
-              <string>New Incident</string>
+              <string>Edit</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_editTodoIncdt" >
+            <widget class="QPushButton" name="_detach" >
+             <property name="text" >
+              <string>Detach</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_attach" >
+             <property name="text" >
+              <string>Attach</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_notesTab" >
+        <attribute name="title" >
+         <string>Notes</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QTextEdit" name="_notes" />
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_commentsTab" >
+        <attribute name="title" >
+         <string>Comments</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="Comments" name="_comments" >
+           <property name="type" >
+            <enum>Comments::CRMAccount</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_characteristicsTab" >
+        <attribute name="title" >
+         <string>Characteristics</string>
+        </attribute>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="XTreeWidget" name="_charass" />
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="_newCharacteristic" >
+             <property name="text" >
+              <string>New</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_editCharacteristic" >
              <property name="enabled" >
               <bool>false</bool>
              </property>
@@ -815,17 +629,7 @@
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_viewTodoIncdt" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="text" >
-              <string>View</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_deleteTodoIncdt" >
+            <widget class="QPushButton" name="_deleteCharacteristic" >
              <property name="enabled" >
               <bool>false</bool>
              </property>
@@ -850,45 +654,187 @@
           </layout>
          </item>
         </layout>
-       </item>
-       <item>
-        <layout class="QHBoxLayout" >
-         <property name="margin" >
+       </widget>
+       <widget class="QWidget" name="_todoIncdtTab" >
+        <attribute name="title" >
+         <string>To-Do List</string>
+        </attribute>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>2</number>
+         </property>
+         <property name="leftMargin" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
+          <layout class="QGridLayout" >
+           <property name="horizontalSpacing" >
+            <number>0</number>
            </property>
-           <property name="sizeHint" >
-            <size>
-             <width>40</width>
-             <height>20</height>
-            </size>
+           <property name="verticalSpacing" >
+            <number>0</number>
            </property>
-          </spacer>
+           <item row="1" column="1" >
+            <widget class="XCheckBox" name="_completedTodoIncdt" >
+             <property name="text" >
+              <string>Completed</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="XCheckBox" name="_showIncdt" >
+             <property name="text" >
+              <string>Show Incidents</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="0" >
+            <widget class="XCheckBox" name="_showTodo" >
+             <property name="text" >
+              <string>Show To-Do List</string>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1" >
+            <widget class="XCheckBox" name="_activeTodoIncdt" >
+             <property name="text" >
+              <string>Active Only</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
-          <widget class="XCheckBox" name="_autoUpdateTodo" >
-           <property name="text" >
-            <string>Automatically Update</string>
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
            </property>
-          </widget>
+           <item>
+            <widget class="XTreeWidget" name="_todo" />
+           </item>
+           <item>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_newTodo" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>New To-Do Item</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_newIncdt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>New Incident</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editTodoIncdt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewTodoIncdt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>View</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_deleteTodoIncdt" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Delete</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="XCheckBox" name="_autoUpdateTodo" >
+             <property name="text" >
+              <string>Automatically Update</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
-       </item>
-      </layout>
-     </widget>
-    </widget>
+       </widget>
+      </widget>
+     </item>
+    </layout>
    </item>
   </layout>
  </widget>
  <layoutdefault spacing="5" margin="5" />
  <customwidgets>
+  <customwidget>
+   <class>Comments</class>
+   <extends>QWidget</extends>
+   <header>comments.h</header>
+  </customwidget>
   <customwidget>
    <class>ContactCluster</class>
    <extends>QWidget</extends>
@@ -900,19 +846,14 @@
    <header>crmacctcluster.h</header>
   </customwidget>
   <customwidget>
-   <class>Comments</class>
-   <extends>QWidget</extends>
-   <header>comments.h</header>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XLineEdit</class>
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
-  </customwidget>
-  <customwidget>
-   <class>XCheckBox</class>
-   <extends>QCheckBox</extends>
-   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -927,22 +868,16 @@
   <tabstop>_parentCrmacct</tabstop>
   <tabstop>_organization</tabstop>
   <tabstop>_individual</tabstop>
-  <tabstop>_customer</tabstop>
-  <tabstop>_prospect</tabstop>
-  <tabstop>_neither</tabstop>
   <tabstop>_vendor</tabstop>
   <tabstop>_partner</tabstop>
   <tabstop>_competitor</tabstop>
   <tabstop>_taxauth</tabstop>
   <tabstop>_primary</tabstop>
-  <tabstop>_secondary</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_customerButton</tabstop>
   <tabstop>_prospectButton</tabstop>
   <tabstop>_vendorButton</tabstop>
-  <tabstop>_partnerButton</tabstop>
-  <tabstop>_competitorButton</tabstop>
   <tabstop>_taxauthButton</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
@@ -960,70 +895,6 @@
  </tabstops>
  <resources/>
  <connections>
-  <connection>
-   <sender>_customer</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_customerButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>206</x>
-     <y>127</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>615</x>
-     <y>92</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_competitor</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_competitorButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>391</x>
-     <y>153</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>615</x>
-     <y>252</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_partner</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_partnerButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>300</x>
-     <y>132</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>615</x>
-     <y>188</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_prospect</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_prospectButton</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>206</x>
-     <y>132</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>615</x>
-     <y>124</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>_vendor</sender>
    <signal>toggled(bool)</signal>
@@ -1165,6 +1036,38 @@
     <hint type="destinationlabel" >
      <x>380</x>
      <y>801</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_customer</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_customerButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>179</x>
+     <y>180</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>247</x>
+     <y>182</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_prospect</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_prospectButton</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>179</x>
+     <y>148</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>247</x>
+     <y>150</y>
     </hint>
    </hints>
   </connection>

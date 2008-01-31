@@ -115,6 +115,10 @@ protected slots:
     virtual void sViewIncdt();
     virtual void sViewTodo();
     virtual void sViewTodoIncdt();
+    virtual void sCustomerInfo();
+    virtual void sHandleButtons();
+    virtual void sCustomerToggled();
+    virtual void sProspectToggled();
 
 private:
     bool	_modal;

@@ -72,6 +72,7 @@
 #include "todoItem.h"
 #include "vendor.h"
 #include "storedProcErrorLookup.h"
+#include "dspCustomerInformation.h"
 
 crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
     : QWidget(parent, fl)
@@ -95,7 +96,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(_autoUpdateTodo,  SIGNAL(toggled(bool)), this, SLOT(sHandleAutoUpdate()));
   connect(_close,		SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_competitor,		SIGNAL(clicked()), this, SLOT(sCompetitor()));
-  connect(_competitorButton,	SIGNAL(clicked()), this, SLOT(sCompetitor()));
+//  connect(_competitorButton,	SIGNAL(clicked()), this, SLOT(sCompetitor()));
   connect(_completedTodoIncdt, SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
   connect(_contacts, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_customerButton,	SIGNAL(clicked()), this, SLOT(sCustomer()));
@@ -110,7 +111,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(_newIncdt,		SIGNAL(clicked()), this, SLOT(sNewIncdt()));
   connect(_newTodo,		SIGNAL(clicked()), this, SLOT(sNewTodo()));
   connect(_partner,		SIGNAL(clicked()), this, SLOT(sPartner()));
-  connect(_partnerButton,	SIGNAL(clicked()), this, SLOT(sPartner()));
+//  connect(_partnerButton,	SIGNAL(clicked()), this, SLOT(sPartner()));
   connect(_prospectButton,	SIGNAL(clicked()), this, SLOT(sProspect()));
   connect(_save,		SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_showTodo,	    SIGNAL(toggled(bool)), this, SLOT(sPopulateTodo()));
@@ -124,6 +125,10 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(prospectsUpdated()),  this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(taxAuthsUpdated(int)),this, SLOT(sUpdateRelationships()));
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
+  connect(_custInfoButton, SIGNAL(clicked()), this, SLOT(sCustomerInfo()));
+  connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
+  connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
 
   _contacts->addColumn(tr("First Name"),	 50, Qt::AlignLeft );
   _contacts->addColumn(tr("Last Name"),		 -1, Qt::AlignLeft );
@@ -155,20 +160,23 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   }
 
   _mode		= cNew;
-  _crmacctId	= -1;
+  _crmacctId    = -1;
   _competitorId	= -1;
-  _custId	= -1;
-  _partnerId	= -1;
-  _prospectId	= -1;
-  _taxauthId	= -1;
-  _vendId	= -1;
+  _custId       = -1;
+  _partnerId    = -1;
+  _prospectId   = -1;
+  _taxauthId    = -1;
+  _vendId       = -1;
   _comments->setId(-1);
 
-  // TODO: implement these and unhide them
-  _partnerButton->hide();
-  _competitorButton->hide();
-
   sHandleTodoPrivs();
+  
+  _primary->setMinimalLayout(FALSE);
+  _primary->setAccountVisible(FALSE);
+  _primary->setActiveVisible(FALSE);
+  _secondary->setMinimalLayout(FALSE);
+  _secondary->setAccountVisible(FALSE);
+  _secondary->setActiveVisible(FALSE);
 }
 
 crmaccount::~crmaccount()
@@ -185,6 +193,41 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
+
+  // if _modal then disable any widgets that lead to opening QMainWindows
+  if (_modal)
+  {
+    _customerButton->setEnabled(false);
+    _custInfoButton->setEnabled(false);
+    _taxauthButton->setEnabled(false);
+    _vendorButton->setEnabled(false);
+    _prospectButton->setEnabled(false);
+  }
+
+  if (_mode == cView)
+  {
+    _customer->setEnabled(false);
+    _prospect->setEnabled(false);
+    _taxauth->setEnabled(false);
+    _vendor->setEnabled(false);
+    _partner->setEnabled(false);
+    _competitor->setEnabled(false);
+  }
+  else
+  {
+    _customer->setEnabled(_privleges->check("MaintainCustomerMasters") && !_modal);
+    _prospect->setEnabled(_privleges->check("MaintainProspects") && !_modal);
+    _taxauth->setEnabled(_privleges->check("MaintainTaxAuthorities") && !_modal);
+    _vendor->setEnabled(_privleges->check("MaintainVendors") && !_modal);
+    _partner->setEnabled(_privleges->check("MaintainPartners"));
+    _competitor->setEnabled(_privleges->check("MaintainCompetitorMasters"));
+  }
+
+  if (! _privleges->check("MaintainContacts") || _mode == cView)
+    _edit->setText("View");
+  _edit->setEnabled(_privleges->check("MaintainContacts"));
+  _attach->setEnabled(_privleges->check("MaintainContacts"));
+  _detach->setEnabled(_privleges->check("MaintainContacts"));
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
@@ -204,27 +247,27 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _number->setFocus();
 
       q.prepare("SELECT createCrmAcct('TEMPORARY' || (last_value + 1), '',"
-		"		      false, 'O', NULL, NULL, NULL, NULL,"
-		"		      NULL, NULL, NULL, NULL) AS result "
-		"FROM crmacct_crmacct_id_seq;");
+                "		      false, 'O', NULL, NULL, NULL, NULL,"
+                "		      NULL, NULL, NULL, NULL) AS result "
+                "FROM crmacct_crmacct_id_seq;");
       q.bindValue(":crmacct_id", _crmacctId);
       q.exec();
       if (q.first())
       {
-	_crmacctId = q.value("result").toInt();
-	if (_crmacctId < 0)
-	{
-	  QMessageBox::critical(this, tr("Error creating Initial Account"),
-			    storedProcErrorLookup("createCrmAcct", _crmacctId));
-	  _crmacctId = -1;
-	  return UndefinedError;
-	}
-	_comments->setId(_crmacctId);
+        _crmacctId = q.value("result").toInt();
+        if (_crmacctId < 0)
+        {
+          QMessageBox::critical(this, tr("Error creating Initial Account"),
+                storedProcErrorLookup("createCrmAcct", _crmacctId));
+          _crmacctId = -1;
+          return UndefinedError;
+        }
+        _comments->setId(_crmacctId);
       }
       else if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return UndefinedError;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return UndefinedError;
       }
       _number->clear();
 
@@ -266,46 +309,6 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
       _close->setFocus();
     }
   }
-
-  // if _modal then disable any widgets that lead to opening QMainWindows
-  if (_modal)
-  {
-    _customerButton->setEnabled(false);
-    _taxauthButton->setEnabled(false);
-    _vendorButton->setEnabled(false);
-    _prospectButton->setEnabled(false);
-    _partnerButton->setEnabled(false);
-    _competitorButton->setEnabled(false);
-  }
-
-  if (_mode == cView)
-  {
-    _customer->setEnabled(false);
-    _prospect->setEnabled(false);
-    _neither->setEnabled(false);
-    _taxauth->setEnabled(false);
-    _vendor->setEnabled(false);
-    _partner->setEnabled(false);
-    _competitor->setEnabled(false);
-  }
-  else
-  {
-    _customer->setEnabled(_privleges->check("MaintainCustomerMasters") && !_modal);
-    _prospect->setEnabled(_privleges->check("MaintainProspects") && !_modal);
-    _neither->setEnabled((_privleges->check("MaintainCustomerMasters") ||
-			  _privleges->check("MaintainProspects")) && !_modal);
-    _taxauth->setEnabled(_privleges->check("MaintainTaxAuthorities") && !_modal);
-    _vendor->setEnabled(_privleges->check("MaintainVendors") && !_modal);
-    _partner->setEnabled(_privleges->check("MaintainPartners"));
-    _competitor->setEnabled(_privleges->check("MaintainCompetitorMasters"));
-  }
-
-  if (! _privleges->check("MaintainContacts") || _mode == cView)
-    _edit->setText("View");
-  _edit->setEnabled(_privleges->check("MaintainContacts"));
-  _attach->setEnabled(_privleges->check("MaintainContacts"));
-  _detach->setEnabled(_privleges->check("MaintainContacts"));
-
   return NoError;
 }
 
@@ -522,7 +525,7 @@ void crmaccount::sSave()
   int	  spArg = 0;
   int	  answer = QMessageBox::No;
 
-  if (_prospectId > 0 && _neither->isChecked())
+  if (_prospectId > 0 && !_prospect->isChecked())
   {
     answer = QMessageBox::question(this, tr("Delete Prospect?"),
 		    tr("<p>Are you sure you want to delete %1 as a Prospect?")
@@ -537,7 +540,7 @@ void crmaccount::sSave()
     spArg = _prospectId;
   }
 
-  if (_custId > 0 && _neither->isChecked())
+  if (_custId > 0 && !_customer->isChecked())
   {
     answer = QMessageBox::question(this, tr("Delete Customer?"),
 		    tr("<p>Are you sure you want to delete %1 as a Customer?")
@@ -609,9 +612,9 @@ void crmaccount::sSave()
       returnVal = q.value("returnVal").toInt();
       if (returnVal < 0)
       {
-	rollback.exec();
-	systemError(this, storedProcErrorLookup(spName, returnVal), __FILE__, __LINE__);
-	return;
+        rollback.exec();
+        systemError(this, storedProcErrorLookup(spName, returnVal), __FILE__, __LINE__);
+        return;
       }
     } 
     else if (q.lastError().type() != QSqlError::None)
@@ -620,6 +623,7 @@ void crmaccount::sSave()
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    /*
     if (_neither->isChecked())
     {
       if (_prospectId > 0)
@@ -627,6 +631,7 @@ void crmaccount::sSave()
       else if (_custId > 0)
 	_custId = -1;
     }
+    */
   }
 
   if (! _taxauth->isChecked() && _taxauthId > 0)
@@ -639,9 +644,9 @@ void crmaccount::sSave()
       returnVal = q.value("returnVal").toInt();
       if (returnVal < 0)
       {
-	rollback.exec();
-	systemError(this, storedProcErrorLookup("deleteTaxAuthority", returnVal), __FILE__, __LINE__);
-	return;
+        rollback.exec();
+        systemError(this, storedProcErrorLookup("deleteTaxAuthority", returnVal), __FILE__, __LINE__);
+        return;
       }
     } 
     else if (q.lastError().type() != QSqlError::None)
@@ -663,9 +668,9 @@ void crmaccount::sSave()
       returnVal = q.value("returnVal").toInt();
       if (returnVal < 0)
       {
-	rollback.exec();
-	systemError(this, storedProcErrorLookup("deleteVendor", returnVal), __FILE__, __LINE__);
-	return;
+        rollback.exec();
+        systemError(this, storedProcErrorLookup("deleteVendor", returnVal), __FILE__, __LINE__);
+        return;
       }
     } 
     else if (q.lastError().type() != QSqlError::None)
@@ -829,7 +834,9 @@ void crmaccount::sPopulate()
     _comments->setId(_crmacctId);
 
     _customer->setChecked(_custId > 0);
+    _customer->setDisabled(_customer->isChecked());
     _prospect->setChecked(_prospectId > 0);
+    _prospect->setDisabled(_customer->isChecked());
     _taxauth->setChecked(_taxauthId > 0);
     _vendor->setChecked(_vendId > 0);
     _partner->setChecked(_partnerId > 0);
@@ -1573,17 +1580,22 @@ void crmaccount::sUpdateRelationships()
     _vendId	= q.value("crmacct_vend_id").toInt();
 
     _customer->setChecked(_custId > 0);
+    _customer->setDisabled(_customer->isChecked());
     _prospect->setChecked(_prospectId > 0);
+    _prospect->setDisabled(_customer->isChecked());
     _taxauth->setChecked(_taxauthId > 0);
     _vendor->setChecked(_vendId > 0);
     _partner->setChecked(_partnerId > 0);
     _competitor->setChecked(_competitorId > 0);
+    _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
   }
   else if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  
+  
 
   sPopulateContacts();
 }
@@ -1634,3 +1646,37 @@ void crmaccount::sHandleAutoUpdate()
   else
     disconnect(omfgThis, SIGNAL(tick()), this, SLOT(sPopulateTodo()));
 }
+
+void crmaccount::sCustomerInfo()
+{
+  ParameterList params;
+  params.append("cust_id", _custId);
+
+  dspCustomerInformation *newdlg = new dspCustomerInformation();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void crmaccount::sHandleButtons()
+{
+  if (_primaryButton->isChecked())
+    _widgetStack->setCurrentIndex(0);
+  else
+    _widgetStack->setCurrentIndex(1);
+}
+
+void crmaccount::sCustomerToggled()
+{
+  if (_customer->isChecked())
+    _prospect->setChecked(FALSE);
+
+  _custInfoButton->setEnabled(_custId > 0 && _customer->isChecked());
+}
+
+void crmaccount::sProspectToggled()
+{
+  if (_prospect->isChecked())
+    _customer->setChecked(FALSE);
+}
+
+
