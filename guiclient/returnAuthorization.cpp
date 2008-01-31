@@ -114,6 +114,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(_refund,	SIGNAL(clicked()), this, SLOT(sRefund()));
   connect(_postReceipts, SIGNAL(clicked()), this, SLOT(sPostReceipts()));
 
+  _newso->setReadOnly(true);
+
 #ifndef Q_WS_MAC
   _shipToList->setMaximumWidth(25);
 #endif
@@ -282,7 +284,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _creditBy->setEnabled(FALSE);
 
       _origso->setEnabled(FALSE);
-	  _newso->setEnabled(FALSE);
+      _newso->setEnabled(FALSE);
       _incident->setEnabled(FALSE);
       _project->setEnabled(FALSE);
 
@@ -1142,11 +1144,11 @@ void returnAuthorization::populate()
 	  _creditBy->setCurrentItem(3);
 
     _cust->setId(rahead.value("rahead_cust_id").toInt());
-	_custType->setText(rahead.value("custtype_code").toString());
-	_ignoreSoSignals = TRUE;
-	_origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
-	_newso->setId(rahead.value("rahead_new_cohead_id").toInt());
-	_ignoreSoSignals = FALSE;
+    _custType->setText(rahead.value("custtype_code").toString());
+    _ignoreSoSignals = TRUE;
+    _origso->setId(rahead.value("rahead_orig_cohead_id").toInt());
+    _newso->setId(rahead.value("rahead_new_cohead_id").toInt());
+    _ignoreSoSignals = FALSE;
     _incident->setId(rahead.value("rahead_incdt_id").toInt());
     _project->setId(rahead.value("rahead_prj_id").toInt());
 

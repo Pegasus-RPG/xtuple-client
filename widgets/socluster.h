@@ -112,6 +112,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString label       READ label       WRITE setLabel);
+  Q_PROPERTY(bool    readOnly    READ isReadOnly  WRITE setReadOnly);
 
   public:
     SoCluster(QWidget *, const char * = 0);
@@ -120,13 +121,15 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     inline int id()                { return _soNumber->_id;      }
     inline int custid()            { return _soNumber->_custid;  }
     inline bool isValid()          { return _soNumber->_valid;   }
-    inline int  number()	   { return _soNumber->text().toInt();  }
+    inline int  number()           { return _soNumber->text().toInt();  }
     inline void setType(int pType) { _soNumber->_type = pType;   }
-	inline virtual QString label() const { return _soNumberLit->text(); };
+    inline virtual QString label() const { return _soNumberLit->text(); }
+    inline bool isReadOnly()       { return _readOnly; } 
 
   public slots:
+    void setReadOnly(bool);
     void setId(int);
-	inline virtual void setLabel(const QString& p)  { _soNumberLit->setText(p); };
+    inline virtual void setLabel(const QString& p)  { _soNumberLit->setText(p); };
 
   signals:
     void newId(int);
@@ -137,7 +140,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     void sList();
 
   protected:
-    QLabel*	_soNumberLit;
+    QLabel* _soNumberLit;
 
   private:
     void constructor();
@@ -145,6 +148,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     SoLineEdit   *_soNumber;
     QPushButton  *_list;
     QLabel       *_custName;
+    bool         _readOnly;
 };
 
 #endif

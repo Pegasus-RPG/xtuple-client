@@ -200,6 +200,7 @@ SoCluster::SoCluster(int pType, QWidget *pParent) : QWidget(pParent)
 
 void SoCluster::constructor()
 {
+  _readOnly = false;
   QVBoxLayout *_layoutMain = new QVBoxLayout(this);
   _layoutMain->setMargin(0);
   _layoutMain->setSpacing(5);
@@ -264,3 +265,8 @@ void SoCluster::sList()
     _soNumber->setId(id);
 }
 
+void SoCluster::setReadOnly(bool ro)
+{
+  _soNumber->setEnabled(!ro);
+  _list->setVisible(!ro);
+}
