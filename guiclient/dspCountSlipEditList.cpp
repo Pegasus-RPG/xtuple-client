@@ -220,8 +220,7 @@ void dspCountSlipEditList::sDelete()
                             tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
   {
     q.prepare( "DELETE FROM cntslip "
-               "WHERE ( (NOT cntslip_posted)"
-               " AND (cntslip_id=:cntslip_id) );" );
+               " WHERE(cntslip_id=:cntslip_id);" );
     q.bindValue(":cntslip_id", _cntslip->id());
     q.exec();
 
