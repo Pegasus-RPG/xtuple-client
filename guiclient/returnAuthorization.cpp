@@ -74,6 +74,7 @@
 #include "shipToList.h"
 #include "storedProcErrorLookup.h"
 #include "taxBreakdown.h"
+#include "printRaForm.h"
 
 #define TO_RECEIVE_COL	11
 
@@ -126,6 +127,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _ignoreSoSignals = false;
   _ffBillto = TRUE;
   _ffShipto = TRUE;
+  _custEmail = FALSE;
 
   _origso->setType((cSoReleased));
   _authNumber->setValidator(omfgThis->orderVal());
@@ -516,6 +518,27 @@ void returnAuthorization::sSaveClick()
 {
   if (sSave())
   {
+    if (_printRA->isChecked())
+    {
+      ParameterList params;
+      params.append("rahead_id", _raheadid);
+
+      printRaForm newdlgS(this, "", true);
+      newdlgS.set(params);
+      newdlgS.exec();
+
+/*   TO DO: This isn't going to work right now because the EDI profile is specific to S/O.
+     We really need to rearchitect the EDI profiles for customers to one to many
+     With profile types for Invoice, S/O, R/A etc...
+     
+      if (_custEmail && _metrics->boolean("EnableBatchManager"))
+      {
+        deliverReturnAuthorization newdlgD(this, "", true);
+        newdlgD.set(params);
+        newdlgD.exec();
+      }
+  */
+    }
     _raheadid=-1;
     close();
   }
@@ -718,14 +741,15 @@ void returnAuthorization::sPopulateCustomerInfo()
                      "       cust_taxauth_id, cust_curr_id, "
                      "       cust_name, cntct_addr_id, "
                      "       cust_ffshipto, cust_ffbillto, "
-					 "        COALESCE(shipto_id, -1) AS shiptoid "
+                     "       COALESCE(shipto_id, -1) AS shiptoid, "
+                     "       cust_soemaildelivery "
                      "FROM custinfo "
-					 "  LEFT OUTER JOIN shiptoinfo ON ((cust_id=shipto_cust_id) "
-					 "                             AND (shipto_default)) "
-					 "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id), "
-					 "  custtype "
+                     "  LEFT OUTER JOIN shiptoinfo ON ((cust_id=shipto_cust_id) "
+                     "                             AND (shipto_default)) "
+                     "  LEFT OUTER JOIN cntct ON (cust_cntct_id=cntct_id), "
+                     "  custtype "
                      "WHERE ( (cust_id=:cust_id) "
-					 "AND (custtype_id=cust_custtype_id) );" );
+                     "AND (custtype_id=cust_custtype_id) );" );
       query.bindValue(":cust_id", _cust->id());
       query.exec();
       if (query.first())
@@ -750,18 +774,19 @@ void returnAuthorization::sPopulateCustomerInfo()
 
         if ( (_mode == cNew) || (_mode == cEdit) )
           _ffShipto = query.value("cust_ffshipto").toBool();
-		else
-		  _ffShipto = FALSE;
+        else
+          _ffShipto = FALSE;
         _copyToShipto->setEnabled(_ffShipto);
-		_shipToName->setEnabled(_ffShipto);
-		_shipToNumber->setEnabled(_ffShipto);
-		_shipToAddr->setEnabled(_ffShipto);
-		populateShipto(query.value("shiptoid").toInt());
+        _shipToName->setEnabled(_ffShipto);
+        _shipToNumber->setEnabled(_ffShipto);
+        _shipToAddr->setEnabled(_ffShipto);
+        _custEmail = query.value("cust_soemaildelivery").toBool();
+        populateShipto(query.value("shiptoid").toInt());
       }
       else if (query.lastError().type() != QSqlError::None)
       {
-	systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, query.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
     else
@@ -770,12 +795,12 @@ void returnAuthorization::sPopulateCustomerInfo()
       _taxauth->setId(-1);
       _custtaxauthid	= -1;
       _billToName->setEnabled(TRUE);
-	  _billToAddr->setEnabled(TRUE);
+      _billToAddr->setEnabled(TRUE);
       _billToName->clear();
       _billToAddr->clear();
-	  _shipToNumber->setEnabled(TRUE);
+      _shipToNumber->setEnabled(TRUE);
       _shipToName->setEnabled(TRUE);
-	  _shipToAddr->setEnabled(TRUE);
+      _shipToAddr->setEnabled(TRUE);
       _shipToNumber->clear();
       _shipToName->clear();
       _shipToAddr->clear();

@@ -80,19 +80,18 @@ public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void recalculateTax();
     virtual bool sSave();
-	virtual void sSaveClick();
+    virtual void sSaveClick();
     virtual void sShipToList();
     virtual void sParseShipToNumber();
     virtual void populateShipto( int pShiptoid );
     virtual void sPopulateCustomerInfo();
     virtual void sCheckAuthorizationNumber();
-	virtual void sClearShiptoNumber();
+    virtual void sClearShiptoNumber();
     virtual void sCopyToShipto();
-//	virtual void sCustChanged();
     virtual void sNew();
     virtual void sEdit();
-	virtual void sView();
-	virtual void sAction();
+    virtual void sView();
+    virtual void sAction();
     virtual void sDelete();
     virtual void sFillList();
     virtual void sCalculateSubtotal();
@@ -102,16 +101,16 @@ public slots:
     virtual void sFreightChanged();
     virtual void sTaxAuthChanged();
     virtual void sTaxDetail();
-	virtual void sOrigSoChanged();
-	virtual void sDispositionChanged();
+    virtual void sOrigSoChanged();
+    virtual void sDispositionChanged();
     virtual void sCreditByChanged();
-	virtual void sAuthorizeLine();
-	virtual void sClearAuthorization();
-	virtual void sAuthorizeAll();
+    virtual void sAuthorizeLine();
+    virtual void sClearAuthorization();
+    virtual void sAuthorizeAll();
     virtual void sEnterReceipt();
     virtual void sReceiveAll();
     virtual void sHandleEnterReceipt(bool);
-	virtual void sHandleAction();
+    virtual void sHandleAction();
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
     virtual void sRefund();
     virtual void sPostReceipts();
@@ -124,17 +123,16 @@ private:
     int _raheadid;
     int _shiptoid;
     int	_custtaxauthid;
+    bool _custEmail;
     bool _ffBillto;
     bool _ffShipto;
     bool _ignoreShiptoSignals;
-	bool _ignoreSoSignals;
+	  bool _ignoreSoSignals;
     double _subtotalCache;
     int _taxauthidCache;
     int _taxcurrid;
 
     taxCache _taxCache;
-//	char *dispositionTypes[];
-    //char *creditMethods[];
 };
 
 #endif // RETURNAUTHORIZATION_H
