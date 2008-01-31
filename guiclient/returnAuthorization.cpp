@@ -213,7 +213,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       q.prepare("INSERT INTO rahead ("
 		        "    rahead_id, rahead_number, rahead_authdate"
 		        ") VALUES ("
-		        "    :rahead_id, :rahead_number, :rahead_authdate"
+		        "    :rahead_id, 0, :rahead_authdate"
 		        ");");
       q.bindValue(":rahead_id",		_raheadid);
       q.bindValue(":rahead_number",	_authNumber->text().toInt());
@@ -221,7 +221,7 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       if (q.lastError().type() != QSqlError::None)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	    return UndefinedError;
+        return UndefinedError;
       }
 
       metric = _metrics->value("DefaultRaDisposition");
