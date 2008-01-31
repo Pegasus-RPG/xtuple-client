@@ -107,8 +107,8 @@ RaLineEdit::RaStatus RaCluster::status() const
 
 RaLineEdit::RaLineEdit(QWidget *pParent, const char *pName) :
   VirtualClusterLineEdit(pParent, "rahead", "rahead_id",
-			 "rahead_number", "rahead_disposition",
-			 "rahead_status", pName)
+			 "rahead_number", "rahead_billtoname",
+			 0, pName)
 {
   setTitles(tr("Return Authorization"), tr("Return Authorizations"));
 
@@ -126,9 +126,15 @@ void RaLineEdit::setAllowedStatuses(const RaLineEdit::RaStatuses p)
   if (p & (Open | Closed) || p == 0)
     clearExtraClause();
   else if (p & Open)
-    setExtraClause(" AND (rahead_status='O') ");
+    setExtraClause(" AND EXISTS ( SELECT raitem_id "
+                   " FROM ratiem "
+                   " WHERE ((raitem_status='O') "
+                   " AND (raitem_rahead_id=rahead_id)) ");
   else if (p & Closed)
-    setExtraClause(" AND (rahead_status='C') ");
+    setExtraClause(" AND NOT EXISTS ( SELECT raitem_id "
+                   " FROM ratiem "
+                   " WHERE ((raitem_status='O') "
+                   " AND (raitem_rahead_id=rahead_id)) ");
   else
     clearExtraClause();
 
