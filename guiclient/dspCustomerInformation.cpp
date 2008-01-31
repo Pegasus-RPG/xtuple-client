@@ -974,7 +974,7 @@ void dspCustomerInformation::sFillPaymentsList()
             "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
 	    "       COALESCE(cohead_number, ccpay_order_number),"
 	    "       ccpay_r_ref,"
-	    "       COALESCE(payco_amount, ccpay_amount),"
+	    "       ABS(COALESCE(payco_amount, ccpay_amount)),"
 	    "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
             "  FROM ccpay LEFT OUTER JOIN "
 	    "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"

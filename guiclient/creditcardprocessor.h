@@ -78,7 +78,7 @@ class CreditCardProcessor : public QObject
     virtual int	    authorize(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, int&, QString, int&);
     virtual int	    charge(const int, const int, const double, const double, const bool, const double, const double, const int, QString&, QString&, int&, QString, int&);
     virtual int	    chargePreauthorized(const int, const double, const int, QString&, QString&, int&);
-    virtual int	    credit(const int, const int, const double, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int, QString&, QString&, int&);
+    virtual int	    credit(const int, const int, const double, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int, QString&, QString&, int&, QString, int&);
     virtual int	    voidPrevious(int &);
 
     // these are support methods that typically won't be overridden

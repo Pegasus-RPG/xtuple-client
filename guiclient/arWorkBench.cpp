@@ -818,9 +818,10 @@ void arWorkBench::sCCRefundCM()
 			  CreditCardProcessor::errorMsg());
   else
   {
+    int refid = -1;
     int returnVal = cardproc->credit(ccardid, -2, total, tax, taxexempt,
 				     freight, duty, currid,
-				     docnum, refnum, ccpayid);
+				     docnum, refnum, ccpayid, QString(), refid);
     if (returnVal < 0)
       QMessageBox::critical(this, tr("Credit Card Processing Error"),
 			    cardproc->errorMsg());

@@ -138,6 +138,8 @@ static struct {
   { -33, TR("The preauthorization (for %1) is not sufficient to cover "
 		 "the desired transaction amount (%2).")		},
   { -34, TR("No Preauthorization found")				},
+  { -35, TR("This preauthorization may not be charged. It was created "
+	    "for a Sales Order which has been closed or canceled.")	},
 
   // stand-alone charges
   { -40, TR("Inconsistent data passed to charge(): [%1] [%2]")	},
@@ -249,9 +251,10 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
 int CreditCardProcessor::authorize(const int pccardid, const int pcvv, const double pamount, double ptax, bool ptaxexempt, double pfreight, double pduty, const int pcurrid, QString &porder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
-    qDebug("CCP:authorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %d)",
+    qDebug("CCP:authorize(%d, %d, %f, %f, %d, %f, %f, %d, %s, %d, %s, %d)",
 	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   porder.toAscii().data(), pccpayid);
+	   porder.toAscii().data(), pccpayid,
+	   preftype.toAscii().data(), prefid);
   reset();
 
   if (pamount <= 0)
@@ -588,7 +591,8 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     return -32;
   }
 
-  q.prepare("SELECT ccpay_amount, ccpay_curr_id, ccpay_order_number,"
+  XSqlQuery ccq;
+  ccq.prepare("SELECT ccpay_amount, ccpay_curr_id, ccpay_order_number,"
 	    "       ccpay_ccard_id,"
 	    "       currToCurr(ccpay_curr_id, :curr_id, ccpay_amount,"
 	    "                  CURRENT_DATE) AS ccpay_amount_converted "
@@ -598,24 +602,24 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
 	    "                         ccpay_transaction_datetime) < "
 	    "        :ccValidDays)"
 	    "  AND  (ccpay_id=:id));");
-  q.bindValue(":id", pccpayid);
-  q.bindValue(":curr_id",     pcurrid);
-  q.bindValue(":ccValidDays", ccValidDays);
-  q.exec();
-  if (q.first())
+  ccq.bindValue(":id", pccpayid);
+  ccq.bindValue(":curr_id",     pcurrid);
+  ccq.bindValue(":ccValidDays", ccValidDays);
+  ccq.exec();
+  if (ccq.first())
   {
-    if (pamount > q.value("ccpay_amount_converted").toDouble())
+    if (pamount > ccq.value("ccpay_amount_converted").toDouble())
     {
       _errorMsg = errorMsg(-33)
-		  .arg(q.value("ccpay_amount").toString())
+		  .arg(ccq.value("ccpay_amount").toString())
 		  .arg(pamount);
       return -33;
     }
 
   }
-  else if (q.lastError().type() != QSqlError::None)
+  else if (ccq.lastError().type() != QSqlError::None)
   {
-    _errorMsg = q.lastError().databaseText();
+    _errorMsg = ccq.lastError().databaseText();
     return -1;
   }
   else
@@ -624,8 +628,37 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     return -34;
   }
 
-  int ccardid = q.value("ccpay_ccard_id").toInt();
-  preforder = q.value("ccpay_order_number").toString();
+  int ccardid = ccq.value("ccpay_ccard_id").toInt();
+  preforder = ccq.value("ccpay_order_number").toString();
+
+  ccq.prepare("SELECT * FROM payco WHERE (payco_ccpay_id=:ccpayid)");
+  ccq.bindValue(":ccpayid", pccpayid);
+  ccq.exec();
+  if (ccq.first())
+  {
+    int coheadid = ccq.value("payco_cohead_id").toInt();
+    ccq.prepare("SELECT COUNT(*) AS linecount "
+	      "FROM coitem "
+	      "WHERE ((coitem_status='O')"
+	      "  AND  (coitem_cohead_id=:coheadid));");
+    ccq.bindValue(":coheadid", coheadid);
+    ccq.exec();
+    if (ccq.first() && ccq.value("linecount").toInt() <= 0)
+    {
+      _errorMsg = errorMsg(-35);
+      return -35;
+    }
+    else if (ccq.lastError().type() != QSqlError::None)
+    {
+      _errorMsg = ccq.lastError().databaseText();
+      return -1;
+    }
+  }
+  else if (ccq.lastError().type() != QSqlError::None)
+  {
+    _errorMsg = ccq.lastError().databaseText();
+    return -1;
+  }
 
   QString ccard_x;
   int returnVal = checkCreditCard(ccardid, pcvv, ccard_x);
@@ -665,7 +698,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
       return (voidReturnVal < 0) ? voidReturnVal : returnVal;
     }
 
-    q.prepare("INSERT INTO cashrcpt ("
+    ccq.prepare("INSERT INTO cashrcpt ("
 	      "  cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id,"
 	      "  cashrcpt_fundstype, cashrcpt_docnumber,"
 	      "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate) "
@@ -675,15 +708,15 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
 	      "  FROM ccpay, ccard "
 	      "WHERE ((ccpay_ccard_id=ccard_id)"
 	      "  AND  (ccpay_id=:pccpayid));");
-    q.bindValue(":pccpayid",     pccpayid);
-    q.bindValue(":amount",       pamount);
-    q.bindValue(":curr_id",      pcurrid);
-    q.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
-    q.bindValue(":notes",        "Converted Pre-auth");
-    q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    ccq.bindValue(":pccpayid",     pccpayid);
+    ccq.bindValue(":amount",       pamount);
+    ccq.bindValue(":curr_id",      pcurrid);
+    ccq.bindValue(":bankaccnt_id", _metrics->value("CCDefaultBank").toInt());
+    ccq.bindValue(":notes",        "Converted Pre-auth");
+    ccq.exec();
+    if (ccq.lastError().type() != QSqlError::None)
     {
-      _errorMsg = errorMsg(4).arg(q.lastError().databaseText());
+      _errorMsg = errorMsg(4).arg(ccq.lastError().databaseText());
       // TODO: log an event?
       returnVal = 1;
     }
@@ -790,13 +823,20 @@ int CreditCardProcessor::testConfiguration()
 }
 
 
-int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid)
+int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
   if (DEBUG)
-    qDebug("CCP:credit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d)",
+    qDebug("CCP:credit(%d, %d, %f, %f, %d, %f, %f, %d, %s, %s, %d, %s, %d)",
 	   pccardid, pcvv, pamount, ptax, ptaxexempt, pfreight, pduty, pcurrid,
-	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid);
+	   pneworder.toAscii().data(), preforder.toAscii().data(), pccpayid,
+	   preftype.toAscii().data(), prefid);
   reset();
+
+  if (preftype == "cohead" && prefid < 0)
+  {
+    _errorMsg = errorMsg(-40).arg(preftype).arg(prefid);
+    return -40;
+  }
 
   QString ccard_x;
   int returnVal = checkCreditCard(pccardid, pcvv,  ccard_x);
@@ -881,7 +921,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
     ccq.exec();
     if (ccq.first())
       preforder = ccq.value("ccpay_r_ordernum").toString();
-    else if (q.lastError().type() != QSqlError::None)
+    else if (ccq.lastError().type() != QSqlError::None)
     {
       _errorMsg = ccq.lastError().databaseText();
       return -1;
@@ -916,8 +956,10 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
     if (pccpayid > 0)
     {
       XSqlQuery cq;
-      cq.prepare("SELECT postCCCredit(:ccpayid) AS result;");
+      cq.prepare("SELECT postCCCredit(:ccpayid, :reftype, :refid) AS result;");
       cq.bindValue(":ccpayid", pccpayid);
+      cq.bindValue(":reftype", preftype);
+      cq.bindValue(":refid",   prefid);
       cq.exec();
       if (cq.first())
       {
@@ -957,9 +999,9 @@ int CreditCardProcessor::voidPrevious(int &pccpayid)
   int ccardid;
   if (ccq.first())
     ccardid = ccq.value("ccpay_ccard_id").toInt();
-  else if (q.lastError().type() != QSqlError::None)
+  else if (ccq.lastError().type() != QSqlError::None)
   {
-    _errorMsg = q.lastError().databaseText();
+    _errorMsg = ccq.lastError().databaseText();
     return -1;
   }
   else
@@ -1317,7 +1359,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "       ccpay_yp_r_score=<? value(\"score\") ?>,"
 	   "<? endif ?>"
 	   "<? if exists(\"tax\") ?>"
-	   "       ccpay_yp_r_tax=<? value(\"tax\") ?>,"
+	   "       ccpay_r_tax=<? value(\"tax\") ?>,"
 	   "<? endif ?>"
 	   "<? if exists(\"tdate\") ?>"
 	   "       ccpay_yp_r_tdate=<? value(\"tdate\") ?>,"
@@ -1379,7 +1421,7 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 	   "    ccpay_r_ref,"
 	   "<? if exists(\"score\") ?>    ccpay_yp_r_score, <? endif ?>"
 	   "<? if exists(\"shipping\") ?> ccpay_r_shipping, <? endif ?>"
-	   "<? if exists(\"tax\") ?>      ccpay_yp_r_tax,   <? endif ?>"
+	   "<? if exists(\"tax\") ?>      ccpay_r_tax,   <? endif ?>"
 	   "<? if exists(\"tdate\") ?>    ccpay_yp_r_tdate, <? endif ?>"
 	   "<? if exists(\"time\") ?>     ccpay_yp_r_time,  <? endif ?>"
 	   "    ccpay_status"

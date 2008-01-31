@@ -65,6 +65,7 @@
 #include <openreports.h>
 
 #include "copySalesOrder.h"
+#include "creditcardprocessor.h"
 #include "deliverSalesOrder.h"
 #include "printPackingList.h"
 #include "printSoForm.h"
@@ -188,8 +189,96 @@ void openSalesOrders::sDelete()
     q.exec();
     if (q.first())
     {
+      bool closeInstead = false;
       int result = q.value("result").toInt();
-      if (result == -1)
+      if (result == -4 && _privleges->check("ProcessCreditCards"))
+      {
+	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
+				   storedProcErrorLookup("deleteSo", result) + 
+				   "<br>Would you like to refund the amount "
+				   "charged and close the Sales Order instead?",
+				   QMessageBox::Yes | QMessageBox::Default,
+				   QMessageBox::No) == QMessageBox::Yes)
+	{
+	  CreditCardProcessor *cardproc = CreditCardProcessor::getProcessor();
+	  if (! cardproc)
+	    QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				  CreditCardProcessor::errorMsg());
+	  else
+	  {
+	    XSqlQuery ccq;
+	    ccq.prepare("SELECT ccpay_ccard_id, ccpay_curr_id,"
+			"       SUM(ccpay_amount     * sense) AS amount,"
+			"       SUM(ccpay_r_tax      * sense) AS tax,"
+			"       SUM(ccpay_r_shipping * sense) AS freight "
+			"FROM (SELECT ccpay_ccard_id, ccpay_curr_id, "
+			"             CASE WHEN ccpay_status = 'C' THEN  1"
+			"                  WHEN ccpay_status = 'R' THEN -1"
+			"             END AS sense,"
+			"             ccpay_amount,"
+			"             COALESCE(ccpay_r_tax::NUMERIC, 0) AS ccpay_r_tax,"
+			"             COALESCE(ccpay_r_shipping::NUMERIC, 0) AS ccpay_r_shipping "
+			"      FROM ccpay, payco "
+			"      WHERE ((ccpay_id=payco_ccpay_id)"
+			"        AND  (ccpay_status IN ('C', 'R'))"
+			"        AND  (payco_cohead_id=:coheadid)) "
+			"      ) AS dummy "
+			"GROUP BY ccpay_ccard_id, ccpay_curr_id;");
+	    ccq.bindValue(":coheadid", _so->id());
+	    ccq.exec();
+	    if (ccq.first())
+	    do
+	    {
+	      QString docnum = _so->currentItem()->text(0);
+	      QString refnum = docnum;
+	      int ccpayid = -1;
+	      int coheadid = _so->id();
+	      int returnVal = cardproc->credit(ccq.value("ccpay_ccard_id").toInt(),
+					       -2,
+					       ccq.value("amount").toDouble(),
+					       ccq.value("tax").toDouble(),
+					       true,
+					       ccq.value("freight").toDouble(),
+					       0,
+					       ccq.value("ccpay_curr_id").toInt(),
+					       docnum, refnum, ccpayid,
+					       "cohead", coheadid);
+	      if (returnVal < 0)
+	      {
+		QMessageBox::critical(this, tr("Credit Card Processing Error"),
+				      cardproc->errorMsg());
+		return;
+	      }
+	      else if (returnVal > 0)
+	      {
+		QMessageBox::warning(this, tr("Credit Card Processing Warning"),
+				     cardproc->errorMsg());
+		closeInstead = true;
+	      }
+	      else if (! cardproc->errorMsg().isEmpty())
+	      {
+		QMessageBox::information(this, tr("Credit Card Processing Note"),
+				     cardproc->errorMsg());
+		closeInstead = true;
+	      }
+	    } while (ccq.next());
+	    else if (ccq.lastError().type() != QSqlError::None)
+	    {
+	      systemError(this, ccq.lastError().databaseText(),
+			  __FILE__, __LINE__);
+	      return;
+	    }
+	    else
+	    {
+	      systemError(this, tr("Could not find the ccpay records!"),
+			  __FILE__, __LINE__);
+	      return;
+	    }
+
+	  }
+	}
+      }
+      else if (result == -1 || result == -5)
       {
 	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
 				   storedProcErrorLookup("deleteSo", result) + 
@@ -197,20 +286,28 @@ void openSalesOrders::sDelete()
 				   "Sales Order instead?",
 				   QMessageBox::Yes | QMessageBox::Default,
 				   QMessageBox::No) == QMessageBox::Yes)
-	{
-	  q.prepare( "UPDATE coitem "
-		     "SET coitem_status='C' "
-		     "WHERE ((coitem_status <> 'X')"
-		     "  AND  (coitem_cohead_id=:sohead_id));" );
-	  q.bindValue(":sohead_id", _so->id());
-	  q.exec();
-	}
+	  closeInstead = true;
       }
       else if (result < 0)
       {
 	systemError(this, storedProcErrorLookup("deleteSo", result),
 		    __FILE__, __LINE__);
 	return;
+      }
+
+      if (closeInstead)
+      {
+	q.prepare( "UPDATE coitem "
+		   "SET coitem_status='C' "
+		   "WHERE ((coitem_status <> 'X')"
+		   "  AND  (coitem_cohead_id=:sohead_id));" );
+	q.bindValue(":sohead_id", _so->id());
+	q.exec();
+	if (q.lastError().type() != QSqlError::None)
+	{
+	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	  return;
+	}
       }
 
       omfgThis->sSalesOrdersUpdated(-1);

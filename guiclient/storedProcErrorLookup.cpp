@@ -450,20 +450,23 @@ void initErrorLookupHash()
 			       "for this Shipto. You may Edit the "
 			       "selected Shipto and set its status to "
 			       "inactive."),			 0, "" },
-  { "deleteSO",		-1, TR("This Sales Order cannot be deleted as some of "
-			       "its line items have already been shipped."),
-								 0, "" },
-  { "deleteSO",		-2, TR("This Sales Order cannot be deleted as some of "
-			       "its line items have already been issued to "
-			       "shipping. You must return this stock before "
-			       "you may delete this Sales Order."),
-			       					 0, "" },
+  { "deleteSO",  -1, TR("This Sales Order cannot be deleted as some of its "
+			"line items have already been shipped."),	0, "" },
+  { "deleteSO",  -2, TR("This Sales Order cannot be deleted as some of its "
+			"line items have already been issued to shipping.  "
+			"You must return this stock before "
+		        "you may delete this Sales Order."),		0, "" },
 
   /* uncomment this when releaseSoNumber returns INTEGER instead of BOOLEAN
-  { "deleteSO",		-3, TR("This Sales Order cannot be deleted because "
-			       "there was an internal error releasing the "
-			       "Sales Order Number."),		 0, "" },
+  { "deleteSO",  -3, TR("This Sales Order cannot be deleted because there was "
+			"an internal error releasing the Sales Order Number."),
+									0, "" },
   */
+
+  { "deleteSO",	 -4, TR("This Sales Order cannot be deleted because a Credit "
+			"Card has been charged for it."),		0, "" },
+  { "deleteSO",	 -5, TR("This Sales Order cannot be deleted because there is "
+			"Credit Card transaction history for it."),	0, "" },
 
   { "deleteTO",		-1, TR("This Transfer Order cannot be deleted as some of "
 			       "its line items have already been shipped."),
