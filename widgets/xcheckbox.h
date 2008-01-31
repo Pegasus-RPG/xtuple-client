@@ -72,15 +72,15 @@ class OPENMFGWIDGETS_EXPORT XCheckBox : public QCheckBox
     XCheckBox(const QString &, QWidget * = 0);
     ~XCheckBox();
 
-    virtual void	setObjectName(const QString &);
+    virtual void setObjectName(const QString &);
 
   private:
-    virtual void	constructor();
+    virtual void constructor();
 
-    bool	_forgetful;
-    QString	_settingsName;
+    bool    _forgetful;
+    QString _settingsName;
 
-    static	QPixmap	*_checkedIcon;
+    static QPixmap *_checkedIcon;
 };
 
 #endif

@@ -120,10 +120,10 @@ void RevisionCluster::activate()
   else  if (activate.lastError().type() != QSqlError::None)
   {
     QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-					      .arg(__FILE__)
-					      .arg(__LINE__),
+                                              .arg(__FILE__)
+                                              .arg(__LINE__),
     activate.lastError().databaseText());
-	return; 
+        return; 
   }
 }
 
@@ -166,14 +166,14 @@ void RevisionCluster::sModeChanged()
   if  (_x_privleges)
     if (_x_metrics->boolean("RevControl"))
     {
-	  _list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("ViewInactiveRevisions") || _x_privleges->check("MaintainRevisions"))) ||
-		                                          ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privleges->check("UseInactiveRevisions")) ||
-			                                      ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("MaintainRevisions") || _x_privleges->check("ViewInactiveRevisions"))));
-	  (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privleges->check("MaintainRevisions")) ||
-	  	                                                    ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
-			                                                (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));  
-	}
-	else
+          _list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("ViewInactiveRevisions") || _x_privleges->check("MaintainRevisions"))) ||
+                                                          ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privleges->check("UseInactiveRevisions")) ||
+                                                              ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("MaintainRevisions") || _x_privleges->check("ViewInactiveRevisions"))));
+          (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privleges->check("MaintainRevisions")) ||
+                                                                    ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
+                                                                        (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));  
+        }
+        else
     {
       _list->hide();
       (static_cast<RevisionLineEdit*>(_number))->setEnabled(TRUE);
@@ -202,8 +202,8 @@ void RevisionLineEdit::setMode(QString pmode)
   else
   {
     QMessageBox::critical(this, tr("Invalid Mode"),
-			  tr("RevisionLineEdit::setMode received "
-			     "an invalid Mode %1").arg(pmode));
+                          tr("RevisionLineEdit::setMode received "
+                             "an invalid Mode %1").arg(pmode));
     setMode(View);
   }
 }
@@ -213,7 +213,7 @@ void RevisionLineEdit::setActive()
   if (_isRevControl)
   {
     XSqlQuery revision;
-	revision.prepare( "SELECT getActiveRevId(:target_type,:target_id) AS rev_id;" );
+    revision.prepare( "SELECT getActiveRevId(:target_type,:target_id) AS rev_id;" );
     revision.bindValue(":target_type", typeText());
     revision.bindValue(":target_id", _targetId);
     revision.exec();
@@ -234,8 +234,8 @@ void RevisionLineEdit::setId(const int pId)
   _cachenum = text();
   if  (_x_privleges)
     emit canActivate((_mode==Maintain) && 
-	                (_x_privleges->check("MaintainRevisions")) &&
-					(_description=="Pending"));
+                        (_x_privleges->check("MaintainRevisions")) &&
+                                        (_description=="Pending"));
 }
 
 void RevisionLineEdit::setTargetId(int pItem)
@@ -257,8 +257,8 @@ void RevisionLineEdit::setType(QString ptype)
   else
   {
     QMessageBox::critical(this, tr("Invalid Revision Type"),
-			  tr("RevisionLineEdit::setType received "
-			     "an invalid RevisionType %1").arg(ptype));
+                          tr("RevisionLineEdit::setType received "
+                             "an invalid RevisionType %1").arg(ptype));
     setType(All);
   }
 }
@@ -269,16 +269,16 @@ void RevisionLineEdit::setType(RevisionTypes pType)
   switch (pType)
   {
     case BOM:
-	  _typeText="BOM";
-	  break;
+          _typeText="BOM";
+          break;
 
     case BOO:
-	  _typeText="BOO";
-	  break;
+          _typeText="BOO";
+          break;
 
-	default:
-	  _typeText="All";
-	break;
+        default:
+          _typeText="All";
+        break;
   }
 }
 
@@ -290,79 +290,79 @@ void RevisionLineEdit::sParse()
     if (stripped.length() == 0)
     {
       setId(-1);
-	  _parsed = TRUE;
+          _parsed = TRUE;
     }
     else
     {
-	
+        
       XSqlQuery numQ;
-	  numQ.prepare("SELECT rev_id, "
-		           "rev_number, "
-		           "CASE WHEN rev_status='A' THEN "
-				   "  'Active' "
-				   "WHEN rev_status='P' THEN "
-				   "  'Pending' "
-				   "ELSE 'Inactive' "
-				   "END AS status "
-				   "FROM rev "
-				   "WHERE ((rev_number=UPPER(:number))"
-				   " AND (rev_target_id=:target_id)"
-				   " AND (rev_target_type=:target_type));");
-  	  numQ.bindValue(":number", stripped);
-	  numQ.bindValue(":target_id",_targetId);
-	  numQ.bindValue(":target_type",typeText());
-	  numQ.exec();
-	  if (numQ.first())
-	  {
-	    _valid = true;
-	    setId(numQ.value("rev_id").toInt());
-		setText(numQ.value("rev_number").toString());
-	  }
+          numQ.prepare("SELECT rev_id, "
+                       "rev_number, "
+                       "CASE WHEN rev_status='A' THEN "
+                       "  'Active' "
+                       "WHEN rev_status='P' THEN "
+                       "  'Pending' "
+                       "ELSE 'Inactive' "
+                       "END AS status "
+                       "FROM rev "
+                       "WHERE ((rev_number=UPPER(:number))"
+                       " AND (rev_target_id=:target_id)"
+                       " AND (rev_target_type=:target_type));");
+          numQ.bindValue(":number", stripped);
+          numQ.bindValue(":target_id",_targetId);
+          numQ.bindValue(":target_type",typeText());
+          numQ.exec();
+          if (numQ.first())
+          {
+            _valid = true;
+            setId(numQ.value("rev_id").toInt());
+                setText(numQ.value("rev_number").toString());
+          }
       else
       {
-	    if (_allowNew)
-	    {
+            if (_allowNew)
+            {
           if (QMessageBox::question(this, tr("Create New Revision?"),
-	    	  tr("Revision does not exist.  Would you like to create a new one from the current active revision?"),
-		  	     QMessageBox::Yes | QMessageBox::Default,
-		  	     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-		  {
-		    XSqlQuery newrev;
-			if (_type==BOM)
-			  newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
-			else if (_type==BOO)
-		      newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
-			newrev.bindValue(":target_id", _targetId);
-			newrev.bindValue(":revision", text());
-		    newrev.exec();
-			if (newrev.first())
-			  setId(newrev.value("result").toInt());
-			else
-			{
-	    	  setText(_cachenum);
-	          if (newrev.lastError().type() != QSqlError::None)
-	          QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-			      .arg(__FILE__)
-			      .arg(__LINE__),
-		      newrev.lastError().databaseText());
-			}
-		  }
-		  else
-		  {
-		    setText(_cachenum);
-		  }
-		}
-		else 
-	    {
-		  setText(_cachenum);
-	      if (numQ.lastError().type() != QSqlError::None)
-	      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-			      .arg(__FILE__)
-			      .arg(__LINE__),
+                  tr("Revision does not exist.  Would you like to create a new one from the current active revision?"),
+                             QMessageBox::Yes | QMessageBox::Default,
+                             QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
+                  {
+                    XSqlQuery newrev;
+                        if (_type==BOM)
+                          newrev.prepare("SELECT createBomRev(:target_id,:revision) AS result;");
+                        else if (_type==BOO)
+                      newrev.prepare("SELECT createBooRev(:target_id,:revision) AS result;");
+                        newrev.bindValue(":target_id", _targetId);
+                        newrev.bindValue(":revision", text());
+                    newrev.exec();
+                        if (newrev.first())
+                          setId(newrev.value("result").toInt());
+                        else
+                        {
+                  setText(_cachenum);
+                  if (newrev.lastError().type() != QSqlError::None)
+                  QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                              .arg(__FILE__)
+                              .arg(__LINE__),
+                      newrev.lastError().databaseText());
+                        }
+                  }
+                  else
+                  {
+                    setText(_cachenum);
+                  }
+                }
+                else 
+            {
+                  setText(_cachenum);
+              if (numQ.lastError().type() != QSqlError::None)
+              QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                              .arg(__FILE__)
+                              .arg(__LINE__),
           numQ.lastError().databaseText());
         }
-	  }
-	}
+          }
+        }
   }
   _parsed = TRUE;
   emit valid(_valid);

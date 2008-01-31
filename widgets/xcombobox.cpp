@@ -215,8 +215,8 @@ void XComboBox::setType(XComboBoxTypes pType)
 
     case ShippingForms:
       query.exec( "SELECT shipform_id, shipform_name "
-		  "FROM shipform "
-		  "ORDER BY shipform_name;" );
+                  "FROM shipform "
+                  "ORDER BY shipform_name;" );
       break;
 
     case Terms:
@@ -305,7 +305,7 @@ void XComboBox::setType(XComboBoxTypes pType)
     case CurrenciesNotBase:
       query.exec( "SELECT curr_id, currConcat(curr_abbr, curr_symbol)"
                   " FROM curr_symbol "
-		  " WHERE curr_base = FALSE "
+                  " WHERE curr_base = FALSE "
                   "ORDER BY curr_abbr;" );
       break;
 
@@ -465,19 +465,19 @@ void XComboBox::setType(XComboBoxTypes pType)
     case Agent:
       query.exec( "SELECT usr_id, usr_username "
                   "  FROM usr"
-		  " WHERE (usr_agent) "
-		  " ORDER BY usr_username;" );
+                  " WHERE (usr_agent) "
+                  " ORDER BY usr_username;" );
       break;
 
     case Reports:
       query.exec( "SELECT a.report_id, a.report_name "
-		  "FROM report a, "
-		  "    (SELECT MIN(report_grade) AS report_grade, report_name "
-		  "     FROM report "
-		  "     GROUP BY report_name) b "
-		  "WHERE ((a.report_name=b.report_name)"
-		  "  AND  (a.report_grade=b.report_grade)) "
-		  "ORDER BY report_name;" );
+                  "FROM report a, "
+                  "    (SELECT MIN(report_grade) AS report_grade, report_name "
+                  "     FROM report "
+                  "     GROUP BY report_name) b "
+                  "WHERE ((a.report_name=b.report_name)"
+                  "  AND  (a.report_grade=b.report_grade)) "
+                  "ORDER BY report_name;" );
       break;
 
     case OpportunityStages:
@@ -509,22 +509,22 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case Currencies:
-	if (count() <= 1)
-	{
-	    hide();
-	    if (_label)
-		_label->hide();
-	}
-	break;
+      if (count() <= 1)
+      {
+        hide();
+        if (_label)
+          _label->hide();
+      }
+      break;
 
     case CurrenciesNotBase:
-	if (count() < 1)
-	{
-	    hide();
-	    if (_label)
-		_label->hide();
-	}
-	break;
+      if (count() < 1)
+      {
+        hide();
+        if (_label)
+          _label->hide();
+      }
+      break;
 
     default:
       break;
@@ -538,22 +538,22 @@ void XComboBox::setLabel(QLabel* pLab)
   switch (_type)
   {
     case Currencies:
-	if (count() <= 1)
-	{
-	    hide();
-	    if (_label)
-		_label->hide();
-	}
-	break;
+      if (count() <= 1)
+      {
+        hide();
+        if (_label)
+          _label->hide();
+      }
+      break;
 
     case CurrenciesNotBase:
-	if (count() < 1)
-	{
-	    hide();
-	    if (_label)
-		_label->hide();
-	}
-	break;
+      if (count() < 1)
+      {
+        hide();
+        if (_label)
+          _label->hide();
+      }
+      break;
 
     default:
       break;
@@ -567,10 +567,10 @@ void XComboBox::setId(int pTarget)
   {
     XSqlQuery query;
     query.prepare("SELECT report_id "
-		  "FROM report "
-		  "WHERE (report_name IN (SELECT report_name "
-		  "                       FROM report "
-		  "                       WHERE (report_id=:report_id)));");
+                  "FROM report "
+                  "WHERE (report_name IN (SELECT report_name "
+                  "                       FROM report "
+                  "                       WHERE (report_id=:report_id)));");
     query.bindValue(":report_id", pTarget);
     query.exec();
     while (query.next())
@@ -578,22 +578,22 @@ void XComboBox::setId(int pTarget)
       int id = query.value("report_id").toInt();
       for (int counter = 0; counter < count(); counter++)
       {
-	if (_ids.at(counter) == id)
-	{
-	  setCurrentItem(counter);
+        if (_ids.at(counter) == id)
+        {
+          setCurrentItem(counter);
 
-	  if(_lastId!=id)
-	  {
-	    _lastId = id;
-	    emit newID(pTarget);
-	    emit valid(TRUE);
+          if(_lastId!=id)
+          {
+            _lastId = id;
+            emit newID(pTarget);
+            emit valid(TRUE);
 
-	    if (allowNull())
-	      emit notNull(TRUE);
-	  }
+            if (allowNull())
+              emit notNull(TRUE);
+          }
 
-	  return;
-	}
+          return;
+        }
       }
     }
   }
@@ -603,19 +603,19 @@ void XComboBox::setId(int pTarget)
     {
       if (_ids.at(counter) == pTarget)
       {
-	setCurrentItem(counter);
+        setCurrentItem(counter);
 
-	if(_lastId!=pTarget)
-	{
-	  _lastId = pTarget;
-	  emit newID(pTarget);
-	  emit valid(TRUE);
+        if(_lastId!=pTarget)
+        {
+          _lastId = pTarget;
+          emit newID(pTarget);
+          emit valid(TRUE);
 
-	  if (allowNull())
-	    emit notNull(TRUE);
-	}
+          if (allowNull())
+            emit notNull(TRUE);
+        }
 
-	return;
+        return;
       }
     }
   }

@@ -70,15 +70,14 @@ XCheckBox::XCheckBox(const QString &pText, QWidget *pParent) :
 }
 
 // can't make a static QPixmap 'cause Qt complains:
-//	Must construct a QApplication before a QPaintDevice
+// Must construct a QApplication before a QPaintDevice
 QPixmap *XCheckBox::_checkedIcon = 0;
 
 void XCheckBox::constructor()
 {
   _forgetful = false;
   if (_x_preferences)
-    _forgetful = _x_preferences->value("XCheckBox/forgetful").startsWith("t",
-							  Qt::CaseInsensitive);
+    _forgetful = _x_preferences->value("XCheckBox/forgetful").startsWith("t", Qt::CaseInsensitive);
   if (! _forgetful)
   {
     Q_INIT_RESOURCE(widgets);

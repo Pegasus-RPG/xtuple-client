@@ -84,14 +84,14 @@ class OPENMFGWIDGETS_EXPORT ContactList : public VirtualList
     friend class ContactSearch;
 
     public:
-	ContactList(QWidget*, const char* = 0, bool = false, Qt::WFlags = 0);
+      ContactList(QWidget*, const char* = 0, bool = false, Qt::WFlags = 0);
 
     public slots:
-	virtual void sFillList();
-	virtual void sSearch(const QString&);
+      virtual void sFillList();
+      virtual void sSearch(const QString&);
 
     protected:
-	ContactCluster* _parent;
+      ContactCluster* _parent;
 };
 
 class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch

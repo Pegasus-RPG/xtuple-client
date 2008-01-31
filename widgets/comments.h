@@ -71,7 +71,7 @@ class OPENMFGWIDGETS_EXPORT Comments : public QWidget
 
   Q_ENUMS(CommentSources)
 
-  Q_PROPERTY(CommentSources type	READ type	WRITE setType	)
+  Q_PROPERTY(CommentSources type READ type WRITE setType)
 
   friend class Comment;
 
@@ -109,8 +109,8 @@ class OPENMFGWIDGETS_EXPORT Comments : public QWidget
 
       CommentMap(enum CommentSources s, const QString & i)
       {
-	source = s;
-	ident = i;
+        source = s;
+        ident = i;
       }
     };
     static const struct CommentMap _commentMap[]; // see comments.cpp for init

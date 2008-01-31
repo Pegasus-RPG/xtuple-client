@@ -116,12 +116,12 @@ class OPENMFGWIDGETS_EXPORT ToCluster : public QWidget
     ToCluster(QWidget *, const char * = 0);
     ToCluster(int, QWidget *);
 
-    inline int  dstwhs()		{ return _toNumber->_dstwhs;  }
-    inline int  id()			{ return _toNumber->_id;      }
-    inline int  number()		{ return _toNumber->text().toInt();  }
-    inline int  srcwhs()		{ return _toNumber->_srcwhs;  }
-    inline bool isValid()		{ return _toNumber->_valid;   }
-    inline void setType(int pType)	{ _toNumber->_type = pType;   }
+    inline int  dstwhs()           { return _toNumber->_dstwhs;  }
+    inline int  id()               { return _toNumber->_id;      }
+    inline int  number()           { return _toNumber->text().toInt();  }
+    inline int  srcwhs()           { return _toNumber->_srcwhs;  }
+    inline bool isValid()          { return _toNumber->_valid;   }
+    inline void setType(int pType) { _toNumber->_type = pType;   }
 
   public slots:
     void setId(int);

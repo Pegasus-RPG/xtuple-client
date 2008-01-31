@@ -70,7 +70,7 @@ class OPENMFGWIDGETS_EXPORT ShiftClusterLineEdit : public VirtualClusterLineEdit
     Q_OBJECT
 
     public:
-	ShiftClusterLineEdit(QWidget*, const char* = 0);
+        ShiftClusterLineEdit(QWidget*, const char* = 0);
 };
 
 class OPENMFGWIDGETS_EXPORT ShiftCluster : public VirtualCluster
@@ -78,7 +78,7 @@ class OPENMFGWIDGETS_EXPORT ShiftCluster : public VirtualCluster
     Q_OBJECT
 
     public:
-	ShiftCluster(QWidget*, const char* = 0);
+        ShiftCluster(QWidget*, const char* = 0);
 };
 
 #endif

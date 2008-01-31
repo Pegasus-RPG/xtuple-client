@@ -66,7 +66,7 @@ class OPENMFGWIDGETS_EXPORT OpportunityClusterLineEdit : public VirtualClusterLi
     Q_OBJECT
 
     public:
-	OpportunityClusterLineEdit(QWidget*, const char* = 0);
+      OpportunityClusterLineEdit(QWidget*, const char* = 0);
 };
 
 class OPENMFGWIDGETS_EXPORT OpportunityCluster : public VirtualCluster
@@ -74,7 +74,7 @@ class OPENMFGWIDGETS_EXPORT OpportunityCluster : public VirtualCluster
     Q_OBJECT
 
     public:
-	OpportunityCluster(QWidget*, const char* = 0);
+      OpportunityCluster(QWidget*, const char* = 0);
 };
 
 #endif

@@ -183,15 +183,15 @@ void ParameterGroup::setType(enum ParameterGroupTypes pType)
     case CurrencyNotBase:
       _all->setText(QObject::tr("All Foreign Currencies"));
       _items->setType(XComboBox::CurrenciesNotBase);
-      if (_items->isHidden())	// if there's only one currency defined
-	  hide();
+      if (_items->isHidden()) // if there's only one currency defined
+        hide();
       break;
 
     case Currency:
       _all->setText(QObject::tr("All Currencies"));
       _items->setType(XComboBox::Currencies);
-      if (_items->isHidden())	// if there's only one currency defined
-	  hide();
+      if (_items->isHidden()) // if there's only one currency defined
+        hide();
       break;
 
     case WorkCenter:
@@ -315,7 +315,7 @@ void ParameterGroup::bindValue(XSqlQuery &pQuery)
         name = ":id";             break;
 
       default:
-	break;
+        break;
     }
 
     pQuery.bindValue(name, _items->id());
@@ -361,7 +361,7 @@ void ParameterGroup::bindValue(XSqlQuery &pQuery)
         name = ":pattern";             break;
 
       default:
-	break;
+        break;
     }
 
     pQuery.bindValue(name, _pattern->text());

@@ -238,11 +238,11 @@ void ConfigureGroup::setType(ConfigureGroupType pType)
       _attributeLit->hide();
       _attribute->hide();
     }
-	else
-	{
-	  _type = None;
-	  _everyConfig->setChecked(TRUE);
-	}
+    else
+    {
+      _type = None;
+      _everyConfig->setChecked(TRUE);
+    }
   }
 }
 

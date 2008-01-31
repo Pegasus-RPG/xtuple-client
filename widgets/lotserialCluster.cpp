@@ -95,12 +95,12 @@ LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
 {
     setTitles(tr("Lot/Serial Number"), tr("Lot/Serial Numbers"));
     _query = QString("SELECT lsdetail_id AS id, "
-		     "       lsdetail_lotserial AS number, "
-		     "       item_number AS name, "
-		     "       lsdetail_created AS description "
-		     "FROM lsdetail, itemsite, item "
-		     "WHERE (lsdetail_itemsite_id=itemsite_id) "
-		     "  AND (itemsite_item_id = item_id)");
+                     "       lsdetail_lotserial AS number, "
+                     "       item_number AS name, "
+                     "       lsdetail_created AS description "
+                     "FROM lsdetail, itemsite, item "
+                     "WHERE (lsdetail_itemsite_id=itemsite_id) "
+                     "  AND (itemsite_item_id = item_id)");
     _idClause = QString("AND (lsdetail_id=:id)");
     _numClause = QString("AND (UPPER(lsdetail_lotserial)=UPPER(:number))");
     _strict = true;
@@ -160,49 +160,49 @@ void LotserialLineEdit::sParse()
 {
     if (! _parsed)
     {
-	QString stripped = text().stripWhiteSpace().upper();
-	if (stripped.length() == 0)
-	    setId(-1);
-	else
-	{
-	    XSqlQuery numQ;
-	    numQ.prepare(_query + _numClause + _extraClause + QString(";"));
-	    numQ.bindValue(":number", stripped);
-	    numQ.exec();
-	    if (numQ.first())
-	    {
-		_valid = true;
-		setId(numQ.value("id").toInt());
-		_name = (numQ.value("name").toString());
-		if (_hasDescription)
-		    _description = numQ.value("description").toString();
-	    }
-	    else if (numQ.lastError().type() != QSqlError::None)
-	    {
-	      QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
-					    .arg(__FILE__)
-					    .arg(__LINE__),
-				    numQ.lastError().databaseText());
-	      return;
-	    }
-	    else if (_strict)
-	      VirtualClusterLineEdit::clear();
-	    else if (isVisible() && QMessageBox::question(this, tr("Lot/Serial # Not Found"),
-					   tr("This Lot/Serial # was not found" +
-					      QString(_itemid > 0 ? " for this item" : "") +
-					      ". Are you sure it is correct?"),
-					   QMessageBox::Yes,
-					   QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-	    {
-	      VirtualClusterLineEdit::clear();
-	      return;
-	    }
-	    else
-	    {
-	      VirtualClusterLineEdit::clear();
-	      setText(stripped);
-	    }
-	}
+        QString stripped = text().stripWhiteSpace().upper();
+        if (stripped.length() == 0)
+            setId(-1);
+        else
+        {
+            XSqlQuery numQ;
+            numQ.prepare(_query + _numClause + _extraClause + QString(";"));
+            numQ.bindValue(":number", stripped);
+            numQ.exec();
+            if (numQ.first())
+            {
+                _valid = true;
+                setId(numQ.value("id").toInt());
+                _name = (numQ.value("name").toString());
+                if (_hasDescription)
+                    _description = numQ.value("description").toString();
+            }
+            else if (numQ.lastError().type() != QSqlError::None)
+            {
+              QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                            .arg(__FILE__)
+                                            .arg(__LINE__),
+                                    numQ.lastError().databaseText());
+              return;
+            }
+            else if (_strict)
+              VirtualClusterLineEdit::clear();
+            else if (isVisible() && QMessageBox::question(this, tr("Lot/Serial # Not Found"),
+                                           tr("This Lot/Serial # was not found" +
+                                              QString(_itemid > 0 ? " for this item" : "") +
+                                              ". Are you sure it is correct?"),
+                                           QMessageBox::Yes,
+                                           QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+            {
+              VirtualClusterLineEdit::clear();
+              return;
+            }
+            else
+            {
+              VirtualClusterLineEdit::clear();
+              setText(stripped);
+            }
+        }
     }
 
     _parsed = TRUE;

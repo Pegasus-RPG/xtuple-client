@@ -78,17 +78,17 @@ void ShipmentCluster::limitToOrder(const int head_id)
     switch (static_cast<ShipmentClusterLineEdit*>(_number)->type())
     {
       case ShipmentClusterLineEdit::SalesOrder:
-	setExtraClause(QString("   ((shiphead_order_id=%1)"
-			       "AND (shiphead_order_type='SO')) ").arg(head_id));
-	break;
+        setExtraClause(QString("   ((shiphead_order_id=%1)"
+                               "AND (shiphead_order_type='SO')) ").arg(head_id));
+        break;
       case ShipmentClusterLineEdit::TransferOrder:
-	setExtraClause(QString("   ((shiphead_order_id=%1)"
-			       "AND (shiphead_order_type='TO')) ").arg(head_id));
-	break;
+        setExtraClause(QString("   ((shiphead_order_id=%1)"
+                               "AND (shiphead_order_type='TO')) ").arg(head_id));
+        break;
       case ShipmentClusterLineEdit::All:
       default:
-	setExtraClause(QString(" (shiphead_order_id=%1) ").arg(head_id));
-	break;
+        setExtraClause(QString(" (shiphead_order_id=%1) ").arg(head_id));
+        break;
     }
   }
 //  else
@@ -131,7 +131,7 @@ void ShipmentCluster::setType(ShipmentClusterLineEdit::ShipmentType ptype)
 
 ShipmentClusterLineEdit::ShipmentClusterLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "shiphead", "shiphead_id", "shiphead_number",
-			   "shiphead_shipdate", "shiphead_tracknum", 0, pName)
+                           "shiphead_shipdate", "shiphead_tracknum", 0, pName)
 {
     _type = All;
     setStrict(false);
@@ -151,20 +151,20 @@ void ShipmentClusterLineEdit::setType(ShipmentType ptype)
     switch (ptype)
     {
       case All:
-	clearExtraClause();
-	break;
+        clearExtraClause();
+        break;
       case SalesOrder:
-	setExtraClause(" (shiphead_order_type='SO') ");
-	break;
+        setExtraClause(" (shiphead_order_type='SO') ");
+        break;
       case TransferOrder:
-	setExtraClause(" (shiphead_order_type='TO') ");
-	break;
+        setExtraClause(" (shiphead_order_type='TO') ");
+        break;
       default:
-	QMessageBox::critical(this, tr("Invalid Shipment Type"),
-			      tr("<p>ShipmentClusterLineEdit::setType received "
-				 "an invalid ShipmentType %1").arg(ptype));
-	return;
-	break;
+        QMessageBox::critical(this, tr("Invalid Shipment Type"),
+                              tr("<p>ShipmentClusterLineEdit::setType received "
+                                 "an invalid ShipmentType %1").arg(ptype));
+        return;
+        break;
     }
   }
   _type = ptype;
@@ -179,8 +179,8 @@ void ShipmentClusterLineEdit::setType(QString ptype)
   else
   {
     QMessageBox::critical(this, tr("Invalid Shipment Type"),
-			  tr("ShipmentClusterLineEdit::setType received "
-			     "an invalid ShipmentType %1").arg(ptype));
+                          tr("ShipmentClusterLineEdit::setType received "
+                             "an invalid ShipmentType %1").arg(ptype));
     setType(All);
   }
 }

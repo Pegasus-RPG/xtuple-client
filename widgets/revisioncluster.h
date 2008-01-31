@@ -83,35 +83,35 @@ class OPENMFGWIDGETS_EXPORT RevisionLineEdit : public VirtualClusterLineEdit
   public:
     RevisionLineEdit(QWidget *, const char * = 0);
 
-	enum Modes { View, Use, Maintain };
+    enum Modes { View, Use, Maintain };
     enum RevisionTypes { All, BOM, BOO };
     virtual Modes mode();
-	virtual RevisionTypes type();
-	virtual QString typeText();
+    virtual RevisionTypes type();
+    virtual QString typeText();
 
   protected slots:
-	virtual void setId(const int);
+    virtual void setId(const int);
     virtual void sParse();
 
   public slots:
     void setActive();
-  	void setMode(QString);
-  	void setMode(Modes);
-	void setTargetId(int pItem);
-	void setType(QString);
-	void setType(RevisionTypes);
+      void setMode(QString);
+      void setMode(Modes);
+    void setTargetId(int pItem);
+    void setType(QString);
+    void setType(RevisionTypes);
 
   private:
-	bool _allowNew;
-	bool _isRevControl;
-	enum Modes _mode;
-	enum RevisionTypes _type;
-	int _targetId;
-	QString _cachenum;
+    bool _allowNew;
+    bool _isRevControl;
+    enum Modes _mode;
+    enum RevisionTypes _type;
+    int _targetId;
+    QString _cachenum;
     QString _typeText;
 
   signals:
-	void canActivate(bool);
+    void canActivate(bool);
     void modeChanged();
 
 };
@@ -128,21 +128,21 @@ class OPENMFGWIDGETS_EXPORT RevisionCluster : public VirtualCluster
 
   public:
     RevisionCluster(QWidget *, const char * = 0);
-	virtual RevisionLineEdit::Modes mode();
-	virtual RevisionLineEdit::RevisionTypes type();
+    virtual RevisionLineEdit::Modes mode();
+    virtual RevisionLineEdit::RevisionTypes type();
 
   private slots:
     void sModeChanged();
-	void sCanActivate(bool p);
+    void sCanActivate(bool p);
     void setActive();
 
   public slots:
     void activate();
-  	virtual void setMode(QString);
-	virtual void setMode(RevisionLineEdit::Modes);
-  	virtual void setType(QString);
-	virtual void setType(RevisionLineEdit::RevisionTypes);
-	virtual void setTargetId(int pItem);
+    virtual void setMode(QString);
+    virtual void setMode(RevisionLineEdit::Modes);
+    virtual void setType(QString);
+    virtual void setType(RevisionLineEdit::RevisionTypes);
+    virtual void setTargetId(int pItem);
 
   signals:
     void canActivate(bool);

@@ -80,7 +80,7 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 itemList::itemList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
     if ( !name )
-	setName( "itemList" );
+      setName( "itemList" );
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;

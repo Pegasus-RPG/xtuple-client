@@ -66,7 +66,7 @@ class OPENMFGWIDGETS_EXPORT IncidentClusterLineEdit : public VirtualClusterLineE
     Q_OBJECT
 
     public:
-	IncidentClusterLineEdit(QWidget*, const char* = 0);
+      IncidentClusterLineEdit(QWidget*, const char* = 0);
 };
 
 class OPENMFGWIDGETS_EXPORT IncidentCluster : public VirtualCluster
@@ -74,7 +74,7 @@ class OPENMFGWIDGETS_EXPORT IncidentCluster : public VirtualCluster
     Q_OBJECT
 
     public:
-	IncidentCluster(QWidget*, const char* = 0);
+      IncidentCluster(QWidget*, const char* = 0);
 };
 
 #endif

@@ -78,8 +78,8 @@ class OPENMFGWIDGETS_EXPORT WComboBox : public XComboBox
 
     enum WComboBoxTypes
     {
-      All,	AllActive,	NonTransit,
-      Shipping,	Sold,		Supply,
+      All, AllActive, NonTransit,
+      Shipping, Sold, Supply,
       Transit
     };
 

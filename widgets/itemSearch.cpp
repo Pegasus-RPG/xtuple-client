@@ -82,7 +82,7 @@ QString buildItemLineEditTitle(const unsigned int, const QString);
 itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {
     if ( !name )
-	setName( "itemSearch" );
+      setName( "itemSearch" );
 
   _itemid = -1;
   _itemType = ItemLineEdit::cUndefined;

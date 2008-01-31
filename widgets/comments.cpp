@@ -92,7 +92,7 @@ const Comments::CommentMap Comments::_commentMap[] =
     CommentMap( PurchaseOrder,     "P"   ),
     CommentMap( PurchaseOrderItem, "PI"  ),
     CommentMap( ReturnAuth,        "RA"  ),
-	CommentMap( ReturnAuthItem,    "RI"  ),
+    CommentMap( ReturnAuthItem,    "RI"  ),
     CommentMap( Quote,             "Q"   ),
     CommentMap( QuoteItem,         "QI"  ),
     CommentMap( SalesOrder,        "S"   ),

@@ -92,7 +92,7 @@ class OPENMFGWIDGETS_EXPORT woList : public QDialog
 private:
     int _woid;
     int _type;
-	QString _sql;
+    QString _sql;
 
 };
 

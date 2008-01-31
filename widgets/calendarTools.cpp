@@ -118,9 +118,9 @@ PeriodsListView::PeriodsListView(QWidget *pParent, const char *pName) :
 void PeriodsListView::populate(int pCalheadid)
 {
   XSqlQuery caltype( QString( "SELECT calhead_type "
-			      "FROM calhead "
-			      "WHERE (calhead_id=%1);" )
-		     .arg(pCalheadid) );
+                              "FROM calhead "
+                              "WHERE (calhead_id=%1);" )
+                     .arg(pCalheadid) );
   if (caltype.first())
   {
     QString sql;
@@ -130,25 +130,25 @@ void PeriodsListView::populate(int pCalheadid)
 
     if (caltype.value("calhead_type").toString() == "A")
       sql = QString( "SELECT acalitem_id, periodstart, periodend, acalitem_name,"
-		     "       (formatDate(periodstart) || ' - ' || formatDate(periodend)) "
-		     "FROM ( SELECT acalitem_id, acalitem_name,"
-		     "              findPeriodStart(acalitem_id) AS periodstart,"
-		     "              findPeriodEnd(acalitem_id) AS periodend "
-		     "       FROM acalitem "
-		     "       WHERE (acalitem_calhead_id=%1) ) AS data "
-		     "ORDER BY periodstart;" )
-	      .arg(pCalheadid);
+                     "       (formatDate(periodstart) || ' - ' || formatDate(periodend)) "
+                     "FROM ( SELECT acalitem_id, acalitem_name,"
+                     "              findPeriodStart(acalitem_id) AS periodstart,"
+                     "              findPeriodEnd(acalitem_id) AS periodend "
+                     "       FROM acalitem "
+                     "       WHERE (acalitem_calhead_id=%1) ) AS data "
+                     "ORDER BY periodstart;" )
+              .arg(pCalheadid);
 
     else if (caltype.value("calhead_type").toString() == "R")
       sql = QString( "SELECT rcalitem_id, periodstart, periodend, rcalitem_name,"
-		     "       (formatDate(periodstart) || ' - ' || formatDate(periodend)) "
-		     "FROM ( SELECT rcalitem_id, rcalitem_name,"
-		     "              findPeriodStart(rcalitem_id) AS periodstart,"
-		     "              findPeriodEnd(rcalitem_id) AS periodend "
-		     "       FROM rcalitem "
-		     "       WHERE (rcalitem_calhead_id=%1) ) AS data "
-		     "ORDER BY periodstart;" )
-	      .arg(pCalheadid);
+                     "       (formatDate(periodstart) || ' - ' || formatDate(periodend)) "
+                     "FROM ( SELECT rcalitem_id, rcalitem_name,"
+                     "              findPeriodStart(rcalitem_id) AS periodstart,"
+                     "              findPeriodEnd(rcalitem_id) AS periodend "
+                     "       FROM rcalitem "
+                     "       WHERE (rcalitem_calhead_id=%1) ) AS data "
+                     "ORDER BY periodstart;" )
+              .arg(pCalheadid);
 
     XSqlQuery query(sql);
     XTreeWidgetItem *last = 0;
@@ -157,8 +157,8 @@ void PeriodsListView::populate(int pCalheadid)
     while (query.next())
     {
       last = new PeriodListViewItem(this, last, query.value(0).toInt(),
-				    query.value(1).toDate(), query.value(2).toDate(),
-				    query.value(3).toString(), query.value(4).toString() );
+                                    query.value(1).toDate(), query.value(2).toDate(),
+                                    query.value(3).toString(), query.value(4).toString() );
       setCurrentItem(last);
     }
     setSelectionMode(tmp);
@@ -229,9 +229,9 @@ void PeriodsListView::load(ParameterList &pParams)
       param = pParams.value(QString("calitem_id(%1)").arg(counter), &valid);
       if (valid)
       {
-	for (int i = 0; i < topLevelItemCount(); i++)
-	  if (((XTreeWidgetItem*)topLevelItem(i))->id() == param.toInt())
-	    setCurrentItem(topLevelItem(i));
+        for (int i = 0; i < topLevelItemCount(); i++)
+          if (((XTreeWidgetItem*)topLevelItem(i))->id() == param.toInt())
+            setCurrentItem(topLevelItem(i));
       }
     }
   }
@@ -240,8 +240,8 @@ void PeriodsListView::load(ParameterList &pParams)
 }
 
 PeriodListViewItem::PeriodListViewItem( PeriodsListView *parent, XTreeWidgetItem *itm, int pId,
-			QDate pStartDate, QDate pEndDate,
-			QString s0, QString s1 ) :
+                        QDate pStartDate, QDate pEndDate,
+                        QString s0, QString s1 ) :
 XTreeWidgetItem(parent, itm, pId, QVariant(s0), QVariant(s1))
 {
   _startDate = pStartDate;

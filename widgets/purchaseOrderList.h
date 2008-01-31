@@ -89,7 +89,7 @@ public slots:
 private:
     int _poheadid;
     int _type;
-    VendorCluster	*_vend;
+    VendorCluster *_vend;
 
 };
 

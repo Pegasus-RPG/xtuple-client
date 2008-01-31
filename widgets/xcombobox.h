@@ -128,7 +128,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     bool editable() const;
     void setEditable(bool);
 
-    inline QLabel* label() const	{ return _label; };
+    inline QLabel* label() const { return _label; };
     void setLabel(QLabel* pLab);
 
 
@@ -162,8 +162,8 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     int                 _lastId;
     bool                _allowNull;
     enum XComboBoxTypes _type;
-    QLabel*		_label;
-    QString		_nullStr;
+    QLabel*             _label;
+    QString             _nullStr;
 };
 
 #endif

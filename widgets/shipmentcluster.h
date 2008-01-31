@@ -70,7 +70,7 @@ class ShipmentList : public VirtualList
     Q_OBJECT
 
     public:
-	ShipmentList(QWidget*, Qt::WindowFlags = 0);
+        ShipmentList(QWidget*, Qt::WindowFlags = 0);
 };
 
 class ShipmentSearch : public VirtualSearch
@@ -78,7 +78,7 @@ class ShipmentSearch : public VirtualSearch
     Q_OBJECT
 
     public:
-	ShipmentSearch(QWidget*, Qt::WindowFlags = 0);
+        ShipmentSearch(QWidget*, Qt::WindowFlags = 0);
 };
 
 class OPENMFGWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineEdit
@@ -87,25 +87,25 @@ class OPENMFGWIDGETS_EXPORT ShipmentClusterLineEdit : public VirtualClusterLineE
 
     Q_ENUMS(ShipmentType)
 
-    Q_PROPERTY(ShipmentType type READ type	WRITE setType )
+    Q_PROPERTY(ShipmentType type READ type WRITE setType )
 
     public:
       // TODO: make these flags instead of a simple enum?
-	enum ShipmentType { All, SalesOrder, TransferOrder };
-	ShipmentClusterLineEdit(QWidget*, const char* = 0);
-	virtual ShipmentType type();
+        enum ShipmentType { All, SalesOrder, TransferOrder };
+        ShipmentClusterLineEdit(QWidget*, const char* = 0);
+        virtual ShipmentType type();
 
     public slots:
-	virtual void	setId(const int);
-	virtual void	setType(QString);
-	virtual void	setType(ShipmentType);
+        virtual void setId(const int);
+        virtual void setType(QString);
+        virtual void setType(ShipmentType);
 
     protected slots:
-	virtual VirtualList*	listFactory();
-	virtual VirtualSearch*	searchFactory();
+        virtual VirtualList*   listFactory();
+        virtual VirtualSearch* searchFactory();
 
     private:
-	ShipmentType	_type;
+        ShipmentType _type;
 };
 
 class OPENMFGWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
@@ -113,15 +113,15 @@ class OPENMFGWIDGETS_EXPORT ShipmentCluster : public VirtualCluster
     Q_OBJECT
 
     public:
-	ShipmentCluster(QWidget*, const char* = 0);
-	virtual ShipmentClusterLineEdit::ShipmentType type();
+        ShipmentCluster(QWidget*, const char* = 0);
+        virtual ShipmentClusterLineEdit::ShipmentType type();
 
     public slots:
-	virtual void limitToOrder(const int);
-	virtual void removeOrderLimit();
-	virtual void setId(const int);
-	virtual void setType(QString);
-	virtual void setType(ShipmentClusterLineEdit::ShipmentType);
+        virtual void limitToOrder(const int);
+        virtual void removeOrderLimit();
+        virtual void setId(const int);
+        virtual void setType(QString);
+        virtual void setType(ShipmentClusterLineEdit::ShipmentType);
 };
 
 #endif

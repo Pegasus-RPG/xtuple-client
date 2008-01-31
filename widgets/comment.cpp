@@ -338,7 +338,7 @@ void comment::sSave()
   {
     QMessageBox::critical( this, tr("Cannot Post Comment"),
                            tr("<p>You must select a Comment Type for this "
-			      "Comment before you may post it.") );
+                              "Comment before you may post it.") );
     _cmnttype->setFocus();
     return;
   }
@@ -355,9 +355,9 @@ void comment::sSave()
     if (result < 0)
     {
       QMessageBox::critical(this, tr("Cannot Post Comment"),
-			    tr("<p>A Stored Procedure failed to run "
-			       "properly.<br>(%1, %2)<br>")
-			      .arg("postComment").arg(result));
+                            tr("<p>A Stored Procedure failed to run "
+                               "properly.<br>(%1, %2)<br>")
+                              .arg("postComment").arg(result));
       reject();
     }
     done (_query.value("result").toInt());
@@ -365,7 +365,7 @@ void comment::sSave()
   else if (_query.lastError().type() != QSqlError::None)
   {
     QMessageBox::critical(this, tr("Cannot Post Comment"),
-			  _query.lastError().databaseText());
+                          _query.lastError().databaseText());
     reject();
   }
 }
@@ -385,7 +385,7 @@ void comment::populate()
   else if (_query.lastError().type() != QSqlError::None)
   {
     QMessageBox::critical(this, tr("Error Selecting Comment"),
-			  _query.lastError().databaseText());
+                          _query.lastError().databaseText());
     return;
   }
 }

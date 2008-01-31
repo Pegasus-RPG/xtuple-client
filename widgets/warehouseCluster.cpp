@@ -92,17 +92,17 @@ void WComboBox::setType(WComboBoxTypes pType)
   int warehousid = ((_x_preferences) ? _x_preferences->value("PreferredWarehouse").toInt() : -1);
 
   QString whss("SELECT warehous_id, warehous_code "
-	     "FROM whsinfo "
-	     "WHERE (true"
-	     "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
-	     "<? if exists(\"shipping\") ?>AND (warehous_shipping)<? endif ?>"
-	     "<? if exists(\"transit\") ?>"
-	     "  AND (warehous_transit) "
-	     "<? elseif exists(\"nottransit\") ?>"
-	     "  AND (NOT warehous_transit)"
-	     "<? endif ?>"
-	     ") "
-	     "ORDER BY warehous_code;" );
+             "FROM whsinfo "
+             "WHERE (true"
+             "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
+             "<? if exists(\"shipping\") ?>AND (warehous_shipping)<? endif ?>"
+             "<? if exists(\"transit\") ?>"
+             "  AND (warehous_transit) "
+             "<? elseif exists(\"nottransit\") ?>"
+             "  AND (NOT warehous_transit)"
+             "<? endif ?>"
+             ") "
+             "ORDER BY warehous_code;" );
 
   ParameterList whsp;
 
@@ -125,7 +125,7 @@ void WComboBox::setType(WComboBoxTypes pType)
 
     case Supply:
       clear();
-      return;	// yes, the previous version just had "clear(); return;"
+      return; // yes, the previous version just had "clear(); return;"
       break;
 
     case Transit:
@@ -149,67 +149,67 @@ void WComboBox::findItemsites(int pItemID)
   if (pItemID != -1)
   {
     QString iss("SELECT warehous_id, warehous_code "
-	       "FROM whsinfo, itemsite "
-	       "WHERE ((itemsite_warehous_id=warehous_id)"
-	       "  AND  (itemsite_item_id=<? value(\"itemid\") ?>) "
-	       "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
-	       "<? if exists(\"shipping\") ?>AND (warehous_shipping)<? endif ?>"
-	       "<? if exists(\"transit\") ?>"
-	       "  AND (warehous_transit) "
-	       "<? elseif exists(\"nottransit\") ?>"
-	       "  AND (NOT warehous_transit)"
-	       "<? endif ?>"
-	       "<? if exists(\"active\") ?>  AND (itemsite_active)  <? endif ?>"
-	       "<? if exists(\"soldIS\") ?>  AND (itemsite_sold)    <? endif ?>"
-	       "<? if exists(\"supplyIS\") ?>AND (itemsite_supply)  <? endif ?>"
-	       ") "
-	       "ORDER BY warehous_code;" );
+               "FROM whsinfo, itemsite "
+               "WHERE ((itemsite_warehous_id=warehous_id)"
+               "  AND  (itemsite_item_id=<? value(\"itemid\") ?>) "
+               "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"
+               "<? if exists(\"shipping\") ?>AND (warehous_shipping)<? endif ?>"
+               "<? if exists(\"transit\") ?>"
+               "  AND (warehous_transit) "
+               "<? elseif exists(\"nottransit\") ?>"
+               "  AND (NOT warehous_transit)"
+               "<? endif ?>"
+               "<? if exists(\"active\") ?>  AND (itemsite_active)  <? endif ?>"
+               "<? if exists(\"soldIS\") ?>  AND (itemsite_sold)    <? endif ?>"
+               "<? if exists(\"supplyIS\") ?>AND (itemsite_supply)  <? endif ?>"
+               ") "
+               "ORDER BY warehous_code;" );
     ParameterList isp;
     isp.append("itemid", pItemID);
 
     switch (_type)
     {
       case AllActive:
-	isp.append("active");
-	break;
+        isp.append("active");
+        break;
 
       case NonTransit:
-	isp.append("nottransit");
-	isp.append("active");
-	break;
+        isp.append("nottransit");
+        isp.append("active");
+        break;
 
       case Sold:
         isp.append("active");
-	isp.append("nottransit");
-	isp.append("soldIS");
-	break;
+        isp.append("nottransit");
+        isp.append("soldIS");
+        break;
 
       /* TODO: ? previous version of this function didn't have Shipping case
       case Shipping:
-	isp.append("shipping");
-	isp.append("active");
-	break;
+        isp.append("shipping");
+        isp.append("active");
+        break;
       */
 
       case Supply:
         isp.append("active");
-	isp.append("supplyIS");
-	break;
+        isp.append("supplyIS");
+        break;
 
       case Transit:
-	isp.append("transit");
-	isp.append("active");
-	break;
+        isp.append("transit");
+        isp.append("active");
+        break;
 
       case All:
       default:
-	break;
+        break;
     }
 
     MetaSQLQuery ism(iss);
     XSqlQuery isq = ism.toQuery(isp);
     populate(isq, ((_x_preferences) ?
-		    _x_preferences->value("PreferredWarehouse").toInt() : -1));
+                    _x_preferences->value("PreferredWarehouse").toInt() : -1));
 
     if (currentItem() == -1)
       setCurrentItem(0);

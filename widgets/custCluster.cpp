@@ -158,67 +158,67 @@ void CLineEdit::setSilentId(int pId)
   if (pId != -1)
   {
     QString sql( "<? if exists(\"customer\") ?>"
-		 "  SELECT cust_number,"
-		 "         cust_name,"
-		 "         addr_line1, addr_line2, addr_line3,"
-		 "         addr_city,  addr_state, addr_postalcode,"
-		 "         addr_country, cust_creditstatus, "
-		 "         cntct_addr_id, cust_cntct_id "
-		 "  FROM custinfo LEFT OUTER JOIN "
-		 "       cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN "
-		 "       addr  ON (cntct_addr_id=addr_id) "
-		 "  WHERE ( (cust_id=<? value(\"id\") ?>) "
-		 "  <? if exists(\"active\") ?>"
-		 "   AND (cust_active)"
-		 "  <? endif ?>"
-		 "  )"
-		 "<? endif ?>"
-		 "<? if exists(\"prospect\") ?>"
-		 "  <? if exists(\"customer\") ?>"
-		 "    UNION"
-		 "  <? endif ?>"
-		 "  SELECT prospect_number AS cust_number,"
-		 "         prospect_name AS cust_name,"
-		 "         addr_line1, addr_line2, addr_line3,"
-		 "         addr_city,  addr_state, addr_postalcode,"
-		 "         addr_country, '' AS cust_creditstatus, "
-		 "         cntct_addr_id, prospect_cntct_id AS cust_cntct_id "
-		 "  FROM prospect LEFT OUTER JOIN "
-		 "       cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN "
-		 "       addr  ON (cntct_addr_id=addr_id) "
-		 "  WHERE ( (prospect_id=<? value(\"id\") ?>) "
-		 "  <? if exists(\"active\") ?>"
-		 "   AND (prospect_active)"
-		 "  <? endif ?>"
-		 "  )"
-		 "<? endif ?>"
-		 ";");
+                 "  SELECT cust_number,"
+                 "         cust_name,"
+                 "         addr_line1, addr_line2, addr_line3,"
+                 "         addr_city,  addr_state, addr_postalcode,"
+                 "         addr_country, cust_creditstatus, "
+                 "         cntct_addr_id, cust_cntct_id "
+                 "  FROM custinfo LEFT OUTER JOIN "
+                 "       cntct ON (cust_cntct_id=cntct_id) LEFT OUTER JOIN "
+                 "       addr  ON (cntct_addr_id=addr_id) "
+                 "  WHERE ( (cust_id=<? value(\"id\") ?>) "
+                 "  <? if exists(\"active\") ?>"
+                 "   AND (cust_active)"
+                 "  <? endif ?>"
+                 "  )"
+                 "<? endif ?>"
+                 "<? if exists(\"prospect\") ?>"
+                 "  <? if exists(\"customer\") ?>"
+                 "    UNION"
+                 "  <? endif ?>"
+                 "  SELECT prospect_number AS cust_number,"
+                 "         prospect_name AS cust_name,"
+                 "         addr_line1, addr_line2, addr_line3,"
+                 "         addr_city,  addr_state, addr_postalcode,"
+                 "         addr_country, '' AS cust_creditstatus, "
+                 "         cntct_addr_id, prospect_cntct_id AS cust_cntct_id "
+                 "  FROM prospect LEFT OUTER JOIN "
+                 "       cntct ON (prospect_cntct_id=cntct_id) LEFT OUTER JOIN "
+                 "       addr  ON (cntct_addr_id=addr_id) "
+                 "  WHERE ( (prospect_id=<? value(\"id\") ?>) "
+                 "  <? if exists(\"active\") ?>"
+                 "   AND (prospect_active)"
+                 "  <? endif ?>"
+                 "  )"
+                 "<? endif ?>"
+                 ";");
 
     ParameterList params;
     params.append("id", pId);
     switch (_type)
     {
       case ActiveCustomers:
-	params.append("active");
-	// fall-through
+        params.append("active");
+        // fall-through
       case AllCustomers:
-	params.append("customer");
-	break;
+        params.append("customer");
+        break;
 
       case ActiveProspects:
-	params.append("active");
-	// fall-through
+        params.append("active");
+        // fall-through
       case AllProspects:
-	params.append("prospect");
-	break;
+        params.append("prospect");
+        break;
 
       case ActiveCustomersAndProspects:
-	params.append("active");
-	// fall-through
+        params.append("active");
+        // fall-through
       case AllCustomersAndProspects:
-	params.append("customer");
-	params.append("prospect");
-	break;
+        params.append("customer");
+        params.append("prospect");
+        break;
     }
 
     MetaSQLQuery mql(sql);
@@ -249,9 +249,9 @@ void CLineEdit::setSilentId(int pId)
     }
     else if (cust.lastError().type() != QSqlError::None)
       QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
-			    .arg(__FILE__)
-			    .arg(__LINE__),
-			    cust.lastError().databaseText());
+                            .arg(__FILE__)
+                            .arg(__LINE__),
+                            cust.lastError().databaseText());
 //qDebug("the query: %s", cust.lastQuery().toAscii().data());
   }
 
@@ -300,54 +300,54 @@ void CLineEdit::sParse()
       setId(-1);
 
     QString sql("<? if exists(\"customer\") ?>"
-		"  SELECT cust_number, cust_id"
-		"  FROM custinfo "
-		"  WHERE ((UPPER(cust_number)=UPPER(<? value(\"number\") ?>))"
-		"  <? if exists(\"active\") ?>"
-		"   AND (cust_active)"
-		"  <? endif ?>"
-		"  )"
-		"<? endif ?>"
-		"<? if exists(\"prospect\") ?>"
-		"  <? if exists(\"customer\") ?>"
-		"    UNION"
-		"  <? endif ?>"
-		"  SELECT prospect_number AS cust_number,"
-		"         prospect_id AS cust_id "
-		"  FROM prospect "
-		"  WHERE ((UPPER(prospect_number)=UPPER(<? value(\"number\") ?>))"
-		"  <? if exists(\"active\") ?>"
-		"   AND (prospect_active)"
-		"  <? endif ?>"
-		"  )"
-		"<? endif ?>"
-		";");
+                "  SELECT cust_number, cust_id"
+                "  FROM custinfo "
+                "  WHERE ((UPPER(cust_number)=UPPER(<? value(\"number\") ?>))"
+                "  <? if exists(\"active\") ?>"
+                "   AND (cust_active)"
+                "  <? endif ?>"
+                "  )"
+                "<? endif ?>"
+                "<? if exists(\"prospect\") ?>"
+                "  <? if exists(\"customer\") ?>"
+                "    UNION"
+                "  <? endif ?>"
+                "  SELECT prospect_number AS cust_number,"
+                "         prospect_id AS cust_id "
+                "  FROM prospect "
+                "  WHERE ((UPPER(prospect_number)=UPPER(<? value(\"number\") ?>))"
+                "  <? if exists(\"active\") ?>"
+                "   AND (prospect_active)"
+                "  <? endif ?>"
+                "  )"
+                "<? endif ?>"
+                ";");
 
     ParameterList params;
     params.append("number", text().stripWhiteSpace());
     switch (_type)
     {
       case ActiveCustomers:
-	params.append("active");
-	// fall-through
+        params.append("active");
+        // fall-through
       case AllCustomers:
-	params.append("customer");
-	break;
+        params.append("customer");
+        break;
 
       case ActiveProspects:
-	params.append("active");
-	// fall-through
+        params.append("active");
+        // fall-through
       case AllProspects:
-	params.append("prospect");
-	break;
+        params.append("prospect");
+        break;
 
       case ActiveCustomersAndProspects:
-	params.append("active");
-	// fall-through
+        params.append("active");
+        // fall-through
       case AllCustomersAndProspects:
-	params.append("customer");
-	params.append("prospect");
-	break;
+        params.append("customer");
+        params.append("prospect");
+        break;
     }
 
     MetaSQLQuery mql(sql);
@@ -361,10 +361,10 @@ void CLineEdit::sParse()
     else
     {
       if (cust.lastError().type() != QSqlError::None)
-	QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
-			      .arg(__FILE__)
-			      .arg(__LINE__),
-			      cust.lastError().databaseText());
+        QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
+                              .arg(__FILE__)
+                              .arg(__LINE__),
+                              cust.lastError().databaseText());
       setText("");
       setId(-1);
     }
@@ -449,7 +449,7 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
 
   _list = new QPushButton(tr("..."), this, "_list");
 #ifndef Q_WS_MAC
-	_list->setMaximumWidth(25);
+        _list->setMaximumWidth(25);
 #else
     _list->setMinimumWidth(60);
     _list->setMinimumHeight(32);
@@ -459,7 +459,7 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
 
   _info = new QPushButton(tr("?"), this, "_info");
 #ifndef Q_WS_MAC
-	_info->setMaximumWidth(25);
+  _info->setMaximumWidth(25);
 #else
     _info->setMinimumWidth(60);
     _info->setMinimumHeight(32);

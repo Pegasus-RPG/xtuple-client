@@ -111,14 +111,14 @@ void WoLineEdit::setId(int pId)
   if (pId != -1)
   {
     XSqlQuery wo;
-	if (_useQuery)
+        if (_useQuery)
     {
       wo.prepare(_sql);
       wo.exec();
       found = (wo.findFirst("wo_id", pId) != -1);
     }
-	else
-	{
+        else
+        {
       wo.prepare( "SELECT formatWONumber(wo_id) AS wonumber,"
                   "       warehous_code, item_id, item_number, uom_name,"
                   "       item_descrip1, item_descrip2,"
@@ -137,8 +137,8 @@ void WoLineEdit::setId(int pId)
       wo.bindValue(":wo_id", pId);
       wo.exec();
       found = (wo.first());
-	}
-	if (found)
+        }
+        if (found)
     {
       _id    = pId;
       _valid = TRUE;
@@ -267,46 +267,46 @@ void WoLineEdit::sParse()
 //  Add in the Status checks
       if (_woType)
       {
-	sql += " AND (";
+        sql += " AND (";
 
-	if (_woType & cWoOpen)
-	{
-	  sql += "(wo_status='O')";
-	  statusCheck = TRUE;
-	}
+        if (_woType & cWoOpen)
+        {
+          sql += "(wo_status='O')";
+          statusCheck = TRUE;
+        }
 
-	if (_woType & cWoExploded)
-	{
-	  if (statusCheck)
-	    sql += " OR ";
-	  sql += "(wo_status='E')";
-	  statusCheck = TRUE;
-	}
+        if (_woType & cWoExploded)
+        {
+          if (statusCheck)
+            sql += " OR ";
+          sql += "(wo_status='E')";
+          statusCheck = TRUE;
+        }
 
-	if (_woType & cWoReleased)
-	{
-	  if (statusCheck)
-	    sql += " OR ";
-	  sql += "(wo_status='R')";
-	  statusCheck = TRUE;
-	}
+        if (_woType & cWoReleased)
+        {
+          if (statusCheck)
+            sql += " OR ";
+          sql += "(wo_status='R')";
+          statusCheck = TRUE;
+        }
 
-	if (_woType & cWoIssued)
-	{
-	  if (statusCheck)
-	    sql += " OR ";
-	  sql += "(wo_status='I')";
-	  statusCheck = TRUE;
-	}
+        if (_woType & cWoIssued)
+        {
+          if (statusCheck)
+            sql += " OR ";
+          sql += "(wo_status='I')";
+          statusCheck = TRUE;
+        }
 
-	if (_woType & cWoClosed)
-	{
-	  if (statusCheck)
-	    sql += " OR ";
-	  sql += "(wo_status='C')";
-	}
+        if (_woType & cWoClosed)
+        {
+          if (statusCheck)
+            sql += " OR ";
+          sql += "(wo_status='C')";
+        }
 
-	sql += ")";
+        sql += ")";
       }
       sql += ");";
 

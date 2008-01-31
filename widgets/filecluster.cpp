@@ -71,7 +71,7 @@ FileCluster::FileCluster(QWidget* pParent, const char* pName) :
   _filter  = "";
 
   QHBoxLayout *hbox = new QHBoxLayout(this);
-  hbox->setContentsMargins(0, 0, 0, 0);	// prevent double margins
+  hbox->setContentsMargins(0, 0, 0, 0); // prevent double margins
 
   _file = new FileLineEdit();
 
@@ -84,10 +84,10 @@ FileCluster::FileCluster(QWidget* pParent, const char* pName) :
   hbox->addWidget(_file);
   hbox->addWidget(_list);
 
-  connect(_file, SIGNAL(requestList()),		      this, SLOT(sEllipses()));
-  connect(_file, SIGNAL(requestSearch()),	      this, SLOT(sEllipses()));
+  connect(_file, SIGNAL(requestList()),               this, SLOT(sEllipses()));
+  connect(_file, SIGNAL(requestSearch()),             this, SLOT(sEllipses()));
   connect(_file, SIGNAL(textChanged(const QString&)), this, SIGNAL(textChanged(const QString&)));
-  connect(_list, SIGNAL(clicked()),		      this, SLOT(sEllipses()));
+  connect(_list, SIGNAL(clicked()),                   this, SLOT(sEllipses()));
 }
 
 FileCluster::~FileCluster()

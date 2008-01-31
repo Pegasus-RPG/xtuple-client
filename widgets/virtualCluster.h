@@ -81,26 +81,26 @@ class OPENMFGWIDGETS_EXPORT VirtualList : public QDialog
     friend class VirtualClusterLineEdit;
 
     public:
-	VirtualList();
-	VirtualList(QWidget*, Qt::WindowFlags = 0);
+        VirtualList();
+        VirtualList(QWidget*, Qt::WindowFlags = 0);
 
     public slots:
-	virtual void sClose();
-	virtual void sFillList();
-	virtual void sSearch(const QString&);
-	virtual void sSelect();
+        virtual void sClose();
+        virtual void sFillList();
+        virtual void sSearch(const QString&);
+        virtual void sSelect();
 
     protected:
-	virtual void	init();
+        virtual void init();
 
-	VirtualClusterLineEdit* _parent;
-	QLabel*		_searchLit;
-	QLineEdit*	_search;
-	QLabel*		_titleLit;
-	QPushButton*	_close;
-	QPushButton*	_select;
-	XTreeWidget*	_listTab;
-	int		_id;
+        VirtualClusterLineEdit* _parent;
+        QLabel*      _searchLit;
+        QLineEdit*   _search;
+        QLabel*      _titleLit;
+        QPushButton* _close;
+        QPushButton* _select;
+        XTreeWidget* _listTab;
+        int          _id;
 };
 
 class OPENMFGWIDGETS_EXPORT VirtualSearch : public QDialog
@@ -110,31 +110,31 @@ class OPENMFGWIDGETS_EXPORT VirtualSearch : public QDialog
     friend class VirtualClusterLineEdit;
 
     public:
-	VirtualSearch(QWidget*, Qt::WindowFlags = 0);
+        VirtualSearch(QWidget*, Qt::WindowFlags = 0);
 
     public slots:
-	virtual void sClose();
-	virtual void sFillList();
-	virtual void sSelect();
+        virtual void sClose();
+        virtual void sFillList();
+        virtual void sSelect();
 
     protected:
-	VirtualClusterLineEdit* _parent;
-	int		_id;
-	QLabel*		_searchLit;
-	QLineEdit*	_search;
-	QCheckBox*	_searchNumber;
-	QCheckBox*	_searchName;
-	QCheckBox*	_searchDescrip;
-	QLabel*		_titleLit;
-	QPushButton*	_close;
-	QPushButton*	_select;
-	XTreeWidget*	_listTab;
-	QLayout*	dialogLyt;
-	QLayout*	searchLyt;
-	QLayout*	searchStrLyt;
-	QGridLayout*	selectorsLyt;
-	QLayout*	tableLyt;
-	QLayout*	buttonsLyt;
+        VirtualClusterLineEdit* _parent;
+        int  _id;
+        QLabel*      _searchLit;
+        QLineEdit*   _search;
+        QCheckBox*   _searchNumber;
+        QCheckBox*   _searchName;
+        QCheckBox*   _searchDescrip;
+        QLabel*      _titleLit;
+        QPushButton* _close;
+        QPushButton* _select;
+        XTreeWidget* _listTab;
+        QLayout*     dialogLyt;
+        QLayout*     searchLyt;
+        QLayout*     searchStrLyt;
+        QGridLayout* selectorsLyt;
+        QLayout*     tableLyt;
+        QLayout*     buttonsLyt;
 };
 
 class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
@@ -144,24 +144,24 @@ class OPENMFGWIDGETS_EXPORT VirtualInfo : public QDialog
     friend class VirtualClusterLineEdit;
 
     public:
-	VirtualInfo(QWidget*, Qt::WindowFlags = 0);
+        VirtualInfo(QWidget*, Qt::WindowFlags = 0);
 
     public slots:
-	virtual void sPopulate();
+        virtual void sPopulate();
 
     protected:
-	VirtualClusterLineEdit* _parent;
-	QLabel*		_titleLit;
-	QLabel*		_numberLit;
-	QLabel*		_number;
-	QLabel*		_nameLit;
-	QLabel*		_name;
-	QLabel*		_descripLit;
-	QLabel*		_descrip;
-	QPushButton*	_close;
+        VirtualClusterLineEdit* _parent;
+        QLabel*         _titleLit;
+        QLabel*         _numberLit;
+        QLabel*         _number;
+        QLabel*         _nameLit;
+        QLabel*         _name;
+        QLabel*         _descripLit;
+        QLabel*         _descrip;
+        QPushButton*    _close;
 
     private:
-	int _id;
+        int _id;
 };
 
 /*
@@ -191,61 +191,61 @@ class OPENMFGWIDGETS_EXPORT VirtualClusterLineEdit : public XLineEdit
     friend class VirtualSearch;
 
     public:
-	VirtualClusterLineEdit(QWidget*, const char*, const char*, const char*,
-			       const char*, const char*, const char*,
-			       const char* = 0);
+        VirtualClusterLineEdit(QWidget*, const char*, const char*, const char*,
+                               const char*, const char*, const char*,
+                               const char* = 0);
 
     public slots:
-	virtual void setId(const int);
+        virtual void setId(const int);
 
     protected slots:
-	virtual void clear();
-	inline virtual void clearExtraClause()	{ _extraClause = ""; }
+        virtual void clear();
+        inline virtual void clearExtraClause() { _extraClause = ""; }
 
-	virtual VirtualList*	listFactory();
-	virtual VirtualSearch*	searchFactory();
-	virtual VirtualInfo*	infoFactory();
+        virtual VirtualList*    listFactory();
+        virtual VirtualSearch*  searchFactory();
+        virtual VirtualInfo*    infoFactory();
 
-	virtual void sList();
-	virtual void sInfo();
-	virtual void sSearch();
-	virtual void sEllipses();
-	virtual void sParse();
+        virtual void sList();
+        virtual void sInfo();
+        virtual void sSearch();
+        virtual void sEllipses();
+        virtual void sParse();
 
-	virtual void setNumber(const QString&);
-	virtual void setTitles(const QString&, const QString& = 0);
-	inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
-	virtual void setTableAndColumnNames(const char* pTabName,
-					    const char* pIdColumn,
-					    const char* pNumberColumn,
-					    const char* pNameColumn,
-					    const char* pDescripColumn);
+        virtual void setNumber(const QString&);
+        virtual void setTitles(const QString&, const QString& = 0);
+        inline virtual void setExtraClause(const QString& pExt) { _extraClause = pExt; };
+        virtual void setTableAndColumnNames(const char* pTabName,
+                                            const char* pIdColumn,
+                                            const char* pNumberColumn,
+                                            const char* pNameColumn,
+                                            const char* pDescripColumn);
 
         void setStrict(bool);
         bool isStrict() const { return _strict; }
 
     signals:
-	void newId(int);
-	void parsed();
-	void valid(bool);
+        void newId(int);
+        void parsed();
+        void valid(bool);
 
     protected:
-	QString _titleSingular;
-	QString _titlePlural;
-	QString	_query;	
-	QString	_idClause;
-	QString	_numClause;
-	QString	_extraClause;
-	QString _name;
-	QString	_description;
-	QString _idColName;
-	QString _numColName;
-	QString _nameColName;
-	QString _descripColName;
-	bool	_hasDescription;
-	bool	_hasName;
+        QString _titleSingular;
+        QString _titlePlural;
+        QString _query;
+        QString _idClause;
+        QString _numClause;
+        QString _extraClause;
+        QString _name;
+        QString _description;
+        QString _idColName;
+        QString _numColName;
+        QString _nameColName;
+        QString _descripColName;
+        bool    _hasDescription;
+        bool    _hasName;
         bool    _strict;
-	virtual void silentSetId(const int);
+        virtual void silentSetId(const int);
 };
 
 /*
@@ -275,59 +275,59 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     friend class VirtualClusterLineEdit;
 
     public:
-	VirtualCluster(QWidget*, const char* = 0);
-	VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
+        VirtualCluster(QWidget*, const char* = 0);
+        VirtualCluster(QWidget*, VirtualClusterLineEdit* = 0, const char* = 0);
 
-	inline virtual int     id()	     const { return _number->_id; };
-	inline virtual bool    infoVisible() const { return _info->isVisible(); };
-	inline virtual bool    listVisible() const { return _list->isVisible(); };
-	inline virtual QString label()	     const { return _label->text(); };
-	inline virtual bool    nameVisible() const { return _name->isVisible(); };
-	inline virtual QString number()      const { return _number->text(); };
-	inline virtual QString description() const { return _description->text(); };
-	inline virtual bool    isValid()     const { return _number->isValid(); };
-	inline virtual QString name()        const { return _name->text(); };
+        inline virtual int     id()          const { return _number->_id; };
+        inline virtual bool    infoVisible() const { return _info->isVisible(); };
+        inline virtual bool    listVisible() const { return _list->isVisible(); };
+        inline virtual QString label()       const { return _label->text(); };
+        inline virtual bool    nameVisible() const { return _name->isVisible(); };
+        inline virtual QString number()      const { return _number->text(); };
+        inline virtual QString description() const { return _description->text(); };
+        inline virtual bool    isValid()     const { return _number->isValid(); };
+        inline virtual QString name()        const { return _name->text(); };
         inline virtual bool    isStrict()    const { return _number->isStrict(); };
-	inline virtual bool    readOnly()    const { return _readOnly; };
+        inline virtual bool    readOnly()    const { return _readOnly; };
 
     public slots:
-	// most of the heavy lifting is done by VirtualClusterLineEdit _number
-	inline virtual void clearExtraClause()	{ _number->clearExtraClause(); };
-	inline virtual void setExtraClause(const QString& p) { _number->setExtraClause(p); };
-	inline virtual void setDescription(const QString& p) { _description->setText(p); };
-	inline virtual void setId(const int p)	         { _number->setId(p); };
-	inline virtual void setInfoVisible(const bool p) { _info->setHidden(!p); };
-	inline virtual void setListVisible(const bool p) { _list->setHidden(!p); };
-	inline virtual void setLabel(const QString& p)  { _label->setText(p); };
-	inline virtual void setName(const QString& p)   { _name->setText(p); };
-	inline virtual void setNameVisible(const bool p) { _name->setHidden(!p); };
-	inline virtual void setNumber(const int p)	{ _number->setNumber(QString::number(p)); };
-	inline virtual void setNumber(const QString& p) { _number->setNumber(p); };
+        // most of the heavy lifting is done by VirtualClusterLineEdit _number
+        inline virtual void clearExtraClause() { _number->clearExtraClause(); };
+        inline virtual void setExtraClause(const QString& p) { _number->setExtraClause(p); };
+        inline virtual void setDescription(const QString& p) { _description->setText(p); };
+        inline virtual void setId(const int p)           { _number->setId(p); };
+        inline virtual void setInfoVisible(const bool p) { _info->setHidden(!p); };
+        inline virtual void setListVisible(const bool p) { _list->setHidden(!p); };
+        inline virtual void setLabel(const QString& p)  { _label->setText(p); };
+        inline virtual void setName(const QString& p)   { _name->setText(p); };
+        inline virtual void setNameVisible(const bool p) { _name->setHidden(!p); };
+        inline virtual void setNumber(const int p)      { _number->setNumber(QString::number(p)); };
+        inline virtual void setNumber(const QString& p) { _number->setNumber(p); };
 
-	virtual void clear();
-	virtual void setEnabled(const bool p);
+        virtual void clear();
+        virtual void setEnabled(const bool p);
         virtual void setStrict(const bool b);
-	virtual void setReadOnly(const bool b);
-	virtual void sRefresh();
+        virtual void setReadOnly(const bool b);
+        virtual void sRefresh();
 
     signals:
-	void newId(int);
-	void valid(bool);
+        void newId(int);
+        void valid(bool);
 
     protected:
-	virtual void addNumberWidget(VirtualClusterLineEdit* pNumberWidget);
+        virtual void addNumberWidget(VirtualClusterLineEdit* pNumberWidget);
 
-	QGridLayout*	_grid;
-	QLabel*		_label;
-	VirtualClusterLineEdit*	_number;
-	QPushButton*	_list;
-	QPushButton*	_info;
-	QLabel*		_description;
-	QLabel*		_name;
-	bool		_readOnly;
+        QGridLayout*    _grid;
+        QLabel*         _label;
+        VirtualClusterLineEdit* _number;
+        QPushButton*    _list;
+        QPushButton*    _info;
+        QLabel*         _description;
+        QLabel*         _name;
+        bool            _readOnly;
 
     private:
-	virtual void init();
+        virtual void init();
 };
 
 #endif

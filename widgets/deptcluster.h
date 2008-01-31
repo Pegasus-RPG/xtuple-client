@@ -70,7 +70,7 @@ class OPENMFGWIDGETS_EXPORT DeptClusterLineEdit : public VirtualClusterLineEdit
     Q_OBJECT
 
     public:
-	DeptClusterLineEdit(QWidget*, const char* = 0);
+      DeptClusterLineEdit(QWidget*, const char* = 0);
 };
 
 class OPENMFGWIDGETS_EXPORT DeptCluster : public VirtualCluster
@@ -78,7 +78,7 @@ class OPENMFGWIDGETS_EXPORT DeptCluster : public VirtualCluster
     Q_OBJECT
 
     public:
-	DeptCluster(QWidget*, const char* = 0);
+      DeptCluster(QWidget*, const char* = 0);
 
 };
 
