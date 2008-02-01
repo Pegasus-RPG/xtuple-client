@@ -372,6 +372,16 @@
       <!-- invc_edi_emailbody -->
     </customer>
 
+    <xsl:if test="not(starts-with(@id, /OrderList/@StoreAccountName))">
+      <xsl:message terminate="yes">
+	Order number <xsl:value-of select="@id"/> is not valid since it
+	does not start with the store account name
+	<xsl:value-of select="/OrderList/@StoreAccountName"/><xsl:text>
+
+</xsl:text>
+      </xsl:message>
+    </xsl:if>
+
     <salesorder>
       <order_number>
 	<xsl:value-of select="substring-after(@id, concat(/OrderList/@StoreAccountName, '-'))"/>
@@ -545,9 +555,11 @@
       <!-- misc_account_number -->
       <!-- misc_charge -->
 
-      <freight>
-        <xsl:value-of select="Total/Line[@type='Shipping']"/>
-      </freight>
+      <xsl:if test="Total/Line[@type='Shipping']">
+	<freight>
+	  <xsl:value-of select="Total/Line[@type='Shipping']"/>
+	</freight>
+      </xsl:if>
 
       <order_notes>
 	<xsl:if test="Comments">
