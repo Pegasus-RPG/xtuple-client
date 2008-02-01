@@ -392,7 +392,7 @@ void printInvoice::sEditWatermark()
 
 void printInvoice::populate()
 {
-  q.prepare( "SELECT invchead_invcnumber, invchead_cust_id "
+  q.prepare( "SELECT invchead_invcnumber, invchead_cust_id, invchead_posted "
              "FROM invchead "
              "WHERE (invchead_id=:invchead_id);" );
   q.bindValue(":invchead_id", _invcheadid);
@@ -401,6 +401,13 @@ void printInvoice::populate()
   {
     _invoiceNum->setText(q.value("invchead_invcnumber").toString());
     _cust->setId(q.value("invchead_cust_id").toInt());
+    if (q.value("invchead_posted").toBool())
+    {
+      _post->setChecked(FALSE);
+      _post->hide();
+    }
+    else
+      _post->show();
   }
 }
 
