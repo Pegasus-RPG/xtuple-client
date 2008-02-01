@@ -377,7 +377,7 @@
        </property>
        <widget class="QWidget" name="tab" >
         <attribute name="title" >
-         <string>Main Contacts</string>
+         <string>Contacts</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -396,9 +396,16 @@
             </widget>
            </item>
            <item>
-            <widget class="QRadioButton" name="_SecondaryButton" >
+            <widget class="QRadioButton" name="_secondaryButton" >
              <property name="text" >
               <string>Secondary</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QRadioButton" name="_allButton" >
+             <property name="text" >
+              <string>All</string>
              </property>
             </widget>
            </item>
@@ -443,6 +450,19 @@
                </property>
               </widget>
              </item>
+             <item row="1" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
             </layout>
            </widget>
            <widget class="QWidget" name="page_2" >
@@ -450,82 +470,77 @@
              <item row="0" column="0" >
               <widget class="ContactCluster" name="_secondary" />
              </item>
+             <item row="1" column="0" >
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>20</width>
+                 <height>40</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+           <widget class="QWidget" name="page_3" >
+            <layout class="QGridLayout" >
+             <item row="0" column="0" >
+              <widget class="XTreeWidget" name="_contacts" />
+             </item>
+             <item row="0" column="1" >
+              <layout class="QVBoxLayout" >
+               <property name="spacing" >
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QPushButton" name="_new" >
+                 <property name="text" >
+                  <string>New</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_edit" >
+                 <property name="text" >
+                  <string>Edit</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_detach" >
+                 <property name="text" >
+                  <string>Detach</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QPushButton" name="_attach" >
+                 <property name="text" >
+                  <string>Attach</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer>
+                 <property name="orientation" >
+                  <enum>Qt::Vertical</enum>
+                 </property>
+                 <property name="sizeHint" >
+                  <size>
+                   <width>20</width>
+                   <height>40</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+              </layout>
+             </item>
             </layout>
            </widget>
           </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_contactsTab" >
-        <attribute name="title" >
-         <string>All Contacts</string>
-        </attribute>
-        <layout class="QHBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="XTreeWidget" name="_contacts" />
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="_new" >
-             <property name="text" >
-              <string>New</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_edit" >
-             <property name="text" >
-              <string>Edit</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_detach" >
-             <property name="text" >
-              <string>Detach</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_attach" >
-             <property name="text" >
-              <string>Attach</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>40</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
          </item>
         </layout>
        </widget>
@@ -881,11 +896,6 @@
   <tabstop>_taxauthButton</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_save</tabstop>
-  <tabstop>_new</tabstop>
-  <tabstop>_edit</tabstop>
-  <tabstop>_detach</tabstop>
-  <tabstop>_attach</tabstop>
-  <tabstop>_contacts</tabstop>
   <tabstop>_todo</tabstop>
   <tabstop>_newTodo</tabstop>
   <tabstop>_newIncdt</tabstop>
@@ -928,38 +938,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>_contacts</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_edit</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>380</x>
-     <y>803</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>380</x>
-     <y>803</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_contacts</sender>
-   <signal>valid(bool)</signal>
-   <receiver>_detach</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>380</x>
-     <y>803</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>380</x>
-     <y>803</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>_todo</sender>
    <signal>valid(bool)</signal>
    <receiver>_editTodoIncdt</receiver>
@@ -980,22 +958,6 @@
    <signal>valid(bool)</signal>
    <receiver>_deleteTodoIncdt</receiver>
    <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>380</x>
-     <y>803</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>380</x>
-     <y>803</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_contacts</sender>
-   <signal>itemSelected(int)</signal>
-   <receiver>_edit</receiver>
-   <slot>animateClick(int)</slot>
    <hints>
     <hint type="sourcelabel" >
      <x>380</x>
@@ -1068,6 +1030,54 @@
     <hint type="destinationlabel" >
      <x>247</x>
      <y>150</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_contacts</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_edit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>525</x>
+     <y>313</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_contacts</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_detach</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>525</x>
+     <y>337</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_contacts</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_edit</receiver>
+   <slot>animateClick(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>256</x>
+     <y>371</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>525</x>
+     <y>313</y>
     </hint>
    </hints>
   </connection>

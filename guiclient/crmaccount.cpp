@@ -127,6 +127,8 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(omfgThis, SIGNAL(vendorsUpdated()),    this, SLOT(sUpdateRelationships()));
   connect(_custInfoButton, SIGNAL(clicked()), this, SLOT(sCustomerInfo()));
   connect(_primaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_secondaryButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
+  connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
 
@@ -1661,8 +1663,10 @@ void crmaccount::sHandleButtons()
 {
   if (_primaryButton->isChecked())
     _widgetStack->setCurrentIndex(0);
-  else
+  else if (_secondaryButton->isChecked())
     _widgetStack->setCurrentIndex(1);
+  else
+    _widgetStack->setCurrentIndex(2);
 }
 
 void crmaccount::sCustomerToggled()
