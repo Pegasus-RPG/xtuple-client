@@ -88,6 +88,8 @@ public slots:
     virtual void sNewOrder();
     virtual void sEditOrder();
     virtual void sViewOrder();
+    virtual void sEditInvOrder();
+    virtual void sViewInvOrder();
     virtual void sFillInvoiceList();
     virtual void sNewInvoice();
     virtual void sEditInvoice();
@@ -101,7 +103,7 @@ public slots:
     virtual void sFillPaymentsList();
     virtual void sPopulateMenuQuote(QMenu*);
     virtual void sPopulateMenuSalesOrder(QMenu*);
-    virtual void sPopulateMenuInvoice(QMenu*);
+    virtual void sPopulateMenuInvoice(QMenu*, QTreeWidgetItem *selected);
     virtual void sPopulateMenuCreditMemo(QMenu*);
     virtual void sPopulateMenuArhist(QMenu*);
     virtual void sConvertQuote();
@@ -113,6 +115,11 @@ public slots:
     virtual void sRefreshList();
     virtual void sShipment();
     virtual void sDspShipmentStatus();
+    virtual void sCashReceipt();
+    virtual void sPrintSalesOrder();
+    virtual void sPrintQuote();
+    virtual void sPrintCreditMemo();
+    virtual void sPrintInvoice();
 
 protected slots:
     virtual void languageChange();

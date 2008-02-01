@@ -368,23 +368,23 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="_crmButton" >
+          <widget class="QPushButton" name="_crmAccount" >
            <property name="text" >
             <string>CRM Account</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_arworkbenchButton" >
+          <widget class="QPushButton" name="_arWorkbench" >
            <property name="text" >
             <string>A/R Workbench</string>
            </property>
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="_refreshButton" >
+          <widget class="QPushButton" name="_cashReceipt" >
            <property name="text" >
-            <string>Query</string>
+            <string>&amp;Cash Receipts</string>
            </property>
           </widget>
          </item>
@@ -440,6 +440,13 @@
           <number>0</number>
          </property>
          <item>
+          <widget class="QPushButton" name="_print" >
+           <property name="text" >
+            <string>&amp;Print</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="_close" >
            <property name="text" >
             <string>&amp;Close</string>
@@ -450,22 +457,19 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="_refresh" >
+           <property name="text" >
+            <string>&amp;Query</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="_edit" >
            <property name="text" >
             <string>Edit</string>
            </property>
            <property name="shortcut" >
             <string/>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_print" >
-           <property name="text" >
-            <string>&amp;Print</string>
-           </property>
-           <property name="shortcut" >
-            <string>Alt+P</string>
            </property>
           </widget>
          </item>
@@ -1099,6 +1103,9 @@
              <property name="text" >
               <string/>
              </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
             </widget>
            </item>
           </layout>
@@ -1122,6 +1129,19 @@
         </spacer>
        </item>
       </layout>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <layout class="QHBoxLayout" >
@@ -1257,6 +1277,19 @@
         </layout>
        </item>
       </layout>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
      </item>
      <item>
       <layout class="QHBoxLayout" >
@@ -1593,6 +1626,16 @@
               <number>0</number>
              </property>
              <item>
+              <widget class="QPushButton" name="_printQuote" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>&amp;Print</string>
+               </property>
+              </widget>
+             </item>
+             <item>
               <widget class="QPushButton" name="_newQuote" >
                <property name="text" >
                 <string>New</string>
@@ -1711,6 +1754,16 @@
             <number>0</number>
            </property>
            <item>
+            <widget class="QPushButton" name="_printOrder" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Print</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="_newOrder" >
              <property name="text" >
               <string>New</string>
@@ -1817,6 +1870,16 @@
             <number>0</number>
            </property>
            <item>
+            <widget class="QPushButton" name="_printInvoice" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Print</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="_newInvoice" >
              <property name="text" >
               <string>New</string>
@@ -1922,6 +1985,16 @@
            <property name="bottomMargin" >
             <number>0</number>
            </property>
+           <item>
+            <widget class="QPushButton" name="_printCreditMemo" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Print</string>
+             </property>
+            </widget>
+           </item>
            <item>
             <widget class="QPushButton" name="_newCreditMemo" >
              <property name="text" >
@@ -2072,7 +2145,6 @@
   <tabstop>_arhist</tabstop>
   <tabstop>_payments</tabstop>
   <tabstop>_edit</tabstop>
-  <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
  <includes>
@@ -2080,5 +2152,70 @@
   <include location="local" >OpenMFGGUIClient.h</include>
  </includes>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>_quote</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_printQuote</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>323</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>691</x>
+     <y>413</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_order</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_printOrder</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>333</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>700</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_invoice</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_printInvoice</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>333</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>700</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_creditMemo</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_printCreditMemo</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>333</x>
+     <y>489</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>700</x>
+     <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>
