@@ -77,6 +77,10 @@
 #include "arWorkBench.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "dspSalesOrderStatus.h"
+#include "cashReceipt.h"
+#include "printSoForm.h"
+#include "printInvoice.h"
+#include "printCreditMemo.h"
 
 dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     : QWidget(parent, fl)
@@ -93,7 +97,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_editInvoice, SIGNAL(clicked()), this, SLOT(sEditInvoice()));
   connect(_editOrder, SIGNAL(clicked()), this, SLOT(sEditOrder()));
   connect(_editQuote, SIGNAL(clicked()), this, SLOT(sEditQuote()));
-  connect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*)));
+  connect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*, QTreeWidgetItem*)));
   connect(_newCreditMemo, SIGNAL(clicked()), this, SLOT(sNewCreditMemo()));
   connect(_newInvoice, SIGNAL(clicked()), this, SLOT(sNewInvoice()));
   connect(_newOrder, SIGNAL(clicked()), this, SLOT(sNewOrder()));
@@ -108,9 +112,14 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_viewOrder, SIGNAL(clicked()), this, SLOT(sViewOrder()));
   connect(_viewQuote, SIGNAL(clicked()), this, SLOT(sViewQuote()));
   connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
-  connect(_crmButton, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
-  connect(_refreshButton, SIGNAL(clicked()), this, SLOT(sRefreshList()));
-  connect(_arworkbenchButton, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
+  connect(_crmAccount, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
+  connect(_refresh, SIGNAL(clicked()), this, SLOT(sRefreshList()));
+  connect(_arWorkbench, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
+  connect(_cashReceipt, SIGNAL(clicked()), this, SLOT(sCashReceipt()));
+  connect(_printOrder, SIGNAL(clicked()), this ,SLOT(sPrintSalesOrder()));
+  connect(_printQuote, SIGNAL(clicked()), this ,SLOT(sPrintQuote()));
+  connect(_printInvoice, SIGNAL(clicked()), this ,SLOT(sPrintInvoice()));
+  connect(_printCreditMemo, SIGNAL(clicked()), this ,SLOT(sPrintCreditMemo()));
 
 #ifndef Q_WS_MAC
   _custList->setMaximumWidth(25);
@@ -220,6 +229,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   }
 
   _edit->setEnabled(_privleges->check("MaintainCustomerMasters"));
+  _crmAccount->setEnabled(_privleges->check("MaintainCRMAccount") || _privleges->check("ViewCRMAccount"));
+  _arWorkbench->setEnabled(_privleges->check("ViewAROpenItems"));
+  _cashReceipt->setEnabled(_privleges->check("MaintainCashReceipts"));
 }
 
 dspCustomerInformation::~dspCustomerInformation()
@@ -670,6 +682,30 @@ void dspCustomerInformation::sViewOrder()
   salesOrder::viewSalesOrder(_order->id());
 }
 
+void dspCustomerInformation::sEditInvOrder()
+{
+    q.prepare("SELECT cohead_id "
+              "FROM invchead, cohead "
+              "WHERE ((cohead_number=invchead_ordernumber) "
+              "  AND (invchead_id=:invoice_id));");
+    q.bindValue(":invoice_id",  _invoice->id());
+    q.exec();
+    if (q.first())
+      salesOrder::editSalesOrder(q.value("cohead_id").toInt(), false);
+}
+
+void dspCustomerInformation::sViewInvOrder()
+{
+    q.prepare("SELECT cohead_id "
+              "FROM invchead, cohead "
+              "WHERE ((cohead_number=invchead_ordernumber) "
+              "  AND (invchead_id=:invoice_id));");
+    q.bindValue(":invoice_id",  _invoice->id());
+    q.exec();
+    if (q.first())
+      salesOrder::viewSalesOrder(q.value("cohead_id").toInt());
+}
+
 void dspCustomerInformation::sFillInvoiceList()
 {
   q.prepare("SELECT invchead_id, -1,"
@@ -954,14 +990,26 @@ void dspCustomerInformation::sViewAropen()
   newdlg.exec();
 }
 
+void dspCustomerInformation::sCashReceipt()
+{
+/*
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("cust_id", _cust->id());//
+  cashReceipt newdlg(this, "", TRUE);
+  newdlg.set(params);//
+  newdlg.exec();
+  */
+}
+
 void dspCustomerInformation::sFillPaymentsList()
 {
   q.prepare("SELECT ccpay_id, cohead_id,"
-	    "       CASE WHEN (ccpay_type='A') THEN :preauth"
-	    "            WHEN (ccpay_type='C') THEN :charge"
-	    "            WHEN (ccpay_type='R') THEN :refund"
-	    "            ELSE ccpay_type"
-	    "       END AS f_type,"
+            "       CASE WHEN (ccpay_type='A') THEN :preauth"
+            "            WHEN (ccpay_type='C') THEN :charge"
+            "            WHEN (ccpay_type='R') THEN :refund"
+            "            ELSE ccpay_type"
+            "       END AS f_type,"
             "       CASE WHEN (ccpay_status='A') THEN :authorized"
             "            WHEN (ccpay_status='C') THEN :approved"
             "            WHEN (ccpay_status='D') THEN :declined"
@@ -972,12 +1020,19 @@ void dspCustomerInformation::sFillPaymentsList()
             "       formatDateTime(ccpay_transaction_datetime) AS f_datetime,"
             "       ccpay_by_username, ccpay_amount,"
             "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
+<<<<<<< .mine
+            "       COALESCE(cohead_number, ccpay_order_number),"
+            "       ccpay_r_ref,"
+            "       COALESCE(payco_amount, ccpay_amount),"
+            "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
+=======
 	    "       COALESCE(cohead_number, ccpay_order_number),"
 	    "       ccpay_r_ref,"
 	    "       ABS(COALESCE(payco_amount, ccpay_amount)),"
 	    "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
+>>>>>>> .r1315
             "  FROM ccpay LEFT OUTER JOIN "
-	    "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
+            "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
             "         ON (payco_ccpay_id=ccpay_id)"
             " WHERE ((ccpay_cust_id=:cust_id))"
             " ORDER BY ccpay_transaction_datetime;");
@@ -1047,7 +1102,7 @@ void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
   pMenu->insertItem(tr("Shipment..."), this, SLOT(sShipment()), 0);
 }
 
-void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu )
+void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetItem *selected)
 {
   int menuItem;
   menuItem = pMenu->insertItem(tr("New Invoice..."), this, SLOT(sNewInvoice()), 0);
@@ -1059,6 +1114,17 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu )
   if(!_privleges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
+  pMenu->insertSeparator();
+  
+  if (selected->text(3).length() != 0)
+  {
+    menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditInvOrder()), 0);
+    if(!_privleges->check("MaintainSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewInvOrder()), 0);
+    if(!_privleges->check("ViewSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
 }
 
 void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
@@ -1090,9 +1156,9 @@ void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu )
 
 void dspCustomerInformation::sConvertQuote()
 {
-    if ( QMessageBox::information( this, tr("Convert Selected Quote(s)"),
-                                 tr("Are you sure that you want to convert the selected Quote(s) to Sales Order(s)?" ),
-                                 tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
+  if ( QMessageBox::information( this, tr("Convert Selected Quote(s)"),
+                               tr("Are you sure that you want to convert the selected Quote(s) to Sales Order(s)?" ),
+                               tr("&Yes"), tr("&No"), QString::null, 0, 1 ) == 0)
   {
     XSqlQuery check;
     check.prepare( "SELECT quhead_number, cust_creditstatus "
@@ -1114,62 +1180,62 @@ void dspCustomerInformation::sConvertQuote()
       check.exec();
       if (check.first())
       {
-	if ( (check.value("cust_creditstatus").toString() == "H") &&
-	     (!_privleges->check("CreateSOForHoldCustomer")) )
-	{
-	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
-				tr("<p>Quote #%1 is for a Customer that has "
-				   "been placed on a Credit Hold and you do not"
-				   " have privilege to create Sales Orders for "
-				   "Customers on Credit Hold.  The selected "
-				   "Customer must be taken off of Credit Hold "
-				   "before you may create convert this Quote." )
-				.arg(check.value("quhead_number").toString()) );
-	  return;
-	}
+        if ( (check.value("cust_creditstatus").toString() == "H") &&
+             (!_privleges->check("CreateSOForHoldCustomer")) )
+        {
+          QMessageBox::warning( this, tr("Cannot Convert Quote"),
+              tr("<p>Quote #%1 is for a Customer that has "
+                 "been placed on a Credit Hold and you do not"
+                 " have privilege to create Sales Orders for "
+                 "Customers on Credit Hold.  The selected "
+                 "Customer must be taken off of Credit Hold "
+                 "before you may create convert this Quote." )
+              .arg(check.value("quhead_number").toString()) );
+          return;
+        }
 
-	if ( (check.value("cust_creditstatus").toString() == "W") &&
-	     (!_privleges->check("CreateSOForWarnCustomer")) )
-	{
-	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
-				tr("<p>Quote #%1 is for a Customer that has "
-				   "been placed on a Credit Warning and you do "
-				   " not have privilege to create Sales Orders "
-				   "for Customers on Credit Warning.  The "
-				   "selected Customer must be taken off of "
-				   "Credit Warning before you may convert this "
-				   "Quote." )
-				.arg(check.value("quhead_number").toString()) );
-	  return;
-	}
+        if ( (check.value("cust_creditstatus").toString() == "W") &&
+             (!_privleges->check("CreateSOForWarnCustomer")) )
+        {
+          QMessageBox::warning( this, tr("Cannot Convert Quote"),
+              tr("<p>Quote #%1 is for a Customer that has "
+                 "been placed on a Credit Warning and you do "
+                 " not have privilege to create Sales Orders "
+                 "for Customers on Credit Warning.  The "
+                 "selected Customer must be taken off of "
+                 "Credit Warning before you may convert this "
+                 "Quote." )
+              .arg(check.value("quhead_number").toString()) );
+          return;
+        }
       }
       else if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	continue;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        continue;
       }
 
       convert.bindValue(":quhead_id", id);
       convert.exec();
       if (convert.first())
       {
-	soheadid = convert.value("sohead_id").toInt();
-	if(soheadid < 0)
-	{
-	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
-				tr("<p>Quote #%1 has one or more line items "
-				   "without a warehouse specified. These line "
-				   "items must be fixed before you may convert "
-				   "this quote." )
-				.arg(check.value("quhead_number").toString()) );
-	  return;
-	}
-	counter++;
+        soheadid = convert.value("sohead_id").toInt();
+        if(soheadid < 0)
+        {
+          QMessageBox::warning( this, tr("Cannot Convert Quote"),
+              tr("<p>Quote #%1 has one or more line items "
+                 "without a warehouse specified. These line "
+                 "items must be fixed before you may convert "
+                 "this quote." )
+              .arg(check.value("quhead_number").toString()) );
+          return;
+        }
+        counter++;
       }
       else if (q.lastError().type() != QSqlError::None)
       {
-	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
 
@@ -1238,6 +1304,7 @@ void dspCustomerInformation::sARWorkbench()
   omfgThis->handleNewWindow(newdlg);
 }
 
+
 void dspCustomerInformation::sCRMAccount()
 {
   q.prepare("SELECT crmacct_id FROM crmacct "
@@ -1249,7 +1316,11 @@ void dspCustomerInformation::sCRMAccount()
     _crmacctId = q.value("crmacct_id").toInt();
 
   ParameterList params;
-  params.append("mode", "edit");
+  if (!_privleges->check("MaintainCRMAccount"))
+    params.append("mode", "view");
+  else
+    params.append("mode", "edit");
+    
   params.append("crmacct_id", _crmacctId);
 
   crmaccount* newdlg = new crmaccount();
@@ -1285,3 +1356,55 @@ void dspCustomerInformation::sShipment()
   omfgThis->handleNewWindow(newdlg);
 }
 
+void dspCustomerInformation::sPrintSalesOrder()
+{
+    ParameterList params;
+    params.append("sohead_id", _order->id());
+
+    printSoForm newdlgS(this, "", true);
+    newdlgS.set(params);
+    newdlgS.exec();
+}
+
+void dspCustomerInformation::sPrintQuote()
+{
+  QPrinter printer;
+  q.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS reportname "
+             "FROM quhead "
+             "WHERE (quhead_id=:quheadid); " );
+
+  ParameterList params;
+  params.append("quhead_id", _quote->id());
+
+  orReport report(q.value("reportname").toString(), params);
+}
+
+void dspCustomerInformation::sPrintInvoice()
+{
+  ParameterList params;
+  params.append("invchead_id", _invoice->id());
+
+  printInvoice newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (!newdlg.isSetup())
+  {
+    newdlg.exec();
+    newdlg.setSetup(TRUE);
+  }
+}
+
+void dspCustomerInformation::sPrintCreditMemo()
+{
+  ParameterList params;
+  params.append("cmhead_id", _creditMemo->id());
+
+  printCreditMemo newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (!newdlg.isSetup())
+  {
+    newdlg.exec();
+    newdlg.setSetup(TRUE);
+  }
+}
