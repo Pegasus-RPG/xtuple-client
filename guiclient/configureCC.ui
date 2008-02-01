@@ -76,11 +76,6 @@
              </item>
              <item>
               <property name="text" >
-               <string>Verisign</string>
-              </property>
-             </item>
-             <item>
-              <property name="text" >
                <string>YourPay</string>
               </property>
              </item>
@@ -1223,121 +1218,6 @@
            </item>
           </layout>
          </widget>
-         <widget class="QWidget" name="_verisignStack" >
-          <layout class="QVBoxLayout" >
-           <property name="spacing" >
-            <number>5</number>
-           </property>
-           <property name="leftMargin" >
-            <number>5</number>
-           </property>
-           <property name="topMargin" >
-            <number>5</number>
-           </property>
-           <property name="rightMargin" >
-            <number>5</number>
-           </property>
-           <property name="bottomMargin" >
-            <number>5</number>
-           </property>
-           <item>
-            <widget class="QLabel" name="_ccVSLit" >
-             <property name="text" >
-              <string>Verisign Options:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="spacing" >
-              <number>5</number>
-             </property>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLabel" name="_ccVSUserLit" >
-                 <property name="text" >
-                  <string>User:</string>
-                 </property>
-                 <property name="alignment" >
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="_ccVSVendorLit" >
-                 <property name="text" >
-                  <string>Vendor:</string>
-                 </property>
-                 <property name="alignment" >
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="_ccVSPartnerLit" >
-                 <property name="text" >
-                  <string>Partner:</string>
-                 </property>
-                 <property name="alignment" >
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QLabel" name="_ccVSPasswordLit" >
-                 <property name="text" >
-                  <string>Password:</string>
-                 </property>
-                 <property name="alignment" >
-                  <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </item>
-             <item>
-              <layout class="QVBoxLayout" >
-               <property name="spacing" >
-                <number>0</number>
-               </property>
-               <item>
-                <widget class="QLineEdit" name="_ccVSUser" />
-               </item>
-               <item>
-                <widget class="QLineEdit" name="_ccVSVendor" />
-               </item>
-               <item>
-                <widget class="QLineEdit" name="_ccVSPartner" />
-               </item>
-               <item>
-                <widget class="QLineEdit" name="_ccVSPassword" />
-               </item>
-              </layout>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer>
-             <property name="orientation" >
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeType" >
-              <enum>QSizePolicy::Expanding</enum>
-             </property>
-             <property name="sizeHint" >
-              <size>
-               <width>20</width>
-               <height>21</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-          </layout>
-         </widget>
          <widget class="QWidget" name="_yourPayStack" >
           <layout class="QVBoxLayout" >
            <property name="leftMargin" >
@@ -1698,10 +1578,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>_ccProxyPort</tabstop>
   <tabstop>_ccProxyLogin</tabstop>
   <tabstop>_ccProxyPassword</tabstop>
-  <tabstop>_ccVSUser</tabstop>
-  <tabstop>_ccVSVendor</tabstop>
-  <tabstop>_ccVSPartner</tabstop>
-  <tabstop>_ccVSPassword</tabstop>
   <tabstop>_ccYPStoreNum</tabstop>
   <tabstop>_ccEncKeyName</tabstop>
   <tabstop>_ccWinEncKey</tabstop>

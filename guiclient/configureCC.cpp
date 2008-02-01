@@ -187,10 +187,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccPassword->setText(_metricsenc->value("CCPassword"));
     _ccProxyLogin->setText(_metricsenc->value("CCProxyLogin"));
     _ccProxyPassword->setText(_metricsenc->value("CCProxyPassword"));
-    _ccVSUser->setText(_metricsenc->value("CCVSUser"));
-    _ccVSVendor->setText(_metricsenc->value("CCVSVendor"));
-    _ccVSPartner->setText(_metricsenc->value("CCVSPartner"));
-    _ccVSPassword->setText(_metricsenc->value("CCVSPassword"));
     _ccYPStoreNum->setText(_metricsenc->value("CCYPStoreNum"));
     _anTransactionKey->setText(_metricsenc->value("CCANTransactionKey"));
   }
@@ -200,10 +196,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccPassword->setEnabled(false);
     _ccProxyLogin->setEnabled(false);
     _ccProxyPassword->setEnabled(false);
-    _ccVSUser->setEnabled(false);
-    _ccVSVendor->setEnabled(false);
-    _ccVSPartner->setEnabled(false);
-    _ccVSPassword->setEnabled(false);
     _ccYPStoreNum->setEnabled(false);
     _anTransactionKey->setEnabled(false);
   }
@@ -401,10 +393,6 @@ void configureCC::sSave()
     _metricsenc->set("CCPassword",      _ccPassword->text());
     _metricsenc->set("CCProxyLogin",    _ccProxyLogin->text());
     _metricsenc->set("CCProxyPassword", _ccProxyPassword->text());
-    _metricsenc->set("CCVSUser",        _ccVSUser->text());
-    _metricsenc->set("CCVSVendor",      _ccVSVendor->text());
-    _metricsenc->set("CCVSPartner",     _ccVSPartner->text());
-    _metricsenc->set("CCVSPassword",    _ccVSPassword->text());
     _metricsenc->set("CCYPStoreNum",    _ccYPStoreNum->text());
     _metricsenc->set("CCANTransactionKey", _anTransactionKey->text());
 

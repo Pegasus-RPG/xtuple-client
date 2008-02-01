@@ -59,7 +59,7 @@
 #define CONFIGURECC_H
 
 #include "OpenMFGGUIClient.h"
-#include <QtGui/QDialog>
+#include <QDialog>
 
 #include "ui_configureCC.h"
 
