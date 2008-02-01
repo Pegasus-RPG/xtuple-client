@@ -1020,17 +1020,17 @@ void dspCustomerInformation::sFillPaymentsList()
             "       formatDateTime(ccpay_transaction_datetime) AS f_datetime,"
             "       ccpay_by_username, ccpay_amount,"
             "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
-<<<<<<< .mine
+//<<<<<<< .mine
             "       COALESCE(cohead_number, ccpay_order_number),"
             "       ccpay_r_ref,"
             "       COALESCE(payco_amount, ccpay_amount),"
             "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
-=======
+//=======
 	    "       COALESCE(cohead_number, ccpay_order_number),"
 	    "       ccpay_r_ref,"
 	    "       ABS(COALESCE(payco_amount, ccpay_amount)),"
 	    "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
->>>>>>> .r1315
+//>>>>>>> .r1315
             "  FROM ccpay LEFT OUTER JOIN "
             "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
             "         ON (payco_ccpay_id=ccpay_id)"
