@@ -131,6 +131,7 @@ private:
     bool _availabilityLastShowIndent;
     double _originalQtyOrd;
     double _availabilityQtyOrdered;
+    bool _invIsFractional;
     bool _updateItemsite;
     double _orderQtyChanged;
     double	_cachedPctA;

@@ -58,7 +58,6 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
 #include <QValidator>
 #include <QVariant>
 
@@ -142,6 +141,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _priceinvuomratio = 1.0;
   _priceRatio = 1.0;
   _invuomid = -1;
+  _invIsFractional = false;
 
   _authNumber->hide();
   _authNumberLit->hide();
@@ -701,6 +701,15 @@ void salesOrderItem::sSave()
   {
     QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
                           tr("<p>You must enter a valid Quantity Ordered before saving this Sales Order Item.")  );
+    _qtyOrdered->setFocus();
+    return;
+  }
+  else if (_qtyOrdered->toDouble() != qRound(_qtyOrdered->toDouble()) &&
+	   _qtyOrdered->validator()->inherits("QIntValidator"))
+  {
+    QMessageBox::warning(this, tr("Invalid Quantity"),
+			 tr("This UOM for this Item does not allow fractional "
+			    "quantities. Please fix the quantity."));
     _qtyOrdered->setFocus();
     return;
   }
@@ -1407,7 +1416,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     q.prepare( "SELECT item_type, item_config, uom_name,"
                "       item_inv_uom_id, item_price_uom_id,"
                "       iteminvpricerat(item_id) AS invpricerat,"
-               "       item_listprice, "
+               "       item_listprice, item_fractional,"
                "       stdcost(item_id) AS f_unitcost,"
 	       "       getItemTaxType(item_id, :taxauth) AS taxtype_id "
                "FROM item JOIN uom ON (item_inv_uom_id=uom_id)"
@@ -1426,6 +1435,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       _qtyinvuomratio = 1.0;
 
       _qtyUOM->setId(q.value("item_inv_uom_id").toInt());
+      _invIsFractional = q.value("item_fractional").toBool();
       _priceUOM->setId(q.value("item_price_uom_id").toInt());
       
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
@@ -2561,18 +2571,31 @@ void salesOrderItem::sTaxDetail()
 void salesOrderItem::sQtyUOMChanged()
 {
   if(_qtyUOM->id() == _invuomid)
+  {
     _qtyinvuomratio = 1.0;
+    if (_invIsFractional)
+      _qtyOrdered->setValidator(new QDoubleValidator(this));
+    else
+      _qtyOrdered->setValidator(new QIntValidator(this));
+  }
   else
   {
     XSqlQuery invuom;
-    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio"
+    invuom.prepare("SELECT itemuomtouomratio(item_id, :uom_id, item_inv_uom_id) AS ratio,"
+		   "       itemuomfractionalbyuom(item_id, :uom_id) AS frac "
                    "  FROM item"
                    " WHERE(item_id=:item_id);");
     invuom.bindValue(":item_id", _item->id());
     invuom.bindValue(":uom_id", _qtyUOM->id());
     invuom.exec();
     if(invuom.first())
+    {
       _qtyinvuomratio = invuom.value("ratio").toDouble();
+      if (invuom.value("frac").toBool())
+	_qtyOrdered->setValidator(new QDoubleValidator(this));
+      else
+	_qtyOrdered->setValidator(new QIntValidator(this));
+    }
     else
       systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
   }
@@ -2585,6 +2608,17 @@ void salesOrderItem::sQtyUOMChanged()
   else
     _priceUOM->setEnabled(true);
   sCalculateExtendedPrice();
+
+  if (_qtyOrdered->toDouble() != qRound(_qtyOrdered->toDouble()) &&
+      _qtyOrdered->validator()->inherits("QIntValidator"))
+  {
+    QMessageBox::warning(this, tr("Invalid Quantity"),
+			 tr("This UOM for this Item does not allow fractional "
+			    "quantities. Please fix the quantity."));
+    _qtyOrdered->setFocus();
+    return;
+  }
+
 }
 
 void salesOrderItem::sPriceUOMChanged()
