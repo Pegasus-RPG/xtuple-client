@@ -59,6 +59,8 @@
    support Visa ECI, MasterCard UCAF for x_authentication_indicator?
    support Visa CAVV or MasterCard UCAF for x_cardholder_authentication_value?
 */
+
+#include <QDomDocument>
 #include <QSqlError>
 
 #include <currcluster.h>
@@ -69,6 +71,7 @@
 #define DEBUG true
 
 // convenience macro to add Name and Content to the Request
+/*
 #define APPENDFIELD(Request, Name, Content) 			\
 	{ 							\
 	  QString encap = _metrics->value("CCANEncap"); 	\
@@ -77,13 +80,21 @@
 					      _metrics->value("CCANDelim");  \
 	  Request += QString(Name) + "=" + encap + QString(Content) + encap; \
 	}
+*/
+// outbound delimiter is always &
+#define APPENDFIELD(Request, Name, Content) \
+        { \
+	  if (! Request.isEmpty()) \
+	    Request += "&"; \
+	  Request += QString(Name) + "=" + QString(Content); \
+	}
 
 AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 {
-  _defaultLivePort   = 443;
+  _defaultLivePort   = 0;
   _defaultLiveServer = "secure.authorize.net/gateway/transact.dll";
-  _defaultTestPort   = 443;
-  _defaultTestServer = "certification.authorize.net/gateway/transact.dll";
+  _defaultTestPort   = 0;
+  _defaultTestServer = "test.authorize.net/gateway/transact.dll";
 
   _msgHash.insert(-200, tr("A Login is required."));
   _msgHash.insert(-201, tr("The Login must be 20 characters or less."));
@@ -97,6 +108,11 @@ AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 			   "security check."));
   _msgHash.insert( 206, tr("The response from the Gateway has failed the MD5 "
 			   "security check but will be processed anyway."));
+  _msgHash.insert(-207, tr("The Gateway returned the following error: %1"));
+  _msgHash.insert(-208, tr("& (ampersand) is not a valid Delimiting Character."));
+  _msgHash.insert(-209, tr("The Delimiting Character and the Encapsulating "
+			   "Character cannot be the same. Please change one or "
+			   "the other."));
 }
 
 int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, const double pamount, const int pcurrid, QString &prequest, QString pordertype)
@@ -144,16 +160,17 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
     return -17;
   }
 
+  if (! _metrics->boolean("CCANDelimSetOnGateway") &&
+      ! _metrics->value("CCANDelim").isEmpty())
+    APPENDFIELD(prequest, "x_delim_char", _metrics->value("CCANDelim"));
+
   if (! _metrics->boolean("CCANVerSetOnGateway"))
     APPENDFIELD(prequest, "x_version",      _metrics->value("CCANVer"));
 
   APPENDFIELD(prequest, "x_delim_data", "TRUE");
 
-  if (! _metrics->boolean("CCANDelimSetOnGateway") &&
-      ! _metrics->value("CCANDelim").isEmpty())
-    APPENDFIELD(prequest, "x_delim_char", _metrics->value("CCANDelim"));
-
-  if (! _metrics->boolean("CCANEncapSetOnGateway"))
+  if (! _metrics->boolean("CCANEncapSetOnGateway") &&
+      ! _metrics->value("CCANEncap").isEmpty())
     APPENDFIELD(prequest, "x_encap_char", _metrics->value("CCANEncap"));
 
   APPENDFIELD(prequest, "x_login",    _metricsenc->value("CCLogin"));
@@ -492,12 +509,9 @@ int AuthorizeDotNetProcessor::fieldValue(const QStringList plist, const int pind
   {
     pvalue = plist.at(pindex - 1);
     // now strip of the encapsulating char from front and back
-    pvalue = pvalue.mid(plist.at(pindex - 1)
-			   .indexOf(_metrics->value("CCANEncap"))+1,
-		        plist.at(pindex - 1)
-			 .lastIndexOf(_metrics->value("CCANEncap")) -
-			 plist.at(pindex - 1)
-			 .indexOf(_metrics->value("CCANEncap")));
+    int firstPos = plist.at(pindex - 1).indexOf(_metrics->value("CCANEncap"));
+    int lastPos  = plist.at(pindex - 1).lastIndexOf(_metrics->value("CCANEncap"));
+    pvalue = pvalue.mid(firstPos + 1, lastPos - firstPos - 1);
   }
   return 0;
 }
@@ -510,6 +524,13 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
 	   presponse.toAscii().data(), pccardid,
 	   ptype.toAscii().data(), pamount, pcurrid,
 	   preforder.toAscii().data(), pccpayid);
+
+  // if we got an error msg very early on
+  if (presponse.startsWith("<HTML>"))
+  {
+    _errorMsg = errorMsg(-207).arg(presponse);
+    return -207;
+  }
 
   QString delim = _metrics->value("CCANDelim").isEmpty() ? "," :
 						  _metrics->value("CCANDelim");
@@ -551,52 +572,51 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
   else if (r_response.toInt() == 4)
     r_approved == "HELDFORREVIEW";
 
-  // fieldValue(responseFields, 2);		// response subcode
+  // fieldValue(responseFields, 2);				// subcode
 
-  returnValue = fieldValue(responseFields, 3, r_code);	// response reason code
+  returnValue = fieldValue(responseFields, 3, r_code);		// reason code
   if (returnValue < 0)
     return returnValue;
-  returnValue = fieldValue(responseFields, 4, r_message);	// response reason text
-  if (returnValue < 0)
-    return returnValue;
-
-  returnValue = fieldValue(responseFields, 5, r_ref);		// response approval code
-  if (returnValue < 0)
-    return returnValue;
-  returnValue = fieldValue(responseFields, 6, r_avs);		// response avs result
-  if (returnValue < 0)
-    return returnValue;
-  returnValue = fieldValue(responseFields, 7, r_ordernum);	// xaction id for future changes
+  returnValue = fieldValue(responseFields, 4, r_message);	// reason text
   if (returnValue < 0)
     return returnValue;
 
-  // fieldValue(responseFields, 8-10);	// echo x_invoice_number description amount 
-  // fieldValue(responseFields, 11-13);	// echo x_method type cust_id
-  // fieldValue(responseFields, 14-17);	// echo x_first_name last_name company address
-  // fieldValue(responseFields, 18-24);	// echo x_city state zip country phone fax email
-  // fieldValue(responseFields, 25-27);	// echo x_ship_to_first_name last_name company
-  // fieldValue(responseFields, 28-32);	// echo x_ship_to_address city state zip country
+  returnValue = fieldValue(responseFields, 5, r_ref);	 	// approval code
+  if (returnValue < 0)
+    return returnValue;
+  returnValue = fieldValue(responseFields, 6, r_avs);	 	// avs result
+  if (returnValue < 0)
+    return returnValue;
+  returnValue = fieldValue(responseFields, 7, r_ordernum);	// transaction id
 
-  returnValue = fieldValue(responseFields, 33, r_tax);	// echo x_tax
   if (returnValue < 0)
     return returnValue;
 
-  // fieldValue(responseFields, 34);	// echo x_duty
+  // fieldValue(responseFields, 8-10);	// echo invoice_number description amount 
+  // fieldValue(responseFields, 11-13);	// echo method type cust_id
+  // fieldValue(responseFields, 14-24);	// echo name, company, and address info
+  // fieldValue(responseFields, 25-32);	// echo ship_to fields
+
+  returnValue = fieldValue(responseFields, 33, r_tax);		// echo x_tax
+  if (returnValue < 0)
+    return returnValue;
+
+  // fieldValue(responseFields, 34);				// echo x_duty
 
   returnValue = fieldValue(responseFields, 35, r_shipping);	// echo x_freight
   if (returnValue < 0)
     return returnValue;
 
-  // fieldValue(responseFields, 36);	// echo x_tax_exempt
-  // fieldValue(responseFields, 37);	// echo x_po_num
+  // fieldValue(responseFields, 36);		// echo x_tax_exempt
+  // fieldValue(responseFields, 37);		// echo x_po_num
 
   returnValue = fieldValue(responseFields, 39, r_cvv); // ccv response code
   if (returnValue < 0)
     return returnValue;
 
-  // fieldValue(responseFields, 40);	// cavv response code
-  // fieldValue(responseFields, 41-68);	// reserved for future use
-  // fieldValue(responseFields, 69+);	// echo of merchant-defined fields
+  // fieldValue(responseFields, 40);		// cavv response code
+  // fieldValue(responseFields, 41-68);		// reserved for future use
+  // fieldValue(responseFields, 69+);		// echo of merchant-defined fields
 
   /* treat heldforreview as approved because the AIM doc says response
      reason codes 252 and 253 are both approved but being reviewed.
@@ -623,6 +643,13 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     r_error = r_message;
     _errorMsg = errorMsg(-12).arg(r_error);
     returnValue = -12;
+  }
+
+  else if (r_approved.isEmpty() && ! r_message.isEmpty())
+  {
+    _errorMsg = errorMsg(-95).arg(r_message);
+    returnValue = -95;
+    status = "X";
   }
 
   else if (r_approved.isEmpty())
@@ -680,7 +707,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
 
     returnValue = fieldValue(responseFields, 38, r_hash);	// md5 hash
     XSqlQuery anq;
-    anq.prepare("SELECT md5(:inputstr) AS expected;");
+    anq.prepare("SELECT UPPER(MD5(:inputstr)) AS expected;");
     anq.bindValue(":inputstr", _metrics->value("CCANMD5Hash") +
 			       _metrics->value("CCLogin") +
 			       r_ordernum +
@@ -734,11 +761,23 @@ int AuthorizeDotNetProcessor::doTestConfiguration()
     _errorMsg = errorMsg(-202);
     returnValue = -202;
   }
-  else if (_metricsenc->value("CCANDelim").size() > 1)
+  else if (_metrics->value("CCANDelim").size() > 1)
   {
     _errorMsg = errorMsg(-203);
     returnValue = -203;
   }
+  else if (_metrics->value("CCANDelim") == "&")
+  {
+    _errorMsg = errorMsg(-208);
+    returnValue = -208;
+  }
+  else if (_metrics->value("CCANDelim") == _metrics->value("CCANEncap") &&
+	   ! _metrics->value("CCANDelim").isEmpty())
+  {
+    _errorMsg = errorMsg(-209);
+    returnValue = -209;
+  }
+
   return returnValue;
 }
 

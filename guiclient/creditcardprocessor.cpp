@@ -152,6 +152,7 @@ static struct {
   { -60, TR("Could not find the Credit Card transaction to void.")	},
 
   // other misc errors
+  { -95, TR("The Credit Card Processor returned an error: %1")		},
   { -96, TR("This transaction failed the CVV check.")			},
   { -97, TR("This transaction failed the Address Verification check.")	},
   { -98, TR("You may not process this transaction without a CVV code. "
@@ -1245,13 +1246,15 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
 #endif
 
   curl_args.append("https://" + _metrics->value("CCServer") +
-		   ":" + _metrics->value("CCPort"));
+		   QString(_metrics->value("CCPort").toInt() == 0 ? "" :
+					      (":" + _metrics->value("CCPort"))));
 
   if(_metrics->boolean("CCUseProxyServer"))
   {
     curl_args.append( "-x" );
-    curl_args.append(_metrics->value("CCProxyServer") + ":" +
-		     _metrics->value("CCProxyPort"));
+    curl_args.append(_metrics->value("CCProxyServer") +
+		     QString(_metrics->value("CCProxyPort").toInt() == 0 ? "" :
+					(":" + _metrics->value("CCProxyPort"))));
     curl_args.append( "-U" );
     curl_args.append(_metricsenc->value("CCProxyLogin") + ":" +
 		     _metricsenc->value("CCPassword"));
