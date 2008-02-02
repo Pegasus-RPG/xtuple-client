@@ -210,7 +210,7 @@ void itemSource::sSave()
   if (!_item->isValid())
   {
     QMessageBox::critical( this, tr("Cannot Save Item Source"),
-                           tr( "You must select an Item that this Item Source represents before you\n"
+                           tr( "You must select an Item that this Item Source represents\n"
                                "before you may save this Item Source." ) );
     _item->setFocus();
     return;
