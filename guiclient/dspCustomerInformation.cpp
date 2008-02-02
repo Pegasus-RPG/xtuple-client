@@ -90,7 +90,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_arhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuArhist(QMenu*)));
   connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_creditMemo, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuCreditMemo(QMenu*)));
-  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulate(int)));
+  connect(_cust, SIGNAL(newId(int)), this, SLOT(sPopulate()));
   connect(_custList, SIGNAL(clicked()), _cust, SLOT(sEllipses()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_editCreditMemo, SIGNAL(clicked()), this, SLOT(sEditCreditMemo()));
@@ -113,7 +113,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_viewQuote, SIGNAL(clicked()), this, SLOT(sViewQuote()));
   connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
   connect(_crmAccount, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
-  connect(_refresh, SIGNAL(clicked()), this, SLOT(sRefreshList()));
+  connect(_refresh, SIGNAL(clicked()), this, SLOT(sPopulate()));
   connect(_workbenchInvoice, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
   connect(_cashReceiptInvoice, SIGNAL(clicked()), this, SLOT(sCashReceipt()));
   connect(_workbenchCreditMemo, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
@@ -177,6 +177,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _invoice->addColumn(tr("Invoice #"),  _orderColumn, Qt::AlignLeft   );
   _invoice->addColumn(tr("S/O #"),      _orderColumn, Qt::AlignLeft   );
   _invoice->addColumn(tr("Invc. Date"), _dateColumn,  Qt::AlignCenter );
+  _invoice->addColumn(tr("Due Date"),   _dateColumn,  Qt::AlignCenter );
   _invoice->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight  );
   _invoice->addColumn(tr("Balance"),    _moneyColumn, Qt::AlignRight  );
   _invoice->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft);
@@ -440,7 +441,7 @@ void dspCustomerInformation::sPopulateCustInfo()
   }
 }
 
-void dspCustomerInformation::sPopulate( int /*pCustid*/ )
+void dspCustomerInformation::sPopulate()
 {
   sPopulateCustInfo();
   sFillARHistory();
@@ -651,16 +652,20 @@ void dspCustomerInformation::sFillARHistory()
 }
 void dspCustomerInformation::sFillOrderList()
 {
-  q.prepare( "SELECT DISTINCT cohead_id, cohead_number,"
+  QString sql( "SELECT DISTINCT cohead_id, cohead_number,"
              "       cohead_custponumber,"
              "       formatDate(cohead_orderdate) AS f_ordered,"
              "       formatDate(MIN(coitem_scheddate)) AS f_scheduled "
              "  FROM cohead LEFT OUTER JOIN coitem ON (coitem_cohead_id=cohead_id) "
-             " WHERE (((coitem_status = 'O') OR (coitem_status IS NULL))"
-             "   AND  (cohead_cust_id=:cust_id) ) "
+             " WHERE ( ");
+  if (!_orderShowclosed->isChecked())
+    sql += " ((coitem_status = 'O') OR (coitem_status IS NULL)) AND ";
+    
+  sql +=     " (cohead_cust_id=:cust_id) )"
              "GROUP BY cohead_id, cohead_number,"
              "         cohead_custponumber, cohead_orderdate "
-             "ORDER BY cohead_number " );
+             "ORDER BY cohead_number; ";
+  q.prepare(sql);
   q.bindValue(":cust_id", _cust->id());
   q.exec();
 
@@ -710,42 +715,77 @@ void dspCustomerInformation::sViewInvOrder()
 
 void dspCustomerInformation::sFillInvoiceList()
 {
-  q.prepare("SELECT invchead_id, -1,"
+  QString sql("SELECT invchead_id AS id, -1 AS altId,"
             "       formatBoolYN(invchead_posted) AS f_posted,"
             "       formatBoolYN(COALESCE(aropen_open, FALSE)) AS f_open,"
             "       text(invchead_invcnumber) AS invcnumber,"
             "       text(invchead_ordernumber) AS invchead_ordernumber,"
-            "       formatDate(invchead_invcdate),"
-            "       formatMoney(COALESCE(aropen_amount,0)) AS amount,"
-            "       formatMoney(COALESCE(aropen_amount - aropen_paid,0)) AS balance,"
-            "       currConcat(COALESCE(aropen_curr_id,-1))"
+            "       formatDate(invchead_invcdate) AS f_docdate,"
+            "       formatdate(aropen_duedate) AS f_duedate,"
+            "       formatMoney(COALESCE(aropen_amount,0)) AS f_amount,"
+            "       formatMoney(COALESCE(aropen_amount - aropen_paid,0)) AS f_balance,"
+            "       currConcat(COALESCE(aropen_curr_id,-1)) AS f_curr,"
+            "       ((COALESCE(aropen_duedate,current_date) < current_date) "
+            "       AND COALESCE(aropen_open,FALSE)) AS pastdue "
             "  FROM invchead LEFT OUTER JOIN aropen"
             "         ON (aropen_docnumber=invchead_invcnumber"
             "         AND aropen_doctype='I'"
             "         AND aropen_cust_id=invchead_cust_id)"
-            " WHERE (invchead_cust_id=:cust_id)"
-            " UNION "
-            "SELECT aropen_id, -2,"
+            " WHERE (invchead_cust_id=:cust_id)");
+            
+  if (!_invoiceShowclosed->isChecked())
+    sql +=  "   AND (COALESCE(aropen_open,TRUE)) ";
+    
+  sql +=    " UNION "
+            "SELECT aropen_id AS id, -2 AS altId,"
             "       formatBoolYN(true) AS f_posted,"
             "       formatBoolYN(aropen_open) AS f_open,"
             "       text(aropen_docnumber) AS invcnumber,"
             "       aropen_ordernumber,"
-            "       formatDate(aropen_docdate),"
-            "       formatMoney(aropen_amount),"
-            "       formatMoney(aropen_amount - aropen_paid),"
-            "       currConcat(aropen_curr_id)"
+            "       formatDate(aropen_docdate) AS f_docdate,"
+            "       formatDate(aropen_duedate) AS f_duedate,"
+            "       formatMoney(aropen_amount) AS f_amount,"
+            "       formatMoney(aropen_amount - aropen_paid) AS f_balance,"
+            "       currConcat(aropen_curr_id) AS f_curr,"
+            "       ((COALESCE(aropen_duedate,current_date) < current_date) "
+            "       AND aropen_open) AS pastdue "
             "  FROM aropen LEFT OUTER JOIN invchead"
             "         ON (aropen_docnumber=invchead_invcnumber"
             "         AND aropen_doctype='I'"
             "         AND aropen_cust_id=invchead_cust_id)"
             " WHERE ((aropen_doctype='I')"
-            "   AND  (invchead_id IS NULL)"
-            "   AND  (aropen_cust_id=:cust_id) ) "
-            "ORDER BY invcnumber DESC;" );
+            "   AND  (invchead_id IS NULL)";
+            
+  if (!_invoiceShowclosed->isChecked())
+    sql +=  "   AND (aropen_open) ";
+    
+  sql +=    "   AND  (aropen_cust_id=:cust_id) ) "
+            "ORDER BY invcnumber DESC;";
+  q.prepare(sql);
   q.bindValue(":cust_id", _cust->id());
   q.exec();
   _invoice->clear();
-  _invoice->populate(q, true);
+//  _invoice->populate(q, true);
+  
+  XTreeWidgetItem *last = 0;
+  while (q.next())
+  {
+    last = new XTreeWidgetItem(_invoice, last, q.value("id").toInt(),
+			       q.value("altId").toInt(),
+			       q.value("f_posted"),
+			       q.value("f_open"),
+			       q.value("invcnumber"),
+			       q.value("invchead_ordernumber"),
+			       q.value("f_docdate"),
+			       q.value("f_duedate"),
+			       q.value("f_amount"),
+			       q.value("f_balance"),
+             q.value("f_curr") );
+
+    if (q.value("pastdue").toBool())
+      last->setTextColor(5, "red");
+  }
+
 }
 
 void dspCustomerInformation::sNewInvoice()
@@ -816,7 +856,7 @@ void dspCustomerInformation::sFillCreditMemoList()
   disconnect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sHandleCreditMemoPrint()));
   _printCreditMemo->setEnabled(FALSE);
     
-  q.prepare( "SELECT cmhead_id, -1,"
+  QString sql( "SELECT cmhead_id, -1,"
              "       formatBoolYN(false), '', '',"
              "       text(cmhead_number) AS docnumber,"
              "       formatDate(cmhead_docdate),"
@@ -835,8 +875,11 @@ void dspCustomerInformation::sFillCreditMemoList()
 	           "       currConcat(aropen_curr_id)"
              "  FROM aropen, cmhead "
              " WHERE ((aropen_doctype = 'C')"
-             "   AND  (aropen_docnumber=cmhead_number) "
-             "   AND  (aropen_cust_id=:cust_id) ) "
+             "   AND  (aropen_docnumber=cmhead_number) ");
+  if (!_creditMemoShowclosed->isChecked())
+    sql +=   "   AND (aropen_open) ";
+    
+  sql +=     "   AND  (aropen_cust_id=:cust_id) ) "
              "UNION "
              "SELECT aropen_id, -3,"
              "       formatBoolYN(true), formatBoolYN(aropen_open),"
@@ -851,12 +894,16 @@ void dspCustomerInformation::sFillCreditMemoList()
 	           "       currConcat(aropen_curr_id)"
              "  FROM aropen "
              " WHERE ((aropen_doctype IN ('C', 'R'))"
-             "   AND  (aropen_cust_id=:cust_id) "
-             "   AND  (NOT EXISTS (SELECT cmhead_id "
+             "   AND  (aropen_cust_id=:cust_id) ";
+  if (!_creditMemoShowclosed->isChecked())
+    sql +=   "   AND (aropen_open) ";
+    
+  sql +=     "   AND  (NOT EXISTS (SELECT cmhead_id "
              "                     FROM cmhead "
              "                     WHERE (cmhead_number=aropen_docnumber) ) ) ) "
-             "ORDER BY docnumber; " );
+             "ORDER BY docnumber; ";
              
+  q.prepare(sql);
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":creditmemo", tr("CM"));
   q.bindValue(":cashdeposit", tr("CD"));
@@ -1123,7 +1170,7 @@ void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
   pMenu->insertSeparator();
 
   pMenu->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
-  pMenu->insertItem(tr("Shipment..."), this, SLOT(sShipment()), 0);
+  pMenu->insertItem(tr("Shipments..."), this, SLOT(sShipment()), 0);
 }
 
 void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetItem *selected)
@@ -1148,6 +1195,12 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
     pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewInvOrder()), 0);
     if(!_privleges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
+  
+    pMenu->insertSeparator();
+
+    pMenu->insertItem(tr("Sales Order Shipment Status..."), this, SLOT(sInvShipmentStatus()), 0);
+    pMenu->insertItem(tr("Sales Order Shipments..."), this, SLOT(sInvShipment()), 0);
+  
   }
 }
 
@@ -1352,13 +1405,6 @@ void dspCustomerInformation::sCRMAccount()
   omfgThis->handleNewWindow(newdlg);
 }
 
-void dspCustomerInformation::sRefreshList()
-{
-  sFillARHistory();
-  sFillPaymentsList();
-  sPopulateCustInfo();
-}
-
 void dspCustomerInformation::sDspShipmentStatus()
 {
   ParameterList params;
@@ -1378,6 +1424,45 @@ void dspCustomerInformation::sShipment()
   dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
   newdlg->set(params);
   omfgThis->handleNewWindow(newdlg);
+}
+
+void dspCustomerInformation::sInvShipmentStatus()
+{
+  q.prepare("SELECT cohead_id "
+            "FROM cohead, invchead "
+            "WHERE ( (cohead_number=invchead_ordernumber) "
+            "AND ( invchead_id=:invoice_id)) ");
+  q.bindValue(":invoice_id", _invoice->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("sohead_id", q.value("cohead_id").toInt());
+    params.append("run");
+
+    dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+    newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+  }
+}
+
+void dspCustomerInformation::sInvShipment()
+{
+  q.prepare("SELECT cohead_id "
+            "FROM cohead, invchead "
+            "WHERE ( (cohead_number=invchead_ordernumber) "
+            "AND ( invchead_id=:invoice_id)) ");
+  q.bindValue(":invoice_id", _invoice->id());
+  q.exec();
+  if (q.first())
+  {
+    ParameterList params;
+    params.append("sohead_id", q.value("cohead_id").toInt());
+
+    dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
 }
 
 void dspCustomerInformation::sPrintSalesOrder()

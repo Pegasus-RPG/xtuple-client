@@ -77,7 +77,7 @@ public:
     static void doDialog(QWidget * parent, const ParameterList & pParams);
 
 public slots:
-    virtual void sPopulate( int );
+    virtual void sPopulate();
     virtual void sEdit();
     virtual void sPrint();
     virtual void sFillQuoteList();
@@ -112,9 +112,10 @@ public slots:
     virtual void sPopulateCustInfo();
     virtual void sCRMAccount();
     virtual void sARWorkbench();
-    virtual void sRefreshList();
     virtual void sShipment();
     virtual void sDspShipmentStatus();
+    virtual void sInvShipment();
+    virtual void sInvShipmentStatus();
     virtual void sCashReceipt();
     virtual void sPrintSalesOrder();
     virtual void sPrintQuote();

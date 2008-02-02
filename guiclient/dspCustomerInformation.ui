@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>766</width>
-    <height>620</height>
+    <width>788</width>
+    <height>667</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -1454,46 +1454,36 @@
       <attribute name="title" >
        <string>Sales Orders</string>
       </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XTreeWidget" name="_order" />
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="XCheckBox" name="_orderShowclosed" >
+         <property name="text" >
+          <string>Show Closed</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
+         <property name="sizeHint" >
+          <size>
+           <width>521</width>
+           <height>20</height>
+          </size>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="XTreeWidget" name="_order" />
+         </item>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
-            <number>5</number>
+            <number>0</number>
            </property>
            <property name="leftMargin" >
             <number>0</number>
@@ -1508,59 +1498,78 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_printOrder" >
-             <property name="enabled" >
-              <bool>false</bool>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>5</number>
              </property>
-             <property name="text" >
-              <string>&amp;Print</string>
+             <property name="leftMargin" >
+              <number>0</number>
              </property>
-            </widget>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_printOrder" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>&amp;Print</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_newOrder" >
+               <property name="text" >
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editOrder" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewOrder" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>View</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
            <item>
-            <widget class="QPushButton" name="_newOrder" >
-             <property name="text" >
-              <string>New</string>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_editOrder" >
-             <property name="enabled" >
-              <bool>false</bool>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="text" >
-              <string>Edit</string>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_viewOrder" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="text" >
-              <string>View</string>
-             </property>
-            </widget>
+            </spacer>
            </item>
           </layout>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
@@ -1570,46 +1579,36 @@
       <attribute name="title" >
        <string>Invoices</string>
       </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XTreeWidget" name="_invoice" />
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="XCheckBox" name="_invoiceShowclosed" >
+         <property name="text" >
+          <string>Show Closed</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
+         <property name="sizeHint" >
+          <size>
+           <width>351</width>
+           <height>20</height>
+          </size>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="XTreeWidget" name="_invoice" />
+         </item>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
-            <number>5</number>
+            <number>0</number>
            </property>
            <property name="leftMargin" >
             <number>0</number>
@@ -1624,73 +1623,92 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_printInvoice" >
-             <property name="enabled" >
-              <bool>false</bool>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>5</number>
              </property>
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_printInvoice" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>&amp;Print</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_newInvoice" >
+               <property name="text" >
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editInvoice" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewInvoice" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>View</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_workbenchInvoice" >
              <property name="text" >
-              <string>&amp;Print</string>
+              <string>&amp;Workbench</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_newInvoice" >
+            <widget class="QPushButton" name="_cashReceiptInvoice" >
              <property name="text" >
-              <string>New</string>
+              <string>&amp;Cash Receipt</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_editInvoice" >
-             <property name="enabled" >
-              <bool>false</bool>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
              </property>
-             <property name="text" >
-              <string>Edit</string>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_viewInvoice" >
-             <property name="enabled" >
-              <bool>false</bool>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
              </property>
-             <property name="text" >
-              <string>View</string>
-             </property>
-            </widget>
+            </spacer>
            </item>
           </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_workbenchInvoice" >
-           <property name="text" >
-            <string>&amp;Workbench</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_cashReceiptInvoice" >
-           <property name="text" >
-            <string>&amp;Cash Receipt</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
@@ -1700,46 +1718,36 @@
       <attribute name="title" >
        <string>Credit Memos</string>
       </attribute>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
-       <item>
-        <widget class="XTreeWidget" name="_creditMemo" />
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="XCheckBox" name="_creditMemoShowclosed" >
+         <property name="text" >
+          <string>Show Closed</string>
+         </property>
+        </widget>
        </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
+       <item row="0" column="1" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
          </property>
-         <property name="leftMargin" >
-          <number>0</number>
+         <property name="sizeHint" >
+          <size>
+           <width>511</width>
+           <height>20</height>
+          </size>
          </property>
-         <property name="topMargin" >
-          <number>0</number>
-         </property>
-         <property name="rightMargin" >
-          <number>0</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>0</number>
-         </property>
+        </spacer>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <layout class="QHBoxLayout" >
+         <item>
+          <widget class="XTreeWidget" name="_creditMemo" />
+         </item>
          <item>
           <layout class="QVBoxLayout" >
            <property name="spacing" >
-            <number>5</number>
+            <number>0</number>
            </property>
            <property name="leftMargin" >
             <number>0</number>
@@ -1754,66 +1762,85 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_printCreditMemo" >
-             <property name="enabled" >
-              <bool>false</bool>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>5</number>
              </property>
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_printCreditMemo" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>&amp;Print</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_newCreditMemo" >
+               <property name="text" >
+                <string>New</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_editCreditMemo" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>Edit</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_viewCreditMemo" >
+               <property name="enabled" >
+                <bool>false</bool>
+               </property>
+               <property name="text" >
+                <string>View</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_workbenchCreditMemo" >
              <property name="text" >
-              <string>&amp;Print</string>
+              <string>&amp;Workbench</string>
              </property>
             </widget>
            </item>
            <item>
-            <widget class="QPushButton" name="_newCreditMemo" >
-             <property name="text" >
-              <string>New</string>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_editCreditMemo" >
-             <property name="enabled" >
-              <bool>false</bool>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
              </property>
-             <property name="text" >
-              <string>Edit</string>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
              </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_viewCreditMemo" >
-             <property name="enabled" >
-              <bool>false</bool>
-             </property>
-             <property name="text" >
-              <string>View</string>
-             </property>
-            </widget>
+            </spacer>
            </item>
           </layout>
-         </item>
-         <item>
-          <widget class="QPushButton" name="_workbenchCreditMemo" >
-           <property name="text" >
-            <string>&amp;Workbench</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Expanding</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>20</width>
-             <height>40</height>
-            </size>
-           </property>
-          </spacer>
          </item>
         </layout>
        </item>
@@ -1889,6 +1916,11 @@
    <class>Comments</class>
    <extends>QWidget</extends>
    <header>comments.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
   </customwidget>
   <customwidget>
    <class>XTreeWidget</class>
@@ -1973,6 +2005,54 @@
     <hint type="destinationlabel" >
      <x>700</x>
      <y>412</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_orderShowclosed</sender>
+   <signal>clicked()</signal>
+   <receiver>_refresh</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>89</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>735</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_invoiceShowclosed</sender>
+   <signal>clicked()</signal>
+   <receiver>_refresh</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>89</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>735</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_creditMemoShowclosed</sender>
+   <signal>clicked()</signal>
+   <receiver>_refresh</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>89</x>
+     <y>450</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>735</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
