@@ -120,6 +120,7 @@ public slots:
     virtual void sPrintQuote();
     virtual void sPrintCreditMemo();
     virtual void sPrintInvoice();
+    virtual void sHandleCreditMemoPrint();
 
 protected slots:
     virtual void languageChange();

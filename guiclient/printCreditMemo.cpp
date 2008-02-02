@@ -284,7 +284,7 @@ void printCreditMemo::sEditWatermark()
 
 void printCreditMemo::populate()
 {
-  q.prepare( "SELECT cmhead_number, cmhead_cust_id "
+  q.prepare( "SELECT cmhead_number, cmhead_cust_id, cmhead_posted "
              "FROM cmhead "
              "WHERE (cmhead_id=:cmhead_id);" );
   q.bindValue(":cmhead_id", _cmheadid);
@@ -293,6 +293,14 @@ void printCreditMemo::populate()
   {
     _number->setText(q.value("cmhead_number").toString());
     _cust->setId(q.value("cmhead_cust_id").toInt());
+    if (q.value("cmhead_posted").toBool())
+    {
+      _post->setChecked(FALSE);
+      _post->hide();
+    }
+    else
+      _post->show();
+      
   }
   else if (q.lastError().type() != QSqlError::None)
   {

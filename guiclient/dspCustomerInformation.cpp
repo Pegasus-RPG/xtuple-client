@@ -114,8 +114,9 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   connect(_convertQuote, SIGNAL(clicked()), this, SLOT(sConvertQuote()));
   connect(_crmAccount, SIGNAL(clicked()), this, SLOT(sCRMAccount()));
   connect(_refresh, SIGNAL(clicked()), this, SLOT(sRefreshList()));
-  connect(_arWorkbench, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
-  connect(_cashReceipt, SIGNAL(clicked()), this, SLOT(sCashReceipt()));
+  connect(_workbenchInvoice, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
+  connect(_cashReceiptInvoice, SIGNAL(clicked()), this, SLOT(sCashReceipt()));
+  connect(_workbenchCreditMemo, SIGNAL(clicked()), this, SLOT(sARWorkbench()));
   connect(_printOrder, SIGNAL(clicked()), this ,SLOT(sPrintSalesOrder()));
   connect(_printQuote, SIGNAL(clicked()), this ,SLOT(sPrintQuote()));
   connect(_printInvoice, SIGNAL(clicked()), this ,SLOT(sPrintInvoice()));
@@ -229,9 +230,10 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   }
 
   _edit->setEnabled(_privleges->check("MaintainCustomerMasters"));
-  _crmAccount->setEnabled(_privleges->check("MaintainCRMAccount") || _privleges->check("ViewCRMAccount"));
-  _arWorkbench->setEnabled(_privleges->check("ViewAROpenItems"));
-  _cashReceipt->setEnabled(_privleges->check("MaintainCashReceipts"));
+  _crmAccount->setEnabled(_privleges->check("MaintainCRMAccounts") || _privleges->check("ViewCRMAccounts"));
+  _workbenchInvoice->setEnabled(_privleges->check("ViewAROpenItems"));
+  _cashReceiptInvoice->setEnabled(_privleges->check("MaintainCashReceipts"));
+  _workbenchCreditMemo->setEnabled(_privleges->check("ViewAROpenItems"));
 }
 
 dspCustomerInformation::~dspCustomerInformation()
@@ -811,6 +813,9 @@ void dspCustomerInformation::sViewInvoice()
 
 void dspCustomerInformation::sFillCreditMemoList()
 {
+  disconnect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sHandleCreditMemoPrint()));
+  _printCreditMemo->setEnabled(FALSE);
+    
   q.prepare( "SELECT cmhead_id, -1,"
              "       formatBoolYN(false), '', '',"
              "       text(cmhead_number) AS docnumber,"
@@ -822,6 +827,19 @@ void dspCustomerInformation::sFillCreditMemoList()
              "UNION "
              "SELECT aropen_id, -2,"
              "       formatBoolYN(true), formatBoolYN(aropen_open),"
+             "       :creditmemo,"
+             "       text(aropen_docnumber) AS docnumber,"
+             "       formatDate(aropen_docdate),"
+             "       formatMoney(aropen_amount),"
+             "       formatMoney(aropen_amount - aropen_paid),"
+	           "       currConcat(aropen_curr_id)"
+             "  FROM aropen, cmhead "
+             " WHERE ((aropen_doctype = 'C')"
+             "   AND  (aropen_docnumber=cmhead_number) "
+             "   AND  (aropen_cust_id=:cust_id) ) "
+             "UNION "
+             "SELECT aropen_id, -3,"
+             "       formatBoolYN(true), formatBoolYN(aropen_open),"
              "       CASE WHEN (aropen_doctype='C') THEN :creditmemo"
              "            WHEN (aropen_doctype='R') THEN :cashdeposit"
              "            else aropen_doctype"
@@ -830,11 +848,14 @@ void dspCustomerInformation::sFillCreditMemoList()
              "       formatDate(aropen_docdate),"
              "       formatMoney(aropen_amount),"
              "       formatMoney(aropen_amount - aropen_paid),"
-	     "       currConcat(aropen_curr_id)"
-             "  FROM aropen"
+	           "       currConcat(aropen_curr_id)"
+             "  FROM aropen "
              " WHERE ((aropen_doctype IN ('C', 'R'))"
-             "   AND  (aropen_cust_id=:cust_id) ) "
-             "ORDER BY docnumber " );
+             "   AND  (aropen_cust_id=:cust_id) "
+             "   AND  (NOT EXISTS (SELECT cmhead_id "
+             "                     FROM cmhead "
+             "                     WHERE (cmhead_number=aropen_docnumber) ) ) ) "
+             "ORDER BY docnumber; " );
              
   q.bindValue(":cust_id", _cust->id());
   q.bindValue(":creditmemo", tr("CM"));
@@ -842,6 +863,8 @@ void dspCustomerInformation::sFillCreditMemoList()
   q.exec();
   _creditMemo->clear();
   _creditMemo->populate(q, true);
+  
+  connect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sHandleCreditMemoPrint()));
 }
 
 void dspCustomerInformation::sNewCreditMemo()
@@ -874,7 +897,7 @@ void dspCustomerInformation::sEditCreditMemo()
   q.exec();
   if (q.first())
   {
-    memoType	= q.value("type").toInt();
+//    memoType	= q.value("type").toInt();
     memoId	= q.value("id").toInt();
     memoPosted	= q.value("posted").toBool();
   }
@@ -895,7 +918,7 @@ void dspCustomerInformation::sEditCreditMemo()
   else
     params.append("mode", "view");
 
-  if(memoType == -1)
+  if(memoType == -1 || memoType == -2)
   {
     params.append("cmhead_id", memoId);
   
@@ -903,7 +926,7 @@ void dspCustomerInformation::sEditCreditMemo()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(memoType == -2)
+  else if(memoType == -3)
   {
     params.append("aropen_id", memoId);
     arOpenItem newdlg(this, "", TRUE);
@@ -932,7 +955,7 @@ void dspCustomerInformation::sViewCreditMemo()
   q.exec();
   if (q.first())
   {
-    memoType = q.value("type").toInt();
+//    memoType = q.value("type").toInt();
     memoId = q.value("id").toInt();
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -941,7 +964,7 @@ void dspCustomerInformation::sViewCreditMemo()
     return;
   }
 
-  if(memoType == -1)
+  if(memoType == -1 || memoType == -2)
   {
     ParameterList params;
     params.append("mode", "view");
@@ -951,7 +974,7 @@ void dspCustomerInformation::sViewCreditMemo()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(memoType == -2)
+  else if(memoType == -3)
   {
     ParameterList params;
     params.append("mode", "view");
@@ -992,18 +1015,18 @@ void dspCustomerInformation::sViewAropen()
 
 void dspCustomerInformation::sCashReceipt()
 {
-/*
   ParameterList params;
   params.append("mode", "new");
-  params.append("cust_id", _cust->id());//
-  cashReceipt newdlg(this, "", TRUE);
-  newdlg.set(params);//
-  newdlg.exec();
-  */
+  params.append("cust_id", _cust->id());
+
+  cashReceipt *newdlg = new cashReceipt();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void dspCustomerInformation::sFillPaymentsList()
 {
+/*
   q.prepare("SELECT ccpay_id, cohead_id,"
             "       CASE WHEN (ccpay_type='A') THEN :preauth"
             "            WHEN (ccpay_type='C') THEN :charge"
@@ -1055,6 +1078,7 @@ void dspCustomerInformation::sFillPaymentsList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  */
 }
 
 void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )
@@ -1138,8 +1162,8 @@ void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Credit Memo..."), this, SLOT(sEditCreditMemo()), 0);
-  if((_creditMemo->altId() == -1 && !_privleges->check("MaintainCreditMemos"))
-   ||(_creditMemo->altId() == -2 && !_privleges->check("EditAROpenItem")))
+  if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && !_privleges->check("MaintainCreditMemos"))
+   ||(_creditMemo->altId() == -3 && !_privleges->check("EditAROpenItem")))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
 }
@@ -1269,14 +1293,14 @@ void dspCustomerInformation::sCreditMemoSelected(bool b)
 {
   if(b)
   {
-    if((_creditMemo->altId() == -1 && _privleges->check("MaintainCreditMemos"))
-     ||(_creditMemo->altId() == -2 && _privleges->check("EditAROpenItem")))
+    if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && _privleges->check("MaintainCreditMemos"))
+     ||(_creditMemo->altId() == -3 && _privleges->check("EditAROpenItem")))
     {
       _editCreditMemo->setEnabled(true);
       _viewCreditMemo->setEnabled(true);
     }
-    else if((_creditMemo->altId() == -1 && _privleges->check("ViewCreditMemos"))
-     ||(_creditMemo->altId() == -2 && _privleges->check("ViewAROpenItems")))
+    else if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && _privleges->check("ViewCreditMemos"))
+     ||(_creditMemo->altId() == -3 && _privleges->check("ViewAROpenItems")))
     {
       _editCreditMemo->setEnabled(false);
       _viewCreditMemo->setEnabled(true);
@@ -1316,7 +1340,7 @@ void dspCustomerInformation::sCRMAccount()
     _crmacctId = q.value("crmacct_id").toInt();
 
   ParameterList params;
-  if (!_privleges->check("MaintainCRMAccount"))
+  if (!_privleges->check("MaintainCRMAccounts"))
     params.append("mode", "view");
   else
     params.append("mode", "edit");
@@ -1396,8 +1420,23 @@ void dspCustomerInformation::sPrintInvoice()
 
 void dspCustomerInformation::sPrintCreditMemo()
 {
+  int  memoId		= _creditMemo->id();
+
+  q.prepare("SELECT cmhead_id "
+            "FROM cmhead "
+            "WHERE (cmhead_number=:docnum);");
+  q.bindValue(":docnum", _creditMemo->currentItem()->text(3));
+  q.exec();
+  if (q.first())
+    memoId	= q.value("cmhead_id").toInt();
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
   ParameterList params;
-  params.append("cmhead_id", _creditMemo->id());
+  params.append("cmhead_id", memoId);
 
   printCreditMemo newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -1407,4 +1446,9 @@ void dspCustomerInformation::sPrintCreditMemo()
     newdlg.exec();
     newdlg.setSetup(TRUE);
   }
+}
+
+void dspCustomerInformation::sHandleCreditMemoPrint()
+{
+  _printCreditMemo->setEnabled(_creditMemo->altId() == -1 || _creditMemo->altId() == -2);
 }
