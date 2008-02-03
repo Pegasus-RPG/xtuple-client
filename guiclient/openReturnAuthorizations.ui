@@ -196,7 +196,7 @@
          </size>
         </property>
         <property name="text" >
-         <string>Return Material Authorization:</string>
+         <string>Return Authorizations:</string>
         </property>
        </widget>
       </item>
