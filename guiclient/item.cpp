@@ -1230,7 +1230,7 @@ void item::sNewTransformation()
     q.exec();
     if (q.first())
     {
-      QMessageBox::warning( this, tr("Cannot Dupliate Transformation"),
+      QMessageBox::warning( this, tr("Cannot Duplicate Transformation"),
                             tr("The selected Item is already a Transformation target for this Item.") );
       return;
     }
