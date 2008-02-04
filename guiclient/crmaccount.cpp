@@ -73,6 +73,8 @@
 #include "vendor.h"
 #include "storedProcErrorLookup.h"
 #include "dspCustomerInformation.h"
+#include "opportunity.h"
+#include "mqlutil.h"
 
 crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
     : QWidget(parent, fl)
@@ -131,6 +133,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(_allButton, SIGNAL(toggled(bool)), this, SLOT(sHandleButtons()));
   connect(_customer, SIGNAL(toggled(bool)), this, SLOT(sCustomerToggled()));
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
+  connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
 
   _contacts->addColumn(tr("First Name"),	 50, Qt::AlignLeft );
   _contacts->addColumn(tr("Last Name"),		 -1, Qt::AlignLeft );
@@ -151,6 +154,18 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _todo->addColumn(tr("Status"),  _statusColumn, Qt::AlignLeft );
   _todo->addColumn(tr("Due Date"),  _dateColumn, Qt::AlignLeft );
   _todo->addColumn(tr("Incident"), _orderColumn, Qt::AlignLeft );
+
+  _oplist->addColumn(tr("Name"),        _itemColumn,     Qt::AlignLeft );
+  _oplist->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft );
+  _oplist->addColumn(tr("Owner"),       _userColumn,     Qt::AlignLeft );
+  _oplist->addColumn(tr("Stage"),       _orderColumn,    Qt::AlignLeft );
+  _oplist->addColumn(tr("Source"),      _orderColumn,    Qt::AlignLeft,   false );
+  _oplist->addColumn(tr("Type"),        _orderColumn,    Qt::AlignLeft,   false );
+  _oplist->addColumn(tr("Prob.%"),      _prcntColumn,    Qt::AlignCenter, false );
+  _oplist->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  false );
+  _oplist->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false );
+  _oplist->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft );
+  _oplist->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false );
 
   Preferences _pref = Preferences(omfgThis->username());
   if (_pref.boolean("XCheckBox/forgetful"))
@@ -853,6 +868,7 @@ void crmaccount::sPopulate()
   sPopulateContacts();
   sGetCharacteristics();
   sPopulateTodo();
+  sPopulateOplist();
 }
 
 void crmaccount::sPopulateContacts()
@@ -1627,6 +1643,29 @@ void crmaccount::sPopulateMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
+void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
+{
+  int menuItem;
+
+  if (_oplist->currentItem()->text(0) == "T")
+  {
+    bool editPriv = _privleges->check("MaintainOpportunities");
+    bool viewPriv = _privleges->check("VeiwOpportunities");
+
+    //menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
+    //pMenu->setItemEnabled(menuItem, editPriv);
+
+    //menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sOplistEdit()), 0);
+    //pMenu->setItemEnabled(menuItem, editPriv);
+
+    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sOplistView()), 0);
+    pMenu->setItemEnabled(menuItem, viewPriv);
+
+    //menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sOplistDelete()), 0);
+    //pMenu->setItemEnabled(menuItem, editPriv);
+  }
+}
+
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
 {
   QDialog newdlg(parent);
@@ -1683,4 +1722,32 @@ void crmaccount::sProspectToggled()
     _customer->setChecked(FALSE);
 }
 
+void crmaccount::sOplistView()
+{
+  ParameterList params;
+  params.append("mode", "view");
+  params.append("ophead_id", _oplist->id());
 
+  opportunity newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  newdlg.exec();
+}
+
+void crmaccount::sPopulateOplist()
+{
+  MetaSQLQuery mql = mqlLoad(":/crm/account/FillOpListDetail.mql");
+
+  ParameterList params;
+  params.append("crmacct_id", _crmacctId);
+
+  XSqlQuery itemQ = mql.toQuery(params);
+
+  if (itemQ.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  _oplist->populate(itemQ);
+}

@@ -437,7 +437,7 @@
                 <string/>
                </property>
                <property name="listVisible" >
-                <bool>true</bool>
+                <bool>false</bool>
                </property>
                <property name="accountVisible" >
                 <bool>true</bool>
@@ -591,6 +591,9 @@
          </property>
          <item>
           <widget class="Comments" name="_comments" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
            <property name="type" >
             <enum>Comments::CRMAccount</enum>
            </property>
@@ -837,6 +840,16 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_oplistTab" >
+        <attribute name="title" >
+         <string>Opportunities</string>
+        </attribute>
+        <layout class="QVBoxLayout" >
+         <item>
+          <widget class="XTreeWidget" name="_oplist" />
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -883,25 +896,48 @@
   <tabstop>_parentCrmacct</tabstop>
   <tabstop>_organization</tabstop>
   <tabstop>_individual</tabstop>
+  <tabstop>_prospect</tabstop>
+  <tabstop>_prospectButton</tabstop>
+  <tabstop>_customer</tabstop>
+  <tabstop>_customerButton</tabstop>
+  <tabstop>_custInfoButton</tabstop>
   <tabstop>_vendor</tabstop>
-  <tabstop>_partner</tabstop>
-  <tabstop>_competitor</tabstop>
+  <tabstop>_vendorButton</tabstop>
   <tabstop>_taxauth</tabstop>
+  <tabstop>_taxauthButton</tabstop>
+  <tabstop>_competitor</tabstop>
+  <tabstop>_partner</tabstop>
+  <tabstop>_primaryButton</tabstop>
+  <tabstop>_secondaryButton</tabstop>
+  <tabstop>_allButton</tabstop>
   <tabstop>_primary</tabstop>
   <tabstop>_tab</tabstop>
-  <tabstop>_notes</tabstop>
-  <tabstop>_customerButton</tabstop>
-  <tabstop>_prospectButton</tabstop>
-  <tabstop>_vendorButton</tabstop>
-  <tabstop>_taxauthButton</tabstop>
-  <tabstop>_close</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_contacts</tabstop>
+  <tabstop>_comments</tabstop>
+  <tabstop>_charass</tabstop>
+  <tabstop>_newCharacteristic</tabstop>
+  <tabstop>_editCharacteristic</tabstop>
+  <tabstop>_deleteCharacteristic</tabstop>
+  <tabstop>_showTodo</tabstop>
+  <tabstop>_activeTodoIncdt</tabstop>
+  <tabstop>_showIncdt</tabstop>
+  <tabstop>_completedTodoIncdt</tabstop>
   <tabstop>_todo</tabstop>
   <tabstop>_newTodo</tabstop>
   <tabstop>_newIncdt</tabstop>
   <tabstop>_editTodoIncdt</tabstop>
   <tabstop>_viewTodoIncdt</tabstop>
   <tabstop>_deleteTodoIncdt</tabstop>
+  <tabstop>_autoUpdateTodo</tabstop>
+  <tabstop>_oplist</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_close</tabstop>
+  <tabstop>_notes</tabstop>
+  <tabstop>_secondary</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_edit</tabstop>
+  <tabstop>_detach</tabstop>
+  <tabstop>_attach</tabstop>
  </tabstops>
  <resources/>
  <connections>

@@ -1,0 +1,25 @@
+SELECT ophead_id,
+       ophead_name,
+       crmacct_number,
+       ophead_owner_username,
+       opstage_name,
+       opsource_name,
+       optype_name,
+       ophead_probability_prcnt,
+       formatMoney(ophead_amount) AS f_amount,
+       currConcat(ophead_curr_id) As f_currency,
+       formatDate(ophead_target_date) AS f_targetdate,
+       formatDate(ophead_actual_date) AS f_actualdate
+  FROM ophead
+       LEFT OUTER JOIN crmacct ON (ophead_crmacct_id=crmacct_id)
+       LEFT OUTER JOIN opstage ON (ophead_opstage_id=opstage_id)
+       LEFT OUTER JOIN opsource ON (ophead_opsource_id=opsource_id)
+       LEFT OUTER JOIN optype ON (ophead_optype_id=optype_id)
+ WHERE((crmacct_id=<? value("crmacct_id") ?>)
+<? if exists("usr_id") ?>
+   AND (ophead_owner_username=(SELECT usr_username FROM usr WHERE usr_id=<? value("usr_id") ?>))
+<? elseif exists("usr_pattern") ?>
+   AND (ophead_owner_username ~ <? value("username_pattern") ?>)
+<? endif ?>
+ )
+ ORDER BY ophead_target_date;

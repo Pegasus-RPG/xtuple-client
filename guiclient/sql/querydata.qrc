@@ -41,6 +41,7 @@
   </qresource>
   <qresource prefix="crm">
     <file alias="opportunityList/FillListDetail.mql">opportunityListFillList.mql</file>
+    <file alias="account/FillOpListDetail.mql">crmaccountOpFillList.mql</file>
   </qresource>
   <qresource prefix="sys">
     <file alias="eventManager/FillListDetail.mql">eventManagerFillList.mql</file>

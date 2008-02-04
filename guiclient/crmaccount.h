@@ -77,6 +77,7 @@ public slots:
     virtual void sPopulate();
     virtual void sPopulateContacts();
     virtual void sPopulateTodo();
+    virtual void sPopulateOplist();
 
 protected slots:
     virtual void languageChange();
@@ -106,6 +107,7 @@ protected slots:
     virtual void sPartner();
     virtual void sPopulateMenu(QMenu *);
     virtual void sPopulateTodoMenu(QMenu *);
+    virtual void sPopulateOplistMenu(QMenu *);
     virtual void sProspect();
     virtual void sSave();
     virtual void sTaxAuth();
@@ -119,6 +121,7 @@ protected slots:
     virtual void sHandleButtons();
     virtual void sCustomerToggled();
     virtual void sProspectToggled();
+    virtual void sOplistView();
 
 private:
     bool	_modal;

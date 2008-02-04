@@ -203,15 +203,68 @@ void Comments::refresh()
   }
 
   XSqlQuery comment;
-  comment.prepare( "SELECT comment_id, formatDateTime(comment_date),"
-                   "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
-                   "            ELSE :none"
-                   "       END,"
-                   "       comment_user, firstLine(detag(comment_text)) "
-                   "FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
-                   "WHERE ( (comment_source=:source)"
-                   " AND (comment_source_id=:sourceid) ) "
-                   "ORDER BY comment_date;" );
+  if(_source != CRMAccount)
+  {
+    comment.prepare( "SELECT comment_id, formatDateTime(comment_date),"
+                     "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
+                     "            ELSE :none"
+                     "       END,"
+                     "       comment_user, firstLine(detag(comment_text)) "
+                     "FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     "WHERE ( (comment_source=:source)"
+                     " AND (comment_source_id=:sourceid) ) "
+                     "ORDER BY comment_date;" );
+  }
+  else
+  {
+    // If it's CRMAccount we want to do some extra joining in our SQL
+    comment.prepare( "SELECT comment_id, formatDateTime(comment_date),"
+                     "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
+                     "            ELSE :none"
+                     "       END,"
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_date "
+                     "  FROM comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     " WHERE((comment_source=:source)"
+                     "   AND (comment_source_id=:sourceid) ) "
+                     " UNION "
+                     "SELECT comment_id, formatDateTime(comment_date),"
+                     "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
+                     "            ELSE :none"
+                     "       END,"
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_date "
+                     "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     " WHERE((comment_source=:sourceCust)"
+                     "   AND (crmacct_id=:sourceid)"
+                     "   AND (comment_source_id=crmacct_cust_id) ) "
+                     " UNION "
+                     "SELECT comment_id, formatDateTime(comment_date),"
+                     "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
+                     "            ELSE :none"
+                     "       END,"
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_date "
+                     "  FROM crmacct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     " WHERE((comment_source=:sourceVend)"
+                     "   AND (crmacct_id=:sourceid)"
+                     "   AND (comment_source_id=crmacct_vend_id) ) "
+                     " UNION "
+                     "SELECT comment_id, formatDateTime(comment_date),"
+                     "       CASE WHEN (cmnttype_name IS NOT NULL) THEN cmnttype_name"
+                     "            ELSE :none"
+                     "       END,"
+                     "       comment_user, firstLine(detag(comment_text)),"
+                     "       comment_date "
+                     "  FROM cntct, comment LEFT OUTER JOIN cmnttype ON (comment_cmnttype_id=cmnttype_id) "
+                     " WHERE((comment_source=:sourceContact)"
+                     "   AND (cntct_crmacct_id=:sourceid)"
+                     "   AND (comment_source_id=cntct_id) ) "
+                     "ORDER BY comment_date;" );
+    comment.bindValue(":sourceCust", _commentMap[Customer].ident);
+    comment.bindValue(":sourceContact", _commentMap[Contact].ident);
+    comment.bindValue(":sourceVend", _commentMap[Vendor].ident);
+  }
   comment.bindValue(":none", tr("None"));
   comment.bindValue(":source", _commentMap[_source].ident);
   comment.bindValue(":sourceid", _sourceid);
