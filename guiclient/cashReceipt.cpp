@@ -436,17 +436,19 @@ void cashReceipt::sClose()
 {
   if (_mode == cNew)
   {
-    q.prepare( "DELETE FROM cashrcpt "
-               "WHERE (cashrcpt_id=:cashrcpt_id); "
-
-               "DELETE FROM cashrcptitem "
-               "WHERE (cashrcptitem_cashrcpt_id=:cashrcpt_id); "
-
-               "DELETE FROM cashrcptmisc "
-               "WHERE (cashrcptmisc_cashrcpt_id=:cashrcpt_id);" );
+    q.prepare("SELECT deleteCashRcpt(:cashrcpt_id) AS result;");
     q.bindValue(":cashrcpt_id", _cashrcptid);
     q.exec();
-    if (q.lastError().type() != QSqlError::None)
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("deleteCashRcpt", result));
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
@@ -581,11 +583,11 @@ void cashReceipt::sPopulateCustomerInfo(int)
     cust.exec();
     if (cust.first())
       _received->setId(cust.value("cust_curr_id").toInt());
-    else if (cust.lastError().type() != QSqlError::NoError)
-      QMessageBox::critical(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__),
-                          cust.lastError().databaseText());
+    else if (cust.lastError().type() != QSqlError::None)
+    {
+      systemError(this, cust.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   sFillApplyList();

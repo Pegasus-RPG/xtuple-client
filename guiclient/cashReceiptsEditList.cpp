@@ -60,40 +60,26 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
-#include <QVariant>
-#include <QWorkspace>
-#include <QSqlError>
 
 #include <openreports.h>
 #include <parameter.h>
+
 #include "OpenMFGGUIClient.h"
 #include "cashReceipt.h"
+#include "storedProcErrorLookup.h"
 
-/*
- *  Constructs a cashReceiptsEditList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_cashrcpt, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
-  connect(_cashrcpt, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print,  SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
-  
   _cashrcpt->addColumn(tr("Customer"),   -1,              Qt::AlignLeft  );
   _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter );
   _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight  );
@@ -119,21 +105,14 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 cashReceiptsEditList::~cashReceiptsEditList()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void cashReceiptsEditList::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void cashReceiptsEditList::sPopulateMenu(QMenu *pMenu)
@@ -191,13 +170,23 @@ void cashReceiptsEditList::sView()
 
 void cashReceiptsEditList::sDelete()
 {
-  q.prepare( "DELETE FROM cashrcpt "
-             "WHERE (cashrcpt_id=:cashrcpt_id);"
-
-             "DELETE FROM cashrcptitem "
-             "WHERE (cashrcptitem_cashrcpt_id=:cashrcpt_id);" );
+  q.prepare( "SELECT deleteCashRcpt(:cashrcpt_id) AS result;");
   q.bindValue(":cashrcpt_id", _cashrcpt->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteCashRcpt", result));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillList();
 }
 
@@ -220,41 +209,19 @@ void cashReceiptsEditList::sPost()
   q.exec();
   if (q.first())
   {
-    switch (q.value("result").toInt())
+    int result = q.value("result").toInt();
+    if (result < 0)
     {
-      case -1:
-        QMessageBox::critical( this, tr("Cannot Post Cash Receipt"),
-                               tr( "The selected Cash Receipt cannot be posted as the amount distributed is greater than\n"
-                                   "the amount received. You must correct this before you may post this Cash Receipt." ) );
-        break;
-
-      case -5:
-        QMessageBox::critical( this, tr("Cannot Post Cash Receipt"),
-                               tr( "The selected Cash Receipt cannot be posted as the A/R Account cannot be determined.\n"
-                                   "You must make an A/R Account Assignment for the Customer Type to which this Customer\n"
-                                   "is assigned before you may post this Cash Receipt." ) );
-        break;
-
-      case -6:
-        QMessageBox::critical( this, tr("Cannot Post Cash Receipt"),
-                               tr( "The selected Cash Receipt cannot be posted as the Bank Account cannot be determined.\n"
-                                   "You must make a Bank Account Assignment for this Cash Receipt before you may post it." )
-                               .arg(q.value("cust_number").toString())  );
-        break;
-
-      case -7:
-        QMessageBox::critical( this, tr("Cannot Post Cash Receipt"),
-                               tr( "The selected Cash Receipt cannot be posted due to an unknown error.\n"
-                                   "Contact your Systems Administrator." )
-                               .arg(q.value("cust_number").toString())  );
-        break;
-
-      default:
-        sFillList();
+      systemError(this, storedProcErrorLookup("postCashReceipt", result));
+      return;
     }
   }
-  else
-    systemError( this, q.lastError().databaseText(), __FILE__, __LINE__);
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  sFillList();
 }
 
 void cashReceiptsEditList::sPrint()

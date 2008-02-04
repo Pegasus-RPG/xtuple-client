@@ -503,13 +503,23 @@ void arWorkBench::sViewCashrcpt()
 
 void arWorkBench::sDeleteCashrcpt()
 {
-  q.prepare( "DELETE FROM cashrcpt "
-             "WHERE (cashrcpt_id=:cashrcpt_id);"
-
-             "DELETE FROM cashrcptitem "
-             "WHERE (cashrcptitem_cashrcpt_id=:cashrcpt_id);" );
+  q.prepare("SELECT deleteCashrcpt(:cashrcpt_id) AS result;");
   q.bindValue(":cashrcpt_id", _cashrcpt->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("deleteCashrcpt", result));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   sFillCashrcptList();
 }
 

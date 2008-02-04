@@ -1073,7 +1073,6 @@ void dspCustomerInformation::sCashReceipt()
 
 void dspCustomerInformation::sFillPaymentsList()
 {
-/*
   q.prepare("SELECT ccpay_id, cohead_id,"
             "       CASE WHEN (ccpay_type='A') THEN :preauth"
             "            WHEN (ccpay_type='C') THEN :charge"
@@ -1118,7 +1117,6 @@ void dspCustomerInformation::sFillPaymentsList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  */
 }
 
 void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )

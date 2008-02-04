@@ -292,6 +292,10 @@ void initErrorLookupHash()
 			       "it is used by an active Warehouse."),
 			       					 0, "" },
 
+  { "deleteCashrcpt",  -1, TR("The selected Cash Receipt cannot be deleted "
+                              "because it is a Customer Deposit made with "
+                              "a Credit Card and the card has already been "
+                              "charged."),                              0, "" },
   { "deleteCharacteristic",
 			-1, TR("The selected Characteristic cannot be deleted "
 			       "because there are Items assigned to "
