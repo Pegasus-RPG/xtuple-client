@@ -771,15 +771,15 @@ void dspCustomerInformation::sFillInvoiceList()
   while (q.next())
   {
     last = new XTreeWidgetItem(_invoice, last, q.value("id").toInt(),
-			       q.value("altId").toInt(),
-			       q.value("f_posted"),
-			       q.value("f_open"),
-			       q.value("invcnumber"),
-			       q.value("invchead_ordernumber"),
-			       q.value("f_docdate"),
-			       q.value("f_duedate"),
-			       q.value("f_amount"),
-			       q.value("f_balance"),
+                               q.value("altId").toInt(),
+                               q.value("f_posted"),
+                               q.value("f_open"),
+                               q.value("invcnumber"),
+                               q.value("invchead_ordernumber"),
+                               q.value("f_docdate"),
+                               q.value("f_duedate"),
+                               q.value("f_amount"),
+                               q.value("f_balance"),
              q.value("f_curr") );
 
     if (q.value("pastdue").toBool())
@@ -799,8 +799,8 @@ void dspCustomerInformation::sEditInvoice()
   bool invcPosted	= false;
 
   q.prepare("SELECT invchead_id AS id, invchead_posted AS posted "
-	    "FROM invchead "
-	    "WHERE (invchead_invcnumber=:docnum);");
+            "FROM invchead "
+            "WHERE (invchead_invcnumber=:docnum);");
   q.bindValue(":docnum", _invoice->currentItem()->text(2));
   q.exec();
   if (q.first())
@@ -816,10 +816,10 @@ void dspCustomerInformation::sEditInvoice()
 
   if (! invcPosted ||
       QMessageBox::question(this, tr("Edit Posted Invoice?"),
-			      tr("<p>This Invoice has already been posted. "
-				 "Are you sure you want to edit it?"),
-			      QMessageBox::Yes,
-			      QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                              tr("<p>This Invoice has already been posted. "
+                                 "Are you sure you want to edit it?"),
+                              QMessageBox::Yes,
+                              QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
   {
     invoice::editInvoice(invcId);
     sFillInvoiceList();
@@ -872,7 +872,7 @@ void dspCustomerInformation::sFillCreditMemoList()
              "       formatDate(aropen_docdate),"
              "       formatMoney(aropen_amount),"
              "       formatMoney(aropen_amount - aropen_paid),"
-	           "       currConcat(aropen_curr_id)"
+             "       currConcat(aropen_curr_id)"
              "  FROM aropen, cmhead "
              " WHERE ((aropen_doctype = 'C')"
              "   AND  (aropen_docnumber=cmhead_number) ");
@@ -891,7 +891,7 @@ void dspCustomerInformation::sFillCreditMemoList()
              "       formatDate(aropen_docdate),"
              "       formatMoney(aropen_amount),"
              "       formatMoney(aropen_amount - aropen_paid),"
-	           "       currConcat(aropen_curr_id)"
+             "       currConcat(aropen_curr_id)"
              "  FROM aropen "
              " WHERE ((aropen_doctype IN ('C', 'R'))"
              "   AND  (aropen_cust_id=:cust_id) ";
@@ -932,14 +932,14 @@ void dspCustomerInformation::sEditCreditMemo()
   bool memoPosted	= false;
 
   q.prepare("SELECT -1 AS type, cmhead_id AS id, cmhead_posted AS posted "
-	    "FROM cmhead "
-	    "WHERE (cmhead_number=:docnum) "
-	    "UNION "
-	    "SELECT -2 AS type, aropen_id AS id, aropen_posted AS posted "
-	    "FROM aropen "
-	    "WHERE ((aropen_docnumber=:docnum)"
-	  //"  AND (aropen_doctype='C') "
-	    ") ORDER BY type DESC LIMIT 1;");
+            "FROM cmhead "
+            "WHERE (cmhead_number=:docnum) "
+            "UNION "
+            "SELECT -2 AS type, aropen_id AS id, aropen_posted AS posted "
+            "FROM aropen "
+            "WHERE ((aropen_docnumber=:docnum)"
+          //"  AND (aropen_doctype='C') "
+            ") ORDER BY type DESC LIMIT 1;");
   q.bindValue(":docnum", _creditMemo->currentItem()->text(3));
   q.exec();
   if (q.first())
@@ -957,10 +957,10 @@ void dspCustomerInformation::sEditCreditMemo()
   ParameterList params;
   if (! memoPosted ||
       QMessageBox::question(this, tr("Edit Posted Memo?"),
-			    tr("<p>This Credit Memo has already been posted. "
-			       "Are you sure you want to edit it?"),
-			    QMessageBox::Yes,
-			    QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
+                            tr("<p>This Credit Memo has already been posted. "
+                               "Are you sure you want to edit it?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::Yes)
     params.append("mode", "edit");
   else
     params.append("mode", "view");
@@ -990,14 +990,14 @@ void dspCustomerInformation::sViewCreditMemo()
   int memoId	= _creditMemo->id();
 
   q.prepare("SELECT -1 AS type, cmhead_id AS id "
-	    "FROM cmhead "
-	    "WHERE (cmhead_number=:docnum) "
-	    "UNION "
-	    "SELECT -2 AS type, aropen_id AS id "
-	    "FROM aropen "
-	    "WHERE ((aropen_docnumber=:docnum)"
-	  //"  AND (aropen_doctype='C') "
-	    ") ORDER BY type DESC LIMIT 1;");
+            "FROM cmhead "
+            "WHERE (cmhead_number=:docnum) "
+            "UNION "
+            "SELECT -2 AS type, aropen_id AS id "
+            "FROM aropen "
+            "WHERE ((aropen_docnumber=:docnum)"
+          //"  AND (aropen_doctype='C') "
+            ") ORDER BY type DESC LIMIT 1;");
   q.bindValue(":docnum", _creditMemo->currentItem()->text(3));
   q.exec();
   if (q.first())
@@ -1090,17 +1090,10 @@ void dspCustomerInformation::sFillPaymentsList()
             "       formatDateTime(ccpay_transaction_datetime) AS f_datetime,"
             "       ccpay_by_username, ccpay_amount,"
             "       currConcat(ccpay_curr_id) AS ccpay_currAbbr,"
-//<<<<<<< .mine
             "       COALESCE(cohead_number, ccpay_order_number),"
             "       ccpay_r_ref,"
-            "       COALESCE(payco_amount, ccpay_amount),"
+            "       ABS(COALESCE(payco_amount, ccpay_amount)),"
             "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
-//=======
-	    "       COALESCE(cohead_number, ccpay_order_number),"
-	    "       ccpay_r_ref,"
-	    "       ABS(COALESCE(payco_amount, ccpay_amount)),"
-	    "       currConcat(COALESCE(payco_curr_id, ccpay_curr_id)) AS payco_currAbbr"
-//>>>>>>> .r1315
             "  FROM ccpay LEFT OUTER JOIN "
             "       (payco JOIN cohead ON (payco_cohead_id=cohead_id))"
             "         ON (payco_ccpay_id=ccpay_id)"
