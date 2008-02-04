@@ -1214,7 +1214,7 @@ void returnAuthorizationItem::sDispositionChanged()
     _tab->setTabEnabled(0,TRUE);
     _scheduledDate->setEnabled(TRUE);
     _altcosAccntid->setEnabled(TRUE);
-    _shipWhs->setVisible(TRUE);
+    _shipWhsLit->setVisible(TRUE);
     _shipWhs->setVisible(TRUE);
   }
   else
