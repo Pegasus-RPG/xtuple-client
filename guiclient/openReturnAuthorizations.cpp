@@ -65,7 +65,7 @@
 #include <openreports.h>
 #include "returnAuthorization.h"
 #include "openReturnAuthorizations.h"
-#include "printSoForm.h"
+#include "printRaForm.h"
 //#include "deliverSalesOrder.h"
 
 /*
@@ -292,7 +292,7 @@ void openReturnAuthorizations::sPrintForms()
   ParameterList params;
   params.append("rahead_id", _ra->id());
 
-  printSoForm newdlg(this, "", TRUE);
+  printRaForm newdlg(this, "", TRUE);
   newdlg.set(params);
   newdlg.exec();
 }
