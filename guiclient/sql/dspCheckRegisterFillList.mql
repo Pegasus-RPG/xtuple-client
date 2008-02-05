@@ -11,7 +11,9 @@ SELECT checkhead_id AS checkid,
        formatBoolYN(checkhead_misc) AS f_misc,
        formatBoolYN(checkhead_printed) AS f_printed,
        formatBoolYN(checkhead_posted) AS f_posted,
-       TEXT(checkhead_number) AS number,
+       CASE when checkhead_number = -1 THEN
+         'Unspecified'
+       ELSE TEXT(checkhead_number) END AS number,
        COALESCE(checkrecip_number || '-' || checkrecip_name,
 		checkhead_recip_type || '-' || checkhead_recip_id ) AS description,
        formatDate(checkhead_checkdate) AS f_checkdate,
