@@ -555,9 +555,7 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
         _authLineNumberLit->show();
 		_authNumber->setText(q.value("rahead_number").toString());
 		_authLineNumber->setText(q.value("raitem_linenumber").toString());
-		_netUnitPrice->setEnabled(FALSE);
 		_qtyOrdered->setEnabled(FALSE);
-		_discountFromCust->setEnabled(FALSE);
 		_qtyUOM->setEnabled(FALSE);
 		_priceUOM->setEnabled(FALSE);
 	  }

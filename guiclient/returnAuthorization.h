@@ -114,6 +114,14 @@ public slots:
     virtual void sHandleSalesOrderEvent( int pSoheadid, bool );
     virtual void sRefund();
     virtual void sPostReceipts();
+    virtual void sPopulateMenu(QMenu*, QTreeWidgetItem *selected);
+	virtual void sViewOrigOrder();
+	virtual void sEditNewOrder();
+	virtual void sViewNewOrder();
+	virtual void sEditNewOrderLine();
+	virtual void sViewNewOrderLine();
+	virtual void sShipment();
+	virtual void sShipmentStatus();
 
 protected slots:
     virtual void languageChange();

@@ -76,6 +76,11 @@
 #include "taxBreakdown.h"
 #include "printRaForm.h"
 
+#include "salesOrder.h"
+#include "salesOrderItem.h"
+#include "dspShipmentsBySalesOrder.h"
+#include "dspSalesOrderStatus.h"
+
 #define TO_RECEIVE_COL	11
 
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
@@ -113,6 +118,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   connect(omfgThis, SIGNAL(salesOrdersUpdated(int, bool)), this, SLOT(sHandleSalesOrderEvent(int, bool)));
   connect(_refund,	SIGNAL(clicked()), this, SLOT(sRefund()));
   connect(_postReceipts, SIGNAL(clicked()), this, SLOT(sPostReceipts()));
+  connect(_raitem, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+
 
   _newso->setReadOnly(true);
 
@@ -1742,4 +1749,136 @@ void returnAuthorization::sRefund()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+}
+
+void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *selected)
+{
+  int menuItem;
+  menuItem = pMenu->insertItem(tr("Edit Line..."), this, SLOT(sEdit()), 0);
+  if (selected->text(5) == "O")
+	menuItem = pMenu->insertItem(tr("Close Line..."), this, SLOT(sAction()), 0);
+  if (selected->text(5) == "C")
+	menuItem = pMenu->insertItem(tr("Open Line..."), this, SLOT(sAction()), 0);
+  menuItem = pMenu->insertItem(tr("Delete Line..."), this, SLOT(sDelete()), 0);
+  pMenu->insertSeparator();
+
+  if (selected->text(16).length() != 0)
+  {
+    pMenu->insertItem(tr("View Original Sales Order..."), this, SLOT(sViewOrigOrder()), 0);
+    if(!_privleges->check("ViewSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
+  
+  if (selected->text(17).length() != 0)
+  {
+    menuItem = pMenu->insertItem(tr("Edit New Sales Order..."), this, SLOT(sEditNewOrder()), 0);
+    if(!_privleges->check("MaintainSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->insertItem(tr("View New Sales Order..."), this, SLOT(sViewNewOrder()), 0);
+    if(!_privleges->check("ViewSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    pMenu->insertSeparator();
+
+    menuItem = pMenu->insertItem(tr("Edit Sales Order Line..."), this, SLOT(sEditNewOrderLine()), 0);
+    if(!_privleges->check("MaintainSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+    pMenu->insertItem(tr("View Sales Order Line..."), this, SLOT(sViewNewOrderLine()), 0);
+    if(!_privleges->check("ViewSalesOrders"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  
+    pMenu->insertSeparator();
+
+    pMenu->insertItem(tr("New Sales Order Shipment Status..."), this, SLOT(sShipmentStatus()), 0);
+    pMenu->insertItem(tr("New Sales Order Shipments..."), this, SLOT(sShipment()), 0);
+  
+  }
+}
+
+void returnAuthorization::sViewOrigOrder()
+{
+  salesOrder::viewSalesOrder(_origso->id());
+}
+
+void returnAuthorization::sEditNewOrder()
+{
+  salesOrder::editSalesOrder(_newso->id(), false);
+}
+
+void returnAuthorization::sViewNewOrder()
+{
+  salesOrder::viewSalesOrder(_newso->id());
+}
+
+void returnAuthorization::sEditNewOrderLine()
+{
+  q.prepare("SELECT coitem_id, cohead_number, "
+	        "  cohead_curr_id, cohead_orderdate "
+			"FROM raitem, cohead, coitem "
+			"WHERE ((raitem_id=:raitem_id) "
+			"AND (raitem_new_coitem_id=coitem_id) "
+			"AND (coitem_cohead_id=cohead_id));");
+  q.bindValue(":raitem_id", _raitem->id());
+  q.exec();
+  if (q.first())
+  {
+	ParameterList params;
+	params.append("soitem_id", q.value("coitem_id").toInt());
+	params.append("cust_id", _cust->id());
+	params.append("orderNumber", q.value("cohead_number").toString());
+	params.append("curr_id", q.value("cohead_curr_id").toInt());
+	params.append("orderDate", q.value("cohead_orderdate").toDate());
+	params.append("mode", "edit");
+
+	salesOrderItem newdlg(this, "", TRUE);
+	newdlg.set(params);
+	newdlg.exec();
+  }
+}
+
+void returnAuthorization::sViewNewOrderLine()
+{
+  q.prepare("SELECT coitem_id, cohead_number, "
+	        "  cohead_curr_id, cohead_orderdate "
+			"FROM raitem, cohead, coitem "
+			"WHERE ((raitem_id=:raitem_id) "
+			"AND (raitem_new_coitem_id=coitem_id) "
+			"AND (coitem_cohead_id=cohead_id));");
+  q.bindValue(":raitem_id", _raitem->id());
+  q.exec();
+  if (q.first())
+  {
+	ParameterList params;
+	params.append("soitem_id", q.value("coitem_id").toInt());
+	params.append("cust_id", _cust->id());
+	params.append("orderNumber", q.value("cohead_number").toString());
+	params.append("curr_id", q.value("cohead_curr_id").toInt());
+	params.append("orderDate", q.value("cohead_orderdate").toDate());
+	params.append("mode", "view");
+
+	salesOrderItem newdlg(this, "", TRUE);
+	newdlg.set(params);
+	newdlg.exec();
+  }
+}
+
+void returnAuthorization::sShipmentStatus()
+{
+  ParameterList params;
+  params.append("sohead_id", _newso->id());
+  params.append("run");
+
+  dspSalesOrderStatus *newdlg = new dspSalesOrderStatus();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
+}
+
+void returnAuthorization::sShipment()
+{
+  ParameterList params;
+  params.append("sohead_id", _newso->id() );
+
+  dspShipmentsBySalesOrder* newdlg = new dspShipmentsBySalesOrder();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
