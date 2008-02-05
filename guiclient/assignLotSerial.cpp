@@ -73,6 +73,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
   connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancel()));
+  connect(this, SIGNAL(rejected()), this, SLOT(sCancel()));
 
   _trapClose = TRUE;
 
