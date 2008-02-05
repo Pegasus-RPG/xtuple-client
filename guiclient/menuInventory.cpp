@@ -405,8 +405,8 @@ menuInventory::menuInventory(OpenMFGGUIClient *Pparent) :
     { "im.dspInventoryAvailabilityByItem",		tr("by &Item..."),	 SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
     { "im.dspSubstituteAvailabilityByRootItem",		tr("&Substitute Availability..."),	 SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
     
-    //  Inventory | Reports | Inventory Buffer Status
-    { "menu",				tr("Inventory &Buffer Status"),			  (char*)reportsInvBufrStsMenu,			reportsMenu,	_privleges->check("ViewInventoryBufferStatus"),	NULL, NULL,  _metrics->boolean("BufferMgt") , NULL },
+    //  Inventory | Reports | Inventory Status
+    { "menu",				tr("Inventory S&tatus"),			  (char*)reportsInvBufrStsMenu,			reportsMenu,	_privleges->check("ViewInventoryBufferStatus"),	NULL, NULL,  _metrics->boolean("BufferMgt") , NULL },
     { "im.dspInventoryBufferStatusByPlannerCode",	tr("by &Planner Code..."),SLOT(sDspInventoryBufferStatusByPlannerCode()), reportsInvBufrStsMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },
     { "im.dspInventoryBufferStatusByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryBufferStatusByClassCode()), reportsInvBufrStsMenu, _privleges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },  
     { "im.dspInventoryBufferStatusByItemGroup",		tr("by &Item Group..."),	 SLOT(sDspInventoryBufferStatusByItemGroup()), reportsInvBufrStsMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt"), NULL }, 

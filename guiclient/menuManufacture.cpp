@@ -247,8 +247,8 @@ menuManufacture::menuManufacture(OpenMFGGUIClient *Pparent) :
     { "wo.dspWoScheduleByItem",		tr("by &Item..."),	SLOT(sDspWoScheduleByItem()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
     { "wo.dspWoScheduleByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoScheduleByWorkOrder()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
-    //  Production | Reports | Buffer Status
-    { "menu",				tr("&Buffer Status"),	(char*)reportsBufrStsMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("BufferMgt"), NULL },
+    //  Production | Reports | Status
+    { "menu",				tr("Work Order Sta&tus"),	(char*)reportsBufrStsMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("BufferMgt"), NULL },
     { "wo.dspWoBufferStatusByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoBufferStatusByPlannerCode()), reportsBufrStsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) , 0, 0, _metrics->boolean("BufferMgt"), NULL },
     { "wo.dspWoBufferStatusByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoBufferStatusByClassCode()), reportsBufrStsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")),  0, 0, _metrics->boolean("BufferMgt") , NULL },
     { "wo.dspWoBufferStatusByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoBufferStatusByItemGroup()), reportsBufrStsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("BufferMgt"), NULL },

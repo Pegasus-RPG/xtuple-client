@@ -169,24 +169,24 @@ menuSchedule::menuSchedule(OpenMFGGUIClient *Pparent) :
     { "ms.deletePlannedOrdersByPlannerCode", tr("Delete Planned Order&s..."), SLOT(sDeletePlannedOrdersByPlannerCode()), plannedOrdersMenu, _privleges->check("DeletePlannedOrders"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, mainMenu, true, NULL, NULL, true , NULL },
 
-    // Schedule | Buffer Status
-    { "menu",	tr("&Buffer Status"), (char*)bufferMenu,	mainMenu,	true,	NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
+    // Schedule | Constraint Management
+    { "menu",	tr("Cons&traint Management"), (char*)bufferMenu,	mainMenu,	true,	NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
   
     // Schedule | Buffer Status | Run
-    { "menu",	tr("&Update"), (char*)bufferRunMenu,	bufferMenu,	true,	NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
+    { "menu",	tr("&Update Status"), (char*)bufferRunMenu,	bufferMenu,	true,	NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.runBufferStatusByPlannerCode", tr("by &Planner Code..."), SLOT(sCreateBufferStatusByPlannerCode()), bufferRunMenu, _privleges->check("CreateBufferStatus"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.runBufferStatusByItem", tr("by &Item..."), SLOT(sCreateBufferStatusByItem()), bufferRunMenu, _privleges->check("CreateBufferStatus"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
  
     { "separator", NULL, NULL, bufferMenu, true, NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
   
-    // Schedule | Buffer Management | Inventory Buffer Status
+    // Schedule | Contsraint Management | Inventory Status
     { "menu",	tr("&Inventory"), (char*)bufferInvMenu,	bufferMenu,	true,	NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.dspInventoryBufferStatusByPlannerCode", tr("by &Planner Code..."), SLOT(sDspInventoryBufferStatusByPlannerCode()), bufferInvMenu, _privleges->check("ViewInventoryBufferStatus"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.dspInventoryBufferStatusByClassCode", tr("by &Class Code..."), SLOT(sDspInventoryBufferStatusByClassCode()), bufferInvMenu, _privleges->check("ViewInventoryBufferStatus"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.dspInventoryBufferStatusByItemGroup", tr("by &Item Group..."), SLOT(sDspInventoryBufferStatusByItemGroup()), bufferInvMenu, _privleges->check("ViewInventoryBufferStatus"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.dspPoLineItemsByBufferStatus", tr("&Purchase Order..."), SLOT(sDspPoItemsByBufferStatus()), bufferMenu, _privleges->check("ViewPurchaseOrders"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
 
-    // Schedule | Buffer Management | Work Order Buffer Status
+    // Schedule | Gostraint Management | Work Order Status
     { "menu",	tr("&Work Order"), (char*)bufferWoMenu,	bufferMenu,	true,	NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.dspWoBufferStatusByPlannerCode", tr("by &Planner Code..."), SLOT(sDspWoBufferStatusByPlannerCode()), bufferWoMenu, _privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "ms.dspWoBufferStatusByClassCode", tr("by &Class Code..."), SLOT(sDspWoBufferStatusByClassCode()), bufferWoMenu, _privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },

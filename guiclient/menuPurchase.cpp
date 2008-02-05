@@ -231,7 +231,7 @@ menuPurchase::menuPurchase(OpenMFGGUIClient *Pparent) :
     { "po.dspPoLineItemsByDate", tr("by &Date..."), SLOT(sDspPoItemsByDate()), reportsPoItemsMenu, _privleges->check("ViewPurchaseOrders"), NULL, NULL, true , NULL },
     { "po.dspPoLineItemsByItem", tr("by &Item..."), SLOT(sDspPoItemsByItem()), reportsPoItemsMenu, _privleges->check("ViewPurchaseOrders"), NULL, NULL, true , NULL },
     
-    { "po.dspPoLineItemsByBufferStatus", tr("P/O Item Bu&ffer Status..."), SLOT(sDspPoItemsByBufferStatus()), reportsMenu, _privleges->check("ViewPurchaseOrders"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
+    { "po.dspPoLineItemsByBufferStatus", tr("P/O Item Sta&tus..."), SLOT(sDspPoItemsByBufferStatus()), reportsMenu, _privleges->check("ViewPurchaseOrders"), NULL, NULL, _metrics->boolean("BufferMgt") , NULL },
     { "po.dspPoHistory", tr("Purchase Order &History..."), SLOT(sDspPoHistory()), reportsMenu, _privleges->check("ViewPurchaseOrders"), NULL, NULL, true , NULL },
 
     { "separator", NULL, NULL, reportsMenu, true, NULL, NULL, true , NULL },
