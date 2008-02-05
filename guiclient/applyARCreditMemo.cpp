@@ -61,7 +61,10 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include <metasql.h>
+
 #include "arCreditMemoApplication.h"
+#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
 applyARCreditMemo::applyARCreditMemo(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
@@ -69,59 +72,41 @@ applyARCreditMemo::applyARCreditMemo(QWidget* parent, const char* name, bool mod
 {
   setupUi(this);
 
-  // signals and slots connections
-  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-  connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
-  connect(_aropen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
-  connect(_aropen, SIGNAL(valid(bool)), _clear, SLOT(setEnabled(bool)));
-  connect(_applyToBalance, SIGNAL(clicked()), this, SLOT(sApplyBalance()));
-  connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
-  connect(_clear, SIGNAL(clicked()), this, SLOT(sClear()));
-  connect(_available, SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
-  connect(_available, SIGNAL(idChanged(int)), _applied, SLOT(setId(int)));
-  connect(_available, SIGNAL(idChanged(int)), _balance, SLOT(setId(int)));
-  connect(_available, SIGNAL(effectiveChanged(const QDate&)), _applied, SLOT(setEffective(const QDate&)));
-  connect(_available, SIGNAL(effectiveChanged(const QDate&)), _balance, SLOT(setEffective(const QDate&)));
-  connect(_docDate, SIGNAL(newDate(const QDate&)), _available, SLOT(setEffective(const QDate&)));
-  connect(_searchDocNum, SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged(const QString&)));
+  connect(_apply,         SIGNAL(clicked()),      this, SLOT(sApply()));
+  connect(_applyToBalance,SIGNAL(clicked()),      this, SLOT(sApplyBalance()));
+  connect(_available,     SIGNAL(idChanged(int)), this, SLOT(sPriceGroup()));
+  connect(_clear,         SIGNAL(clicked()),      this, SLOT(sClear()));
+  connect(_close,         SIGNAL(clicked()),      this, SLOT(sClose()));
+  connect(_post,          SIGNAL(clicked()),      this, SLOT(sPost()));
+  connect(_searchDocNum,  SIGNAL(textChanged(const QString&)), this, SLOT(sSearchDocNumChanged(const QString&)));
 
   _captive = FALSE;
+  _overapplied = false;
 
   _aropen->addColumn(tr("Doc. Type"),   _docTypeColumn, Qt::AlignCenter );
   _aropen->addColumn(tr("Doc. Number"), -1,             Qt::AlignCenter );
   _aropen->addColumn(tr("Doc. Date"),   _dateColumn,    Qt::AlignCenter );
   _aropen->addColumn(tr("Due Date"),    _dateColumn,    Qt::AlignCenter );
   _aropen->addColumn(tr("Open"),        _moneyColumn,   Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),	_currencyColumn, Qt::AlignLeft  );
-  _aropen->addColumn(tr("Applied"),     _moneyColumn,   Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),	_currencyColumn, Qt::AlignLeft  );
+  _aropen->addColumn(tr("Currency"),	_currencyColumn, Qt::AlignLeft, !omfgThis->singleCurrency());
+  _aropen->addColumn(tr("Applied"),     _moneyColumn,    Qt::AlignRight  );
+  _aropen->addColumn(tr("Currency"),	_currencyColumn, Qt::AlignLeft, !omfgThis->singleCurrency());
+  _aropen->addColumn(tr("All Pending"), _moneyColumn,    Qt::AlignRight  );
+  _aropen->addColumn(tr("Currency"),	_currencyColumn, Qt::AlignLeft, !omfgThis->singleCurrency());
 
   _cust->setReadOnly(TRUE);
 
   if(_metrics->boolean("HideApplyToBalance"))
     _applyToBalance->hide();
 
-  if (omfgThis->singleCurrency())
-  {
-    _aropen->hideColumn(5);
-    _aropen->hideColumn(7);
-  }
-
   sPriceGroup();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 applyARCreditMemo::~applyARCreditMemo()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void applyARCreditMemo::languageChange()
 {
   retranslateUi(this);
@@ -145,14 +130,24 @@ enum SetResponse applyARCreditMemo::set(const ParameterList &pParams)
 
 void applyARCreditMemo::sPost()
 {
+  populate(); // one more time to double-check _overapplied
+  if (_overapplied &&
+      QMessageBox::question(this, tr("Overapplied?"),
+                            tr("This Credit Memo appears to apply too much to "
+                               "at least one of the Open Items. Do you want "
+                               "to post the current applications anyway?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
   XSqlQuery rollback;
   rollback.prepare("ROLLBACK;");
 
   q.exec("BEGIN;");
   if (q.lastError().type() != QSqlError::NoError)
   {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   q.prepare("SELECT postARCreditMemoApplication(:aropen_id) AS result;");
@@ -188,11 +183,23 @@ void applyARCreditMemo::sPost()
 
 void applyARCreditMemo::sApplyBalance()
 {
-  q.prepare("SELECT applyARCreditMemoToBalance(:aropen_id)");
+  q.prepare("SELECT applyARCreditMemoToBalance(:aropen_id) AS result;");
   q.bindValue(":aropen_id", _aropenid);
   q.exec();
-  if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup("applyARCreditMemoToBalance", result));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   populate();
 }
@@ -274,32 +281,38 @@ void applyARCreditMemo::populate()
   else
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
-  q.prepare( "SELECT aropen_id,"
-             "       CASE WHEN (aropen_doctype='I') THEN :invoice"
-             "            WHEN (aropen_doctype='D') THEN :debitMemo"
-             "       END AS doctype,"
-             "       aropen_docnumber,"
-             "       formatDate(aropen_docdate),"
-             "       formatDate(aropen_duedate),"
-             "       formatMoney(aropen_amount - aropen_paid),"
-	     "       currConcat(aropen_curr_id),"
-             "       formatMoney(COALESCE(arcreditapply_amount, 0)),"
-	     "       currConcat(arcreditapply_curr_id) "
-             "FROM aropen LEFT OUTER JOIN arcreditapply "
-             "             ON ( (arcreditapply_source_aropen_id=:parentAropenid) AND (arcreditapply_target_aropen_id=aropen_id) ) "
-             "WHERE ( (aropen_doctype IN ('I', 'D'))"
-             " AND (aropen_open)"
-             " AND (aropen_cust_id=:cust_id) ) "
-             "ORDER BY aropen_duedate, aropen_docnumber;" );
-  q.bindValue(":parentAropenid", _aropenid);
-  q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":debitMemo", tr("D/M"));
-  q.exec();
+  _aropen->clear();
+  MetaSQLQuery mql = mqlLoad(":/ar/aropenApplications.mql");
+  ParameterList params;
+  params.append("cust_id",          _cust->id());
+  params.append("debitMemo",        tr("D/M"));
+  params.append("invoice",          tr("Invoice"));
+  params.append("source_aropen_id", _aropenid);
+  q = mql.toQuery(params);
+  XTreeWidgetItem *last = 0;
+  _overapplied = false;
+  while (q.next())
+  {
+    last = new XTreeWidgetItem(_aropen, last,
+                               q.value("aropen_id").toInt(),
+                               q.value("doctype"),
+                               q.value("aropen_docnumber"),
+                               q.value("f_docdate"),
+                               q.value("f_duedate"),
+                               q.value("f_balance"),
+                               q.value("balance_curr"),
+                               q.value("f_applied"),
+                               q.value("applied_curr"),
+                               q.value("f_pending"),
+                               q.value("balance_curr"));
+    if (q.value("pending").toDouble() > q.value("balance").toDouble())
+    {
+      last->setTextColor("red");
+      _overapplied = true;
+    }
+  }
   if (q.lastError().type() != QSqlError::NoError)
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-
-  _aropen->populate(q);
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 }
 
 void applyARCreditMemo::sPriceGroup()

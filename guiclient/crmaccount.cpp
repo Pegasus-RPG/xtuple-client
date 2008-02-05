@@ -1649,7 +1649,7 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
 
   if (_oplist->currentItem()->text(0) == "T")
   {
-    bool editPriv = _privleges->check("MaintainOpportunities");
+    // bool editPriv = _privleges->check("MaintainOpportunities");
     bool viewPriv = _privleges->check("VeiwOpportunities");
 
     //menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);

@@ -107,6 +107,7 @@ private:
     int     _cashrcptid;
     bool    _ccEdit;
     QString _origFunds;
+    bool    _overapplied;
 
 };
 

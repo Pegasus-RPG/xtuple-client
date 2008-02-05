@@ -1,0 +1,45 @@
+SELECT aropen_id,
+<? if exists("cashrcpt_id") ?>
+       COALESCE(s.cashrcptitem_id, -1) AS alt_id,
+<? endif ?>
+       CASE WHEN (aropen_doctype='D') THEN <? value("debitMemo") ?>
+            WHEN (aropen_doctype='I') THEN <? value("invoice") ?>
+       END AS doctype,
+       aropen_docnumber, aropen_ordernumber,
+       formatDate(aropen_docdate) AS f_docdate,
+       formatDate(aropen_duedate) AS f_duedate,
+       (aropen_amount - aropen_paid) AS balance,
+       formatMoney(aropen_amount - aropen_paid) AS f_balance,
+       currConcat(aropen_curr_id) AS balance_curr,
+<? if exists("cashrcpt_id") ?>
+       (SELECT COALESCE(SUM(p.cashrcptitem_amount), 0)
+                      FROM cashrcptitem p
+                     WHERE p.cashrcptitem_aropen_id=aropen_id)
+                   AS applied,
+       formatMoney((SELECT COALESCE(SUM(p.cashrcptitem_amount),0)
+                      FROM cashrcptitem p
+                     WHERE p.cashrcptitem_aropen_id=aropen_id))
+                   AS f_applied,
+       currConcat(cashrcpt_curr_id) AS applied_curr,
+<? elseif exists("source_aropen_id") ?>
+       COALESCE(arcreditapply_amount, 0) AS applied,
+       formatMoney(COALESCE(arcreditapply_amount, 0)) AS f_applied,
+       currConcat(arcreditapply_curr_id) AS applied_curr,
+<? endif ?>
+       calcpendingarapplications(aropen_id) AS pending,
+       formatMoney(calcpendingarapplications(aropen_id)) AS f_pending
+ FROM aropen LEFT OUTER JOIN
+ <? if exists("cashrcpt_id") ?>
+      cashrcptitem s ON (s.cashrcptitem_aropen_id=aropen_id
+                     AND cashrcptitem_cashrcpt_id=<? value("cashrcpt_id") ?>)
+        LEFT OUTER JOIN
+      cashrcpt ON (cashrcptitem_cashrcpt_id = cashrcpt_id
+               AND cashrcpt_id=<? value("cashrcpt_id") ?>)
+<? elseif exists("source_aropen_id") ?>
+      arcreditapply ON ((arcreditapply_source_aropen_id=<? value("source_aropen_id") ?>)
+                    AND (arcreditapply_target_aropen_id=aropen_id) )
+<? endif ?>
+ WHERE ( (aropen_open)
+   AND (aropen_doctype IN ('D', 'I'))
+   AND (aropen_cust_id=<? value("cust_id") ?>) )
+ ORDER BY aropen_duedate, (aropen_amount - aropen_paid);

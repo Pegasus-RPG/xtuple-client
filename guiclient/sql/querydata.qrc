@@ -3,6 +3,9 @@
   <qresource prefix="ap">
     <file alias="displays/CheckRegister/FillListDetail.mql">dspCheckRegisterFillList.mql</file>
   </qresource>
+  <qresource prefix="ar">
+    <file alias="aropenApplications.mql">aropenApplications.mql</file>
+  </qresource>
   <qresource prefix="im">
     <file alias="displays/InventoryHistoryByItem/FillListDetail.mql">dspInventoryHistoryByItemFillList.mql</file>
     <file alias="displays/InventoryHistoryByOrderNumber/FillListDetail.mql">dspInventoryHistoryByOrderNumberFillList.mql</file>

@@ -90,10 +90,11 @@ protected slots:
 
 
 private:
-    bool _captive;
-    int _aropenid;
+    int    _aropenid;
+    bool   _captive;
     double _cachedAmount;
     double _cachedApplied;
+    bool   _overapplied;
 
 };
 

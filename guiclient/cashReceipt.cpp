@@ -61,12 +61,14 @@
 #include <QSqlError>
 #include <QVariant>
 
+#include <metasql.h>
 #include <stdlib.h>
 
 #include "cashReceiptItem.h"
 #include "cashReceiptMiscDistrib.h"
 #include "creditCard.h"
 #include "creditcardprocessor.h"
+#include "mqlutil.h"
 #include "storedProcErrorLookup.h"
 
 const char *_fundsTypes[] = { "C", "T", "M", "V", "A", "D", "R", "K", "W", "O" };
@@ -123,9 +125,11 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _aropen->addColumn(tr("Doc. Date"), _dateColumn,     Qt::AlignCenter );
   _aropen->addColumn(tr("Due Date"),  _dateColumn,     Qt::AlignCenter );
   _aropen->addColumn(tr("Open"),      _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft   );
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency());
   _aropen->addColumn(tr("Applied"),   _bigMoneyColumn, Qt::AlignRight  );
-  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft   );
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency());
+  _aropen->addColumn(tr("All Pending"),_moneyColumn,   Qt::AlignRight  );
+  _aropen->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft,  !omfgThis->singleCurrency());
 
   _cashrcptmisc->addColumn(tr("Account #"), _itemColumn,     Qt::AlignCenter );
   _cashrcptmisc->addColumn(tr("Notes"),     -1,              Qt::AlignLeft   );
@@ -137,13 +141,6 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _cc->addColumn(tr("Active"),          _itemColumn,  Qt::AlignLeft );
   _cc->addColumn(tr("Name"),            _itemColumn,  Qt::AlignLeft );
   _cc->addColumn(tr("Expiration Date"), -1,           Qt::AlignLeft );
-
-  if (omfgThis->singleCurrency())
-  {
-    _aropen->hideColumn(6);
-    _aropen->hideColumn(8);
-    _cashrcptmisc->hideColumn(3);
-  }
 
   if (!_metrics->boolean("CCAccept") && ! _privleges->check("ProcessCreditCards"))
     _tab->removeTab(_tab->indexOf(_creditCardTab));
@@ -159,6 +156,8 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
    _balCreditMemo->hide();
    _balCustomerDeposit->hide();
   }
+
+  _overapplied = false;
 }
 
 cashReceipt::~cashReceipt()
@@ -460,6 +459,16 @@ void cashReceipt::sClose()
 
 void cashReceipt::sSave()
 {
+  sFillApplyList(); // one more time to double-check _overapplied
+  if (_overapplied &&
+      QMessageBox::question(this, tr("Overapplied?"),
+                            tr("This Cash Receipt appears to apply too much to"
+                               " at least one of the Open Items. Do you want "
+                               "to save the current applications anyway?"),
+                            QMessageBox::Yes,
+                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
+    return;
+
   int _bankaccnt_curr_id = -1;
   QString _bankaccnt_currAbbr;
   q.prepare( "SELECT bankaccnt_curr_id, "
@@ -599,36 +608,44 @@ void cashReceipt::sFillApplyList()
   {
     _cust->setReadOnly(TRUE);
 
+    _aropen->clear();
+    MetaSQLQuery mql = mqlLoad(":/ar/aropenApplications.mql");
+    ParameterList params;
+    params.append("cashrcpt_id", _cashrcptid);
+    params.append("cust_id",     _cust->id());
+    params.append("debitMemo",   tr("D/M"));
+    params.append("invoice",     tr("Invoice"));
     XSqlQuery apply;
-    apply.prepare( "SELECT aropen_id, COALESCE(s.cashrcptitem_id, -1),"
-               "       CASE WHEN (aropen_doctype='D') THEN :debitMemo"
-               "            WHEN (aropen_doctype='I') THEN :invoice"
-               "       END,"
-               "       aropen_docnumber, aropen_ordernumber,"
-               "       formatDate(aropen_docdate),"
-               "       formatDate(aropen_duedate),"
-               "       formatMoney(aropen_amount - aropen_paid),"
-               "       currConcat(aropen_curr_id), "
-               "       formatMoney((SELECT COALESCE(SUM(p.cashrcptitem_amount), 0) "
-               "                      FROM cashrcptitem p"
-               "                     WHERE p.cashrcptitem_aropen_id=aropen_id)), "
-               "       currConcat(cashrcpt_curr_id) "
-               " FROM aropen LEFT OUTER JOIN "
-               "      cashrcptitem s ON (s.cashrcptitem_aropen_id=aropen_id "
-               "                     AND cashrcptitem_cashrcpt_id=:cashrcpt_id) "
-               "        LEFT OUTER JOIN "
-               "      cashrcpt ON (cashrcptitem_cashrcpt_id = cashrcpt_id "
-               "               AND cashrcpt_id=:cashrcpt_id) "
-               " WHERE ( (aropen_open)"
-               "   AND (aropen_doctype IN ('D', 'I'))"
-               "   AND (aropen_cust_id=:cust_id) ) "
-               " ORDER BY aropen_duedate, (aropen_amount - aropen_paid)" );
-    apply.bindValue(":cashrcpt_id", _cashrcptid);
-    apply.bindValue(":cust_id", _cust->id());
-    apply.bindValue(":debitMemo", tr("D/M"));
-    apply.bindValue(":invoice", tr("Invoice"));
-    apply.exec();
-    _aropen->populate(apply, true);
+    apply = mql.toQuery(params);
+    XTreeWidgetItem *last = 0;
+    _overapplied = false;
+    while (apply.next())
+    {
+      last = new XTreeWidgetItem(_aropen, last,
+                                 apply.value("aropen_id").toInt(),
+                                 apply.value("alt_id").toInt(),
+                                 apply.value("doctype"),
+                                 apply.value("aropen_docnumber"),
+                                 apply.value("aropen_ordernumber"),
+                                 apply.value("f_docdate"),
+                                 apply.value("f_duedate"),
+                                 apply.value("f_balance"),
+                                 apply.value("balance_curr"),
+                                 apply.value("f_applied"),
+                                 apply.value("applied_curr"),
+                                 apply.value("f_pending"),
+                                 apply.value("balance_curr"));
+      if (apply.value("pending").toDouble() > apply.value("balance").toDouble())
+      {
+        last->setTextColor("red");
+        _overapplied = true;
+      }
+    }
+    if (apply.lastError().type() != QSqlError::None)
+    {
+      systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     apply.prepare( "SELECT SUM(COALESCE(cashrcptitem_amount, 0)) AS total "
                "FROM cashrcptitem "
@@ -636,8 +653,11 @@ void cashReceipt::sFillApplyList()
     apply.bindValue(":cashrcpt_id", _cashrcptid);
     apply.exec();
     if (apply.first())
-    {
       _applied->setLocalValue(apply.value("total").toDouble());
+    else if (apply.lastError().type() != QSqlError::None)
+    {
+      systemError(this, apply.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
   _received->setCurrencyEditable(_applied->isZero() && _miscDistribs->isZero());
