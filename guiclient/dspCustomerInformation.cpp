@@ -938,13 +938,13 @@ void dspCustomerInformation::sEditCreditMemo()
             "SELECT -2 AS type, aropen_id AS id, aropen_posted AS posted "
             "FROM aropen "
             "WHERE ((aropen_docnumber=:docnum)"
-          //"  AND (aropen_doctype='C') "
+            "  AND (aropen_doctype='C') "
             ") ORDER BY type DESC LIMIT 1;");
   q.bindValue(":docnum", _creditMemo->currentItem()->text(3));
   q.exec();
   if (q.first())
   {
-//    memoType	= q.value("type").toInt();
+    memoType	= q.value("type").toInt();
     memoId	= q.value("id").toInt();
     memoPosted	= q.value("posted").toBool();
   }
@@ -965,7 +965,7 @@ void dspCustomerInformation::sEditCreditMemo()
   else
     params.append("mode", "view");
 
-  if(memoType == -1 || memoType == -2)
+  if(memoType == -1)
   {
     params.append("cmhead_id", memoId);
   
@@ -973,7 +973,7 @@ void dspCustomerInformation::sEditCreditMemo()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(memoType == -3)
+  else
   {
     params.append("aropen_id", memoId);
     arOpenItem newdlg(this, "", TRUE);
@@ -996,13 +996,13 @@ void dspCustomerInformation::sViewCreditMemo()
             "SELECT -2 AS type, aropen_id AS id "
             "FROM aropen "
             "WHERE ((aropen_docnumber=:docnum)"
-          //"  AND (aropen_doctype='C') "
+            "  AND (aropen_doctype='C') "
             ") ORDER BY type DESC LIMIT 1;");
   q.bindValue(":docnum", _creditMemo->currentItem()->text(3));
   q.exec();
   if (q.first())
   {
-//    memoType = q.value("type").toInt();
+    memoType = q.value("type").toInt();
     memoId = q.value("id").toInt();
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -1011,7 +1011,7 @@ void dspCustomerInformation::sViewCreditMemo()
     return;
   }
 
-  if(memoType == -1 || memoType == -2)
+  if(memoType == -1)
   {
     ParameterList params;
     params.append("mode", "view");
@@ -1021,7 +1021,7 @@ void dspCustomerInformation::sViewCreditMemo()
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
-  else if(memoType == -3)
+  else
   {
     ParameterList params;
     params.append("mode", "view");
