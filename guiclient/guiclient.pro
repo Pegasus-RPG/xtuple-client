@@ -287,7 +287,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                shippingForm.ui shippingForms.ui shipTo.ui                                             \
                shippingChargeType.ui shippingChargeTypes.ui                                           \
                shippingZones.ui shippingZone.ui                                                       \
-               shipVias.ui shipVia.ui standardOperations.ui standardOperation.ui                      \
+               shipVias.ui shipVia.ui splitReceipt.ui standardOperations.ui standardOperation.ui      \
                standardJournal.ui standardJournals.ui                                                 \
                standardJournalGroup.ui standardJournalGroupItem.ui standardJournalGroups.ui           \
                standardJournalItem.ui subaccount.ui subaccounts.ui subAccntTypes.ui subAccntType.ui   \
@@ -596,7 +596,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                shippingForm.h shippingForms.h shipTo.h                                                \
                shippingChargeType.h shippingChargeTypes.h                                             \
                shippingZones.h shippingZone.h                                                         \
-               shipVias.h shipVia.h standardOperations.h standardOperation.h                          \
+               shipVias.h shipVia.h splitReceipt.h standardOperations.h standardOperation.h           \
                standardJournal.h standardJournals.h                                                   \
                standardJournalGroup.h standardJournalGroupItem.h standardJournalGroups.h              \
                standardJournalItem.h subaccount.h subaccounts.h subAccntTypes.h subAccntType.h        \
@@ -911,7 +911,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                shippingForm.cpp shippingForms.cpp shipTo.cpp                                          \
                shippingChargeType.cpp shippingChargeTypes.cpp                                         \
                shippingZones.cpp shippingZone.cpp                                                     \
-               shipVias.cpp shipVia.cpp standardOperations.cpp standardOperation.cpp                  \
+               shipVias.cpp shipVia.cpp splitReceipt.cpp standardOperations.cpp standardOperation.cpp   \
                standardJournal.cpp standardJournals.cpp                                               \
                standardJournalGroup.cpp standardJournalGroupItem.cpp standardJournalGroups.cpp        \
                standardJournalItem.cpp subaccount.cpp subaccounts.cpp subAccntTypes.cpp subAccntType.cpp \

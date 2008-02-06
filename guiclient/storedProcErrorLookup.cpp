@@ -199,7 +199,8 @@ void initErrorLookupHash()
 		     "Item Source."),					0, "" },
   { "copyPO", -4, TR("At least one line item in the original P/O does not have "
 		     "an active Item Source Price for this Vendor."),	0, "" },
-
+  { "correctReceipt",  -12, TR("The receipt has been split and may not be corrected. "
+				      "Correct Receipt."),	0, "" },
   { "createAccountingPeriod",  -1, TR("The Start Date falls within another "
 				      "Accounting Period."),	0, "" },
   { "createAccountingPeriod",  -2, TR("The End Date falls within another "
@@ -942,7 +943,13 @@ void initErrorLookupHash()
 			    "more Line Items are still not completely issued. "
 			    "Please correct this before shipping the Order."),
 									0, "" },
-
+  { "splitReceipt", -1, TR("Only Purchase Order Receipts may be split."),		0, "" },
+  { "splitReceipt", -2, TR("Only posted receipts may be split."),		0, "" },
+  { "splitReceipt", -3, TR("Vouchered receitps may not be split."),		0, "" },
+  { "splitReceipt", -4, TR("Split quantity must me less than original receipt quantity."),		0, "" },
+  { "splitReceipt", -5, TR("Split freight may not be greater than original freight."),		0, "" },
+  { "splitReceipt", -6, TR("Receipt not found."),		0, "" },
+  { "splitReceipt", -7, TR("The split quantity must be a positive number."),		0, "" },
   { "sufficientInventoryToShipItem", -1,
 	    TR("Cannot figure out which line item to issue."),	0, "" },
   { "sufficientInventoryToShipItem", -2,

@@ -61,17 +61,24 @@
 #include <QMessageBox>
 #include <QValidator>
 #include "voucherItemDistrib.h"
+#include "enterPoitemReceipt.h"
+#include "splitReceipt.h"
+#include <QCloseEvent>
 
 voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
+  
+  _inTransaction = TRUE;
 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
+  connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
+  connect(this, SIGNAL(rejected()), this, SLOT(sReject()));
 
   _item->setReadOnly(TRUE);
   _qtyToVoucher->setValidator(omfgThis->qtyVal());
@@ -83,6 +90,8 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _uninvoiced->addColumn(tr("Date"),           _dateColumn, Qt::AlignCenter );
   _uninvoiced->addColumn(tr("Qty."),           _qtyColumn,  Qt::AlignRight  );
   _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter );
+  
+  q.exec("BEGIN;"); //Lot's of things can happen in here that can cause problems if cancelled out.  Let's make it easy to roll it back.
 }
 
 voucherItem::~voucherItem()
@@ -196,53 +205,6 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _qtyToVoucher->clear();
       _freightToVoucher->clear();
     }
-
-    q.prepare( "SELECT porecv_id AS item_id, 1 AS item_type, :receiving AS action,"
-               "       formatDate(porecv_date) AS f_item_date,"
-               "       formatQty(porecv_qty) AS f_qty,"
-               "       formatBoolYN(porecv_vohead_id=:vohead_id) AS f_tagged,"
-               "       porecv_qty AS qty "
-               "FROM porecv "
-               "WHERE ( (NOT porecv_invoiced)"
-	       " AND ((porecv_vohead_id IS NULL) OR (porecv_vohead_id=:vohead_id))"
-               " AND (porecv_poitem_id=:poitem_id) ) "
-
-               "UNION SELECT poreject_id AS item_id, 2 AS item_type, :reject AS action,"
-               "             formatDate(poreject_date) AS f_item_date,"
-               "             formatQty(poreject_qty) AS f_qty,"
-               "             formatBoolYN(poreject_vohead_id=:vohead_id) AS f_tagged,"
-               "             (poreject_qty * -1) AS qty "
-               "FROM poreject "
-               "WHERE ( (poreject_posted)"
-               " AND (NOT poreject_invoiced)"
-	       " AND ((poreject_vohead_id IS NULL) OR (poreject_vohead_id=:vohead_id))"
-               " AND (poreject_poitem_id=:poitem_id) );" );
-    q.bindValue(":receiving", tr("Receiving"));
-    q.bindValue(":reject", tr("Reject"));
-    q.bindValue(":vohead_id", _voheadid);
-    q.bindValue(":poitem_id", _poitemid);
-    q.exec();
-    if (q.first())
-    {
-      double totalQty = 0;
-      XTreeWidgetItem *last = 0;
-
-      do
-      {
-	last = new XTreeWidgetItem( _uninvoiced, last,
-				   q.value("item_id").toInt(),
-				   q.value("item_type").toInt(),
-				   q.value("action"),
-				   q.value("f_item_date"),
-				   q.value("f_qty"),
-				   q.value("f_tagged") );
-
-        totalQty += q.value("qty").toDouble();
-      }
-      while (q.next());
-
-      new XTreeWidgetItem(_uninvoiced, last, -1, QVariant(tr("Uninvoiced")), "", formatQty(totalQty));
-    }
   }
 
   sFillList();
@@ -299,14 +261,14 @@ void voucherItem::sSave()
     q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
     q.exec();
   	if (q.first())
-	{
-	QString msg;
-	msg = "The P/O value of ";
-	msg.append( q.value("f_povalue").toString() );
-	msg.append( " does not match the total distributed value.\nInvoice matching is required for this vendor.\nStop and correct?" );
-	if ( QMessageBox::warning( this, tr("Invoice Value Mismatch"), msg, tr("Yes"), tr("No"), QString::null ) != 1 )
-    		return;
-	}
+    {
+    QString msg;
+    msg = "The P/O value of ";
+    msg.append( q.value("f_povalue").toString() );
+    msg.append( " does not match the total distributed value.\nInvoice matching is required for this vendor.\nStop and correct?" );
+    if ( QMessageBox::warning( this, tr("Invoice Value Mismatch"), msg, tr("Yes"), tr("No"), QString::null ) != 1 )
+          return;
+    }
   }
 
 //  Update the qty vouchered
@@ -319,73 +281,8 @@ void voucherItem::sSave()
   q.bindValue(":vohead_id", _voheadid);
   q.exec();
 
-
-//  Save the voitem information
-  if (_voitemid != -1)
-  {
-    q.prepare( "UPDATE voitem "
-               "SET voitem_close=:voitem_close, voitem_qty=:voitem_qty,"
-               "    voitem_freight=:voitem_freight "
-               "WHERE (voitem_id=:voitem_id);" );
-    q.bindValue(":voitem_id", _voitemid);
-  }
-  else
-    {
-	//  Get next voitem id
-    q.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
-    q.exec();
-    if (q.first())
-	  _voitemid = (q.value("voitemid").toInt());
-	  
-    q.prepare( "INSERT INTO voitem "
-               "(voitem_id,voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
-               "VALUES "
-               "(:voitem_id,:vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight);" );
-    }
-
-  q.bindValue(":voitem_id", _voitemid);
-  q.bindValue(":vohead_id", _voheadid);
-  q.bindValue(":poitem_id", _poitemid);
-  q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked(), 0));
-  q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
-  q.bindValue(":voitem_freight", _freightToVoucher->localValue());
-  q.exec();
-  
-  //  Tag all the Tagged Uninvoiced P/O Receivings
-  for (int i = 0; i < _uninvoiced->topLevelItemCount(); i++)
-  {
-    XTreeWidgetItem *cursor = ((XTreeWidgetItem*)(_uninvoiced->topLevelItem(i)));
-    if (cursor->text(3) == "Yes")
-    {
-      if (cursor->altId() == 1)
-        q.prepare( "UPDATE recv "
-                   "SET recv_vohead_id=:vohead_id,recv_voitem_id=:voitem_id "
-                   "WHERE (recv_id=:target_id);" );
-      else if (cursor->altId() == 2)
-        q.prepare( "UPDATE poreject "
-                   "SET poreject_vohead_id=:vohead_id,poreject_voitem_id=:voitem_id "
-                   "WHERE (poreject_id=:target_id);" );
-    }
-    else
-    {
-      if (cursor->altId() == 1)
-        q.prepare( "UPDATE porecv "
-                   "SET recv_vohead_id=NULL,recv_voitem_id=NULL "
-                   "WHERE ((recv_id=:target_id)"
-                   "  AND  (recv_vohead_id=:vohead_id));" );
-      else if (cursor->altId() == 2)
-        q.prepare( "UPDATE poreject "
-                   "SET poreject_vohead_id=NULL,poreject_voitem_id=NULL "
-                   "WHERE ((poreject_id=:target_id)"
-                   "  AND  (poreject_vohead_id=:vohead_id));" );
-    }
-
-    q.bindValue(":vohead_id", _voheadid);
-	q.bindValue(":voitem_id", _voitemid);
-    q.bindValue(":target_id", cursor->id());
-    q.exec();
-  }
-
+  q.exec("COMMIT;");
+  _inTransaction = FALSE;
   accept();
 }
 
@@ -452,61 +349,61 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   if(item->id() == -1)
     return;
   if (item->text(3) == "Yes")
-    {
+  {
     item->setText(3, "No");
     if (item->text(0) == "Receiving")
-    	{
+    {
     	n = _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(item->text(2));
     	n = n - _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(s.setNum(n));
 
-	n = _uninvoicedReceived->toDouble();
-        _uninvoicedReceived->setText(item->text(2));
-        n = n + _uninvoicedReceived->toDouble();
-        _uninvoicedReceived->setText(s.setNum(n));
-	}
+      n = _uninvoicedReceived->toDouble();
+      _uninvoicedReceived->setText(item->text(2));
+      n = n + _uninvoicedReceived->toDouble();
+      _uninvoicedReceived->setText(s.setNum(n));
+    }
     else
-	{
+    {
     	n = _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(item->text(2));
     	n = n + _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(s.setNum(n));
 
-	n = _uninvoicedRejected->toDouble();
-        _uninvoicedRejected->setText(item->text(2));
-        n = n + _rejected->toDouble();
-        _uninvoicedRejected->setText(s.setNum(n));
-	}
+      n = _uninvoicedRejected->toDouble();
+      _uninvoicedRejected->setText(item->text(2));
+      n = n + _rejected->toDouble();
+      _uninvoicedRejected->setText(s.setNum(n));
     }
+  }
   else 
-    {
+  {
     item->setText(3, "Yes");
     if (item->text(0) == "Receiving")
-    	{
+    {
     	n = _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(item->text(2));
     	n = n + _qtyToVoucher->toDouble();
     	_qtyToVoucher->setText(s.setNum(n));
 
-	n = _uninvoicedReceived->toDouble();
-        _uninvoicedReceived->setText(item->text(2));
-        n = n - _uninvoicedReceived->toDouble();
-        _uninvoicedReceived->setText(s.setNum(n));
-	}
-    else
-	{
- 	n = _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(item->text(2));
-    	n = n - _qtyToVoucher->toDouble();
-    	_qtyToVoucher->setText(s.setNum(n));
-
-	n = _uninvoicedRejected->toDouble();
-        _uninvoicedRejected->setText(item->text(2));
-        n = n - _uninvoicedRejected->toDouble();
-        _uninvoicedRejected->setText(s.setNum(n));
-	}
+      n = _uninvoicedReceived->toDouble();
+      _uninvoicedReceived->setText(item->text(2));
+      n = n - _uninvoicedReceived->toDouble();
+      _uninvoicedReceived->setText(s.setNum(n));
     }
+    else
+    {
+      n = _qtyToVoucher->toDouble();
+      _qtyToVoucher->setText(item->text(2));
+      n = n - _qtyToVoucher->toDouble();
+      _qtyToVoucher->setText(s.setNum(n));
+
+      n = _uninvoicedRejected->toDouble();
+      _uninvoicedRejected->setText(item->text(2));
+      n = n - _uninvoicedRejected->toDouble();
+      _uninvoicedRejected->setText(s.setNum(n));
+    }
+  }
 
 //Check PO Close flag
 
@@ -514,6 +411,68 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
         _closePoitem->setChecked(true);
   else
 	_closePoitem->setChecked(false);
+  
+//  Save the voitem information
+  if (_voitemid != -1)
+  {
+    q.prepare( "UPDATE voitem "
+               "SET voitem_close=:voitem_close, voitem_qty=:voitem_qty,"
+               "    voitem_freight=:voitem_freight "
+               "WHERE (voitem_id=:voitem_id);" );
+    q.bindValue(":voitem_id", _voitemid);
+  }
+  else
+  {
+//  Get next voitem id
+  q.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
+  q.exec();
+  if (q.first())
+  _voitemid = (q.value("voitemid").toInt());
+  
+  q.prepare( "INSERT INTO voitem "
+             "(voitem_id,voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
+             "VALUES "
+             "(:voitem_id,:vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight);" );
+  }
+
+  q.bindValue(":voitem_id", _voitemid);
+  q.bindValue(":vohead_id", _voheadid);
+  q.bindValue(":poitem_id", _poitemid);
+  q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked(), 0));
+  q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
+  q.bindValue(":voitem_freight", _freightToVoucher->localValue());
+  q.exec();
+  
+//Update the receipt record
+  if (item->text(3) == "Yes")
+  {
+    if (item->altId() == 1)
+      q.prepare( "UPDATE recv "
+                 "SET recv_vohead_id=:vohead_id,recv_voitem_id=:voitem_id "
+                 "WHERE (recv_id=:target_id);" );
+    else if (item->altId() == 2)
+      q.prepare( "UPDATE poreject "
+                 "SET poreject_vohead_id=:vohead_id,poreject_voitem_id=:voitem_id "
+                 "WHERE (poreject_id=:target_id);" );
+  }
+  else
+  {
+    if (item->altId() == 1)
+      q.prepare( "UPDATE porecv "
+                 "SET recv_vohead_id=NULL,recv_voitem_id=NULL "
+                 "WHERE ((recv_id=:target_id)"
+                 "  AND  (recv_vohead_id=:vohead_id));" );
+    else if (item->altId() == 2)
+      q.prepare( "UPDATE poreject "
+                 "SET poreject_vohead_id=NULL,poreject_voitem_id=NULL "
+                 "WHERE ((poreject_id=:target_id)"
+                 "  AND  (poreject_vohead_id=:vohead_id));" );
+  }
+
+  q.bindValue(":vohead_id", _voheadid);
+  q.bindValue(":voitem_id", _voitemid);
+  q.bindValue(":target_id", item->id());
+  q.exec();
 
 }
 
@@ -542,5 +501,107 @@ void voucherItem::sFillList()
   if (q.first())
     _totalDistributed->setLocalValue(q.value("totalamount").toDouble() +
 					_freightToVoucher->localValue());
+          
+  //Fill univoiced receipts list
+  q.prepare( "SELECT porecv_id AS item_id, 1 AS item_type, :receiving AS action,"
+             "       formatDate(porecv_date) AS f_item_date,"
+             "       formatQty(porecv_qty) AS f_qty,"
+             "       formatBoolYN(porecv_vohead_id=:vohead_id) AS f_tagged,"
+             "       porecv_qty AS qty "
+             "FROM porecv "
+             "WHERE ( (NOT porecv_invoiced)"
+             " AND ((porecv_vohead_id IS NULL) OR (porecv_vohead_id=:vohead_id))"
+             " AND (porecv_poitem_id=:poitem_id) ) "
+
+             "UNION SELECT poreject_id AS item_id, 2 AS item_type, :reject AS action,"
+             "             formatDate(poreject_date) AS f_item_date,"
+             "             formatQty(poreject_qty) AS f_qty,"
+             "             formatBoolYN(poreject_vohead_id=:vohead_id) AS f_tagged,"
+             "             (poreject_qty * -1) AS qty "
+             "FROM poreject "
+             "WHERE ( (poreject_posted)"
+             " AND (NOT poreject_invoiced)"
+             " AND ((poreject_vohead_id IS NULL) OR (poreject_vohead_id=:vohead_id))"
+             " AND (poreject_poitem_id=:poitem_id) );" );
+  q.bindValue(":receiving", tr("Receiving"));
+  q.bindValue(":reject", tr("Reject"));
+  q.bindValue(":vohead_id", _voheadid);
+  q.bindValue(":poitem_id", _poitemid);
+  q.exec();
+  if (q.first())
+  {
+    _uninvoiced->clear();
+    double totalQty = 0;
+    XTreeWidgetItem *last = 0;
+
+    do
+    {
+      last = new XTreeWidgetItem( _uninvoiced, last,
+               q.value("item_id").toInt(),
+               q.value("item_type").toInt(),
+               q.value("action"),
+               q.value("f_item_date"),
+               q.value("f_qty"),
+               q.value("f_tagged") );
+
+      totalQty += q.value("qty").toDouble();
+    }
+    while (q.next());
+
+    new XTreeWidgetItem(_uninvoiced, last, -1, QVariant(tr("Uninvoiced")), "", formatQty(totalQty));
+  }
+}
+
+void voucherItem::sCorrectReceiving()
+{
+  if (enterPoitemReceipt::correctReceipt(_uninvoiced->id(), this) != QDialog::Rejected)
+    sFillList();
+}
+
+void voucherItem::sSplitReceipt()
+{
+  ParameterList params;
+  params.append("recv_id", _uninvoiced->id());
+
+  splitReceipt newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sFillList();
+}
+
+void voucherItem::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
+{
+  int menuItem;
+  
+  if (selected->text(3) == "No")
+  {
+    menuItem = pMenu->insertItem(tr("Correct Receipt..."), this, SLOT(sCorrectReceiving()), 0);
+    if (!_privleges->check("EnterReceipts"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+
+    menuItem = pMenu->insertItem(tr("Split Receipt..."), this, SLOT(sSplitReceipt()), 0);
+    if (!_privleges->check("EnterReceipts"))
+      pMenu->setItemEnabled(menuItem, FALSE);
+  }
+}
+
+/*
+void voucherItem::closeEvent(QCloseEvent *pEvent)
+{
+  if(_inTransaction)
+  {
+    q.exec("ROLLBACK;");
+    _inTransaction = false;
+  }
+}
+*/
+void voucherItem::sReject()
+{
+  if(_inTransaction)
+  {
+    q.exec("ROLLBACK;");
+    _inTransaction = false;
+  }
 }
 

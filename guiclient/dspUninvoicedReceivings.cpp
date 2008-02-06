@@ -170,14 +170,7 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
 
 void dspUninvoicedReceivings::sCorrectReceiving()
 {
-  ParameterList params;
-  params.append("mode", "edit");
-  params.append("recv_id", _porecv->id());
-
-  enterPoitemReceipt newdlg(this, "", TRUE);
-  newdlg.set(params);
-
-  if (newdlg.exec() != QDialog::Rejected)
+  if (enterPoitemReceipt::correctReceipt(_porecv->id(), this) != QDialog::Rejected)
     sFillList();
 }
 

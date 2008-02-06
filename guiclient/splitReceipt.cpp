@@ -55,40 +55,107 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef ENTERPOITEMRECEIPT_H
-#define ENTERPOITEMRECEIPT_H
+#include "splitReceipt.h"
 
-#include "OpenMFGGUIClient.h"
-#include <QDialog>
-#include <parameter.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QValidator>
+#include <QVariant>
 
-#include "ui_enterPoitemReceipt.h"
+#include <metasql.h>
 
-class enterPoitemReceipt : public QDialog, public Ui::enterPoitemReceipt
+#include "mqlutil.h"
+#include "storedProcErrorLookup.h"
+
+splitReceipt::splitReceipt(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : QDialog(parent, name, modal, fl)
 {
-    Q_OBJECT
+  setupUi(this);
 
-public:
-    enterPoitemReceipt(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~enterPoitemReceipt();
-    
-    static bool correctReceipt( int pRecvid, QWidget * pParent );
+  connect(_split, SIGNAL(clicked()), this, SLOT(sSplit()));
 
-public slots:
-    virtual SetResponse set( const ParameterList & pParams );
-    virtual void populate();
-    virtual void sReceive();
+  _toSplit->setValidator(omfgThis->qtyVal());
+  _toSplit->setFocus();
+  _receiptDate->setDate(QDate::currentDate());
 
-protected slots:
-    virtual void languageChange();
+  _recvid	= -1;
+}
 
-private:
-    int		_mode;
-    int		_orderitemid;
-    QString	_ordertype;
-    double	_receivable;
-    int		_recvid;
+splitReceipt::~splitReceipt()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
 
-};
+void splitReceipt::languageChange()
+{
+  retranslateUi(this);
+}
 
-#endif // ENTERPOITEMRECEIPT_H
+enum SetResponse splitReceipt::set(const ParameterList &pParams)
+{
+  QVariant param;
+  bool     valid;
+
+  param = pParams.value("recv_id", &valid);
+  if (valid)
+  {
+    _recvid = param.toInt();
+    populate();
+  }
+
+  return NoError;
+}
+
+void splitReceipt::populate()
+{
+  ParameterList params;
+
+  MetaSQLQuery popm = mqlLoad(":/sr/enterItemReceipt/PopulateEdit.mql");
+  params.append("recv_id", _recvid);
+  q = popm.toQuery(params);
+
+  if (q.first())
+  {
+    _orderNumber->setText(q.value("order_number").toString());
+    _lineNumber->setText(q.value("orderitem_linenumber").toString());
+    _received->setText(q.value("f_qtyreceived").toString());
+    _receiptDate->setDate(q.value("effective").toDate());
+    _freight->setId(q.value("curr_id").toInt());
+    _freight->setLocalValue(q.value("recv_freight").toDouble());
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
+
+void splitReceipt::sSplit()
+{
+  int result = 0;
+
+  q.prepare("SELECT splitReceipt(:recvid, :qty, :freight) AS result;");
+  q.bindValue(":recvid",	_recvid);
+  q.bindValue(":qty",		_toSplit->toDouble());
+  q.bindValue(":freight",	_freight->localValue());
+  q.exec();
+  if (q.first())
+  {
+    result = q.value("result").toInt();
+    if (result < 0)
+    {
+      systemError(this, storedProcErrorLookup(QString("splitReceipt"), result),
+		  __FILE__, __LINE__);
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::NoError)
+  {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+  }
+
+  omfgThis->sPurchaseOrderReceiptsUpdated();
+
+  accept();
+}

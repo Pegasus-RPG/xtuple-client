@@ -55,40 +55,34 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef ENTERPOITEMRECEIPT_H
-#define ENTERPOITEMRECEIPT_H
+#ifndef SPLITRECEIPT_H
+#define SPLITRECEIPT_H
 
 #include "OpenMFGGUIClient.h"
 #include <QDialog>
 #include <parameter.h>
 
-#include "ui_enterPoitemReceipt.h"
+#include "ui_splitReceipt.h"
 
-class enterPoitemReceipt : public QDialog, public Ui::enterPoitemReceipt
+class splitReceipt : public QDialog, public Ui::splitReceipt
 {
     Q_OBJECT
 
 public:
-    enterPoitemReceipt(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~enterPoitemReceipt();
-    
-    static bool correctReceipt( int pRecvid, QWidget * pParent );
+    splitReceipt(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~splitReceipt();
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
-    virtual void sReceive();
+    virtual void sSplit();
 
 protected slots:
     virtual void languageChange();
 
 private:
-    int		_mode;
-    int		_orderitemid;
-    QString	_ordertype;
-    double	_receivable;
     int		_recvid;
 
 };
 
-#endif // ENTERPOITEMRECEIPT_H
+#endif // SPLITRECEIPT_H

@@ -78,7 +78,12 @@ public slots:
     virtual void sDelete();
     virtual void sToggleReceiving( QTreeWidgetItem * pItem );
     virtual void sFillList();
-
+    virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem* );
+    virtual void sCorrectReceiving();
+    virtual void sSplitReceipt();
+ //  virtual void closeEvent( QCloseEvent * pEvent );
+    virtual void sReject();
+    
 protected slots:
     virtual void languageChange();
 
@@ -87,6 +92,7 @@ private:
     int _voheadid;
     int _voitemid;
     int _poitemid;
+    bool _inTransaction;
 
 };
 

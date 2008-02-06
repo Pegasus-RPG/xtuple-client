@@ -97,6 +97,39 @@ void enterPoitemReceipt::languageChange()
   retranslateUi(this);
 }
 
+bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
+{
+  //Validate - Split receipts may not be corrected
+  q.prepare("SELECT (count(*) > 0) AS result "
+            "FROM recv "
+            "WHERE (((recv_id=:recvid) "
+            "  AND (recv_splitfrom_id IS NOT NULL)) "
+            "  OR (recv_splitfrom_id=:recvid)); ");
+  q.bindValue(":recvid", pRecvid);
+  q.exec();
+  if (q.first())
+  {
+    if (q.value("result").toBool())
+    {
+        QMessageBox::critical( pParent, tr("Cannot Correct"),
+                         tr("<p>Receipt has been split.  The received quantity may not be changed."));
+        return QDialog::Rejected;
+    }
+    else
+    {
+      ParameterList params;
+      params.append("mode", "edit");
+      params.append("recv_id", pRecvid);
+
+      enterPoitemReceipt newdlg(pParent, "", TRUE);
+      newdlg.set(params);
+
+      if (newdlg.exec() != QDialog::Rejected)
+        return true;
+    }
+  }
+}
+
 enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
 {
   QVariant param;
@@ -218,18 +251,18 @@ void enterPoitemReceipt::populate()
       XSqlQuery isq = ism.toQuery(params);
       if (isq.first())
       {
-	itemsiteid = itemSite::createItemSite(this,
-					      isq.value("itemsite_id").toInt(),
-					      isq.value("warehous_id").toInt(),
-					      true);
-	if (itemsiteid < 0)
-	  return;
-	_item->setItemsiteid(itemsiteid);
+        itemsiteid = itemSite::createItemSite(this,
+                      isq.value("itemsite_id").toInt(),
+                      isq.value("warehous_id").toInt(),
+                      true);
+        if (itemsiteid < 0)
+          return;
+        _item->setItemsiteid(itemsiteid);
       }
       else if (isq.lastError().type() != QSqlError::None)
       {
-	systemError(this, isq.lastError().databaseText(), __FILE__, __LINE__);
-	return;
+        systemError(this, isq.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
   }
