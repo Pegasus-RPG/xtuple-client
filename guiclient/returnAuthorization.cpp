@@ -1764,33 +1764,35 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
 
   if (selected->text(16).length() != 0)
   {
-    pMenu->insertItem(tr("View Original Sales Order..."), this, SLOT(sViewOrigOrder()), 0);
+    pMenu->insertItem(tr("View Original Order..."), this, SLOT(sViewOrigOrder()), 0);
     if(!_privleges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   
+    pMenu->insertSeparator();
+
   if (selected->text(17).length() != 0)
   {
-    menuItem = pMenu->insertItem(tr("Edit New Sales Order..."), this, SLOT(sEditNewOrder()), 0);
+    menuItem = pMenu->insertItem(tr("Edit New Order..."), this, SLOT(sEditNewOrder()), 0);
     if(!_privleges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
-    pMenu->insertItem(tr("View New Sales Order..."), this, SLOT(sViewNewOrder()), 0);
+    pMenu->insertItem(tr("View New Order..."), this, SLOT(sViewNewOrder()), 0);
     if(!_privleges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
 
-    menuItem = pMenu->insertItem(tr("Edit Sales Order Line..."), this, SLOT(sEditNewOrderLine()), 0);
+    menuItem = pMenu->insertItem(tr("Edit New Order Line..."), this, SLOT(sEditNewOrderLine()), 0);
     if(!_privleges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
-    pMenu->insertItem(tr("View Sales Order Line..."), this, SLOT(sViewNewOrderLine()), 0);
+    pMenu->insertItem(tr("View New Order Line..."), this, SLOT(sViewNewOrderLine()), 0);
     if(!_privleges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   
     pMenu->insertSeparator();
 
-    pMenu->insertItem(tr("New Sales Order Shipment Status..."), this, SLOT(sShipmentStatus()), 0);
-    pMenu->insertItem(tr("New Sales Order Shipments..."), this, SLOT(sShipment()), 0);
+    pMenu->insertItem(tr("New Order Shipment Status..."), this, SLOT(sShipmentStatus()), 0);
+    pMenu->insertItem(tr("New Order Shipments..."), this, SLOT(sShipment()), 0);
   
   }
 }
