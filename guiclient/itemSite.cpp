@@ -313,6 +313,15 @@ void itemSite::sSave()
     _plannerCode->setFocus();
     return;
   } 
+  
+  if (_stocked->isChecked() && _reorderLevel->toDouble() == 0)
+  {
+    QMessageBox::critical( this, tr("Cannot Save Item Site"),
+                           tr("<p>You must set a reorder level "
+			      "for a stocked item before you may save it.") );
+    _reorderLevel->setFocus();
+    return;
+  }
 
   bool isLocationControl = _locationControl->isChecked();
   bool isLotSerial = (((_controlMethod->currentItem() == 2) || (_controlMethod->currentItem() == 3)) ? TRUE : FALSE);
