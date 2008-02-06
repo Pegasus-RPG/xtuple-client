@@ -194,6 +194,7 @@
 #include "reasonCodes.h"
 #include "arAccountAssignments.h"
 
+#include "updateLateCustCreditStatus.h"
 
 // START_RW
 #include "postGLTransactionsToExternal.h"
@@ -462,12 +463,13 @@ menuAccounting::menuAccounting(OpenMFGGUIClient *Pparent) :
     { "separator",		  NULL,					NULL,					masterInfoMenu,		true,					       NULL, NULL, true, NULL },
     { "gl.adjustmentTypes",	tr("&Adjustment Types..."),	SLOT(sAdjustmentTypes()),	masterInfoMenu,	(_privleges->check("MaintainAdjustmentTypes") || _privleges->check("ViewAdjustmentTypes")),	NULL, NULL, true, NULL },
 
-    // Accounting | Utliities
+    // Accounting | Utilities
     { "menu",				tr("&Utilities"),			(char*)utilitiesMenu,		mainMenu,	true,	NULL, NULL, true, NULL },
     { "gl.forwardUpdateAccounts",	tr("&Forward Update Accounts..."),	SLOT(sForwardUpdateAccounts()),	utilitiesMenu,	_privleges->check("ViewTrialBalances"),	NULL, NULL, true, NULL },
     { "gl.duplicateAccountNumbers",      tr("&Duplicate Account Numbers..."),  SLOT(sDuplicateAccountNumbers()), utilitiesMenu,  _privleges->check("MaintainChartOfAccounts"), NULL, NULL, true, NULL },
     { "separator",		  NULL,					NULL,					utilitiesMenu,		true,					       NULL, NULL, true, NULL },
     { "so.purgeInvoices", tr("Purge &Invoices..."), SLOT(sPurgeInvoices()), utilitiesMenu, _privleges->check("PurgeInvoices"), NULL, NULL, true , NULL },
+    { "ar.updateLateCustCreditStatus", tr("&Update Late Customer Credit Status..."), SLOT(sUpdateLateCustCreditStatus()), utilitiesMenu, _privleges->check("UpdateCustomerCreditStatus"), NULL, NULL, _metrics->boolean("AutoCreditWarnLateCustomers"), NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));
@@ -1215,4 +1217,9 @@ void menuAccounting::sARAccountAssignments()
   omfgThis->handleNewWindow(new arAccountAssignments());
 }
 
+void menuAccounting::sUpdateLateCustCreditStatus()
+{
+  updateLateCustCreditStatus newdlg(parent, "", TRUE);
+  newdlg.exec();
+}
 

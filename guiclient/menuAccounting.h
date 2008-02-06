@@ -221,6 +221,8 @@ class menuAccounting : public QObject
     void sReasonCodes();
     void sARAccountAssignments();
 
+    void sUpdateLateCustCreditStatus();
+
 // START_RW
     void sPostTransactionsToExternal();
     void sDspRWTransactions();

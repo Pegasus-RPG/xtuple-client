@@ -183,6 +183,11 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
       _sellingWarehouseLit->hide();
       _sellingWarehouse->hide();
     }
+
+    if(!_metrics->boolean("AutoCreditWarnLateCustomers"))
+      _warnLate->hide();
+    else
+      _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
 }
 
 /*
@@ -190,7 +195,7 @@ customer::customer(QWidget* parent, const char* name, Qt::WFlags fl)
  */
 customer::~customer()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
 /*
@@ -199,7 +204,7 @@ customer::~customer()
  */
 void customer::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 enum SetResponse customer::set(const ParameterList &pParams)
@@ -537,6 +542,7 @@ void customer::sSave()
                "       cust_soediemailbody=:cust_soediemailbody, cust_soedicc=:cust_soedicc,"
                "       cust_soediprofile_id=:cust_soediprofile_id, "
                "       cust_preferred_warehous_id=:cust_preferred_warehous_id, "
+               "       cust_gracedays=:cust_gracedays,"
                "       cust_curr_id=:cust_curr_id "
                "WHERE (cust_id=:cust_id);" );
   }
@@ -561,7 +567,7 @@ void customer::sSave()
                "  cust_soemaildelivery, cust_soediemail, cust_soedisubject,"
                "  cust_soedifilename, cust_soediemailbody, cust_soedicc, "
                "  cust_soediprofile_id, cust_preferred_warehous_id, "
-               "  cust_curr_id ) "
+               "  cust_gracedays, cust_curr_id ) "
                "VALUES "
                "( :cust_id, :cust_number,"
                "  :cust_salesrep_id, :cust_name,"
@@ -583,7 +589,7 @@ void customer::sSave()
                "  :cust_soedifilename, :cust_soediemailbody, :cust_soedicc,"
 
                "  :cust_soediprofile_id, :cust_preferred_warehous_id, "
-               "  :cust_curr_id ) " );
+               "  :cust_gracedays, :cust_curr_id ) " );
 
   q.bindValue(":cust_id", _custid);
   q.bindValue(":cust_number", _number->text().stripWhiteSpace());
@@ -651,6 +657,9 @@ void customer::sSave()
 
   q.bindValue(":cust_preferred_warehous_id", _sellingWarehouse->id());
   q.bindValue(":cust_curr_id", _currency->id());
+
+  if(_warnLate->isChecked())
+    q.bindValue(":cust_gracedays", _graceDays->value());
 
   if(_ediProfile->id() > 0)
     q.bindValue(":cust_ediprofile_id", _ediProfile->id());
@@ -1086,6 +1095,7 @@ void customer::populate()
   cust.prepare( "SELECT custinfo.*, "
                 "       formatScrap(cust_commprcnt) AS commprcnt,"
                 "       formatScrap(cust_discntprcnt) AS discountpercent,"
+                "       (cust_gracedays IS NOT NULL) AS hasGraceDays,"
                 "       crmacct_id "
                 "FROM custinfo, crmacct "
                 "WHERE ((cust_id=:cust_id) "
@@ -1108,6 +1118,12 @@ void customer::populate()
     _autoUpdateStatus->setChecked(cust.value("cust_autoupdatestatus").toBool());
     _autoHoldOrders->setChecked(cust.value("cust_autoholdorders").toBool());
     _defaultDiscountPrcnt->setText(cust.value("discountpercent"));
+
+    if(cust.value("hasGraceDays").toBool())
+    {
+      _warnLate->setChecked(true);
+      _graceDays->setValue(cust.value("cust_gracedays").toInt());
+    }
 
     _notes->setText(cust.value("cust_comments").toString());
 

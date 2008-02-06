@@ -656,6 +656,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -1169,6 +1174,63 @@
          </layout>
         </item>
         <item>
+         <layout class="QHBoxLayout" >
+          <property name="bottomMargin" >
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QGroupBox" name="_warnLate" >
+            <property name="title" >
+             <string>Alternate Late Grace Days</string>
+            </property>
+            <property name="checkable" >
+             <bool>true</bool>
+            </property>
+            <property name="checked" >
+             <bool>false</bool>
+            </property>
+            <layout class="QHBoxLayout" >
+             <property name="leftMargin" >
+              <number>5</number>
+             </property>
+             <property name="topMargin" >
+              <number>5</number>
+             </property>
+             <property name="rightMargin" >
+              <number>5</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>5</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="_graceDaysLit" >
+               <property name="text" >
+                <string>Grace Days:</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="_graceDays" />
+             </item>
+            </layout>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
+        </item>
+        <item>
          <spacer>
           <property name="orientation" >
            <enum>Qt::Vertical</enum>
@@ -1482,6 +1544,9 @@
        <layout class="QVBoxLayout" >
         <item>
          <widget class="Comments" name="_comments" >
+          <property name="focusPolicy" >
+           <enum>Qt::StrongFocus</enum>
+          </property>
           <property name="type" >
            <enum>Comments::Customer</enum>
           </property>
@@ -2117,15 +2182,34 @@
   <tabstop>_creditLimit</tabstop>
   <tabstop>_creditRating</tabstop>
   <tabstop>_inGoodStanding</tabstop>
+  <tabstop>_onCreditWarning</tabstop>
+  <tabstop>_onCreditHold</tabstop>
   <tabstop>_usesPOs</tabstop>
   <tabstop>_blanketPos</tabstop>
   <tabstop>_autoUpdateStatus</tabstop>
   <tabstop>_autoHoldOrders</tabstop>
+  <tabstop>_warnLate</tabstop>
+  <tabstop>_graceDays</tabstop>
+  <tabstop>_billCntct</tabstop>
+  <tabstop>_corrCntct</tabstop>
+  <tabstop>_shipto</tabstop>
+  <tabstop>_printShipto</tabstop>
+  <tabstop>_newShipto</tabstop>
+  <tabstop>_editShipto</tabstop>
+  <tabstop>_viewShipto</tabstop>
+  <tabstop>_deleteShipto</tabstop>
   <tabstop>_notes</tabstop>
+  <tabstop>_charass</tabstop>
   <tabstop>_newCharacteristic</tabstop>
   <tabstop>_editCharacteristic</tabstop>
   <tabstop>_deleteCharacteristic</tabstop>
   <tabstop>_comments</tabstop>
+  <tabstop>_soEdiProfile</tabstop>
+  <tabstop>_soEdiEmail</tabstop>
+  <tabstop>_soEdiCC</tabstop>
+  <tabstop>_soEdiSubject</tabstop>
+  <tabstop>_soEdiFilename</tabstop>
+  <tabstop>_soEdiEmailBody</tabstop>
   <tabstop>_ediProfile</tabstop>
   <tabstop>_ediEmail</tabstop>
   <tabstop>_ediCC</tabstop>
@@ -2140,6 +2224,7 @@
   <tabstop>_downCC</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_chartempl</tabstop>
  </tabstops>
  <includes>
   <include location="local" >OpenMFGGUIClient.h</include>

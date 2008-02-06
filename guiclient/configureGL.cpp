@@ -107,6 +107,10 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _address->setPostalCode(_metrics->value("remitto_zipcode"));
   _address->setCountry(_metrics->value("remitto_country"));
   _phone->setText(_metrics->value("remitto_phone"));
+
+  _warnLate->setChecked(_metrics->boolean("AutoCreditWarnLateCustomers"));
+  if(!_metrics->value("DefaultAutoCreditWarnGraceDays").isEmpty())
+    _graceDays->setValue(_metrics->value("DefaultAutoCreditWarnGraceDays").toInt());
   
   // GL
   _mainSize->setValue(_metrics->value("GLMainSize").toInt());
@@ -223,6 +227,10 @@ void configureGL::sSave()
   _metrics->set("remitto_zipcode",	_address->postalCode().stripWhiteSpace());
   _metrics->set("remitto_country",	_address->country().stripWhiteSpace());
   _metrics->set("remitto_phone",	_phone->text().stripWhiteSpace());
+  
+  _metrics->set("AutoCreditWarnLateCustomers", _warnLate->isChecked());
+  if(_warnLate->isChecked())
+    _metrics->set("DefaultAutoCreditWarnGraceDays", _graceDays->value());
   
   // GL
   Action *profitcenter = 0;

@@ -665,9 +665,6 @@
                <property name="alignment" >
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                </property>
-               <property name="buddy" >
-                <cstring></cstring>
-               </property>
               </widget>
              </item>
              <item>
@@ -906,6 +903,63 @@
              </layout>
             </widget>
            </item>
+           <item>
+            <widget class="QGroupBox" name="_warnLate" >
+             <property name="title" >
+              <string>Credit Warn Customs when Late</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QHBoxLayout" >
+              <property name="leftMargin" >
+               <number>5</number>
+              </property>
+              <property name="topMargin" >
+               <number>5</number>
+              </property>
+              <property name="rightMargin" >
+               <number>5</number>
+              </property>
+              <property name="bottomMargin" >
+               <number>5</number>
+              </property>
+              <item>
+               <widget class="QLabel" name="_graceDaysLit" >
+                <property name="text" >
+                 <string>Default Grace Period Days:</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QSpinBox" name="_graceDays" >
+                <property name="maximum" >
+                 <number>9999</number>
+                </property>
+                <property name="value" >
+                 <number>30</number>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Horizontal</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>40</width>
+                  <height>20</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
           </layout>
          </item>
          <item>
@@ -1017,6 +1071,16 @@
   <tabstop>_discrepancy</tabstop>
   <tabstop>_baseToLocal</tabstop>
   <tabstop>_localToBase</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_nextAPMemoNumber</tabstop>
+  <tabstop>_nextARMemoNumber</tabstop>
+  <tabstop>_hideApplyto</tabstop>
+  <tabstop>_customerDeposits</tabstop>
+  <tabstop>_name</tabstop>
+  <tabstop>_address</tabstop>
+  <tabstop>_phone</tabstop>
+  <tabstop>_warnLate</tabstop>
+  <tabstop>_graceDays</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>

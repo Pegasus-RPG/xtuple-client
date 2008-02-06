@@ -312,6 +312,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                updateABCClass.ui updateActualCostsByClassCode.ui updateActualCostsByItem.ui           \
                updateCreditStatusByCustomer.ui updateCycleCountFrequency.ui                           \
                updateItemSiteLeadTimes.ui updateListPricesByProductCategory.ui                        \
+               updateLateCustCreditStatus.ui                                                          \
                updateOUTLevelByItem.ui updateOUTLevels.ui updateOUTLevelsByClassCode.ui               \
                updatePricesByProductCategory.ui  updatePricesByPricingSchedule.ui                     \
                updateReorderLevelByItem.ui updateReorderLevels.ui updateReorderLevelsByClassCode.ui   \
@@ -621,6 +622,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                updateABCClass.h updateActualCostsByClassCode.h updateActualCostsByItem.h              \
                updateCreditStatusByCustomer.h updateCycleCountFrequency.h                             \
                updateItemSiteLeadTimes.h updateListPricesByProductCategory.h                          \
+               updateLateCustCreditStatus.h                                                           \
                updateOUTLevelByItem.h updateOUTLevels.h updateOUTLevelsByClassCode.h                  \
                updatePricesByProductCategory.h  updatePricesByPricingSchedule.h                       \
                updateReorderLevelByItem.h updateReorderLevels.h updateReorderLevelsByClassCode.h      \
@@ -935,11 +937,12 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                updateABCClass.cpp updateActualCostsByClassCode.cpp updateActualCostsByItem.cpp        \
                updateCreditStatusByCustomer.cpp updateCycleCountFrequency.cpp                         \
                updateItemSiteLeadTimes.cpp updateListPricesByProductCategory.cpp                      \
+               updateLateCustCreditStatus.cpp                                                         \
                updateOUTLevelByItem.cpp updateOUTLevels.cpp updateOUTLevelsByClassCode.cpp            \
                updatePricesByProductCategory.cpp  updatePricesByPricingSchedule.cpp                   \
-               updateReorderLevelByItem.cpp updateReorderLevels.cpp updateReorderLevelsByClassCode.cpp \
+               updateReorderLevelByItem.cpp updateReorderLevels.cpp updateReorderLevelsByClassCode.cpp\
                users.cpp user.cpp userList.cpp userPreferences.cpp                                    \
-               userCostingElement.cpp costingElements.cpp                                              \
+               userCostingElement.cpp costingElements.cpp                                             \
                version.cpp vendor.cpp vendors.cpp                                                     \
                vendorAddress.cpp vendorAddressList.cpp                                                \
                vendorType.cpp vendorTypes.cpp viewCheckRun.cpp voidChecks.cpp                         \
