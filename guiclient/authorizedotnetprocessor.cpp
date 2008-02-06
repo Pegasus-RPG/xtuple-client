@@ -709,7 +709,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     XSqlQuery anq;
     anq.prepare("SELECT UPPER(MD5(:inputstr)) AS expected;");
     anq.bindValue(":inputstr", _metrics->value("CCANMD5Hash") +
-			       _metrics->value("CCLogin") +
+			       _metricsenc->value("CCLogin") +
 			       r_ordernum +
 			       QString::number(pamount, 'f', 2));
     anq.exec();

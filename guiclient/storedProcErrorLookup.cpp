@@ -730,6 +730,19 @@ void initErrorLookupHash()
 			      "probably because the Customer's Prepaid Account "
 			      "was not found."),			0, "" },
 
+  { "postCCcredit",  -1, TR("Cannot post this Credit Card refund because the "
+                            "default Bank Account for Credit Card transactions "
+                            "could not be found."),                     0, "" },
+  { "postCCcredit",  -2, TR("Cannot post this Credit Card refund because an "
+                            "invalid id/reference-type pair was passed."),
+                                                                        0, "" },
+  { "postCCcredit",  -3, TR("Cannot post this Credit Card refund because the "
+                            "credit card and refund records could not be "
+                            "found."),                                  0, "" },
+  { "postCCcredit",  -4, TR("Cannot post this Credit Card refund because the "
+                            "credit card payment records is not for a refund."),
+                                                                        0, "" },
+
   { "postCheck",  -10, TR("Cannot post this Check because it has already "
 			 "been posted."),				0, "" },
   { "postCheck",  -11, TR("Cannot post this Check because the recipient "
