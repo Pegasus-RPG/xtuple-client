@@ -97,13 +97,12 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
   else if (issueMethod == "M")
     _issueMethod->setCurrentItem(2);
     
+  
   if (_metrics->value("Application") != "OpenMFG")
   {
     _routings->hide();
     _routings->setChecked(FALSE);
-	_revControl->hide();
     _bbom->hide();
-    _transforms->hide();
   }
   else
   {
@@ -120,7 +119,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
     } 
     else
       _routings->setChecked(_metrics->boolean("Routings"));
-    
+      
     q.exec("SELECT item_id FROM item WHERE (item_type IN ('B','C','Y')) LIMIT 1;");
     if (q.first())
     {
@@ -129,7 +128,17 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
     }
     else
       _bbom->setChecked(_metrics->boolean("BBOM"));
-    
+  }
+  
+  
+  if ( (_metrics->value("Application") != "OpenMFG")
+    && (_metrics->value("Application") != "xTupleERP") )
+  {
+    _revControl->hide();
+    _transforms->hide();
+  }
+  else
+  {
     q.exec("SELECT * FROM itemtrans LIMIT 1;");
     if (q.first())
     {

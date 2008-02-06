@@ -221,14 +221,15 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   }
 
   //Set status of Returns Authorization based on context
-  if (_metrics->value("Application") != "OpenMFG")
+  if ( (_metrics->value("Application") != "OpenMFG")
+    && (_metrics->value("Application") != "xTupleERP") )
   {
-	_authNumGenerationLit->setVisible(false);
+    _authNumGenerationLit->setVisible(false);
     _returnAuthorizationNumGeneration->setVisible(false);
-	_nextRaNumberLit->setVisible(false);
-	_nextRaNumber->setVisible(false);
-	_tab->removePage(_tab->page(3));
-	_enableReturns->setChecked(false);
+    _nextRaNumberLit->setVisible(false);
+    _nextRaNumber->setVisible(false);
+    _tab->removePage(_tab->page(3));
+    _enableReturns->setChecked(false);
     _enableReservations->hide();
     _enableReservations->setChecked(false);
   }

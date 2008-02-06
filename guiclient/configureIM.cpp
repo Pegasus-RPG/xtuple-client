@@ -75,7 +75,8 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   //Inventory
   //Disable multi-warehouse if PostBooks
-  if (_metrics->value("Application") != "OpenMFG")
+  if ( (_metrics->value("Application") != "OpenMFG")
+    && (_metrics->value("Application") != "xTupleERP") )
     _multiWhs->hide();
   else
   {
@@ -132,7 +133,8 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
   else if (countSlipAuditing == "B")
     _checkOnAll->setChecked(TRUE);
     
-  if (_metrics->value("Application") == "OpenMFG")
+  if ( (_metrics->value("Application") == "OpenMFG")
+    || (_metrics->value("Application") == "xTupleERP") )
   {
     q.exec("SELECT DISTINCT itemsite_controlmethod "
 	      "FROM itemsite "

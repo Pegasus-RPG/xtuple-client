@@ -110,7 +110,8 @@ void databaseInformation::init()
   _version->setText(_metrics->value("OpenMFGServerVersion"));
 
   //Disable batch manager if PostBooks
-  if (_metrics->value("Application") != "OpenMFG")
+  if ( (_metrics->value("Application") != "OpenMFG")
+    && (_metrics->value("Application") != "xTupleERP") )
   {
     _enableBatchManager->setChecked(FALSE);
     _enableBatchManager->hide();
