@@ -127,6 +127,17 @@ void SoLineEdit::setId(int pId)
   _parsed = TRUE;
 }
 
+void SoLineEdit::setCustId(int pId)
+{
+  if (pId == _custid)
+    return;
+    
+  _custid=pId;
+  setNumber(_number);
+  
+  emit custidChanged(_custid);
+}
+
 void SoLineEdit::setNumber(int pNumber)
 {
   XSqlQuery sohead;
@@ -151,6 +162,14 @@ void SoLineEdit::setNumber(int pNumber)
                     " AND (coship_coitem_id=coitem_id)"
                     " AND (NOT cosmisc_shipped)"
                     " AND (cohead_number=:sohead_number) );" );
+  else if (_type == cSoCustomer)
+  {
+    sohead.prepare( "SELECT cohead_id "
+                    "FROM cohead "
+                    "WHERE ( (cohead_number=:sohead_number) "
+                    "AND (cohead_cust_id=:cust_id) );" );
+    sohead.bindValue(":cust_id", _custid);
+  }
   else
     sohead.prepare( "SELECT cohead_id "
                     "FROM cohead "
@@ -251,11 +270,17 @@ void SoCluster::setId(int pSoid)
   _soNumber->setId(pSoid);
 }
 
+void SoCluster::setCustId(int pCustid)
+{
+  _soNumber->setCustId(pCustid);
+}
+
 void SoCluster::sList()
 {
   ParameterList params;
   params.append("sohead_id", _soNumber->_id);
   params.append("soType", _soNumber->_type);
+  params.append("cust_id", _soNumber->_custid);
 
   salesOrderList newdlg(parentWidget(), "", TRUE);
   newdlg.set(params);

@@ -90,6 +90,7 @@ public slots:
 private:
     int _soheadid;
     int _type;
+    int _custid;
 };
 
 #endif

@@ -77,6 +77,7 @@ class SoCluster;
 #define cSoClosed             0x02
 #define cSoAtShipping         0x04
 #define cSoReleased           0x08
+#define cSoCustomer           0x16
 
 class OPENMFGWIDGETS_EXPORT SoLineEdit : public XLineEdit
 {
@@ -89,6 +90,7 @@ friend class SoCluster;
 
   public slots:
     void setId(int);
+    void setCustId(int);
     void setNumber(int);
     void clear();
     void sParse();
@@ -129,6 +131,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   public slots:
     void setReadOnly(bool);
     void setId(int);
+    void setCustId(int);
     inline virtual void setLabel(const QString& p)  { _soNumberLit->setText(p); };
 
   signals:

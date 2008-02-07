@@ -146,6 +146,10 @@ void salesOrderList::set(ParameterList &pParams)
   param = pParams.value("soType", &valid);
   if (valid)
     _type = param.toInt();
+    
+  param = pParams.value("cust_id", &valid);
+  if (valid)
+    _custid = param.toInt();
  
   sFillList();
 }
@@ -163,6 +167,7 @@ void salesOrderList::sSelect()
 void salesOrderList::sFillList()
 {
   QString sql;
+
 
   if (_type == cSoAtShipping)
   {
@@ -214,6 +219,7 @@ void salesOrderList::sFillList()
       if (statusCheck)
         sql += " OR ";
       sql += "(coitem_status='C')";
+      statusCheck = TRUE;
     }
 
     if (_type & cSoReleased)
@@ -221,6 +227,14 @@ void salesOrderList::sFillList()
       if (statusCheck)
         sql += " AND ";
       sql += "(cohead_holdtype='N')";
+      statusCheck = TRUE;
+    }
+    
+    if (_type & cSoCustomer)
+    {
+      if (statusCheck)
+        sql += " AND ";
+      sql += "(cohead_cust_id=:cust_id)";
     }
 
     sql += ")) "
@@ -232,6 +246,7 @@ void salesOrderList::sFillList()
   XSqlQuery q;
   q.prepare(sql);
   _warehouse->bindValue(q);
+  q.bindValue(":cust_id", _custid);
   q.exec();
   _so->populate(q, _soheadid);
 }
