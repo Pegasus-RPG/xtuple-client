@@ -243,6 +243,12 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   {
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
   }
+
+  if(_metrics->boolean("EnableSOReservations"))
+  {
+    _requireInventory->setChecked(true);
+    _requireInventory->setEnabled(false);
+  }
 }
 
 salesOrder::~salesOrder()

@@ -114,6 +114,11 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   _bcQty->setValidator(omfgThis->qtyVal());
 
   _to->setVisible(_metrics->boolean("MultiWhs"));
+  if(_metrics->boolean("EnableSOReservations"))
+  {
+    _requireInventory->setChecked(true);
+    _requireInventory->setEnabled(false);
+  }
 }
 
 issueToShipping::~issueToShipping()
