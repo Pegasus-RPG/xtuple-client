@@ -44,6 +44,7 @@
     <file>images/billingSelections.png</file>
     <file>images/splashOpenMFG.png</file>
     <file>images/splashPostBooks.png</file>
+    <file>images/splashxTupleERP.png</file>
     <file>images/splashEmpty.png</file>
   </qresource>
 </RCC>

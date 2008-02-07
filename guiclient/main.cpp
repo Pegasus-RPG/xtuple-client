@@ -268,6 +268,11 @@ int main(int argc, char *argv[])
     _splash->setPixmap(QPixmap(":/images/splashPostBooks.png"));
     _Name.prepend("PostBooks");
   }
+  else if(!metric.first() || (metric.value("metric_value").toString() != "xTupleERP"))
+  {
+    _splash->setPixmap(QPixmap(":/images/splashxTupleERP.png"));
+    _Name.prepend("PostBooks");
+  }
   else
   {
     _splash->setPixmap(QPixmap(":/images/splashOpenMFG.png"));
