@@ -306,8 +306,8 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _miscChargeAccount->setReadOnly(TRUE);
       _freight->setEnabled(FALSE);
       _notes->setEnabled(FALSE);
-	  _comments->setEnabled(FALSE);
-	  _copyToShipto->setEnabled(FALSE);
+      _comments->setEnabled(FALSE);
+      _copyToShipto->setEnabled(FALSE);
       _shipToNumber->setEnabled(FALSE);
       _shipToName->setEnabled(FALSE);
       _shipToAddr->setEnabled(FALSE);
@@ -317,13 +317,13 @@ enum SetResponse returnAuthorization::set(const ParameterList &pParams)
       _new->hide();
       _delete->hide();
       _edit->hide();
-	  _action->hide();
-	  _authorizeLine->hide();
-	  _clearAuthorization->hide();
-	  _authorizeAll->hide();
-	  _enterReceipt->hide();
-	  _receiveAll->hide();
-	  _postReceipts->hide();
+      _action->hide();
+      _authorizeLine->hide();
+      _clearAuthorization->hide();
+      _authorizeAll->hide();
+      _enterReceipt->hide();
+      _receiveAll->hide();
+      _postReceipts->hide();
 
   	  _cancel->setText("&Close");
       _cancel->setFocus();
@@ -413,13 +413,13 @@ bool returnAuthorization::sSave()
 
   q.prepare( "UPDATE rahead "
 	     "SET rahead_cust_id=:rahead_cust_id,rahead_number=:rahead_number,"
-		 "    rahead_authdate=:rahead_authdate,rahead_expiredate=:rahead_expiredate,"
+       "    rahead_authdate=:rahead_authdate,rahead_expiredate=:rahead_expiredate,"
  	     "    rahead_salesrep_id=:rahead_salesrep_id, rahead_commission=:rahead_commission,"
  	     "    rahead_taxauth_id=:rahead_taxauth_id,rahead_rsncode_id=:rahead_rsncode_id,"
-		 "    rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
-		 "    rahead_creditmethod=:rahead_creditmethod,rahead_orig_cohead_id=:rahead_orig_cohead_id,"
-		 "    rahead_new_cohead_id=:rahead_new_cohead_id, "
-		 "    rahead_incdt_id=:rahead_incdt_id,rahead_prj_id=:rahead_prj_id,"
+       "    rahead_disposition=:rahead_disposition,rahead_timing=:rahead_timing,"
+       "    rahead_creditmethod=:rahead_creditmethod,rahead_orig_cohead_id=:rahead_orig_cohead_id,"
+       "    rahead_new_cohead_id=:rahead_new_cohead_id, "
+       "    rahead_incdt_id=:rahead_incdt_id,rahead_prj_id=:rahead_prj_id,"
 	     "    rahead_billtoname=:rahead_billtoname, rahead_billtoaddress1=:rahead_billtoaddress1,"
 	     "    rahead_billtoaddress2=:rahead_billtoaddress2, rahead_billtoaddress3=:rahead_billtoaddress3,"
 	     "    rahead_billtocity=:rahead_billtocity, rahead_billtostate=:rahead_billtostate,"
@@ -429,12 +429,12 @@ bool returnAuthorization::sSave()
 	     "    rahead_shipto_address2=:rahead_shipto_address2, rahead_shipto_address3=:rahead_shipto_address3,"
 	     "    rahead_shipto_city=:rahead_shipto_city, rahead_shipto_state=:rahead_shipto_state,"
 	     "    rahead_shipto_zipcode=:rahead_shipto_zipcode,rahead_shipto_country=:rahead_shipto_country,"
-		 "    rahead_custponumber=:rahead_custponumber,rahead_notes=:rahead_notes, "
+       "    rahead_custponumber=:rahead_custponumber,rahead_notes=:rahead_notes, "
 	     "    rahead_misc_accnt_id=:rahead_misc_accnt_id,rahead_misc=:rahead_misc, "
 	     "    rahead_misc_descrip=:rahead_misc_descrip,"
  	     "    rahead_curr_id=:rahead_curr_id, "
-	     "    rahead_freight=:rahead_freight,"
-		 "    rahead_printed=:rahead_printed "
+       "    rahead_freight=:rahead_freight,"
+       "    rahead_printed=:rahead_printed "
 	     "WHERE (rahead_id=:rahead_id);" );
 
   q.bindValue(":rahead_id", _raheadid);
@@ -744,6 +744,9 @@ void returnAuthorization::sPopulateCustomerInfo()
 {
     if (_cust->isValid())
     {
+      _origso->setCustId(_cust->id());
+      _origso->setType((cSoReleased | cSoCustomer));
+      
       XSqlQuery query;
       query.prepare( "SELECT custtype_code, cust_salesrep_id,"
                      "       formatScrap(cust_commprcnt) AS f_commission,"
@@ -800,6 +803,8 @@ void returnAuthorization::sPopulateCustomerInfo()
     }
     else
     {
+      _origso->setCustId(-1);
+      _origso->setType((cSoReleased));
       _salesRep->setCurrentItem(-1);
       _taxauth->setId(-1);
       _custtaxauthid	= -1;
