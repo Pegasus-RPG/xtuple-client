@@ -446,9 +446,12 @@ void purchaseOrderItem::populate()
     {
       _inventoryItem->setChecked(TRUE);
       _item->setItemsiteid(q.value("poitem_itemsite_id").toInt());
-	  _bomRevision->setId(q.value("poitem_bom_rev_id").toInt());
-	  _booRevision->setId(q.value("poitem_boo_rev_id").toInt());
       sPopulateItemSourceInfo(_item->id());
+      if (_metrics->boolean("RevControl"))
+      {
+        _bomRevision->setId(q.value("poitem_bom_rev_id").toInt());
+        _booRevision->setId(q.value("poitem_boo_rev_id").toInt());
+      }
     }
 
     _itemsrcid = q.value("poitem_itemsrc_id").toInt();
