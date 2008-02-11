@@ -148,9 +148,12 @@ void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
       pMenu->insertSeparator();
     }
   
-    menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
-    if (!_privleges->check("CreateInterWarehouseTrans"))
-      pMenu->setItemEnabled(menuItem, FALSE);
+    if (_metrics->boolean("MultiWhs"))
+    {
+      menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
+      if (!_privleges->check("CreateInterWarehouseTrans"))
+        pMenu->setItemEnabled(menuItem, FALSE);
+    }
 
     menuItem = pMenu->insertItem(tr("Adjust this QOH..."), this, SLOT(sAdjust()), 0);
     if (!_privleges->check("CreateAdjustmentTrans"))
