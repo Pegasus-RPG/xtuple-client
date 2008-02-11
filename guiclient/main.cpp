@@ -263,20 +263,20 @@ int main(int argc, char *argv[])
   metric.exec("SELECT metric_value"
            "  FROM metric"
            " WHERE (metric_name = 'Application')" );
-  if(!metric.first() || (metric.value("metric_value").toString() != "OpenMFG"))
-  {
-    _splash->setPixmap(QPixmap(":/images/splashPostBooks.png"));
-    _Name.prepend("PostBooks");
-  }
-  else if(!metric.first() || (metric.value("metric_value").toString() != "xTupleERP"))
-  {
-    _splash->setPixmap(QPixmap(":/images/splashxTupleERP.png"));
-    _Name.prepend("PostBooks");
-  }
-  else
+  if(!metric.first() || (metric.value("metric_value").toString() == "OpenMFG"))
   {
     _splash->setPixmap(QPixmap(":/images/splashOpenMFG.png"));
     _Name.prepend("OpenMFG");
+  }
+  else if(!metric.first() || (metric.value("metric_value").toString() == "xTupleERP"))
+  {
+    _splash->setPixmap(QPixmap(":/images/splashxTupleERP.png"));
+    _Name.prepend("xTupleERP");
+  }
+  else
+  {
+    _splash->setPixmap(QPixmap(":/images/splashPostBooks.png"));
+    _Name.prepend("PostBooks");
   }
 
   metric.exec("SELECT metric_value"
