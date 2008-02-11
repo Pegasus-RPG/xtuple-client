@@ -266,6 +266,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                rejectCodes.ui rejectCode.ui                                                           \
                reassignClassCodeByClassCode.ui reassignCustomerTypeByCustomerType.ui                  \
                reassignProductCategoryByProductCategory.ui reconcileBankaccount.ui                    \
+               registration.ui                                                                        \
                releasePlannedOrdersByPlannerCode.ui releaseWorkOrdersByPlannerCode.ui                 \
                relativeCalendarItem.ui relocateInventory.ui                                           \
                reports.ui reprioritizeWo.ui                                                           \
@@ -576,6 +577,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                rejectCodes.h rejectCode.h                                                             \
                reassignClassCodeByClassCode.h reassignCustomerTypeByCustomerType.h                    \
                reassignProductCategoryByProductCategory.h reconcileBankaccount.h                      \
+               registration.h                                                                         \
                releasePlannedOrdersByPlannerCode.h releaseWorkOrdersByPlannerCode.h                   \
                relativeCalendarItem.h relocateInventory.h                                             \
                reports.h reprioritizeWo.h                                                             \
@@ -890,6 +892,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                rejectCodes.cpp rejectCode.cpp                                                         \
                reassignClassCodeByClassCode.cpp reassignCustomerTypeByCustomerType.cpp                \
                reassignProductCategoryByProductCategory.cpp reconcileBankaccount.cpp                  \
+               registration.cpp                                                                       \
                releasePlannedOrdersByPlannerCode.cpp releaseWorkOrdersByPlannerCode.cpp               \
                relativeCalendarItem.cpp relocateInventory.cpp                                         \
                reports.cpp reprioritizeWo.cpp                                                         \

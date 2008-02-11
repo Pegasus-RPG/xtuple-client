@@ -170,6 +170,7 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 	inline virtual QString phone()		const { return _phone->text(); };
 	inline virtual QString phone2()		const { return _phone2->text(); };
 	inline virtual bool    phonesVisible()  const { return _phone->isVisible(); };
+        inline virtual QString title()          const { return _title->text(); };
 	inline virtual int     searchAcct()	const { return _searchAcctId; };
 	inline virtual QString webAddress()	const { return _webaddr->text(); };
 	inline virtual bool    webaddrVisible() const { return _webaddr->isVisible(); };

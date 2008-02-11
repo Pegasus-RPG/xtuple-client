@@ -122,6 +122,8 @@
 #include "configurePM.h"
 #include "configureCRM.h"
 
+#include "registration.h"
+
 extern QString __path;
 
 menuSystem::menuSystem(OpenMFGGUIClient *Pparent) :
@@ -241,14 +243,15 @@ menuSystem::menuSystem(OpenMFGGUIClient *Pparent) :
   communityMenu = new QMenu();
   actionProperties community[] = {
     { "community.home",        tr("xTuple.org &Home"),          SLOT(sCommunityHome()),        communityMenu, true, NULL, NULL, true },
-    { "separator",		NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
+    { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
+    { "community.register",    tr("&Register"),      SLOT(sRegister()),             communityMenu, true, NULL, NULL, _metrics->value("Application") != "OpenMFG" },
     { "community.newAccount",  tr("&New Account"),   SLOT(sCommunityNewAccount()),  communityMenu, true, NULL, NULL, true },
     { "community.editAccount", tr("&Edit Account"),  SLOT(sCommunityEditAccount()), communityMenu, true, NULL, NULL, true },
-    { "separator",		NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
+    { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
     { "community.forums",      tr("Discussion &Forums"),  SLOT(sCommunityForums()),      communityMenu, true, NULL, NULL, true },
     { "community.blogs",       tr("Bl&ogs"),              SLOT(sCommunityBlogs()),       communityMenu, true, NULL, NULL, true },
     { "community.issues",      tr("&Bugs and Feature Requests"), SLOT(sCommunityIssues()),      communityMenu, true, NULL, NULL, true },
-    { "separator",		NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
+    { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
     { "community.downloads",   tr("&Downloads"),     SLOT(sCommunityDownloads()),   communityMenu, true, NULL, NULL, true },
   };
   addActionsToMenu(community, sizeof(community) / sizeof(community[0]));
@@ -700,6 +703,12 @@ void menuSystem::sImportXML()
 void menuSystem::sCommunityHome()
 {
   omfgThis->launchBrowser(omfgThis, "http://www.xtuple.org/");
+}
+
+void menuSystem::sRegister()
+{
+  registration newdlg(parent);
+  newdlg.exec();
 }
 
 void menuSystem::sCommunityNewAccount()

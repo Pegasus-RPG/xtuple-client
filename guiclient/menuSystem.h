@@ -158,6 +158,7 @@ class menuSystem : public QObject
     void sCommunityBlogs();
     void sCommunityIssues();
     void sCommunityDownloads();
+    void sRegister();
 
 // START_RW
     void sConfigureAccountingSystemInterface();
