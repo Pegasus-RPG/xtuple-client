@@ -1,19 +1,16 @@
-SELECT enterReceipt(<? value("ordertype") ?>, orderitem_id,
-		    orderitem_qty_ordered - orderitem_qty_received,
-		    orderitem_freight - orderitem_freight_received,
-		    '',
-		    orderitem_freight_curr_id, CURRENT_DATE) AS result
-FROM orderitem LEFT OUTER JOIN
-     recv ON ((recv_orderitem_id=orderitem_id)
-	  AND (recv_order_type=orderitem_orderhead_type))
+SELECT enterReceipt(orderitem_orderhead_type, orderitem_id,
+                    orderitem_qty_ordered - orderitem_qty_received,
+                    orderitem_freight - orderitem_freight_received,
+                    '',
+                    orderitem_freight_curr_id, CURRENT_DATE) AS result
+  FROM orderitemData(<? value("ordertype") ?>, <? value("orderid") ?>, NULL) AS orderitem LEFT OUTER JOIN
+       recv ON ((recv_orderitem_id=orderitem_id)
+            AND (recv_order_type=orderitem_orderhead_type))
 <? if exists("EnableReturnAuth") ?>
                LEFT OUTER JOIN
      raitem ON ((raitem_id=orderitem_id)
         AND ('RA' = orderitem_orderhead_type))
 <? endif ?>
-WHERE ((orderitem_orderhead_id=<? value("orderid") ?>)
-  AND  (orderitem_orderhead_type=<? value("ordertype") ?>)
 <? if exists("EnableReturnAuth") ?>
-  AND  ((orderitem_orderhead_type != 'RA' OR raitem_disposition IN (NULL,'R','V','P')))
+  WHERE(((orderitem_orderhead_type != 'RA') OR (raitem_disposition IN (NULL,'R','V','P'))))
 <? endif?>
-);
