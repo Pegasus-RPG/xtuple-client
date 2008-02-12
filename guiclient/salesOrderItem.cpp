@@ -2083,7 +2083,7 @@ void salesOrderItem::populate()
     if (!item.value("quitem_createorder").isNull())
       _createOrder->setChecked(item.value("quitem_createorder").toBool());
     if (!item.value("promdate").isNull() && _metrics->boolean("UsePromiseDate"))
-      _promisedDate->setText(item.value("promdate").toString());
+      _promisedDate->setDate(item.value("promdate").toDate());
     if(item.value("coitem_substitute_item_id").toInt() > 0)
     {
       _sub->setChecked(true);
