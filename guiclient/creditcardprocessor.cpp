@@ -139,7 +139,7 @@ static struct {
 		 "the desired transaction amount (%2).")		},
   { -34, TR("No Preauthorization found")				},
   { -35, TR("This preauthorization may not be charged. It was created "
-	    "for a Sales Order which has been closed or canceled.")	},
+	    "for a Sales Order which has been canceled.")	},
 
   // stand-alone charges
   { -40, TR("Inconsistent data passed to charge(): [%1] [%2]")	},
@@ -640,7 +640,7 @@ int CreditCardProcessor::chargePreauthorized(const int pcvv, const double pamoun
     int coheadid = ccq.value("payco_cohead_id").toInt();
     ccq.prepare("SELECT COUNT(*) AS linecount "
 	      "FROM coitem "
-	      "WHERE ((coitem_status='O')"
+	      "WHERE ((coitem_status IN ('O', 'C'))"
 	      "  AND  (coitem_cohead_id=:coheadid));");
     ccq.bindValue(":coheadid", coheadid);
     ccq.exec();
