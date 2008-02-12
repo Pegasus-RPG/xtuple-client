@@ -58,6 +58,7 @@
 #include "registration.h"
 
 #include <QMessageBox>
+#include <QUrl>
 
 #include "OpenMFGGUIClient.h"
 
@@ -68,17 +69,22 @@ registration::registration(QWidget* parent, Qt::WindowFlags fl)
 
   connect(_back,     SIGNAL(clicked()), this, SLOT(sBack()));
   connect(_cancel,   SIGNAL(clicked()), this, SLOT(sCancel()));
-  connect(_never,    SIGNAL(clicked()), this, SLOT(sNever()));
   connect(_next,     SIGNAL(clicked()), this, SLOT(sNext()));
   connect(_register, SIGNAL(clicked()), this, SLOT(sRegister()));
-
-  _varContact->addressWidget()->setListVisible(false);
 
   _postreq = 0;
   _contact->setAccountVisible(false);
   _contact->setActiveVisible(false);
   _contact->setInitialsVisible(false);
   _contact->setMinimalLayout(true);
+
+  if (_metrics->value("Registered") == "Yes")
+      _weaskLit->setText(tr("<p><i>It seems you or someone else using this "
+                            "same database have already registered with "
+                            "xTuple.</i> You can fill out this window and send "
+                            "us registration information again, perhaps to "
+                            "register another user, or click the %1 button.")
+                         .arg(_later->text()));
 }
 
 registration::~registration()
@@ -116,15 +122,10 @@ void registration::sBack()
   _register->setEnabled(! _next->isEnabled());
 }
 
-void registration::sNever()
-{
-  _metrics->set("Registered", QString("Never"));
-  QDialog::accept();
-}
-
 void registration::reject()
 {
-  _metrics->set("Registered", QString("No"));
+  if (_metrics->value("Registered") != "Yes")
+    _metrics->set("Registered", QString("No"));
   QDialog::reject();
 }
 
@@ -159,16 +160,15 @@ void registration::sNext()
   _register->setEnabled(! _next->isEnabled());
 }
 
-void registration::sRegister(bool pretry)
+QString registration::encodedPair(const QString pfield, const QString pvalue)
 {
-  if (_metrics->value("Registered") == "Yes" && ! pretry &&
-      QMessageBox::question(this, tr("You are already registered"),
-                            tr("You have already submitted registration data "
-                               "to xTuple. Would you like to do this again?"),
-                            QMessageBox::Yes,
-                            QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-    accept();
+  QString encodedValue = pvalue;
+  QUrl::encode(encodedValue);
+  return pfield + "=" + encodedValue;
+}
 
+void registration::sRegister(bool /*pretry*/)
+{
   struct {
     bool        condition;
     QString     msg;
@@ -235,31 +235,16 @@ void registration::sRegister(bool pretry)
     return;
   }
 
-  if (_enduser->isChecked() && _gotvaryes->isChecked())
+  if (_enduser->isChecked() && _gotvaryes->isChecked() &&
+      _varName->text().isEmpty())
   {
-    if (_varName->text().isEmpty() &&
-        _varContact->first().isEmpty() && _varContact->last().isEmpty())
-    {
-      QMessageBox::warning(this, tr("Need Integrator/Consultant Name"),
-                           tr("You've told us that you have a systems "
-                              "integrator or consultant but haven't given us "
-                              "his/her name. Please do so."));
-      _wizardStack->setCurrentIndex(2);
-      _varName->setFocus();
-      return;
-    }
-    else if (_varContact->phone().isEmpty() &&
-             _varContact->emailAddress().isEmpty())
-    {
-      QMessageBox::warning(this,
-                           tr("Need Integrator/Consultant Contact Information"),
-                           tr("You've told us that you have a systems "
-                              "integrator or consultant. Please give us either "
-                              "a phone number or an e-mail address."));
-      _wizardStack->setCurrentIndex(2);
-      _varContact->setFocus();
-      return;
-    }
+    QMessageBox::warning(this, tr("Need Integrator/Consultant Name"),
+                         tr("You've told us that you have a systems "
+                            "integrator or consultant but haven't given us "
+                            "his/her name. Please do so."));
+    _wizardStack->setCurrentIndex(2);
+    _varName->setFocus();
+    return;
   }
 
   if (_var->isChecked())
@@ -309,61 +294,43 @@ void registration::sRegister(bool pretry)
 
   _progressLit->setText(tr("Building data to send"));
   QString request;
-  request += QString("\n") + "company"     + "=" + _company->text();
-  request += QString("\n") + "honorific"   + "=" + _contact->first();
-  request += QString("\n") + "first_name"  + "=" + _contact->first();
-  request += QString("\n") + "last_name"   + "=" + _contact->last();
-  request += QString("\n") + "email"       + "=" + _contact->emailAddress();
-  request += QString("\n") + "member_name" + "=" + _username->text();
-  request += QString("\n") + "jobtitle"    + "=" + _contact->title();
-  request += QString("\n") + "telephone"   + "=" + _contact->phone();
-  request += QString("\n") + "fax"         + "=" + _contact->fax();
-  request += QString("\n") + "password"    + "=" + _password->text();
-  request += QString("\n") + "addr_1"      + "=" + _companyAddr->line1();
-  request += QString("\n") + "addr_2"      + "=" + _companyAddr->line2();
-  request += QString("\n") + "addr_3"      + "=" + _companyAddr->line3();
-  request += QString("\n") + "city"        + "=" + _companyAddr->city();
-  request += QString("\n") + "state"       + "=" + _companyAddr->state();
-  request += QString("\n") + "country"     + "=" + _companyAddr->country();
-  request += QString("\n") + "zip"         + "=" + _companyAddr->postalCode();
+  request += "&" + encodedPair("company",    _company->text());
+  request += "&" + encodedPair("honorific",  _contact->honorific());
+  request += "&" + encodedPair("first_name", _contact->first());
+  request += "&" + encodedPair("last_name",  _contact->last());
+  request += "&" + encodedPair("email",      _contact->emailAddress());
+  request += "&" + encodedPair("member_name",_username->text());
+  request += "&" + encodedPair("jobtitle",   _contact->title());
+  request += "&" + encodedPair("telephone",  _contact->phone());
+  request += "&" + encodedPair("fax",        _contact->fax());
+  request += "&" + encodedPair("password",   _password->text());
+  request += "&" + encodedPair("addr_1",     _companyAddr->line1());
+  request += "&" + encodedPair("addr_2",     _companyAddr->line2());
+  request += "&" + encodedPair("addr_3",     _companyAddr->line3());
+  request += "&" + encodedPair("city",       _companyAddr->city());
+  request += "&" + encodedPair("state",      _companyAddr->state());
+  request += "&" + encodedPair("country",    _companyAddr->country());
+  request += "&" + encodedPair("zip",        _companyAddr->postalCode());
 
   _progress->setValue(1);
 
-  request += QString("\n") + "revenues"     + "=" + _revenues->currentText();
-  request += QString("\n") + "num_employees"+ "=" + _noemployees->currentText();
-  request += QString("\n") + "sic_code"     + "=" + _sic->currentText();
-  request += QString("\n") + "cur_mansoft"  + "=" + _erp->text();
-  request += QString("\n") + "cur_accsoft"  + "=" + _accounting->text();
-  request += QString("\n") + "bigchall"     + "=" + _bigchallenge->currentText();
-  request += QString("\n") + "pref_client"  + "=" + _client->currentText();
-  request += QString("\n") + "pref_server"  + "=" + _server->currentText();
-  request += QString("\n") + "pref_db"      + "=" + _db->currentText();
+  request += "&" + encodedPair("revenues",     _revenues->currentText());
+  request += "&" + encodedPair("num_employees",_noemployees->currentText());
+  request += "&" + encodedPair("sic_code",     _sic->currentText());
+  request += "&" + encodedPair("cur_mansoft",  _erp->text());
+  request += "&" + encodedPair("cur_accsoft",  _accounting->text());
+  request += "&" + encodedPair("bigchall",     _bigchallenge->currentText());
+  request += "&" + encodedPair("pref_client",  _client->currentText());
+  request += "&" + encodedPair("pref_server",  _server->currentText());
+  request += "&" + encodedPair("pref_db",      _db->currentText());
 
-  request += QString("\n") + "have_integrator" + "=" +
-                      (_gotvaryes->isChecked() ? "Yes" : "No");
+  request += "&" + encodedPair("have_integrator",      
+                      (_gotvaryes->isChecked() ? "Yes" : "No"));
 
-  request += QString("\n") + "var_name"     + "=" + _varName->text();
-  request += QString("\n") + "var_honorific"+ "=" + _varContact->honorific();
-  request += QString("\n") + "var_first"    + "=" + _varContact->first();
-  request += QString("\n") + "var_last"     + "=" + _varContact->last();
-  request += QString("\n") + "var_email"    + "=" + _varContact->emailAddress();
-  request += QString("\n") + "var_jobtitle" + "=" + _varContact->title();
-  request += QString("\n") + "var_phone"    + "=" + _varContact->phone();
-  request += QString("\n") + "var_phone2"   + "=" + _varContact->phone2();
-  request += QString("\n") + "var_fax"      + "=" + _varContact->fax();
-  request += QString("\n") + "var_url"      + "=" + _varContact->webAddress();
-
-  AddressCluster *varaddr = _varContact->addressWidget();
-  request += QString("\n") + "var_addr_1"    + "=" + varaddr->line1();
-  request += QString("\n") + "var_addr_2"    + "=" + varaddr->line2();
-  request += QString("\n") + "var_addr_3"    + "=" + varaddr->line3();
-  request += QString("\n") + "var_city"      + "=" + varaddr->city();
-  request += QString("\n") + "var_state"     + "=" + varaddr->state();
-  request += QString("\n") + "var_country"   + "=" + varaddr->country();
-  request += QString("\n") + "var_zip"       + "=" + varaddr->postalCode();
-  request += QString("\n") + "erp_timeframe" + "=" + _timeframe->currentText();
-  request += QString("\n") + "erp_budget"    + "=" + _budget->currentText();
-  request += QString("\n") + "provider_type" + "=" + _partnerlevel->currentText();
+  request += "&" + encodedPair("var_name",      _varName->text());
+  request += "&" + encodedPair("erp_timeframe", _timeframe->currentText());
+  request += "&" + encodedPair("erp_budget",    _budget->currentText());
+  request += "&" + encodedPair("provider_type", _partnerlevel->currentText());
 
   _progress->setValue(2);
 
@@ -378,7 +345,7 @@ void registration::sRegister(bool pretry)
     whaterp.append(_whaterpotherprop->text());
   if (! _whaterpotheross->text().isEmpty())
     whaterp.append(_whaterpotheross->text());
-  request += QString("\n") + "cur_erp_imp" + "=" + whaterp.join(", ");
+  request += "&" + encodedPair("cur_erp_imp", whaterp.join(", "));
 
   QStringList whatother;
   if (_whatotherErp->isChecked())        whatother.append("ERP");
@@ -390,17 +357,22 @@ void registration::sRegister(bool pretry)
   if (_whatotherNetwork->isChecked())    whatother.append("Network");
   if (! _whatotherOther->text().isEmpty())
     whatother.append(_whatotherOther->text());
-  request += QString("\n") + "other_products" + "=" + whatother.join(", ");
+  request += "&" + encodedPair("other_products", whatother.join(", "));
 
-  request += QString("\n") + "other_info" + "=" + _otherInfo->text();
-  request += QString("\n") + "website"    + "=" + _companyUrl->text();
-  request += QString("\n") + "manpro"     + "=" + (_enduser->isChecked() ? "Yes" : "No");
-  request += QString("\n") + "solpro"     + "=" + (_var->isChecked()     ? "Yes" : "No");
+  request += "&" + encodedPair("other_info",    _otherInfo->text());
+  request += "&" + encodedPair("website",       _companyUrl->text());
+  request += "&" + encodedPair("manpro",(_enduser->isChecked() ? "Yes" : "No"));
+  request += "&" + encodedPair("solpro",(_var->isChecked() ? "Yes" : "No"));
 
   _progress->setValue(3);
 
-  _postreq = new QHttp("www.postbooks.net", QHttp::ConnectionModeHttps);
-  _postreq->post("/pbregister.php", request.toAscii());
+  QHttpRequestHeader header("POST", "/pbregister.php");
+  header.setValue("Host", "www.xtuple.com");
+  header.setContentType("application/x-www-form-urlencoded");
+
+  _postreq = new QHttp("www.xtuple.com", QHttp::ConnectionModeHttp);
+  _postreq->setHost("www.xtuple.com");
+  _postreq->request(header, request.utf8()); 
 
   _xml->setText(request);
   sState(QHttp::Unconnected);
@@ -408,7 +380,6 @@ void registration::sRegister(bool pretry)
   _register->setEnabled(false);
   _next->setEnabled(false);
   _back->setEnabled(false);
-  _never->setEnabled(false);
   _later->setEnabled(false);
   _cancel->setEnabled(true);
 
@@ -485,9 +456,10 @@ void registration::sDone(bool perror)
 
   _progress->setValue(100);
   _progressLit->setText(tr("Done!"));
+  // TODO: check if the registration failed and handle it here
   _metrics->set("Registered", QString("Yes"));
-  QMessageBox::information(this, tr("Thanks!"),
-                           tr("<p>Your registration is complete.<p>%1")
+  QMessageBox::information(this, tr("Thanks for registering!"),
+                           tr("<p>The registration server responded with:<p>%1")
                            .arg(result));
   accept();
 }

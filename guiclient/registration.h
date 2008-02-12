@@ -75,7 +75,6 @@ public slots:
     virtual void sBack();
     virtual void sCancel();
     virtual void sDone(bool);
-    virtual void sNever();
     virtual void sNext();
     virtual void sRead(int, int);
     virtual void sRegister(bool pretry = false);
@@ -88,6 +87,7 @@ protected slots:
 
 protected:
     QHttp *_postreq;
+    QString encodedPair(const QString, const QString);
 };
 
 #endif // REGISTRATION_H
