@@ -122,6 +122,7 @@ protected slots:
     virtual void sCustomerToggled();
     virtual void sProspectToggled();
     virtual void sOplistView();
+    virtual void sOplistEdit();
 
 private:
     bool	_modal;

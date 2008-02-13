@@ -1647,23 +1647,20 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  if (_oplist->currentItem()->text(0) == "T")
-  {
-    // bool editPriv = _privleges->check("MaintainOpportunities");
-    bool viewPriv = _privleges->check("VeiwOpportunities");
+  bool editPriv = _privleges->check("MaintainOpportunities");
+  bool viewPriv = _privleges->check("VeiwOpportunities") || editPriv;
 
-    //menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
-    //pMenu->setItemEnabled(menuItem, editPriv);
+  //menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
+  //pMenu->setItemEnabled(menuItem, editPriv);
 
-    //menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sOplistEdit()), 0);
-    //pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sOplistEdit()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
 
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sOplistView()), 0);
-    pMenu->setItemEnabled(menuItem, viewPriv);
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sOplistView()), 0);
+  pMenu->setItemEnabled(menuItem, viewPriv);
 
-    //menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sOplistDelete()), 0);
-    //pMenu->setItemEnabled(menuItem, editPriv);
-  }
+  //menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sOplistDelete()), 0);
+  //pMenu->setItemEnabled(menuItem, editPriv);
 }
 
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
@@ -1732,6 +1729,19 @@ void crmaccount::sOplistView()
   newdlg.set(params);
 
   newdlg.exec();
+}
+
+void crmaccount::sOplistEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("ophead_id", _oplist->id());
+
+  opportunity newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != QDialog::Rejected)
+    sPopulateOplist();
 }
 
 void crmaccount::sPopulateOplist()

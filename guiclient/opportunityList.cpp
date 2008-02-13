@@ -141,23 +141,20 @@ void opportunityList::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  if (_list->currentItem()->text(0) == "T")
-  {
-    bool editPriv = _privleges->check("MaintainOpportunities");
-    bool viewPriv = _privleges->check("VeiwOpportunities");
+  bool editPriv = _privleges->check("MaintainOpportunities");
+  bool viewPriv = _privleges->check("VeiwOpportunities") || editPriv;
 
-    menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
 
-    menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
+  menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
 
-    menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-    pMenu->setItemEnabled(menuItem, viewPriv);
+  menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
+  pMenu->setItemEnabled(menuItem, viewPriv);
 
-    menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, editPriv);
-  }
+  menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
+  pMenu->setItemEnabled(menuItem, editPriv);
 }
 
 enum SetResponse opportunityList::set(const ParameterList& pParams)
