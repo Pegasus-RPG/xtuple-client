@@ -431,6 +431,7 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
   qApp->processEvents();
 
   _eventButton = NULL;
+  _registerButton = NULL;
   sTick();
 
   _timeoutHandler = new TimeoutHandler(this);
@@ -782,6 +783,28 @@ void OpenMFGGUIClient::sTick()
       }
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
+
+      if (_metrics->value("Application") != "OpenMFG" &&
+          _metrics->value("Registered") != "Yes" &&
+          !_preferences->boolean("UseOldMenu"))
+      {
+        if (_registerButton)
+        {
+          if (!_registerButton->isVisible())
+            _registerButton->show();
+        }
+        else
+        {
+          _registerButton = new QPushButton(QIcon(":/images/dspRegister.png"), "", statusBar());
+          _registerButton->setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+          _registerButton->setMinimumSize(QSize(32, 32));
+          _registerButton->setMaximumSize(QSize(32, 32));
+          statusBar()->setMinimumHeight(36);
+          statusBar()->addWidget(_registerButton);
+
+          connect(_registerButton, SIGNAL(clicked()), systemMenu, SLOT(sRegister()));
+        }
+      }
     }
 
     emit(tick());

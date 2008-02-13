@@ -46,6 +46,7 @@
     <file>images/splashPostBooks.png</file>
     <file>images/splashxTupleERP.png</file>
     <file>images/splashEmpty.png</file>
+    <file>images/dspRegister.png</file>
   </qresource>
 </RCC>
 

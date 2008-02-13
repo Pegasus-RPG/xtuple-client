@@ -378,6 +378,7 @@ class OpenMFGGUIClient : public QMainWindow
     QWorkspace   *_workspace;
     QTimer       _tick;
     QPushButton  *_eventButton;
+    QPushButton  *_registerButton;
     QString      _databaseURL;
     QString      _username;
     bool         _showTopLevel;

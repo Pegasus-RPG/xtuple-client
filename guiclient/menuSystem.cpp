@@ -244,7 +244,7 @@ menuSystem::menuSystem(OpenMFGGUIClient *Pparent) :
   actionProperties community[] = {
     { "community.home",        tr("xTuple.org &Home"),          SLOT(sCommunityHome()),        communityMenu, true, NULL, NULL, true },
     { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
-    { "community.register",    tr("&Register"),      SLOT(sRegister()),             communityMenu, true, NULL, NULL, _metrics->value("Application") != "OpenMFG" },
+    { "community.register",    tr("&Register"),      SLOT(sRegister()),             communityMenu, true, new QPixmap(":images/dspRegister.png"), NULL, _metrics->value("Application") != "OpenMFG" },
     { "community.newAccount",  tr("&New Account"),   SLOT(sCommunityNewAccount()),  communityMenu, true, NULL, NULL, true },
     { "community.editAccount", tr("&Edit Account"),  SLOT(sCommunityEditAccount()), communityMenu, true, NULL, NULL, true },
     { "separator",	       NULL,				NULL,		communityMenu, true,	NULL, NULL, true	},
