@@ -464,6 +464,14 @@ void invoice::sSave()
     // TODO: add more error checks here?
     { true, "", NULL }
   };
+  
+  if (_total->localValue() < 0 )
+  {
+    QMessageBox::information(this, tr("Total Less than Zero"),
+                             tr("<p>The Total must be a positive value.") );
+    _cust->setFocus();
+    return;
+  }
 
   int errIndex;
   for (errIndex = 0; ! error[errIndex].condition; errIndex++)
