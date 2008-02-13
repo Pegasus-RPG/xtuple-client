@@ -785,14 +785,10 @@ void OpenMFGGUIClient::sTick()
         _eventButton->hide();
 
       if (_metrics->value("Application") != "OpenMFG" &&
-          _metrics->value("Registered") != "Yes" &&
           !_preferences->boolean("UseOldMenu"))
       {
         if (_registerButton)
-        {
-          if (!_registerButton->isVisible())
-            _registerButton->show();
-        }
+          _registerButton->setVisible(_metrics->value("Registered") != "Yes");
         else
         {
           _registerButton = new QPushButton(QIcon(":/images/dspRegister.png"), "", statusBar());
@@ -812,10 +808,11 @@ void OpenMFGGUIClient::sTick()
     _tick.singleShot(60000, this, SLOT(sTick()));
   }
   else
-    systemError( this, tr( "A Critical Error occurred at %1::%2.\n"
-                           "Please immediately log out and contact your Systems Adminitrator." )
-                       .arg(__FILE__)
-                       .arg(__LINE__) );
+    systemError(this, tr("<p>Your application was probably left idle too long "
+                          "and has been disconnected from the database server."
+                          "Try exiting the application and starting it again."
+                          "<br><pre>%1</pre>" )
+                      .arg(tickle.lastError().databaseText()));
 }
 
 //  Global notification slots
