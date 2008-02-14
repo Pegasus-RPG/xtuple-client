@@ -965,6 +965,11 @@ void initErrorLookupHash()
             TR("Invalid Order Type.  Only Sales Orders and Transfer Orders "
                "may be shipped from this window."),
 								0, "" },                            
+  { "sufficientInventoryToShipOrder", -1, TR("Cannot check inventory levels for"
+                                             "an invalid item."),       0, ""},
+  { "sufficientInventoryToShipOrder", -2, "", -2, "sufficientInventoryToShipItem"},
+  { "sufficientInventoryToShipOrder", -3, "", -3, "sufficientInventoryToShipItem"},
+  { "sufficientInventoryToShipOrder",-11, "",-11, "sufficientInventoryToShipItem"},
 
   { "thawAccountingPeriod", -2, TR("Cannot thaw this Accounting Period "
 				     "because it is not frozen."), 0, "" },
@@ -1007,6 +1012,7 @@ void initErrorLookupHash()
   { "reserveSoLineQty", -1, TR("Cannot reserve more quantity than remaining on order."), 0, ""},
   { "reserveSoLineQty", -2, TR("Cannot reserve negative quantities."), 0, ""},
   { "reserveSoLineQty", -3, TR("Cannot reserve more quantity than currently on hand and already reserved."), 0, ""},
+
 
   { "woClockIn",  -1, "", -1, "explodeWo" },
   { "woClockIn",  -2, "", -2, "explodeWo" },

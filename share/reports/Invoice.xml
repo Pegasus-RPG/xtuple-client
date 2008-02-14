@@ -42,9 +42,6 @@ ORDER BY ordernumber;</sql>
   <name>Detail</name>
   <sql>SELECT invcitem_linenumber,
        formatQty(invcitem_billed) AS f_billed,
---     In 2.3 replaced the next line:
---     uom_name AS invuom,
---     with:
        (select uom_name from uom where uom_id = invcitem_qty_uom_id) AS invuom,
        CASE WHEN (item_number IS NULL) THEN invcitem_number
             WHEN (invcitem_custpn != '') THEN invcitem_custpn
@@ -95,17 +92,28 @@ FROM invchead,
 		ELSE currToCurr(aropen_curr_id, invchead_curr_id,
 				aropen_amount - aropen_paid, aropen_docdate)
 	    END),0) AS total_allocated
-  FROM aropenco, aropen, cohead, invchead
+  FROM aropenco, aropen, invchead
  WHERE ( (aropenco_aropen_id=aropen_id)
-   AND   (aropenco_cohead_id=cohead_id)
    AND   ((aropen_amount - aropen_paid) > 0)
-   AND   (cohead_number=invchead_ordernumber)
-   AND   (invchead_id=&lt;? value("invchead_id") ?>) )) AS totalalloc
-WHERE (invchead_id=&lt;? value("invchead_id") ?>);</sql>
+   AND   (aropen_docnumber=invchead_invcnumber)
+   AND   (NOT invchead_posted)
+   AND   (invchead_id=&lt;? value("invchead_id") ?>) )
+ UNION
+SELECT COALESCE(SUM(currToCurr(arapply_curr_id, aropen_curr_id,
+                               arapply_applied, aropen_docdate)),0) AS total_allocated
+  FROM arapply, aropen, invchead
+ WHERE ( (arapply_target_aropen_id=aropen_id)
+   AND   (arapply_target_doctype='I')
+   AND   (arapply_target_docnumber=invchead_invcnumber)
+   AND   (invchead_posted)
+   AND   (invchead_id=&lt;? value("invchead_id") ?>) )
+ ) AS totalalloc
+WHERE ((invchead_id=&lt;? value("invchead_id") ?>)
+   AND (total_allocated > 0));</sql>
  </querysource>
  <querysource>
   <name>allocatedCMs</name>
-  <sql>SELECT cohead_id, aropen_id,
+  <sql>SELECT cohead_id,
        aropen_docnumber,
        formatMoney(aropen_amount) AS f_total,
        formatMoney(aropen_paid) AS f_paid,
@@ -132,7 +140,8 @@ WHERE (invchead_id=&lt;? value("invchead_id") ?>);</sql>
 							     aropen_docdate))
 	    THEN currToCurr(aropenco_curr_id, invchead_curr_id,
 			    aropenco_amount, aropen_docdate)
-            ELSE currToCurr(aropen_curr_id, invchead_curr_id, aropen_amount - aropen_paid, aropen_docdate)
+            ELSE currToCurr(aropen_curr_id, invchead_curr_id,
+                            aropen_amount - aropen_paid, aropen_docdate)
        END AS allocated_invccurr,
        CASE WHEN((aropen_amount - aropen_paid) >= currToCurr(aropenco_curr_id,
 							     aropen_curr_id,
@@ -140,16 +149,52 @@ WHERE (invchead_id=&lt;? value("invchead_id") ?>);</sql>
 							     aropen_docdate))
 	    THEN formatMoney(currToCurr(aropenco_curr_id, invchead_curr_id,
 					aropenco_amount, aropen_docdate))
-            ELSE formatMoney(currToCurr(aropen_curr_id, invchead_curr_id, aropen_amount - aropen_paid, aropen_docdate))
+            ELSE formatMoney(currToCurr(aropen_curr_id, invchead_curr_id,
+                                        aropen_amount - aropen_paid,
+                                        aropen_docdate))
        END AS f_allocated_invccurr,
        curr_symbol AS aropen_currsymbol
   FROM aropenco, aropen, cohead, invchead, curr_symbol
  WHERE ( (aropenco_aropen_id=aropen_id)
    AND   (aropenco_cohead_id=cohead_id)
    AND   ((aropen_amount - aropen_paid) > 0)
+   AND   (aropen_docnumber=invchead_invcnumber)
    AND   (aropen_curr_id=curr_id)
    AND   (cohead_number=invchead_ordernumber)
-   AND   (invchead_id=&lt;? value("invchead_id") ?>) );</sql>
+   AND   (NOT invchead_posted)
+   AND   (invchead_id=&lt;? value("invchead_id") ?>) )
+UNION
+SELECT cohead_id,
+       arapply_source_docnumber AS aropen_docnumber,
+       formatMoney(s.aropen_amount) AS f_total,
+       formatMoney(s.aropen_paid -
+                   currToCurr(arapply_curr_id, s.aropen_curr_id,
+                              arapply_applied, arapply_postdate)) AS f_paid,
+       formatMoney(s.aropen_amount - s.aropen_paid +
+                   currToCurr(arapply_curr_id, s.aropen_curr_id,
+                              arapply_applied, arapply_postdate)) AS f_balance,
+       currToCurr(arapply_curr_id, s.aropen_curr_id,
+                  arapply_applied, arapply_postdate) AS allocated,
+       formatMoney(currToCurr(arapply_curr_id, s.aropen_curr_id,
+                              arapply_applied,
+                              arapply_postdate)) AS f_allocated,
+       currToCurr(arapply_curr_id, invchead_curr_id,
+                  arapply_applied, t.aropen_docdate) AS allocated_invccurr,
+       formatMoney(currToCurr(arapply_curr_id, invchead_curr_id,
+                              arapply_applied,
+                              t.aropen_docdate)) AS f_allocated_invccurr,
+       curr_symbol AS aropen_currsymbol
+  FROM arapply, aropen s, aropen t, cohead, invchead, curr_symbol
+ WHERE ( (s.aropen_id=arapply_source_aropen_id)
+   AND   (arapply_target_aropen_id=t.aropen_id)
+   AND   (arapply_target_doctype='I')
+   AND   (arapply_target_docnumber=invchead_invcnumber)
+   AND   (arapply_source_aropen_id=s.aropen_id)
+   AND   (arapply_curr_id=curr_id)
+   AND   (cohead_number=invchead_ordernumber)
+   AND   (invchead_posted)
+   AND   (invchead_id=&lt;? value("invchead_id") ?>) )
+ ORDER BY aropen_docnumber;</sql>
  </querysource>
  <querysource>
   <name>currency</name>
@@ -1350,7 +1395,7 @@ WHERE ((image_name='logo'));</sql>
       <query>allocatedCMs</query>
       <column>allocated_invccurr</column>
      </data>
-     <tracktotal builtin="true" >qty</tracktotal>
+     <tracktotal builtin="true" >price</tracktotal>
     </field>
    </foot>
   </group>

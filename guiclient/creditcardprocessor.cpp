@@ -435,114 +435,28 @@ int CreditCardProcessor::charge(const int pccardid, const int pcvv, const double
       return (voidReturnVal < 0) ? voidReturnVal : returnVal;
     }
 
-    // TODO: move this logic to postCCCashReceipt?
     XSqlQuery cashq;
-    if (preftype == "cashrcpt")
+    cashq.prepare("SELECT postCCcashReceipt(:ccpayid,"
+                  "                         :docid, :doctype) AS cm_id;");
+    cashq.bindValue(":ccpayid",   pccpayid); 
+    cashq.bindValue(":doctype",   preftype);
+    cashq.bindValue(":docid",     prefid);
+    cashq.exec();
+    if (cashq.first())
     {
-      if (prefid <= 0)
+      int cm_id = cashq.value("cm_id").toInt();
+      if (cm_id < 0)
       {
-	cashq.exec("SELECT NEXTVAL('cashrcpt_cashrcpt_id_seq') AS cashrcpt_id;");
-	if (cashq.first())
-	  prefid = cashq.value("cashrcpt_id").toInt();
-	else if (q.lastError().type() != QSqlError::None)
-	{
-	  _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-	  // TODO: log an event?
-	  return 1;
-	}
-
-	cashq.prepare("INSERT INTO cashrcpt (cashrcpt_id,"
-		  "  cashrcpt_cust_id, cashrcpt_amount, cashrcpt_curr_id,"
-		  "  cashrcpt_fundstype, cashrcpt_docnumber,"
-		  "  cashrcpt_bankaccnt_id, cashrcpt_notes, cashrcpt_distdate) "
-		  "SELECT :cashrcptid,"
-		  "       ccpay_cust_id, :amount, :curr_id,"
-		  "       ccard_type, ccpay_r_ordernum,"
-		  "       :bankaccntid, :notes, current_date"
-		  "  FROM ccpay, ccard "
-		  "WHERE (ccpay_ccard_id=ccard_id);");
-      }
-      else
-	cashq.prepare( "UPDATE cashrcpt "
-		       "SET cashrcpt_cust_id=ccard_cust_id,"
-		       "    cashrcpt_amount=:amount,"
-		       "    cashrcpt_fundstype=ccard_type,"
-		       "    cashrcpt_bankaccnt_id=:bankaccntid,"
-		       "    cashrcpt_distdate=CURRENT_DATE,"
-		       "    cashrcpt_notes=:notes, "
-		       "    cashrcpt_curr_id=:curr_id "
-		       "FROM ccard "
-		       "WHERE ((cashrcpt_id=:cashrcptid)"
-		       "  AND  (ccard_id=:ccardid));" );
-
-      cashq.bindValue(":cashrcptid",   prefid);
-      cashq.bindValue(":ccardid",      pccardid);
-      cashq.bindValue(":amount",       pamount);
-      cashq.bindValue(":curr_id",      pcurrid);
-      cashq.bindValue(":bankaccntid", _metrics->value("CCDefaultBank").toInt());
-      cashq.bindValue(":notes",        "Credit Card Charge");
-      cashq.exec();
-      if (cashq.lastError().type() != QSqlError::None)
-      {
-	_errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-	// TODO: log an event?
-	returnVal = 1;
+        _errorMsg = "<p>" + errorMsg(4)
+                      .arg(storedProcErrorLookup("postCCcashReceipt", cm_id));
+        returnVal = 3;
       }
     }
-    else if (preftype == "cohead")
+    else if (cashq.lastError().type() != QSqlError::NoError)
     {
-      cashq.prepare("SELECT postCCcashReceipt(:ccpayid, :bankaccnt) AS cm_id;");
-      cashq.bindValue(":ccpayid",   pccpayid); 
-      cashq.bindValue(":bankaccnt", _metrics->value("CCDefaultBank").toInt()); 
-      cashq.exec();
-      if (cashq.first())
-      {
-	int cm_id = cashq.value("cm_id").toInt();
-	if (cm_id < 0)
-	{
-	  _errorMsg = "<p>" + errorMsg(4)
-			.arg(storedProcErrorLookup("postCCcashReceipt", cm_id));
-	  returnVal = 3;
-	}
-
-	cashq.prepare("INSERT INTO payaropen VALUES"
-		      " (:payco_ccpay_id, :payco_cohead_id,"
-		      "  :payco_amount, :payco_curr_id);");
-	cashq.bindValue(":payco_ccpay_id",  pccpayid);
-	cashq.bindValue(":payco_cohead_id", cm_id);
-	cashq.bindValue(":payco_amount",    pamount);
-	cashq.bindValue(":payco_curr_id",   pcurrid);
-	cashq.exec();
-	if (cashq.lastError().type() != QSqlError::NoError)
-	{
-	  _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-	  // TODO: log an event?
-	  returnVal = 1;
-	}
-	else
-	{
-	  cashq.prepare("INSERT INTO aropenco VALUES"
-			" (:payco_ccpay_id, :payco_cohead_id,"
-			"  :payco_amount, :payco_curr_id);");
-	  cashq.bindValue(":payco_ccpay_id",  cm_id);
-	  cashq.bindValue(":payco_cohead_id", prefid);
-	  cashq.bindValue(":payco_amount",    pamount);
-	  cashq.bindValue(":payco_curr_id",   pcurrid);
-	  cashq.exec();
-	  if (cashq.lastError().type() != QSqlError::NoError)
-	  {
-	    _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-	    // TODO: log an event?
-	    returnVal = 1;
-	  }
-	}
-      }
-      else if (cashq.lastError().type() != QSqlError::NoError)
-      {
-	_errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
-	// TODO: log an event?
-	returnVal = 1;
-      }
+      _errorMsg = errorMsg(4).arg(cashq.lastError().databaseText());
+      // TODO: log an event?
+      returnVal = 1;
     }
   }
   else if (preftype == "cohead") // record unsuccessful attempt against cohead
