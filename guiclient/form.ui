@@ -242,12 +242,12 @@
            </item>
            <item>
             <property name="text" >
-             <string>Production Entry Sheet</string>
+             <string>Production Entry Sheets</string>
             </property>
            </item>
            <item>
             <property name="text" >
-             <string>Return Authorization</string>
+             <string>Return Authorizations</string>
             </property>
            </item>
           </widget>
