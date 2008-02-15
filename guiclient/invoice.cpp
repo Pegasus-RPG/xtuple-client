@@ -472,6 +472,20 @@ void invoice::sSave()
     _cust->setFocus();
     return;
   }
+  
+  //  We can't post a Misc. Charge without a Sales Account
+  if ( (! _miscAmount->isZero()) && (!_miscChargeAccount->isValid()) )
+  {
+    QMessageBox::warning( this, tr("No Misc. Charge Account Number"),
+                          tr("<p>You may not enter a Misc. Charge without "
+                             "indicating the G/L Sales Account number for the "
+                             "charge.  Please set the Misc. Charge amount to 0 "
+                             "or select a Misc. Charge Sales Account." ) );
+    _tabWidget->setCurrentPage(1);
+    _miscChargeAccount->setFocus();
+    return;
+  }
+
 
   int errIndex;
   for (errIndex = 0; ! error[errIndex].condition; errIndex++)
