@@ -231,6 +231,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
                "       char_name, charass_value,"
                "       CASE WHEN (item_type='P') THEN :purchased"
                "            WHEN (item_type='M') THEN :manufactured"
+               "            WHEN (item_type='J') THEN :job"
                "            WHEN (item_type='F') THEN :phantom"
                "            WHEN (item_type='B') THEN :breeder"
                "            WHEN (item_type='C') THEN :coProduct"
@@ -239,6 +240,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
                "            WHEN (item_type='S') THEN :costing"
                "            WHEN (item_type='T') THEN :tooling"
                "            WHEN (item_type='O') THEN :outsideProcess"
+               "            WHEN (item_type='L') THEN :planning"
                "            ELSE :error"
                "       END,"
                "       uom_name "
@@ -259,6 +261,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
   q.prepare(sql);
   q.bindValue(":purchased", tr("Purchased"));
   q.bindValue(":manufactured", tr("Manufactured"));
+  q.bindValue(":job", tr("Job"));
   q.bindValue(":phantom", tr("Phantom"));
   q.bindValue(":breeder", tr("Breeder"));
   q.bindValue(":coProduct", tr("Co-Product"));
@@ -267,6 +270,7 @@ void dspItemsByCharacteristic::sFillList(int pItemid, bool pLocal)
   q.bindValue(":costing", tr("Costing"));
   q.bindValue(":tooling", tr("Tooling"));
   q.bindValue(":outsideProcess", tr("Outside Process"));
+  q.bindValue(":planning", tr("Planning"));
   q.bindValue(":error", tr("Error"));
   q.bindValue(":char_id", _char->id());
   q.bindValue(":charass_value", _value->text().stripWhiteSpace());

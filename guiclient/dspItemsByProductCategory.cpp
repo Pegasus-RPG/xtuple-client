@@ -153,6 +153,7 @@ void dspItemsByProductCategory::sFillList(int pItemid, bool pLocal)
   QString sql( "SELECT item_id, item_number, (item_descrip1 || ' ' || item_descrip2),"
                "       CASE WHEN (item_type='P') THEN :purchased"
                "            WHEN (item_type='M') THEN :manufactured"
+               "            WHEN (item_type='J') THEN :job"
                "            WHEN (item_type='F') THEN :phantom"
                "            WHEN (item_type='B') THEN :breeder"
                "            WHEN (item_type='C') THEN :coProduct"
@@ -181,6 +182,7 @@ void dspItemsByProductCategory::sFillList(int pItemid, bool pLocal)
   q.prepare(sql);
   q.bindValue(":purchased", tr("Purchased"));
   q.bindValue(":manufactured", tr("Manufactured"));
+  q.bindValue(":job", tr("Job"));
   q.bindValue(":phantom", tr("Phantom"));
   q.bindValue(":breeder", tr("Breeder"));
   q.bindValue(":coProduct", tr("Co-Product"));
