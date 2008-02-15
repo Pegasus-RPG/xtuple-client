@@ -159,8 +159,11 @@ void bomList::sFillList( int pItemid, bool pLocal )
         " ELSE 1 "
         " END AS revcontrol, "
         " item_number, (item_descrip1 || ' ' || item_descrip2) "
-        "FROM item, bomitem "
-        "WHERE ((bomitem_parent_item_id=item_id)";
+        "FROM item "
+        "  LEFT OUTER JOIN bomitem ON (item_id=bomitem_parent_item_id) "
+        "  LEFT OUTER JOIN bomhead ON (item_id=bomhead_item_id) "
+        "WHERE (((bomitem_id IS NOT NULL) "
+        "OR (bomhead_id IS NOT NULL)) ";
 
   if (!_showInactive->isChecked())
     sql += " AND (item_active)";
