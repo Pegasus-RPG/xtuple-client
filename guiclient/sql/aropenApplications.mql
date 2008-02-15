@@ -14,11 +14,13 @@ SELECT aropen_id,
 <? if exists("cashrcpt_id") ?>
        (SELECT COALESCE(SUM(p.cashrcptitem_amount), 0)
                       FROM cashrcptitem p
-                     WHERE p.cashrcptitem_aropen_id=aropen_id)
+                     WHERE (p.cashrcptitem_aropen_id=aropen_id)
+                     AND (p.cashrcptitem_cashrcpt_id=<? value("cashrcpt_id") ?>))
                    AS applied,
        formatMoney((SELECT COALESCE(SUM(p.cashrcptitem_amount),0)
                       FROM cashrcptitem p
-                     WHERE p.cashrcptitem_aropen_id=aropen_id))
+                     WHERE (p.cashrcptitem_aropen_id=aropen_id)
+                     AND (p.cashrcptitem_cashrcpt_id=<? value("cashrcpt_id") ?>)))
                    AS f_applied,
        currConcat(cashrcpt_curr_id) AS applied_curr,
 <? elseif exists("source_aropen_id") ?>
