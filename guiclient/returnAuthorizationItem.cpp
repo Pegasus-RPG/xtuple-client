@@ -740,7 +740,7 @@ void returnAuthorizationItem::populate()
       _newSoLineNumber->hide();
     }
     if (raitem.value("raitem_disposition").toString() == "C")
-      _disposition->setCurrentItem(0);
+      sDispositionChanged();
     else if (raitem.value("raitem_disposition").toString() == "R")
       _disposition->setCurrentItem(1);
     else if (raitem.value("raitem_disposition").toString() == "P")
