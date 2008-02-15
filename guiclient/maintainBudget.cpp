@@ -411,19 +411,21 @@ void maintainBudget::sGenerateTable()
       periods.append(QString::number((*it)));
   }
 
-  QString sql = "SELECT budget_period_id, budget_amount"
-                "  FROM budget"
-                " WHERE ((budget_accnt_id=:accnt_id)"
-                "   AND  (budget_period_id IN (" + periods.join(",") + ")) ); ";
+  QString sql = "SELECT budgitem_period_id, budgitem_amount"
+                "  FROM budgitem"
+                " WHERE ((budgitem_accnt_id=:accnt_id)"
+                "   AND  (budgitem_budghead_id=:budghead_id)"
+                "   AND  (budgitem_period_id IN (" + periods.join(",") + ")) ); ";
   q.prepare(sql);
   
   for(int i = 0; i < _accountsRef.count(); i++)
   {
     _table->setText(i, 0, (accounts.at(i)));
     q.bindValue(":accnt_id", *(_accountsRef.at(i)));
+    q.bindValue(":budghead_id", _budgheadid);
     q.exec();
     while(q.next())
-      _table->setText(i, _periodsRef.findIndex(q.value("budget_period_id").toInt()), q.value("budget_amount").toString());
+      _table->setText(i, _periodsRef.findIndex(q.value("budgitem_period_id").toInt()), q.value("budgitem_amount").toString());
   }
   _table->setColumnReadOnly(0, true);
 }
