@@ -92,10 +92,11 @@ FROM invchead,
 		ELSE currToCurr(aropen_curr_id, invchead_curr_id,
 				aropen_amount - aropen_paid, aropen_docdate)
 	    END),0) AS total_allocated
-  FROM aropenco, aropen, invchead
+  FROM aropenco, aropen, cohead, invchead
  WHERE ( (aropenco_aropen_id=aropen_id)
+   AND   (aropenco_cohead_id=cohead_id)
    AND   ((aropen_amount - aropen_paid) > 0)
-   AND   (aropen_docnumber=invchead_invcnumber)
+   AND   (cohead_number=invchead_ordernumber)
    AND   (NOT invchead_posted)
    AND   (invchead_id=&lt;? value("invchead_id") ?>) )
  UNION
@@ -158,7 +159,6 @@ WHERE ((invchead_id=&lt;? value("invchead_id") ?>)
  WHERE ( (aropenco_aropen_id=aropen_id)
    AND   (aropenco_cohead_id=cohead_id)
    AND   ((aropen_amount - aropen_paid) > 0)
-   AND   (aropen_docnumber=invchead_invcnumber)
    AND   (aropen_curr_id=curr_id)
    AND   (cohead_number=invchead_ordernumber)
    AND   (NOT invchead_posted)
@@ -1395,7 +1395,7 @@ WHERE ((image_name='logo'));</sql>
       <query>allocatedCMs</query>
       <column>allocated_invccurr</column>
      </data>
-     <tracktotal builtin="true" >price</tracktotal>
+     <tracktotal builtin="true" >extprice</tracktotal>
     </field>
    </foot>
   </group>
