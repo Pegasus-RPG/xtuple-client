@@ -68,7 +68,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   connect(_anDuplicateWindow, SIGNAL(valueChanged(int)), this, SLOT(sDuplicateWindow(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save,  SIGNAL(clicked()), this, SLOT(sSave()));
 
   if (_metricsenc == 0)
   {
@@ -399,7 +399,7 @@ void configureCC::sSave()
     _metricsenc->load();
   }
 
-  if (cardproc->testConfiguration() != 0)
+  if (cardproc && cardproc->testConfiguration() != 0)
   {
     if (QMessageBox::question(this, tr("Invalid Credit Card Configuration"),
 			      tr("<p>The configuration has been saved but "
