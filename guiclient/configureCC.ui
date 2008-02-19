@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>765</width>
-    <height>444</height>
+    <height>474</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -376,7 +376,7 @@
          </property>
         </widget>
        </item>
-       <item row="1" column="0" >
+       <item row="2" column="0" >
         <widget class="QGroupBox" name="_cvvCheckGroup" >
          <property name="title" >
           <string>Card Verification</string>
@@ -409,7 +409,7 @@
          </layout>
         </widget>
        </item>
-       <item row="1" column="1" >
+       <item row="2" column="1" >
         <widget class="QGroupBox" name="_avsCheckGroup" >
          <property name="enabled" >
           <bool>true</bool>
@@ -445,7 +445,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="0" >
+       <item row="3" column="0" >
         <widget class="QGroupBox" name="_cvvFailGroup" >
          <property name="title" >
           <string>Fail CVV Check If:</string>
@@ -482,7 +482,7 @@
          </layout>
         </widget>
        </item>
-       <item row="2" column="1" >
+       <item row="3" column="1" >
         <widget class="QGroupBox" name="_avsFailGroup" >
          <property name="title" >
           <string>Fail AVS check If:</string>
@@ -519,7 +519,7 @@
          </layout>
         </widget>
        </item>
-       <item row="3" column="0" >
+       <item row="4" column="0" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -532,7 +532,7 @@
          </property>
         </spacer>
        </item>
-       <item row="3" column="1" >
+       <item row="4" column="1" >
         <spacer>
          <property name="orientation" >
           <enum>Qt::Vertical</enum>
@@ -544,6 +544,13 @@
           </size>
          </property>
         </spacer>
+       </item>
+       <item row="1" column="0" colspan="2" >
+        <widget class="QLabel" name="_fraudDetectionIgnoredLit" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
        </item>
       </layout>
      </widget>
@@ -1220,7 +1227,7 @@
                </widget>
               </item>
               <item row="0" column="1" >
-               <widget class="FileCluster" name="_ccYPWinPathPEM" />
+               <widget class="QLineEdit" name="_ccYPWinPathPEM" />
               </item>
               <item row="1" column="0" >
                <widget class="QLabel" name="_ccYPLinPathPEMLit" >
@@ -1233,7 +1240,7 @@
                </widget>
               </item>
               <item row="1" column="1" >
-               <widget class="FileCluster" name="_ccYPLinPathPEM" />
+               <widget class="QLineEdit" name="_ccYPLinPathPEM" />
               </item>
               <item row="2" column="0" >
                <widget class="QLabel" name="_ccYPMacPathPEMLit" >
@@ -1246,7 +1253,7 @@
                </widget>
               </item>
               <item row="2" column="1" >
-               <widget class="FileCluster" name="_ccYPMacPathPEM" />
+               <widget class="QLineEdit" name="_ccYPMacPathPEM" />
               </item>
              </layout>
             </widget>

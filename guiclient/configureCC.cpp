@@ -61,12 +61,17 @@
 
 #include "creditcardprocessor.h"
 
+// Change these definitions to match the indices in the _ccCompany combo box
+#define ANINDEX 0
+#define YPINDEX 1
+
 configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : QDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
   connect(_anDuplicateWindow, SIGNAL(valueChanged(int)), this, SLOT(sDuplicateWindow(int)));
+  connect(_ccCompany, SIGNAL(currentIndexChanged(int)), this, SLOT(sCCCompanyChanged(int)));
   connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_save,  SIGNAL(clicked()), this, SLOT(sSave()));
 
@@ -84,6 +89,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
   
   _ccCompany->setCurrentIndex(_ccCompany->findText(_metrics->value("CCCompany")));
   _ccWidgetStack->setCurrentIndex(_ccCompany->currentIndex());
+  sCCCompanyChanged(_ccCompany->currentIndex());
 
   _ccServer->setText(_metrics->value("CCServer"));
   _ccPort->setText(_metrics->value("CCPort"));
@@ -420,4 +426,26 @@ void configureCC::sDuplicateWindow(int p)
   QTime time;
   time.addSecs(p);
   _anDuplicateWindowAsHMS->setText(time.toString("HH:mm:ss"));
+}
+
+void configureCC::sCCCompanyChanged(const int pindex)
+{
+  if (pindex == ANINDEX)
+  {
+    _fraudDetectionIgnoredLit->setText(tr("For Authorize.Net please configure "
+                                          "CVV and AVS using the Merchant "
+                                          "Interface."));
+    _cvvCheckGroup->setEnabled(false);
+    _cvvFailGroup->setEnabled(false);
+    _avsCheckGroup->setEnabled(false);
+    _avsFailGroup->setEnabled(false);
+  }
+  else
+  {
+    _fraudDetectionIgnoredLit->setText("");
+    _cvvCheckGroup->setEnabled(true);
+    _cvvFailGroup->setEnabled(true);
+    _avsCheckGroup->setEnabled(true);
+    _avsFailGroup->setEnabled(true);
+  }
 }
