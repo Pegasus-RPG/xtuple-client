@@ -950,6 +950,7 @@ void initErrorLookupHash()
   { "splitReceipt", -5, TR("Split freight may not be greater than original freight."),		0, "" },
   { "splitReceipt", -6, TR("Receipt not found."),		0, "" },
   { "splitReceipt", -7, TR("The split quantity must be a positive number."),		0, "" },
+
   { "sufficientInventoryToShipItem", -1,
 	    TR("Cannot figure out which line item to issue."),	0, "" },
   { "sufficientInventoryToShipItem", -2,
@@ -967,8 +968,13 @@ void initErrorLookupHash()
 								0, "" },                            
   { "sufficientInventoryToShipOrder", -1, TR("Cannot check inventory levels for"
                                              "an invalid item."),       0, ""},
-  { "sufficientInventoryToShipOrder", -2, "", -2, "sufficientInventoryToShipItem"},
-  { "sufficientInventoryToShipOrder", -3, "", -3, "sufficientInventoryToShipItem"},
+  { "sufficientInventoryToShipOrder", -2, TR("There is not enough Inventory to "
+                                             "issue the amount required of one "
+                                             "of the items requested."),0, ""},
+  { "sufficientInventoryToShipOrder", -3, TR("One of the requested items is a "
+                                             "Multiple Location or Lot/Serial "
+                                             "controlled Item which is sort on "
+                                             "Inventory."),             0, ""},
   { "sufficientInventoryToShipOrder",-11, "",-11, "sufficientInventoryToShipItem"},
 
   { "thawAccountingPeriod", -2, TR("Cannot thaw this Accounting Period "
