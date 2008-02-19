@@ -741,6 +741,27 @@ int YourPayProcessor::doTestConfiguration()
   if (DEBUG)
     qDebug("YP:doTestConfiguration()");
 
+#ifdef Q_WS_WIN
+   QString pemfile = _metrics->value("CCYPWinPathPEM");
+#elif defined Q_WS_MACX
+   QString pemfile = _metrics->value("CCYPMacPathPEM");
+#elif defined Q_WS_X11
+   QString pemfile = _metrics->value("CCYPLinPathPEM");
+#endif
+
+  if (pemfile.isEmpty())
+  {
+    _errorMsg = errorMsg(-15);
+    return -15;
+  }
+
+  QFileInfo fileinfo(pemfile.toLatin1());
+  if (!fileinfo.isFile())
+  {
+    _errorMsg = errorMsg(-16).arg(fileinfo.fileName());
+   return -16;
+  }
+
   if (_metricsenc->value("CCYPStoreNum").isEmpty())
   {
     _errorMsg = errorMsg(-103);

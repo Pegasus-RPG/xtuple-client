@@ -670,27 +670,6 @@ int CreditCardProcessor::testConfiguration()
     return -5;
   }
 
-#ifdef Q_WS_WIN
-   QString pemfile = _metrics->value("CCYPWinPathPEM");
-#elif defined Q_WS_MACX
-   QString pemfile = _metrics->value("CCYPMacPathPEM");
-#elif defined Q_WS_X11
-   QString pemfile = _metrics->value("CCYPLinPathPEM");
-#endif
-
-  if (pemfile.isEmpty())
-  {
-    _errorMsg = errorMsg(-15);
-    return -15;
-  }
-
-  QFileInfo fileinfo(pemfile.toLatin1());
-  if (!fileinfo.isFile())
-  {
-    _errorMsg = errorMsg(-16).arg(fileinfo.fileName());
-   return -16;
-  }
-
   if(_metrics->boolean("CCUseProxyServer"))
   {
     _plogin = _metricsenc->value("CCProxyLogin");
@@ -1149,15 +1128,21 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
   curl_args.append( "-k" );
   curl_args.append( "-d" );
   curl_args.append( prequest );
-  curl_args.append( "-E" );
 
 #ifdef Q_WS_WIN
-  curl_args.append(_metrics->value("CCYPWinPathPEM"));
+  QString pemfile = _metrics->value("CCYPWinPathPEM");
 #elif defined Q_WS_MACX
-  curl_args.append(_metrics->value("CCYPMacPathPEM"));
+  QString pemfile = _metrics->value("CCYPMacPathPEM");
 #elif defined Q_WS_X11
-  curl_args.append(_metrics->value("CCYPLinPathPEM"));
+  QString pemfile = _metrics->value("CCYPLinPathPEM");
+#else
+  QString pemfile;
 #endif
+  if (! pemfile.isEmpty())
+  {
+    curl_args.append( "-E" );
+    curl_args.append(pemfile);
+  }
 
   curl_args.append("https://" + _metrics->value("CCServer") +
 		   QString(_metrics->value("CCPort").toInt() == 0 ? "" :
