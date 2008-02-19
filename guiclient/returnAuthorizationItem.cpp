@@ -1149,6 +1149,7 @@ void returnAuthorizationItem::updatePriceInfo()
 void returnAuthorizationItem::sDispositionChanged()
 {
   if ( (_disposition->currentIndex() == 3) && 
+          (_item->id() != -1) &&
 	  (_item->itemType() != "J") )
   {
     QMessageBox::warning( this, tr("Cannot use Service Disposition"),
