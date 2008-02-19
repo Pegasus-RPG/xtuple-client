@@ -1,81 +1,40 @@
 #!/bin/bash
 
-if [ -z $QTDIR ]; then
-  QTDIR=/opt/qt/4.1.4
-fi
 if ! [ -d $QTDIR ]; then
   echo "Cannot find QTDIR"
-  exit
-fi
-if [ -z $PGDIR ]; then
-  PGDIR=$QTDIR
+  exit 1
 fi
 if ! [ -d $PGDIR/lib ]; then
   echo "Cannot find PGDIR/lib"
-  exit
+  exit 1
 fi
 FRAMEWORKSDIR=../bin/xtuple.app/Contents/Frameworks
 
-if ! [ -d $FRAMEWORKSDIR ]; then
-  mkdir $FRAMEWORKSDIR
-fi
-cd $FRAMEWORKSDIR
+if ! [ -d $FRAMEWORKSDIR ] && ! mkdir $FRAMEWORKSDIR    ; then exit 1 ; fi
+if ! cd $FRAMEWORKSDIR                                  ; then exit 1 ; fi
 
-cp $QTDIR/lib/libQt3Support.4.dylib .
-cp $QTDIR/lib/libQtAssistantClient.4.dylib .
-cp $QTDIR/lib/libQtNetwork.4.dylib .
-cp $QTDIR/lib/libQtSql.4.dylib .
-cp $QTDIR/lib/libQtXml.4.dylib .
-cp $QTDIR/lib/libQtGui.4.dylib .
-cp $QTDIR/lib/libQtCore.4.dylib .
-cp $PGDIR/lib/libpq.4.dylib .
+LIBRARIES="$QTDIR/lib/libQt3Support.4.dylib
+           $QTDIR/lib/libQtAssistantClient.4.dylib
+           $QTDIR/lib/libQtNetwork.4.dylib
+           $QTDIR/lib/libQtSql.4.dylib
+           $QTDIR/lib/libQtXml.4.dylib
+           $QTDIR/lib/libQtGui.4.dylib
+           $QTDIR/lib/libQtCore.4.dylib
+           $PGDIR/lib/libpq.4.dylib"
+if ! cp $LIBRARIES .                                    ; then exit 1 ; fi
+for TOFIX in $LIBRARIES ; do
+  BASETOFIX=`basename $TOFIX`
+  install_name_tool -id @executable_path/../Frameworks/$BASETOFIX $BASETOFIX
+  for RENAME in $LIBRARIES ; do
+    install_name_tool -change $RENAME @executable_path/../Frameworks/`basename $RENAME` $BASETOFIX
+    install_name_tool -change $RENAME @executable_path/../Frameworks/`basename $RENAME` ../MacOS/xtuple
+  done
+done
 
-install_name_tool -id @executable_path/../Frameworks/libpq.4.dylib libpq.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQt3Support.4.dylib libQt3Support.4.dylib
-install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libQt3Support.4.dylib
-install_name_tool -change $QTDIR/lib/libQtXml.4.dylib @executable_path/../Frameworks/libQtXml.4.dylib libQt3Support.4.dylib
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libQt3Support.4.dylib
-install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib libQt3Support.4.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQt3Support.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQtAssistantClient.4.dylib libQtAssistantClient.4.dylib
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libQtAssistantClient.4.dylib
-install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib libQtAssistantClient.4.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtAssistantClient.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQtNetwork.4.dylib libQtNetwork.4.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtNetwork.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQtSql.4.dylib libQtSql.4.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtSql.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQtXml.4.dylib libQtXml.4.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtXml.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQtGui.4.dylib libQtGui.4.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libQtGui.4.dylib
-
-install_name_tool -id @executable_path/../Frameworks/libQtCore.4.dylib libQtCore.4.dylib
-
-cd ../MacOS
-install_name_tool -change $QTDIR/lib/libQt3Support.4.dylib @executable_path/../Frameworks/libQt3Support.4.dylib xtuple
-install_name_tool -change $QTDIR/lib/libQtAssistantClient.4.dylib @executable_path/../Frameworks/libQtAssistantClient.4.dylib xtuple
-install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib xtuple
-install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib xtuple
-install_name_tool -change $QTDIR/lib/libQtXml.4.dylib @executable_path/../Frameworks/libQtXml.4.dylib xtuple
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib xtuple
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib xtuple
-
-if ! [ -d "../plugins" ]; then
-  mkdir ../plugins
-fi
-cd ../plugins
-
-if ! [ -d "sqldrivers" ]; then
-  mkdir sqldrivers
-fi
-cd sqldrivers
+if ! [ -d "../plugins" ] && ! mkdir ../plugins  ; then exit 2 ; fi
+if ! cd ../plugins                              ; then exit 2 ; fi
+if ! [ -d "sqldrivers" ] && ! mkdir sqldrivers  ; then exit 2 ; fi
+if ! cd sqldrivers                              ; then exit 2 ; fi
 
 cp $QTDIR/plugins/sqldrivers/libqsqlpsql.dylib .
 install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libqsqlpsql.dylib
@@ -91,37 +50,39 @@ if ! [ -d "imageformats" ]; then
   mkdir imageformats
 fi
 cd imageformats
-cp $QTDIR/plugins/imageformats/libqgif.dylib .
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libqgif.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqgif.dylib
 
-cp $QTDIR/plugins/imageformats/libqjpeg.dylib .
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libqjpeg.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqjpeg.dylib
+LIBRARIES="$QTDIR/plugins/imageformats/libqgif.dylib
+           $QTDIR/plugins/imageformats/libqjpeg.dylib
+           $QTDIR/plugins/imageformats/libqmng.dylib"
+if ! cp $LIBRARIES .                            ; then exit 2 ; fi
+for TOFIX in $LIBRARIES ; do
+  BASETOFIX=`basename $TOFIX`
+  for RENAME in $QTDIR/lib/libQtGui.4.dylib \
+                $QTDIR/lib/libQtCore.4.dylib ; do
+    install_name_tool -change $RENAME @executable_path/../Frameworks/`basename $RENAME` $BASETOFIX
+  done
+done
 
-cp $QTDIR/plugins/imageformats/libqmng.dylib .
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib libqmng.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqmng.dylib
-
-
-cd ../../Resources
+if ! cd ../../Resources                         ; then exit 3 ; fi
 
 echo "[Paths]" > qt.conf
 echo "Prefix = .." >> qt.conf
 
-cp -r $QTDIR/bin/assistant.app .
-cd assistant.app/Contents/MacOS
-install_name_tool -change $QTDIR/lib/libQtXml.4.dylib @executable_path/../Frameworks/libQtXml.4.dylib assistant
-install_name_tool -change $QTDIR/lib/libQtGui.4.dylib @executable_path/../Frameworks/libQtGui.4.dylib assistant
-install_name_tool -change $QTDIR/lib/libQtNetwork.4.dylib @executable_path/../Frameworks/libQtNetwork.4.dylib assistant
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib assistant
+if ! cp -r $QTDIR/bin/assistant.app .           ; then exit 3 ; fi
+if ! cd assistant.app/Contents/MacOS            ; then exit 3 ; fi
+for RENAME in Xml Gui Network Core ; do
+  install_name_tool -change $QTDIR/lib/libQt${RENAME}.4.dylib @executable_path/../Frameworks/libQt${RENAME}.4.dylib assistant
+done
 
-cd ../Resources
+if ! cd ../Resources                            ; then exit 3 ; fi
 # create/copy a qt.conf file pointing to the plugins directory
 echo "[Paths]" > qt.conf
 echo "Prefix = .." >> qt.conf
 
-cd ..
-ln -s ../../../Frameworks
-ln -s ../../../plugins
+if ! cd ..                                      ; then exit 4 ; fi
+if [ -L Frameworks ] && ! rm Frameworks         ; then exit 4 ; fi
+if ! ln -s ../../../Frameworks                  ; then exit 4 ; fi
+if [ -L plugins ] && ! rm plugins               ; then exit 4 ; fi
+if ! ln -s ../../../plugins                     ; then exit 4 ; fi
 
+exit 0
