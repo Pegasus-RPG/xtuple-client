@@ -75,6 +75,7 @@ public:
 public slots:
     virtual SetResponse set(const ParameterList & pParams );
     virtual void sSave();
+    virtual void sSaveClick();
     virtual void sClose();
     virtual void sItemTypeChanged( const QString & type );
     virtual void sBooitemList();
@@ -94,8 +95,9 @@ private:
     int _bomitemid;
     int _sourceBomitemid;
     int _itemid;
-	int _revisionid;
+    int _revisionid;
     int _booitemseqid;
+    bool _saved;
 
 };
 

@@ -76,7 +76,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _substituteGroupInt->addButton(_itemDefinedSubstitutes);
   _substituteGroupInt->addButton(_bomDefinedSubstitutes);
 
-  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSaveClick()));
   connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sItemTypeChanged(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sItemIdChanged()));
@@ -117,6 +117,8 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _booitemList->hide();
     _scheduleAtWooper->hide();
   }
+  
+  _saved=FALSE;
 }
 
 bomItem::~bomItem()
@@ -262,7 +264,7 @@ void bomItem::sSave()
     return;
   }
 
-  if (_mode == cNew)
+  if (_mode == cNew && !_saved)
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
                "                      :configType, :configId, :configFlag,"
@@ -279,7 +281,7 @@ void bomItem::sSave()
 			   "                      :ecn, :subtype, :revision_id ) AS result "
 			   "FROM bomitem "
 			   "WHERE (bomitem_id=:sourceBomitem_id);" );
-  else if (_mode == cEdit)
+  else if (_mode == cEdit  || _saved)
     q.prepare( "UPDATE bomitem "
                "SET bomitem_booitem_seq_id=:booitem_seq_id, bomitem_schedatwooper=:scheduledWithBooItem,"
                "    bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
@@ -361,7 +363,13 @@ void bomItem::sSave()
   }
 
   omfgThis->sBOMsUpdated(_itemid, TRUE);
+  
+  _saved=TRUE;
+}
 
+void bomItem::sSaveClick()
+{
+  sSave();
   done(_bomitemid);
 }
 
@@ -532,6 +540,7 @@ void bomItem::sHandleIssueMethod(int pItem)
 
 void bomItem::sNewSubstitute()
 {
+  sSave();
   ParameterList params;
   params.append("mode", "new");
   params.append("bomitem_id", _bomitemid);
