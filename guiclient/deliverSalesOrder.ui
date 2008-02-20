@@ -10,7 +10,7 @@
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Schedule Sales Order for Email Delivery</string>
+   <string>Email Order Acknowledgment</string>
   </property>
   <layout class="QVBoxLayout" >
    <property name="margin" >

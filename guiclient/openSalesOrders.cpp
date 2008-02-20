@@ -394,7 +394,7 @@ void openSalesOrders::sPopulateMenu(QMenu *pMenu)
 
   if (_metrics->boolean("EnableBatchManager"))
   {
-    menuItem = pMenu->insertItem(tr("Schedule S/O for Email Delivery..."), this, SLOT(sDeliver()), 0);
+    menuItem = pMenu->insertItem(tr("Email Order Acknowledgment..."), this, SLOT(sDeliver()), 0);
   }
 
   menuItem = pMenu->insertItem(tr("Print Sales Order Form..."), this, SLOT(sPrintForms()), 0); 
