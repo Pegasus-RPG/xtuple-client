@@ -166,6 +166,13 @@ static struct {
   {   3, TR("Stored Procedure Error")					},
   {   4, TR("The Credit Card transaction completed successfully but "
 	    "it was not recorded correctly:\n%1")			},
+  {   5, TR("The Server is %2 and is expected to be %3 in %1 mode, "
+            "while the Port is %4 and is expected to be %5. Credit Card "
+            "processing transactions may fail.")                        },
+  {   6, TR("The Server is %2 and is expected to be %3 in %1 mode."
+            "Credit Card processing transactions may fail.")            },
+  {   7, TR("The Port is %2 and is expected to be %3 in %1 mode. "
+            "Credit Card processing transactions may fail.")            },
   {  10, TR("This Credit Card transaction was denied.\n%1")		},
   {  11, TR("This Credit Card transaction is a duplicate.\n%1")		},
   {  12, TR("This Credit Card transaction was declined.\n%1")		},
@@ -237,7 +244,7 @@ CreditCardProcessor * CreditCardProcessor::getProcessor(const QString pcompany)
     _errorMsg = errorMsg(-14).arg(_metrics->value("CCServer"));
 
   // reset to 0 if the config is bad and we're not configuring the system
-  if (processor && processor->testConfiguration() != 0 && pcompany.isEmpty())
+  if (processor && processor->testConfiguration() < 0 && pcompany.isEmpty())
   {
     delete processor;
     processor = 0;
@@ -713,9 +720,44 @@ int CreditCardProcessor::testConfiguration()
     return -13;
   }
 
-  return doTestConfiguration();
-}
+  int returnValue = doTestConfiguration();
 
+  // now handle warnings
+  if (returnValue >= 0)
+  {
+    QString serverStr = buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), false);
+
+    if (serverStr != defaultServer() && ! _metrics->value("CCPort").isEmpty() &&
+        _metrics->value("CCPort").toInt() != defaultPort(isLive()) &&
+        _metrics->value("CCPort").toInt() != 0)
+    {
+      _errorMsg = errorMsg(5).arg(isLive() ? tr("Live") : tr("Test"))
+                             .arg(_metrics->value("CCServer"))
+                             .arg(defaultServer())
+                             .arg(_metrics->value("CCPort"))
+                             .arg(defaultPort(isLive()));
+      returnValue = 5;
+    }
+    else if (serverStr != defaultServer())
+    {
+      _errorMsg = errorMsg(6).arg(isLive() ? tr("Live") : tr("Test"))
+                             .arg(_metrics->value("CCServer"))
+                             .arg(defaultServer());
+      returnValue = 6;
+    }
+    else if (_metrics->value("CCPort").toInt() != defaultPort(isLive()) &&
+             _metrics->value("CCPort").toInt() != 0 &&
+            ! _metrics->value("CCPort").isEmpty())
+    {
+      _errorMsg = errorMsg(7).arg(isLive() ? tr("Live") : tr("Test"))
+                             .arg(_metrics->value("CCPort"))
+                             .arg(defaultPort(isLive()));
+      returnValue = 7;
+    }
+  }
+
+  return returnValue;
+}
 
 int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double pamount, const double ptax, const bool ptaxexempt, const double pfreight, const double pduty, const int pcurrid, QString &pneworder, QString &preforder, int &pccpayid, QString preftype, int &prefid)
 {
@@ -1144,9 +1186,7 @@ int CreditCardProcessor::sendViaHTTP(const QString &prequest,
     curl_args.append(pemfile);
   }
 
-  curl_args.append("https://" + _metrics->value("CCServer") +
-		   QString(_metrics->value("CCPort").toInt() == 0 ? "" :
-					      (":" + _metrics->value("CCPort"))));
+  curl_args.append(buildURL(_metrics->value("CCServer"), _metrics->value("CCPort"), true));
 
   if(_metrics->boolean("CCUseProxyServer"))
   {
@@ -1379,12 +1419,14 @@ int CreditCardProcessor::defaultPort(bool ptestmode)
     return _defaultLivePort;
 }
 
-QString CreditCardProcessor::defaultServer(bool ptestmode)
+QString CreditCardProcessor::defaultServer()
 {
-  if (ptestmode)
+  if (isTest())
     return _defaultTestServer;
-  else
+  else if (isLive())
     return _defaultLiveServer;
+  else
+    return "";
 }
 
 void CreditCardProcessor::reset()
@@ -1466,4 +1508,57 @@ bool CreditCardProcessor::handlesChecks()
 bool CreditCardProcessor::handlesCreditCards()
 {
   return false;
+}
+
+/* take apart the url we got from the user and rebuild it to make sure it's complete.
+   if the user did not specify a URL to start with then build it using defaults.
+   the third argument tells us whether to build with or without the port.
+*/
+QString CreditCardProcessor::buildURL(const QString pserver, const QString pport, const bool pinclport)
+{
+  if (DEBUG)
+    qDebug("buildURL(%s, %s, %d)", pserver.toAscii().data(),
+           pport.toAscii().data(), pinclport);
+
+  QString defaultprotocol = "https";
+
+  QString serverStr = pserver.isEmpty() ?  defaultServer() : pserver;
+  QString protocol  = serverStr;
+  protocol.remove(QRegExp("://.*"));
+  if (protocol == serverStr)
+    protocol = "";
+  if (DEBUG) qDebug("protocol: %s", protocol.toAscii().data());
+  if (protocol.isEmpty())
+    protocol = defaultprotocol;
+
+  QString host      = serverStr;
+  host.remove(QRegExp("^.*://")).remove(QRegExp("[/:].*"));
+  if (DEBUG) qDebug("host: %s", host.toAscii().data());
+
+  QString port      = serverStr;
+  port.remove(QRegExp("^([^:/]+://)?[^:]*:")).remove(QRegExp("/.*"));
+  if (port == serverStr || port == host)
+    port = "";
+  if (DEBUG) qDebug("port: %s", port.toAscii().data());
+  if (! pinclport)
+    port = "";
+  else if (port.isEmpty())
+    port = pport.toInt() == 0 ?  QString::number(defaultPort()) : pport;
+
+  QString remainder = serverStr;
+  remainder.remove(QRegExp("^([^:/]+://)?[^:/]*(:[0-9]+)?/"));
+  if (remainder == serverStr)
+    remainder = "";
+  if (DEBUG) qDebug("remainder: %s", remainder.toAscii().data());
+
+  serverStr = protocol + "://" + host;
+
+  if (! port.isEmpty() && ! (protocol == "https" && port == "443"))
+    serverStr += ":" + port;
+
+  if (! remainder.isEmpty())
+    serverStr += "/" + remainder;
+
+  if (DEBUG) qDebug("buildURL: returning %s", serverStr.toAscii().data());
+  return serverStr;
 }

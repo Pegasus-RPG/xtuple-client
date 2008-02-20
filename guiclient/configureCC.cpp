@@ -221,77 +221,6 @@ void configureCC::languageChange()
 
 void configureCC::sSave()
 {
-  CreditCardProcessor *cardproc =
-		  CreditCardProcessor::getProcessor(_ccCompany->currentText());
-  if (! cardproc)
-  {
-    QMessageBox::warning(this, tr("Error getting Credit Card Processor"),
-			 tr("<p>Internal error finding the right Credit Card "
-			    "Processor. The application will save what it can "
-			    "but you should re-open this window and double-"
-			    "check all of the settings before continuing."));
-  }
-  else if (_ccServer->text() != cardproc->defaultServer(_ccTest->isChecked()) &&
-      _ccPort->text().toInt() != cardproc->defaultPort(_ccTest->isChecked()) )
-  {
-    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration?"),
-			      tr("<p>This configuration does not appear "
-				 "valid for %1 mode: the Server is %2 and is "
-				 "expected to be %3, while the Port is %4 "
-				 "and is expected to be %5. Credit Card "
-				 "processing transactions may fail.<p>Do you "
-				 "want to save this configuration anyway?")
-				.arg((_ccTest->isChecked() ? "Test" : "Live"))
-				.arg(_ccServer->text())
-				.arg(cardproc->defaultServer(_ccTest->isChecked()))
-				.arg(_ccPort->text())
-				.arg(cardproc->defaultPort(_ccTest->isChecked())),
-			      QMessageBox::Yes,
-			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-      return;
-  }
-  else if (_ccServer->text() != cardproc->defaultServer(_ccTest->isChecked()))
-  {
-    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration?"),
-			      tr("<p>This configuration does not appear "
-				 "valid for %1 mode: the Server is %2 and is "
-				 "expected to be %3. Credit Card "
-				 "processing transactions may fail.<p>Do you "
-				 "want to save this configuration anyway?")
-				.arg((_ccTest->isChecked() ? "Test" : "Live"))
-				.arg(_ccServer->text())
-				.arg(cardproc->defaultServer(_ccTest->isChecked())),
-			      QMessageBox::Yes,
-			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-      return;
-  }
-  else if (_ccPort->text().toInt() != cardproc->defaultPort(_ccTest->isChecked()))
-  {
-    if (QMessageBox::question(this, tr("Invalid Credit Card Configuration?"),
-			      tr("<p>This configuration does not appear "
-				 "valid for %1 mode: the Port is %2 "
-				 "and is expected to be %3. Credit Card "
-				 "processing transactions may fail.<p>Do you "
-				 "want to save this configuration anyway?")
-				.arg((_ccTest->isChecked() ? "Test" : "Live"))
-				.arg(_ccPort->text())
-				.arg(cardproc->defaultPort(_ccTest->isChecked())),
-			      QMessageBox::Yes,
-			      QMessageBox::No | QMessageBox::Default) == QMessageBox::No)
-      return;
-  }
-  else if (_ccAccept->isChecked() && ! cardproc->handlesCreditCards())
-  {
-    QMessageBox::warning(this, tr("Invalid Credit Card Configuration"),
-			  tr("<p>%1 is checked but the application does "
-			     "not support credit card processing by %2. "
-			     "Either choose a different credit card "
-			     "processing company or uncheck %1.")
-				.arg(_ccAccept->name())
-				.arg(_ccCompany->currentText()));
-    return;
-  }
-
   _metrics->set("CCAccept",          _ccAccept->isChecked());
   _metrics->set("CCTest",            _ccTest->isChecked());
   _metrics->set("CCValidDays",       _ccValidDays->value());
@@ -405,7 +334,17 @@ void configureCC::sSave()
     _metricsenc->load();
   }
 
-  if (cardproc && cardproc->testConfiguration() != 0)
+  CreditCardProcessor *cardproc =
+		  CreditCardProcessor::getProcessor(_ccCompany->currentText());
+  if (! cardproc)
+  {
+    QMessageBox::warning(this, tr("Error getting Credit Card Processor"),
+			 tr("<p>Internal error finding the right Credit Card "
+			    "Processor. The application saved what it could "
+			    "but you should re-open this window and double-"
+			    "check all of the settings before continuing."));
+  }
+  else if (cardproc && cardproc->testConfiguration() != 0)
   {
     if (QMessageBox::question(this, tr("Invalid Credit Card Configuration"),
 			      tr("<p>The configuration has been saved but "

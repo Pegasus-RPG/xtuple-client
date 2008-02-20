@@ -84,7 +84,7 @@ class CreditCardProcessor : public QObject
     // these are support methods that typically won't be overridden
     virtual int	    testConfiguration();
     virtual int     defaultPort(bool = false);
-    virtual QString defaultServer(bool = false);
+    virtual QString defaultServer();
     virtual bool    handlesChecks();
     virtual bool    handlesCreditCards();
     virtual bool    isLive();
@@ -105,6 +105,7 @@ class CreditCardProcessor : public QObject
     virtual int doVoidPrevious(const int, const int, const double, const int, QString&, QString&, int&, ParameterList&);
     virtual int doTestConfiguration();
 
+    virtual QString buildURL(const QString, const QString, const bool);
     virtual int     checkCreditCard(const int, const int, QString&);
     virtual int     checkCreditCardProcessor()	{ return false; };
     static  double  currToCurr(const int, const int, const double, int * = 0);

@@ -100,9 +100,9 @@ YourPayProcessor::YourPayProcessor() : CreditCardProcessor()
   }
 
   _defaultLivePort   = 1129;
-  _defaultLiveServer = "secure.linkpt.net";
+  _defaultLiveServer = "https://secure.linkpt.net";
   _defaultTestPort   = 1129;
-  _defaultTestServer = "staging.linkpt.net";
+  _defaultTestServer = "https://staging.linkpt.net";
 
   _msgHash.insert(-100, tr("No Approval Code\n%1\n%2\n%3"));
   _msgHash.insert(-102, tr("If LinkShield is enabled then the cutoff score "

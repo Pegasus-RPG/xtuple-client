@@ -91,10 +91,10 @@
 
 AuthorizeDotNetProcessor::AuthorizeDotNetProcessor() : CreditCardProcessor()
 {
-  _defaultLivePort   = 0;
-  _defaultLiveServer = "secure.authorize.net/gateway/transact.dll";
-  _defaultTestPort   = 0;
-  _defaultTestServer = "test.authorize.net/gateway/transact.dll";
+  _defaultLivePort   = 443;
+  _defaultLiveServer = "https://secure.authorize.net/gateway/transact.dll";
+  _defaultTestPort   = 443;
+  _defaultTestServer = "https://test.authorize.net/gateway/transact.dll";
 
   _msgHash.insert(-200, tr("A Login is required."));
   _msgHash.insert(-201, tr("The Login must be 20 characters or less."));
