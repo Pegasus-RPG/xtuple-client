@@ -174,7 +174,7 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
     APPENDFIELD(prequest, "x_encap_char", _metrics->value("CCANEncap"));
 
   APPENDFIELD(prequest, "x_login",    _metricsenc->value("CCLogin"));
-  APPENDFIELD(prequest, "x_tran_key", _metricsenc->value("CCANTransactionKey"));
+  APPENDFIELD(prequest, "x_tran_key", _metricsenc->value("CCPassword"));
   APPENDFIELD(prequest, "x_amount",   QString::number(pamount));
   // TODO: if check and not credit card transaction do something else
   APPENDFIELD(prequest, "x_card_num", anq.value("ccard_number").toString());
@@ -708,7 +708,7 @@ int AuthorizeDotNetProcessor::handleResponse(const QString &presponse, const int
     returnValue = fieldValue(responseFields, 38, r_hash);	// md5 hash
     XSqlQuery anq;
     anq.prepare("SELECT UPPER(MD5(:inputstr)) AS expected;");
-    anq.bindValue(":inputstr", _metrics->value("CCANMD5Hash") +
+    anq.bindValue(":inputstr", _metricsenc->value("CCANMD5Hash") +
 			       _metricsenc->value("CCLogin") +
 			       r_ordernum +
 			       QString::number(pamount, 'f', 2));
@@ -756,7 +756,7 @@ int AuthorizeDotNetProcessor::doTestConfiguration()
     _errorMsg = errorMsg(-201);
     returnValue = -201;
   }
-  else if (_metricsenc->value("CCANTransactionKey").size() > 16)
+  else if (_metricsenc->value("CCPassword").size() > 16)
   {
     _errorMsg = errorMsg(-202);
     returnValue = -202;

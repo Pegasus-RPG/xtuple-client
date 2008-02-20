@@ -194,7 +194,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccProxyLogin->setText(_metricsenc->value("CCProxyLogin"));
     _ccProxyPassword->setText(_metricsenc->value("CCProxyPassword"));
     _ccYPStoreNum->setText(_metricsenc->value("CCYPStoreNum"));
-    _anTransactionKey->setText(_metricsenc->value("CCANTransactionKey"));
+    _anMD5Hash->setText(_metricsenc->value("CCANMD5Hash"));
   }
   else
   {
@@ -203,7 +203,7 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _ccProxyLogin->setEnabled(false);
     _ccProxyPassword->setEnabled(false);
     _ccYPStoreNum->setEnabled(false);
-    _anTransactionKey->setEnabled(false);
+    _anMD5Hash->setEnabled(false);
   }
 
   sDuplicateWindow(_anDuplicateWindow->value());
@@ -243,7 +243,6 @@ void configureCC::sSave()
   _metrics->set("CCANEncap",             _anEncap->text());
   _metrics->set("CCANEncapSetOnGateway", _anEncapSetOnGateway->isChecked());
   _metrics->set("CCANDuplicateWindow",   _anDuplicateWindow->cleanText());
-  _metrics->set("CCANMD5Hash",           _anMD5Hash->text());
   _metrics->set("CCANMD5HashSetOnGateway", _anMD5HashSetOnGateway->isChecked());
   if (_anMD5HashWarn->isChecked())
     _metrics->set("CCANMD5HashAction", QString("W"));
@@ -329,7 +328,7 @@ void configureCC::sSave()
     _metricsenc->set("CCProxyLogin",    _ccProxyLogin->text());
     _metricsenc->set("CCProxyPassword", _ccProxyPassword->text());
     _metricsenc->set("CCYPStoreNum",    _ccYPStoreNum->text());
-    _metricsenc->set("CCANTransactionKey", _anTransactionKey->text());
+    _metricsenc->set("CCANMD5Hash",     _anMD5Hash->text());
 
     _metricsenc->load();
   }
@@ -374,6 +373,7 @@ void configureCC::sCCCompanyChanged(const int pindex)
     _fraudDetectionIgnoredLit->setText(tr("For Authorize.Net please configure "
                                           "CVV and AVS using the Merchant "
                                           "Interface."));
+    _ccPasswordLit->setText(tr("Transaction Key:"));
     _cvvCheckGroup->setEnabled(false);
     _cvvFailGroup->setEnabled(false);
     _avsCheckGroup->setEnabled(false);
@@ -382,6 +382,7 @@ void configureCC::sCCCompanyChanged(const int pindex)
   else
   {
     _fraudDetectionIgnoredLit->setText("");
+    _ccPasswordLit->setText(tr("Password:"));
     _cvvCheckGroup->setEnabled(true);
     _cvvFailGroup->setEnabled(true);
     _avsCheckGroup->setEnabled(true);
