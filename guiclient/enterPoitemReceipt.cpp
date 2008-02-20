@@ -331,7 +331,7 @@ void enterPoitemReceipt::sReceive()
   q.bindValue(":freight",	_freight->localValue());
   q.bindValue(":notes",		_notes->text());
   q.bindValue(":curr_id",	_freight->id());
-  q.bindValue(":effective",	_freight->effective());
+  q.bindValue(":effective",	_receiptDate->date());
   q.exec();
   if (q.first())
   {
@@ -361,8 +361,8 @@ void enterPoitemReceipt::sReceive()
     }
 
     q.exec("COMMIT;");
-    omfgThis->sPurchaseOrderReceiptsUpdated();
   }
 
+  omfgThis->sPurchaseOrderReceiptsUpdated();
   accept();
 }
