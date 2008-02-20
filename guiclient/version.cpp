@@ -73,5 +73,5 @@ QString _dbVersion = "2.3.1Beta1";
 #else
 #include "../altVersion.cpp"
 #endif
-QString _Copyright = "Copyright (c) 1999-2007, OpenMFG, LLC.";
+QString _Copyright = "Copyright (c) 1999-2008, OpenMFG, LLC.";
 
