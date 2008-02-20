@@ -218,6 +218,22 @@
               </widget>
              </item>
              <item>
+              <spacer>
+               <property name="orientation" >
+                <enum>Qt::Horizontal</enum>
+               </property>
+               <property name="sizeType" >
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" >
+                <size>
+                 <width>10</width>
+                 <height>20</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item>
               <widget class="QGroupBox" name="_ccSoOptionsGroup" >
                <property name="title" >
                 <string>Enable Transaction on Sales Order</string>
@@ -653,7 +669,11 @@
               <widget class="QLineEdit" name="_ccLogin" />
              </item>
              <item>
-              <widget class="QLineEdit" name="_ccPassword" />
+              <widget class="QLineEdit" name="_ccPassword" >
+               <property name="echoMode" >
+                <enum>QLineEdit::PasswordEchoOnEdit</enum>
+               </property>
+              </widget>
              </item>
             </layout>
            </item>
@@ -761,7 +781,11 @@
                <widget class="QLineEdit" name="_ccProxyLogin" />
               </item>
               <item>
-               <widget class="QLineEdit" name="_ccProxyPassword" />
+               <widget class="QLineEdit" name="_ccProxyPassword" >
+                <property name="echoMode" >
+                 <enum>QLineEdit::PasswordEchoOnEdit</enum>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -862,7 +886,7 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="0" >
+             <item row="1" column="0" >
               <widget class="QLabel" name="_anDelimLit" >
                <property name="text" >
                 <string>Delimiting Character:</string>
@@ -875,7 +899,7 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="1" >
+             <item row="1" column="1" >
               <widget class="QLineEdit" name="_anDelim" >
                <property name="text" >
                 <string>,</string>
@@ -885,14 +909,14 @@
                </property>
               </widget>
              </item>
-             <item row="2" column="2" >
+             <item row="1" column="2" >
               <widget class="QCheckBox" name="_anDelimSetOnGateway" >
                <property name="text" >
                 <string>Set on Gateway</string>
                </property>
               </widget>
              </item>
-             <item row="3" column="0" >
+             <item row="2" column="0" >
               <widget class="QLabel" name="_anEncapLit" >
                <property name="text" >
                 <string>Encapsulating Character:</string>
@@ -905,21 +929,21 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="1" >
+             <item row="2" column="1" >
               <widget class="QLineEdit" name="_anEncap" >
                <property name="maxLength" >
                 <number>1</number>
                </property>
               </widget>
              </item>
-             <item row="3" column="2" >
+             <item row="2" column="2" >
               <widget class="QCheckBox" name="_anEncapSetOnGateway" >
                <property name="text" >
                 <string>Set on Gateway</string>
                </property>
               </widget>
              </item>
-             <item row="4" column="0" >
+             <item row="3" column="0" >
               <widget class="QLabel" name="_anDuplicateWindowLit" >
                <property name="text" >
                 <string>Duplicate Window:</string>
@@ -932,7 +956,7 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="1" >
+             <item row="3" column="1" >
               <widget class="QSpinBox" name="_anDuplicateWindow" >
                <property name="maximum" >
                 <number>28000</number>
@@ -942,14 +966,14 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="2" >
+             <item row="3" column="2" >
               <widget class="QLabel" name="_anDuplicateWindowAsHMS" >
                <property name="text" >
                 <string>00:00:00</string>
                </property>
               </widget>
              </item>
-             <item row="5" column="0" >
+             <item row="4" column="0" >
               <widget class="QLabel" name="_anMD5HashLit" >
                <property name="text" >
                 <string>MD5 Hash:</string>
@@ -962,10 +986,14 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="1" >
-              <widget class="QLineEdit" name="_anMD5Hash" />
+             <item row="4" column="1" >
+              <widget class="QLineEdit" name="_anMD5Hash" >
+               <property name="echoMode" >
+                <enum>QLineEdit::PasswordEchoOnEdit</enum>
+               </property>
+              </widget>
              </item>
-             <item rowspan="2" row="5" column="2" >
+             <item rowspan="2" row="4" column="2" >
               <widget class="QGroupBox" name="_anMD5HashSetOnGateway" >
                <property name="title" >
                 <string>Set on Gateway</string>
@@ -994,7 +1022,7 @@
                </layout>
               </widget>
              </item>
-             <item row="6" column="0" colspan="2" >
+             <item row="5" column="0" colspan="2" >
               <widget class="QGroupBox" name="_anCurrencyGroup" >
                <property name="title" >
                 <string>Currency of Transactions:</string>
@@ -1040,25 +1068,20 @@
                </layout>
               </widget>
              </item>
-             <item row="7" column="0" colspan="2" >
+             <item row="6" column="0" colspan="2" >
               <widget class="QGroupBox" name="_anExtrasGroup" >
                <property name="title" >
                 <string>Additional Options:</string>
                </property>
-               <layout class="QGridLayout" />
-               <widget class="QCheckBox" name="_anUsingWellsFargoSecureSource" >
-                <property name="geometry" >
-                 <rect>
-                  <x>13</x>
-                  <y>31</y>
-                  <width>448</width>
-                  <height>16</height>
-                 </rect>
-                </property>
-                <property name="text" >
-                 <string>Using Wells Fargo SecureSource</string>
-                </property>
-               </widget>
+               <layout class="QGridLayout" >
+                <item row="0" column="0" >
+                 <widget class="QCheckBox" name="_anUsingWellsFargoSecureSource" >
+                  <property name="text" >
+                   <string>Using Wells Fargo SecureSource</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
              </item>
             </layout>
