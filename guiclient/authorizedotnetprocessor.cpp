@@ -71,16 +71,6 @@
 #define DEBUG false
 
 // convenience macro to add Name and Content to the Request
-/*
-#define APPENDFIELD(Request, Name, Content) 			\
-	{ 							\
-	  QString encap = _metrics->value("CCANEncap"); 	\
-	  if (! Request.isEmpty())				\
-	    Request += (_metrics->value("CCANDelim").isEmpty()) ? "," :	     \
-					      _metrics->value("CCANDelim");  \
-	  Request += QString(Name) + "=" + encap + QString(Content) + encap; \
-	}
-*/
 // outbound delimiter is always &
 #define APPENDFIELD(Request, Name, Content) \
         { \
@@ -160,17 +150,13 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
     return -17;
   }
 
-  if (! _metrics->boolean("CCANDelimSetOnGateway") &&
-      ! _metrics->value("CCANDelim").isEmpty())
+  if (! _metrics->value("CCANDelim").isEmpty())
     APPENDFIELD(prequest, "x_delim_char", _metrics->value("CCANDelim"));
 
-  if (! _metrics->boolean("CCANVerSetOnGateway"))
-    APPENDFIELD(prequest, "x_version",      _metrics->value("CCANVer"));
-
+  APPENDFIELD(prequest, "x_version",      _metrics->value("CCANVer"));
   APPENDFIELD(prequest, "x_delim_data", "TRUE");
 
-  if (! _metrics->boolean("CCANEncapSetOnGateway") &&
-      ! _metrics->value("CCANEncap").isEmpty())
+  if (! _metrics->value("CCANEncap").isEmpty())
     APPENDFIELD(prequest, "x_encap_char", _metrics->value("CCANEncap"));
 
   APPENDFIELD(prequest, "x_login",    _metricsenc->value("CCLogin"));
@@ -208,31 +194,26 @@ int AuthorizeDotNetProcessor::buildCommon(const int pccardid, const int pcvv, co
     APPENDFIELD(prequest, "x_email",    anq.value("cust_email").toString());
   }
 
-  if ((_metrics->value("CCANCurrency") == "TRANS") ||
-       ! _metrics->boolean("CCANCurrencySetOnGateway"))
+  anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
+  anq.bindValue(":currid", pcurrid);
+  anq.exec();
+  if (anq.first())
   {
-    anq.prepare("SELECT curr_abbr FROM curr_symbol WHERE (curr_id=:currid);");
-    anq.bindValue(":currid", pcurrid);
-    anq.exec();
-    if (anq.first())
-    {
-      APPENDFIELD(prequest, "x_currency_code", anq.value("curr_abbr").toString());
-    }
-    else if (anq.lastError().type() != QSqlError::NoError)
-    {
-      _errorMsg = anq.lastError().databaseText();
-      return -1;
-    }
-    else
-    {
-      _errorMsg = errorMsg(-17).arg(pccardid);
-      return -17;
-    }
+    APPENDFIELD(prequest, "x_currency_code", anq.value("curr_abbr").toString());
+  }
+  else if (anq.lastError().type() != QSqlError::NoError)
+  {
+    _errorMsg = anq.lastError().databaseText();
+    return -1;
+  }
+  else
+  {
+    _errorMsg = errorMsg(-17).arg(pccardid);
+    return -17;
   }
 
   // TODO: if check and not credit card transaction do something else
   APPENDFIELD(prequest, "x_method",     "CC");
-
   APPENDFIELD(prequest, "x_type",       pordertype);
 
   if (pcvv > 0)

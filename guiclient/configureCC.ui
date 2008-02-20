@@ -879,13 +879,6 @@
                </item>
               </widget>
              </item>
-             <item row="0" column="2" >
-              <widget class="QCheckBox" name="_anVersionSetOnGateway" >
-               <property name="text" >
-                <string>Set on Gateway</string>
-               </property>
-              </widget>
-             </item>
              <item row="1" column="0" >
               <widget class="QLabel" name="_anDelimLit" >
                <property name="text" >
@@ -909,13 +902,6 @@
                </property>
               </widget>
              </item>
-             <item row="1" column="2" >
-              <widget class="QCheckBox" name="_anDelimSetOnGateway" >
-               <property name="text" >
-                <string>Set on Gateway</string>
-               </property>
-              </widget>
-             </item>
              <item row="2" column="0" >
               <widget class="QLabel" name="_anEncapLit" >
                <property name="text" >
@@ -933,13 +919,6 @@
               <widget class="QLineEdit" name="_anEncap" >
                <property name="maxLength" >
                 <number>1</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2" >
-              <widget class="QCheckBox" name="_anEncapSetOnGateway" >
-               <property name="text" >
-                <string>Set on Gateway</string>
                </property>
               </widget>
              </item>
@@ -1052,16 +1031,6 @@
                   </property>
                   <property name="type" >
                    <enum>XComboBox::Currencies</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item row="2" column="1" >
-                 <widget class="QCheckBox" name="_anCurrFixedSetOnGateway" >
-                  <property name="enabled" >
-                   <bool>false</bool>
-                  </property>
-                  <property name="text" >
-                   <string>Set on Gateway</string>
                   </property>
                  </widget>
                 </item>
@@ -1596,22 +1565,6 @@ p, li { white-space: pre-wrap; }
     <hint type="destinationlabel" >
      <x>199</x>
      <y>369</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_anCurrFixed</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_anCurrFixedSetOnGateway</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>83</x>
-     <y>338</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>192</x>
-     <y>366</y>
     </hint>
    </hints>
   </connection>

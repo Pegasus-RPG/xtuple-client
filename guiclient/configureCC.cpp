@@ -109,11 +109,8 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _anVersion->setCurrentText("3.1");
   else
     _anVersion->setCurrentText(_metrics->value("CCANVer"));
-  _anVersionSetOnGateway->setChecked(_metrics->boolean("CCANVerSetOnGateway"));
   _anDelim->setText(_metrics->value("CCANDelim"));
-  _anDelimSetOnGateway->setChecked(_metrics->boolean("CCANDelimSetOnGateway"));
   _anEncap->setText(_metrics->value("CCANEncap"));
-  _anEncapSetOnGateway->setChecked(_metrics->boolean("CCANEncapSetOnGateway"));
   _anDuplicateWindow->setValue(_metrics->value("CCANDuplicateWindow").toInt());
 
   _anMD5Hash->setText(_metrics->value("CCANMD5Hash"));
@@ -128,7 +125,6 @@ configureCC::configureCC(QWidget* parent, const char* name, bool modal, Qt::WFla
     _anCurrFixed->setChecked(true);
     _anCurrFixedValue->setId(_metrics->value("CCANCurrency").toInt());
   }
-  _anCurrFixedSetOnGateway->setChecked(_metrics->boolean("CCANCurrencySetOnGateway"));
 
   _anUsingWellsFargoSecureSource->setChecked(_metrics->boolean("CCANWellsFargoSecureSource"));
 
@@ -237,11 +233,8 @@ void configureCC::sSave()
   _metrics->set("CCMacEncKey",       _ccMacEncKey->text());
 
   _metrics->set("CCANVer",               _anVersion->currentText());
-  _metrics->set("CCANVerSetOnGateway",   _anVersionSetOnGateway->isChecked());
   _metrics->set("CCANDelim",             _anDelim->text());
-  _metrics->set("CCANDelimSetOnGateway", _anDelimSetOnGateway->isChecked());
   _metrics->set("CCANEncap",             _anEncap->text());
-  _metrics->set("CCANEncapSetOnGateway", _anEncapSetOnGateway->isChecked());
   _metrics->set("CCANDuplicateWindow",   _anDuplicateWindow->cleanText());
   _metrics->set("CCANMD5HashSetOnGateway", _anMD5HashSetOnGateway->isChecked());
   if (_anMD5HashWarn->isChecked())
@@ -252,8 +245,7 @@ void configureCC::sSave()
   if (_anCurrFixed->isChecked())
     _metrics->set("CCANCurrency", _anCurrFixedValue->id());
   else // if (_anCurrTransaction->isChecked())
-    _metrics->set("CCANCurrency", "TRANS");
-  _metrics->set("CCANCurrencySetOnGateway", _anCurrFixedSetOnGateway->isChecked());
+    _metrics->set("CCANCurrency", QString("TRANS"));
   _metrics->set("CCANWellsFargoSecureSource", _anUsingWellsFargoSecureSource->isChecked());
 
   _metrics->set("CCYPWinPathPEM",    _ccYPWinPathPEM->text());
