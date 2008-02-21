@@ -274,7 +274,7 @@ int  AuthorizeDotNetProcessor::doAuthorize(const int pccardid, const int pcvv, c
   if (returnValue < 0)
     return returnValue;
 
-  returnValue = handleResponse(response, pccardid, "A", pamount, pcurrid,
+  returnValue = handleResponse(response, pccardid, "A", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
@@ -331,7 +331,7 @@ int  AuthorizeDotNetProcessor::doCharge(const int pccardid, const int pcvv, cons
   if (returnValue < 0)
     return returnValue;
 
-  returnValue = handleResponse(response, pccardid, "C", pamount, pcurrid,
+  returnValue = handleResponse(response, pccardid, "C", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
@@ -370,7 +370,7 @@ int AuthorizeDotNetProcessor::doChargePreauthorized(const int pccardid, const in
   if (returnValue < 0)
     return returnValue;
 
-  returnValue = handleResponse(response, pccardid, "CP", pamount, pcurrid,
+  returnValue = handleResponse(response, pccardid, "CP", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
@@ -424,7 +424,7 @@ int AuthorizeDotNetProcessor::doCredit(const int pccardid, const int pcvv, const
   if (returnValue < 0)
     return returnValue;
 
-  returnValue = handleResponse(response, pccardid, "R", pamount, pcurrid,
+  returnValue = handleResponse(response, pccardid, "R", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
 
   return returnValue;
@@ -470,7 +470,7 @@ int AuthorizeDotNetProcessor::doVoidPrevious(const int pccardid, const int pcvv,
   if (returnValue < 0)
     return returnValue;
 
-  returnValue = handleResponse(response, pccardid, "V", pamount, pcurrid,
+  returnValue = handleResponse(response, pccardid, "V", amount, currid,
 			       pneworder, preforder, pccpayid, pparams);
   _errorMsg = tmpErrorMsg;
   return returnValue;
