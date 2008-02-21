@@ -236,6 +236,8 @@ void enterPoitemReceipt::populate()
       _orderType->setText(tr("P/O"));
     else if (_ordertype == "TO")
       _orderType->setText(tr("T/O"));
+    else if (_ordertype == "RA")
+      _orderType->setText(tr("R/A"));
 
     int itemsiteid = q.value("itemsiteid").toInt();
     if (itemsiteid > 0)
