@@ -170,11 +170,13 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
 
   if (! _metrics->boolean("CCAccept") || !_privleges->check("ProcessCreditCards"))
   {
-    _creditBy->removeItem(3);
     _refund->hide();
     _CCCVVLit->hide();
     _CCCVV->hide();
   }
+  
+  if (! _metrics->boolean("CCAccept"))
+    _creditBy->removeItem(3);
   
   _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
