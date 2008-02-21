@@ -883,7 +883,9 @@ void salesOrderItem::sSave()
 				     QMessageBox::Yes | QMessageBox::Default,
 				     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
         {
-          q.prepare("SELECT changeWoDates(:wo_id, :schedDate, :schedDate, TRUE) AS result;");
+          q.prepare("SELECT changeWoDates(:wo_id, wo_startdate + (:schedDate-wo_duedate), :schedDate, TRUE) AS result "
+                    "FROM wo "
+                    "WHERE (wo_id=:wo_id);");
           q.bindValue(":wo_id", _orderId);
           q.bindValue(":schedDate", _scheduledDate->date());
           q.exec();
