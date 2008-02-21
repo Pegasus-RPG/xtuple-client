@@ -38,4 +38,5 @@ FROM orderhead, orderitem LEFT OUTER JOIN
 WHERE ((orderitem_orderhead_id=orderhead_id)
   AND  (orderitem_orderhead_type=orderhead_type)
   AND  (orderitem_status <> 'C')
-  AND  (orderitem_id=<? value("orderitem_id") ?>) );
+  AND  (orderitem_id=<? value("orderitem_id") ?>)
+  AND  (orderitem_orderhead_type=<? value("ordertype") ?>) );
