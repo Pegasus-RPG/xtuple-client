@@ -199,7 +199,7 @@ menuPurchase::menuPurchase(OpenMFGGUIClient *Pparent) :
     { "po.printPurchaseOrder", tr("Print Purchase &Order..."), SLOT(sPrintPurchaseOrder()), formsMenu, _privleges->check("PrintPurchaseOrders"), NULL, NULL, true , NULL },
     { "po.printPurchaseOrdersByAgent", tr("Print Purchase Orders by &Agent..."), SLOT(sPrintPurchaseOrdersByAgent()), formsMenu, _privleges->check("PrintPurchaseOrders"), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, formsMenu, true, NULL, NULL,  _metrics->boolean("EnableBatchManager") , NULL },
-    { "po.schedulePoForEmailDelivery", tr("&Schedule P/O for Email Delivery..."), SLOT(sDeliverPurchaseOrder()), formsMenu, _privleges->check("PrintPurchaseOrders"), NULL, NULL, _metrics->boolean("EnableBatchManager") , NULL },
+    { "po.schedulePoForEmailDelivery", tr("&E-Mail Purchase Order Form..."), SLOT(sDeliverPurchaseOrder()), formsMenu, _privleges->check("PrintPurchaseOrders"), NULL, NULL, _metrics->boolean("EnableBatchManager") , NULL },
     { "separator", NULL, NULL, formsMenu, true, NULL, NULL, true , NULL },
     { "po.printPoForm", tr("Print &P/O Form..."), SLOT(sPrintPOForm()), formsMenu, _privleges->check("PrintPurchaseOrders"), NULL, NULL, true , NULL },
     { "po.printVendorForm", tr("Print &Vendor Form..."), SLOT(sPrintVendorForm()), formsMenu, (_privleges->check("MaintainVendors") || _privleges->check("ViewVendors")), NULL, NULL, true , NULL },
