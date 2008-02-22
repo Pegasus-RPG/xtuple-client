@@ -596,10 +596,17 @@ void returnAuthorization::sOrigSoChanged()
 	q.exec();
 	if (q.first())
 	{
-      QMessageBox::critical(this, tr("Invalid Sales Order"),
+          QMessageBox::critical(this, tr("Invalid Sales Order"),
                            tr("This sales order is already linked to open return authorization %1.").arg(q.value("rahead_number").toString())  );
-	   _origso->setId(-1);
-	   return;
+          _origso->setId(-1);
+          if (_cust->isValid())
+          {
+            _origso->setCustId(_cust->id());
+            _origso->setType((cSoReleased | cSoCustomer));
+          }
+          else
+            _origso->setType(cSoReleased);
+          return;
 	}
   }
   if (!_ignoreSoSignals) 
@@ -608,7 +615,7 @@ void returnAuthorization::sOrigSoChanged()
 	  sFillList();
 
       if (_origso->isValid())
-	  {
+      {
         XSqlQuery sohead;
         sohead.prepare( "SELECT cohead.*,custinfo.*, custtype_code, "
                         "       formatScrap(cohead_commission) AS f_commission, "
