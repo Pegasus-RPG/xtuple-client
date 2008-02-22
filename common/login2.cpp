@@ -91,20 +91,22 @@ login2::login2(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   // signals and slots connections
   connect(_login, SIGNAL(clicked()), this, SLOT(sLogin()));
   connect(_options, SIGNAL(clicked()), this, SLOT(sOptions()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
 
   _splash = 0;
 
-  _captive = false; _evaluation = false; _nonOpenMFGDB = false;
+  _captive = false; _nonOpenMFGDB = false;
+  _evalDatabaseURL = "pgsql://demo.openmfg.com:5434/%1";
 
   _userid = -1;
 
   _password->setEchoMode(QLineEdit::Password);
 
-  QSettings settings; settings.setPath("OpenMFG.com", "OpenMFG",
-  QSettings::UserScope);
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  _databaseURL = settings.readEntry("/OpenMFG/_databaseURL", "pgsql://127.0.0.1:5432/mfg");
   _enhancedAuth = settings.readBoolEntry("/OpenMFG/_enhancedAuthentication", false);
   _requireSSL = settings.readBoolEntry("/OpenMFG/_requireSSL", false);
+  if(settings.readBoolEntry("/OpenMFG/_demoOption", false))
+    _demoOption->setChecked(true);
 }
 
 /*
@@ -161,40 +163,23 @@ int login2::set(ParameterList &pParams, QSplashScreen *pSplash)
   param = pParams.value("evaluation", &valid);
   if (valid)
   {
-    _evaluation = TRUE;
-
+/*
     _serverLit->hide();
     _server->hide();
     _databaseLit->hide();
     _database->hide();
-    _options->hide();
+    _options->setEnabled(false);
+*/
+    _demoOption->setChecked(TRUE);
   }
-  else
-    _evaluation = FALSE;
 
   param = pParams.value("name", &valid);
   if (valid)
-  {
-    if (_evaluation)
-      _nameLit->setText(param.toString() + tr(" Evaluation"));
-    else
-      _nameLit->setText(param.toString());
-  }
+    _nameLit->setText(param.toString());
 
   param = pParams.value("databaseURL", &valid);
   if (valid)
     _databaseURL = param.toString();
-  else if (!_evaluation)
-  {
-    QSettings settings;
-    settings.setPath("OpenMFG.com", "OpenMFG", QSettings::UserScope);
-    _databaseURL = settings.readEntry("/OpenMFG/_databaseURL", "pgsql://127.0.0.1:5432/mfg");
-  }
-  else
-  {
-    _evalDatabaseURL = "pgsql://demo.openmfg.com:5433/%1";
-    _databaseURL = _evalDatabaseURL;
-  }
 
   populateDatabaseInfo();
 
@@ -232,7 +217,7 @@ void login2::sLogin()
   }
 
   QString databaseURL;
-  if (_evaluation)
+  if (_demoOption->isChecked())
     _databaseURL = _evalDatabaseURL.arg(_username->text().stripWhiteSpace());
   databaseURL = _databaseURL;
 
@@ -250,16 +235,24 @@ void login2::sLogin()
   _cPassword = _password->text().stripWhiteSpace();
 
   db.setUserName(_cUsername);
-  if(_enhancedAuth || _evaluation)
+  if(_demoOption->isChecked())
   {
-    QString passwd = QMd5(QString(_cPassword + "OpenMFG" + _cUsername));
+    QString passwd = QMd5(QString(_cPassword + "private" + _cUsername)); 
     db.setPassword(passwd);
   }
   else
-    db.setPassword(_cPassword);
+  {
+    if(_enhancedAuth)
+    {
+      QString passwd = QMd5(QString(_cPassword + "OpenMFG" + _cUsername));
+      db.setPassword(passwd);
+    }
+    else
+      db.setPassword(_cPassword);
 
-  if(_requireSSL)
-    db.setConnectOptions("requiressl=1");
+    if(_requireSSL)
+      db.setConnectOptions("requiressl=1");
+  }
 
   setCursor(QCursor(Qt::waitCursor));
 
@@ -299,6 +292,9 @@ void login2::sLogin()
     _password->setText("");
     return;
   }
+
+  QSettings settings(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
+  settings.writeEntry("/OpenMFG/_demoOption", (bool)_demoOption->isChecked());
 
   if (_splash)
   {

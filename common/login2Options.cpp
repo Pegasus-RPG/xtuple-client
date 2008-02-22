@@ -127,8 +127,7 @@ void login2Options::set(ParameterList &pParams)
 void login2Options::sSave()
 {
   buildDatabaseURL(_databaseURL, "psql", _server->text(), _database->text(), _port->text());
-  QSettings setting;
-  setting.setPath("OpenMFG.com", "OpenMFG", QSettings::UserScope);
+  QSettings setting(QSettings::UserScope, "OpenMFG.com", "OpenMFG");
   setting.writeEntry("/OpenMFG/_databaseURL", _databaseURL);
   setting.writeEntry("/OpenMFG/_enhancedAuthentication", (bool)_enhancedAuth->isChecked());
   setting.writeEntry("/OpenMFG/_requireSSL", (bool)_requireSSL->isChecked());
