@@ -66,6 +66,10 @@ bundle() {
     if ! mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR" ; then
       return 4
     fi
+    mkdir "$BUNDLEDIR"/"${BINARY}"/Contents/Resources/helpXTupleGUIClient || return 5
+    cp "$BASEDIR/share/empty_help.html" \
+       "$BASEDIR/share/XTupleGUIClient.adp" \
+       "$BUNDLEDIR"/"${BINARY}"/Contents/Resources/helpXTupleGUIClient || return 5
   else
     if ! mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR"/"${APPNAME}_Demo.app" ; then
       return 4
