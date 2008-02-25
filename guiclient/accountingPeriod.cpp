@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -65,7 +65,7 @@
 #include "unpostedGLTransactions.h"
 
 accountingPeriod::accountingPeriod(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -200,7 +200,7 @@ void accountingPeriod::sSave()
 	  params.append("period_id", _periodid);
 	  newdlg.set(params);
 
-	  reallyOpen = (newdlg.exec() == QDialog::Accepted);
+	  reallyOpen = (newdlg.exec() == XDialog::Accepted);
 	}
       }
       else if (q.lastError().type() != QSqlError::None)

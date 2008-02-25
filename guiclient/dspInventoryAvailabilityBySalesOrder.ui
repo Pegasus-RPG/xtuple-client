@@ -664,11 +664,7 @@
   <tabstop>_avail</tabstop>
   <tabstop>_autoupdate</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
-  <include location="global" >qworkspace.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

@@ -535,11 +535,7 @@
   <tabstop>_ship</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >parameter.h</include>
-  <include location="global" >QValidator</include>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

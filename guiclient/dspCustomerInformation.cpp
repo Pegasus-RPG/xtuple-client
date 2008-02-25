@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -57,8 +57,8 @@
 
 #include "dspCustomerInformation.h"
 
-#include <QDialog>
-#include <QMainWindow>
+#include "xdialog.h"
+#include "xmainwindow.h"
 #include <QMenu>
 #include <QMessageBox>
 #include <QSqlError>
@@ -979,7 +979,7 @@ void dspCustomerInformation::sEditCreditMemo()
     arOpenItem newdlg(this, "", TRUE);
     newdlg.set(params);
 
-    if (newdlg.exec() != QDialog::Rejected)
+    if (newdlg.exec() != XDialog::Rejected)
       sFillCreditMemoList();
   }
 }
@@ -1029,7 +1029,7 @@ void dspCustomerInformation::sViewCreditMemo()
     arOpenItem newdlg(this, "", TRUE);
     newdlg.set(params);
 
-    if (newdlg.exec() != QDialog::Rejected)
+    if (newdlg.exec() != XDialog::Rejected)
       sFillCreditMemoList();
   }
 }
@@ -1322,7 +1322,8 @@ void dspCustomerInformation::sConvertQuote()
 
 void dspCustomerInformation::doDialog(QWidget * parent, const ParameterList & pParams)
 {
-  QDialog newdlg(parent);
+  XDialog newdlg(parent);
+  newdlg.setObjectName("dspCustomerInformationDialog");
   QVBoxLayout * vbox = new QVBoxLayout(&newdlg);
   dspCustomerInformation * ci = new dspCustomerInformation(&newdlg);
   vbox->addWidget(ci);

@@ -1783,11 +1783,7 @@
   <tabstop>_next</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
-  <include location="global" >qdatetime.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

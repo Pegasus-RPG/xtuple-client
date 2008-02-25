@@ -341,7 +341,7 @@
     <include location="global" impldecl="in implementation">qvalidator.h</include>
     <include location="global" impldecl="in declaration">parameter.h</include>
     <include location="local" impldecl="in implementation">booItemList.h</include>
-    <include location="local" impldecl="in declaration">OpenMFGGUIClient.h</include>
+    
     <include location="local" impldecl="in implementation">assortmentItem.ui.h</include>
 </includes>
 <variables>

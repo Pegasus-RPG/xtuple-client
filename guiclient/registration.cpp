@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -60,10 +60,10 @@
 #include <QMessageBox>
 #include <QUrl>
 
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 
 registration::registration(QWidget* parent, Qt::WindowFlags fl)
-    : QDialog(parent, fl)
+    : XDialog(parent, fl)
 {
   setupUi(this);
 
@@ -126,7 +126,7 @@ void registration::reject()
 {
   if (_metrics->value("Registered") != "Yes")
     _metrics->set("Registered", QString("No"));
-  QDialog::reject();
+  XDialog::reject();
 }
 
 void registration::sNext()
@@ -479,7 +479,7 @@ void registration::sCancel()
       disconnect(_postreq, SIGNAL(done(bool)), this, SLOT(sDone(bool)));
       connect(_postreq, SIGNAL(done(bool)), this, SLOT(reject()));
       _postreq->abort();
-      QDialog::reject();
+      XDialog::reject();
     }
   }
 }

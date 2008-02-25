@@ -299,9 +299,7 @@
   <tabstop>_submit</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >calendarTools.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

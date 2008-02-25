@@ -325,6 +325,6 @@
   </tabstops>
   <includes>
     <include location="global" >parameter.h</include>
-    <include location="local" >OpenMFGGUIClient.h</include>
+    
   </includes>
 </ui>

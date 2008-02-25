@@ -332,7 +332,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                zeroUncountedCountTagsByWarehouse.ui                                                   \
                idleShutdown.ui xdateinputdialog.ui xsltMap.ui
 
-HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwInterface.h             \
+HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface.h             \
                ../common/format.h SaveSizePositionEventFilter.h                                       \
                menuProducts.h menuInventory.h menuSchedule.h menuPurchase.h                           \
                menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
@@ -642,10 +642,11 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                zeroUncountedCountTagsByWarehouse.h                                                    \
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h                                                                     \
+               xmainwindow.h xdialog.h                                                                \
                idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h xsltMap.h
 
 
-SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp rwInterface.cpp      \
+SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInterface.cpp      \
                menuProducts.cpp menuInventory.cpp menuSchedule.cpp menuPurchase.cpp                   \
                menuManufacture.cpp menuCRM.cpp menuSales.cpp menuAccounting.cpp menuSystem.cpp        \
                moduleAP.cpp moduleAR.cpp moduleSO.cpp moduleCP.cpp moduleGL.cpp                       \
@@ -958,9 +959,10 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp                                                                   \
+               xmainwindow.cpp xdialog.cpp                                                            \
                idleShutdown.cpp storedProcErrorLookup.cpp xdateinputdialog.cpp xsltMap.cpp
 
-QT += xml  assistant sql
+QT += xml assistant sql script
 
 RESOURCES += guiclient.qrc sql/querydata.qrc
 

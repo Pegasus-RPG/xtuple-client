@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -72,7 +72,7 @@
 #include "storedProcErrorLookup.h"
 
 enterPoReceipt::enterPoReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -291,7 +291,7 @@ void enterPoReceipt::sPost()
             return;
           }
 
-          if(newdlg.exec() == QDialog::Accepted)
+          if(newdlg.exec() == XDialog::Accepted)
           {
             lotnum = newdlg.lot();
             expdate = newdlg.expiration();
@@ -305,7 +305,7 @@ void enterPoReceipt::sPost()
         }
       }
 
-      if (distributeInventory::SeriesAdjust(result, this, lotnum, expdate) == QDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(result, this, lotnum, expdate) == XDialog::Rejected)
       {
         QMessageBox::information( this, tr("Enter Receipts"), tr("Post Canceled") );
         rollback.exec();
@@ -342,7 +342,7 @@ void enterPoReceipt::sSave()
 {
   // most of the work is done in enterPoitemReceipt
   // don't call this->close() 'cause that deletes the recv records
-  QMainWindow::close();
+  XMainWindow::close();
 }
 
 void enterPoReceipt::sEnter()
@@ -355,7 +355,7 @@ void enterPoReceipt::sEnter()
   enterPoitemReceipt newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -418,7 +418,7 @@ void enterPoReceipt::close()
     else
       return;
   }
-  QMainWindow::close();
+  XMainWindow::close();
 }
 
 void enterPoReceipt::sReceiveAll()

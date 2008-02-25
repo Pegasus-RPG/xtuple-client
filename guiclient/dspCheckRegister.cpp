@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -69,7 +69,7 @@
 #include <xdateinputdialog.h>
 #include "mqlutil.h"
 
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 #include "storedProcErrorLookup.h"
 
 /*
@@ -78,7 +78,7 @@
  *
  */
 dspCheckRegister::dspCheckRegister(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -243,7 +243,7 @@ void dspCheckRegister::sVoidPosted()
   params.append("label", tr("On what date did you void this check?"));
   newdlg.set(params);
   int returnVal = newdlg.exec();
-  if (returnVal == QDialog::Accepted)
+  if (returnVal == XDialog::Accepted)
   {
     QDate voidDate = newdlg.getDate();
     q.prepare("SELECT voidPostedCheck(:check_id, fetchJournalNumber('AP-CK'),"

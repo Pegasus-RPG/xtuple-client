@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -58,13 +58,13 @@
 #ifndef DSPSALESORDERSTATUS_H
 #define DSPSALESORDERSTATUS_H
 
-#include "OpenMFGGUIClient.h"
-#include <QMainWindow>
+#include "guiclient.h"
+#include "xmainwindow.h"
 #include <parameter.h>
 
 #include "ui_dspSalesOrderStatus.h"
 
-class dspSalesOrderStatus : public QMainWindow, public Ui::dspSalesOrderStatus
+class dspSalesOrderStatus : public XMainWindow, public Ui::dspSalesOrderStatus
 {
     Q_OBJECT
 

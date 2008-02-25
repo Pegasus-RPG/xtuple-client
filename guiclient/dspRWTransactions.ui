@@ -430,10 +430,7 @@
   <tabstop>_showExported</tabstop>
   <tabstop>_showUnexported</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >parameter.h</include>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

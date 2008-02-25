@@ -514,12 +514,7 @@
   <tabstop>_layout</tabstop>
   <tabstop>_periods</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
-  <include location="global" >xtreewidget.h</include>
-  <include location="global" >xlistbox.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

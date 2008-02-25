@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -76,7 +76,7 @@ bool importXML::userHasPriv()
 void importXML::setVisible(bool visible)
 {
   if (! visible)
-    QMainWindow::setVisible(false);
+    XMainWindow::setVisible(false);
 
   else if (! userHasPriv())
   {
@@ -103,17 +103,17 @@ void importXML::setVisible(bool visible)
 				 "data. Would you like to do this now?"),
 			      QMessageBox::Yes | QMessageBox::Default,
 			      QMessageBox::No) == QMessageBox::Yes &&
-	     configureIE(this, "", true).exec() == QDialog::Accepted)
-      QMainWindow::setVisible(true);
+	     configureIE(this, "", true).exec() == XDialog::Accepted)
+      XMainWindow::setVisible(true);
     else
       close();
   }
   else
-    QMainWindow::setVisible(true);
+    XMainWindow::setVisible(true);
 }
 
 importXML::importXML(QWidget* parent, Qt::WindowFlags fl)
-    : QMainWindow(parent, fl)
+    : XMainWindow(parent, fl)
 {
   setupUi(this);
 

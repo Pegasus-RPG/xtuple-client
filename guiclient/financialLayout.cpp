@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -83,7 +83,7 @@
  *  true to construct a modal dialog.
  */
 financialLayout::financialLayout(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -762,7 +762,7 @@ void financialLayout::sAddTopLevelGroup()
   
   financialLayoutGroup newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -783,7 +783,7 @@ void financialLayout::sAddGroup()
   
   financialLayoutGroup newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -804,7 +804,7 @@ void financialLayout::sAddAccount()
   
   financialLayoutItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -817,7 +817,7 @@ void financialLayout::sAddSpecial()
  
   financialLayoutSpecial newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -844,7 +844,7 @@ void financialLayout::sEdit()
 
     financialLayoutGroup newdlg(this, "", TRUE);
     newdlg.set(params);
-    ok = (newdlg.exec() != QDialog::Rejected);
+    ok = (newdlg.exec() != XDialog::Rejected);
   }
   else if(_layout->altId() == cFlItem)
   {
@@ -860,7 +860,7 @@ void financialLayout::sEdit()
   
     financialLayoutItem newdlg(this, "", TRUE);
     newdlg.set(params);
-    ok = (newdlg.exec() != QDialog::Rejected);
+    ok = (newdlg.exec() != XDialog::Rejected);
   }
   else if(_layout->altId() == cFlSpec)
   {
@@ -868,7 +868,7 @@ void financialLayout::sEdit()
   
     financialLayoutSpecial newdlg(this, "", TRUE);
     newdlg.set(params);
-    ok = (newdlg.exec() != QDialog::Rejected);
+    ok = (newdlg.exec() != XDialog::Rejected);
   }
 
   if(ok)
@@ -1135,7 +1135,7 @@ void financialLayout::sAddCol()
     params.append("type", "adhoc");
   financialLayoutColumns newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -1159,7 +1159,7 @@ void financialLayout::sEditCol()
     params.append("type", "adhoc");
   financialLayoutColumns newdlg(this, "", TRUE);
   newdlg.set(params);
-  ok = (newdlg.exec() != QDialog::Rejected);
+  ok = (newdlg.exec() != XDialog::Rejected);
   
   if(ok)
     sFillList();
@@ -1196,5 +1196,5 @@ void financialLayout::reject()
     q.exec();
   }
 
-  QDialog::reject();
+  XDialog::reject();
 }

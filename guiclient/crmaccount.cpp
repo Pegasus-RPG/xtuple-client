@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -211,7 +211,7 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  // if _modal then disable any widgets that lead to opening QMainWindows
+  // if _modal then disable any widgets that lead to opening XMainWindows
   if (_modal)
   {
     _customerButton->setEnabled(false);
@@ -777,7 +777,7 @@ void crmaccount::sNewCharacteristic()
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sGetCharacteristics();
 }
 
@@ -790,7 +790,7 @@ void crmaccount::sEditCharacteristic()
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sGetCharacteristics();
 }
 
@@ -1282,7 +1282,7 @@ void crmaccount::sNew()
 
   contact *newdlg = new contact();
   newdlg->set(params);
-  if (newdlg->exec() != QDialog::Rejected)
+  if (newdlg->exec() != XDialog::Rejected)
     sPopulate();
 }
 
@@ -1310,7 +1310,7 @@ void crmaccount::sEdit()
 
   contact *newdlg = new contact();
   newdlg->set(params);
-  if (newdlg->exec() != QDialog::Rejected)
+  if (newdlg->exec() != XDialog::Rejected)
     sPopulate();
 }
 
@@ -1323,7 +1323,7 @@ void crmaccount::sView()
 
   contact *newdlg = new contact();
   newdlg->set(params);
-  if (newdlg->exec() != QDialog::Rejected)
+  if (newdlg->exec() != XDialog::Rejected)
     sPopulate();
 }
 
@@ -1413,7 +1413,7 @@ void crmaccount::sNewTodo()
 
   todoItem newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sPopulateTodo();
 }
 
@@ -1431,7 +1431,7 @@ void crmaccount::sNewIncdt()
 
   incident newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sPopulateTodo();
 }
 
@@ -1457,7 +1457,7 @@ void crmaccount::sEditTodo()
 
   todoItem newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sPopulateTodo();
 }
 
@@ -1495,7 +1495,7 @@ void crmaccount::sEditIncdt()
 
   incident newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sPopulateTodo();
 }
 
@@ -1665,7 +1665,7 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
 
 void crmaccount::doDialog(QWidget *parent, const ParameterList & pParams)
 {
-  QDialog newdlg(parent);
+  XDialog newdlg(parent);
   QVBoxLayout * vbox = new QVBoxLayout(&newdlg);
   crmaccount * ci = new crmaccount(&newdlg);
   vbox->addWidget(ci);
@@ -1740,7 +1740,7 @@ void crmaccount::sOplistEdit()
   opportunity newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sPopulateOplist();
 }
 

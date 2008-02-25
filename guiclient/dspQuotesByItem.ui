@@ -181,10 +181,7 @@
   <tabstop>_close</tabstop>
   <tabstop>_so</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

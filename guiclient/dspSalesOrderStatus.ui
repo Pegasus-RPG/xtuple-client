@@ -446,10 +446,7 @@
   <tabstop>_close</tabstop>
   <tabstop>_orderDate</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

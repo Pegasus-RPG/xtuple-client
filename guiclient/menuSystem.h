@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -57,7 +57,7 @@
 
 //  menuSystem.h
 //  Created 12/11/2000 JSL
-//  Copyright (c) 2000-2007, OpenMFG, LLC
+//  Copyright (c) 2000-2008, OpenMFG, LLC
 
 #ifndef menuSystem_h
 #define menuSystem_h
@@ -67,7 +67,7 @@
 class QMenu;
 class QPixmap;
 class QToolBar;
-class OpenMFGGUIClient;
+class GUIClient;
 class Action;
 
 class menuSystem : public QObject
@@ -86,7 +86,7 @@ class menuSystem : public QObject
   };
 
   public:
-    menuSystem(OpenMFGGUIClient *);
+    menuSystem(GUIClient *);
 
   public slots:
     void sPrepareWindowMenu();
@@ -165,7 +165,7 @@ class menuSystem : public QObject
 // END_RW
 
   private:
-    OpenMFGGUIClient *parent;
+    GUIClient *parent;
 
     QToolBar *toolBar;
 

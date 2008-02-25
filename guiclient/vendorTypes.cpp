@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -64,14 +64,14 @@
 #include <parameter.h>
 #include <openreports.h>
 #include "vendorType.h"
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 /*
  *  Constructs a vendorTypes as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  *
  */
 vendorTypes::vendorTypes(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -162,7 +162,7 @@ void vendorTypes::sNew()
   vendorType newdlg(this, "", TRUE);
   newdlg.set(params);
   
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -175,7 +175,7 @@ void vendorTypes::sEdit()
   vendorType newdlg(this, "", TRUE);
   newdlg.set(params);
   
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 

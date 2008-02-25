@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -84,7 +84,7 @@
 #define TO_RECEIVE_COL	11
 
 returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -907,7 +907,7 @@ void returnAuthorization::sNew()
     returnAuthorizationItem newdlg(this, "", TRUE);
     newdlg.set(params);
   
-    if (newdlg.exec() != QDialog::Rejected)
+    if (newdlg.exec() != XDialog::Rejected)
       populate();
   }
 }
@@ -933,7 +933,7 @@ void returnAuthorization::sEdit()
 		returnAuthorizationItem newdlg(this, "", TRUE);
 		newdlg.set(params);
 	  
-		if (newdlg.exec() != QDialog::Rejected)
+		if (newdlg.exec() != XDialog::Rejected)
 		  fill = TRUE;
 	  }
 	  if (fill)
@@ -1279,7 +1279,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
 	}
   }
 
-  QMainWindow::closeEvent(pEvent);
+  XMainWindow::closeEvent(pEvent);
 }
 
 void returnAuthorization::sTaxDetail()
@@ -1317,7 +1317,7 @@ void returnAuthorization::sTaxDetail()
     params.append("mode", "edit");
 
   taxBreakdown newdlg(this, "", TRUE);
-  if (newdlg.set(params) == NoError && newdlg.exec() == QDialog::Accepted)
+  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
     populate();
 }
 
@@ -1591,7 +1591,7 @@ void returnAuthorization::sEnterReceipt()
   enterPoitemReceipt newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 

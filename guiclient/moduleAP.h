@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -57,7 +57,7 @@
 
 //  moduleAP.h
 //  Created 08/22/2000
-//  Copyright (c), 2000-2007, OpenMFG, LLC
+//  Copyright (c), 2000-2008, OpenMFG, LLC
 
 #ifndef moduleAP_h
 #define moduleAP_h
@@ -67,14 +67,14 @@
 class QToolBar;
 class QMenu;
 
-class OpenMFGGUIClient;
+class GUIClient;
 
 class moduleAP : public QObject
 {
   Q_OBJECT
 
   public:
-    moduleAP(OpenMFGGUIClient *);
+    moduleAP(GUIClient *);
 
   public slots:
     void sEnterPurchaseOrder();
@@ -122,7 +122,7 @@ class moduleAP : public QObject
     void sExpenseCategories();
 
   private:
-    OpenMFGGUIClient *parent;
+    GUIClient *parent;
 
     QToolBar *toolBar;
     QMenu *mainMenu;

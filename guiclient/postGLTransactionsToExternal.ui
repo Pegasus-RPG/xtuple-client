@@ -257,9 +257,7 @@
   <tabstop>_post</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

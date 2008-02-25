@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -107,7 +107,7 @@
 #define cCanceled     0x08
 
 salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -2657,7 +2657,7 @@ void salesOrder::closeEvent(QCloseEvent *pEvent)
   else if(cNewQuote == _mode && _saved)
     omfgThis->sQuotesUpdated(-1);
 
-  QMainWindow::closeEvent(pEvent);
+  XMainWindow::closeEvent(pEvent);
 }
 
 void salesOrder::dragEnterEvent(QDragEnterEvent *pEvent)
@@ -2786,7 +2786,7 @@ void salesOrder::sTaxDetail()
   params.append("mode", "view");
 
   taxBreakdown newdlg(this, "", TRUE);
-  if (newdlg.set(params) == NoError && newdlg.exec() == QDialog::Accepted)
+  if (newdlg.set(params) == NoError && newdlg.exec() == XDialog::Accepted)
   {
     populate();
   }
@@ -3060,7 +3060,7 @@ void salesOrder::sNewCreditCard()
   creditCard newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillCcardList();
 
 }
@@ -3076,7 +3076,7 @@ void salesOrder::sEditCreditCard()
   creditCard newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillCcardList();
 
 }
@@ -3312,7 +3312,7 @@ void salesOrder::sReturnStock()
                            __FILE__, __LINE__);
         return;
       }
-      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
       {
         rollback.exec();
         QMessageBox::information( this, tr("Return Stock"), tr("Transaction Canceled") );
@@ -3350,7 +3350,7 @@ void salesOrder::sIssueStock()
 
       issueLineToShipping newdlg(this, "", TRUE);
       newdlg.set(params);
-      if (newdlg.exec() != QDialog::Rejected)
+      if (newdlg.exec() != XDialog::Rejected)
         update = TRUE;
     }
   }
@@ -3452,7 +3452,7 @@ void salesOrder::sIssueLineBalance()
           return;
         }
         
-        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == QDialog::Rejected)
+        if (distributeInventory::SeriesAdjust(q.value("result").toInt(), this) == XDialog::Rejected)
         {
           rollback.exec();
           QMessageBox::information( this, tr("Issue to Shipping"), tr("Transaction Canceled") );

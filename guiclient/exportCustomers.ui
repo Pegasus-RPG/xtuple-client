@@ -138,9 +138,7 @@
   <tabstop>_exp</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

@@ -1069,10 +1069,7 @@
   <tabstop>_customUseBudget</tabstop>
   <tabstop>_customUseDiff</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >parameter.h</include>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

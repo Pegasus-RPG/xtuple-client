@@ -588,10 +588,7 @@
   <tabstop>_close</tabstop>
   <tabstop>_comments</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >parameter.h</include>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

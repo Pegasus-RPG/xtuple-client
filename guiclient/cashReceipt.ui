@@ -1049,12 +1049,7 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >parameter.h</include>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >q3process.h</include>
-  <include location="global" >qdom.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

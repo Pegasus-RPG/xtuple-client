@@ -367,10 +367,7 @@
   <tabstop>_closeWo</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

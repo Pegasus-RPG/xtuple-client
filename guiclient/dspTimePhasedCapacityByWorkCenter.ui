@@ -307,9 +307,7 @@
   <tabstop>_print</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="global" >calendarTools.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -57,7 +57,7 @@
 
 //  main.cpp
 //  Created 12/07/1999 JSL
-//  Copyright (c) 1999-2007, OpenMFG, LLC
+//  Copyright (c) 1999-2008, OpenMFG, LLC
 
 #include <stdlib.h>
 
@@ -73,9 +73,8 @@
 
 #include <QMessageBox>
 #include <QSplashScreen>
-#include <qimage.h>
-#include <qapplication.h>
-//Added by qt3to4:
+#include <QImage>
+#include <QApplication>
 #include <QPixmap>
 
 #ifdef Q_WS_WIN
@@ -89,7 +88,7 @@
 
 #include "login2.h"
 
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 #include "version.h"
 #include "metrics.h"
 #include "metricsenc.h"
@@ -398,7 +397,7 @@ int main(int argc, char *argv[])
     }
   }
 
-  omfgThis = new OpenMFGGUIClient(databaseURL, username);
+  omfgThis = new GUIClient(databaseURL, username);
   omfgThis->_key = key;
 
 // qDebug("Encryption Key: %s", key.toAscii().data() );
@@ -416,7 +415,7 @@ int main(int argc, char *argv[])
     omfgThis->show();
     app.setMainWidget(omfgThis);
   }
-  // keep this synchronized with OpenMFGGUIClient and user.ui.h
+  // keep this synchronized with GUIClient and user.ui.h
   else if (omfgThis->_singleWindow == "woTimeClock")
   {
     woTimeClock* newdlg = new woTimeClock();

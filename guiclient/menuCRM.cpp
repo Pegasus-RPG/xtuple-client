@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -57,14 +57,14 @@
 
 //  menuCRM.cpp
 //  Created 09/05/2006 GJM
-//  Copyright (c) 2006-2007, OpenMFG, LLC
+//  Copyright (c) 2006-2008, OpenMFG, LLC
 
 #include <QAction>
 #include <QMenuBar>
 #include <QMenu>
 #include <QToolBar>
 
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 
 #include "project.h"
 #include "projects.h"
@@ -100,7 +100,7 @@
 
 #include "menuCRM.h"
 
-menuCRM::menuCRM(OpenMFGGUIClient *Pparent) :
+menuCRM::menuCRM(GUIClient *Pparent) :
   QObject(Pparent, "crmModule")
 {
   parent = Pparent;

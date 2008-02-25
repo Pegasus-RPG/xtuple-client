@@ -290,7 +290,7 @@
     <tabstop>_warehouse</tabstop>
   </tabstops>
   <includes>
-    <include location="local" >OpenMFGGUIClient.h</include>
+    
   </includes>
   <connections>
     <connection>

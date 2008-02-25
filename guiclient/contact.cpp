@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -74,7 +74,7 @@
 #include "warehouse.h"
 
 contact::contact(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -401,7 +401,7 @@ void contact::sNewCharass()
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -414,7 +414,7 @@ void contact::sEditCharass()
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -823,7 +823,7 @@ void contact::sEditShipto()
   params.append("shipto_id",	_uses->id());
   shipTo newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() == QDialog::Accepted)
+  if (newdlg.exec() == XDialog::Accepted)
     sFillList();
 }
 
@@ -844,7 +844,7 @@ void contact::sEditVendorAddress()
   params.append("vendaddr_id",	_uses->id());
   vendorAddress newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() == QDialog::Accepted)
+  if (newdlg.exec() == XDialog::Accepted)
     sFillList();
 }
 
@@ -885,7 +885,7 @@ void contact::sEditWarehouse()
   params.append("warehous_id",	_uses->id());
   warehouse newdlg(this, "", true);
   newdlg.set(params);
-  if (newdlg.exec() == QDialog::Accepted)
+  if (newdlg.exec() == XDialog::Accepted)
     sFillList();
 }
 

@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -72,7 +72,7 @@
 #define cNoIncludeLotSerial 0x02
 
 distributeInventory::distributeInventory(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 
@@ -218,7 +218,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           newdlg.set(params);
           itemlocSeries = newdlg.exec();
           if (itemlocSeries == -1)
-            return QDialog::Rejected;
+            return XDialog::Rejected;
         }
 
         if (itemloc.value("itemsite_loccntrl").toBool())
@@ -236,8 +236,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
 
             distributeInventory newdlg(pParent, "", TRUE);
             newdlg.set(params);
-            if (newdlg.exec() == QDialog::Rejected)
-              return QDialog::Rejected;
+            if (newdlg.exec() == XDialog::Rejected)
+              return XDialog::Rejected;
           }
         }
         else
@@ -263,8 +263,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
 
         distributeInventory newdlg(pParent, "", TRUE);
         newdlg.set(params);
-        if (newdlg.exec() == QDialog::Rejected)
-          return QDialog::Rejected;
+        if (newdlg.exec() == XDialog::Rejected)
+          return XDialog::Rejected;
       }
     }
     
@@ -279,11 +279,11 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     else if (post.lastError().type() != QSqlError::None)
     {
       systemError(0, post.lastError().databaseText(), __FILE__, __LINE__);
-      return QDialog::Rejected;
+      return XDialog::Rejected;
     }
   }
   
-  return QDialog::Accepted;
+  return XDialog::Accepted;
 }
 
 enum SetResponse distributeInventory::set(const ParameterList &pParams)
@@ -365,7 +365,7 @@ void distributeInventory::sSelectLocation()
   distributeToLocation newdlg(this, "", TRUE);
   newdlg.set(params);
 
-  if (newdlg.exec() == QDialog::Accepted)
+  if (newdlg.exec() == XDialog::Accepted)
     sFillList();
 }
 

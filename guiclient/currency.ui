@@ -263,10 +263,7 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="local" >parameter.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections/>
 </ui>

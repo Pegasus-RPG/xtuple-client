@@ -317,9 +317,7 @@
   <tabstop>_close</tabstop>
   <tabstop>_print</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

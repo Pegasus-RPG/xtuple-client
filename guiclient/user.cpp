@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -70,7 +70,7 @@
  *  true to construct a modal dialog.
  */
 user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl)
 {
     setupUi(this);
 
@@ -307,7 +307,7 @@ void user::sSave()
   q.bindValue(":usr_locale_id", _locale->id());
   q.bindValue(":usr_agent", QVariant(_agent->isChecked(), 0));
   q.bindValue(":usr_active", QVariant(_active->isChecked(), 0));
-  // keep synchronized with the select below, OpenMFGGUIClient, and main
+  // keep synchronized with the select below, GUIClient, and main
   q.bindValue(":usr_window", _woTimeClockOnly->isChecked() ? "woTimeClock" : "");
   if (_dept->id() != -1)
     q.bindValue(":usr_dept_id", _dept->id());
@@ -487,7 +487,7 @@ void user::populate()
     _shift->setId(q.value("usr_shift_id").toInt());
     _createUsers->setChecked(q.value("createusers").toBool());
     _createUsers->setEnabled(q.value("enablecreateusers").toBool());
-    // keep synchronized with the insert/update above, OpenMFGGUIClient, and main
+    // keep synchronized with the insert/update above, GUIClient, and main
     _woTimeClockOnly->setChecked(q.value("usr_window").toString()==("woTimeClock"));
 
     _passwd->setText("        ");

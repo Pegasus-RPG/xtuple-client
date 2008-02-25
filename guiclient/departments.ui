@@ -131,7 +131,7 @@
     </customwidget>
   </customwidgets>
   <includes>
-    <include location="local" >OpenMFGGUIClient.h</include>
+    
     <include location="global" >parameter.h</include>
   </includes>
 </ui>

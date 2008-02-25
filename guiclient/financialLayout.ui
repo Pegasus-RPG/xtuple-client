@@ -963,13 +963,7 @@
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
-  <include location="global" >parameter.h</include>
-  <include location="global" >q3listview.h</include>
-  <include location="global" >q3ptrstack.h</include>
-  <include location="global" >xtreewidget.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

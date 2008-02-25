@@ -279,7 +279,7 @@
     <tabstop>_newCurrency</tabstop>
   </tabstops>
   <includes>
-    <include location="local" >OpenMFGGUIClient.h</include>
+    
     <include location="local" >parameter.h</include>
   </includes>
 </ui>

@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -55,12 +55,12 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  OpenMFGGUIClient.h
+//  guiclient.h
 //  Created 03/22/2003 JSL
-//  Copyright (c) 2003-2007, OpenMFG, LLC
+//  Copyright (c) 2003-2008, OpenMFG, LLC
 //
-#ifndef OpenMFGGUIClient_h
-#define OpenMFGGUIClient_h
+#ifndef GUICLIENT_H
+#define GUICLIENT_H
 
 #include <QDateTime>
 #include <QMainWindow>
@@ -213,12 +213,12 @@ class ActionSet : public Q3ValueList<Action *>
 {
 };
 
-class OpenMFGGUIClient : public QMainWindow
+class GUIClient : public QMainWindow
 {
   Q_OBJECT
   
   public:
-    OpenMFGGUIClient(const QString &, const QString &);
+    GUIClient(const QString &, const QString &);
 
     void setCaption();
     void initMenuBar();
@@ -436,7 +436,7 @@ class OpenMFGGUIClient : public QMainWindow
     QFont *_systemFont;
     QFont *_fixedFont;
 };
-extern OpenMFGGUIClient *omfgThis;
+extern GUIClient *omfgThis;
 
 #endif
 

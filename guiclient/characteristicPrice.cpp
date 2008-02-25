@@ -69,7 +69,7 @@
  *  true to construct a modal dialog.
  */
 characteristicPrice::characteristicPrice(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : QDialog(parent, name, modal, fl)
+    : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
 

@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -77,7 +77,7 @@
 #define cClose  0x02
 
 purchaseOrder::purchaseOrder(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -274,7 +274,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
         itemSourceList newdlg(omfgThis, "", TRUE);
         newdlg.set(itemSourceParams);
         int itemsrcid = newdlg.exec();
-        if (itemsrcid == QDialog::Rejected)
+        if (itemsrcid == XDialog::Rejected)
       	{
           close();
           return UndefinedError;
@@ -357,7 +357,7 @@ enum SetResponse purchaseOrder::set(const ParameterList &pParams)
 
           purchaseOrderItem poItem(this, "", TRUE);
           poItem.set(newItemParams);
-          if (poItem.exec() != QDialog::Rejected)
+          if (poItem.exec() != XDialog::Rejected)
           {
             if(_mode == cEdit)
             {
@@ -745,7 +745,7 @@ void purchaseOrder::sNew()
 
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -761,7 +761,7 @@ void purchaseOrder::sEdit()
 
   purchaseOrderItem newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() != QDialog::Rejected)
+  if (newdlg.exec() != XDialog::Rejected)
     sFillList();
 }
 
@@ -784,7 +784,7 @@ void purchaseOrder::sVendaddrList()
   newdlg.set(params);
 
   int vendaddrid;
-  if ((vendaddrid = newdlg.exec()) != QDialog::Rejected)
+  if ((vendaddrid = newdlg.exec()) != XDialog::Rejected)
   {
     if (vendaddrid != -1)
     {
@@ -1100,7 +1100,7 @@ void purchaseOrder::closeEvent(QCloseEvent *pEvent)
       sQESave();
   }
 
-  QMainWindow::closeEvent(pEvent);
+  XMainWindow::closeEvent(pEvent);
 }
 
 bool purchaseOrder::sQESave()

@@ -58,13 +58,13 @@
 #ifndef CHARACTERISTICPRICE_H
 #define CHARACTERISTICPRICE_H
 
-#include "OpenMFGGUIClient.h"
-#include <QDialog>
+#include "guiclient.h"
+#include "xdialog.h"
 #include <parameter.h>
 
 #include "ui_characteristicPrice.h"
 
-class characteristicPrice : public QDialog, public Ui::characteristicPrice
+class characteristicPrice : public XDialog, public Ui::characteristicPrice
 {
     Q_OBJECT
 

@@ -238,9 +238,7 @@
    <pixmap></pixmap>
   </customwidget>
  </customwidgets>
- <includes>
-  <include location="local" >OpenMFGGUIClient.h</include>
- </includes>
+ <includes/>
  <resources/>
  <connections>
   <connection>

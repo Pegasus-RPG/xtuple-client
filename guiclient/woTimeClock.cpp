@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -74,7 +74,7 @@
 #define WOID ((_wooperList->currentItem() == 0) ? _wo->id() : _wooperList->altId())
 
 woTimeClock::woTimeClock(QWidget* parent, const char* name, Qt::WFlags fl)
-    : QMainWindow(parent, name, fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
@@ -151,7 +151,7 @@ bool woTimeClock::close(bool alsoDelete)
       return false;
   }
   
-  return QMainWindow::close(alsoDelete);
+  return XMainWindow::close(alsoDelete);
 }
 
 void woTimeClock::sClockIn()
@@ -221,13 +221,13 @@ void woTimeClock::sClockOut()
 		      .arg(_wo->woNumber())
 		      .arg(QDateTime::currentDateTime().toString()));
 
-  int dlgResult = QDialog::Accepted;
+  int dlgResult = XDialog::Accepted;
   if (_metrics->value("WOTCPostStyle") == "Operations")
     dlgResult = callPostOperations(wotc_id);
   else if (_metrics->value("WOTCPostStyle") == "Production")
     dlgResult = callPostProduction();
 
-  if (dlgResult == QDialog::Accepted)
+  if (dlgResult == XDialog::Accepted)
     sScrap();
   else // cancel the clockout
   {
@@ -265,7 +265,7 @@ int woTimeClock::callPostProduction()
   postProduction newdlg(this, "", TRUE);
   newdlg.set(params);
   returnCode = newdlg.exec();
-  if (returnCode == QDialog::Accepted)
+  if (returnCode == XDialog::Accepted)
     _lastEvent->setText(tr("User %1 posted production at %2\n")
 			.arg(_user->username())
 			.arg(QDateTime::currentDateTime().toString()));
@@ -290,7 +290,7 @@ int woTimeClock::callPostOperations(int wotc_id)
   postOperations newdlg(this, "", TRUE);
   newdlg.set(params);
   returnCode = newdlg.exec();
-  if (returnCode == QDialog::Accepted)
+  if (returnCode == XDialog::Accepted)
     _lastEvent->setText(tr("User %1 posted operation at %2\n")
 			.arg(_user->username())
 			.arg(QDateTime::currentDateTime().toString()));
@@ -331,7 +331,7 @@ void woTimeClock::sScrap()
 
   scrapWoMaterialFromWIP newdlg(this, "", TRUE);
   newdlg.set(params);
-  if (newdlg.exec() == QDialog::Accepted)
+  if (newdlg.exec() == XDialog::Accepted)
     _lastEvent->setText(tr("User %1 entered scrap at %2\n")
 			.arg(_user->username())
 			.arg(QDateTime::currentDateTime().toString()));

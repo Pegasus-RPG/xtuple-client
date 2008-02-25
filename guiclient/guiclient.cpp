@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -55,9 +55,9 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  OpenMFGGUIClient.cpp
+//  guiclient.cpp
 //  Created 12/07/1999 JSL
-//  Copyright (c) 1999-2007, OpenMFG, LLC
+//  Copyright (c) 1999-2008, OpenMFG, LLC
 
 #include <QTimer>
 #include <QAction>
@@ -93,7 +93,7 @@
 #include <dbtools.h>
 #include <quuencode.h>
 
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 #include "version.h"
 
 #include "systemMessage.h"
@@ -302,8 +302,8 @@ class OpenMFGCRMAcctInfoAction : public CRMAcctInfoAction
     }
 };
 
-OpenMFGGUIClient *omfgThis;
-OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &pUsername)
+GUIClient *omfgThis;
+GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   _menuBar = 0;
   _activeWindow = 0;
@@ -451,7 +451,7 @@ OpenMFGGUIClient::OpenMFGGUIClient(const QString &pDatabaseURL, const QString &p
   connect(qApp, SIGNAL(focusChanged(QWidget*, QWidget*)), this, SLOT(sFocusChanged(QWidget*,QWidget*)));
 }
 
-bool OpenMFGGUIClient::singleCurrency()
+bool GUIClient::singleCurrency()
 {
     bool retValue = true;
 
@@ -464,7 +464,7 @@ bool OpenMFGGUIClient::singleCurrency()
     return retValue;
 }
 
-void OpenMFGGUIClient::setCaption()
+void GUIClient::setCaption()
 {
   QString name;
 
@@ -506,7 +506,7 @@ void OpenMFGGUIClient::setCaption()
     QMainWindow::setCaption(_Name);
 }
 
-void OpenMFGGUIClient::initMenuBar()
+void GUIClient::initMenuBar()
 {
   qApp->setOverrideCursor(Qt::WaitCursor);
   menuBar()->clear();
@@ -694,13 +694,13 @@ void OpenMFGGUIClient::initMenuBar()
   qApp->restoreOverrideCursor();
 }
 
-void OpenMFGGUIClient::saveToolbarPositions()
+void GUIClient::saveToolbarPositions()
 {
   // QSettings config("OpenMFG", "OpenMFG");
   // config.setValue("MainWindowState", saveState(1));
 }
 
-void OpenMFGGUIClient::closeEvent(QCloseEvent *event)
+void GUIClient::closeEvent(QCloseEvent *event)
 {
   saveToolbarPositions();
 
@@ -710,12 +710,12 @@ void OpenMFGGUIClient::closeEvent(QCloseEvent *event)
   event->accept();
 }
 
-void OpenMFGGUIClient::sReportError(const QString &pError)
+void GUIClient::sReportError(const QString &pError)
 {
   qDebug(pError);
 }
 
-void OpenMFGGUIClient::sTick()
+void GUIClient::sTick()
 {
 //  Check the database
   XSqlQuery tickle;
@@ -816,203 +816,203 @@ void OpenMFGGUIClient::sTick()
 }
 
 //  Global notification slots
-void OpenMFGGUIClient::sItemsUpdated(int intPItemid, bool boolPLocalUpdate)
+void GUIClient::sItemsUpdated(int intPItemid, bool boolPLocalUpdate)
 {
   emit itemsUpdated(intPItemid, boolPLocalUpdate);
 }
 
-void OpenMFGGUIClient::sItemsitesUpdated()
+void GUIClient::sItemsitesUpdated()
 {
   emit itemsitesUpdated();
 }
 
-void OpenMFGGUIClient::sWarehousesUpdated()
+void GUIClient::sWarehousesUpdated()
 {
   emit warehousesUpdated();
 }
 
-void OpenMFGGUIClient::sCustomersUpdated(int pCustid, bool pLocal)
+void GUIClient::sCustomersUpdated(int pCustid, bool pLocal)
 {
   emit customersUpdated(pCustid, pLocal);
 }
 
-void OpenMFGGUIClient::sGlSeriesUpdated()
+void GUIClient::sGlSeriesUpdated()
 {
   emit glSeriesUpdated();
 }
 
-void OpenMFGGUIClient::sVendorsUpdated()
+void GUIClient::sVendorsUpdated()
 {
   emit vendorsUpdated();
 }
 
-void OpenMFGGUIClient::sProspectsUpdated()
+void GUIClient::sProspectsUpdated()
 {
   emit prospectsUpdated();
 }
 
-void OpenMFGGUIClient::sReturnAuthorizationsUpdated()
+void GUIClient::sReturnAuthorizationsUpdated()
 {
   emit returnAuthorizationsUpdated();
 }
 
-void OpenMFGGUIClient::sStandardPeriodsUpdated()
+void GUIClient::sStandardPeriodsUpdated()
 {
   emit standardPeriodsUpdated();
 }
 
-void OpenMFGGUIClient::sSalesOrdersUpdated(int pSoheadid)
+void GUIClient::sSalesOrdersUpdated(int pSoheadid)
 {
   emit salesOrdersUpdated(pSoheadid, TRUE);
 }
 
-void OpenMFGGUIClient::sCreditMemosUpdated()
+void GUIClient::sCreditMemosUpdated()
 {
   emit creditMemosUpdated();
 }
 
-void OpenMFGGUIClient::sQuotesUpdated(int pQuheadid)
+void GUIClient::sQuotesUpdated(int pQuheadid)
 {
   emit quotesUpdated(pQuheadid, TRUE);
 }
 
-void OpenMFGGUIClient::sWorkOrderMaterialsUpdated(int pWoid, int pWomatlid, bool pLocalUpdate)
+void GUIClient::sWorkOrderMaterialsUpdated(int pWoid, int pWomatlid, bool pLocalUpdate)
 {
   emit workOrderMaterialsUpdated(pWoid, pWomatlid, pLocalUpdate);
 }
 
-void OpenMFGGUIClient::sWorkOrderOperationsUpdated(int pWoid, int pWooperid, bool pLocalUpdate)
+void GUIClient::sWorkOrderOperationsUpdated(int pWoid, int pWooperid, bool pLocalUpdate)
 {
   emit workOrderOperationsUpdated(pWoid, pWooperid, pLocalUpdate);
 }
 
-void OpenMFGGUIClient::sWorkOrdersUpdated(int pWoid, bool pLocalUpdate)
+void GUIClient::sWorkOrdersUpdated(int pWoid, bool pLocalUpdate)
 {
   emit workOrdersUpdated(pWoid, pLocalUpdate);
 }
 
-void OpenMFGGUIClient::sPurchaseOrdersUpdated(int pPoheadid, bool pLocalUpdate)
+void GUIClient::sPurchaseOrdersUpdated(int pPoheadid, bool pLocalUpdate)
 {
   emit purchaseOrdersUpdated(pPoheadid, pLocalUpdate);
 }
 
-void OpenMFGGUIClient::sPurchaseOrderReceiptsUpdated()
+void GUIClient::sPurchaseOrderReceiptsUpdated()
 {
   emit purchaseOrderReceiptsUpdated();
 }
 
-void OpenMFGGUIClient::sPurchaseRequestsUpdated()
+void GUIClient::sPurchaseRequestsUpdated()
 {
   emit purchaseRequestsUpdated();
 }
 
-void OpenMFGGUIClient::sVouchersUpdated()
+void GUIClient::sVouchersUpdated()
 {
   emit vouchersUpdated();
 }
 
-void OpenMFGGUIClient::sBOMsUpdated(int intPItemid, bool boolPLocalUpdate)
+void GUIClient::sBOMsUpdated(int intPItemid, bool boolPLocalUpdate)
 {
   emit bomsUpdated(intPItemid, boolPLocalUpdate);
 }
 
-void OpenMFGGUIClient::sBBOMsUpdated(int intPItemid, bool boolPLocalUpdate)
+void GUIClient::sBBOMsUpdated(int intPItemid, bool boolPLocalUpdate)
 {
   emit bbomsUpdated(intPItemid, boolPLocalUpdate);
 }
 
-void OpenMFGGUIClient::sBOOsUpdated(int intPItemid, bool boolPLocalUpdate)
+void GUIClient::sBOOsUpdated(int intPItemid, bool boolPLocalUpdate)
 {
   emit boosUpdated(intPItemid, boolPLocalUpdate);
 }
 
-void OpenMFGGUIClient::sBudgetsUpdated(int intPItemid, bool boolPLocalUpdate)
+void GUIClient::sBudgetsUpdated(int intPItemid, bool boolPLocalUpdate)
 {
   emit budgetsUpdated(intPItemid, boolPLocalUpdate);
 }
 
-void OpenMFGGUIClient::sAssortmentsUpdated(int pItemid, bool pLocalUpdate)
+void GUIClient::sAssortmentsUpdated(int pItemid, bool pLocalUpdate)
 {
   emit assortmentsUpdated(pItemid, pLocalUpdate);
 }
 
-void OpenMFGGUIClient::sWorkCentersUpdated()
+void GUIClient::sWorkCentersUpdated()
 {
   emit workCentersUpdated();
 }
 
-void OpenMFGGUIClient::sBillingSelectionUpdated(int pCoheadid, int pCoitemid)
+void GUIClient::sBillingSelectionUpdated(int pCoheadid, int pCoitemid)
 {
   emit billingSelectionUpdated(pCoheadid, pCoitemid);
 }
 
-void OpenMFGGUIClient::sInvoicesUpdated(int pInvcheadid, bool pLocal)
+void GUIClient::sInvoicesUpdated(int pInvcheadid, bool pLocal)
 {
   emit invoicesUpdated(pInvcheadid, pLocal);
 }
 
-void OpenMFGGUIClient::sItemGroupsUpdated(int pItemgrpid, bool pLocal)
+void GUIClient::sItemGroupsUpdated(int pItemgrpid, bool pLocal)
 {
   emit itemGroupsUpdated(pItemgrpid, pLocal);
 }
 
-void OpenMFGGUIClient::sCashReceiptsUpdated(int pCashrcptid, bool pLocal)
+void GUIClient::sCashReceiptsUpdated(int pCashrcptid, bool pLocal)
 {
   emit cashReceiptsUpdated(pCashrcptid, pLocal);
 }
 
-void OpenMFGGUIClient::sBankAdjustmentsUpdated(int pBankadjid, bool pLocal)
+void GUIClient::sBankAdjustmentsUpdated(int pBankadjid, bool pLocal)
 {
   emit bankAdjustmentsUpdated(pBankadjid, pLocal);
 }
 
-void OpenMFGGUIClient::sQOHChanged(int pItemsiteid, bool pLocal)
+void GUIClient::sQOHChanged(int pItemsiteid, bool pLocal)
 {
   emit qohChanged(pItemsiteid, pLocal);
 }
 
-void OpenMFGGUIClient::sReportsChanged(int pReportid, bool pLocal)
+void GUIClient::sReportsChanged(int pReportid, bool pLocal)
 {
   emit reportsChanged(pReportid, pLocal);
 }
 
-void OpenMFGGUIClient::sChecksUpdated(int pBankaccntid, int pCheckid, bool pLocal)
+void GUIClient::sChecksUpdated(int pBankaccntid, int pCheckid, bool pLocal)
 {
   emit checksUpdated(pBankaccntid, pCheckid, pLocal);
   emit paymentsUpdated(pBankaccntid, -1, pLocal);
 }
 
-void OpenMFGGUIClient::sPaymentsUpdated(int pBankaccntid, int pApselectid, bool pLocal)
+void GUIClient::sPaymentsUpdated(int pBankaccntid, int pApselectid, bool pLocal)
 {
   emit paymentsUpdated(pBankaccntid, pApselectid, pLocal);
 }
 
-void OpenMFGGUIClient::sConfigureGLUpdated()
+void GUIClient::sConfigureGLUpdated()
 {
   emit configureGLUpdated();
 }
 
-void OpenMFGGUIClient::sProjectsUpdated(int prjid)
+void GUIClient::sProjectsUpdated(int prjid)
 {
   emit projectsUpdated(prjid);
 }
 
-void OpenMFGGUIClient::sCrmAccountsUpdated(int crmacctid)
+void GUIClient::sCrmAccountsUpdated(int crmacctid)
 {
   emit crmAccountsUpdated(crmacctid);
 }
 
-void OpenMFGGUIClient::sTaxAuthsUpdated(int taxauthid)
+void GUIClient::sTaxAuthsUpdated(int taxauthid)
 {
   emit taxAuthsUpdated(taxauthid);
 }
 
-void OpenMFGGUIClient::sTransferOrdersUpdated(int id)
+void GUIClient::sTransferOrdersUpdated(int id)
 {
   emit transferOrdersUpdated(id);
 }
 
-void OpenMFGGUIClient::sIdleTimeout()
+void GUIClient::sIdleTimeout()
 {
  // so we don't accidentally get called again waiting
   _timeoutHandler->reset();
@@ -1023,7 +1023,7 @@ void OpenMFGGUIClient::sIdleTimeout()
   idleShutdown newdlg(this, "", TRUE);
   newdlg.set(params);
   
-  if (newdlg.exec() == QDialog::Accepted)
+  if (newdlg.exec() == XDialog::Accepted)
     qApp->quit();
 }
 
@@ -1071,7 +1071,7 @@ void audioReject()
 }
 
 
-void OpenMFGGUIClient::populateCustomMenu(QMenu * menu, const QString & module)
+void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
 {
   QMenu *customMenu = 0;
   XSqlQuery qry;
@@ -1099,7 +1099,7 @@ void OpenMFGGUIClient::populateCustomMenu(QMenu * menu, const QString & module)
   }
 }
 
-void OpenMFGGUIClient::sCustomCommand()
+void GUIClient::sCustomCommand()
 {
   const QObject * obj = sender();
   QMap<const QObject*,int>::const_iterator it;
@@ -1128,7 +1128,7 @@ void OpenMFGGUIClient::sCustomCommand()
   }
 }
 
-void OpenMFGGUIClient::launchBrowser(QWidget * w, const QString & url)
+void GUIClient::launchBrowser(QWidget * w, const QString & url)
 {
 #if defined(Q_OS_WIN32)
   // Windows - let the OS do the work
@@ -1176,7 +1176,7 @@ void OpenMFGGUIClient::launchBrowser(QWidget * w, const QString & url)
 #endif
 }
 
-QWidgetList OpenMFGGUIClient::windowList()
+QWidgetList GUIClient::windowList()
 {
   if(_showTopLevel)
     return _windowList;
@@ -1184,7 +1184,7 @@ QWidgetList OpenMFGGUIClient::windowList()
     return _workspace->windowList();
 }
 
-void OpenMFGGUIClient::windowDestroyed(QObject * o)
+void GUIClient::windowDestroyed(QObject * o)
 {
   QWidget * w = qobject_cast<QWidget *>(o);
   if(w)
@@ -1215,11 +1215,21 @@ bool SaveSizePositionEventFilter::eventFilter(QObject *obj, QEvent *event)
   return QObject::eventFilter(obj, event);
 }
 
-void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
+void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 {
   w->setWindowModality(m);
 
   connect(w, SIGNAL(destroyed(QObject*)), this, SLOT(windowDestroyed(QObject*)));
+
+  if(w->inherits("XMainWindow"))
+  {
+    // adding to the window list should happen in xmainwindo class
+    // but requires some changes for either public access or friend access.
+    if(_showTopLevel)
+      _windowList.append(w);
+    w->show();
+    return;
+  }
 
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
   if(!_showTopLevel)
@@ -1261,7 +1271,7 @@ void OpenMFGGUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
   w->installEventFilter(__saveSizePositionEventFilter);
 }
 
-QMenuBar *OpenMFGGUIClient::menuBar()
+QMenuBar *GUIClient::menuBar()
 {
 #ifdef Q_WS_MACX
   if (_menuBar == 0)
@@ -1273,7 +1283,7 @@ QMenuBar *OpenMFGGUIClient::menuBar()
 #endif
 }
 
-void OpenMFGGUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
+void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
 {
   QWidget * thisActive = workspace()->activeWindow();
   if(omfgThis->showTopLevel())
@@ -1283,7 +1293,7 @@ void OpenMFGGUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
   _activeWindow = thisActive;
 }
 
-QWidget * OpenMFGGUIClient::myActiveWindow()
+QWidget * GUIClient::myActiveWindow()
 {
   return _activeWindow;
 }
