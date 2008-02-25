@@ -41,7 +41,7 @@
     <item row="1" column="0" >
      <widget class="QTabWidget" name="_salesOrderInformation" >
       <property name="currentIndex" >
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="_headerPage" >
        <attribute name="title" >
@@ -1129,6 +1129,9 @@
          <widget class="XTreeWidget" name="_soitem" >
           <property name="focusPolicy" >
            <enum>Qt::NoFocus</enum>
+          </property>
+          <property name="alternatingRowColors" >
+           <bool>true</bool>
           </property>
          </widget>
         </item>

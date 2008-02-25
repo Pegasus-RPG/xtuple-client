@@ -164,6 +164,7 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight );
   _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
 
   _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft);
@@ -728,7 +729,7 @@ void item::sDelete()
 
 void item::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, formatBoolYN(charass_default) "
+  q.prepare( "SELECT charass_id, char_name, charass_value, charass_price, formatBoolYN(charass_default) "
              "FROM charass, char "
              "WHERE ( (charass_target_type='I')"
              " AND (charass_char_id=char_id)"

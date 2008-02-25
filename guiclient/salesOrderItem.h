@@ -100,7 +100,8 @@ public slots:
     virtual void sTaxDetail();
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
-	virtual void sCalcWoUnitCost();
+    virtual void sCalcWoUnitCost();
+    virtual void sPopulateCharacteristics();
 
 protected slots:
     virtual void languageChange();
@@ -145,6 +146,7 @@ private:
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
+    double _charPrice;
 
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);

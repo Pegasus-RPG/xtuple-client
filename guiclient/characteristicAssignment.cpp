@@ -77,6 +77,8 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
   _char->setAllowNull(TRUE);
+  
+  resize(minimumSize());
 }
 
 /*
@@ -210,14 +212,15 @@ void characteristicAssignment::sSave()
       _charassid = q.value("charass_id").toInt();
 
       q.prepare( "INSERT INTO charass "
-                 "( charass_id, charass_target_id, charass_target_type, charass_char_id, charass_value, charass_default ) "
+                 "( charass_id, charass_target_id, charass_target_type, charass_char_id, charass_value, charass_price, charass_default ) "
                  "VALUES "
-                 "( :charass_id, :charass_target_id, :charass_target_type, :charass_char_id, :charass_value, :charass_default );" );
+                 "( :charass_id, :charass_target_id, :charass_target_type, :charass_char_id, :charass_value, :charass_price, :charass_default );" );
     }
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE charass "
-               "SET charass_char_id=:charass_char_id, charass_value=:charass_value, charass_default=:charass_default "
+               "SET charass_char_id=:charass_char_id, charass_value=:charass_value, "
+               "charass_price=:charass_price, charass_default=:charass_default "
                "WHERE (charass_id=:charass_id);" );
 
   q.bindValue(":charass_id", _charassid);
@@ -225,6 +228,7 @@ void characteristicAssignment::sSave()
   q.bindValue(":charass_target_type", _targetType);
   q.bindValue(":charass_char_id", _char->id());
   q.bindValue(":charass_value", _value->text());
+  q.bindValue(":charass_price", _listprice->toDouble());
   q.bindValue(":charass_default", QVariant(_default->isChecked(), 0));
   q.exec();
 
@@ -255,7 +259,7 @@ void characteristicAssignment::sCheck()
 
 void characteristicAssignment::populate()
 {
-  q.prepare( "SELECT charass_target_id, charass_target_type, charass_char_id, charass_value, charass_default "
+  q.prepare( "SELECT charass_target_id, charass_target_type, charass_char_id, charass_value, charass_default, charass_price "
                    "FROM charass "
                    "WHERE (charass_id=:charass_id);" );
   q.bindValue(":charass_id", _charassid);
@@ -268,6 +272,7 @@ void characteristicAssignment::populate()
 
     _char->setId(q.value("charass_char_id").toInt());
     _value->setText(q.value("charass_value").toString());
+    _listprice->setText(formatSalesPrice(q.value("charass_price").toDouble()));
     _default->setChecked(q.value("charass_default").toBool());
   }
   else if (q.lastError().type() != QSqlError::None)
@@ -281,7 +286,10 @@ void characteristicAssignment::handleTargetType()
 {
   if((_targetType != "I") && (_targetType != "CT"))
     _default->hide();
-
+    
+  if(_targetType != "I")
+    _listprice->hide();
+    
   QString boolColumn;
   if ((_targetType == "C") || (_targetType == "CT"))
   {

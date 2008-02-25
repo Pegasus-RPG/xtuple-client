@@ -686,11 +686,28 @@
          </widget>
         </item>
         <item row="2" column="1" colspan="2" >
-         <widget class="XComboBox" name="_priceUOM" >
-          <property name="focusPolicy" >
-           <enum>Qt::NoFocus</enum>
-          </property>
-         </widget>
+         <layout class="QHBoxLayout" >
+          <item>
+           <widget class="XComboBox" name="_priceUOM" >
+            <property name="focusPolicy" >
+             <enum>Qt::NoFocus</enum>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <spacer>
+            <property name="orientation" >
+             <enum>Qt::Horizontal</enum>
+            </property>
+            <property name="sizeHint" >
+             <size>
+              <width>40</width>
+              <height>20</height>
+             </size>
+            </property>
+           </spacer>
+          </item>
+         </layout>
         </item>
         <item row="3" column="0" >
          <widget class="QLabel" name="_extendedPriceLit" >
@@ -1211,23 +1228,34 @@
         <attribute name="title" >
          <string>Item Characteristics</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>6</number>
-         </property>
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <item>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>221</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="0" column="1" >
+          <widget class="QLabel" name="_baseUnitPriceLit" >
+           <property name="text" >
+            <string>Base Price:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTop|Qt::AlignTrailing</set>
+           </property>
+           <property name="margin" >
+            <number>5</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" colspan="3" >
           <widget class="QTreeView" name="_itemcharView" >
            <property name="focusPolicy" >
             <enum>Qt::NoFocus</enum>
@@ -1240,6 +1268,64 @@
            </property>
            <property name="itemsExpandable" >
             <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <widget class="CurrCluster" name="_baseUnitPrice" >
+           <property name="minimumSize" >
+            <size>
+             <width>140</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="currencyEditable" stdset="0" >
+            <bool>false</bool>
+           </property>
+           <property name="decimals" >
+            <number>2</number>
+           </property>
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QWidget" name="_availabilityTab" >
+        <attribute name="title" >
+         <string>Pending Availability</string>
+        </attribute>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <property name="leftMargin" >
+          <number>5</number>
+         </property>
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <property name="rightMargin" >
+          <number>5</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QCheckBox" name="_showIndented" >
+           <property name="text" >
+            <string>Show Pending Availability as Indented BOM</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_availability" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="rootIsDecorated" >
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -1538,45 +1624,6 @@
            </property>
            <property name="focusPolicy" >
             <enum>Qt::StrongFocus</enum>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_availabilityTab" >
-        <attribute name="title" >
-         <string>Pending Availability</string>
-        </attribute>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <property name="leftMargin" >
-          <number>5</number>
-         </property>
-         <property name="topMargin" >
-          <number>5</number>
-         </property>
-         <property name="rightMargin" >
-          <number>5</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="QCheckBox" name="_showIndented" >
-           <property name="text" >
-            <string>Show Pending Availability as Indented BOM</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XTreeWidget" name="_availability" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="rootIsDecorated" >
-            <bool>true</bool>
            </property>
           </widget>
          </item>

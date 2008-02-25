@@ -55,47 +55,38 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef ITEMPRICINGSCHEDULEITEM_H
-#define ITEMPRICINGSCHEDULEITEM_H
+#ifndef CHARACTERISTICPRICE_H
+#define CHARACTERISTICPRICE_H
 
 #include "OpenMFGGUIClient.h"
 #include <QDialog>
 #include <parameter.h>
 
-#include "ui_itemPricingScheduleItem.h"
+#include "ui_characteristicPrice.h"
 
-class itemPricingScheduleItem : public QDialog, public Ui::itemPricingScheduleItem
+class characteristicPrice : public QDialog, public Ui::characteristicPrice
 {
     Q_OBJECT
 
 public:
-    itemPricingScheduleItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~itemPricingScheduleItem();
+    characteristicPrice(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~characteristicPrice();
 
 public slots:
-    virtual SetResponse set( const ParameterList & pParams );
+    virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sSave();
     virtual void populate();
-    virtual void sUpdateCosts( int pItemid );
-    virtual void sUpdateMargins();
-    virtual void sTypeChanged();
-    virtual void sQtyUOMChanged();
-    virtual void sPriceUOMChanged();
-    virtual void sNew();
-    virtual void sEdit();
-    virtual void sDelete();
-    virtual void sFillList();
+    virtual void sCheck();
 
 protected slots:
     virtual void languageChange();
 
 private:
     int _mode;
-    int _ipsheadid;
+    int _itemid;
     int _ipsitemid;
-    int _ipsprodcatid;
-    int _invuomid;
+    int _ipsitemcharid;
 
 };
 
-#endif // ITEMPRICINGSCHEDULEITEM_H
+#endif // CHARACTERISTICPRICE_H

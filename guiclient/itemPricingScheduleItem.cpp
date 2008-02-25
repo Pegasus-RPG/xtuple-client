@@ -56,6 +56,7 @@
  */
 
 #include "itemPricingScheduleItem.h"
+#include "characteristicPrice.h"
 
 #include <QVariant>
 #include <QMessageBox>
@@ -89,11 +90,18 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   connect(_itemSelected, SIGNAL(toggled(bool)), this, SLOT(sTypeChanged()));
   connect(_qtyUOM, SIGNAL(newID(int)), this, SLOT(sQtyUOMChanged()));
   connect(_priceUOM, SIGNAL(newID(int)), this, SLOT(sPriceUOMChanged()));
+  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
 
   _ipsheadid = -1;
   _ipsitemid = -1;
   _ipsprodcatid = -1;
   _invuomid = -1;
+  
+  _charprice->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
+  _charprice->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  _charprice->addColumn(tr("Price"),          _priceColumn,Qt::AlignRight );
 
   _qtyBreak->setValidator(omfgThis->qtyVal());
   _qtyBreakCat->setValidator(omfgThis->qtyVal());
@@ -333,6 +341,7 @@ void itemPricingScheduleItem::populate()
       _discount->setText(formatPercent(q.value("ipsprodcat_discntprcnt").toDouble()));
     }
   }
+  sFillList();
 }
 
 void itemPricingScheduleItem::sUpdateCosts(int pItemid)
@@ -479,5 +488,56 @@ void itemPricingScheduleItem::sPriceUOMChanged()
 
     sUpdateMargins();
   }
+}
+
+void itemPricingScheduleItem::sNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("ipsitem_id", _ipsitemid);
+  params.append("curr_id", _price->id());
+  params.append("item_id", _item->id());
+
+  characteristicPrice newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  newdlg.exec();
+  sFillList();
+}
+
+void itemPricingScheduleItem::sEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("ipsitem_id", _ipsitemid);
+  params.append("ipsitemchar_id", _charprice->id());
+  params.append("curr_id", _price->id());
+  params.append("item_id", _item->id());
+
+  characteristicPrice newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  newdlg.exec();
+  sFillList();
+}
+
+void itemPricingScheduleItem::sDelete()
+{
+  q.prepare("DELETE FROM ipsitemchar "
+            "WHERE (ipsitemchar_id=:ipsitemchar_id);");
+  q.bindValue(":ipsitemchar_id", _charprice->id());
+  q.exec();
+  sFillList();
+}
+
+void itemPricingScheduleItem::sFillList()
+{
+  q.prepare("SELECT ipsitemchar_id, char_name, ipsitemchar_value, ipsitemchar_price "
+            "FROM ipsitemchar, char "
+            "WHERE ((ipsitemchar_char_id=char_id) "
+            "AND (ipsitemchar_ipsitem_id=:ipsitem_id)); ");
+  q.bindValue(":ipsitem_id", _ipsitemid);
+  q.exec();
+  _charprice->populate(q);
 }
 

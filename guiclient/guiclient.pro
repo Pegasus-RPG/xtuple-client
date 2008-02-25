@@ -53,7 +53,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                cashReceipt.ui cashReceiptsEditList.ui cashReceiptItem.ui cashReceiptMiscDistrib.ui    \
                changePoitemQty.ui changeWoQty.ui changeQtyToDistributeFromBreeder.ui                  \
                characteristic.ui characteristics.ui characteristicAssignment.ui                       \
-               checkFormat.ui checkFormats.ui                                                         \
+               characteristicPrice.ui checkFormat.ui checkFormats.ui                                  \
                classCodes.ui classCode.ui closePurchaseOrder.ui closeWo.ui                            \
                commentType.ui commentTypes.ui company.ui companies.ui configureAccountingSystem.ui    \
                configureAP.ui configureAR.ui configureCC.ui configureSO.ui configureIM.ui             \
@@ -362,7 +362,7 @@ HEADERS      = version.h inputManager.h OpenMFGGUIClient.h timeoutHandler.h rwIn
                cashReceipt.h cashReceiptsEditList.h cashReceiptItem.h cashReceiptMiscDistrib.h        \
                changePoitemQty.h changeWoQty.h changeQtyToDistributeFromBreeder.h                     \
                characteristic.h characteristics.h characteristicAssignment.h                          \
-               checkFormat.h checkFormats.h                                                           \
+               characteristicPrice.h checkFormat.h checkFormats.h                                     \
                classCodes.h classCode.h closePurchaseOrder.h closeWo.h                                \
                commentType.h commentTypes.h company.h companies.h configureAccountingSystem.h         \
                configureAP.h configureAR.h configureCC.h configureSO.h configureIM.h                  \
@@ -675,7 +675,7 @@ SOURCES      = main.cpp inputManager.cpp OpenMFGGUIClient.cpp timeoutHandler.cpp
                cashReceipt.cpp cashReceiptsEditList.cpp cashReceiptItem.cpp cashReceiptMiscDistrib.cpp \
                changePoitemQty.cpp changeWoQty.cpp changeQtyToDistributeFromBreeder.cpp               \
                characteristic.cpp characteristics.cpp characteristicAssignment.cpp                    \
-               checkFormat.cpp checkFormats.cpp                                                       \
+               characteristicPrice.cpp checkFormat.cpp checkFormats.cpp                               \
                classCodes.cpp classCode.cpp closePurchaseOrder.cpp closeWo.cpp                        \
                commentType.cpp commentTypes.cpp company.cpp companies.cpp configureAccountingSystem.cpp \
                configureAP.cpp configureAR.cpp configureCC.cpp configureSO.cpp configureIM.cpp        \

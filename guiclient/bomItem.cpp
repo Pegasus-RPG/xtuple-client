@@ -175,6 +175,27 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return UndefinedError;
       }
+  
+      //Set up configuration tab if parent item is Job type
+      q.prepare("SELECT item_type "
+                "FROM item "
+                "WHERE (item_id=:item_id); ");
+      q.bindValue(":item_id", _itemid);
+      q.exec();
+      if (q.first())
+      {
+        if (q.value("item_type").toString() == "J")
+          _char->populate(QString( "SELECT -1 AS charass_char_id, '' AS char_name "
+                                   "UNION "
+                                   "SELECT DISTINCT charass_char_id, char_name "
+                                   "FROM charass, char "
+                                   "WHERE ((charass_char_id=char_id) "
+                                   "AND (charass_target_type='I') "
+                                   "AND (charass_target_id= %1)) "
+                                   "ORDER BY char_name; ").arg(_itemid));
+        else
+          _tab->removeTab(_tab->indexOf(_configurationTab));
+      }
 
       _item->setFocus();
     }
@@ -325,6 +346,12 @@ void bomItem::sSave()
   else if (_bomDefinedSubstitutes->isChecked())
     q.bindValue(":subtype", "B");
   q.bindValue(":revision_id", _revisionid);
+  
+  if (_char->id() != -1)
+  {
+    q.bindValue(":char_id", _char->id());
+    q.bindValue(":char_value", _value->text());
+  }
 
   q.bindValue(":configType", "N");
   q.bindValue(":configId", -1);
@@ -443,12 +470,12 @@ void bomItem::populate()
 {
   q.prepare( "SELECT bomitem_item_id, bomitem_parent_item_id, item_config,"
              "       bomitem_booitem_seq_id, bomitem_createwo, bomitem_issuemethod,"
-             "       bomitem_configtype, bomitem_configid, bomitem_configflag,"
              "       bomitem_schedatwooper, bomitem_ecn, item_type,"
              "       formatQtyper(bomitem_qtyper) AS qtyper,"
              "       formatScrap(bomitem_scrap) AS scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
-             "       bomitem_uom_id "
+             "       bomitem_uom_id, "
+             "       bomitem_char_id, bomitem_char_value "
              "FROM bomitem, item "
              "WHERE ( (bomitem_parent_item_id=item_id)"
              " AND (bomitem_id=:bomitem_id) );" );
@@ -484,12 +511,26 @@ void bomItem::populate()
 
     _comments->setId(_bomitemid);
 
-    if (q.value("bomitem_subtype").toString() == "N")
-      _noSubstitutes->setChecked(TRUE);
-    else if (q.value("bomitem_subtype").toString() == "I")
-      _itemDefinedSubstitutes->setChecked(TRUE);
-    else if (q.value("bomitem_subtype").toString() == "B")
-      _bomDefinedSubstitutes->setChecked(TRUE);
+    if (q.value("item_type").toString() == "M" || 
+        q.value("item_type").toString() == "F" || 
+        q.value("item_type").toString() == "J")
+      _createWo->setChecked(q.value("bomitem_createwo").toBool());
+      
+    if (q.value("item_type").toString() == "J")
+    {
+      _char->populate(QString( "SELECT -1 AS charass_char_id, '' AS char_name "
+                               "UNION "
+                               "SELECT DISTINCT charass_char_id, char_name "
+                               "FROM charass, char "
+                               "WHERE ((charass_char_id=char_id) "
+                               "AND (charass_target_type='I') "
+                               "AND (charass_target_id= %1)) "
+                               "ORDER BY char_name; ").arg(_itemid));
+      _char->setId(q.value("bomitem_char_id").toInt());
+      _value->setText(q.value("bomitem_char_value").toString());
+    }
+    else
+      _tab->removeTab(_tab->indexOf(_configurationTab));
 
     sFillSubstituteList();
 
