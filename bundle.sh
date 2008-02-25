@@ -162,12 +162,34 @@ if [ `uname -s` != Darwin ] ; then
 fi
 
 if [ -z "$QTDIR" ] ; then
-  echo "$PROG: Cannot run properly without the QTDIR environment variable set"
-  exit 2
+  for TRYME in `echo $PATH | tr : ' '` ; do
+    TRYME=`dirname $TRYME`
+    if [ -e "$TRYME/bin/qmake" -a -e "$TRYME/lib/libQtCore.dylib" ] ; then
+      export QTDIR="$TRYME"
+      break;
+    fi
+  done
+  if [ -n "QTDIR" ] ; then
+    echo "$PROG: guessing that Qt is installed in $QTDIR"
+  else
+    echo "$PROG: Cannot run properly without the QTDIR environment variable set"
+    exit 2
+  fi
 fi
 if [ -z "$PGDIR" ] ; then
-  echo "$PROG: Cannot run properly without the PGDIR environment variable set"
-  exit 2
+  for TRYME in `echo $PATH | tr : ' '` ; do
+    TRYME=`dirname $TRYME`
+    if [ -e "$TRYME/bin/psql" -a -e "$TRYME/lib/libpq.a" ] ; then
+      export PGDIR="$TRYME"
+      break;
+    fi
+  done
+  if [ -n "PGDIR" ] ; then
+    echo "$PROG: guessing that Qt is installed in $PGDIR"
+  else
+    echo "$PROG: Cannot run properly without the PGDIR environment variable set"
+    exit 2
+  fi
 fi
 
 if [ ! -e "$BASEDIR"/bin/xtuple.app ] ; then
