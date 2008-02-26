@@ -85,6 +85,7 @@ bomItem::bomItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_newSubstitution, SIGNAL(clicked()), this, SLOT(sNewSubstitute()));
   connect(_editSubstitution, SIGNAL(clicked()), this, SLOT(sEditSubstitute()));
   connect(_deleteSubstitution, SIGNAL(clicked()), this, SLOT(sDeleteSubstitute()));
+  connect(_char, SIGNAL(activated(int)), this, SLOT(sCharIdChanged()));
 
 #ifndef Q_WS_MAC
   _booitemList->setMaximumWidth(25);
@@ -288,29 +289,29 @@ void bomItem::sSave()
   if (_mode == cNew && !_saved)
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id, :issueMethod,"
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
-               "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
-			   "                      :ecn, :subtype, :revision_id ) AS result;" );
+               "                      :ecn, :subtype, :revision_id,"
+               "                      :charass_id ) AS result;" );
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
                "                      bomitem_seqnumber, :issueMethod,"
                "                      :bomitem_uom_id, :qtyPer, :scrap,"
-               "                      :configType, :configId, :configFlag,"
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
-			   "                      :ecn, :subtype, :revision_id ) AS result "
-			   "FROM bomitem "
-			   "WHERE (bomitem_id=:sourceBomitem_id);" );
+               "                      :ecn, :subtype, :revision_id,"
+               "                      :charass_id ) AS result "
+               "FROM bomitem "
+               "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit  || _saved)
     q.prepare( "UPDATE bomitem "
                "SET bomitem_booitem_seq_id=:booitem_seq_id, bomitem_schedatwooper=:scheduledWithBooItem,"
                "    bomitem_qtyper=:qtyPer, bomitem_scrap=:scrap,"
-               "    bomitem_configtype=:configType, bomitem_configid=:configId, bomitem_configflag=:configFlag,"
                "    bomitem_effective=:effective, bomitem_expires=:expires,"
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
                "    bomitem_uom_id=:bomitem_uom_id,"
-               "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype "
+               "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype, "
+               "    bomitem_charass_id=:charass_id "
                "WHERE (bomitem_id=:bomitem_id);" );
   else
 //  ToDo
@@ -348,10 +349,7 @@ void bomItem::sSave()
   q.bindValue(":revision_id", _revisionid);
   
   if (_char->id() != -1)
-  {
-    q.bindValue(":char_id", _char->id());
-    q.bindValue(":char_value", _value->text());
-  }
+    q.bindValue(":charass_id", _value->id());
 
   q.bindValue(":configType", "N");
   q.bindValue(":configId", -1);
@@ -397,7 +395,8 @@ void bomItem::sSave()
 void bomItem::sSaveClick()
 {
   sSave();
-  done(_bomitemid);
+  if (_saved)
+    done(_bomitemid);
 }
 
 void bomItem::sClose()
@@ -475,8 +474,11 @@ void bomItem::populate()
              "       formatScrap(bomitem_scrap) AS scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
              "       bomitem_uom_id, "
-             "       bomitem_char_id, bomitem_char_value "
-             "FROM bomitem, item "
+             "       bomitem_charass_id, "
+             "       charass_char_id "
+             "FROM bomitem "
+             " LEFT OUTER JOIN charass ON (bomitem_charass_id=charass_id), "
+             " item "
              "WHERE ( (bomitem_parent_item_id=item_id)"
              " AND (bomitem_id=:bomitem_id) );" );
   q.bindValue(":bomitem_id", _bomitemid);
@@ -526,8 +528,10 @@ void bomItem::populate()
                                "AND (charass_target_type='I') "
                                "AND (charass_target_id= %1)) "
                                "ORDER BY char_name; ").arg(_itemid));
-      _char->setId(q.value("bomitem_char_id").toInt());
-      _value->setText(q.value("bomitem_char_value").toString());
+      _char->setId(q.value("charass_char_id").toInt());
+      sCharIdChanged();
+      qDebug("charass_id = %d", q.value("bomitem_charass_id").toInt());
+      _value->setId(q.value("bomitem_charass_id").toInt());
     }
     else
       _tab->removeTab(_tab->indexOf(_configurationTab));
@@ -683,4 +687,21 @@ void bomItem::sItemIdChanged()
   if(uom.first())
     _uom->setId(uom.value("item_inv_uom_id").toInt());
 }
+
+void bomItem::sCharIdChanged()
+{
+  XSqlQuery charass;
+  charass.prepare("SELECT charass_id, charass_value "
+            "FROM charass "
+            "WHERE ((charass_target_type='I') "
+            "AND (charass_target_id=:item_id) "
+            "AND (charass_char_id=:char_id) "
+            "AND (COALESCE(charass_value,'')!='')); ");
+  charass.bindValue(":item_id", _itemid);
+  charass.bindValue(":char_id", _char->id());
+  charass.exec();
+  _value->populate(charass);
+}
+
+
 

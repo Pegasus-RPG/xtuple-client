@@ -657,7 +657,11 @@
             </widget>
            </item>
            <item row="1" column="1" >
-            <widget class="XLineEdit" name="_value" />
+            <widget class="XComboBox" name="_value" >
+             <property name="allowNull" >
+              <bool>true</bool>
+             </property>
+            </widget>
            </item>
           </layout>
          </item>
@@ -712,6 +716,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>

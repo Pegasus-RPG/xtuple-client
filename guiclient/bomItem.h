@@ -86,6 +86,7 @@ public slots:
     virtual void sDeleteSubstitute();
     virtual void sFillSubstituteList();
     virtual void sItemIdChanged();
+    virtual void sCharIdChanged();
 
 protected slots:
     virtual void languageChange();
