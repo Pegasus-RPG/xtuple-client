@@ -53,50 +53,36 @@ bundle() {
   BUNDLEDIR="${2}/${BUNDLENAME}"
 
   if [ -d "$BUNDLEDIR" ] ; then
-    if ! rm -rf "$BUNDLEDIR" ; then
-      return 3
-    fi
+    rm -rf "$BUNDLEDIR"                                               || return 3
   fi
 
-  if ! mkdir "$BUNDLEDIR" ; then
-    return 3
-  fi
+  mkdir "$BUNDLEDIR"                                                  || return 3
 
   if ! $DEMO ; then
-    if ! mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR" ; then
-      return 4
-    fi
-    mkdir "$BUNDLEDIR"/"${BINARY}"/Contents/Resources/helpXTupleGUIClient || return 5
+    mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR"                            || return 4
+    mkdir "$BUNDLEDIR/${BINARY}/Contents/Resources/helpXTupleGUIClient" || return 5
     cp "$BASEDIR/share/empty_help.html" \
        "$BASEDIR/share/XTupleGUIClient.adp" \
        "$BUNDLEDIR"/"${BINARY}"/Contents/Resources/helpXTupleGUIClient || return 5
   else
-    if ! mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR"/"${APPNAME}_Demo.app" ; then
-      return 4
-    fi
+    mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR"/"${APPNAME}_Demo.app"      || return 4
     BINARY="${APPNAME}_Demo.app"
     if [ -d "$HELPFILE" ] ; then
-      if ! cp -R -L "$HELPFILE" \
-	      "$BUNDLEDIR"/bin/"${BINARY}"/Contents/Resources/helpXTupleGUIClient ; then
-	return 5
-      fi
+      cp -R -L "$HELPFILE" \
+      "$BUNDLEDIR"/bin/"${BINARY}"/Contents/Resources/helpXTupleGUIClient || return 5
     elif [ -f "$HELPFILE" ] ; then
       CURRDIR=`pwd`
-      if ! cd "$BUNDLEDIR"/"${BINARY}"/Contents/Resources ; then
-	return 5
-      fi
-      if ! jar xf "$HELPFILE" ; then
-	return 5
-      fi
+      cd "$BUNDLEDIR"/"${BINARY}"/Contents/Resources                  || return 5
+      jar xf "$HELPFILE"                                              || return 5
       if [ ! -d helpXTupleGUIClient ] ; then
 	echo "$PROG: help file $HELPFILE was not installed properly in demo client"
 	return 5
       fi
-      cd "$CURRDIR"
+      cd "$CURRDIR"                                                   || return 5
     fi
   fi
 
-  cd "$BUNDLEDIR"/..
+  cd "$BUNDLEDIR"/..                                                  || return 5
   if [ -f "$BUNDLENAME".dmg ] && ! rm "$BUNDLENAME".dmg ; then
     return 5
   fi
@@ -104,7 +90,7 @@ bundle() {
     return 5
   fi
 
-  cd $STARTDIR
+  cd $STARTDIR                                                        || return 5
 }
 
 ARGS=`getopt hbd:x $*`
@@ -207,26 +193,14 @@ VERSION=`awk '/ _Version / { split($0,vers,"\""); print vers[2]}' $VERFILE | \
          tr -d [:blank:]`
 
 if $BUILD ; then
-  cd "$BASEDIR"
-  qmake
-  make
+  cd "$BASEDIR"                                                         || exit 3
+  qmake                                                                 || exit 3
+  make                                                                  || exit 3
 fi
 
-cd "$BASEDIR"/guiclient
-./fixPackage
-
-# PostBooks is just a copy of OpenMFG with some text changed
-cd "$BASEDIR"/bin
-
-for FILE in OpenMFG PostBooks ; do
-  rm -rf ${FILE}.app
-  cp -R -L xtuple.app ${FILE}.app
-  mv ${FILE}.app/Contents/MacOS/xtuple ${FILE}.app/Contents/MacOS/${FILE}
-  sed -e "s,\\(<string>\\)xtuple\\(</string>\\),\\1${FILE}\\2," -i .xtuple ${FILE}.app/Contents/Info.plist
-
-  if ! bundle ${FILE} "${BASEDIR}/.." ; then
-    exit $?
-  fi
-done
+cd "$BASEDIR"/guiclient                                                 || exit 4
+./fixPackage                                                            || exit 4
+cd "$BASEDIR"/bin                                                       || exit 4
+bundle xtuple "${BASEDIR}/.."                                           || exit 4
 
 echo "DONE!"
