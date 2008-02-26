@@ -101,7 +101,6 @@ public slots:
     virtual void sQtyUOMChanged();
     virtual void sPriceUOMChanged();
     virtual void sCalcWoUnitCost();
-    virtual void sPopulateCharacteristics();
 
 protected slots:
     virtual void languageChange();
@@ -146,7 +145,17 @@ private:
     int _invuomid;
     double _qtyinvuomratio;
     double _priceinvuomratio;
-    double _charPrice;
+    
+    //For holding variables for characteristic pricing
+    QList<QVariant> _charVars;
+    enum {
+      ITEM_ID   = 0,
+      CUST_ID   = 1,
+      SHIPTO_ID = 2,
+      QTY       = 3,
+      CURR_ID   = 4,
+      EFFECTIVE = 5
+    };
 
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);

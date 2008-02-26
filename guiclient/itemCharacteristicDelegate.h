@@ -61,6 +61,7 @@
 #include <QItemDelegate>
 #include <QModelIndex>
 #include <QObject>
+#include <QDate>
 
 class ItemCharacteristicDelegate : public QItemDelegate
 {
@@ -78,6 +79,23 @@ class ItemCharacteristicDelegate : public QItemDelegate
 
     void updateEditorGeometry(QWidget *editor,
         const QStyleOptionViewItem &option, const QModelIndex &index) const;
+    
+  private:
+    enum {
+      CHAR  = 0,
+      VALUE = 1,
+      PRICE = 2
+    };
+         
+    enum {
+      ITEM_ID   = 0,
+      CUST_ID   = 1,
+      SHIPTO_ID = 2,
+      QTY       = 3,
+      CURR_ID   = 4,
+      EFFECTIVE = 5
+    };
+  
 };
 
 #endif

@@ -154,7 +154,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _availabilityLastShow = false;
   _availabilityQtyOrdered = 0.0;
   
-  _charPrice = 0;
+  _charVars << -1 << -1 << -1 << 0 << -1 << omfgThis->dbDate();
 
 //  Configure some Widgets
   _item->setType(ItemLineEdit::cSold | ItemLineEdit::cActive);
@@ -171,14 +171,14 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _availability->addColumn(tr("UOM"),          _uomColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("Pend. Alloc."), _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("Total Alloc."), _qtyColumn,  Qt::AlignRight  );
-  _availability->addColumn(tr("On Order"),      _qtyColumn,  Qt::AlignRight  );
+  _availability->addColumn(tr("On Order"),     _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("QOH"),          _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight  );
   
   _itemchar = new QStandardItemModel(0, 3, this);
   _itemchar->setHeaderData( 0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
   _itemchar->setHeaderData( 1, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
-  _itemchar->setHeaderData( 2, Qt::Horizontal, tr("Price"), Qt::AlignRight);
+  _itemchar->setHeaderData( 2, Qt::Horizontal, tr("Price"), Qt::DisplayRole);
 
   _itemcharView->setModel(_itemchar);
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
@@ -269,11 +269,15 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return UndefinedError;
     }
+    _charVars.replace(CUST_ID, param.toInt());
   }
 
   param = pParams.value("shipto_id", &valid);
   if (valid)
+  {
     _shiptoid = param.toInt();
+    _charVars.replace(SHIPTO_ID, param.toInt());
+  }
 
   param = pParams.value("orderNumber", &valid);
   if (valid)
@@ -283,12 +287,16 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
   if (valid)
   {
     _netUnitPrice->setId(param.toInt());
-	_tax->setId(param.toInt());
+    _tax->setId(param.toInt());
+    _charVars.replace(CURR_ID, param.toInt());
   }
 
   param = pParams.value("orderDate", &valid);
   if (valid)
+  {
     _netUnitPrice->setEffective(param.toDate());
+    _charVars.replace(EFFECTIVE, param.toDate());
+  }
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -543,26 +551,26 @@ enum SetResponse salesOrderItem::set(const ParameterList &pParams)
 	  
 	//See if this is linked to a Return Authorization and handle
     if ((ISORDER(_mode)) && (_metrics->boolean("EnableReturnAuth")))
-	{
+    {
       q.prepare("SELECT rahead_number,raitem_linenumber " 
-			    "FROM raitem,rahead "
-				"WHERE ((raitem_new_coitem_id=:coitem_id) "
-				"AND (rahead_id=raitem_rahead_id));");
-	  q.bindValue(":coitem_id",_soitemid);
+                            "FROM raitem,rahead "
+                                "WHERE ((raitem_new_coitem_id=:coitem_id) "
+                                "AND (rahead_id=raitem_rahead_id));");
+      q.bindValue(":coitem_id",_soitemid);
       q.exec();
-	  if (q.first())
-	  {
+      if (q.first())
+      {
         _authNumber->show();
         _authNumberLit->show();
         _authLineNumber->show();
         _authLineNumberLit->show();
-		_authNumber->setText(q.value("rahead_number").toString());
-		_authLineNumber->setText(q.value("raitem_linenumber").toString());
-		_qtyOrdered->setEnabled(FALSE);
-		_qtyUOM->setEnabled(FALSE);
-		_priceUOM->setEnabled(FALSE);
-	  }
-	}
+        _authNumber->setText(q.value("rahead_number").toString());
+        _authLineNumber->setText(q.value("raitem_linenumber").toString());
+        _qtyOrdered->setEnabled(FALSE);
+        _qtyUOM->setEnabled(FALSE);
+        _priceUOM->setEnabled(FALSE);
+      }
+    }
   }
 
   param = pParams.value("item_id", &valid);
@@ -691,6 +699,7 @@ void salesOrderItem::clear()
   _originalQtyOrd = 0.0;
   _modified = false;
   _updateItemsite = false;
+  _soitemid=-1;
 }
 
 void salesOrderItem::sSave()
@@ -1095,17 +1104,22 @@ void salesOrderItem::sSave()
     if(_mode & 0x20)
       type = "QI";
 
-    q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
+    QModelIndex idx1, idx2, idx3;
+    if (_item->itemType() == "J")
+      q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value, CAST(:char_price AS NUMERIC)) AS result;"); 
+    else
+      q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
 
-    QModelIndex idx1, idx2;
     for(int i = 0; i < _itemchar->rowCount(); i++)
     {
       idx1 = _itemchar->index(i, 0);
       idx2 = _itemchar->index(i, 1);
+      idx3 = _itemchar->index(i, 2);
       q.bindValue(":target_type", type);
       q.bindValue(":target_id", _soitemid);
       q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
       q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+      q.bindValue(":char_price", _itemchar->data(idx3, Qt::DisplayRole)); 
       q.exec();
       if (q.first())
       {
@@ -1287,6 +1301,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
       systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    _charVars.replace(ITEM_ID, _item->id());
   }
 }
 
@@ -1314,6 +1329,7 @@ void salesOrderItem::sDeterminePrice()
   if(cView == _mode || cViewQuote == _mode)
     return;
 
+  double charTotal=0;
   if ((_item->isValid()) && (_qtyOrdered->text().length()))
   {
     if (_mode == cEditQuote || _mode == cEdit)
@@ -1333,22 +1349,39 @@ void salesOrderItem::sDeterminePrice()
       }
     }
     
-    if (_item->itemType() == "J")
+    if (_item->itemType() == "J") //For job items, update characteristic pricing
     {
-      XSqlQuery charprice;
-      charprice.prepare("UPDATE charass "
-                        "SET charass_price=itemcharprice( "
-                        ":item_id,charass_char_id,charass_value,:cust_id,:shipto_id,:qty,:curr_id,:effective) "
-                        "WHERE ((charass_target_type='SI') "
-                        "AND (charass_target_id=:coitem_id));");
-      charprice.bindValue(":coitem_id", _soitemid);
-      charprice.bindValue(":cust_id", _custid);
-      charprice.bindValue(":shipto_id", _shiptoid);
-      charprice.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
-      charprice.bindValue(":item_id", _item->id());
-      charprice.bindValue(":curr_id", _customerPrice->id());
-      charprice.bindValue(":effective", _customerPrice->effective());
-      charprice.exec();
+      _charVars.replace(QTY, _qtyOrdered->toDouble() * _qtyinvuomratio);
+        
+      QModelIndex idx1, idx2, idx3;
+      q.prepare("SELECT formatprice(itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective)) AS price;");
+
+      for(int i = 0; i < _itemchar->rowCount(); i++)
+      {
+        idx1 = _itemchar->index(i, 0);
+        idx2 = _itemchar->index(i, 1);
+        idx3 = _itemchar->index(i, 2);
+        q.bindValue(":item_id", _item->id());
+        q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+        q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+        q.bindValue(":cust_id", _custid);
+        q.bindValue(":shipto_id", _shiptoid);
+        q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+        q.bindValue(":curr_id", _customerPrice->id());
+        q.bindValue(":effective", _customerPrice->effective());
+        q.exec();
+        if (q.first())
+        {
+          _itemchar->setData(idx3, q.value("price").toDouble(), Qt::DisplayRole);
+          _itemchar->setData(idx3, QVariant(_charVars), Qt::UserRole);
+          charTotal += q.value("price").toDouble();
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
     }
     
     XSqlQuery itemprice;
@@ -1388,8 +1421,10 @@ void salesOrderItem::sDeterminePrice()
       {
         double price = itemprice.value("price").toDouble();
         price = price * (_priceinvuomratio / _priceRatio);
-        _customerPrice->setLocalValue(price);
-        _netUnitPrice->setLocalValue(price);
+        
+        _baseUnitPrice->setLocalValue(price);
+        _customerPrice->setLocalValue(price + charTotal);
+        _netUnitPrice->setLocalValue(price + charTotal);
 
         sCalculateDiscountPrcnt();
         _orderQtyChanged = _qtyOrdered->toDouble();
@@ -1519,66 +1554,64 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    sPopulateCharacteristics();
-  }
-}
-
-void salesOrderItem::sPopulateCharacteristics()
-{
-  q.prepare("SELECT "
-            "  char_id, "
-            "  char_name,"
-            "  COALESCE(si.charass_value,i2.charass_value) AS charass_value,"
-            "  COALESCE(si.charass_price,itemcharprice(:item_id,char_id,COALESCE(si.charass_value,i2.charass_value),:cust_id,:shipto_id,:qty,:curr_id,:effective),0)::numeric(16,4) AS charass_price "
-            "FROM "
-            "  (SELECT DISTINCT "
-            "    char_id,"
-            "    char_name "
-            "   FROM charass, char"
-            "   WHERE ((charass_char_id=char_id)"
-            "   AND (charass_target_type='I')"
-            "   AND (charass_target_id=:item_id) ) ) AS data"
-            "  LEFT OUTER JOIN charass  si ON ((:coitem_id=si.charass_target_id)"
-            "                              AND ('SI'=si.charass_target_type)"
-            "                              AND (si.charass_char_id=char_id))"
-            "  LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id)"
-            "  LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id)"
-            "                              AND ('I'=i2.charass_target_type)"
-            "                              AND (i2.charass_char_id=char_id)"
-            "                              AND (i2.charass_default)) "
-            "ORDER BY char_name; ");
-  q.bindValue(":coitem_id", _soitemid);
-  q.bindValue(":cust_id", _custid);
-  q.bindValue(":shipto_id", _shiptoid);
-  q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
-  q.bindValue(":item_id", _item->id());
-  q.bindValue(":curr_id", _customerPrice->id());
-  q.bindValue(":effective", _customerPrice->effective());
-  if(_mode & 0x20)
-    q.bindValue(":sotype", "QI");
-  else
-    q.bindValue(":sotype", "SI");
-  q.bindValue(":soitem_id", _soitemid);
-  q.exec();
-  int row = 0;
-  QModelIndex idx;
-  while(q.next())
-  {
-    _itemchar->insertRow(_itemchar->rowCount());
-    idx = _itemchar->index(row, 0);
-    _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
-    _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
-    idx = _itemchar->index(row, 1);
-    _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
-    _itemchar->setData(idx, _item->id(), Qt::UserRole);
-    idx = _itemchar->index(row, 2);
-    _itemchar->setData(idx, q.value("charass_price"), Qt::DisplayRole);
-    row++;
-  }
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    
+    //Populate Characteristics
+    q.prepare("SELECT "
+          "  char_id, "
+          "  char_name,"
+          "  COALESCE(si.charass_value,i2.charass_value) AS charass_value,"
+          "  COALESCE(si.charass_price,itemcharprice(:item_id,char_id,COALESCE(si.charass_value,i2.charass_value),:cust_id,:shipto_id,:qty,:curr_id,:effective),0)::numeric(16,4) AS charass_price "
+          "FROM "
+          "  (SELECT DISTINCT "
+          "    char_id,"
+          "    char_name "
+          "   FROM charass, char"
+          "   WHERE ((charass_char_id=char_id)"
+          "   AND (charass_target_type='I')"
+          "   AND (charass_target_id=:item_id) ) ) AS data"
+          "  LEFT OUTER JOIN charass  si ON ((:coitem_id=si.charass_target_id)"
+          "                              AND ('SI'=si.charass_target_type)"
+          "                              AND (si.charass_char_id=char_id))"
+          "  LEFT OUTER JOIN item     i1 ON (i1.item_id=:item_id)"
+          "  LEFT OUTER JOIN charass  i2 ON ((i1.item_id=i2.charass_target_id)"
+          "                              AND ('I'=i2.charass_target_type)"
+          "                              AND (i2.charass_char_id=char_id)"
+          "                              AND (i2.charass_default)) "
+          "ORDER BY char_name; ");
+    q.bindValue(":coitem_id", _soitemid);
+    q.bindValue(":cust_id", _custid);
+    q.bindValue(":shipto_id", _shiptoid);
+    q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
+    q.bindValue(":item_id", _item->id());
+    q.bindValue(":curr_id", _customerPrice->id());
+    q.bindValue(":effective", _customerPrice->effective());
+    if(_mode & 0x20)
+      q.bindValue(":sotype", "QI");
+    else
+      q.bindValue(":sotype", "SI");
+    q.bindValue(":soitem_id", _soitemid);
+    q.exec();
+    int row = 0;
+    QModelIndex idx;
+    while(q.next())
+    {
+      _itemchar->insertRow(_itemchar->rowCount());
+      idx = _itemchar->index(row, 0);
+      _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
+      _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
+      idx = _itemchar->index(row, 1);
+      _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
+      _itemchar->setData(idx, _item->id(), Qt::UserRole);
+      idx = _itemchar->index(row, 2);
+      _itemchar->setData(idx, q.value("charass_price"), Qt::DisplayRole);
+      _itemchar->setData(idx, QVariant(_charVars), Qt::UserRole);
+      row++;
+    }
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 }
 
@@ -1821,7 +1854,7 @@ void salesOrderItem::sDetermineAvailability()
     _unallocated->clear();
     _onOrder->clear();
     _available->clear();
-	_leadtime->clear();
+    _leadtime->clear();
   }
 }
 

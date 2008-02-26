@@ -73,14 +73,13 @@ QWidget *ItemCharacteristicDelegate::createEditor(QWidget *parent,
   if(index.column()!=1)
     return 0;
 
-  QModelIndex idx = index.sibling(index.row(), 0);
+  QModelIndex idx = index.sibling(index.row(), CHAR);
   q.prepare("SELECT charass_value"
             "  FROM charass, char"
             " WHERE ((charass_char_id=char_id)"
             "   AND  (charass_target_type='I')"
             "   AND  (charass_target_id=:item_id)"
             "   AND  (char_id=:char_id) );");
-  //q.bindValue(":name", idx.model()->data(idx, Qt::DisplayRole));
   q.bindValue(":char_id", idx.model()->data(idx, Qt::UserRole));
   q.bindValue(":item_id", index.model()->data(index, Qt::UserRole));
   q.exec();
@@ -120,7 +119,26 @@ void ItemCharacteristicDelegate::setModelData(QWidget *editor, QAbstractItemMode
                                    const QModelIndex &index) const
 {
   QComboBox *comboBox = static_cast<QComboBox*>(editor);
-
+  QModelIndex charidx = index.sibling(index.row(), CHAR);
+  QModelIndex priceidx = index.sibling(index.row(), PRICE);
+  QVariant charVars;
+  QVariantList listVars;
+  charVars.setValue(priceidx.model()->data(priceidx, Qt::UserRole).toList());
+  listVars=charVars.toList();
+  
+  q.prepare("SELECT formatprice(itemcharprice(:item_id,:char_id,:value,:cust_id,:shipto_id,:qty,:curr_id,:effective)) AS price;");
+  
+  q.bindValue(":item_id"  , listVars.value(ITEM_ID).toInt());
+  q.bindValue(":char_id"  , charidx.model()->data(charidx, Qt::UserRole));
+  q.bindValue(":value"    , comboBox->currentText());
+  q.bindValue(":cust_id"  , listVars.value(CUST_ID));
+  q.bindValue(":shipto_id", listVars.value(SHIPTO_ID));
+  q.bindValue(":qty"      , listVars.value(QTY));
+  q.bindValue(":curr_id"  , listVars.value(CURR_ID));
+  q.bindValue(":effective", listVars.value(EFFECTIVE));
+  q.exec();
+  if (q.first())
+    model->setData(priceidx, q.value("price").toString());
   model->setData(index, comboBox->currentText());
 }
 
@@ -129,4 +147,6 @@ void ItemCharacteristicDelegate::updateEditorGeometry(QWidget *editor,
 {
   editor->setGeometry(option.rect);
 }
+
+
 
