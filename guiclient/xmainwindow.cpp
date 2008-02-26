@@ -67,7 +67,7 @@
 #include <QtScript>
 #include <QDebug>
 
-#include "OpenMFGGUIClient.h"
+#include "guiclient.h"
 
 //
 // XMainWindowPrivate
@@ -132,10 +132,8 @@ void XMainWindow::closeEvent(QCloseEvent *event)
 
 void XMainWindow::showEvent(QShowEvent *event)
 {
-qDebug() << "Here we are";
   if(!_private->_shown)
   {
-qDebug() << "showing for the first time";
     _private->_shown = true;
 
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
@@ -152,7 +150,7 @@ qDebug() << "showing for the first time";
 
     if(omfgThis->showTopLevel())
     {
-      //_windowList.append(w);
+      omfgThis->_windowList.append(this);
       setWindowFlags(Qt::WDestructiveClose);
       statusBar()->show();
       QRect r(pos, size());
@@ -182,7 +180,6 @@ qDebug() << "Looking for a script on window " << objectName();
     q.exec();
     if(q.first())
     {
-qDebug() << "Found one.";
       QString script = q.value("script_source").toString();
       _private->_engine = new QScriptEngine();
       QScriptValue mywindow = _private->_engine->newQObject(this);
@@ -197,10 +194,6 @@ qDebug() << "Found one.";
           delete _private->_engine;
           _private->_engine = 0;
       }
-    }
-    else
-    {
-qDebug() << "Didn't find one or got error.";
     }
   }
   QMainWindow::showEvent(event);

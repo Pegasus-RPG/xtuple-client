@@ -130,10 +130,8 @@ void XDialog::closeEvent(QCloseEvent *event)
 
 void XDialog::showEvent(QShowEvent *event)
 {
-qDebug() << "Here we are";
   if(!_private->_shown)
   {
-qDebug() << "showing for the first time";
     _private->_shown = true;
 
     QRect availableGeometry = QApplication::desktop()->availableGeometry();
@@ -146,6 +144,7 @@ qDebug() << "showing for the first time";
     if(lsize.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
       resize(lsize);
 
+    // do I want to do this for a dialog?
     //_windowList.append(w);
     QRect r(pos, size());
     if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
@@ -161,7 +160,6 @@ qDebug() << "Looking for a script on window " << objectName();
     q.exec();
     if(q.first())
     {
-qDebug() << "Found one.";
       QString script = q.value("script_source").toString();
       _private->_engine = new QScriptEngine();
       QScriptValue mywindow = _private->_engine->newQObject(this);
@@ -176,10 +174,6 @@ qDebug() << "Found one.";
           delete _private->_engine;
           _private->_engine = 0;
       }
-    }
-    else
-    {
-qDebug() << "Didn't find one or got error.";
     }
   }
   QDialog::showEvent(event);

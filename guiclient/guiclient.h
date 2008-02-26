@@ -114,6 +114,9 @@ class TimeoutHandler;
 class InputManager;
 class ReportHandler;
 
+class XMainWindow;
+class QMainWindow;
+
 #define q omfgThis->_q
 
 #define cNew                  1
@@ -215,6 +218,9 @@ class ActionSet : public Q3ValueList<Action *>
 
 class GUIClient : public QMainWindow
 {
+  friend class XMainWindow;
+  friend class XDialog;
+
   Q_OBJECT
   
   public:

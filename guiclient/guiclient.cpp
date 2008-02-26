@@ -1223,10 +1223,6 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
 
   if(w->inherits("XMainWindow"))
   {
-    // adding to the window list should happen in xmainwindo class
-    // but requires some changes for either public access or friend access.
-    if(_showTopLevel)
-      _windowList.append(w);
     w->show();
     return;
   }
