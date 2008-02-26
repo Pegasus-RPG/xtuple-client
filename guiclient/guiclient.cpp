@@ -88,6 +88,7 @@
 #include <QMainWindow>
 #include <QSettings>
 #include <QDesktopWidget>
+#include <QDebug>
 
 #include <parameter.h>
 #include <dbtools.h>
@@ -1226,6 +1227,8 @@ void GUIClient::handleNewWindow(QWidget * w, Qt::WindowModality m)
     w->show();
     return;
   }
+
+  qDebug() << "GUIClient::handleNewWindow() called on object that doesn't inherit XMainWindow: " << w->objectName();
 
   QRect availableGeometry = QApplication::desktop()->availableGeometry();
   if(!_showTopLevel)

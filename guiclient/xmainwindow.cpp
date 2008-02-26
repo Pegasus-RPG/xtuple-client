@@ -170,16 +170,18 @@ void XMainWindow::showEvent(QShowEvent *event)
     }
 
     // load and run an QtScript that applies to this window
-qDebug() << "Looking for a script on window " << objectName();
-    q.prepare("SELECT script_source"
+    qDebug() << "Looking for a script on window " << objectName();
+    q.prepare("SELECT script_source, script_order"
               "  FROM script"
-              " WHERE(script_name=:script_name)"
-              " ORDER BY script_grade DESC;");
+              " WHERE((script_name=:script_name)"
+              "   AND (script_enabled))"
+              " ORDER BY script_order;");
     q.bindValue(":script_name", objectName());
     q.exec();
-    if(q.first())
+    while(q.next())
     {
       QString script = q.value("script_source").toString();
+qDebug() << "loading script " << script << " #" << q.value("script_order").toInt();
       _private->_engine = new QScriptEngine();
       QScriptValue mywindow = _private->_engine->newQObject(this);
       _private->_engine->globalObject().setProperty("mywindow", mywindow);
@@ -187,11 +189,12 @@ qDebug() << "Looking for a script on window " << objectName();
       _private->_engine->globalObject().setProperty("mainwindow", mainwindow);
 
       QScriptValue result = _private->_engine->evaluate(script);
-      if (_private->_engine->hasUncaughtException()) {
-          int line = _private->_engine->uncaughtExceptionLineNumber();
-          qDebug() << "uncaught exception at line" << line << ":" << result.toString();
-          delete _private->_engine;
-          _private->_engine = 0;
+      if (_private->_engine->hasUncaughtException())
+      {
+        int line = _private->_engine->uncaughtExceptionLineNumber();
+        qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+        delete _private->_engine;
+        _private->_engine = 0;
       }
     }
   }
