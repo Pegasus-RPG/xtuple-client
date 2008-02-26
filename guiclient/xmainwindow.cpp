@@ -148,10 +148,10 @@ void XMainWindow::showEvent(QShowEvent *event)
     if(lsize.isValid() && settings.value(objName + "/geometry/rememberSize", true).toBool())
       resize(lsize);
 
+    setAttribute(Qt::WA_DeleteOnClose);
     if(omfgThis->showTopLevel())
     {
       omfgThis->_windowList.append(this);
-      setWindowFlags(Qt::WDestructiveClose);
       statusBar()->show();
       QRect r(pos, size());
       if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
@@ -160,7 +160,6 @@ void XMainWindow::showEvent(QShowEvent *event)
     else
     {
       QWidget * fw = focusWidget();
-      setAttribute(Qt::WA_DeleteOnClose);
       omfgThis->workspace()->addWindow(this);
       QRect r(pos, size());
       if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
