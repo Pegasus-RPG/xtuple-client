@@ -292,7 +292,7 @@ void bomItem::sSave()
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
-               "                      :charass_id ) AS result;" );
+               "                      :char_id, :value ) AS result;" );
   else if ( (_mode == cCopy) || (_mode == cReplace) )
     q.prepare( "SELECT createBOMItem( :bomitem_id, :parent_item_id, :component_item_id,"
                "                      bomitem_seqnumber, :issueMethod,"
@@ -300,7 +300,7 @@ void bomItem::sSave()
                "                      :effective, :expires,"
                "                      :createWo, :booitem_seq_id, :scheduledWithBooItem,"
                "                      :ecn, :subtype, :revision_id,"
-               "                      :charass_id ) AS result "
+               "                      :char_id, value ) AS result "
                "FROM bomitem "
                "WHERE (bomitem_id=:sourceBomitem_id);" );
   else if (_mode == cEdit  || _saved)
@@ -311,7 +311,7 @@ void bomItem::sSave()
                "    bomitem_createwo=:createWo, bomitem_issuemethod=:issueMethod,"
                "    bomitem_uom_id=:bomitem_uom_id,"
                "    bomitem_ecn=:ecn, bomitem_moddate=CURRENT_DATE, bomitem_subtype=:subtype, "
-               "    bomitem_charass_id=:charass_id "
+               "    bomitem_char_id=:char_id, bomitem_value=:value "
                "WHERE (bomitem_id=:bomitem_id);" );
   else
 //  ToDo
@@ -349,7 +349,10 @@ void bomItem::sSave()
   q.bindValue(":revision_id", _revisionid);
   
   if (_char->id() != -1)
-    q.bindValue(":charass_id", _value->id());
+  {
+    q.bindValue(":char_id", _char->id());
+    q.bindValue(":value", _value->currentText());
+  }
 
   q.bindValue(":configType", "N");
   q.bindValue(":configId", -1);
@@ -474,11 +477,9 @@ void bomItem::populate()
              "       formatScrap(bomitem_scrap) AS scrap,"
              "       bomitem_effective, bomitem_expires, bomitem_subtype,"
              "       bomitem_uom_id, "
-             "       bomitem_charass_id, "
-             "       charass_char_id "
-             "FROM bomitem "
-             " LEFT OUTER JOIN charass ON (bomitem_charass_id=charass_id), "
-             " item "
+             "       bomitem_char_id, "
+             "       bomitem_value "
+             "FROM bomitem, item "
              "WHERE ( (bomitem_parent_item_id=item_id)"
              " AND (bomitem_id=:bomitem_id) );" );
   q.bindValue(":bomitem_id", _bomitemid);
@@ -528,10 +529,9 @@ void bomItem::populate()
                                "AND (charass_target_type='I') "
                                "AND (charass_target_id= %1)) "
                                "ORDER BY char_name; ").arg(_itemid));
-      _char->setId(q.value("charass_char_id").toInt());
+      _char->setId(q.value("bomitem_char_id").toInt());
       sCharIdChanged();
-      qDebug("charass_id = %d", q.value("bomitem_charass_id").toInt());
-      _value->setId(q.value("bomitem_charass_id").toInt());
+      _value->setText(q.value("bomitem_value").toString());
     }
     else
       _tab->removeTab(_tab->indexOf(_configurationTab));

@@ -176,9 +176,13 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _availability->addColumn(tr("Availability"), _qtyColumn,  Qt::AlignRight  );
   
   _itemchar = new QStandardItemModel(0, 3, this);
-  _itemchar->setHeaderData( 0, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
-  _itemchar->setHeaderData( 1, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
-  _itemchar->setHeaderData( 2, Qt::Horizontal, tr("Price"), Qt::DisplayRole);
+  _itemchar->setHeaderData( CHAR_ID, Qt::Horizontal, tr("Name"), Qt::DisplayRole);
+  _itemchar->setHeaderData( CHAR_VALUE, Qt::Horizontal, tr("Value"), Qt::DisplayRole);
+  _itemchar->setHeaderData( CHAR_PRICE, Qt::Horizontal, tr("Price"), Qt::DisplayRole);
+  
+  _itemcharView->hideColumn(CHAR_PRICE);
+  _baseUnitPriceLit->hide();
+  _baseUnitPrice->hide();
 
   _itemcharView->setModel(_itemchar);
   ItemCharacteristicDelegate * delegate = new ItemCharacteristicDelegate(this);
@@ -1282,7 +1286,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
 
 		else if (_item->itemType() == "J")
 		{
-          _createOrder->setChecked(TRUE);
+                  _createOrder->setChecked(TRUE);
 		  _createOrder->setEnabled(FALSE);
 		}
 
@@ -1300,8 +1304,7 @@ void salesOrderItem::sPopulateItemsiteInfo()
     {
       systemError(this, itemsite.lastError().databaseText(), __FILE__, __LINE__);
       return;
-    }
-    _charVars.replace(ITEM_ID, _item->id());
+    }    
   }
 }
 
@@ -1324,7 +1327,17 @@ void salesOrderItem::sListPrices()
   }
 }
 
+void salesOrderItem::sRecalcPrice()
+{
+  sDeterminePrice(TRUE);
+}
+
 void salesOrderItem::sDeterminePrice()
+{
+  sDeterminePrice(FALSE);
+}
+
+void salesOrderItem::sDeterminePrice(bool p)
 {
   if(cView == _mode || cViewQuote == _mode)
     return;
@@ -1334,10 +1347,12 @@ void salesOrderItem::sDeterminePrice()
   {
     if (_mode == cEditQuote || _mode == cEdit)
     {
-      if ((_qtyOrdered->toDouble() == _orderQtyChanged) || (_metrics->value("UpdatePriceLineEdit").toInt() == iDontUpdate))
+      if (((_qtyOrdered->toDouble() == _orderQtyChanged) 
+        || (_metrics->value("UpdatePriceLineEdit").toInt() == iDontUpdate))
+        && !p)
         return;
 
-      if( _metrics->value("UpdatePriceLineEdit").toInt() != iJustUpdate )
+      if (( _metrics->value("UpdatePriceLineEdit").toInt() != iJustUpdate ) && !p)
       {
         if (QMessageBox::question(this, tr("Update Price?"),
                 tr("<p>The Item qty. has changed. Do you want to update the Price?"),
@@ -1349,8 +1364,9 @@ void salesOrderItem::sDeterminePrice()
       }
     }
     
-    if (_item->itemType() == "J") //For job items, update characteristic pricing
+    if ((_item->itemType() == "J") && (_qtyOrdered->toDouble() != _orderQtyChanged) ) //For job items, update characteristic pricing if qty changed
     {
+      disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
       _charVars.replace(QTY, _qtyOrdered->toDouble() * _qtyinvuomratio);
         
       QModelIndex idx1, idx2, idx3;
@@ -1363,7 +1379,7 @@ void salesOrderItem::sDeterminePrice()
         idx3 = _itemchar->index(i, 2);
         q.bindValue(":item_id", _item->id());
         q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
-        q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+        q.bindValue(":value", _itemchar->data(idx2, Qt::DisplayRole));
         q.bindValue(":cust_id", _custid);
         q.bindValue(":shipto_id", _shiptoid);
         q.bindValue(":qty", _qtyOrdered->toDouble() * _qtyinvuomratio);
@@ -1372,15 +1388,26 @@ void salesOrderItem::sDeterminePrice()
         q.exec();
         if (q.first())
         {
-          _itemchar->setData(idx3, q.value("price").toDouble(), Qt::DisplayRole);
+          _itemchar->setData(idx3, q.value("price").toString(), Qt::DisplayRole);
           _itemchar->setData(idx3, QVariant(_charVars), Qt::UserRole);
-          charTotal += q.value("price").toDouble();
         }
         else if (q.lastError().type() != QSqlError::None)
         {
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
           return;
         }
+      }
+      connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
+    }
+    
+    if (_item->itemType() == "J") //Total up price for job item characteristics
+    {
+      QModelIndex idx;
+
+      for(int i = 0; i < _itemchar->rowCount(); i++)
+      {
+        idx = _itemchar->index(i, 2);
+        charTotal += _itemchar->data(idx, Qt::DisplayRole).toDouble();
       }
     }
     
@@ -1553,6 +1580,24 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
+    }
+    
+    _charVars.replace(ITEM_ID, _item->id());
+    
+    //Setup widgets and signals needed to handle configuration
+    if (_item->itemType() == "J")
+    {
+      connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
+      _itemcharView->showColumn(CHAR_PRICE);
+      _baseUnitPriceLit->show();
+      _baseUnitPrice->setVisible(TRUE);
+    }
+    else
+    {
+      disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
+      _itemcharView->hideColumn(CHAR_PRICE);
+      _baseUnitPriceLit->hide();
+      _baseUnitPrice->setVisible(FALSE);
     }
     
     //Populate Characteristics

@@ -81,6 +81,8 @@ public slots:
     virtual void sPopulateItemsiteInfo();
     virtual void sListPrices();
     virtual void sDeterminePrice();
+    virtual void sDeterminePrice(bool p);
+    virtual void sRecalcPrice();
     virtual void sPopulateItemInfo( int pItemid );
     virtual void sDetermineAvailability();
     virtual void sCalculateDiscountPrcnt();
@@ -148,6 +150,13 @@ private:
     
     //For holding variables for characteristic pricing
     QList<QVariant> _charVars;
+    
+    enum {
+      CHAR_ID      = 0,
+      CHAR_VALUE     = 1,
+      CHAR_PRICE     = 2
+    };
+    
     enum {
       ITEM_ID   = 0,
       CUST_ID   = 1,

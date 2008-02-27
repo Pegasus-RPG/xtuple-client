@@ -1230,19 +1230,6 @@
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>221</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item row="0" column="1" >
           <widget class="QLabel" name="_baseUnitPriceLit" >
            <property name="text" >
             <string>Base Price:</string>
@@ -1255,23 +1242,7 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="3" >
-          <widget class="QTreeView" name="_itemcharView" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="editTriggers" >
-            <set>QAbstractItemView::AllEditTriggers</set>
-           </property>
-           <property name="rootIsDecorated" >
-            <bool>false</bool>
-           </property>
-           <property name="itemsExpandable" >
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="2" >
+         <item row="0" column="1" >
           <widget class="CurrCluster" name="_baseUnitPrice" >
            <property name="minimumSize" >
             <size>
@@ -1286,6 +1257,35 @@
             <number>2</number>
            </property>
            <property name="enabled" >
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2" >
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>221</width>
+             <height>0</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0" colspan="3" >
+          <widget class="QTreeView" name="_itemcharView" >
+           <property name="focusPolicy" >
+            <enum>Qt::NoFocus</enum>
+           </property>
+           <property name="editTriggers" >
+            <set>QAbstractItemView::AllEditTriggers</set>
+           </property>
+           <property name="rootIsDecorated" >
+            <bool>false</bool>
+           </property>
+           <property name="itemsExpandable" >
             <bool>false</bool>
            </property>
           </widget>
@@ -1783,7 +1783,6 @@
   <tabstop>_next</tabstop>
   <tabstop>_cancel</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
