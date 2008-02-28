@@ -181,8 +181,8 @@ void XMainWindow::showEvent(QShowEvent *event)
     while(q.next())
     {
       QString script = q.value("script_source").toString();
-qDebug() << "loading script " << script << " #" << q.value("script_order").toInt();
-      _private->_engine = new QScriptEngine();
+      if(!_private->_engine)
+        _private->_engine = new QScriptEngine();
       QScriptValue mywindow = _private->_engine->newQObject(this);
       _private->_engine->globalObject().setProperty("mywindow", mywindow);
       QScriptValue mainwindow = _private->_engine->newQObject(omfgThis);
@@ -193,8 +193,6 @@ qDebug() << "loading script " << script << " #" << q.value("script_order").toInt
       {
         int line = _private->_engine->uncaughtExceptionLineNumber();
         qDebug() << "uncaught exception at line" << line << ":" << result.toString();
-        delete _private->_engine;
-        _private->_engine = 0;
       }
     }
   }

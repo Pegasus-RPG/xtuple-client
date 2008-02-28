@@ -89,6 +89,8 @@
 #include <QSettings>
 #include <QDesktopWidget>
 #include <QDebug>
+#include <QScriptEngine>
+#include <QScriptValue>
 
 #include <parameter.h>
 #include <dbtools.h>
@@ -171,6 +173,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 QWidget *pAddTo, bool pEnabled ) :
  QAction(pDisplayName, pParent)
 {
+  setObjectName(pName);
   _name = pName;
   _displayName = pDisplayName;
 
@@ -198,6 +201,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 const QPixmap &pIcon, QWidget *pToolBar ) :
  QAction(pDisplayName, pParent)
 {
+  setObjectName(pName);
   _name = pName;
   _displayName = pDisplayName;
 
@@ -227,6 +231,7 @@ Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName
                 const QString &pToolTip ) :
  QAction(pDisplayName, pParent)
 {
+  setObjectName(pName);
   _name = pName;
   _displayName = pDisplayName;
   _toolTip = pToolTip;
@@ -308,6 +313,7 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 {
   _menuBar = 0;
   _activeWindow = 0;
+  _shown = false;
 
   _databaseURL = pDatabaseURL;
   _username = pUsername;
@@ -581,6 +587,7 @@ void GUIClient::initMenuBar()
       _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
       qApp->processEvents();
       systemMenu = new menuSystem(this);
+
   }
   else
   {
@@ -709,6 +716,42 @@ void GUIClient::closeEvent(QCloseEvent *event)
   QSqlDatabase::database().close();
 
   event->accept();
+}
+
+void GUIClient::showEvent(QShowEvent *event)
+{
+  if(!_shown)
+  {
+    _shown = true;
+    // We only want the scripting to work on the NEO menu
+    // START script code
+      XSqlQuery sq;
+      sq.prepare("SELECT script_source, script_order"
+              "  FROM script"
+              " WHERE((script_name=:script_name)"
+              "   AND (script_enabled))"
+              " ORDER BY script_order;");
+      sq.bindValue(":script_name", "initMenu");
+      sq.exec();
+      QScriptEngine * engine;
+      while(sq.next())
+      {
+        QString script = sq.value("script_source").toString();
+        if(!engine)
+          engine = new QScriptEngine(this);
+        QScriptValue mainwindow = engine->newQObject(this);
+        engine->globalObject().setProperty("mainwindow", mainwindow);
+  
+        QScriptValue result = engine->evaluate(script);
+        if (engine->hasUncaughtException())
+        {
+          int line = engine->uncaughtExceptionLineNumber();
+          qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+        }
+      }
+    // END script code
+  }
+  QMainWindow::showEvent(event);
 }
 
 void GUIClient::sReportError(const QString &pError)

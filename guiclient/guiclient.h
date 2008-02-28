@@ -376,6 +376,7 @@ class GUIClient : public QMainWindow
 
   protected:
     void closeEvent(QCloseEvent *);
+    void showEvent(QShowEvent *);
 
   protected slots:
     void windowDestroyed(QObject*);
@@ -441,6 +442,8 @@ class GUIClient : public QMainWindow
 
     QFont *_systemFont;
     QFont *_fixedFont;
+
+    bool _shown;
 };
 extern GUIClient *omfgThis;
 
