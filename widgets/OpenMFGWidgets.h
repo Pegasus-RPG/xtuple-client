@@ -77,13 +77,13 @@
 class Preferences;
 class Metrics;
 class QWorkspace;
-class Privleges;
+class Privileges;
 class QWidget;
 
 extern Preferences *_x_preferences;
 extern Metrics     *_x_metrics;
 extern QWorkspace  *_x_workspace;
-extern Privleges   *_x_privleges;
+extern Privileges  *_x_privileges;
 
 #ifdef MAKEDLL
 class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
@@ -101,7 +101,7 @@ class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInte
 };
 #endif
 
-void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privleges *, QWorkspace *);
+void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
 
 #endif
 

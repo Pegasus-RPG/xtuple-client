@@ -173,7 +173,7 @@ void dspAROpenItemsByCustomer::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pIte
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("EditAROpenItem"))
+  if (!_privileges->check("EditAROpenItem"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);

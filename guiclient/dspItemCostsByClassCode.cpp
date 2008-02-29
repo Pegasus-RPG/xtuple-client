@@ -157,11 +157,11 @@ void dspItemCostsByClassCode::sPopulateMenu(QMenu *pMenu)
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Update Actual Costs..."), this, SLOT(sUpdateCosts()), 0);
-  if (!_privleges->check("UpdateActualCosts"))
+  if (!_privileges->check("UpdateActualCosts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Post Actual Costs..."), this, SLOT(sPostCosts()), 0);
-  if (!_privleges->check("PostActualCosts"))
+  if (!_privileges->check("PostActualCosts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -113,7 +113,7 @@ void shifts::init()
     _shiftList->addColumn(tr("Shift Number"),	_userColumn,	Qt::AlignLeft );
     _shiftList->addColumn(tr("Shift Name"),	-1,		Qt::AlignLeft );
 
-    if (_privleges->check("MaintainShifts"))
+    if (_privileges->check("MaintainShifts"))
     {
 	connect(_shiftList, SIGNAL(valid(bool)), _edit,	SLOT(setEnabled(bool)));
 	connect(_shiftList, SIGNAL(valid(bool)), _delete,SLOT(setEnabled(bool)));
@@ -205,12 +205,12 @@ void shifts::sPopulateMenu(QMenu *pMenu )
     int menuItem;
 
     menuItem = pMenu->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainShifts"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainShifts"));
 
     menuItem = pMenu->insertItem(tr("View"), this, SLOT(sView()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewShifts") ||
-				    _privleges->check("MaintainShifts"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewShifts") ||
+				    _privileges->check("MaintainShifts"));
 
     menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainShifts"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainShifts"));
 }

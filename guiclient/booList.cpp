@@ -123,7 +123,7 @@ void booList::init()
   
   connect(omfgThis, SIGNAL(boosUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
-  if (_privleges->check("MaintainBOOs"))
+  if (_privileges->check("MaintainBOOs"))
   {
     connect(_boo, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_boo, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));

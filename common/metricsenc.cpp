@@ -57,13 +57,15 @@
 
 
 #include "metricsenc.h"
+#include "xsqlquery.h"
 
-Parametersend::Parametersend()
+Parametersenc::Parametersenc(QObject * parent)
+  : QObject(parent)
 {
   _dirty = FALSE;
 }
 
-void Parametersend::load()
+void Parametersenc::load()
 {
   _values.clear();
 
@@ -78,12 +80,12 @@ void Parametersend::load()
   _dirty = FALSE;
 }
 
-QString Parametersend::value(const char *pName)
+QString Parametersenc::value(const char *pName)
 {
   return value(QString(pName));
 }
 
-QString Parametersend::value(const QString &pName)
+QString Parametersenc::value(const QString &pName)
 {
   MetricMap::iterator it = _values.find(pName);
   if (it == _values.end())
@@ -92,12 +94,12 @@ QString Parametersend::value(const QString &pName)
     return it.data();
 }
 
-bool Parametersend::boolean(const char *pName)
+bool Parametersenc::boolean(const char *pName)
 {
   return boolean(QString(pName));
 }
 
-bool Parametersend::boolean(const QString &pName)
+bool Parametersenc::boolean(const QString &pName)
 {
   MetricMap::iterator it = _values.find(pName);
   if (it == _values.end())
@@ -108,12 +110,12 @@ bool Parametersend::boolean(const QString &pName)
   return FALSE;
 }
 
-void Parametersend::set(const char *pName, bool pValue)
+void Parametersenc::set(const char *pName, bool pValue)
 {
   set(QString(pName), pValue);
 }
 
-void Parametersend::set(const QString &pName, bool pValue)
+void Parametersenc::set(const QString &pName, bool pValue)
 {
   MetricMap::iterator it = _values.find(pName);
   if ( (it != _values.end()) && (it.data() == ((pValue) ? "t" : "f")) )
@@ -122,12 +124,12 @@ void Parametersend::set(const QString &pName, bool pValue)
   _set(pName, ((pValue) ? QString("t") : QString("f")));
 }
 
-void Parametersend::set(const char *pName, int pValue)
+void Parametersenc::set(const char *pName, int pValue)
 {
   set(QString(pName), pValue);
 }
 
-void Parametersend::set(const QString &pName, int pValue)
+void Parametersenc::set(const QString &pName, int pValue)
 {
   MetricMap::iterator it = _values.find(pName);
   if ( (it != _values.end()) && (it.data().toInt() == pValue) )
@@ -136,12 +138,12 @@ void Parametersend::set(const QString &pName, int pValue)
   _set(pName, pValue);
 }
 
-void Parametersend::set(const char *pName, const QString &pValue)
+void Parametersenc::set(const char *pName, const QString &pValue)
 {
   set(QString(pName), pValue);
 }
 
-void Parametersend::set(const QString &pName, const QString &pValue)
+void Parametersenc::set(const QString &pName, const QString &pValue)
 {
   MetricMap::iterator it = _values.find(pName);
   if (it != _values.end())
@@ -157,7 +159,7 @@ void Parametersend::set(const QString &pName, const QString &pValue)
   _set(pName, pValue);
 }
 
-void Parametersend::_set(const QString &pName, QVariant pValue)
+void Parametersenc::_set(const QString &pName, QVariant pValue)
 {
   XSqlQuery q;
   q.prepare(_setSql);
@@ -170,7 +172,7 @@ void Parametersend::_set(const QString &pName, QVariant pValue)
   _dirty = TRUE;
 }
 
-QString Parametersend::parent(const QString &pValue)
+QString Parametersenc::parent(const QString &pValue)
 {
   for (MetricMap::iterator it = _values.begin(); it != _values.end(); it++)
     if (it.data() == pValue)

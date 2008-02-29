@@ -142,17 +142,17 @@ void dspPurchaseReqsByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
-  if (!_privleges->check("ViewInventoryAvailability"))
+  if (!_privileges->check("ViewInventoryAvailability"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Release P/R..."), this, SLOT(sRelease()), 0);
-  if (!_privleges->check("MaintainPurchaseOrders"))
+  if (!_privileges->check("MaintainPurchaseOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete P/R..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainPurchaseRequests"))
+  if (!_privileges->check("MaintainPurchaseRequests"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

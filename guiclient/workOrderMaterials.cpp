@@ -98,7 +98,7 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
   _womatl->addColumn(tr("Balance"),        _qtyColumn,   Qt::AlignRight  );
   _womatl->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter );
   
-  if (_privleges->check("MaintainWoMaterials"))
+  if (_privileges->check("MaintainWoMaterials"))
   {
     connect(_womatl, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_womatl, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -111,7 +111,7 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
     connect(_womatl, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  if (!_privleges->check("ViewCosts"))
+  if (!_privileges->check("ViewCosts"))
   {
     _currentStdCostLit->hide();
     _currentActCostLit->hide();
@@ -208,7 +208,7 @@ void workOrderMaterials::sDelete()
   int womatlid = _womatl->id();
   if (_womatl->altId())
   {
-    if(_privleges->check("ReturnWoMaterials"))
+    if(_privileges->check("ReturnWoMaterials"))
     {
       if (QMessageBox::question(this, tr("W/O Material Requirement cannot be Deleted"),
 				tr("<p>This W/O Material Requirement cannot "
@@ -505,7 +505,7 @@ void workOrderMaterials::sFillList()
     _totalNumber->setText(QString("%1").arg(totalNumber));
     _totalQtyPer->setText(formatQtyPer(totalQtyPer));
 
-    if (_privleges->check("ViewCosts"))
+    if (_privileges->check("ViewCosts"))
     {
       q.prepare( "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
                  "       formatCost(COALESCE(SUM(itemuomtouom(ci.itemsite_item_id, womatl_uom_id, NULL, womatl_qtyper * (1 + womatl_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"

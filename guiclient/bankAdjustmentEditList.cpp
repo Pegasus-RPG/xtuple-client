@@ -130,7 +130,7 @@ void bankAdjustmentEditList::init()
   if (omfgThis->singleCurrency())
       _adjustments->hideColumn(5);
   
-  if (_privleges->check("MaintainBankAdjustments"))
+  if (_privileges->check("MaintainBankAdjustments"))
   {
     connect(_adjustments, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_adjustments, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -224,19 +224,19 @@ void bankAdjustmentEditList::sPopulateMenu( QMenu * pMenu )
   int menuItem;
   
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainBankAdjustments"))
+  if (!_privileges->check("MaintainBankAdjustments"))
     pMenu->setItemEnabled(menuItem, FALSE);
   
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
   
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainBankAdjustments"))
+  if (!_privileges->check("MaintainBankAdjustments"))
     pMenu->setItemEnabled(menuItem, FALSE);
   
   pMenu->insertSeparator();
   
   menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostBankAdjustments"))
+  if (!_privileges->check("PostBankAdjustments"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

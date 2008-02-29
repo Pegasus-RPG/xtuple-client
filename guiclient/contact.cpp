@@ -202,67 +202,67 @@ void contact::sPopulateUsesMenu(QMenu* pMenu)
     case 1:
     case 2:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditCRMAccount()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainCRMAccounts"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCRMAccounts"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewCRMAccount()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewCRMAccounts"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewCRMAccounts"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainCRMAccounts"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCRMAccounts"));
       break;
 
     case 3:
     case 4:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditCustomer()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainCustomerMasters"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewCustomer()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewCustomerMasters"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewCustomerMasters"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainCustomerMasters"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCustomerMasters"));
       break;
 
     case 5:
     case 6:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditVendor()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainVendors"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendors"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewVendor()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewVendors"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewVendors"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainVendors"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendors"));
       break;
 
     case 7:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditProspect()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainProspects"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainProspects"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewProspect()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewProspects"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewProspects"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainProspects"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainProspects"));
       break;
 
     case 8:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditShipto()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainShiptos"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainShiptos"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewShipto()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewShiptos"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewShiptos"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainShiptos"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainShiptos"));
       break;
 
     case 9:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditVendorAddress()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainVendorAddresses"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendorAddresses"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewVendorAddress()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewVendorAddresses"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewVendorAddresses"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainVendorAddresses"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainVendorAddresses"));
       break;
 
     case 10:
       menuItem = pMenu->insertItem(editStr, this, SLOT(sEditWarehouse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWarehouses"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWarehouses"));
       menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewWarehouse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("ViewWarehouses"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("ViewWarehouses"));
       menuItem = pMenu->insertItem(detachStr, this, SLOT(sDetachUse()));
-      pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWarehouses"));
+      pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWarehouses"));
       break;
 
     default:
@@ -708,28 +708,28 @@ void contact::sViewUse()
 void contact::sHandleValidUse(bool valid)
 {
   bool editPriv = (
-		  (_uses->altId() == 1 && _privleges->check("MaintainCRMAccounts")) ||
-		  (_uses->altId() == 2 && _privleges->check("MaintainCRMAccounts")) ||
-		  (_uses->altId() == 3 && _privleges->check("MaintainCustomerMasters")) ||
-		  (_uses->altId() == 4 && _privleges->check("MaintainCustomerMasters")) ||
-		  (_uses->altId() == 5 && _privleges->check("MaintainVendors")) ||
-		  (_uses->altId() == 6 && _privleges->check("MaintainVendors")) ||
-		  (_uses->altId() == 7 && _privleges->check("MaintainProspects")) ||
-		  (_uses->altId() == 8 && _privleges->check("MaintainShiptos")) ||
-		  (_uses->altId() == 9 && _privleges->check("MaintainVendorAddresses")) ||
-		  (_uses->altId() ==10 && _privleges->check("MaintainWarehouses")) 
+		  (_uses->altId() == 1 && _privileges->check("MaintainCRMAccounts")) ||
+		  (_uses->altId() == 2 && _privileges->check("MaintainCRMAccounts")) ||
+		  (_uses->altId() == 3 && _privileges->check("MaintainCustomerMasters")) ||
+		  (_uses->altId() == 4 && _privileges->check("MaintainCustomerMasters")) ||
+		  (_uses->altId() == 5 && _privileges->check("MaintainVendors")) ||
+		  (_uses->altId() == 6 && _privileges->check("MaintainVendors")) ||
+		  (_uses->altId() == 7 && _privileges->check("MaintainProspects")) ||
+		  (_uses->altId() == 8 && _privileges->check("MaintainShiptos")) ||
+		  (_uses->altId() == 9 && _privileges->check("MaintainVendorAddresses")) ||
+		  (_uses->altId() ==10 && _privileges->check("MaintainWarehouses")) 
   );
   bool viewPriv = (
-		  (_uses->altId() == 1 && _privleges->check("ViewCRMAccounts")) ||
-		  (_uses->altId() == 2 && _privleges->check("ViewCRMAccounts")) ||
-		  (_uses->altId() == 3 && _privleges->check("ViewCustomerMasters")) ||
-		  (_uses->altId() == 4 && _privleges->check("ViewCustomerMasters")) ||
-		  (_uses->altId() == 5 && _privleges->check("ViewVendors")) ||
-		  (_uses->altId() == 6 && _privleges->check("ViewVendors")) ||
-		  (_uses->altId() == 7 && _privleges->check("ViewProspects")) ||
-		  (_uses->altId() == 8 && _privleges->check("ViewShiptos")) ||
-		  (_uses->altId() == 9 && _privleges->check("ViewVendorAddresses")) ||
-		  (_uses->altId() ==10 && _privleges->check("ViewWarehouses")) 
+		  (_uses->altId() == 1 && _privileges->check("ViewCRMAccounts")) ||
+		  (_uses->altId() == 2 && _privileges->check("ViewCRMAccounts")) ||
+		  (_uses->altId() == 3 && _privileges->check("ViewCustomerMasters")) ||
+		  (_uses->altId() == 4 && _privileges->check("ViewCustomerMasters")) ||
+		  (_uses->altId() == 5 && _privileges->check("ViewVendors")) ||
+		  (_uses->altId() == 6 && _privileges->check("ViewVendors")) ||
+		  (_uses->altId() == 7 && _privileges->check("ViewProspects")) ||
+		  (_uses->altId() == 8 && _privileges->check("ViewShiptos")) ||
+		  (_uses->altId() == 9 && _privileges->check("ViewVendorAddresses")) ||
+		  (_uses->altId() ==10 && _privileges->check("ViewWarehouses")) 
   );
 
   disconnect(_uses, SIGNAL(itemSelected(int)), _editUse, SLOT(animateClick()));

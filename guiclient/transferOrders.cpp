@@ -93,7 +93,7 @@ transferOrders::transferOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   _to->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
   _to->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
   
-  if (_privleges->check("MaintainTransferOrders"))
+  if (_privileges->check("MaintainTransferOrders"))
   {
     connect(_to,       SIGNAL(valid(bool)), _edit,    SLOT(setEnabled(bool)));
     connect(_to,       SIGNAL(valid(bool)), _copy,    SLOT(setEnabled(bool)));
@@ -279,31 +279,31 @@ void transferOrders::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainTransferOrders"))
+  if (!_privileges->check("MaintainTransferOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainTransferOrders"))
+  if (!_privileges->check("MaintainTransferOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Issue To Shipping..."), this, SLOT(sIssue()), 0);
-  if (!_privleges->check("IssueStockToShipping"))
+  if (!_privileges->check("IssueStockToShipping"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Copy..."), this, SLOT(sCopy()), 0);
-  if (!_privleges->check("MaintainTransferOrders"))
+  if (!_privileges->check("MaintainTransferOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-  if (!_privleges->check("PrintPackingLists"))
+  if (!_privileges->check("PrintPackingLists"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Add to Packing List Batch..."), this, SLOT(sAddToPackingListBatch()), 0);
-  if (!_privleges->check("MaintainPackingListBatch"))
+  if (!_privileges->check("MaintainPackingListBatch"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

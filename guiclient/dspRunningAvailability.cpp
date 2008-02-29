@@ -194,19 +194,19 @@ void dspRunningAvailability::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelec
   {
     pMenu->insertItem(tr("View Work Order Details..."), this, SLOT(sViewWo()), 0);
     menuItem = pMenu->insertItem(tr("Work Order Schedule..."), this, SLOT(sDspWoScheduleByWorkOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWorkOrders") ||
-				    _privleges->check("ViewWorkOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWorkOrders") ||
+				    _privileges->check("ViewWorkOrders"));
   }
   else if (pSelected->text(ORDERTYPE_COL) == "S/O")
   {
     menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSo()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewSalesOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
   }
 
   else if (pSelected->text(ORDERTYPE_COL) == "T/O")
   {
     menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTo()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewTransferOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewTransferOrders"));
   }
 
 }

@@ -87,7 +87,7 @@ vendorTypes::vendorTypes(QWidget* parent, const char* name, Qt::WFlags fl)
 
   statusBar()->hide();
   
-  if (_privleges->check("MaintainVendorTypes"))
+  if (_privileges->check("MaintainVendorTypes"))
   {
     connect(_vendtype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_vendtype, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

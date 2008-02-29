@@ -58,8 +58,10 @@
 
 #include "metrics.h"
 #include <QVariant>
+#include "xsqlquery.h"
 
-Parameters::Parameters()
+Parameters::Parameters(QObject * parent)
+  : QObject(parent)
 {
   _dirty = FALSE;
 }
@@ -202,7 +204,7 @@ void Preferences::remove(const QString &pPrefName)
 }
 
 
-Privleges::Privleges()
+Privileges::Privileges()
 {
   _readSql = "SELECT priv_name AS key, TEXT('t') AS value "
              "FROM usrpriv, priv, usr "
@@ -212,7 +214,7 @@ Privleges::Privleges()
   load();
 }
 
-bool Privleges::check(const QString &pName)
+bool Privileges::check(const QString &pName)
 {
   MetricMap::iterator it = _values.find(pName);
   if (it == _values.end())

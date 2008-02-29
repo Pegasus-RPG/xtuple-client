@@ -106,7 +106,7 @@ void shippingChargeTypes::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainShippingChargeTypes"))
+  if (_privileges->check("MaintainShippingChargeTypes"))
   {
     connect(_shipchrg, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_shipchrg, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

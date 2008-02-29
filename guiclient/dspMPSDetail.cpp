@@ -202,17 +202,17 @@ void dspMPSDetail::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *, int pColumn)
   if (_itemsite->currentItem()->text(0) == "P")
   {
     menuItem = pMenu->insertItem(tr("Issue P/R..."), this, SLOT(sIssuePR()));
-    if (!_privleges->check("MaintainPurchaseRequests"))
+    if (!_privileges->check("MaintainPurchaseRequests"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Issue P/O..."), this, SLOT(sIssuePO()));
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (_itemsite->currentItem()->text(0) == "M")
   {
     menuItem = pMenu->insertItem(tr("Issue W/O..."), this, SLOT(sIssueWO()));
-    if (!_privleges->check("MaintainWorkOrders"))
+    if (!_privileges->check("MaintainWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

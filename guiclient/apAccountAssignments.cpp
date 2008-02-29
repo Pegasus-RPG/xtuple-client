@@ -114,7 +114,7 @@ void apAccountAssignments::init()
   _apaccnt->addColumn(tr("Prepaid Account"), 120, Qt::AlignLeft   );
   _apaccnt->addColumn(tr("Discount Account"),120, Qt::AlignLeft   );
 
-  if (_privleges->check("MaintainVendorAccounts"))
+  if (_privileges->check("MaintainVendorAccounts"))
   {
     connect(_apaccnt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_apaccnt, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

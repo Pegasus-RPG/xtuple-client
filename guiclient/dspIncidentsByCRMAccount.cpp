@@ -163,26 +163,26 @@ void dspIncidentsByCRMAccount::sPopulateMenu(QMenu *pMenu)
   if (_list->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Edit CRM Account..."), this, SLOT(sEditCRMAccount()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainCRMAccounts"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainCRMAccounts"));
     menuItem = pMenu->insertItem(tr("View CRM Account..."), this, SLOT(sViewCRMAccount()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewCRMAccounts") ||
-				    _privleges->check("MaintainCRMAccounts"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewCRMAccounts") ||
+				    _privileges->check("MaintainCRMAccounts"));
   }
   else if (_list->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Edit Incident..."), this, SLOT(sEditIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
     menuItem = pMenu->insertItem(tr("View Incident..."), this, SLOT(sViewIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewIncidents") ||
-				    _privleges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
+				    _privileges->check("MaintainIncidents"));
   }
   else if (_list->altId() == 3)
   {
     menuItem = pMenu->insertItem(tr("Edit To-Do Item..."), this, SLOT(sEditTodoItem()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainOtherTodoLists"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainOtherTodoLists"));
 
     menuItem = pMenu->insertItem(tr("View To-Do Item..."), this, SLOT(sViewTodoItem()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewOtherTodoLists"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewOtherTodoLists"));
   }
 }
 

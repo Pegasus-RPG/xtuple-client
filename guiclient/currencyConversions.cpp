@@ -122,9 +122,9 @@ void currencyConversions::init()
     _conversionRates->addColumn(tr("Effective"),    _dateColumn,   Qt::AlignCenter);
     _conversionRates->addColumn(tr("Expires"),      _dateColumn,   Qt::AlignCenter);
     
-    _newCurrency->setEnabled(_privleges->check("CreateNewCurrency"));
+    _newCurrency->setEnabled(_privileges->check("CreateNewCurrency"));
     
-    bool maintainPriv = _privleges->check("MaintainCurrencyRates");
+    bool maintainPriv = _privileges->check("MaintainCurrencyRates");
     _new->setEnabled(maintainPriv);
     if (maintainPriv)
     {
@@ -301,13 +301,13 @@ void currencyConversions::sPopulateMenu( QMenu* pMenu)
     int menuItem;
     
     menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainCurrencyRates"))
+    if (!_privileges->check("MaintainCurrencyRates"))
 	pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
     menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-    if (!_privleges->check("MaintainCurrencyRates"))
+    if (!_privileges->check("MaintainCurrencyRates"))
 	pMenu->setItemEnabled(menuItem, FALSE);
 }
 

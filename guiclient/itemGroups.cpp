@@ -110,7 +110,7 @@ void itemGroups::init()
   _itemgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _itemgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft );
   
-  if (_privleges->check("MaintainItemGroups"))
+  if (_privileges->check("MaintainItemGroups"))
   {
     connect(_itemgrp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_itemgrp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

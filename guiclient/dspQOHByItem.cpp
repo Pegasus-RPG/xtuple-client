@@ -96,7 +96,7 @@ dspQOHByItem::dspQOHByItem(QWidget* parent, const char* name, Qt::WFlags fl)
   _qoh->addColumn(tr("NN Value"),         _costColumn,  Qt::AlignRight  );
   sHandleValue(_showValue->isChecked());
 
-  _showValue->setEnabled(_privleges->check("ViewInventoryValue"));
+  _showValue->setEnabled(_privileges->check("ViewInventoryValue"));
 
   sHandleValue(_showValue->isChecked());
 
@@ -151,27 +151,27 @@ void dspQOHByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     if (_metrics->boolean("MultiWhs"))
     {
       menuItem = pMenu->insertItem(tr("Transfer to another Warehouse..."), this, SLOT(sTransfer()), 0);
-      if (!_privleges->check("CreateInterWarehouseTrans"))
+      if (!_privileges->check("CreateInterWarehouseTrans"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
     menuItem = pMenu->insertItem(tr("Adjust this QOH..."), this, SLOT(sAdjust()), 0);
-    if (!_privleges->check("CreateAdjustmentTrans"))
+    if (!_privileges->check("CreateAdjustmentTrans"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Reset this QOH to 0..."), this, SLOT(sReset()), 0);
-    if (!_privleges->check("CreateAdjustmentTrans"))
+    if (!_privileges->check("CreateAdjustmentTrans"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Enter Misc. Count..."), this, SLOT(sMiscCount()), 0);
-    if (!_privleges->check("EnterMiscCounts"))
+    if (!_privileges->check("EnterMiscCounts"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
     menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-    if (!_privleges->check("IssueCountTags"))
+    if (!_privileges->check("IssueCountTags"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

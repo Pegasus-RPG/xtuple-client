@@ -162,7 +162,7 @@ void dspUsageStatisticsByWarehouse::sPopulateMenu(QMenu *menuThis, QTreeWidgetIt
   _column = pColumn;
 
   intMenuItem = menuThis->insertItem(tr("View Transactions..."), this, SLOT(sViewTransactions()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 }
 

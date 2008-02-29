@@ -253,250 +253,250 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     //  Inventory |  Transfer Orders
     // TODO: switch between visibility of Inter-Warehouse Transfer and Transfer Orders based on config param?
     { "menu",				tr("Transfer &Order"),	  (char*)transferOrderMenu,	mainMenu,	  true,	NULL, NULL, _metrics->boolean("MultiWhs"), NULL},
-    { "im.interWarehouseTransfer",	tr("&New..."),	  SLOT(sNewTransferOrder()),	transferOrderMenu, _privleges->check("MaintainTransferOrders"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
-    { "im.transferOrders",		tr("&List..."),	  SLOT(sTransferOrders()),	transferOrderMenu, (_privleges->check("ViewTransferOrders") || _privleges->check("MaintainTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
+    { "im.interWarehouseTransfer",	tr("&New..."),	  SLOT(sNewTransferOrder()),	transferOrderMenu, _privileges->check("MaintainTransferOrders"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
+    { "im.transferOrders",		tr("&List..."),	  SLOT(sTransferOrders()),	transferOrderMenu, (_privileges->check("ViewTransferOrders") || _privileges->check("MaintainTransferOrders")),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL }, 
 
     //  Inventory | Physical Inventory
     { "menu",				tr("&Physical Inventory"),		   (char*)physicalMenu,			 mainMenu,	true,	NULL, NULL, true, NULL },
     
     //  Inventory | Physical Inventory | Create Count Tags
     { "menu",				tr("&Create Count Tags"),   (char*)physicalCreateTagsMenu,	 physicalMenu,      true,	NULL, NULL, true, NULL },
-    { "im.createCountTagsByPlannerCode",tr("by &Planner Code..."),SLOT(sCreateCountTagsByPlannerCode()), physicalCreateTagsMenu, _privleges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.createCountTagsByClassCode",	tr("by &Class Code..."),  SLOT(sCreateCountTagsByClassCode()),  physicalCreateTagsMenu, _privleges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.createCountTagsByItem",	tr("by &Item..."),	   SLOT(sCreateCountTagsByItem()),	 physicalCreateTagsMenu, _privleges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.createCycleCountTags", tr("Create C&ycle Count Tags..."),SLOT(sCreateCycleCountTags()), physicalMenu, _privleges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.createCountTagsByPlannerCode",tr("by &Planner Code..."),SLOT(sCreateCountTagsByPlannerCode()), physicalCreateTagsMenu, _privileges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.createCountTagsByClassCode",	tr("by &Class Code..."),  SLOT(sCreateCountTagsByClassCode()),  physicalCreateTagsMenu, _privileges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.createCountTagsByItem",	tr("by &Item..."),	   SLOT(sCreateCountTagsByItem()),	 physicalCreateTagsMenu, _privileges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.createCycleCountTags", tr("Create C&ycle Count Tags..."),SLOT(sCreateCycleCountTags()), physicalMenu, _privileges->check("IssueCountTags"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,					   NULL,				 physicalMenu,	true, NULL, NULL, true, NULL},
-    { "im.enterCountSlip",		tr("Enter Count &Slip..."),		   SLOT(sEnterCountSlip()), 		 physicalMenu, _privleges->check("EnterCountSlips"),	NULL, NULL, true, NULL }, 
-    { "im.enterCountTag",		tr("Enter Count &Tag..."),		   SLOT(sEnterCountTags()), 		 physicalMenu, _privleges->check("EnterCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.enterMiscInventoryCount",	tr("Enter &Misc. Inventory Count..."),	   SLOT(sEnterMiscCount()), 		 physicalMenu, _privleges->check("EnterMiscCounts"),	NULL, NULL, true, NULL }, 
-    { "im.zeroUncountedCountTags",	tr("&Zero Uncounted Count Tags..."),	   SLOT(sZeroUncountedTagsByWarehouse()),physicalMenu, _privleges->check("ZeroCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.enterCountSlip",		tr("Enter Count &Slip..."),		   SLOT(sEnterCountSlip()), 		 physicalMenu, _privileges->check("EnterCountSlips"),	NULL, NULL, true, NULL }, 
+    { "im.enterCountTag",		tr("Enter Count &Tag..."),		   SLOT(sEnterCountTags()), 		 physicalMenu, _privileges->check("EnterCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.enterMiscInventoryCount",	tr("Enter &Misc. Inventory Count..."),	   SLOT(sEnterMiscCount()), 		 physicalMenu, _privileges->check("EnterMiscCounts"),	NULL, NULL, true, NULL }, 
+    { "im.zeroUncountedCountTags",	tr("&Zero Uncounted Count Tags..."),	   SLOT(sZeroUncountedTagsByWarehouse()),physicalMenu, _privileges->check("ZeroCountTags"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,					   NULL,				 physicalMenu,	true, NULL, NULL, true, NULL },
-    { "im.thawItemSitesByClassCode",	tr("Tha&w Item Sites..."),	   SLOT(sThawItemSitesByClassCode()),	 physicalMenu, _privleges->check("ThawInventory"),	NULL, NULL, true, NULL }, 
+    { "im.thawItemSitesByClassCode",	tr("Tha&w Item Sites..."),	   SLOT(sThawItemSitesByClassCode()),	 physicalMenu, _privileges->check("ThawInventory"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,					   NULL,				 physicalMenu,	true, NULL, NULL, true, NULL },
-    { "im.postCountSlips",		tr("Post Count S&lips..."),		   SLOT(sPostCountSlipsByWarehouse()),	 physicalMenu, _privleges->check("PostCountSlips"),	NULL, NULL, true, NULL }, 
-    { "im.postCountTags",		tr("Post Count T&ags..."),		   SLOT(sPostCountTags()),		 physicalMenu, _privleges->check("PostCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.purgeCountSlips",		tr("&Purge Posted Count Slips..."),	   SLOT(sPurgePostedCountSlips()),	 physicalMenu, _privleges->check("PurgeCountSlips"),	NULL, NULL, true, NULL }, 
-    { "im.purgeCountTags",		tr("P&urge Posted Count Tags..."),	   SLOT(sPurgePostedCountTags()),	 physicalMenu, _privleges->check("PurgeCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.postCountSlips",		tr("Post Count S&lips..."),		   SLOT(sPostCountSlipsByWarehouse()),	 physicalMenu, _privileges->check("PostCountSlips"),	NULL, NULL, true, NULL }, 
+    { "im.postCountTags",		tr("Post Count T&ags..."),		   SLOT(sPostCountTags()),		 physicalMenu, _privileges->check("PostCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.purgeCountSlips",		tr("&Purge Posted Count Slips..."),	   SLOT(sPurgePostedCountSlips()),	 physicalMenu, _privileges->check("PurgeCountSlips"),	NULL, NULL, true, NULL }, 
+    { "im.purgeCountTags",		tr("P&urge Posted Count Tags..."),	   SLOT(sPurgePostedCountTags()),	 physicalMenu, _privileges->check("PurgeCountTags"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,					   NULL,				 physicalMenu,	true, NULL, NULL, true , NULL },	
     
     //  Inventory | Physical Inventory | Reports
     { "menu",				tr("&Reports"),		  (char*)physicalReportsMenu,	    physicalMenu,	  true,	NULL, NULL, true , NULL },
-    { "im.dspFrozenItemSites",		tr("&Frozen Item Sites..."),	  SLOT(sDspFrozenItemSites()),	    physicalReportsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
+    { "im.dspFrozenItemSites",		tr("&Frozen Item Sites..."),	  SLOT(sDspFrozenItemSites()),	    physicalReportsMenu, _privileges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,				  NULL,				    physicalReportsMenu, true, NULL, NULL, true , NULL },
-    { "im.dspCountSlipEditList",	tr("Count S&lip Edit List..."),	  SLOT(sDspCountSlipEditList()),    physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.dspCountTagEditList",		tr("Count Ta&g Edit List..."),	  SLOT(sDspCountTagEditList()),	    physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.dspCountSlipEditList",	tr("Count S&lip Edit List..."),	  SLOT(sDspCountSlipEditList()),    physicalReportsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.dspCountTagEditList",		tr("Count Ta&g Edit List..."),	  SLOT(sDspCountTagEditList()),	    physicalReportsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,				  NULL,				    physicalReportsMenu, true, NULL, NULL, true , NULL },
     
-    { "im.dspCountSlipsByWarehouse",	tr("Count &Slips..."),SLOT(sDspCountSlipsByWarehouse()),physicalReportsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.dspCountSlipsByWarehouse",	tr("Count &Slips..."),SLOT(sDspCountSlipsByWarehouse()),physicalReportsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
     
     //  Inventory | Physical Inventory | Reports | Count Tags
-    { "menu",				tr("Count &Tags"),		  (char*)physicalReportsTagsMenu,	    physicalReportsMenu,	  _privleges->check("ViewCountTags"),	NULL, NULL, true , NULL },
-    { "im.dspCountTagsByItem",		tr("by &Item..."),	  SLOT(sDspCountTagsByItem()),	    physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.dspCountTagsByWarehouse",	tr("by &Warehouse..."), SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
-    { "im.dspCountTagsByClassCode",	tr("by &Class Code..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, _privleges->check("ViewCountTags"),	NULL, NULL, true, NULL },     
+    { "menu",				tr("Count &Tags"),		  (char*)physicalReportsTagsMenu,	    physicalReportsMenu,	  _privileges->check("ViewCountTags"),	NULL, NULL, true , NULL },
+    { "im.dspCountTagsByItem",		tr("by &Item..."),	  SLOT(sDspCountTagsByItem()),	    physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.dspCountTagsByWarehouse",	tr("by &Warehouse..."), SLOT(sDspCountTagsByWarehouse()), physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL }, 
+    { "im.dspCountTagsByClassCode",	tr("by &Class Code..."), SLOT(sDspCountTagsByClassCode()), physicalReportsTagsMenu, _privileges->check("ViewCountTags"),	NULL, NULL, true, NULL },     
 
     { "separator",			NULL,				  NULL,				mainMenu, true, NULL, NULL, true , NULL },
 
     //  Inventory | Receiving
     { "menu",	tr("R&eceiving"),  (char*)receivingMenu,	mainMenu,	true,	NULL, NULL, true , NULL },
-    { "sr.enterReceipt", tr("&New Receipt..."), SLOT(sEnterReceipt()), receivingMenu, _privleges->check("EnterReceipts"), NULL, NULL, true, NULL },
-    { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, _privleges->check("EnterReceipts"), new QPixmap(":/images/postReceipts.png"), toolBar,  true, NULL },
+    { "sr.enterReceipt", tr("&New Receipt..."), SLOT(sEnterReceipt()), receivingMenu, _privileges->check("EnterReceipts"), NULL, NULL, true, NULL },
+    { "sr.postReceipts", tr("&List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, _privileges->check("EnterReceipts"), new QPixmap(":/images/postReceipts.png"), toolBar,  true, NULL },
     { "separator", NULL, NULL, receivingMenu, true, NULL, NULL, true, NULL },
-    { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, _privleges->check("EnterReturns"), NULL, NULL, true, NULL },
+    { "sr.enterReturn",  tr("Purchase Order &Return..."),  SLOT(sEnterReturn()),  receivingMenu, _privileges->check("EnterReturns"), NULL, NULL, true, NULL },
     { "separator",			NULL,				  NULL,				receivingMenu, true, NULL, NULL, true , NULL },
 
     //  Inventory | Receiving | Forms
     { "menu",	tr("&Forms"),  (char*)receivingFormsMenu,	receivingMenu,	true,	NULL, NULL, true , NULL },
-    { "sr.printReceivingLabelsByPo", tr("&Print Receiving Labels..."), SLOT(sPrintReceivingLabelsByPo()), receivingFormsMenu, _privleges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.printReceivingLabelsByPo", tr("&Print Receiving Labels..."), SLOT(sPrintReceivingLabelsByPo()), receivingFormsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
 
     //  Inventory | Shipping
     { "menu",	tr("&Shipping"),  (char*)shippingMenu,	mainMenu,	true,	NULL, NULL, true , NULL },
-    { "sr.issueStockToShipping", tr("&Issue Stock to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, _privleges->check("IssueStockToShipping"), new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, NULL },
-    { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, _privleges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.issueStockToShipping", tr("&Issue Stock to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, _privileges->check("IssueStockToShipping"), new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true, NULL },
+    { "sr.maintainShippingContents", tr("&Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
     { "separator", NULL, NULL, shippingMenu, true, NULL, NULL, true, NULL },
-    { "sr.shipOrder", tr("&Ship Order..."), SLOT(sShipOrders()), shippingMenu, _privleges->check("ShipOrders"), NULL, NULL, true, NULL },
-    { "sr.recallOrdersToShipping", tr("R&ecall Orders to Shipping..."), SLOT(sRecallOrders()), shippingMenu, _privleges->check("RecallOrders"), NULL, NULL, true, NULL },
+    { "sr.shipOrder", tr("&Ship Order..."), SLOT(sShipOrders()), shippingMenu, _privileges->check("ShipOrders"), NULL, NULL, true, NULL },
+    { "sr.recallOrdersToShipping", tr("R&ecall Orders to Shipping..."), SLOT(sRecallOrders()), shippingMenu, _privileges->check("RecallOrders"), NULL, NULL, true, NULL },
     
     { "separator",					NULL,						 NULL,	shippingMenu,	true, NULL, NULL,  true , NULL },
     
     // Inventory | Shipping | Forms
     { "menu",				tr("&Forms"),				(char*)shippingFormsMenu,		    shippingMenu,	 true,					NULL, NULL, true , NULL },
-    { "sr.packingListBatch", tr("Packing List &Batch..."), SLOT(sPackingListBatch()), shippingFormsMenu, (_privleges->check("MaintainPackingListBatch") || _privleges->check("ViewPackingListBatch")), NULL, NULL, true, NULL },
-    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship &Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingFormsMenu, _privleges->check("PrintPackingLists"), NULL, NULL, true, NULL },
-    { "sr.printPackingList", tr("&Packing List..."), SLOT(sPrintPackingLists()), shippingFormsMenu, _privleges->check("PrintPackingLists"), NULL, NULL, true, NULL },
+    { "sr.packingListBatch", tr("Packing List &Batch..."), SLOT(sPackingListBatch()), shippingFormsMenu, (_privileges->check("MaintainPackingListBatch") || _privileges->check("ViewPackingListBatch")), NULL, NULL, true, NULL },
+    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship &Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingFormsMenu, _privileges->check("PrintPackingLists"), NULL, NULL, true, NULL },
+    { "sr.printPackingList", tr("&Packing List..."), SLOT(sPrintPackingLists()), shippingFormsMenu, _privileges->check("PrintPackingLists"), NULL, NULL, true, NULL },
     { "separator", NULL, NULL, shippingFormsMenu, true, NULL, NULL, true, NULL },
-    { "sr.printShippingForm", tr("&Shipping Form..."), SLOT(sPrintShippingForm()), shippingFormsMenu, _privleges->check("PrintBillsOfLading"), NULL, NULL, true, NULL },
-    { "sr.printShippingForms", tr("S&hipping Forms..."), SLOT(sPrintShippingForms()), shippingFormsMenu, _privleges->check("PrintBillsOfLading"), NULL, NULL, true, NULL },
+    { "sr.printShippingForm", tr("&Shipping Form..."), SLOT(sPrintShippingForm()), shippingFormsMenu, _privileges->check("PrintBillsOfLading"), NULL, NULL, true, NULL },
+    { "sr.printShippingForms", tr("S&hipping Forms..."), SLOT(sPrintShippingForms()), shippingFormsMenu, _privileges->check("PrintBillsOfLading"), NULL, NULL, true, NULL },
     
     // Inventory | Shipping | Forms | Shipping Labels
     { "menu",	tr("Shipping &Labels"),  (char*)formsShipLabelsMenu,	shippingFormsMenu,	true,	NULL, NULL, true , NULL },
-    { "sr.printShippingLabelsBySo", tr("by &S/O #..."), SLOT(sPrintShippingLabelsBySo()), formsShipLabelsMenu, _privleges->check("ViewShipping"), NULL, NULL, true, NULL },
-    { "sr.printShippingLabelsByInvoice", tr("by &Invoice..."), SLOT(sPrintShippingLabelsByInvoice()), formsShipLabelsMenu, _privleges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsBySo", tr("by &S/O #..."), SLOT(sPrintShippingLabelsBySo()), formsShipLabelsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.printShippingLabelsByInvoice", tr("by &Invoice..."), SLOT(sPrintShippingLabelsByInvoice()), formsShipLabelsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
 
     // Inventory | Shipping | Reports
     { "menu",				tr("&Reports"),				(char*)shippingReportsMenu,		    shippingMenu,	 true,					NULL, NULL, true , NULL },
 
     // Inventory | Shipping | Reports | Backlog
     { "menu",				tr("&Backlog"),				(char*)reportsBacklogMenu,		    shippingReportsMenu,	 true,					NULL, NULL, true , NULL },
-    { "sr.dspBacklogByItem", tr("by &Item..."), SLOT(sDspBacklogByItem()), reportsBacklogMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
-    { "sr.dspBacklogByCustomer", tr("by &Customer..."), SLOT(sDspBacklogByCustomer()), reportsBacklogMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
-    { "sr.dspBacklogByProductCategory", tr("by &Product Category..."), SLOT(sDspBacklogByProductCategory()), reportsBacklogMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
-    { "sr.dspSummarizedBacklogByWarehouse", tr("S&ummarized Backlog..."), SLOT(sDspSummarizedBacklogByWarehouse()), shippingReportsMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
+    { "sr.dspBacklogByItem", tr("by &Item..."), SLOT(sDspBacklogByItem()), reportsBacklogMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
+    { "sr.dspBacklogByCustomer", tr("by &Customer..."), SLOT(sDspBacklogByCustomer()), reportsBacklogMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
+    { "sr.dspBacklogByProductCategory", tr("by &Product Category..."), SLOT(sDspBacklogByProductCategory()), reportsBacklogMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
+    { "sr.dspSummarizedBacklogByWarehouse", tr("S&ummarized Backlog..."), SLOT(sDspSummarizedBacklogByWarehouse()), shippingReportsMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true, NULL },
 
     { "separator", NULL, NULL, shippingReportsMenu, true, NULL, NULL, true, NULL },
     
     // Inventory | Shipping | Reports | Shipments
     { "menu",				tr("&Shipments"),				(char*)reportsShipmentsMenu,		    shippingReportsMenu,	 true,					NULL, NULL, true , NULL },
-    { "sr.dspShipmentsBySalesOrder", tr("by Sales &Order..."), SLOT(sDspShipmentsBySalesOrder()), reportsShipmentsMenu, _privleges->check("ViewShipping"), NULL, NULL, true, NULL },
-    { "sr.dspShipmentsByDate", tr("by &Date..."), SLOT(sDspShipmentsByDate()), reportsShipmentsMenu, _privleges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.dspShipmentsBySalesOrder", tr("by Sales &Order..."), SLOT(sDspShipmentsBySalesOrder()), reportsShipmentsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.dspShipmentsByDate", tr("by &Date..."), SLOT(sDspShipmentsByDate()), reportsShipmentsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
     
     //  Inventory |  Transactions
     { "menu",				tr("&Transactions"),	  (char*)transactionsMenu,	mainMenu,	  true,	NULL, NULL, true	, NULL },
-    { "im.miscellaneousAdjustment",	tr("&Adjustment..."),SLOT(sAdjustmentTrans()),	transactionsMenu, _privleges->check("CreateAdjustmentTrans"),	NULL, NULL, true, NULL }, 
+    { "im.miscellaneousAdjustment",	tr("&Adjustment..."),SLOT(sAdjustmentTrans()),	transactionsMenu, _privileges->check("CreateAdjustmentTrans"),	NULL, NULL, true, NULL }, 
 
-    { "im.scrap",			tr("&Scrap..."),			  SLOT(sScrapTrans()),		transactionsMenu, _privleges->check("CreateScrapTrans"),	NULL, NULL, true, NULL }, 
-    { "im.expense",			tr("E&xpense..."),		  SLOT(sExpenseTrans()),	transactionsMenu, _privleges->check("CreateExpenseTrans"),	NULL, NULL, true, NULL }, 
-    { "im.materialReceipt",		tr("&Material Receipt..."),	  SLOT(sReceiptTrans()),	transactionsMenu, _privleges->check("CreateReceiptTrans"),	NULL, NULL, true, NULL }, 
-    { "im.transform",			tr("Trans&form..."),		  SLOT(sTransformTrans()),	transactionsMenu, _privleges->check("CreateTransformTrans"),	NULL, NULL,  _metrics->boolean("Transforms"), NULL }, 
+    { "im.scrap",			tr("&Scrap..."),			  SLOT(sScrapTrans()),		transactionsMenu, _privileges->check("CreateScrapTrans"),	NULL, NULL, true, NULL }, 
+    { "im.expense",			tr("E&xpense..."),		  SLOT(sExpenseTrans()),	transactionsMenu, _privileges->check("CreateExpenseTrans"),	NULL, NULL, true, NULL }, 
+    { "im.materialReceipt",		tr("&Material Receipt..."),	  SLOT(sReceiptTrans()),	transactionsMenu, _privileges->check("CreateReceiptTrans"),	NULL, NULL, true, NULL }, 
+    { "im.transform",			tr("Trans&form..."),		  SLOT(sTransformTrans()),	transactionsMenu, _privileges->check("CreateTransformTrans"),	NULL, NULL,  _metrics->boolean("Transforms"), NULL }, 
     { "separator",			NULL,				  NULL,				transactionsMenu, true, NULL, NULL, true , NULL },
-    { "im.resetQOHBalances",		tr("&Reset QOH Balances..."),	  SLOT(sResetQOHBalances()),	transactionsMenu, _privleges->check("CreateAdjustmentTrans"),	NULL, NULL, true, NULL }, 
+    { "im.resetQOHBalances",		tr("&Reset QOH Balances..."),	  SLOT(sResetQOHBalances()),	transactionsMenu, _privileges->check("CreateAdjustmentTrans"),	NULL, NULL, true, NULL }, 
     { "separator",			NULL,				  NULL,				transactionsMenu, true, NULL, NULL, true , NULL },
-    { "im.interWarehouseTransfer",	tr("&Warehouse Transfer..."),SLOT(sTransferTrans()),	transactionsMenu, _privleges->check("CreateInterWarehouseTrans"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
-    { "im.relocateInventory",		tr("Re&locate Inventory..."),	  SLOT(sRelocateInventory()),	transactionsMenu, _privleges->check("RelocateInventory"),	NULL, NULL, true, NULL }, 
+    { "im.interWarehouseTransfer",	tr("&Warehouse Transfer..."),SLOT(sTransferTrans()),	transactionsMenu, _privileges->check("CreateInterWarehouseTrans"),	NULL, NULL, _metrics->boolean("MultiWhs"), NULL },
+    { "im.relocateInventory",		tr("Re&locate Inventory..."),	  SLOT(sRelocateInventory()),	transactionsMenu, _privileges->check("RelocateInventory"),	NULL, NULL, true, NULL }, 
     
     {  "separator",			NULL,					  NULL,					mainMenu,	true, NULL, NULL, true , NULL },
     
     // Inventory | Forms
     { "menu",	tr("&Forms"),  (char*)formsMenu,	mainMenu,	true,	NULL, NULL, true , NULL },
-    { "im.printItemLabelsByClassCode",			tr("Print &Item Labels..."),		SLOT(sPrintItemLabelsByClassCode()),		formsMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
+    { "im.printItemLabelsByClassCode",			tr("Print &Item Labels..."),		SLOT(sPrintItemLabelsByClassCode()),		formsMenu, _privileges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
 
     //  Inventory | Reports
     { "menu",				tr("&Reports"),			  (char*)reportsMenu,			mainMenu,	true,	NULL, NULL, true , NULL },
     
     //  Inventory | Reports | Item Sites
-    { "menu",				tr("&Item Sites"),			  (char*)reportsItemsitesMenu,			reportsMenu,	_privleges->check("ViewItemSites"),	NULL, NULL, true , NULL },
-    { "im.dspItemSitesByPlannerCode",	tr("by &Planner Code..."),	  SLOT(sDspItemSitesByPlannerCode()),	reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
-    { "im.dspItemSitesByCostCategory",	tr("by C&ost Category..."),	  SLOT(sDspItemSitesByCostCategory()),	reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL },
-    { "im.dspItemSitesByClassCode",	tr("by &Class Code..."),	  SLOT(sDspItemSitesByClassCode()),	reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL },  
-    { "im.dspItemSitesByItem",		tr("by &Item..."),		  SLOT(sDspItemSitesByItem()),		reportsItemsitesMenu, _privleges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
+    { "menu",				tr("&Item Sites"),			  (char*)reportsItemsitesMenu,			reportsMenu,	_privileges->check("ViewItemSites"),	NULL, NULL, true , NULL },
+    { "im.dspItemSitesByPlannerCode",	tr("by &Planner Code..."),	  SLOT(sDspItemSitesByPlannerCode()),	reportsItemsitesMenu, _privileges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
+    { "im.dspItemSitesByCostCategory",	tr("by C&ost Category..."),	  SLOT(sDspItemSitesByCostCategory()),	reportsItemsitesMenu, _privileges->check("ViewItemSites"),	NULL, NULL, true, NULL },
+    { "im.dspItemSitesByClassCode",	tr("by &Class Code..."),	  SLOT(sDspItemSitesByClassCode()),	reportsItemsitesMenu, _privileges->check("ViewItemSites"),	NULL, NULL, true, NULL },  
+    { "im.dspItemSitesByItem",		tr("by &Item..."),		  SLOT(sDspItemSitesByItem()),		reportsItemsitesMenu, _privileges->check("ViewItemSites"),	NULL, NULL, true, NULL }, 
     
-    { "im.dspValidLocationsByItem",	tr("&Valid Locations by Item..."),	  SLOT(sDspValidLocationsByItem()),	reportsMenu, _privleges->check("ViewLocations"),	NULL, NULL, true, NULL }, 
+    { "im.dspValidLocationsByItem",	tr("&Valid Locations by Item..."),	  SLOT(sDspValidLocationsByItem()),	reportsMenu, _privileges->check("ViewLocations"),	NULL, NULL, true, NULL }, 
     {  "separator",			NULL,					  NULL,					reportsMenu,	true, NULL, NULL, true , NULL },
     
     //  Inventory | Reports | Quantities On Hand
-    { "menu",				tr("&Quantities On Hand"),			  (char*)reportsQohMenu,			reportsMenu,	 _privleges->check("ViewQOH"),	NULL, NULL, true , NULL },
-    { "im.dspQOHByClassCode",		tr("by &Class Code..."),SLOT(sDspQOHByClassCode()),		reportsQohMenu, _privleges->check("ViewQOH"),	NULL, NULL, true, NULL }, 
-    { "im.dspQOHByItemGroup",		tr("by Item &Group..."),SLOT(sDspQOHByItemGroup()),		reportsQohMenu, _privleges->check("ViewQOH"),	NULL, NULL, true, NULL },
-    { "im.dspQOHByLocation",		tr("by &Location..."),  SLOT(sDspQOHByLocation()),		reportsQohMenu, _privleges->check("ViewQOH"),	NULL, NULL, true, NULL }, 
-    { "im.dspQOHByItem",		tr("by &Item..."),	  SLOT(sDspQOHByItem()),		reportsQohMenu, _privleges->check("ViewQOH"),	NULL, NULL, true, NULL },  
+    { "menu",				tr("&Quantities On Hand"),			  (char*)reportsQohMenu,			reportsMenu,	 _privileges->check("ViewQOH"),	NULL, NULL, true , NULL },
+    { "im.dspQOHByClassCode",		tr("by &Class Code..."),SLOT(sDspQOHByClassCode()),		reportsQohMenu, _privileges->check("ViewQOH"),	NULL, NULL, true, NULL }, 
+    { "im.dspQOHByItemGroup",		tr("by Item &Group..."),SLOT(sDspQOHByItemGroup()),		reportsQohMenu, _privileges->check("ViewQOH"),	NULL, NULL, true, NULL },
+    { "im.dspQOHByLocation",		tr("by &Location..."),  SLOT(sDspQOHByLocation()),		reportsQohMenu, _privileges->check("ViewQOH"),	NULL, NULL, true, NULL }, 
+    { "im.dspQOHByItem",		tr("by &Item..."),	  SLOT(sDspQOHByItem()),		reportsQohMenu, _privileges->check("ViewQOH"),	NULL, NULL, true, NULL },  
     
-    { "im.dspLocationLotSerialDetail",	tr("&Location/Lot/Serial # Detail..."),	  SLOT(sDspLocationLotSerialDetail()),	reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
-    { "im.dspExpiredInventory",		tr("&Expired Inventory..."),		  SLOT(sDspExpiredInventoryByClassCode()), reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+    { "im.dspLocationLotSerialDetail",	tr("&Location/Lot/Serial # Detail..."),	  SLOT(sDspLocationLotSerialDetail()),	reportsMenu, _privileges->check("ViewQOH"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+    { "im.dspExpiredInventory",		tr("&Expired Inventory..."),		  SLOT(sDspExpiredInventoryByClassCode()), reportsMenu, _privileges->check("ViewQOH"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
     
-    { "im.dspSlowMovingInventory",	tr("Slow &Moving Inventory..."),		  SLOT(sDspSlowMovingInventoryByClassCode()), reportsMenu, _privleges->check("ViewQOH"),	NULL, NULL, true, NULL }, 
+    { "im.dspSlowMovingInventory",	tr("Slow &Moving Inventory..."),		  SLOT(sDspSlowMovingInventoryByClassCode()), reportsMenu, _privileges->check("ViewQOH"),	NULL, NULL, true, NULL }, 
     {  "separator",			NULL,					  NULL,					reportsMenu,	true, NULL, NULL, true , NULL },
     
     //  Inventory| Reports | Inventory Availability
-    { "menu",				tr("Inventory &Availability"),			  (char*)reportsInvAvailMenu,			reportsMenu,	 _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true , NULL },
-    { "im.dspInventoryAvailabilityByPlannerCode",	tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"), new QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true , "Inventory Availability by Planner Code" },
-    { "im.dspInventoryAvailabilityByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryAvailabilityByClassCode()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
-    { "im.dspInventoryAvailabilityBySourceVendor",	tr("by &Source Vendor..."),SLOT(sDspInventoryAvailabilityBySourceVendor()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
-    { "im.dspInventoryAvailabilityByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryAvailabilityByItemGroup()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
-    { "im.dspInventoryAvailabilityByItem",		tr("by &Item..."),	 SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
-    { "im.dspSubstituteAvailabilityByRootItem",		tr("&Substitute Availability..."),	 SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, _privleges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
+    { "menu",				tr("Inventory &Availability"),			  (char*)reportsInvAvailMenu,			reportsMenu,	 _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true , NULL },
+    { "im.dspInventoryAvailabilityByPlannerCode",	tr("by &Planner Code..."), SLOT(sDspInventoryAvailabilityByPlannerCode()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"), new QPixmap(":/images/dspInventoryAvailabilityByPlannerCode.png"), toolBar, true , "Inventory Availability by Planner Code" },
+    { "im.dspInventoryAvailabilityByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryAvailabilityByClassCode()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
+    { "im.dspInventoryAvailabilityBySourceVendor",	tr("by &Source Vendor..."),SLOT(sDspInventoryAvailabilityBySourceVendor()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
+    { "im.dspInventoryAvailabilityByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryAvailabilityByItemGroup()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
+    { "im.dspInventoryAvailabilityByItem",		tr("by &Item..."),	 SLOT(sDspInventoryAvailabilityByItem()), reportsInvAvailMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL },
+    { "im.dspSubstituteAvailabilityByRootItem",		tr("&Substitute Availability..."),	 SLOT(sDspSubstituteAvailabilityByRootItem()), reportsMenu, _privileges->check("ViewInventoryAvailability"),	NULL, NULL, true, NULL }, 
     
     //  Inventory | Reports | Inventory Status
-    { "menu",				tr("Inventory S&tatus"),			  (char*)reportsInvBufrStsMenu,			reportsMenu,	_privleges->check("ViewInventoryBufferStatus"),	NULL, NULL,  _metrics->boolean("BufferMgt") , NULL },
-    { "im.dspInventoryBufferStatusByPlannerCode",	tr("by &Planner Code..."),SLOT(sDspInventoryBufferStatusByPlannerCode()), reportsInvBufrStsMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },
-    { "im.dspInventoryBufferStatusByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryBufferStatusByClassCode()), reportsInvBufrStsMenu, _privleges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },  
-    { "im.dspInventoryBufferStatusByItemGroup",		tr("by &Item Group..."),	 SLOT(sDspInventoryBufferStatusByItemGroup()), reportsInvBufrStsMenu, _privleges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt"), NULL }, 
+    { "menu",				tr("Inventory S&tatus"),			  (char*)reportsInvBufrStsMenu,			reportsMenu,	_privileges->check("ViewInventoryBufferStatus"),	NULL, NULL,  _metrics->boolean("BufferMgt") , NULL },
+    { "im.dspInventoryBufferStatusByPlannerCode",	tr("by &Planner Code..."),SLOT(sDspInventoryBufferStatusByPlannerCode()), reportsInvBufrStsMenu, _privileges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },
+    { "im.dspInventoryBufferStatusByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryBufferStatusByClassCode()), reportsInvBufrStsMenu, _privileges->check("ViewInventoryBufferStatus") ,	NULL, NULL, _metrics->boolean("BufferMgt"), NULL },  
+    { "im.dspInventoryBufferStatusByItemGroup",		tr("by &Item Group..."),	 SLOT(sDspInventoryBufferStatusByItemGroup()), reportsInvBufrStsMenu, _privileges->check("ViewInventoryBufferStatus"),	NULL, NULL, _metrics->boolean("BufferMgt"), NULL }, 
 
     { "separator",					NULL,						 NULL,	reportsMenu,	true, NULL, NULL,  true , NULL },
     
     //  Inventory| Reports | Inventory History
-    { "menu",				tr("Inventory &History"),			  (char*)reportsInvHistMenu,			reportsMenu,	_privleges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
-    { "im.dspInventoryHistoryByPlannerCode",		tr("by &Planner Code..."),	 SLOT(sDspInventoryHistoryByPlannerCode()), reportsInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryHistoryByClassCode()), reportsInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
-    { "im.dspInventoryHistoryByOrderNumber",		tr("by &Order Number..."),	 SLOT(sDspInventoryHistoryByOrderNumber()), reportsInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
-    { "im.dspInventoryHistoryByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryHistoryByItemGroup()), reportsInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
-    { "im.dspInventoryHistoryByItem",			tr("by &Item..."),		 SLOT(sDspInventoryHistoryByItem()), reportsInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "menu",				tr("Inventory &History"),			  (char*)reportsInvHistMenu,			reportsMenu,	_privileges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
+    { "im.dspInventoryHistoryByPlannerCode",		tr("by &Planner Code..."),	 SLOT(sDspInventoryHistoryByPlannerCode()), reportsInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
+    { "im.dspInventoryHistoryByClassCode",		tr("by &Class Code..."),	 SLOT(sDspInventoryHistoryByClassCode()), reportsInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspInventoryHistoryByOrderNumber",		tr("by &Order Number..."),	 SLOT(sDspInventoryHistoryByOrderNumber()), reportsInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspInventoryHistoryByItemGroup",		tr("by Item &Group..."),	 SLOT(sDspInventoryHistoryByItemGroup()), reportsInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
+    { "im.dspInventoryHistoryByItem",			tr("by &Item..."),		 SLOT(sDspInventoryHistoryByItem()), reportsInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
     
     //  Inventory | Reports | Detailed Inventory History
-    { "menu",				tr("&Detailed Inventory History"),			  (char*)reportsDtlInvHistMenu,			reportsMenu,	 _privleges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
-    { "im.dspDetailedInventoryHistoryByLocation",	tr("by Lo&cation..."),	SLOT(sDspDetailedInventoryHistoryByLocation()), reportsDtlInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
-    { "im.dspDetailedInventoryHistoryByLot/SerialNumber",tr("by &Lot/Serial #..."),	SLOT(sDspDetailedInventoryHistoryByLotSerial()), reportsDtlInvHistMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+    { "menu",				tr("&Detailed Inventory History"),			  (char*)reportsDtlInvHistMenu,			reportsMenu,	 _privileges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
+    { "im.dspDetailedInventoryHistoryByLocation",	tr("by Lo&cation..."),	SLOT(sDspDetailedInventoryHistoryByLocation()), reportsDtlInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspDetailedInventoryHistoryByLot/SerialNumber",tr("by &Lot/Serial #..."),	SLOT(sDspDetailedInventoryHistoryByLotSerial()), reportsDtlInvHistMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
 
     //  Inventory | Reports | Usage Statistics
-    { "menu",				tr("&Usage Statistics "),			  (char*)reportsItemUsgMenu,			reportsMenu,	 _privleges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
-    { "im.dspItemUsageStatisticsByWarehouse",		tr("by &Warehouse..."),		SLOT(sDspItemUsageStatisticsByWarehouse()), reportsItemUsgMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
-    { "im.dspItemUsageStatisticsByClassCode",		tr("by &Class Code..."),		SLOT(sDspItemUsageStatisticsByClassCode()), reportsItemUsgMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
-    { "im.dspItemUsageStatisticsByItemGroup",		tr("by Item &Group..."),		SLOT(sDspItemUsageStatisticsByItemGroup()), reportsItemUsgMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
-    { "im.dspItemUsageStatisticsByItem",		tr("by &Item..."),			SLOT(sDspItemUsageStatisticsByItem()), reportsItemUsgMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "menu",				tr("&Usage Statistics "),			  (char*)reportsItemUsgMenu,			reportsMenu,	 _privileges->check("ViewInventoryHistory"),	NULL, NULL, true , NULL },
+    { "im.dspItemUsageStatisticsByWarehouse",		tr("by &Warehouse..."),		SLOT(sDspItemUsageStatisticsByWarehouse()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspItemUsageStatisticsByClassCode",		tr("by &Class Code..."),		SLOT(sDspItemUsageStatisticsByClassCode()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL },
+    { "im.dspItemUsageStatisticsByItemGroup",		tr("by Item &Group..."),		SLOT(sDspItemUsageStatisticsByItemGroup()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspItemUsageStatisticsByItem",		tr("by &Item..."),			SLOT(sDspItemUsageStatisticsByItem()), reportsItemUsgMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
         
-    { "im.dspTimePhasedItemUsageStatisticsByItem",	tr("Time &Phased Usage Statistics..."),	SLOT(sDspTimePhasedUsageStatisticsByItem()), reportsMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
+    { "im.dspTimePhasedItemUsageStatisticsByItem",	tr("Time &Phased Usage Statistics..."),	SLOT(sDspTimePhasedUsageStatisticsByItem()), reportsMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, true, NULL }, 
 
     { "separator",			NULL,				  NULL,				mainMenu, true, NULL, NULL, true , NULL },
 
     // Inventory | Warehouse
     { "menu",			tr("&Warehouse"),	(char*)warehouseMenu,	     mainMenu,	     true,												NULL, NULL, true , NULL },
-    { whsModule,		whsLabel,		SLOT(sWarehouses()),	     warehouseMenu, (_privleges->check("MaintainWarehouses")) || (_privleges->check("ViewWarehouses") ),		NULL, NULL, true, NULL }, 
-    { "im.warehousesLocations",	tr("L&ocations..."),	SLOT(sWarehouseLocations()), warehouseMenu, (_privleges->check("MaintainLocations")) || (_privleges->check("ViewLocations") ),			NULL, NULL, true, NULL }, 
+    { whsModule,		whsLabel,		SLOT(sWarehouses()),	     warehouseMenu, (_privileges->check("MaintainWarehouses")) || (_privileges->check("ViewWarehouses") ),		NULL, NULL, true, NULL }, 
+    { "im.warehousesLocations",	tr("L&ocations..."),	SLOT(sWarehouseLocations()), warehouseMenu, (_privileges->check("MaintainLocations")) || (_privileges->check("ViewLocations") ),			NULL, NULL, true, NULL }, 
 
     // Inventory | Item Site
     { "menu",				tr("&Item Site"),             		(char*)itemSitesMenu,	mainMenu,	true,	NULL, NULL, true	, NULL },
-    { "im.newItemSite",			tr("&New..."),		SLOT(sNewItemSite()),	itemSitesMenu,	_privleges->check("MaintainItemSites"), NULL, NULL, true , NULL },
-    { "im.listItemSites",		tr("&List..."),		SLOT(sItemSites()),	itemSitesMenu,	(_privleges->check("MaintainItemSites") || _privleges->check("ViewItemSites")), new QPixmap(":/images/itemSites.png"), toolBar, true , "List Item Sites" },							  
+    { "im.newItemSite",			tr("&New..."),		SLOT(sNewItemSite()),	itemSitesMenu,	_privileges->check("MaintainItemSites"), NULL, NULL, true , NULL },
+    { "im.listItemSites",		tr("&List..."),		SLOT(sItemSites()),	itemSitesMenu,	(_privileges->check("MaintainItemSites") || _privileges->check("ViewItemSites")), new QPixmap(":/images/itemSites.png"), toolBar, true , "List Item Sites" },							  
     { "separator", NULL, NULL, itemSitesMenu,	true, NULL, NULL, true , NULL },
-    { "im.itemAvailabilityWorkbench",	tr("&Workbench..."),	SLOT(sDspItemAvailabilityWorkbench()),	itemSitesMenu, _privleges->check("ViewItemAvailabilityWorkbench"), new QPixmap(":/images/itemAvailabilityWorkbench.png"), toolBar, true , "Item Availability Workbench"},
+    { "im.itemAvailabilityWorkbench",	tr("&Workbench..."),	SLOT(sDspItemAvailabilityWorkbench()),	itemSitesMenu, _privileges->check("ViewItemAvailabilityWorkbench"), new QPixmap(":/images/itemAvailabilityWorkbench.png"), toolBar, true , "Item Availability Workbench"},
     
     //  Inventory | Lot/Serial Control
     { "menu",				tr("&Lot/Serial Control"),	(char*)lotSerialControlMenu,	mainMenu, true,	NULL, NULL, _metrics->boolean("LotSerialControl") , NULL },
-    { "im.lotSerialComments",		tr("&Comments..."),	SLOT(sLotSerialComments()),	lotSerialControlMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
-    { "im.dspLocationLotSerialDetail",	tr("&Location Detail..."),	SLOT(sDspLocationLotSerialDetail()), lotSerialControlMenu, _privleges->check("ViewQOH"),	NULL, NULL,  _metrics->boolean("LotSerialControl"), NULL }, 
-    { "im.dspDetailedInventoryHistoryByLot/SerialNumber", tr("&Detailed Inventory History..."), SLOT(sDspDetailedInventoryHistoryByLotSerial()), lotSerialControlMenu, _privleges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+    { "im.lotSerialComments",		tr("&Comments..."),	SLOT(sLotSerialComments()),	lotSerialControlMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+    { "im.dspLocationLotSerialDetail",	tr("&Location Detail..."),	SLOT(sDspLocationLotSerialDetail()), lotSerialControlMenu, _privileges->check("ViewQOH"),	NULL, NULL,  _metrics->boolean("LotSerialControl"), NULL }, 
+    { "im.dspDetailedInventoryHistoryByLot/SerialNumber", tr("&Detailed Inventory History..."), SLOT(sDspDetailedInventoryHistoryByLotSerial()), lotSerialControlMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
     { "separator",			NULL,				NULL,	lotSerialControlMenu,	true, NULL, NULL,  _metrics->boolean("LotSerialControl") , NULL },
 
-    { "im.reassignLotSerialNumber",	tr("&Reassign Lot/Serial #..."),	SLOT(sReassignLotSerialNumber()), lotSerialControlMenu, _privleges->check("ReassignLotSerial"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+    { "im.reassignLotSerialNumber",	tr("&Reassign Lot/Serial #..."),	SLOT(sReassignLotSerialNumber()), lotSerialControlMenu, _privileges->check("ReassignLotSerial"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
     
     { "separator", NULL, NULL, mainMenu,	true, NULL, NULL, true , NULL },
     
     // Inventory | Master Information
     { "menu",			tr("&Master Information"),	(char*)masterInfoMenu,	     mainMenu,	     true,												NULL, NULL, true , NULL },
-    { "im.costCategories",	tr("&Cost Categories..."),	SLOT(sCostCategories()),     masterInfoMenu, (_privleges->check("MaintainCostCategories")) || (_privleges->check("ViewCostCategories") ),	NULL, NULL, true, NULL }, 
-    { "im.expenseCategories",	tr("&Expense Categories..."),	SLOT(sExpenseCategories()),  masterInfoMenu, (_privleges->check("MaintainExpenseCategories")) || (_privleges->check("ViewExpenseCategories") ),	NULL, NULL, true, NULL },
-    { "im.characteristics",	tr("C&haracteristics..."),	SLOT(sCharacteristics()),    masterInfoMenu, (_privleges->check("MaintainCharacteristics") || _privleges->check("ViewCharacteristics") ),	NULL, NULL, true, NULL },
+    { "im.costCategories",	tr("&Cost Categories..."),	SLOT(sCostCategories()),     masterInfoMenu, (_privileges->check("MaintainCostCategories")) || (_privileges->check("ViewCostCategories") ),	NULL, NULL, true, NULL }, 
+    { "im.expenseCategories",	tr("&Expense Categories..."),	SLOT(sExpenseCategories()),  masterInfoMenu, (_privileges->check("MaintainExpenseCategories")) || (_privileges->check("ViewExpenseCategories") ),	NULL, NULL, true, NULL },
+    { "im.characteristics",	tr("C&haracteristics..."),	SLOT(sCharacteristics()),    masterInfoMenu, (_privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics") ),	NULL, NULL, true, NULL },
 /*  Remove by version 3.0 if no objections...
     { "separator", NULL, NULL, masterInfoMenu, true, NULL, NULL, true, NULL },
-    { "sr.destinations", tr("Destinations..."), SLOT(sDestinations()), masterInfoMenu, (_privleges->check("MaintainDestinations") || _privleges->check("ViewDestinations")), NULL, NULL, true, NULL },
-    { "sr.carries", tr("Carriers..."), SLOT(sCarriers()), masterInfoMenu, (_privleges->check("MaintainCarriers") || _privleges->check("ViewCarriers")), NULL, NULL, true, NULL },
+    { "sr.destinations", tr("Destinations..."), SLOT(sDestinations()), masterInfoMenu, (_privileges->check("MaintainDestinations") || _privileges->check("ViewDestinations")), NULL, NULL, true, NULL },
+    { "sr.carries", tr("Carriers..."), SLOT(sCarriers()), masterInfoMenu, (_privileges->check("MaintainCarriers") || _privileges->check("ViewCarriers")), NULL, NULL, true, NULL },
 */
     // Inventory | Utilities
     { "menu",					  tr("&Utilities"),			 		(char*)utilitiesMenu,			mainMenu,	true,							NULL, NULL, true, NULL },
-    { "im.dspUnbalancedQOHByClassCode",		  tr("U&nbalanced QOH..."), 		SLOT(sDspUnbalancedQOHByClassCode()),	utilitiesMenu, _privleges->check("ViewItemSites"),			NULL, NULL, true, NULL },
+    { "im.dspUnbalancedQOHByClassCode",		  tr("U&nbalanced QOH..."), 		SLOT(sDspUnbalancedQOHByClassCode()),	utilitiesMenu, _privileges->check("ViewItemSites"),			NULL, NULL, true, NULL },
     { "separator",				  NULL,					 		NULL,					utilitiesMenu,	true, 							NULL, NULL, true, NULL },
      
     // Inventory | Utilities | Update Item Controls
     { "menu",					tr("&Update Item Controls"),			(char*)updateItemInfoMenu,			utilitiesMenu,	    true,					NULL, NULL, true, NULL },
-    { "im.updateABCClass",			tr("&ABC Class..."),				SLOT(sUpdateABCClass()), 			updateItemInfoMenu, _privleges->check("UpdateABCClass"),	NULL, NULL, true, NULL },
-    { "im.updateCycleCountFrequency",		tr("&Cycle Count Frequency..."),			SLOT(sUpdateCycleCountFreq()),			updateItemInfoMenu, _privleges->check("UpdateCycleCountFreq"),	NULL, NULL, true, NULL },
-    { "im.updateItemSiteLeadTimes",		tr("&Item Site Lead Times..."),			SLOT(sUpdateItemSiteLeadTimes()),		updateItemInfoMenu, _privleges->check("UpdateLeadTime"),	NULL, NULL, true, NULL },
+    { "im.updateABCClass",			tr("&ABC Class..."),				SLOT(sUpdateABCClass()), 			updateItemInfoMenu, _privileges->check("UpdateABCClass"),	NULL, NULL, true, NULL },
+    { "im.updateCycleCountFrequency",		tr("&Cycle Count Frequency..."),			SLOT(sUpdateCycleCountFreq()),			updateItemInfoMenu, _privileges->check("UpdateCycleCountFreq"),	NULL, NULL, true, NULL },
+    { "im.updateItemSiteLeadTimes",		tr("&Item Site Lead Times..."),			SLOT(sUpdateItemSiteLeadTimes()),		updateItemInfoMenu, _privileges->check("UpdateLeadTime"),	NULL, NULL, true, NULL },
 
     //  Inventory | Utilities | Update Item Controls | Update Reorder Levels
-    { "menu",				tr("&Reorder Levels"),			  (char*)updateItemInfoReorderMenu,			updateItemInfoMenu,	 _privleges->check("UpdateReorderLevels"),	NULL, NULL, true , NULL },
-    { "im.updateReorderLevelsByItem",		tr("by &Item..."),		SLOT(sUpdateReorderLevelByItem()),		updateItemInfoReorderMenu, _privleges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
-    { "im.updateReorderLevelsByPlannerCode",	tr("by &Planner Code..."),	SLOT(sUpdateReorderLevelsByPlannerCode()),	updateItemInfoReorderMenu, _privleges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
-    { "im.updateReorderLevelsByClassCode",	tr("by &Class Code..."), 		SLOT(sUpdateReorderLevelsByClassCode()),	updateItemInfoReorderMenu, _privleges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
+    { "menu",				tr("&Reorder Levels"),			  (char*)updateItemInfoReorderMenu,			updateItemInfoMenu,	 _privileges->check("UpdateReorderLevels"),	NULL, NULL, true , NULL },
+    { "im.updateReorderLevelsByItem",		tr("by &Item..."),		SLOT(sUpdateReorderLevelByItem()),		updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
+    { "im.updateReorderLevelsByPlannerCode",	tr("by &Planner Code..."),	SLOT(sUpdateReorderLevelsByPlannerCode()),	updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
+    { "im.updateReorderLevelsByClassCode",	tr("by &Class Code..."), 		SLOT(sUpdateReorderLevelsByClassCode()),	updateItemInfoReorderMenu, _privileges->check("UpdateReorderLevels"),	NULL, NULL, true, NULL },
 
     //  Inventory | Utilities | Update Item Controls | Update Order Up To Levels
-    { "menu",				tr("&Order Up To Levels"),			  (char*)updateItemInfoOutMenu,			updateItemInfoMenu,	_privleges->check("UpdateOUTLevels"),	NULL, NULL, true , NULL },
-    { "im.updateOrderUpToLevelsByItem",		tr("by &Item..."),		SLOT(sUpdateOUTLevelByItem()), 			updateItemInfoOutMenu, _privleges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
-    { "im.updateOrderUpToLevelsByPlannerCode",	tr("by &Planner Code..."),	SLOT(sUpdateOUTLevelsByPlannerCode()),		updateItemInfoOutMenu, _privleges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
-    { "im.updateOrderUpToLevelsByClassCode",	tr("by &Class Code..."),	SLOT(sUpdateOUTLevelsByClassCode()),		updateItemInfoOutMenu, _privleges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
+    { "menu",				tr("&Order Up To Levels"),			  (char*)updateItemInfoOutMenu,			updateItemInfoMenu,	_privileges->check("UpdateOUTLevels"),	NULL, NULL, true , NULL },
+    { "im.updateOrderUpToLevelsByItem",		tr("by &Item..."),		SLOT(sUpdateOUTLevelByItem()), 			updateItemInfoOutMenu, _privileges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
+    { "im.updateOrderUpToLevelsByPlannerCode",	tr("by &Planner Code..."),	SLOT(sUpdateOUTLevelsByPlannerCode()),		updateItemInfoOutMenu, _privileges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
+    { "im.updateOrderUpToLevelsByClassCode",	tr("by &Class Code..."),	SLOT(sUpdateOUTLevelsByClassCode()),		updateItemInfoOutMenu, _privileges->check("UpdateOUTLevels"),	NULL, NULL, true, NULL },
     
-    { "im.summarizeTransactionHistoryByClassCode",tr("Summarize &Transaction History..."), SLOT(sSummarizeInvTransByClassCode()),	utilitiesMenu, _privleges->check("SummarizeInventoryTransactions"),	NULL, NULL, true, NULL },
-    { "im.createItemSitesByClassCode",		  tr("&Create Item Sites..."),		SLOT(sCreateItemSitesByClassCode()),	utilitiesMenu, _privleges->check("MaintainItemSites"),			NULL, NULL, true, NULL },
+    { "im.summarizeTransactionHistoryByClassCode",tr("Summarize &Transaction History..."), SLOT(sSummarizeInvTransByClassCode()),	utilitiesMenu, _privileges->check("SummarizeInventoryTransactions"),	NULL, NULL, true, NULL },
+    { "im.createItemSitesByClassCode",		  tr("&Create Item Sites..."),		SLOT(sCreateItemSitesByClassCode()),	utilitiesMenu, _privileges->check("MaintainItemSites"),			NULL, NULL, true, NULL },
     { "separator", NULL, NULL, utilitiesMenu, true, NULL, NULL, true, NULL },
-    { "sr.purgeShippingRecords", tr("&Purge Shipping Records..."), SLOT(sPurgeShippingRecords()), utilitiesMenu, _privleges->check("PurgeShippingRecords"), NULL, NULL, true, NULL },
+    { "sr.purgeShippingRecords", tr("&Purge Shipping Records..."), SLOT(sPurgeShippingRecords()), utilitiesMenu, _privileges->check("PurgeShippingRecords"), NULL, NULL, true, NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

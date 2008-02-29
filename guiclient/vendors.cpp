@@ -96,7 +96,7 @@ vendors::vendors(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(vendorsUpdated()), SLOT(sFillList()));
 
-  if (_privleges->check("MaintainVendors"))
+  if (_privileges->check("MaintainVendors"))
   {
     connect(_vendor, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_vendor, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -199,15 +199,15 @@ void vendors::sPopulateMenu(QMenu *menuThis)
   int intMenuItem;
 
   intMenuItem = menuThis->insertItem(tr("Edit Vendor..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainVendors"))
+  if (!_privileges->check("MaintainVendors"))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 
   intMenuItem = menuThis->insertItem(tr("View Vendor..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainVendors")) && (!_privleges->check("ViewVendors")))
+  if ((!_privileges->check("MaintainVendors")) && (!_privileges->check("ViewVendors")))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 
   intMenuItem = menuThis->insertItem(tr("Delete Vendor..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainVendors"))
+  if (!_privileges->check("MaintainVendors"))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 }
 

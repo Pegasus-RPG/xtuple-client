@@ -140,7 +140,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _quote->addColumn(tr("Quote #"),    _orderColumn, Qt::AlignRight  );
   _quote->addColumn(tr("P/O Number"), _itemColumn,  Qt::AlignLeft   );
   _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
-  if(_privleges->check("MaintainQuotes"))
+  if(_privileges->check("MaintainQuotes"))
   {
     connect(_quote, SIGNAL(valid(bool)), _editQuote, SLOT(setEnabled(bool)));
     connect(_quote, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
@@ -150,7 +150,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     _newQuote->setEnabled(false);
     connect(_quote, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
   }
-  if (_privleges->check("ConvertQuotes"))
+  if (_privileges->check("ConvertQuotes"))
     connect(_quote, SIGNAL(valid(bool)), _convertQuote, SLOT(setEnabled(bool)));
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuoteList()));
 
@@ -159,7 +159,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _order->addColumn(tr("Cust. P/O Number"), _itemColumn,  Qt::AlignLeft   );
   _order->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
   _order->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
-  if(_privleges->check("MaintainSalesOrders"))
+  if(_privileges->check("MaintainSalesOrders"))
   {
     connect(_order, SIGNAL(valid(bool)), _editOrder, SLOT(setEnabled(bool)));
     connect(_order, SIGNAL(itemSelected(int)), _editOrder, SLOT(animateClick()));
@@ -181,7 +181,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _invoice->addColumn(tr("Amount"),     _moneyColumn, Qt::AlignRight  );
   _invoice->addColumn(tr("Balance"),    _moneyColumn, Qt::AlignRight  );
   _invoice->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft);
-  if(_privleges->check("MaintainMiscInvoices"))
+  if(_privileges->check("MaintainMiscInvoices"))
   {
     connect(_invoice, SIGNAL(valid(bool)), _editInvoice, SLOT(setEnabled(bool)));
     connect(_invoice, SIGNAL(itemSelected(int)), _editInvoice, SLOT(animateClick()));
@@ -191,7 +191,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     _newInvoice->setEnabled(false);
     connect(_invoice, SIGNAL(itemSelected(int)), _viewInvoice, SLOT(animateClick()));
   }
-  if(_privleges->check("MaintainMiscInvoices") || _privleges->check("ViewMiscInvoices"))
+  if(_privileges->check("MaintainMiscInvoices") || _privileges->check("ViewMiscInvoices"))
     connect(_invoice, SIGNAL(valid(bool)), _viewInvoice, SLOT(setEnabled(bool)));
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillInvoiceList()));
 
@@ -204,7 +204,7 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
   _creditMemo->addColumn(tr("Amount"),    _moneyColumn, Qt::AlignRight  );
   _creditMemo->addColumn(tr("Balance"),   _moneyColumn, Qt::AlignRight  );
   _creditMemo->addColumn(tr("Currency"),  _currencyColumn, Qt::AlignLeft);
-  if(!_privleges->check("MaintainCreditMemos"))
+  if(!_privileges->check("MaintainCreditMemos"))
     _newCreditMemo->setEnabled(false);
   connect(_creditMemo, SIGNAL(valid(bool)), this, SLOT(sCreditMemoSelected(bool)));
   connect(_creditMemo, SIGNAL(itemSelected(int)), _viewCreditMemo, SLOT(animateClick()));
@@ -230,11 +230,11 @@ dspCustomerInformation::dspCustomerInformation(QWidget* parent, Qt::WFlags fl)
     _payments->hideColumn(8);
   }
 
-  _edit->setEnabled(_privleges->check("MaintainCustomerMasters"));
-  _crmAccount->setEnabled(_privleges->check("MaintainCRMAccounts") || _privleges->check("ViewCRMAccounts"));
-  _workbenchInvoice->setEnabled(_privleges->check("ViewAROpenItems"));
-  _cashReceiptInvoice->setEnabled(_privleges->check("MaintainCashReceipts"));
-  _workbenchCreditMemo->setEnabled(_privleges->check("ViewAROpenItems"));
+  _edit->setEnabled(_privileges->check("MaintainCustomerMasters"));
+  _crmAccount->setEnabled(_privileges->check("MaintainCRMAccounts") || _privileges->check("ViewCRMAccounts"));
+  _workbenchInvoice->setEnabled(_privileges->check("ViewAROpenItems"));
+  _cashReceiptInvoice->setEnabled(_privileges->check("MaintainCashReceipts"));
+  _workbenchCreditMemo->setEnabled(_privileges->check("ViewAROpenItems"));
 }
 
 dspCustomerInformation::~dspCustomerInformation()
@@ -267,15 +267,15 @@ enum SetResponse dspCustomerInformation::set( const ParameterList & pParams )
     disconnect(_invoice, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuInvoice(QMenu*)));
     disconnect(_order, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuSalesOrder(QMenu*)));
     disconnect(_quote, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenuQuote(QMenu*)));
-    if(_privleges->check("MaintainQuotes"))
+    if(_privileges->check("MaintainQuotes"))
       disconnect(_quote, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
     else
       disconnect(_quote, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));
-    if(_privleges->check("MaintainSalesOrders"))
+    if(_privileges->check("MaintainSalesOrders"))
       disconnect(_order, SIGNAL(itemSelected(int)), _editOrder, SLOT(animateClick()));
     else
       disconnect(_order, SIGNAL(itemSelected(int)), _viewOrder, SLOT(animateClick()));
-    if(_privleges->check("MaintainMiscInvoices"))
+    if(_privileges->check("MaintainMiscInvoices"))
       disconnect(_invoice, SIGNAL(itemSelected(int)), _editInvoice, SLOT(animateClick()));
     else
       disconnect(_invoice, SIGNAL(itemSelected(int)), _viewInvoice, SLOT(animateClick()));
@@ -1124,13 +1124,13 @@ void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("New Quote..."), this, SLOT(sNewQuote()), 0);
-  if (!_privleges->check("MaintainQuotes"))
+  if (!_privileges->check("MaintainQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Quote..."), this, SLOT(sEditQuote()), 0);
-  if (!_privleges->check("MaintainQuotes"))
+  if (!_privileges->check("MaintainQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Quote..."), this, SLOT(sViewQuote()), 0);
@@ -1138,7 +1138,7 @@ void dspCustomerInformation::sPopulateMenuQuote( QMenu * pMenu )
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Convert Quote..."), this, SLOT(sConvertQuote()), 0);
-  if (!_privleges->check("ConvertQuotes"))
+  if (!_privileges->check("ConvertQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -1147,13 +1147,13 @@ void dspCustomerInformation::sPopulateMenuSalesOrder( QMenu * pMenu )
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("New Order..."), this, SLOT(sNewOrder()), 0);
-  if(!_privleges->check("MaintainSalesOrders"))
+  if(!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-  if(!_privleges->check("MaintainSalesOrders"))
+  if(!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
@@ -1168,12 +1168,12 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
 {
   int menuItem;
   menuItem = pMenu->insertItem(tr("New Invoice..."), this, SLOT(sNewInvoice()), 0);
-  if(!_privleges->check("MaintainMiscInvoices"))
+  if(!_privileges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Invoice..."), this, SLOT(sEditInvoice()), 0);
-  if(!_privleges->check("MaintainMiscInvoices"))
+  if(!_privileges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
   pMenu->insertSeparator();
@@ -1181,10 +1181,10 @@ void dspCustomerInformation::sPopulateMenuInvoice( QMenu * pMenu,  QTreeWidgetIt
   if (selected->text(3).length() != 0)
   {
     menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditInvOrder()), 0);
-    if(!_privleges->check("MaintainSalesOrders"))
+    if(!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
     pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewInvOrder()), 0);
-    if(!_privleges->check("ViewSalesOrders"))
+    if(!_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   
     pMenu->insertSeparator();
@@ -1200,14 +1200,14 @@ void dspCustomerInformation::sPopulateMenuCreditMemo( QMenu * pMenu )
   int menuItem;
   
   menuItem = pMenu->insertItem(tr("New Credit Memo..."), this, SLOT(sNewCreditMemo()), 0);
-  if(!_privleges->check("MaintainCreditMemos"))
+  if(!_privileges->check("MaintainCreditMemos"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Credit Memo..."), this, SLOT(sEditCreditMemo()), 0);
-  if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && !_privleges->check("MaintainCreditMemos"))
-   ||(_creditMemo->altId() == -3 && !_privleges->check("EditAROpenItem")))
+  if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && !_privileges->check("MaintainCreditMemos"))
+   ||(_creditMemo->altId() == -3 && !_privileges->check("EditAROpenItem")))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
 }
@@ -1217,7 +1217,7 @@ void dspCustomerInformation::sPopulateMenuArhist( QMenu * pMenu )
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit A/R Open Item..."), this, SLOT(sEditAropen()), 0);
-  if(!_privleges->check("EditAROpenItem"))
+  if(!_privileges->check("EditAROpenItem"))
     pMenu->setItemEnabled(menuItem, FALSE);
   pMenu->insertItem(tr("View A/R Open Item..."), this, SLOT(sViewAropen()), 0);
 }
@@ -1249,7 +1249,7 @@ void dspCustomerInformation::sConvertQuote()
       if (check.first())
       {
         if ( (check.value("cust_creditstatus").toString() == "H") &&
-             (!_privleges->check("CreateSOForHoldCustomer")) )
+             (!_privileges->check("CreateSOForHoldCustomer")) )
         {
           QMessageBox::warning( this, tr("Cannot Convert Quote"),
               tr("<p>Quote #%1 is for a Customer that has "
@@ -1263,7 +1263,7 @@ void dspCustomerInformation::sConvertQuote()
         }
 
         if ( (check.value("cust_creditstatus").toString() == "W") &&
-             (!_privleges->check("CreateSOForWarnCustomer")) )
+             (!_privileges->check("CreateSOForWarnCustomer")) )
         {
           QMessageBox::warning( this, tr("Cannot Convert Quote"),
               tr("<p>Quote #%1 is for a Customer that has "
@@ -1338,14 +1338,14 @@ void dspCustomerInformation::sCreditMemoSelected(bool b)
 {
   if(b)
   {
-    if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && _privleges->check("MaintainCreditMemos"))
-     ||(_creditMemo->altId() == -3 && _privleges->check("EditAROpenItem")))
+    if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && _privileges->check("MaintainCreditMemos"))
+     ||(_creditMemo->altId() == -3 && _privileges->check("EditAROpenItem")))
     {
       _editCreditMemo->setEnabled(true);
       _viewCreditMemo->setEnabled(true);
     }
-    else if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && _privleges->check("ViewCreditMemos"))
-     ||(_creditMemo->altId() == -3 && _privleges->check("ViewAROpenItems")))
+    else if(((_creditMemo->altId() == -1 || _creditMemo->altId() == -2) && _privileges->check("ViewCreditMemos"))
+     ||(_creditMemo->altId() == -3 && _privileges->check("ViewAROpenItems")))
     {
       _editCreditMemo->setEnabled(false);
       _viewCreditMemo->setEnabled(true);
@@ -1385,7 +1385,7 @@ void dspCustomerInformation::sCRMAccount()
     _crmacctId = q.value("crmacct_id").toInt();
 
   ParameterList params;
-  if (!_privleges->check("MaintainCRMAccounts"))
+  if (!_privileges->check("MaintainCRMAccounts"))
     params.append("mode", "view");
   else
     params.append("mode", "edit");

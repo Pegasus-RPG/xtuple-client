@@ -84,7 +84,7 @@ bomList::bomList(QWidget* parent, const char* name, Qt::WFlags fl)
   
   connect(omfgThis, SIGNAL(bomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
   
-  if (_privleges->check("MaintainBOMs"))
+  if (_privileges->check("MaintainBOMs"))
   {
     connect(_bom, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_bom, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));

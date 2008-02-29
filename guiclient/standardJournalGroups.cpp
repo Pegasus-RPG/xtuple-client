@@ -114,7 +114,7 @@ void standardJournalGroups::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainStandardJournalGroups"))
+  if (_privileges->check("MaintainStandardJournalGroups"))
   {
     connect(_stdjrnlgrp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_stdjrnlgrp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -123,7 +123,7 @@ void standardJournalGroups::init()
   else
     _new->setEnabled(FALSE);
 
-  if (_privleges->check("PostStandardJournalGroups"))
+  if (_privileges->check("PostStandardJournalGroups"))
     connect(_stdjrnlgrp, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
   _stdjrnlgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );

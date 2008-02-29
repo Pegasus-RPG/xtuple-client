@@ -106,8 +106,8 @@ searchForCRMAccount::searchForCRMAccount(QWidget* parent, const char* name, Qt::
   _crmacct->addColumn(tr("Postal Code"), 75, Qt::AlignLeft   );
 
   connect(omfgThis, SIGNAL(crmAccountsUpdated(int)), this, SLOT(sFillList()));
-  _editpriv = _privleges->check("MaintainCRMAccounts");
-  _viewpriv = _privleges->check("ViewCRMAccounts");
+  _editpriv = _privileges->check("MaintainCRMAccounts");
+  _viewpriv = _privileges->check("ViewCRMAccounts");
   if (_editpriv)
   {
     connect(_crmacct, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -164,8 +164,8 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       if (param == "cust")
       {
 	_subtype = CRMAcctLineEdit::Cust;
-	_editpriv = _privleges->check("MaintainCustomerMasters");
-	_viewpriv = _privleges->check("ViewCustomerMasters");
+	_editpriv = _privileges->check("MaintainCustomerMasters");
+	_viewpriv = _privileges->check("ViewCustomerMasters");
 	setWindowTitle(tr("Search For Customer"));
 	_searchNumber->setText(tr("Customer Number"));
 	_searchName->setText(tr("Customer Name"));
@@ -178,8 +178,8 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       else if (param == "prospect")
       {
 	_subtype = CRMAcctLineEdit::Prospect;
-	_editpriv = _privleges->check("MaintainProspects");
-	_viewpriv = _privleges->check("ViewProspects");
+	_editpriv = _privileges->check("MaintainProspects");
+	_viewpriv = _privileges->check("ViewProspects");
 	setWindowTitle(tr("Search For Prospect"));
 	_searchNumber->setText(tr("Prospect Number"));
 	_searchName->setText(tr("Prospect Name"));
@@ -189,8 +189,8 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       else if (param == "taxauth")
       {
 	_subtype = CRMAcctLineEdit::Taxauth;
-	_editpriv = _privleges->check("MaintainTaxAuthorities");
-	_viewpriv = _privleges->check("ViewTaxAuthorities");
+	_editpriv = _privileges->check("MaintainTaxAuthorities");
+	_viewpriv = _privileges->check("ViewTaxAuthorities");
 	setWindowTitle(tr("Search For Tax Authority"));
 	_searchNumber->setText(tr("Tax Authority Code"));
 	_searchName->setText(tr("Tax Authority Name"));
@@ -207,8 +207,8 @@ SetResponse searchForCRMAccount::set(const ParameterList& pParams)
       else if (param == "vend")
       {
 	_subtype = CRMAcctLineEdit::Vend;
-	_editpriv = _privleges->check("MaintainVendors");
-	_viewpriv = _privleges->check("ViewVendors");
+	_editpriv = _privileges->check("MaintainVendors");
+	_viewpriv = _privileges->check("ViewVendors");
 	setWindowTitle(tr("Search For Vendor"));
 	_searchNumber->setText(tr("Vendor Number"));
 	_searchName->setText(tr("Vendor Name"));

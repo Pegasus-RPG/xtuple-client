@@ -92,7 +92,7 @@ opportunityStages::opportunityStages(QWidget* parent, const char* name, Qt::WFla
   _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft );
 
-  if (_privleges->check("MaintainOpportunityStages"))
+  if (_privileges->check("MaintainOpportunityStages"))
   {
     connect(_oplist, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_oplist, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

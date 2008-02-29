@@ -96,7 +96,7 @@ enum SetResponse taxDetail::set(const ParameterList & pParams )
   bool     valid;
   
   _readonly = pParams.inList("readOnly") ||
-	(!pParams.inList("readOnly") && !_privleges->check("OverrideTax"));
+	(!pParams.inList("readOnly") && !_privileges->check("OverrideTax"));
 
   // tax_id first so signal/slot cascade doesn't overwrite passed-in A,B,C
   param = pParams.value("tax_id", &valid);

@@ -83,6 +83,7 @@ class QIntValidator;
 class QDoubleValidator;
 class QCheckBox;
 class QAssistantClient;
+class QScriptEngine;
 
 class menuProducts;
 class menuInventory;
@@ -168,7 +169,7 @@ extern QSplashScreen *_splash;
 #include "../common/metrics.h"
 extern Metrics     *_metrics;
 extern Preferences *_preferences;
-extern Privleges   *_privleges;
+extern Privileges  *_privileges;
 #include "../common/metricsenc.h"
 extern Metricsenc  *_metricsenc;
 
@@ -282,6 +283,8 @@ class GUIClient : public QMainWindow
 
     void launchBrowser(QWidget*, const QString &);
     QWidget * myActiveWindow();
+
+    void loadScriptGlobals(QScriptEngine * engine);
 
   public slots:
     void sReportError(const QString &);

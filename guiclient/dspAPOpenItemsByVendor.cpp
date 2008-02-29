@@ -173,7 +173,7 @@ void dspAPOpenItemsByVendor::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("EditAPOpenItem"))
+  if (!_privileges->check("EditAPOpenItem"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);

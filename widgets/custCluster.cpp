@@ -490,7 +490,7 @@ CustInfo::CustInfo(QWidget *pParent, const char *name) :
 
   connect(_customerNumber, SIGNAL(creditStatusChanged(const QString &)), this, SLOT(sHandleCreditStatus(const QString &)));
 
-  if(_x_privleges && (!_x_privleges->check("MaintainCustomerMasters") && !_x_privleges->check("ViewCustomerMasters")))
+  if(_x_privileges && (!_x_privileges->check("MaintainCustomerMasters") && !_x_privileges->check("ViewCustomerMasters")))
     _info->setEnabled(false);
   else
   {

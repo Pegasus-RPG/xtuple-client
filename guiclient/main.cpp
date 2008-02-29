@@ -309,7 +309,7 @@ int main(int argc, char *argv[])
 
   _splash->showMessage(QObject::tr("Loading User Privileges"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
-  _privleges = new Privleges();
+  _privileges = new Privileges();
 
 //  Load the translator defined by the User's locale
   _splash->showMessage(QObject::tr("Loading Translation Dictionary"), SplashTextAlignment, SplashTextColor);
@@ -408,7 +408,7 @@ int main(int argc, char *argv[])
 	_metricsenc = new Metricsenc(key);
   }
   
-  initializePlugin(_preferences, _metrics, _privleges, omfgThis->workspace());
+  initializePlugin(_preferences, _metrics, _privileges, omfgThis->workspace());
 
   if (omfgThis->_singleWindow.isEmpty())
   {
@@ -452,7 +452,7 @@ int main(int argc, char *argv[])
 //  Clean up
   delete _metrics;
   delete _preferences;
-  delete _privleges;
+  delete _privileges;
   if (0 != _metricsenc)
     delete _metricsenc;
 

@@ -196,7 +196,7 @@ void dspIndentedWhereUsed::sPopulateMenu(QMenu *menu)
   int menuItem;
 
   menuItem = menu->insertItem(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

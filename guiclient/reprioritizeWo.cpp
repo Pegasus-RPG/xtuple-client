@@ -72,8 +72,7 @@ reprioritizeWo::reprioritizeWo(QWidget* parent, const char* name, bool modal, Qt
 
   _wo->setType(cWoOpen | cWoExploded);
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _changeChildren->setChecked(true);
 }
 

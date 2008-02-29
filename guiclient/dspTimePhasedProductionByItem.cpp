@@ -197,7 +197,7 @@ void dspTimePhasedProductionByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *
   if (_column > 1)
   {
     menuItem = menu->insertItem(tr("View Transactions..."), this, SLOT(sViewTransactions()), 0);
-    if (!_privleges->check("ViewInventoryHistory"))
+    if (!_privileges->check("ViewInventoryHistory"))
       menu->setItemEnabled(menuItem, FALSE);
   }
 }

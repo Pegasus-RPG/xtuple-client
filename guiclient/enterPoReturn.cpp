@@ -186,7 +186,7 @@ void enterPoReturn::sPost()
   }
   
   //Offer to create credit memo
-  if ( (_privleges->check("MaintainAPMemos")) && (q.value("poitem_status").toString() == "C") )
+  if ( (_privileges->check("MaintainAPMemos")) && (q.value("poitem_status").toString() == "C") )
     if ( QMessageBox::question( this, tr("Create Credit Memo"),
                              tr("One or more line items on this P/O are closed. \n"
 								"Would you like to automatically create a credit memo against this return?"),

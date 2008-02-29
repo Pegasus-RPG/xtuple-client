@@ -105,7 +105,7 @@ maintainItemCosts::maintainItemCosts(QWidget* parent, const char* name, Qt::WFla
 	_itemcost->hideColumn(6);
     }
 
-    if (_privleges->check("CreateCosts"))
+    if (_privileges->check("CreateCosts"))
       connect(_item, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
 }
 
@@ -153,21 +153,21 @@ void maintainItemCosts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     if (pSelected->text(0) == "Direct Labor")
     {
       menuItem = pMenu->insertItem(tr("Update Actual Cost..."), this, SLOT(sUpdateDirectLabor()), 0);
-      if (!_privleges->check("UpdateActualCosts"))
+      if (!_privileges->check("UpdateActualCosts"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
     else if (pSelected->text(0) == "Overhead")
     {
       menuItem = pMenu->insertItem(tr("Update Actual Cost..."), this, SLOT(sUpdateOverhead()), 0);
-      if (!_privleges->check("UpdateActualCosts"))
+      if (!_privileges->check("UpdateActualCosts"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
     else if (pSelected->text(0) == "Machine Overhead")
     {
       menuItem = pMenu->insertItem(tr("Update Actual Cost..."), this, SLOT(sUpdateMachineOverhead()), 0);
-      if (!_privleges->check("UpdateActualCosts"))
+      if (!_privileges->check("UpdateActualCosts"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
   }
@@ -177,29 +177,29 @@ void maintainItemCosts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Update Actual Cost..."), this, SLOT(sUpdateDetail()), 0);
-    if (!_privleges->check("UpdateActualCosts"))
+    if (!_privileges->check("UpdateActualCosts"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if (((XTreeWidgetItem *)pSelected)->altId() == 0)
   {
     menuItem = pMenu->insertItem(tr("Delete Cost..."), this, SLOT(sDelete()), 0);
-    if (!_privleges->check("DeleteCosts"))
+    if (!_privileges->check("DeleteCosts"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = pMenu->insertItem(tr("Post Actual Cost to Standard..."), this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostActualCosts"))
+  if (!_privileges->check("PostActualCosts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Actual Cost..."), this, SLOT(sEnterActualCost()), 0);
-  if (!_privleges->check("EnterActualCosts"))
+  if (!_privileges->check("EnterActualCosts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("New Actual Cost..."), this, SLOT(sCreateUserCost()), 0);
-  if (!_privleges->check("CreateCosts"))
+  if (!_privileges->check("CreateCosts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -432,10 +432,10 @@ void maintainItemCosts::sSelectionChanged()
 {
   bool yes = (_itemcost->id() != -1);
 
-  if (_privleges->check("EnterActualCosts"))
+  if (_privileges->check("EnterActualCosts"))
     _edit->setEnabled(yes);
 
-  if (_privleges->check("DeleteCosts"))
+  if (_privileges->check("DeleteCosts"))
     _delete->setEnabled(yes);
 }
 

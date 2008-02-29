@@ -133,7 +133,7 @@ void dspShipmentsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Print Shipping Form..."), this, SLOT(sPrintShippingForm()), 0);
-  if (!_privleges->check("PrintBillsOfLading"))
+  if (!_privileges->check("PrintBillsOfLading"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

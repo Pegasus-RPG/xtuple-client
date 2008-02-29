@@ -87,7 +87,7 @@ accountingYearPeriods::accountingYearPeriods(QWidget* parent, const char* name, 
     _period->addColumn(tr("End"),    _dateColumn, Qt::AlignCenter );
     _period->addColumn(tr("Closed"), -1         , Qt::AlignCenter );
 
-    if (_privleges->check("MaintainAccountingPeriods"))
+    if (_privileges->check("MaintainAccountingPeriods"))
     {
       connect(_period, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_period, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -120,7 +120,7 @@ void accountingYearPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   if (altId == 0)
   {
     menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainAccountingPeriods"))
+    if (!_privileges->check("MaintainAccountingPeriods"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -129,7 +129,7 @@ void accountingYearPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   if (altId == 0)
   {
     menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-    if (!_privleges->check("MaintainAccountingPeriods"))
+    if (!_privileges->check("MaintainAccountingPeriods"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -139,7 +139,7 @@ void accountingYearPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   {
     menuItem = pMenu->insertItem(tr("Close..."), this, SLOT(sClosePeriod()), 0);
 #if 0
-    if (!_privleges->check("MaintainItemMasters"))
+    if (!_privileges->check("MaintainItemMasters"))
       pMenu->setItemEnabled(menuItem, FALSE);
 #endif
   }
@@ -147,12 +147,12 @@ void accountingYearPeriods::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelect
   {
     menuItem = pMenu->insertItem(tr("Open..."), this, SLOT(sOpenPeriod()), 0);
 #if 0
-    if (!_privleges->check("MaintainItemMasters"))
+    if (!_privileges->check("MaintainItemMasters"))
       pMenu->setItemEnabled(menuItem, FALSE);
 #endif
 
 #if 0
-    if (!_privleges->check("MaintainItemMasters"))
+    if (!_privileges->check("MaintainItemMasters"))
       pMenu->setItemEnabled(menuItem, FALSE);
 #endif
   }

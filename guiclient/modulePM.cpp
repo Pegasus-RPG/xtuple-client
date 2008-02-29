@@ -93,11 +93,11 @@ modulePM::modulePM(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pm.newProject", tr("New Project..."),
                                       this, SLOT(sNewProject()),
-                                      projectsMenu, _privleges->check("MaintainProjects") ) );
+                                      projectsMenu, _privileges->check("MaintainProjects") ) );
 
   parent->actions.append( new Action( parent, "pm.projects", tr("Projects..."),
                                       this, SLOT(sProjects()),
-                                      projectsMenu, _privleges->check("ViewProjects"),
+                                      projectsMenu, _privileges->check("ViewProjects"),
 									  QPixmap(":/images/projects.png"), toolBar ) );
 
   //projectsMenu->insertSeparator();
@@ -111,7 +111,7 @@ modulePM::modulePM(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pm.dspOrderActivityByProject", tr("Order Activity by Project..."),
                                       this, SLOT(sDspOrderActivityByProject()),
-                                      displaysMenu, _privleges->check("ViewProjects") ) );
+                                      displaysMenu, _privileges->check("ViewProjects") ) );
 
   mainMenu = new QMenu();
   mainMenu->insertItem(tr("Projects"), projectsMenu);

@@ -172,67 +172,67 @@ moduleSys::moduleSys(GUIClient *Pparent) :
 
   actionProperties acts[] = {
 
-    { "sys.scheduleSystemMessage",	tr("Schedule System Message..."),	SLOT(sScheduleSystemMessage()),	systemMenu,	_privleges->check("IssueSystemMessages"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
+    { "sys.scheduleSystemMessage",	tr("Schedule System Message..."),	SLOT(sScheduleSystemMessage()),	systemMenu,	_privileges->check("IssueSystemMessages"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
     { "sys.eventManager",		tr("Event Manager..."),			SLOT(sEventManager()),		systemMenu,	TRUE,						NULL,	NULL,	true	},
     { "sys.batchManager",		tr("Batch Manager..."),			SLOT(sBatchManager()),		systemMenu,	TRUE,						NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
     { "sys.viewDatabaseLog",		tr("View Database Log..."),		SLOT(sErrorLog()),		systemMenu,	TRUE,						NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.preferences",		tr("Preferences..."),			SLOT(sPreferences()),		systemMenu,	(_privleges->check("MaintainPreferencesSelf") || _privleges->check("MaintainPreferencesOthers")),	NULL,	NULL,	true	},
+    { "sys.preferences",		tr("Preferences..."),			SLOT(sPreferences()),		systemMenu,	(_privileges->check("MaintainPreferencesSelf") || _privileges->check("MaintainPreferencesOthers")),	NULL,	NULL,	true	},
     { "sys.rescanPrivileges",		tr("Rescan Privileges..."),		SLOT(sRescanPrivileges()),	systemMenu,	TRUE,						NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.maintainUsers",		tr("Maintain Users..."),		SLOT(sMaintainUsers()),		systemMenu,	_privleges->check("MaintainUsers"),		NULL,	NULL,	true	},
+    { "sys.maintainUsers",		tr("Maintain Users..."),		SLOT(sMaintainUsers()),		systemMenu,	_privileges->check("MaintainUsers"),		NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.scheduleServerMaintenance",	tr("Schedule Server Maintenance..."),	SLOT(sScheduleServerMaintenance()),systemMenu,	_privleges->check("MaintainServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
-    { "sys.scheduleServerBackup",	tr("Schedule Server Backup..."),	SLOT(sScheduleServerBackup()),	systemMenu,	_privleges->check("BackupServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
+    { "sys.scheduleServerMaintenance",	tr("Schedule Server Maintenance..."),	SLOT(sScheduleServerMaintenance()),systemMenu,	_privileges->check("MaintainServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
+    { "sys.scheduleServerBackup",	tr("Schedule Server Backup..."),	SLOT(sScheduleServerBackup()),	systemMenu,	_privileges->check("BackupServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
 
   //  System | Configure Modules
     { "menu",			tr("Configure Modules"),(char*)configModulesMenu,systemMenu,		true,					NULL,	NULL,	true	},
-    { "sys.configureIM",	tr("Configure I/M..."),	SLOT(sConfigureIM()),	configModulesMenu,	_privleges->check("ConfigureIM"),	NULL,	NULL,	true	},
-    { "sys.configurePD",	tr("Configure P/D..."),	SLOT(sConfigurePD()),	configModulesMenu,	_privleges->check("ConfigurePD"),	NULL,	NULL,	true	},
-    { "sys.configureMS",	tr("Configure M/S..."),	SLOT(sConfigureMS()),	configModulesMenu,	_privleges->check("ConfigureMS"),	NULL,	NULL,	 (_metrics->value("Application") == "OpenMFG")	},
-    { "sys.configureWO",	tr("Configure W/O..."),	SLOT(sConfigureWO()),	configModulesMenu,	_privleges->check("ConfigureWO"),	NULL,	NULL,	true	},
-    { "sys.configurePO",	tr("Configure P/O..."),	SLOT(sConfigurePO()),	configModulesMenu,	_privleges->check("ConfigurePO"),	NULL,	NULL,	true	},
-    { "sys.configureSO",	tr("Configure S/O..."),	SLOT(sConfigureSO()),	configModulesMenu,	_privleges->check("ConfigureSO"),	NULL,	NULL,	true	},
-    { "sys.configureSR",	tr("Configure S/R..."),	SLOT(sConfigureSR()),	configModulesMenu,	_privleges->check("ConfigureSR"),	NULL,	NULL,	true	},
-    { "sys.configurePM",	tr("Configure P/M..."),	SLOT(sConfigurePM()),	configModulesMenu,	_privleges->check("ConfigurePM"),	NULL,	NULL,	true	},
-    { "sys.configureAP",	tr("Configure A/P..."),	SLOT(sConfigureAP()),	configModulesMenu,	_privleges->check("ConfigureAP"),	NULL,	NULL,	true	},
-    { "sys.configureAR",	tr("Configure A/R..."),	SLOT(sConfigureAR()),	configModulesMenu,	_privleges->check("ConfigureAR"),	NULL,	NULL,	true	},
-    { "sys.configureGL",	tr("Configure G/L..."),	SLOT(sConfigureGL()),	configModulesMenu,	_privleges->check("ConfigureGL"),	NULL,	NULL,	true	},
-    { "sys.configureCRM",	tr("Configure CRM..."),	SLOT(sConfigureCRM()),	configModulesMenu,	_privleges->check("ConfigureCRM"),	NULL,	NULL,	true	},
+    { "sys.configureIM",	tr("Configure I/M..."),	SLOT(sConfigureIM()),	configModulesMenu,	_privileges->check("ConfigureIM"),	NULL,	NULL,	true	},
+    { "sys.configurePD",	tr("Configure P/D..."),	SLOT(sConfigurePD()),	configModulesMenu,	_privileges->check("ConfigurePD"),	NULL,	NULL,	true	},
+    { "sys.configureMS",	tr("Configure M/S..."),	SLOT(sConfigureMS()),	configModulesMenu,	_privileges->check("ConfigureMS"),	NULL,	NULL,	 (_metrics->value("Application") == "OpenMFG")	},
+    { "sys.configureWO",	tr("Configure W/O..."),	SLOT(sConfigureWO()),	configModulesMenu,	_privileges->check("ConfigureWO"),	NULL,	NULL,	true	},
+    { "sys.configurePO",	tr("Configure P/O..."),	SLOT(sConfigurePO()),	configModulesMenu,	_privileges->check("ConfigurePO"),	NULL,	NULL,	true	},
+    { "sys.configureSO",	tr("Configure S/O..."),	SLOT(sConfigureSO()),	configModulesMenu,	_privileges->check("ConfigureSO"),	NULL,	NULL,	true	},
+    { "sys.configureSR",	tr("Configure S/R..."),	SLOT(sConfigureSR()),	configModulesMenu,	_privileges->check("ConfigureSR"),	NULL,	NULL,	true	},
+    { "sys.configurePM",	tr("Configure P/M..."),	SLOT(sConfigurePM()),	configModulesMenu,	_privileges->check("ConfigurePM"),	NULL,	NULL,	true	},
+    { "sys.configureAP",	tr("Configure A/P..."),	SLOT(sConfigureAP()),	configModulesMenu,	_privileges->check("ConfigureAP"),	NULL,	NULL,	true	},
+    { "sys.configureAR",	tr("Configure A/R..."),	SLOT(sConfigureAR()),	configModulesMenu,	_privileges->check("ConfigureAR"),	NULL,	NULL,	true	},
+    { "sys.configureGL",	tr("Configure G/L..."),	SLOT(sConfigureGL()),	configModulesMenu,	_privileges->check("ConfigureGL"),	NULL,	NULL,	true	},
+    { "sys.configureCRM",	tr("Configure CRM..."),	SLOT(sConfigureCRM()),	configModulesMenu,	_privileges->check("ConfigureCRM"),	NULL,	NULL,	true	},
 
   //  Master Information
     { "menu",				tr("Master Information"),	(char*)masterInfoMenu,		systemMenu,	true,						NULL,	NULL,	true	},
-    { "sys.databaseInformation",	tr("Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	_privleges->check("ConfigDatabaseInfo"),	NULL,	NULL,	true	},
-    { "sys.configureBackup",		tr("Configure Backup..."),	SLOT(sConfigureBackup()),	masterInfoMenu,	_privleges->check("ConfigureBackupServer"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
+    { "sys.databaseInformation",	tr("Database Information..."),	SLOT(sDatabaseInformation()),	masterInfoMenu,	_privileges->check("ConfigDatabaseInfo"),	NULL,	NULL,	true	},
+    { "sys.configureBackup",		tr("Configure Backup..."),	SLOT(sConfigureBackup()),	masterInfoMenu,	_privileges->check("ConfigureBackupServer"),	NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
     { "sys.configureAccountingSystemInterface",
 					tr("Configure Accounting System Interface..."),
 									SLOT(sConfigureAccountingSystemInterface()),
-													masterInfoMenu, _privleges->check("ConfigAccountingInterface"),	NULL,	NULL,
+													masterInfoMenu, _privileges->check("ConfigAccountingInterface"),	NULL,	NULL,
 																	 _metrics->boolean("EnableExternalAccountingInterface") },
     { "separator",		NULL,			NULL,			masterInfoMenu,	true,					NULL,	NULL,	true	},
-    { "sys.images",		tr("Images..."),	SLOT(sImages()),	masterInfoMenu,	_privleges->check("MaintainImages"),	NULL,	NULL,	true	},
-    { "sys.reports",		tr("Reports..."),	SLOT(sReports()),	masterInfoMenu,	_privleges->check("MaintainReports"),	NULL,	NULL,	true	},
-    { "sys.forms",		tr("Forms..."),		SLOT(sForms()),		masterInfoMenu,	_privleges->check("MaintainForms"),	NULL,	NULL,	true	},
-    { "sys.labelForms",		tr("Label Forms..."),	SLOT(sLabelForms()),	masterInfoMenu,	_privleges->check("MaintainForms"),	NULL,	NULL,	true	},
-    { "sys.calendars",		tr("Calendars..."),	SLOT(sCalendars()),	masterInfoMenu,	_privleges->check("MaintainCalendars"),	NULL,	NULL,	true	},
-    { "sys.currencies",		tr("Currencies..."),	SLOT(sCurrencies()),	masterInfoMenu,	_privleges->check("CreateNewCurrency"),	NULL,	NULL,	true	},
-    { "sys.exchangeRates",	tr("Exchange Rates..."),SLOT(sExchangeRates()),	masterInfoMenu,	_privleges->check("MaintainCurrencyRates") || _privleges->check("ViewCurrencyRates"),
+    { "sys.images",		tr("Images..."),	SLOT(sImages()),	masterInfoMenu,	_privileges->check("MaintainImages"),	NULL,	NULL,	true	},
+    { "sys.reports",		tr("Reports..."),	SLOT(sReports()),	masterInfoMenu,	_privileges->check("MaintainReports"),	NULL,	NULL,	true	},
+    { "sys.forms",		tr("Forms..."),		SLOT(sForms()),		masterInfoMenu,	_privileges->check("MaintainForms"),	NULL,	NULL,	true	},
+    { "sys.labelForms",		tr("Label Forms..."),	SLOT(sLabelForms()),	masterInfoMenu,	_privileges->check("MaintainForms"),	NULL,	NULL,	true	},
+    { "sys.calendars",		tr("Calendars..."),	SLOT(sCalendars()),	masterInfoMenu,	_privileges->check("MaintainCalendars"),	NULL,	NULL,	true	},
+    { "sys.currencies",		tr("Currencies..."),	SLOT(sCurrencies()),	masterInfoMenu,	_privileges->check("CreateNewCurrency"),	NULL,	NULL,	true	},
+    { "sys.exchangeRates",	tr("Exchange Rates..."),SLOT(sExchangeRates()),	masterInfoMenu,	_privileges->check("MaintainCurrencyRates") || _privileges->check("ViewCurrencyRates"),
 																					NULL,	NULL,	true	},
-    { "sys.configureCC",	tr("Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	_privleges->check("ConfigureCC"),					NULL,	NULL,	true	},
-    { "sys.countries",		tr("Countries..."),	SLOT(sCountries()),	masterInfoMenu,	_privleges->check("MaintainCountries"),					NULL,	NULL,	true	},
-    { "sys.locales",		tr("Locales..."),	SLOT(sLocales()),	masterInfoMenu,	_privleges->check("MaintainLocales"),					NULL,	NULL,	true	},
-    { "sys.commentTypes",	tr("Comment Types..."),	SLOT(sCommentTypes()),	masterInfoMenu,	_privleges->check("MaintainCommentTypes"),				NULL,	NULL,	true	},
-    { "sys.ediProfiles",	tr("EDI Profiles..."),	SLOT(sEDIProfiles()),	masterInfoMenu,	_privleges->check("MaintainEDIProfiles"),				NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
-    { "sys.departments",	tr("Departments..."),	SLOT(sDepartments()),	masterInfoMenu,	_privleges->check("ViewDepartments") || _privleges->check("MaintainDepartments"),
+    { "sys.configureCC",	tr("Credit Cards..."),	SLOT(sConfigureCC()),	masterInfoMenu,	_privileges->check("ConfigureCC"),					NULL,	NULL,	true	},
+    { "sys.countries",		tr("Countries..."),	SLOT(sCountries()),	masterInfoMenu,	_privileges->check("MaintainCountries"),					NULL,	NULL,	true	},
+    { "sys.locales",		tr("Locales..."),	SLOT(sLocales()),	masterInfoMenu,	_privileges->check("MaintainLocales"),					NULL,	NULL,	true	},
+    { "sys.commentTypes",	tr("Comment Types..."),	SLOT(sCommentTypes()),	masterInfoMenu,	_privileges->check("MaintainCommentTypes"),				NULL,	NULL,	true	},
+    { "sys.ediProfiles",	tr("EDI Profiles..."),	SLOT(sEDIProfiles()),	masterInfoMenu,	_privileges->check("MaintainEDIProfiles"),				NULL,	NULL,	_metrics->boolean("EnableBatchManager")	},
+    { "sys.departments",	tr("Departments..."),	SLOT(sDepartments()),	masterInfoMenu,	_privileges->check("ViewDepartments") || _privileges->check("MaintainDepartments"),
 																					NULL,	NULL,	true	},
-    { "sys.shifts",		tr("Shifts..."),	SLOT(sShifts()),	masterInfoMenu,	_privleges->check("ViewShifts") || _privleges->check("MaintainShifts"),	NULL,	NULL,	true	},
+    { "sys.shifts",		tr("Shifts..."),	SLOT(sShifts()),	masterInfoMenu,	_privileges->check("ViewShifts") || _privileges->check("MaintainShifts"),	NULL,	NULL,	true	},
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu,	configureIE::userHasPriv(),		NULL,	NULL,	true },
-    { "sys.customCommands",	tr("Custom Commands..."),	SLOT(sCustomCommands()), masterInfoMenu,	_privleges->check("MaintainCustomCommands"),		NULL,	NULL,	true	},
+    { "sys.customCommands",	tr("Custom Commands..."),	SLOT(sCustomCommands()), masterInfoMenu,	_privileges->check("MaintainCustomCommands"),		NULL,	NULL,	true	},
 
     { "menu",			tr("System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
-    { "sys.fixSerial",		tr("Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privleges->check("FixSerial"), NULL, NULL, true	},
+    { "sys.fixSerial",		tr("Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privileges->check("FixSerial"), NULL, NULL, true	},
     { "sys.importXML",		tr("Import XML"),	SLOT(sImportXML()),	sysUtilsMenu,	importXML::userHasPriv(),	NULL, NULL, true	},
 
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
@@ -453,7 +453,7 @@ void moduleSys::sEventManager()
 void moduleSys::sBatchManager()
 {
   batchManager *newdlg = new batchManager();
-  newdlg->setViewOtherEvents(_privleges->check("ViewOtherEvents"));
+  newdlg->setViewOtherEvents(_privileges->check("ViewOtherEvents"));
   omfgThis->handleNewWindow(newdlg);
 }
 
@@ -464,7 +464,7 @@ void moduleSys::sPreferences()
 
 void moduleSys::sRescanPrivileges()
 {
-  _privleges->load();
+  _privileges->load();
   omfgThis->saveToolbarPositions();
   _preferences->load();
   omfgThis->initMenuBar();

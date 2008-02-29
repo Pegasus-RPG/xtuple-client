@@ -90,7 +90,7 @@ bankAccounts::bankAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
   if (omfgThis->singleCurrency())
       _bankaccnt->hideColumn(5);
 
-  if (_privleges->check("MaintainBankAccounts"))
+  if (_privileges->check("MaintainBankAccounts"))
   {
     connect(_bankaccnt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_bankaccnt, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

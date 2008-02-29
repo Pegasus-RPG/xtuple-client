@@ -90,7 +90,7 @@ countries::countries(QWidget* parent, const char* name, Qt::WFlags fl)
 
     statusBar()->hide();
 
-    if (_privleges->check("MaintainCountries"))
+    if (_privileges->check("MaintainCountries"))
     {
       connect(_countries, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_countries, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -210,10 +210,10 @@ void countries::sPopulateMenu(QMenu* pMenu)
     pMenu->insertItem("View...", this, SLOT(sView()), 0);
     
     menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainCountries"))
+    if (!_privileges->check("MaintainCountries"))
 	pMenu->setItemEnabled(menuItem, FALSE);
     
     menuItem = pMenu->insertItem("Delete...", this, SLOT(sDelete()), 0);
-    if (!_privleges->check("MaintainCountries"))
+    if (!_privileges->check("MaintainCountries"))
 	pMenu->setItemEnabled(menuItem, FALSE);
 }

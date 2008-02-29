@@ -247,7 +247,7 @@ void dspInventoryBufferStatusByParameterList::sPopulateMenu(QMenu *menu, QTreeWi
   int menuItem;
 
   menuItem = menu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menu->insertSeparator();
@@ -267,11 +267,11 @@ void dspInventoryBufferStatusByParameterList::sPopulateMenu(QMenu *menu, QTreeWi
   if (((XTreeWidgetItem *)selected)->altId() == 1)
   {
     menuItem = menu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
-    if (!_privleges->check("MaintainPurchaseRequests"))
+    if (!_privileges->check("MaintainPurchaseRequests"))
       menu->setItemEnabled(menuItem, FALSE);
 
     menuItem = menu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       menu->setItemEnabled(menuItem, FALSE);
 
     menu->insertSeparator();
@@ -279,11 +279,11 @@ void dspInventoryBufferStatusByParameterList::sPopulateMenu(QMenu *menu, QTreeWi
   else if (((XTreeWidgetItem *)selected)->altId() == 2)
   {
     menuItem = menu->insertItem(tr("Create W/O..."), this, SLOT(sCreateWO()), 0);
-    if (!_privleges->check("MaintainWorkOrders"))
+    if (!_privileges->check("MaintainWorkOrders"))
       menu->setItemEnabled(menuItem, FALSE);
 
     menuItem = menu->insertItem(tr("Post Misc. Production..."), this, SLOT(sPostMiscProduction()), 0);
-    if (!_privleges->check("PostMiscProduction"))
+    if (!_privileges->check("PostMiscProduction"))
       menu->setItemEnabled(menuItem, FALSE);
 
     menu->insertSeparator();
@@ -294,11 +294,11 @@ void dspInventoryBufferStatusByParameterList::sPopulateMenu(QMenu *menu, QTreeWi
   menu->insertSeparator();
 
   menuItem = menu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
-  if (!_privleges->check("EnterMiscCounts"))
+  if (!_privileges->check("EnterMiscCounts"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

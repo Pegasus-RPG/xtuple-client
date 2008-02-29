@@ -97,8 +97,8 @@ searchForContact::searchForContact(QWidget* parent, const char* name, Qt::WFlags
   _cntct->addColumn(tr("Country"),    100, Qt::AlignLeft   );
   _cntct->addColumn(tr("Postal Code"), 75, Qt::AlignLeft   );
   
-  _editpriv = _privleges->check("MaintainContacts");
-  _viewpriv = _privleges->check("ViewContacts");
+  _editpriv = _privileges->check("MaintainContacts");
+  _viewpriv = _privileges->check("ViewContacts");
   if (_editpriv)
   {
     connect(_cntct, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));

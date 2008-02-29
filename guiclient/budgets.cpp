@@ -95,7 +95,7 @@ budgets::budgets(QWidget* parent, const char* name, Qt::WFlags fl)
   _budget->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
   _budget->addColumn(tr("Description"), -1,          Qt::AlignLeft );
 
-  if (_privleges->check("MaintainBudgets"))
+  if (_privileges->check("MaintainBudgets"))
   {
     connect(_budget, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_budget, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

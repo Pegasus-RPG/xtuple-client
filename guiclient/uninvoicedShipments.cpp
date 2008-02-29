@@ -129,7 +129,7 @@ void uninvoicedShipments::sPopulateMenu(QMenu *menu)
   int menuItem;
 
   menuItem = menu->insertItem(tr("Select This Order for Billing..."), this, SLOT(sSelectForBilling()), 0);
-  if (!_privleges->check("SelectBilling"))
+  if (!_privileges->check("SelectBilling"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

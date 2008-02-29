@@ -122,8 +122,8 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
 
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
-  _taxType->setEnabled(_privleges->check("OverrideTax"));
-  _taxCode->setEnabled(_privleges->check("OverrideTax"));
+  _taxType->setEnabled(_privileges->check("OverrideTax"));
+  _taxCode->setEnabled(_privileges->check("OverrideTax"));
   _showAvailability->setChecked(_preferences->boolean("ShowSOItemAvailability"));
   
   //If not multi-warehouse hide whs controls

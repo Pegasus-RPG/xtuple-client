@@ -131,7 +131,7 @@ void printInvoice::init()
     }
   }
 
-  if(!_privleges->check("PostMiscInvoices"))
+  if(!_privileges->check("PostMiscInvoices"))
   {
     _post->setChecked(false);
     _post->setEnabled(false);

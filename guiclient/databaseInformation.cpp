@@ -140,7 +140,7 @@ void databaseInformation::init()
   }
 //  ToDo
 
-  if (!_privleges->check("ConfigDatabaseInfo"))
+  if (!_privileges->check("ConfigDatabaseInfo"))
   {
     _description->setEnabled(FALSE);
     _defaultFromAddress->setEnabled(FALSE);

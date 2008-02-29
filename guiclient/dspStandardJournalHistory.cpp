@@ -115,7 +115,7 @@ void dspStandardJournalHistory::sPopulateMenu(QMenu * pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
-  if (!_privleges->check("PostStandardJournals"))
+  if (!_privileges->check("PostStandardJournals"))
     pMenu->setItemEnabled(menuItem, false);
 }
 

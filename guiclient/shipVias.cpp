@@ -106,7 +106,7 @@ void shipVias::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainShipVias"))
+  if (_privileges->check("MaintainShipVias"))
   {
     connect(_shipvia, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_shipvia, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

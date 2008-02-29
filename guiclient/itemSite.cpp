@@ -1035,7 +1035,7 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
     int itemsiteid = isq.value("itemsite_id").toInt();
     if (itemsiteid > 0 && isq.value("itemsite_active").toBool())
       return itemsiteid;
-    else if (! _privleges->check("MaintainItemSites"))
+    else if (! _privileges->check("MaintainItemSites"))
     {
       QMessageBox::warning(pparent, tr("No Active Item Site"),
 			   noactiveis.arg(whs));

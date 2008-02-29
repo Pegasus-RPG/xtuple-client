@@ -105,7 +105,7 @@ void postCountTags::init()
 {
   _parameter->setType(ClassCode);
   
-  if(!_privleges->check("ThawInventory"))
+  if(!_privileges->check("ThawInventory"))
   {
     _thaw->setChecked(FALSE);
     _thaw->setEnabled(FALSE);

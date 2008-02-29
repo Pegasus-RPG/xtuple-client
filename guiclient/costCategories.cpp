@@ -117,7 +117,7 @@ void costCategories::init()
   _costcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignCenter );
   _costcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
-  if (_privleges->check("MaintainCostCategories"))
+  if (_privileges->check("MaintainCostCategories"))
   {
     connect(_costcat, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_costcat, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
@@ -224,21 +224,21 @@ void costCategories::sPopulateMenu(QMenu *menu)
   int menuItem;
 
   menuItem = menu->insertItem(tr("Edit Inventory Cost Cateogry..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCostCategories"))
+  if (!_privileges->check("MaintainCostCategories"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("View Inventory Cost Category..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainCostCategories")) && (!_privleges->check("ViewCostCategories")))
+  if ((!_privileges->check("MaintainCostCategories")) && (!_privileges->check("ViewCostCategories")))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Delete Inventory Cost Category..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainCostCategories"))
+  if (!_privileges->check("MaintainCostCategories"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menu->insertSeparator();
 
   menuItem = menu->insertItem(tr("List Items in this Inventory Cost Category..."), this, SLOT(sListItemSites()), 0);
-  if (!_privleges->check("ViewItemSites"))
+  if (!_privileges->check("ViewItemSites"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

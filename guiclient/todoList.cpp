@@ -92,7 +92,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _incdtDates->setStartCaption(tr("First Incident Date:"));
   _incdtDates->setEndCaption(tr("Last Incident Date:"));
 
-  _usr->setEnabled(_privleges->check("MaintainOtherTodoLists"));
+  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(User);
   q.prepare("SELECT usr_id "
 	    "FROM usr "
@@ -139,7 +139,7 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft );
   _todoList->addColumn(tr("Incident"), _orderColumn,	Qt::AlignLeft );
 
-  if (Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _active->setChecked(true);
     _incidents->setChecked(true);
@@ -161,12 +161,12 @@ void todoList::sPopulateMenu(QMenu *pMenu)
   if (_todoList->currentItem()->text(0) == "T")
   {
     bool editPriv =
-	(_myUsrId == _todoList->altId() && _privleges->check("MaintainPersonalTodoList")) ||
-	(_myUsrId != _todoList->altId() && _privleges->check("MaintainOtherTodoLists"));
+	(_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+	(_myUsrId != _todoList->altId() && _privileges->check("MaintainOtherTodoLists"));
 
     bool viewPriv =
-	(_myUsrId == _todoList->altId() && _privleges->check("ViewPersonalTodoList")) ||
-	(_myUsrId != _todoList->altId() && _privleges->check("ViewOtherTodoLists"));
+	(_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
+	(_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
 
     menuItem = pMenu->insertItem(tr("Move Up"), this, SLOT(sMoveUp()), 0);
     pMenu->setItemEnabled(menuItem, ENABLEUP(editPriv, _todoList));
@@ -190,10 +190,10 @@ void todoList::sPopulateMenu(QMenu *pMenu)
   if (! _todoList->currentItem()->text(7).isEmpty())
   {
     menuItem = pMenu->insertItem(tr("Edit Incident"), this, SLOT(sEditIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
     menuItem = pMenu->insertItem(tr("View Incident"), this, SLOT(sViewIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewIncidents") ||
-				    _privleges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
+				    _privileges->check("MaintainIncidents"));
   }
 }
 
@@ -227,12 +227,12 @@ void todoList::handlePrivs()
   else if (_todoList->currentItem()->text(0) == "T")
   {
     editTodoPriv =
-      (_myUsrId == _todoList->altId() && _privleges->check("MaintainPersonalTodoList")) ||
-      (_privleges->check("MaintainOtherTodoLists"));
+      (_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      (_privileges->check("MaintainOtherTodoLists"));
 
     viewTodoPriv =
-      (_myUsrId == _todoList->altId() && _privleges->check("ViewPersonalTodoList")) ||
-      (_privleges->check("ViewOtherTodoLists"));
+      (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      (_privileges->check("ViewOtherTodoLists"));
     _moveUp->setEnabled(ENABLEUP(editTodoPriv, _todoList));
     _moveDown->setEnabled(ENABLEDOWN(editTodoPriv, _todoList));
   }
@@ -244,10 +244,10 @@ void todoList::handlePrivs()
     _moveDown->setEnabled(false);
   }
 
-  _usr->setEnabled(_privleges->check("MaintainOtherTodoLists") ||
-		   _privleges->check("ViewOtherTodoLists"));
-  _new->setEnabled(_privleges->check("MaintainOtherTodoLists") ||
-                   _privleges->check("ViewOtherTodoLists"));
+  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+		   _privileges->check("ViewOtherTodoLists"));
+  _new->setEnabled(_privileges->check("MaintainOtherTodoLists") ||
+                   _privileges->check("ViewOtherTodoLists"));
   _edit->setEnabled(editTodoPriv && _todoList->id() > 0);
   _view->setEnabled((editTodoPriv || viewTodoPriv) && _todoList->id() > 0);
   _delete->setEnabled(editTodoPriv && _todoList->id() > 0);

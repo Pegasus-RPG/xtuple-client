@@ -154,12 +154,12 @@ void dspPOsByDate::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (pSelected->text(2) == "U")
   {
     menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if ((!_privleges->check("MaintainPurchaseOrders")) && (!_privleges->check("ViewPurchaseOrders")))
+  if ((!_privileges->check("MaintainPurchaseOrders")) && (!_privileges->check("ViewPurchaseOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

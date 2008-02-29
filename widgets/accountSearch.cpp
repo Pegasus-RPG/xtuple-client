@@ -63,6 +63,7 @@
 #include <parameter.h>
 
 #include "glcluster.h"
+#include "xsqlquery.h"
 
 /*
  *  Constructs a accountSearch as a child of 'parent', with the

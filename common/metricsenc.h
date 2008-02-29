@@ -59,16 +59,17 @@
 #ifndef metricsenc_h
 #define metricsenc_h
 
+#include <QObject>
 #include <QString>
 #include <QMap>
 #include <QVariant>
 
-#include "xsqlquery.h"
-
 typedef QMap<QString, QString> MetricMap;
 
-class Parametersend
+class Parametersenc : public QObject
 {
+  Q_OBJECT
+
   protected:
     MetricMap _values;
     QString   _readSql;
@@ -78,15 +79,13 @@ class Parametersend
     bool      _dirty;
 
   public:
-    Parametersend();
-    virtual ~Parametersend() {};
+    Parametersenc(QObject * parent = 0);
+    virtual ~Parametersenc() {};
 
     void load();
 
     QString value(const char *);
-    QString value(const QString &);
     bool    boolean(const char *);
-    bool    boolean(const QString &);
 
     void set(const char *, bool);
     void set(const QString &, bool);
@@ -97,11 +96,16 @@ class Parametersend
 
     QString parent(const QString &);
 
+  public slots:
+    QString value(const QString &);
+    bool    boolean(const QString &);
+
+  protected:
     void _set(const QString &, QVariant);
 
 };
 
-class Metricsenc : public Parametersend
+class Metricsenc : public Parametersenc
 {
   public:
 //    metricsenc();

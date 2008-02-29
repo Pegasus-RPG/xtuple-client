@@ -162,8 +162,8 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _item->addExtraClause( QString("(itemsite_sold)") );   // ItemLineEdit::cSold doesn't compare against the itemsite record
   _discountFromCust->setValidator(new QDoubleValidator(-9999, 100, 2, this));
 
-  _taxtype->setEnabled(_privleges->check("OverrideTax"));
-  _taxcode->setEnabled(_privleges->check("OverrideTax"));
+  _taxtype->setEnabled(_privileges->check("OverrideTax"));
+  _taxcode->setEnabled(_privileges->check("OverrideTax"));
 
   _availability->addColumn(tr("#"),            _seqColumn,  Qt::AlignCenter );
   _availability->addColumn(tr("Item Number"),  _itemColumn, Qt::AlignLeft   );
@@ -200,7 +200,7 @@ salesOrderItem::salesOrderItem(QWidget* parent, const char* name, bool modal, Qt
   _orderQty->setValidator(omfgThis->qtyVal());
 
 //  Disable the Discount Percent stuff if we don't allow them
-  if ((!_metrics->boolean("AllowDiscounts")) && (!_privleges->check("OverridePrice")))
+  if ((!_metrics->boolean("AllowDiscounts")) && (!_privileges->check("OverridePrice")))
   {
     _netUnitPrice->setEnabled(FALSE);
     _discountFromCust->setEnabled(FALSE);

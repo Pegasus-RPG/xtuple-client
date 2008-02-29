@@ -177,88 +177,88 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   
   // Product | Reports | Items
   { "menu",	tr("&Items"), (char*)reportsItemsMenu,	reportsMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspItemsByProductCategory", tr("by &Product Category..."), SLOT(sDspItemsByProductCategory()), reportsItemsMenu, _privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters"), NULL, NULL, true , NULL },
-  { "pd.dspItemsByClassCode", tr("by &Class Code..."), SLOT(sDspItemsByClassCode()), reportsItemsMenu, _privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters"), NULL, NULL, true , NULL },
-  { "pd.dspItemsByCharacteristic", tr("by C&haracteristic..."), SLOT(sDspItemsByCharacteristic()),  reportsItemsMenu, _privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters"), NULL, NULL, true , NULL },
+  { "pd.dspItemsByProductCategory", tr("by &Product Category..."), SLOT(sDspItemsByProductCategory()), reportsItemsMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), NULL, NULL, true , NULL },
+  { "pd.dspItemsByClassCode", tr("by &Class Code..."), SLOT(sDspItemsByClassCode()), reportsItemsMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), NULL, NULL, true , NULL },
+  { "pd.dspItemsByCharacteristic", tr("by C&haracteristic..."), SLOT(sDspItemsByCharacteristic()),  reportsItemsMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, reportsMenu,	true, NULL, NULL, true , NULL },
   
   // Product | Reports | BOMs
   { "menu",	tr("&Bills of Materials"), (char*)reportsBomsMenu,	reportsMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspSingleLevelBOM", tr("&Single Level..."), SLOT(sDspSingleLevelBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
-  { "pd.dspIndentedBOM", tr("&Indented..."), SLOT(sDspIndentedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
-  { "pd.dspSummarizedBOM", tr("Summari&zed..."), SLOT(sDspSummarizedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
-  { "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, _privleges->check("ViewBOMs"), NULL, NULL,  _metrics->boolean("Routings") , NULL },
+  { "pd.dspSingleLevelBOM", tr("&Single Level..."), SLOT(sDspSingleLevelBOM()), reportsBomsMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspIndentedBOM", tr("&Indented..."), SLOT(sDspIndentedBOM()), reportsBomsMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspSummarizedBOM", tr("Summari&zed..."), SLOT(sDspSummarizedBOM()), reportsBomsMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspSequencedBOM", tr("Se&quenced..."), SLOT(sDspSequencedBOM()), reportsBomsMenu, _privileges->check("ViewBOMs"), NULL, NULL,  _metrics->boolean("Routings") , NULL },
   
   // Product | Reports | Where Used
   { "menu",	tr("&Where Used"), (char*)reportsWhereUsdMenu,	reportsMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspSingleLevelWhereUsed", tr("&Single Level..."), SLOT(sDspSingleLevelWhereUsed()), reportsWhereUsdMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
-  { "pd.dspIndentedWhereUsed", tr("&Indented..."), SLOT(sDspIndentedWhereUsed()), reportsWhereUsdMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspSingleLevelWhereUsed", tr("&Single Level..."), SLOT(sDspSingleLevelWhereUsed()), reportsWhereUsdMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspIndentedWhereUsed", tr("&Indented..."), SLOT(sDspIndentedWhereUsed()), reportsWhereUsdMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
 
-  { "pd.dspPendingBOMChanges", tr("&Pending BOM Changes..."), SLOT(sDspPendingBOMChanges()), reportsMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspPendingBOMChanges", tr("&Pending BOM Changes..."), SLOT(sDspPendingBOMChanges()), reportsMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, reportsMenu,	true, NULL, NULL, true , NULL },
-  { "pd.dspOperationsByWorkCenter", tr("&Operations..."), SLOT(sDspOperationsByWorkCenter()), reportsMenu, _privleges->check("ViewBOOs"), NULL, NULL, _metrics->boolean("Routings") , NULL },
-  { "pd.dspStandardOperationsByWorkCenter", tr("&Standard Operations..."), SLOT(sDspStandardOperByWorkCenter()), reportsMenu, _privleges->check("ViewStandardOperations"), NULL, NULL, _metrics->boolean("Routings") , NULL },
+  { "pd.dspOperationsByWorkCenter", tr("&Operations..."), SLOT(sDspOperationsByWorkCenter()), reportsMenu, _privileges->check("ViewBOOs"), NULL, NULL, _metrics->boolean("Routings") , NULL },
+  { "pd.dspStandardOperationsByWorkCenter", tr("&Standard Operations..."), SLOT(sDspStandardOperByWorkCenter()), reportsMenu, _privileges->check("ViewStandardOperations"), NULL, NULL, _metrics->boolean("Routings") , NULL },
   { "separator", NULL, NULL, reportsMenu,	true, NULL, NULL,  _metrics->boolean("Routings") , NULL },
 
   // Product | Reports | Capacity UOMs
   { "menu",	tr("Capacity &UOMs"), (char*)reportsCapUomMenu,	reportsMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspCapacityUOMsByProductCategory", tr("by &Product Category..."), SLOT(sDspCapacityUOMsByProductCategory()), reportsCapUomMenu, _privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters"), NULL, NULL, true , NULL },
-  { "pd.dspCapacityUOMsByClassCode", tr("by &Class Code..."), SLOT(sDspCapacityUOMsByClassCode()), reportsCapUomMenu, _privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters"), NULL, NULL, true , NULL },
+  { "pd.dspCapacityUOMsByProductCategory", tr("by &Product Category..."), SLOT(sDspCapacityUOMsByProductCategory()), reportsCapUomMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), NULL, NULL, true , NULL },
+  { "pd.dspCapacityUOMsByClassCode", tr("by &Class Code..."), SLOT(sDspCapacityUOMsByClassCode()), reportsCapUomMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), NULL, NULL, true , NULL },
   
   {  "separator", NULL, NULL, mainMenu,	true, NULL, NULL, true , NULL },
 
   // Product | Items
   { "menu",	tr("&Item"), (char*)itemsMenu,	mainMenu, true, NULL, NULL, true , NULL },
-  { "pd.enterNewItem", tr("&New..."), SLOT(sNewItem()), itemsMenu, _privleges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
-  { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, _privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters"), new QPixmap(":/images/items.png"), toolBar, true , "List Items" },
-  { "pd.searchForItems", tr("&Search..."),SLOT(sSearchForItems()), itemsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")), NULL, NULL, true , NULL },
-  { "pd.copyItem", tr("&Copy..."), SLOT(sCopyItem()), itemsMenu, _privleges->check("MaintainItemMasters") , NULL, NULL, true, NULL },
+  { "pd.enterNewItem", tr("&New..."), SLOT(sNewItem()), itemsMenu, _privileges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
+  { "pd.listItems", tr("&List..."), SLOT(sItems()), itemsMenu, _privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters"), new QPixmap(":/images/items.png"), toolBar, true , "List Items" },
+  { "pd.searchForItems", tr("&Search..."),SLOT(sSearchForItems()), itemsMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")), NULL, NULL, true , NULL },
+  { "pd.copyItem", tr("&Copy..."), SLOT(sCopyItem()), itemsMenu, _privileges->check("MaintainItemMasters") , NULL, NULL, true, NULL },
   { "separator", NULL, NULL, itemsMenu,	true, NULL, NULL, true , NULL },
-  { "pd.itemAvailabilityWorkbench", tr("&Workbench..."), SLOT(sDspItemAvailabilityWorkbench()), itemsMenu, _privleges->check("ViewItemAvailabilityWorkbench"), NULL, NULL, true , NULL },
+  { "pd.itemAvailabilityWorkbench", tr("&Workbench..."), SLOT(sDspItemAvailabilityWorkbench()), itemsMenu, _privileges->check("ViewItemAvailabilityWorkbench"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, itemsMenu,	true, NULL, NULL, true , NULL },
-  { "pd.itemGroups", tr("&Groups..."), SLOT(sItemGroups()), itemsMenu, (_privleges->check("MaintainItemGroups") || _privleges->check("ViewItemGroups")), NULL, NULL, true , NULL },
-  { "pd.itemImages", tr("&Images..."), SLOT(sItemImages()), itemsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")), NULL, NULL, true , NULL },
+  { "pd.itemGroups", tr("&Groups..."), SLOT(sItemGroups()), itemsMenu, (_privileges->check("MaintainItemGroups") || _privileges->check("ViewItemGroups")), NULL, NULL, true , NULL },
+  { "pd.itemImages", tr("&Images..."), SLOT(sItemImages()), itemsMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")), NULL, NULL, true , NULL },
 
   // Product | Bill of Materials
   { "menu",	tr("Bill Of Ma&terials"), (char*)bomMenu,	mainMenu, true, NULL, NULL, true , NULL },
-  { "pd.enterNewBOM", tr("&New..."), SLOT(sNewBOM()), bomMenu, _privleges->check("MaintainBOMs"), NULL, NULL, true , NULL },
-  { "pd.listBOMs", tr("&List..."), SLOT(sBOMs()), bomMenu, _privleges->check("MaintainBOMs") || _privleges->check("ViewBOMs"), new QPixmap(":/images/boms.png"), toolBar, true , "List Bill of Materials" },
-  { "pd.copyBOM", tr("&Copy..."), SLOT(sCopyBOM()), bomMenu, _privleges->check("MaintainBOMs"), NULL, NULL, true , NULL },
+  { "pd.enterNewBOM", tr("&New..."), SLOT(sNewBOM()), bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
+  { "pd.listBOMs", tr("&List..."), SLOT(sBOMs()), bomMenu, _privileges->check("MaintainBOMs") || _privileges->check("ViewBOMs"), new QPixmap(":/images/boms.png"), toolBar, true , "List Bill of Materials" },
+  { "pd.copyBOM", tr("&Copy..."), SLOT(sCopyBOM()), bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, bomMenu,	true, NULL, NULL, true , NULL },
-  { "pd.massReplaceComponentItem", tr("Mass &Replace..."), SLOT(sMassReplaceComponent()), bomMenu, _privleges->check("MaintainBOMs"), NULL, NULL, true , NULL },
-  { "pd.massExpireComponentItem", tr("Mass E&xpire..."), SLOT(sMassExpireComponent()),  bomMenu, _privleges->check("MaintainBOMs"), NULL, NULL, true , NULL },
+  { "pd.massReplaceComponentItem", tr("Mass &Replace..."), SLOT(sMassReplaceComponent()), bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
+  { "pd.massExpireComponentItem", tr("Mass E&xpire..."), SLOT(sMassExpireComponent()),  bomMenu, _privileges->check("MaintainBOMs"), NULL, NULL, true , NULL },
 
   // Product | Bill of Operations...
   { "menu",	tr("Bill Of &Operations"), (char*)booMenu,	mainMenu, true, NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.enterNewBOO", tr("&New..."), SLOT(sNewBOO()), booMenu, (_privleges->check("MaintainBOOs") && _metrics->boolean("Routings")), NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, _privleges->check("MaintainBOOs") || _privleges->check("ViewBOOs"), new QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , "List Bill of Operations" },
-  { "pd.copyBOO", tr("&Copy..."), SLOT(sCopyBOO()), booMenu, _privleges->check("MaintainBOOs"), NULL, NULL, _metrics->boolean("Routings") , NULL },
+  { "pd.enterNewBOO", tr("&New..."), SLOT(sNewBOO()), booMenu, (_privileges->check("MaintainBOOs") && _metrics->boolean("Routings")), NULL, NULL,  _metrics->boolean("Routings") , NULL },
+  { "pd.listBOOs", tr("&List..."), SLOT(sBOOs()), booMenu, _privileges->check("MaintainBOOs") || _privileges->check("ViewBOOs"), new QPixmap(":/images/boos.png"), toolBar, _metrics->boolean("Routings") , "List Bill of Operations" },
+  { "pd.copyBOO", tr("&Copy..."), SLOT(sCopyBOO()), booMenu, _privileges->check("MaintainBOOs"), NULL, NULL, _metrics->boolean("Routings") , NULL },
 
   // Product | Breeder Bill of Materials
   { "menu",	tr("&Breeder Bill Of Materials"), (char*)breederBOMMenu,	mainMenu, true, NULL, NULL,  _metrics->boolean("BBOM") , NULL },
-  { "pd.enterNewBreederBOM", tr("&New..."), SLOT(sNewBreederBOM()), breederBOMMenu, _privleges->check("MaintainBBOMs"), NULL, NULL, _metrics->boolean("BBOM") , NULL },
-  { "pd.listBreederBOMs", tr("&List..."), SLOT(sBreederBOMs()), breederBOMMenu, _privleges->check("MaintainBBOMs") || _privleges->check("ViewBBOMs"), NULL, NULL, _metrics->boolean("BBOM") , NULL },
+  { "pd.enterNewBreederBOM", tr("&New..."), SLOT(sNewBreederBOM()), breederBOMMenu, _privileges->check("MaintainBBOMs"), NULL, NULL, _metrics->boolean("BBOM") , NULL },
+  { "pd.listBreederBOMs", tr("&List..."), SLOT(sBreederBOMs()), breederBOMMenu, _privileges->check("MaintainBBOMs") || _privileges->check("ViewBBOMs"), NULL, NULL, _metrics->boolean("BBOM") , NULL },
   
   // Produtc | Costing
   { "menu",	tr("&Costing"), (char*)costingMenu,	mainMenu, true, NULL, NULL, true , NULL },
-  { "pd.maintainItemCosts", tr("&Maintain Item Costs..."), SLOT(sMaintainItemCosts()), costingMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.maintainItemCosts", tr("&Maintain Item Costs..."), SLOT(sMaintainItemCosts()), costingMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
 
   { "separator", NULL, NULL, costingMenu,	true, NULL, NULL, true , NULL },
   
   // Product | Costing | Update Actual Costs
   { "menu",	tr("Update &Actual Costs"), (char*)costingUpdActMenu,	costingMenu, true, NULL, NULL, true , NULL },
-  { "pd.updateActualCostsByItem", tr("by &Item..."), SLOT(sUpdateActualCostsByItem()), costingUpdActMenu, _privleges->check("UpdateActualCosts"), NULL, NULL, true , NULL },
-  { "pd.updateActualCostsByClassCode", tr("by &Class Code..."), SLOT(sUpdateActualCostsByClassCode()), costingUpdActMenu, _privleges->check("UpdateActualCosts"), NULL, NULL, true , NULL },
+  { "pd.updateActualCostsByItem", tr("by &Item..."), SLOT(sUpdateActualCostsByItem()), costingUpdActMenu, _privileges->check("UpdateActualCosts"), NULL, NULL, true , NULL },
+  { "pd.updateActualCostsByClassCode", tr("by &Class Code..."), SLOT(sUpdateActualCostsByClassCode()), costingUpdActMenu, _privileges->check("UpdateActualCosts"), NULL, NULL, true , NULL },
 
   // Product | Costing | Post Actual Costs
   { "menu",	tr("&Post Actual Costs"), (char*)costingPostActMenu,	costingMenu, true, NULL, NULL, true , NULL },
-  { "pd.postActualCostsByItem", tr("by &Item..."), SLOT(sPostActualCostsByItem()), costingPostActMenu, _privleges->check("PostActualCosts"), NULL, NULL, true , NULL },
-  { "pd.postActualCostsByClassCode", tr("by &Class Code..."), SLOT(sPostActualCostsByClassCode()), costingPostActMenu, _privleges->check("PostActualCosts"), NULL, NULL, true , NULL },
+  { "pd.postActualCostsByItem", tr("by &Item..."), SLOT(sPostActualCostsByItem()), costingPostActMenu, _privileges->check("PostActualCosts"), NULL, NULL, true , NULL },
+  { "pd.postActualCostsByClassCode", tr("by &Class Code..."), SLOT(sPostActualCostsByClassCode()), costingPostActMenu, _privileges->check("PostActualCosts"), NULL, NULL, true , NULL },
 
   // Product | Costing | Post Standard Costs
   { "menu",	tr("Post &Standard Costs"), (char*)costingUpdStdMenu,	costingMenu, true, NULL, NULL, true , NULL },
-  { "pd.postStandardCostsByItem", tr("by &Item..."), SLOT(sUpdateStandardCostsByItem()), costingUpdStdMenu, _privleges->check("PostStandardCosts"), NULL, NULL, true , NULL },
-  { "pd.postStandardCostsByClassCode", tr("by &Class Code..."), SLOT(sUpdateStandardCostsByClassCode()), costingUpdStdMenu, _privleges->check("PostStandardCosts"), NULL, NULL, true , NULL },
+  { "pd.postStandardCostsByItem", tr("by &Item..."), SLOT(sUpdateStandardCostsByItem()), costingUpdStdMenu, _privileges->check("PostStandardCosts"), NULL, NULL, true , NULL },
+  { "pd.postStandardCostsByClassCode", tr("by &Class Code..."), SLOT(sUpdateStandardCostsByClassCode()), costingUpdStdMenu, _privileges->check("PostStandardCosts"), NULL, NULL, true , NULL },
 
   { "separator", NULL, NULL, costingMenu,	true, NULL, NULL, true , NULL },
 
@@ -267,40 +267,40 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   
   //  Product | Costing | Reports | Costed BOM
   { "menu",	tr("&Costed BOM"), (char*)costingReportsCostedMenu,	costingReportsMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspCostedSingleLevelBOM", tr("&Single Level..."), SLOT(sDspCostedSingleLevelBOM()),costingReportsCostedMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
-  { "pd.dspCostedIndentedBOM", tr("&Indented..."), SLOT(sDspCostedIndentedBOM()), costingReportsCostedMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
-  { "pd.dspCostedSummarizedBOM", tr("Summari&zed..."), SLOT(sDspCostedSummarizedBOM()), costingReportsCostedMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.dspCostedSingleLevelBOM", tr("&Single Level..."), SLOT(sDspCostedSingleLevelBOM()),costingReportsCostedMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.dspCostedIndentedBOM", tr("&Indented..."), SLOT(sDspCostedIndentedBOM()), costingReportsCostedMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.dspCostedSummarizedBOM", tr("Summari&zed..."), SLOT(sDspCostedSummarizedBOM()), costingReportsCostedMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
   
   //  Product | Costing | Reports | Item Costs
   { "menu",	tr("&Item Costs"), (char*)costingReportsItemCostsMenu,	costingReportsMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspItemCostsByClassCode", tr("by &Class Code..."), SLOT(sDspItemCostsByClassCode()), costingReportsItemCostsMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
-  { "pd.dspItemCostsSummary", tr("&Summary..."), SLOT(sDspItemCostSummary()), costingReportsItemCostsMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
-  { "pd.dspItemCostsHistory", tr("&History..."), SLOT(sDspItemCostHistory()), costingReportsItemCostsMenu, _privleges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.dspItemCostsByClassCode", tr("by &Class Code..."), SLOT(sDspItemCostsByClassCode()), costingReportsItemCostsMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.dspItemCostsSummary", tr("&Summary..."), SLOT(sDspItemCostSummary()), costingReportsItemCostsMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
+  { "pd.dspItemCostsHistory", tr("&History..."), SLOT(sDspItemCostHistory()), costingReportsItemCostsMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
 
   { "separator", NULL, NULL, costingMenu,	true, NULL, NULL, true , NULL },
-  { "pd.userDefinedCostingElements", tr("&User-Defined Costing Elements..."), SLOT(sUserCostingElements()), costingMenu, _privleges->check("MaintainUserCostingElements"), NULL, NULL, true , NULL },
+  { "pd.userDefinedCostingElements", tr("&User-Defined Costing Elements..."), SLOT(sUserCostingElements()), costingMenu, _privileges->check("MaintainUserCostingElements"), NULL, NULL, true , NULL },
 
   { "separator", NULL, NULL, mainMenu,	true, NULL, NULL, true , NULL },
 
   //  Produt | Master Information
   { "menu",	tr("&Master Information"), (char*)masterInfoMenu, mainMenu, true, NULL, NULL, true , NULL },
-  { "pd.unitsOfMeasure", tr("&Units of Measure..."), SLOT(sUnitsOfMeasure()), masterInfoMenu, _privleges->check("MaintainUOMs") || _privleges->check("ViewUOMs"), NULL, NULL, true , NULL },
-  { "pd.classCodes", tr("&Class Codes..."), SLOT(sClassCodes()), masterInfoMenu, _privleges->check("MaintainClassCodes") || _privleges->check("ViewClassCodes"), NULL, NULL, true , NULL },
-  { "pd.productCategories", tr("&Product Categories..."), SLOT(sProductCategories()), masterInfoMenu, _privleges->check("MaintainProductCategories") || _privleges->check("ViewProductCategories"), NULL, NULL, true , NULL },
-  { "pd.characteristics", tr("C&haracteristics..."), SLOT(sCharacteristics()), masterInfoMenu, _privleges->check("MaintainCharacteristics") || _privleges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
+  { "pd.unitsOfMeasure", tr("&Units of Measure..."), SLOT(sUnitsOfMeasure()), masterInfoMenu, _privileges->check("MaintainUOMs") || _privileges->check("ViewUOMs"), NULL, NULL, true , NULL },
+  { "pd.classCodes", tr("&Class Codes..."), SLOT(sClassCodes()), masterInfoMenu, _privileges->check("MaintainClassCodes") || _privileges->check("ViewClassCodes"), NULL, NULL, true , NULL },
+  { "pd.productCategories", tr("&Product Categories..."), SLOT(sProductCategories()), masterInfoMenu, _privileges->check("MaintainProductCategories") || _privileges->check("ViewProductCategories"), NULL, NULL, true , NULL },
+  { "pd.characteristics", tr("C&haracteristics..."), SLOT(sCharacteristics()), masterInfoMenu, _privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, masterInfoMenu,	true, NULL, NULL, _metrics->boolean("Routings")  , NULL },
-  { "pd.standardLaborRates", tr("Standard &Labor Rates..."), SLOT(sStandardLaborRates()), masterInfoMenu, _privleges->check("MaintainLaborRates") || _privleges->check("ViewLaborRates"), NULL, NULL, _metrics->boolean("Routings") , NULL },
-  { "pd.workCenters", tr("&Work Centers..."), SLOT(sWorkCenters()), masterInfoMenu, _privleges->check("MaintainWorkCenters") || _privleges->check("ViewWorkCenters"), NULL, NULL,  _metrics->boolean("Routings") , NULL },
-  { "pd.standardOperations", tr("Standard &Operations..."), SLOT(sStandardOperations()), masterInfoMenu, _privleges->check("MaintainStandardOperations") || _privleges->check("ViewStandardOperations"), NULL, NULL, _metrics->boolean("Routings") , NULL },
+  { "pd.standardLaborRates", tr("Standard &Labor Rates..."), SLOT(sStandardLaborRates()), masterInfoMenu, _privileges->check("MaintainLaborRates") || _privileges->check("ViewLaborRates"), NULL, NULL, _metrics->boolean("Routings") , NULL },
+  { "pd.workCenters", tr("&Work Centers..."), SLOT(sWorkCenters()), masterInfoMenu, _privileges->check("MaintainWorkCenters") || _privileges->check("ViewWorkCenters"), NULL, NULL,  _metrics->boolean("Routings") , NULL },
+  { "pd.standardOperations", tr("Standard &Operations..."), SLOT(sStandardOperations()), masterInfoMenu, _privileges->check("MaintainStandardOperations") || _privileges->check("ViewStandardOperations"), NULL, NULL, _metrics->boolean("Routings") , NULL },
 
   //  Produt | Utilies
   { "menu",	tr("&Utilities"), (char*)utilitiesMenu, mainMenu, true, NULL, NULL, true , NULL },
-  { "pd.dspUnusedPurchasedItems", tr("Unused &Purchased Items..."), SLOT(sDspUnusedPurchasedItems()), utilitiesMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
-  { "pd.dspUndefinedManufacturedItems", tr("Undefined &Manufactured Items..."), SLOT(sDspUndefinedManufacturedItems()), utilitiesMenu, _privleges->check("ViewBOMs") || _privleges->check("ViewBOOs"), NULL, NULL, true , NULL },
-  { "pd.dspBillsOfMaterialsWithoutComponentItemSites", tr("Bills of Ma&terials without Component Item Sites..."), SLOT(sDspInvalidBillsOfMaterials()), utilitiesMenu, _privleges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspUnusedPurchasedItems", tr("Unused &Purchased Items..."), SLOT(sDspUnusedPurchasedItems()), utilitiesMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
+  { "pd.dspUndefinedManufacturedItems", tr("Undefined &Manufactured Items..."), SLOT(sDspUndefinedManufacturedItems()), utilitiesMenu, _privileges->check("ViewBOMs") || _privileges->check("ViewBOOs"), NULL, NULL, true , NULL },
+  { "pd.dspBillsOfMaterialsWithoutComponentItemSites", tr("Bills of Ma&terials without Component Item Sites..."), SLOT(sDspInvalidBillsOfMaterials()), utilitiesMenu, _privileges->check("ViewBOMs"), NULL, NULL, true , NULL },
   { "separator", NULL, NULL, utilitiesMenu,	true, NULL, NULL, true , NULL },
-  { "pd.reassignClassCodeByClassCode", tr("Reassign &Class Codes..."), SLOT(sReassignClassCodeByClassCode()), utilitiesMenu, _privleges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
-  { "pd.reassignProductCategoryByProductCategory", tr("&Reassign Product Categories..."), SLOT(sReassignProductCategoryByProductCategory()), utilitiesMenu, _privleges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
+  { "pd.reassignClassCodeByClassCode", tr("Reassign &Class Codes..."), SLOT(sReassignClassCodeByClassCode()), utilitiesMenu, _privileges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
+  { "pd.reassignProductCategoryByProductCategory", tr("&Reassign Product Categories..."), SLOT(sReassignProductCategoryByProductCategory()), utilitiesMenu, _privileges->check("MaintainItemMasters"), NULL, NULL, true , NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

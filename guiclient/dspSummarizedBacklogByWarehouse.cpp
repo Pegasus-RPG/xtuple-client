@@ -91,8 +91,8 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   _so->addColumn(tr("Ordered/Shipped"),     _dateColumn, Qt::AlignRight  );
   _so->addColumn(tr("Scheduled"),           _dateColumn, Qt::AlignRight  );
   _so->addColumn(tr("Pack Date"),           _dateColumn, Qt::AlignRight  );
-  if (_privleges->check("ViewCustomerPrices") ||
-      _privleges->check("MaintainCustomerPrices"))
+  if (_privileges->check("ViewCustomerPrices") ||
+      _privileges->check("MaintainCustomerPrices"))
   {
     _so->addColumn(tr("Sales"),  _moneyColumn, Qt::AlignRight);
     _so->addColumn(tr("Cost"),   _moneyColumn, Qt::AlignRight);
@@ -102,7 +102,7 @@ dspSummarizedBacklogByWarehouse::dspSummarizedBacklogByWarehouse(QWidget* parent
   _so->setRootIsDecorated(TRUE);
   _so->setDragString("soheadid=");
 
-  if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
+  if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("MaintainCustomerPrices")) )
     _showPrices->setEnabled(FALSE);
   sHandlePrices(_showPrices->isChecked());
 
@@ -291,25 +291,25 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
   if (_so->id() != -1)
   {
     menuItem = pMenu->insertItem(tr("Inventory Availability by Sales Order..."), this, SLOT(sInventoryAvailabilityBySalesOrder()), 0);
-    if (!_privleges->check("ViewInventoryAvailability"))
+    if (!_privileges->check("ViewInventoryAvailability"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
   
     menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainSalesOrders"))
+    if (!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-    if ((!_privleges->check("MaintainSalesOrders")) && (!_privleges->check("ViewSalesOrders")))
+    if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sReschedule()), 0);
-    if (!_privleges->check("MaintainSalesOrders"))
+    if (!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-    if (!_privleges->check("MaintainSalesOrders"))
+    if (!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
   }
@@ -322,7 +322,7 @@ void dspSummarizedBacklogByWarehouse::sPopulateMenu(QMenu *pMenu)
       pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-    if (!_privleges->check("PrintPackingLists"))
+    if (!_privileges->check("PrintPackingLists"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

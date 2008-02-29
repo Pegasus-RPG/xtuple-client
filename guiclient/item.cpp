@@ -200,16 +200,16 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
   _itemtax->addColumn(tr("Tax Type"),      _itemColumn, Qt::AlignLeft );
   _itemtax->addColumn(tr("Tax Authority"),          -1, Qt::AlignLeft );
 
-  if(!_privleges->check("MaintainBOOs") || !_metrics->boolean("Routings"))
+  if(!_privileges->check("MaintainBOOs") || !_metrics->boolean("Routings"))
     _boo->hide();
     
-  if(!_privleges->check("MaintainBOMs"))
+  if(!_privileges->check("MaintainBOMs"))
     _bom->hide();
     
-  if((!_privleges->check("MaintainItemSites")) || (_metrics->boolean("MultiWhs")))
+  if((!_privileges->check("MaintainItemSites")) || (_metrics->boolean("MultiWhs")))
     _site->hide();
 
-  if(!_privleges->check("ViewItemAvailabilityWorkbench"))
+  if(!_privileges->check("ViewItemAvailabilityWorkbench"))
     _workbench->hide();
     
   if (!_metrics->boolean("Transforms"))
@@ -325,7 +325,7 @@ enum SetResponse item::set(const ParameterList &pParams)
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxEdit, SLOT(setEnabled(bool)));
       connect(_itemtax, SIGNAL(valid(bool)), _itemtaxDelete, SLOT(setEnabled(bool)));
 
-      if (_privleges->check("MaintainItemSites"))
+      if (_privileges->check("MaintainItemSites"))
       {
         connect(_itemSite, SIGNAL(valid(bool)), _editItemSite, SLOT(setEnabled(bool)));
         connect(_itemSite, SIGNAL(itemSelected(int)), _editItemSite, SLOT(animateClick()));
@@ -335,7 +335,7 @@ enum SetResponse item::set(const ParameterList &pParams)
         connect(_itemSite, SIGNAL(itemSelected(int)), _viewItemSite, SLOT(animateClick()));
       }
 
-      if (_privleges->check("DeleteItemSites"))
+      if (_privileges->check("DeleteItemSites"))
         connect(_itemSite, SIGNAL(valid(bool)), _deleteItemSite, SLOT(setEnabled(bool)));
 
       _itemNumber->setEnabled(FALSE);

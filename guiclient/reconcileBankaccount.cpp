@@ -107,7 +107,7 @@ reconcileBankaccount::reconcileBankaccount(QWidget* parent, const char* name, Qt
 			 "ORDER BY bankaccnt_name;");
     _currency->setLabel(_currencyLit);
 
-    if (!_privleges->check("MaintainBankAdjustments"))
+    if (!_privileges->check("MaintainBankAdjustments"))
       _addAdjustment->setEnabled(FALSE);
 
     connect(omfgThis, SIGNAL(bankAdjustmentsUpdated(int, bool)), this, SLOT(populate()));

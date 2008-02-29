@@ -133,13 +133,13 @@ void dspCustomersByCustomerType::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCustomerMasters"))
+  if (!_privileges->check("MaintainCustomerMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem("Reassign Customer Type", this, SLOT(sReassignCustomerType()), 0);
-  if (!_privleges->check("MaintainCustomerMasters"))
+  if (!_privileges->check("MaintainCustomerMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

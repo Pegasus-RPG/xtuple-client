@@ -91,7 +91,7 @@ plannerCodes::plannerCodes(QWidget* parent, const char* name, Qt::WFlags fl)
   _plancode->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
   _plancode->addColumn(tr("Description"), -1,          Qt::AlignLeft );
 
-  if (_privleges->check("MaintainPlannerCodes"))
+  if (_privileges->check("MaintainPlannerCodes"))
   {
     connect(_plancode, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_plancode, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

@@ -118,7 +118,7 @@ void customerFormAssignments::init()
   _custform->addColumn(tr("Packing List"),  100, Qt::AlignCenter );
   _custform->addColumn(tr("S/O Pick List"), 100, Qt::AlignCenter );
 
-  if (_privleges->check("MaintainSalesAccount"))
+  if (_privileges->check("MaintainSalesAccount"))
   {
     connect(_custform, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_custform, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

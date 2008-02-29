@@ -174,28 +174,28 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   actionProperties acts[] = {
     // Production | Control
     { "menu",			tr("&Work Order"),		(char*)ordersMenu,	  mainMenu,    true,	0, 0, true, NULL },
-    { "wo.newWorkOrder",	tr("&New..."),	SLOT(sNewWorkOrder()),	  ordersMenu, _privleges->check("MaintainWorkOrders"), 0, 0, true, NULL },
+    { "wo.newWorkOrder",	tr("&New..."),	SLOT(sNewWorkOrder()),	  ordersMenu, _privileges->check("MaintainWorkOrders"), 0, 0, true, NULL },
     { "separator",		NULL,				NULL,			  ordersMenu, true,	0, 0,	true, NULL },
-    { "wo.explodeWorkOrder",	tr("E&xplode..."),	SLOT(sExplodeWorkOrder()), ordersMenu, _privleges->check("ExplodeWorkOrders"), 0, 0, true, NULL },
-    { "wo.implodeWorkOrder",	tr("&Implode..."),	SLOT(sImplodeWorkOrder()), ordersMenu, _privleges->check("ImplodeWorkOrders"), 0, 0, true, NULL },
-    { "wo.releaseWorkOrdersByPlannerCode", tr("&Release..."), SLOT(sReleaseWorkOrdersByPlannerCode()),	ordersMenu, _privleges->check("ReleaseWorkOrders"), 0, 0, true, NULL },
-    { "wo.closeWorkOrder",	tr("&Close..."),	SLOT(sCloseWorkOrder()),  ordersMenu, _privleges->check("CloseWorkOrders"), 0, 0, true, NULL },
+    { "wo.explodeWorkOrder",	tr("E&xplode..."),	SLOT(sExplodeWorkOrder()), ordersMenu, _privileges->check("ExplodeWorkOrders"), 0, 0, true, NULL },
+    { "wo.implodeWorkOrder",	tr("&Implode..."),	SLOT(sImplodeWorkOrder()), ordersMenu, _privileges->check("ImplodeWorkOrders"), 0, 0, true, NULL },
+    { "wo.releaseWorkOrdersByPlannerCode", tr("&Release..."), SLOT(sReleaseWorkOrdersByPlannerCode()),	ordersMenu, _privileges->check("ReleaseWorkOrders"), 0, 0, true, NULL },
+    { "wo.closeWorkOrder",	tr("&Close..."),	SLOT(sCloseWorkOrder()),  ordersMenu, _privileges->check("CloseWorkOrders"), 0, 0, true, NULL },
     { "separator",		NULL,				NULL,			  ordersMenu, true,	0, 0,	true, NULL },
-    { "wo.reprioritizeWorkOrder",	   tr("Re&prioritize..."),	SLOT(sReprioritizeWorkOrder()), ordersMenu, _privleges->check("ReprioritizeWorkOrders"), 0, 0, true, NULL },
-    { "wo.rescheduleWorkOrder",		   tr("Re&schedule..."),	SLOT(sRescheduleWorkOrder()),   ordersMenu, _privleges->check("RescheduleWorkOrders"), 0, 0, true, NULL },
-    { "wo.changeWorkOrderQuantity",	   tr("Change &Quantity..."), SLOT(sChangeWorkOrderQty()),	ordersMenu, _privleges->check("ChangeWorkOrderQty"), 0, 0, true, NULL },
+    { "wo.reprioritizeWorkOrder",	   tr("Re&prioritize..."),	SLOT(sReprioritizeWorkOrder()), ordersMenu, _privileges->check("ReprioritizeWorkOrders"), 0, 0, true, NULL },
+    { "wo.rescheduleWorkOrder",		   tr("Re&schedule..."),	SLOT(sRescheduleWorkOrder()),   ordersMenu, _privileges->check("RescheduleWorkOrders"), 0, 0, true, NULL },
+    { "wo.changeWorkOrderQuantity",	   tr("Change &Quantity..."), SLOT(sChangeWorkOrderQty()),	ordersMenu, _privileges->check("ChangeWorkOrderQty"), 0, 0, true, NULL },
 
     //  Production | W/O Materials
     { "menu",				tr("&Materials"),				(char*)materialsMenu,			mainMenu,	true,	0, 0,	true, NULL },
-    { "wo.createWoMaterialRequirement",	tr("&New..."),	SLOT(sCreateWoMaterialRequirement()), materialsMenu, _privleges->check("MaintainWoMaterials"), 0, 0, true, NULL },
-    { "wo.maintainWoMaterialRequirements",tr("&Maintain..."),	SLOT(sMaintainWoMaterials()), 		materialsMenu, _privleges->check("MaintainWoMaterials"), 0, 0, true, NULL },
+    { "wo.createWoMaterialRequirement",	tr("&New..."),	SLOT(sCreateWoMaterialRequirement()), materialsMenu, _privileges->check("MaintainWoMaterials"), 0, 0, true, NULL },
+    { "wo.maintainWoMaterialRequirements",tr("&Maintain..."),	SLOT(sMaintainWoMaterials()), 		materialsMenu, _privileges->check("MaintainWoMaterials"), 0, 0, true, NULL },
 /*  This can be done in maintain matl req.  Remove by version 3.0 if no objections.    
-    { "wo.deleteWoMaterialRequirement",	tr("&Delete..."),	SLOT(sDeleteWoMaterialRequirement()), materialsMenu, _privleges->check("MaintainWoMaterials"), 0, 0, true, NULL },
+    { "wo.deleteWoMaterialRequirement",	tr("&Delete..."),	SLOT(sDeleteWoMaterialRequirement()), materialsMenu, _privileges->check("MaintainWoMaterials"), 0, 0, true, NULL },
 */
     //  Production | Operations
     { "menu",				tr("&Operations"),			(char*)operationsMenu,	mainMenu,	true,	0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.createWoOperation",		tr("&New..."),		SLOT(sCreateWoOperation()), operationsMenu, _privleges->check("MaintainWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.maintainWoOperation",		tr("&Maintain..."),	SLOT(sMaintainWoOperations()), operationsMenu, _privleges->check("MaintainWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.createWoOperation",		tr("&New..."),		SLOT(sCreateWoOperation()), operationsMenu, _privileges->check("MaintainWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.maintainWoOperation",		tr("&Maintain..."),	SLOT(sMaintainWoOperations()), operationsMenu, _privileges->check("MaintainWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
 
     { "separator",		NULL,				NULL,			  mainMenu, true,	0, 0,	true, NULL },
     
@@ -204,119 +204,119 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
     
     //  Production |Transactions | Issue
     { "menu",				tr("&Issue Material"),				(char*)materialsIssueMenu,			transactionsMenu,	true,	0, 0,	true, NULL },
-    { "wo.issueWoMaterialBatch",	tr("&Batch..."),	SLOT(sIssueWoMaterialBatch()), materialsIssueMenu, _privleges->check("IssueWoMaterials"), 0, 0, true, NULL },
-    { "wo.issueWoMaterialItem",		tr("&Item..."),	SLOT(sIssueWoMaterialItem()), materialsIssueMenu, _privleges->check("IssueWoMaterials"), 0, 0, true, NULL },
+    { "wo.issueWoMaterialBatch",	tr("&Batch..."),	SLOT(sIssueWoMaterialBatch()), materialsIssueMenu, _privileges->check("IssueWoMaterials"), 0, 0, true, NULL },
+    { "wo.issueWoMaterialItem",		tr("&Item..."),	SLOT(sIssueWoMaterialItem()), materialsIssueMenu, _privileges->check("IssueWoMaterials"), 0, 0, true, NULL },
     
     //  Production | Transactions | Return
     { "menu",				tr("Ret&urn Material"),				(char*)materialsReturnMenu,			transactionsMenu,	true,	0, 0,	true, NULL },
-    { "wo.returnWoMaterialBatch",	tr("&Batch..."),	SLOT(sReturnWoMaterialBatch()), materialsReturnMenu, _privleges->check("ReturnWoMaterials"), 0, 0, true, NULL },
-    { "wo.returnWoMaterialItem",	tr("&Item..."),	SLOT(sReturnWoMaterialItem()), materialsReturnMenu, _privleges->check("ReturnWoMaterials"), 0, 0, true, NULL },
+    { "wo.returnWoMaterialBatch",	tr("&Batch..."),	SLOT(sReturnWoMaterialBatch()), materialsReturnMenu, _privileges->check("ReturnWoMaterials"), 0, 0, true, NULL },
+    { "wo.returnWoMaterialItem",	tr("&Item..."),	SLOT(sReturnWoMaterialItem()), materialsReturnMenu, _privileges->check("ReturnWoMaterials"), 0, 0, true, NULL },
     
-    { "wo.scrapWoMaterialFromWo",	tr("&Scrap..."),	SLOT(sScrapWoMaterialFromWo()), transactionsMenu, _privleges->check("ScrapWoMaterials"), 0, 0, true, NULL },
+    { "wo.scrapWoMaterialFromWo",	tr("&Scrap..."),	SLOT(sScrapWoMaterialFromWo()), transactionsMenu, _privileges->check("ScrapWoMaterials"), 0, 0, true, NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, true,	0, 0,	_metrics->boolean("Routings") , NULL },
-    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, _privleges->check("WoTimeClock"), new QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), NULL },
-    { "wo.postOperations",		tr("&Post Operation..."),		SLOT(sPostOperations()), transactionsMenu, _privleges->check("PostWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.correctOperationsPosting",	tr("Co&rrect Operation Posting..."),	SLOT(sCorrectOperationsPosting()), transactionsMenu, _privleges->check("PostWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.woTimeClock",		tr("Shop Floor &Workbench..."),	SLOT(sWoTimeClock()),	  transactionsMenu, _privileges->check("WoTimeClock"), new QPixmap(":/images/shopFloorWorkbench.png"), toolBar, _metrics->boolean("Routings"), NULL },
+    { "wo.postOperations",		tr("&Post Operation..."),		SLOT(sPostOperations()), transactionsMenu, _privileges->check("PostWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.correctOperationsPosting",	tr("Co&rrect Operation Posting..."),	SLOT(sCorrectOperationsPosting()), transactionsMenu, _privileges->check("PostWoOperations"), 0, 0, _metrics->boolean("Routings"), NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, true,	0, 0,	true, NULL },
-    { "wo.postProduction",		tr("Post Productio&n..."),		SLOT(sPostProduction()), transactionsMenu, _privleges->check("PostProduction"), 0, 0, true, NULL },
-    { "wo.correctProductionPosting",	tr("C&orrect Production Posting..."),	SLOT(sCorrectProductionPosting()), transactionsMenu, _privleges->check("PostProduction"), 0, 0, true, NULL },
-    { "wo.closeWorkOrder",	tr("&Close Work Order..."),	SLOT(sCloseWorkOrder()),  transactionsMenu, _privleges->check("CloseWorkOrders"), 0, 0, true, NULL },
+    { "wo.postProduction",		tr("Post Productio&n..."),		SLOT(sPostProduction()), transactionsMenu, _privileges->check("PostProduction"), 0, 0, true, NULL },
+    { "wo.correctProductionPosting",	tr("C&orrect Production Posting..."),	SLOT(sCorrectProductionPosting()), transactionsMenu, _privileges->check("PostProduction"), 0, 0, true, NULL },
+    { "wo.closeWorkOrder",	tr("&Close Work Order..."),	SLOT(sCloseWorkOrder()),  transactionsMenu, _privileges->check("CloseWorkOrders"), 0, 0, true, NULL },
     { "separator",			   NULL,				NULL,				transactionsMenu, true,	0, 0,	true, NULL },
-    { "wo.postMiscProduction",		tr("Post &Misc. Production..."),	SLOT(sPostMiscProduction()), transactionsMenu, _privleges->check("PostMiscProduction"), 0, 0, true, NULL },
+    { "wo.postMiscProduction",		tr("Post &Misc. Production..."),	SLOT(sPostMiscProduction()), transactionsMenu, _privileges->check("PostMiscProduction"), 0, 0, true, NULL },
 
     { "separator",		NULL,				NULL,			  mainMenu, true,	0, 0,	true, NULL },
     
     // Production | Forms
     { "menu",			tr("&Forms"),		(char*)formsMenu,	  mainMenu,    true,	0, 0, true, NULL },
-    { "wo.printTraveler",	tr("Print &Traveler..."),	SLOT(sPrintTraveler()),	  formsMenu, _privleges->check("PrintWorkOrderPaperWork"), 0, 0, true, NULL },
-    { "wo.printPickList",	tr("Print &Pick List..."),	SLOT(sPrintPickList()),	  formsMenu, _privleges->check("PrintWorkOrderPaperWork"), 0, 0, true, NULL },
-    { "wo.printRouting",	tr("Print &Routing..."),		SLOT(sPrintRouting()),	  formsMenu, _privleges->check("PrintWorkOrderPaperWork"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.printTraveler",	tr("Print &Traveler..."),	SLOT(sPrintTraveler()),	  formsMenu, _privileges->check("PrintWorkOrderPaperWork"), 0, 0, true, NULL },
+    { "wo.printPickList",	tr("Print &Pick List..."),	SLOT(sPrintPickList()),	  formsMenu, _privileges->check("PrintWorkOrderPaperWork"), 0, 0, true, NULL },
+    { "wo.printRouting",	tr("Print &Routing..."),		SLOT(sPrintRouting()),	  formsMenu, _privileges->check("PrintWorkOrderPaperWork"), 0, 0, _metrics->boolean("Routings"), NULL },
     { "separator",		NULL,				NULL,			  formsMenu, true,	0, 0,	true, NULL },
-    { "wo.rptPrintWorkOrderForm",		tr("Print &Work Order Form..."),	SLOT(sPrintWorkOrderForm()), formsMenu, _privleges->check("PrintWorkOrderPaperWork"), 0, 0, true, NULL },
-    { "wo.rptPrintProductionEntrySheet",	tr("Print Production &Entry Sheet..."),	SLOT(sPrintProductionEntrySheet()), formsMenu, _privleges->check("PrintWorkOrderPaperWork"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.rptPrintWorkOrderForm",		tr("Print &Work Order Form..."),	SLOT(sPrintWorkOrderForm()), formsMenu, _privileges->check("PrintWorkOrderPaperWork"), 0, 0, true, NULL },
+    { "wo.rptPrintProductionEntrySheet",	tr("Print Production &Entry Sheet..."),	SLOT(sPrintProductionEntrySheet()), formsMenu, _privileges->check("PrintWorkOrderPaperWork"), 0, 0, _metrics->boolean("Routings"), NULL },
     
     //  Production | Reports
     { "menu",				tr("&Reports"),	(char*)reportsMenu,	mainMenu,	true,	0, 0,	true, NULL },
     
     //  Production | Reports | Schedule
     { "menu",				tr("Work Order &Schedule"),	(char*)reportsScheduleMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), new QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, "Work Order Schedule by Planner Code" },
-    { "wo.dspWoScheduleByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoScheduleByClassCode()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspWoScheduleByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspWoScheduleByWorkCenter()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspWoScheduleByItem",		tr("by &Item..."),	SLOT(sDspWoScheduleByItem()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspWoScheduleByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoScheduleByWorkOrder()), reportsScheduleMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoScheduleByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoScheduleByPlannerCode()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), new QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar, true, "Work Order Schedule by Planner Code" },
+    { "wo.dspWoScheduleByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoScheduleByClassCode()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoScheduleByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspWoScheduleByWorkCenter()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspWoScheduleByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoScheduleByItemGroup()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoScheduleByItem",		tr("by &Item..."),	SLOT(sDspWoScheduleByItem()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoScheduleByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoScheduleByWorkOrder()), reportsScheduleMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
     //  Production | Reports | Status
     { "menu",				tr("Work Order Sta&tus"),	(char*)reportsBufrStsMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("BufferMgt"), NULL },
-    { "wo.dspWoBufferStatusByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoBufferStatusByPlannerCode()), reportsBufrStsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) , 0, 0, _metrics->boolean("BufferMgt"), NULL },
-    { "wo.dspWoBufferStatusByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoBufferStatusByClassCode()), reportsBufrStsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")),  0, 0, _metrics->boolean("BufferMgt") , NULL },
-    { "wo.dspWoBufferStatusByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoBufferStatusByItemGroup()), reportsBufrStsMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("BufferMgt"), NULL },
+    { "wo.dspWoBufferStatusByPlannerCode",	tr("by &Planner Code..."),	SLOT(sDspWoBufferStatusByPlannerCode()), reportsBufrStsMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) , 0, 0, _metrics->boolean("BufferMgt"), NULL },
+    { "wo.dspWoBufferStatusByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoBufferStatusByClassCode()), reportsBufrStsMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")),  0, 0, _metrics->boolean("BufferMgt") , NULL },
+    { "wo.dspWoBufferStatusByItemGroup",	tr("by Item &Group..."),	SLOT(sDspWoBufferStatusByItemGroup()), reportsBufrStsMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, _metrics->boolean("BufferMgt"), NULL },
 
     { "separator",			NULL,	NULL,	reportsMenu,	true,	0, 0,	true, NULL },
     
     //  Production | Reports | Material Requirements
     { "menu",				tr("&Material Requirements"),	(char*)reportsMatlReqMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspWoMaterialRequirementsByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoMaterialsByWo()), reportsMatlReqMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspWoMaterialRequirementsByComponentItem",	tr("by &Component Item..."),	SLOT(sDspWoMaterialsByComponentItem()), reportsMatlReqMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoMaterialRequirementsByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoMaterialsByWo()), reportsMatlReqMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoMaterialRequirementsByComponentItem",	tr("by &Component Item..."),	SLOT(sDspWoMaterialsByComponentItem()), reportsMatlReqMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
-    { "wo.dspInventoryAvailabilityByWorkOrder",		tr("&Inventory Availability..."),	SLOT(sDspInventoryAvailabilityByWorkOrder()), reportsMenu, _privleges->check("ViewInventoryAvailability"), 0, 0, true, NULL },
-    { "wo.dspPendingWoMaterialAvailability",	tr("&Pending Material Availability..."),	SLOT(sDspPendingAvailability()), reportsMenu, _privleges->check("ViewInventoryAvailability"), 0, 0, true, NULL },
+    { "wo.dspInventoryAvailabilityByWorkOrder",		tr("&Inventory Availability..."),	SLOT(sDspInventoryAvailabilityByWorkOrder()), reportsMenu, _privileges->check("ViewInventoryAvailability"), 0, 0, true, NULL },
+    { "wo.dspPendingWoMaterialAvailability",	tr("&Pending Material Availability..."),	SLOT(sDspPendingAvailability()), reportsMenu, _privileges->check("ViewInventoryAvailability"), 0, 0, true, NULL },
     { "separator",				NULL,					NULL,	reportsMenu,	true,	0, 0,	_metrics->boolean("Routings"), NULL },
 
     //  Production | Reports | Operations
     { "menu",				tr("&Operations"),	(char*)reportsOperationsMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("Routings"), NULL },
-    { "wo.dspWoOperationsByWorkCenter",		tr("by &Work Center..."),	SLOT(sDspWoOperationsByWorkCenter()), reportsOperationsMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspWoOperationsByWorkOrder",		tr("by Work &Order..."),	SLOT(sDspWoOperationsByWo()), reportsOperationsMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspWoOperationsByWorkCenter",		tr("by &Work Center..."),	SLOT(sDspWoOperationsByWorkCenter()), reportsOperationsMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspWoOperationsByWorkOrder",		tr("by Work &Order..."),	SLOT(sDspWoOperationsByWo()), reportsOperationsMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")), 0, 0, _metrics->boolean("Routings"), NULL },
 
-    { "wo.dspWoOperationBufrStsByWorkCenter",	tr("Operation Buf&fer Status..."),	SLOT(sDspWoOperationBufrStsByWorkCenter()), reportsMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")), 0, 0, _metrics->boolean("Routings") && _metrics->boolean("BufferMgt"), NULL },
+    { "wo.dspWoOperationBufrStsByWorkCenter",	tr("Operation Buf&fer Status..."),	SLOT(sDspWoOperationBufrStsByWorkCenter()), reportsMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")), 0, 0, _metrics->boolean("Routings") && _metrics->boolean("BufferMgt"), NULL },
 
     //  Production | Reports | Production Time Clock
     { "menu",				tr("Production &Time Clock"),	(char*)reportsWoTcMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("Routings"), NULL },
-    { "wo.dspWoEffortByUser",		tr("by &User..."),	SLOT(sDspWoEffortByUser()), reportsWoTcMenu, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspWoEffortByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoEffortByWorkOrder()), reportsWoTcMenu, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspWoEffortByUser",		tr("by &User..."),	SLOT(sDspWoEffortByUser()), reportsWoTcMenu, (_privileges->check("MaintainWoTimeClock") || _privileges->check("ViewWoTimeClock")), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspWoEffortByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspWoEffortByWorkOrder()), reportsWoTcMenu, (_privileges->check("MaintainWoTimeClock") || _privileges->check("ViewWoTimeClock")), 0, 0, _metrics->boolean("Routings"), NULL },
 
     { "separator",			NULL,	NULL,	reportsMenu,	true,	0, 0,	true, NULL },
     
     //  Production | Reports | History
     { "menu",				tr("&History"),	(char*)reportsHistoryMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspWoHistoryByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoHistoryByClassCode()), reportsHistoryMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspWoHistoryByItem",		tr("by &Item..."),	SLOT(sDspWoHistoryByItem()), reportsHistoryMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspWoHistoryByNumber",	tr("by &W/O Number..."),	SLOT(sDspWoHistoryByNumber()), reportsHistoryMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoHistoryByClassCode",	tr("by &Class Code..."),	SLOT(sDspWoHistoryByClassCode()), reportsHistoryMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoHistoryByItem",		tr("by &Item..."),	SLOT(sDspWoHistoryByItem()), reportsHistoryMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspWoHistoryByNumber",	tr("by &W/O Number..."),	SLOT(sDspWoHistoryByNumber()), reportsHistoryMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
     { "separator",			NULL,	NULL,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspJobCosting",	tr("&Job Costing..."),	SLOT(sDspJobCosting()), reportsMenu, _privleges->check("ViewCosts"), 0, 0, true, NULL },
+    { "wo.dspJobCosting",	tr("&Job Costing..."),	SLOT(sDspJobCosting()), reportsMenu, _privileges->check("ViewCosts"), 0, 0, true, NULL },
     
     //  Production | Reports | Material Usage Variance
     { "menu",				tr("Material &Usage Variance"),	(char*)reportsMatlUseVarMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspMaterialUsageVarianceByWarehouse",	tr("by Ware&house..."),	SLOT(sDspMaterialUsageVarianceByWarehouse()), reportsMatlUseVarMenu, _privleges->check("ViewMaterialVariances"), 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByItem",	tr("by &Item..."),	SLOT(sDspMaterialUsageVarianceByItem()), reportsMatlUseVarMenu, _privleges->check("ViewMaterialVariances"), 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByBOMItem",	tr("by &BOM Item..."),	SLOT(sDspMaterialUsageVarianceByBOMItem()), reportsMatlUseVarMenu, _privleges->check("ViewMaterialVariances"), 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByComponentItem",	tr("by &Component Item..."),	SLOT(sDspMaterialUsageVarianceByComponentItem()), reportsMatlUseVarMenu, _privleges->check("ViewMaterialVariances"), 0, 0, true, NULL },
-    { "wo.dspMaterialUsageVarianceByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspMaterialUsageVarianceByWorkOrder()), reportsMatlUseVarMenu, _privleges->check("ViewMaterialVariances"), 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByWarehouse",	tr("by Ware&house..."),	SLOT(sDspMaterialUsageVarianceByWarehouse()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByItem",	tr("by &Item..."),	SLOT(sDspMaterialUsageVarianceByItem()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByBOMItem",	tr("by &BOM Item..."),	SLOT(sDspMaterialUsageVarianceByBOMItem()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByComponentItem",	tr("by &Component Item..."),	SLOT(sDspMaterialUsageVarianceByComponentItem()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
+    { "wo.dspMaterialUsageVarianceByWorkOrder",	tr("by &Work Order..."),	SLOT(sDspMaterialUsageVarianceByWorkOrder()), reportsMatlUseVarMenu, _privileges->check("ViewMaterialVariances"), 0, 0, true, NULL },
 
     //  Production | Reports | Labor Variance
     { "menu",				tr("&Labor Variance"),	(char*)reportsLaborVarMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("Routings"), NULL },
-    { "wo.dspLaborVarianceByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspLaborVarianceByWorkCenter()), reportsLaborVarMenu, _privleges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspLaborVarianceByItem",		tr("by &Item..."),	SLOT(sDspLaborVarianceByItem()), reportsLaborVarMenu, _privleges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspLaborVarianceByBOOItem",		tr("by &BOO Item..."),	SLOT(sDspLaborVarianceByBOOItem()), reportsLaborVarMenu, _privleges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
-    { "wo.dspLaborVarianceByWorkOrder",		tr("by Work &Order..."),	SLOT(sDspLaborVarianceByWorkOrder()), reportsLaborVarMenu, _privleges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspLaborVarianceByWorkCenter",	tr("by &Work Center..."),	SLOT(sDspLaborVarianceByWorkCenter()), reportsLaborVarMenu, _privileges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspLaborVarianceByItem",		tr("by &Item..."),	SLOT(sDspLaborVarianceByItem()), reportsLaborVarMenu, _privileges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspLaborVarianceByBOOItem",		tr("by &BOO Item..."),	SLOT(sDspLaborVarianceByBOOItem()), reportsLaborVarMenu, _privileges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
+    { "wo.dspLaborVarianceByWorkOrder",		tr("by Work &Order..."),	SLOT(sDspLaborVarianceByWorkOrder()), reportsLaborVarMenu, _privileges->check("ViewLaborVariances"), 0, 0, _metrics->boolean("Routings"), NULL },
 
     //  Production | Reports | Breeder Distribution Variance
     { "menu",				tr("Breeder &Distribution Variance"),	(char*)reportsBrdrDistVarMenu,	reportsMenu,	true,	0, 0,	_metrics->boolean("BBOM"), NULL },
-    { "wo.dspBreederDistributionVarianceByWarehouse",	tr("by &Warehouse..."),	SLOT(sDspBreederDistributionVarianceByWarehouse()), reportsBrdrDistVarMenu, _privleges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
-    { "wo.dspBreederDistributionVarianceByItem",	tr("by &Item..."),	SLOT(sDspBreederDistributionVarianceByItem()), reportsBrdrDistVarMenu, _privleges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
+    { "wo.dspBreederDistributionVarianceByWarehouse",	tr("by &Warehouse..."),	SLOT(sDspBreederDistributionVarianceByWarehouse()), reportsBrdrDistVarMenu, _privileges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
+    { "wo.dspBreederDistributionVarianceByItem",	tr("by &Item..."),	SLOT(sDspBreederDistributionVarianceByItem()), reportsBrdrDistVarMenu, _privileges->check("ViewBreederVariances"), 0, 0, _metrics->boolean("BBOM"), NULL },
 
     { "separator",					NULL,	NULL,	reportsMenu,	true,	0, 0,	true, NULL },
     
     //  Production | Reports | Open Work Orders
     { "menu",				tr("Ope&n Work Orders"),	(char*)reportsOpenWoMenu,	reportsMenu,	true,	0, 0,	true, NULL },
-    { "wo.dspOpenWorkOrdersWithClosedParentSalesOrders",tr("with &Closed Parent Sales Orders..."),	SLOT(sDspWoSoStatusMismatch()), reportsOpenWoMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
-    { "wo.dspOpenWorkOrdersWithParentSalesOrders",	tr("with &Parent Sales Orders..."),	SLOT(sDspWoSoStatus()), reportsOpenWoMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspOpenWorkOrdersWithClosedParentSalesOrders",tr("with &Closed Parent Sales Orders..."),	SLOT(sDspWoSoStatusMismatch()), reportsOpenWoMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
+    { "wo.dspOpenWorkOrdersWithParentSalesOrders",	tr("with &Parent Sales Orders..."),	SLOT(sDspWoSoStatus()), reportsOpenWoMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")), 0, 0, true, NULL },
 
     { "separator", NULL, NULL, mainMenu, true,	0, 0, true, NULL },
     { "menu", tr("&Utilities"), (char*)utilitiesMenu, mainMenu, true, NULL, NULL, true, NULL },
-    { "wo.purgeClosedWorkOrder",	   tr("Pur&ge Closed Work Orders..."),	SLOT(sPurgeClosedWorkOrders()),	utilitiesMenu, _privleges->check("PurgeWorkOrders"), 0, 0, true, NULL },
+    { "wo.purgeClosedWorkOrder",	   tr("Pur&ge Closed Work Orders..."),	SLOT(sPurgeClosedWorkOrders()),	utilitiesMenu, _privileges->check("PurgeWorkOrders"), 0, 0, true, NULL },
   };
 
   addActionsToMenu(acts, sizeof(acts) / sizeof(acts[0]));

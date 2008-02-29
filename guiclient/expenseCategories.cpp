@@ -112,7 +112,7 @@ void expenseCategories::init()
   _expcat->addColumn(tr("Category"),    _itemColumn, Qt::AlignCenter );
   _expcat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
-  if (_privleges->check("MaintainExpenseCategories"))
+  if (_privileges->check("MaintainExpenseCategories"))
   {
     connect(_expcat, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_expcat, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));

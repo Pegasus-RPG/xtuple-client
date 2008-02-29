@@ -91,8 +91,8 @@ dspBriefSalesHistoryBySalesRep::dspBriefSalesHistoryBySalesRep(QWidget* parent, 
   _sohist->addColumn( tr("Ext. Price"), _moneyColumn, Qt::AlignRight );
   _sohist->addColumn( tr("Ext. Cost"), _costColumn, Qt::AlignRight );
 
-  _showCosts->setEnabled(_privleges->check("ViewCosts"));
-  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
+  _showCosts->setEnabled(_privileges->check("ViewCosts"));
+  _showPrices->setEnabled(_privileges->check("ViewCustomerPrices"));
 
   sHandleParams();
 

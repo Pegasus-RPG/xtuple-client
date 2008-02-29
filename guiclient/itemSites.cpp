@@ -92,7 +92,7 @@ itemSites::itemSites(QWidget* parent, const char* name, Qt::WFlags fl)
   
   connect(omfgThis, SIGNAL(itemsitesUpdated()), SLOT(sFillList()));
 
-  if (_privleges->check("MaintainItemSites"))
+  if (_privileges->check("MaintainItemSites"))
   {
     connect(_itemSite, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_itemSite, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
@@ -104,7 +104,7 @@ itemSites::itemSites(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_itemSite, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  if (_privleges->check("DeleteItemSites"))
+  if (_privileges->check("DeleteItemSites"))
     connect(_itemSite, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
   _copy->setVisible(_metrics->boolean("MultiWhs"));
@@ -232,7 +232,7 @@ void itemSites::sPopulateMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem(tr("View Item Site"), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Edit Item Site"), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemSites"))
+  if (!_privileges->check("MaintainItemSites"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

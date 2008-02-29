@@ -108,7 +108,7 @@ void dspFrozenItemSites::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Thaw"), this, SLOT(sThaw()), 0);
-  if (!_privleges->check("ThawInventory"))
+  if (!_privileges->check("ThawInventory"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

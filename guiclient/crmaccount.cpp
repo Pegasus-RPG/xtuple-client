@@ -167,8 +167,7 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   _oplist->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft );
   _oplist->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false );
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _active->setChecked(true);
     _activeTodoIncdt->setChecked(true);
@@ -232,19 +231,19 @@ enum SetResponse crmaccount::set(const ParameterList &pParams)
   }
   else
   {
-    _customer->setEnabled(_privleges->check("MaintainCustomerMasters") && !_modal);
-    _prospect->setEnabled(_privleges->check("MaintainProspects") && !_modal);
-    _taxauth->setEnabled(_privleges->check("MaintainTaxAuthorities") && !_modal);
-    _vendor->setEnabled(_privleges->check("MaintainVendors") && !_modal);
-    _partner->setEnabled(_privleges->check("MaintainPartners"));
-    _competitor->setEnabled(_privleges->check("MaintainCompetitorMasters"));
+    _customer->setEnabled(_privileges->check("MaintainCustomerMasters") && !_modal);
+    _prospect->setEnabled(_privileges->check("MaintainProspects") && !_modal);
+    _taxauth->setEnabled(_privileges->check("MaintainTaxAuthorities") && !_modal);
+    _vendor->setEnabled(_privileges->check("MaintainVendors") && !_modal);
+    _partner->setEnabled(_privileges->check("MaintainPartners"));
+    _competitor->setEnabled(_privileges->check("MaintainCompetitorMasters"));
   }
 
-  if (! _privleges->check("MaintainContacts") || _mode == cView)
+  if (! _privileges->check("MaintainContacts") || _mode == cView)
     _edit->setText("View");
-  _edit->setEnabled(_privleges->check("MaintainContacts"));
-  _attach->setEnabled(_privleges->check("MaintainContacts"));
-  _detach->setEnabled(_privleges->check("MaintainContacts"));
+  _edit->setEnabled(_privileges->check("MaintainContacts"));
+  _attach->setEnabled(_privileges->check("MaintainContacts"));
+  _detach->setEnabled(_privileges->check("MaintainContacts"));
 
   param = pParams.value("crmacct_id", &valid);
   if (valid)
@@ -946,10 +945,10 @@ void crmaccount::sPopulateTodo()
     params.append("active");
   if (_completedTodoIncdt->isChecked())
     params.append("completed");
-  if ((_privleges->check("MaintainPersonalTodoList") ||
-       _privleges->check("ViewPersonalTodoList")) &&
-      ! (_privleges->check("MaintainOtherTodoLists") ||
-	 _privleges->check("ViewOtherTodoLists")) )
+  if ((_privileges->check("MaintainPersonalTodoList") ||
+       _privileges->check("ViewPersonalTodoList")) &&
+      ! (_privileges->check("MaintainOtherTodoLists") ||
+	 _privileges->check("ViewOtherTodoLists")) )
     params.append("usr_id", _myUsrId);
 
   MetaSQLQuery mql(sql);
@@ -992,20 +991,20 @@ void crmaccount::sPopulateTodo()
 void crmaccount::sHandleTodoPrivs()
 {
   bool newTodoPriv = ((cEdit == _mode || cNew == _mode) &&
-		      (_privleges->check("MaintainPersonalTodoList") ||
-		       _privleges->check("MaintainOtherTodoLists")) );
+		      (_privileges->check("MaintainPersonalTodoList") ||
+		       _privileges->check("MaintainOtherTodoLists")) );
 
   bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-    (_myUsrId == _todo->altId() && _privleges->check("MaintainPersonalTodoList")) ||
-    (_privleges->check("MaintainOtherTodoLists")) );
+    (_myUsrId == _todo->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+    (_privileges->check("MaintainOtherTodoLists")) );
 
   bool viewTodoPriv =
-    (_myUsrId == _todo->altId() && _privleges->check("ViewPersonalTodoList")) ||
-    (_privleges->check("ViewOtherTodoLists"));
+    (_myUsrId == _todo->altId() && _privileges->check("ViewPersonalTodoList")) ||
+    (_privileges->check("ViewOtherTodoLists"));
 
   _newTodo->setEnabled(newTodoPriv);
   _newIncdt->setEnabled((cEdit == _mode || cNew == _mode) &&
-			_privleges->check("MaintainIncidents"));
+			_privileges->check("MaintainIncidents"));
 
   if (_todo->currentItem())
   {
@@ -1013,18 +1012,18 @@ void crmaccount::sHandleTodoPrivs()
       _editTodoIncdt->setEnabled(editTodoPriv);
     else
       _editTodoIncdt->setEnabled((cEdit == _mode || cNew == _mode) &&
-				  _privleges->check("MaintainIncidents"));
+				  _privileges->check("MaintainIncidents"));
 
     if (_todo->currentItem()->text(0) == "T")
       _viewTodoIncdt->setEnabled(viewTodoPriv);
     else
-      _viewTodoIncdt->setEnabled(_privleges->check("ViewIncidents"));
+      _viewTodoIncdt->setEnabled(_privileges->check("ViewIncidents"));
 
     if (_todo->currentItem()->text(0) == "T")
       _deleteTodoIncdt->setEnabled(editTodoPriv);
     else
       _deleteTodoIncdt->setEnabled((cEdit == _mode || cNew == _mode) &&
-				    _privleges->check("MaintainIncidents"));
+				    _privileges->check("MaintainIncidents"));
   }
   else
   {
@@ -1039,23 +1038,23 @@ void crmaccount::sPopulateTodoMenu(QMenu *pMenu)
   int menuItem;
 
   bool newTodoPriv = ((cEdit == _mode || cNew == _mode) &&
-		      (_privleges->check("MaintainPersonalTodoList") ||
-		       _privleges->check("MaintainOtherTodoLists")) );
+		      (_privileges->check("MaintainPersonalTodoList") ||
+		       _privileges->check("MaintainOtherTodoLists")) );
 
   bool editTodoPriv = (cEdit == _mode || cNew == _mode) && (
-      (_myUsrId == _todo->altId() && _privleges->check("MaintainPersonalTodoList")) ||
-      _privleges->check("MaintainOtherTodoLists"));
+      (_myUsrId == _todo->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      _privileges->check("MaintainOtherTodoLists"));
 
   bool viewTodoPriv =
-      (_myUsrId == _todo->altId() && _privleges->check("ViewPersonalTodoList")) ||
-      _privleges->check("ViewOtherTodoLists");
+      (_myUsrId == _todo->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      _privileges->check("ViewOtherTodoLists");
 
   menuItem = pMenu->insertItem(tr("New To-Do Item..."), this, SLOT(sNewTodo()));
   pMenu->setItemEnabled(menuItem, newTodoPriv);
 
   menuItem = pMenu->insertItem(tr("New Incident..."), this, SLOT(sNewIncdt()));
   pMenu->setItemEnabled(menuItem, (cEdit == _mode || cNew == _mode) &&
-				  _privleges->check("MaintainIncidents"));
+				  _privileges->check("MaintainIncidents"));
 
   if (_todo->currentItem())
   {
@@ -1063,18 +1062,18 @@ void crmaccount::sPopulateTodoMenu(QMenu *pMenu)
     pMenu->setItemEnabled(menuItem,
 			  _todo->currentItem()->text(0) == "T" ? editTodoPriv :
 			       (cEdit == _mode || cNew == _mode) &&
-				_privleges->check("MaintainIncidents") );
+				_privileges->check("MaintainIncidents") );
 
     menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewTodoIncdt()));
     pMenu->setItemEnabled(menuItem,
 			  _todo->currentItem()->text(0) == "T" ? viewTodoPriv :
-				_privleges->check("ViewIncidents"));
+				_privileges->check("ViewIncidents"));
 
     menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDeleteTodoIncdt()));
     pMenu->setItemEnabled(menuItem,
 			  _todo->currentItem()->text(0) == "T" ? editTodoPriv :
 			      (cEdit == _mode || cNew == _mode) &&
-				_privleges->check("MaintainIncidents"));
+				_privileges->check("MaintainIncidents"));
   }
 }
 
@@ -1212,12 +1211,12 @@ void crmaccount::sTaxAuth()
   params.append("crmacct_id", _crmacctId);
   params.append("crmacct_number", _number->text());
   params.append("crmacct_name", _name->text());
-  if (_taxauthId <= 0 && _privleges->check("MaintainTaxAuthorities") &&
+  if (_taxauthId <= 0 && _privileges->check("MaintainTaxAuthorities") &&
       (_mode == cEdit || _mode == cNew))
     params.append("mode", "new");
   else if (_taxauthId <= 0)
     systemError(this, tr("No existing Tax Authorities to View"));
-  else if (_taxauthId > 0 && _privleges->check("MaintainTaxAuthorities") &&
+  else if (_taxauthId > 0 && _privileges->check("MaintainTaxAuthorities") &&
 	    (_mode == cEdit || _mode == cNew))
   {
     params.append("taxauth_id", _taxauthId);
@@ -1246,12 +1245,12 @@ void crmaccount::sVendor()
   params.append("crmacct_id", _crmacctId);
   params.append("crmacct_number", _number->text());
   params.append("crmacct_name", _name->text());
-  if (_vendId <= 0 && _privleges->check("MaintainVendors") &&
+  if (_vendId <= 0 && _privileges->check("MaintainVendors") &&
       (_mode == cEdit || _mode == cNew))
     params.append("mode", "new");
   else if (_vendId <= 0)
     systemError(this, tr("No existing Vendor to View"));
-  else if (_vendId > 0 && _privleges->check("MaintainVendors") &&
+  else if (_vendId > 0 && _privileges->check("MaintainVendors") &&
 	    (_mode == cEdit || _mode == cNew))
   {
     params.append("vend_id", _vendId);
@@ -1294,12 +1293,12 @@ void crmaccount::sEdit()
 
   if (_mode == cView && _contacts->id() > 0)
     params.append("mode", "view");
-  else if (_privleges->check("MaintainContacts") && _contacts->id() > 0)
+  else if (_privileges->check("MaintainContacts") && _contacts->id() > 0)
   {
     params.append("mode", "edit");
     params.append("cntct_id", _contacts->id());
   }
-  else  if (_privleges->check("MaintainContacts") && _contacts->id() <= 0)
+  else  if (_privileges->check("MaintainContacts") && _contacts->id() <= 0)
     params.append("mode", "new");
 
   if (saveNoErrorCheck() < 0)
@@ -1623,23 +1622,23 @@ void crmaccount::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
-  if (!_privleges->check("MaintainContacts") || _mode == cView)
+  if (!_privileges->check("MaintainContacts") || _mode == cView)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainContacts") || _mode == cView)
+  if (!_privileges->check("MaintainContacts") || _mode == cView)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  if (!_privleges->check("ViewContacts"))
+  if (!_privileges->check("ViewContacts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Attach..."), this, SLOT(sAttach()), 0);
-  if (!_privleges->check("MaintainContacts") || _mode == cView)
+  if (!_privileges->check("MaintainContacts") || _mode == cView)
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Detach"), this, SLOT(sDetach()), 0);
-  if (!_privleges->check("MaintainContacts") || _mode == cView)
+  if (!_privileges->check("MaintainContacts") || _mode == cView)
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -1647,8 +1646,8 @@ void crmaccount::sPopulateOplistMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  bool editPriv = _privleges->check("MaintainOpportunities");
-  bool viewPriv = _privleges->check("VeiwOpportunities") || editPriv;
+  bool editPriv = _privileges->check("MaintainOpportunities");
+  bool viewPriv = _privileges->check("VeiwOpportunities") || editPriv;
 
   //menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sOplistNew()), 0);
   //pMenu->setItemEnabled(menuItem, editPriv);

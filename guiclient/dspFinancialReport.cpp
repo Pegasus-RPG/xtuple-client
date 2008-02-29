@@ -110,8 +110,7 @@ dspFinancialReport::dspFinancialReport(QWidget* parent, const char* name, Qt::WF
 
   _layout->addColumn( tr("Group/Account Name"), -1,              Qt::AlignLeft  );
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _shownumbers->setChecked(true);
     _showzeros->setChecked(true);

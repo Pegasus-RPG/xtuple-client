@@ -114,7 +114,7 @@ void salesReps::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainSalesReps"))
+  if (_privileges->check("MaintainSalesReps"))
   {
     connect(_salesrep, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_salesrep, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -251,15 +251,15 @@ void salesReps::sPopulateMenu( QMenu * menu )
   int menuItem;
 
   menuItem = menu->insertItem(tr("Edit Sales Rep..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainSalesReps"))
+  if (!_privileges->check("MaintainSalesReps"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("View Sales Rep..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainSalesReps")) && (!_privleges->check("ViewSalesReps")))
+  if ((!_privileges->check("MaintainSalesReps")) && (!_privileges->check("ViewSalesReps")))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Delete Sales Rep..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainSalesReps"))
+  if (!_privileges->check("MaintainSalesReps"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

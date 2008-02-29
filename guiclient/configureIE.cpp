@@ -66,7 +66,7 @@
 
 bool configureIE::userHasPriv()
 {
-  return _privleges->check("ConfigureImportExport");
+  return _privileges->check("ConfigureImportExport");
 }
 
 int configureIE::exec()

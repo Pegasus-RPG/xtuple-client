@@ -132,7 +132,7 @@ void dspCapacityUOMsByProductCategory::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

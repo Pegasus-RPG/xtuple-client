@@ -110,8 +110,7 @@ dspInventoryAvailabilityByItem::dspInventoryAvailabilityByItem(QWidget* parent, 
 
   _item->setFocus();
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _ignoreReorderAtZero->setChecked(true);
 
   sHandleShowReorder(_showReorder->isChecked());
@@ -224,7 +223,7 @@ void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -244,11 +243,11 @@ void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem
   if (((XTreeWidgetItem *)selected)->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
-    if (!_privleges->check("MaintainPurchaseRequests"))
+    if (!_privileges->check("MaintainPurchaseRequests"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
@@ -256,18 +255,18 @@ void dspInventoryAvailabilityByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem
   else if (((XTreeWidgetItem *)selected)->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Create W/O..."), this, SLOT(sCreateWO()), 0);
-    if (!_privleges->check("MaintainWorkOrders"))
+    if (!_privileges->check("MaintainWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
   }
 
   menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
-  if (!_privleges->check("EnterMiscCounts"))
+  if (!_privileges->check("EnterMiscCounts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -418,7 +417,7 @@ void dspInventoryAvailabilityByItem::sEnterMiscCount()
 void dspInventoryAvailabilityByItem::sHandleShowReorder(bool pValue)
 {
   _ignoreReorderAtZero->setEnabled(pValue);
-  if (pValue && Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  if (pValue && _preferences->boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
 }
 

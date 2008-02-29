@@ -110,7 +110,7 @@ void customerGroups::init()
   _custgrp->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _custgrp->addColumn(tr("Description"), -1,          Qt::AlignLeft );
   
-  if (_privleges->check("MaintainCustomerGroups"))
+  if (_privileges->check("MaintainCustomerGroups"))
   {
     connect(_custgrp, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_custgrp, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

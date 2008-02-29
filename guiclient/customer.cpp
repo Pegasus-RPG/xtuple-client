@@ -260,8 +260,8 @@ enum SetResponse customer::set(const ParameterList &pParams)
       else if (_metrics->value("DefaultBalanceMethod") == "O")
         _balanceMethod->setCurrentItem(1);
 
-      if(!_privleges->check("MaintainCustomerMastersCustomerType")
-         && !_privleges->check("MaintainCustomerMastersCustomerTypeOnCreate")
+      if(!_privileges->check("MaintainCustomerMastersCustomerType")
+         && !_privileges->check("MaintainCustomerMastersCustomerTypeOnCreate")
          && (_custtype->id() != -1))
         _custtype->setEnabled(false);
 
@@ -281,7 +281,7 @@ enum SetResponse customer::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      if(!_privleges->check("MaintainCustomerMastersCustomerType")
+      if(!_privileges->check("MaintainCustomerMastersCustomerType")
          && (_custtype->id() != -1))
         _custtype->setEnabled(false);
 
@@ -482,7 +482,7 @@ void customer::sSave()
   q.bindValue(":prospect_id", _custid);
   q.exec();
   if (q.first())
-    if (_privleges->check("ConvertQuotes") &&
+    if (_privileges->check("ConvertQuotes") &&
         QMessageBox::question(this, tr("Convert"),
                               tr("<p>Do you want to convert all of the Quotes "
                                  "for the Prospect to Sales Orders?"),

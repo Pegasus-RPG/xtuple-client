@@ -68,6 +68,7 @@
 #include "xtreewidget.h"
 #include "warehousegroup.h"
 #include "socluster.h"
+#include "xsqlquery.h"
 
 salesOrderList::salesOrderList( QWidget* parent, const char* name, bool modal, Qt::WFlags fl ) : QDialog( parent, name, modal, fl )
 {

@@ -93,7 +93,8 @@ protected slots:
 
 private:
     int _backgroundImageid;
-    Preferences _pref;
+    Preferences * _pref;
+    Preferences * _altPref;
     bool _dirty;
 };
 

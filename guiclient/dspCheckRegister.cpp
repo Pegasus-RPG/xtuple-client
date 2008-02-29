@@ -230,7 +230,7 @@ void dspCheckRegister::sPopulateMenu( QMenu * pMenu )
   if(_check->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Void Posted Check"), this, SLOT(sVoidPosted()), 0);
-    if(!_privleges->check("VoidPostedAPCheck"))
+    if(!_privileges->check("VoidPostedAPCheck"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

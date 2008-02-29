@@ -259,23 +259,23 @@ void dspARApplications::sPopulateMenu(QMenu* pMenu)
   if (_arapply->currentItem()->text(3) == "C/M")
   {
     menuItem = pMenu->insertItem(tr("View Source Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
-    if (! _privleges->check("MaintainARMemos") &&
-	! _privleges->check("ViewARMemos"))
+    if (! _privileges->check("MaintainARMemos") &&
+	! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if (_arapply->currentItem()->text(6) == "D")
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Debit Memo..."), this, SLOT(sViewDebitMemo()), 0);
-    if (! _privleges->check("MaintainARMemos") &&
-	! _privleges->check("ViewARMemos"))
+    if (! _privileges->check("MaintainARMemos") &&
+	! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (_arapply->currentItem()->text(6) == "I")
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewInvoice()), 0);
-    if (! _privleges->check("MaintainMiscInvoices") &&
-	! _privleges->check("ViewMiscInvoices"))
+    if (! _privileges->check("MaintainMiscInvoices") &&
+	! _privileges->check("ViewMiscInvoices"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

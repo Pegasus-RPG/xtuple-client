@@ -85,7 +85,7 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
 
   statusBar()->hide();
   
-  _new->setEnabled(_privleges->check("MaintainAPMemos"));
+  _new->setEnabled(_privileges->check("MaintainAPMemos"));
 
   connect(_apopen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
@@ -99,7 +99,7 @@ unappliedAPCreditMemos::unappliedAPCreditMemos(QWidget* parent, const char* name
   if (omfgThis->singleCurrency())
       _apopen->hideColumn(5);
 
-  if (_privleges->check("ApplyAPMemos"))
+  if (_privileges->check("ApplyAPMemos"))
     connect(_apopen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
 
   sFillList();

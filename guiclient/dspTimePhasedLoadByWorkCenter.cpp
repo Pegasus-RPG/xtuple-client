@@ -140,7 +140,7 @@ void dspTimePhasedLoadByWorkCenter::sPopulateMenu(QMenu *menu, QTreeWidgetItem *
   if (_column > 0)
   {
     menuItem = menu->insertItem(tr("View Load..."), this, SLOT(sViewLoad()), 0);
-    if ( (!_privleges->check("MaintainWoOperations")) && (!_privleges->check("ViewWoOperations")) )
+    if ( (!_privileges->check("MaintainWoOperations")) && (!_privileges->check("ViewWoOperations")) )
       menu->setItemEnabled(menuItem, FALSE);
   }
 }

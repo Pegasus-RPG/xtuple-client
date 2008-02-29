@@ -103,17 +103,17 @@ dspCountSlipEditList::dspCountSlipEditList(QWidget* parent, const char* name, Qt
   _cntslip->addColumn(tr("Entered"),      _itemColumn, Qt::AlignCenter );
   _cntslip->addColumn(tr("Slip Qty."),    _qtyColumn,  Qt::AlignRight  );
 
-  if (_privleges->check("EnterCountSlips"))
+  if (_privileges->check("EnterCountSlips"))
   {
     connect(_cntslip, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_item, SIGNAL(valid(bool)), _new, SLOT(setEnabled(bool)));
     connect(_cntslip, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
   }
 
-  if (_privleges->check("DeleteCountSlips"))
+  if (_privileges->check("DeleteCountSlips"))
     connect(_cntslip, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("PostCountSlips"))
+  if (_privileges->check("PostCountSlips"))
   {
     connect(_cntslip, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
     _postAll->setEnabled(TRUE);
@@ -176,13 +176,13 @@ void dspCountSlipEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelecte
   int menuItem;
 
   menuItem = pMenu->insertItem("Edit Count Slip...", this, SLOT(sEdit()), 0);
-  if (!_privleges->check("EnterCountSlips"))
+  if (!_privileges->check("EnterCountSlips"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   if (((XTreeWidgetItem *)pSelected)->altId() == 0)
   {
     menuItem = pMenu->insertItem("Post Count Slip...", this, SLOT(sPost()), 0);
-    if (!_privleges->check("PostCountSlips"))
+    if (!_privileges->check("PostCountSlips"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

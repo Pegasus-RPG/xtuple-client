@@ -78,7 +78,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   _targetDates->setStartCaption(tr("First Target Date:"));
   _targetDates->setEndCaption(tr("Last Target Date:"));
 
-  _usr->setEnabled(_privleges->check("MaintainOtherTodoLists"));
+  _usr->setEnabled(_privileges->check("MaintainOtherTodoLists"));
   _usr->setType(User);
   q.prepare("SELECT usr_id "
 	    "FROM usr "
@@ -106,7 +106,7 @@ opportunityList::opportunityList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(sFillList()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
-  if(_privleges->check("MaintainOpportunities"))
+  if(_privileges->check("MaintainOpportunities"))
   {
     connect(_list, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_list, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -141,8 +141,8 @@ void opportunityList::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  bool editPriv = _privleges->check("MaintainOpportunities");
-  bool viewPriv = _privleges->check("VeiwOpportunities") || editPriv;
+  bool editPriv = _privileges->check("MaintainOpportunities");
+  bool viewPriv = _privileges->check("VeiwOpportunities") || editPriv;
 
   menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNew()), 0);
   pMenu->setItemEnabled(menuItem, editPriv);

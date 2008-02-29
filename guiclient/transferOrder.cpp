@@ -293,8 +293,8 @@ enum SetResponse transferOrder::set(const ParameterList &pParams)
 
   if (cNew == _mode || cEdit == _mode)
   {
-    _orderDate->setEnabled(_privleges->check("OverrideTODate"));
-    _packDate->setEnabled(_privleges->check("AlterPackDate"));
+    _orderDate->setEnabled(_privileges->check("OverrideTODate"));
+    _packDate->setEnabled(_privileges->check("AlterPackDate"));
   }
   else
   {
@@ -816,8 +816,8 @@ void transferOrder::sHandleButtons()
   
   if (selected)
   {
-    _issueStock->setEnabled(_privleges->check("IssueStockToShipping"));
-    _issueLineBalance->setEnabled(_privleges->check("IssueStockToShipping"));
+    _issueStock->setEnabled(_privileges->check("IssueStockToShipping"));
+    _issueLineBalance->setEnabled(_privileges->check("IssueStockToShipping"));
 
     if(_numSelected == 1)
     {

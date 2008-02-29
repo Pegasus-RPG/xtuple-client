@@ -149,7 +149,7 @@ void dspQuotesByCustomer::sPopulateMenu(QMenu *menuThis)
   menuThis->insertItem(tr("Edit..."), this, SLOT(sEditOrder()), 0);
   menuThis->insertItem(tr("View..."), this, SLOT(sViewOrder()), 0);
   
-  if (_privleges->check("ConvertQuotes"))
+  if (_privileges->check("ConvertQuotes"))
   {
     menuThis->insertSeparator();
     menuThis->insertItem(tr("Convert..."), this, SLOT(sConvert()), 0);
@@ -238,7 +238,7 @@ void dspQuotesByCustomer::sConvert()
       check.exec();
       if (check.first())
       {
-	if ( (check.value("cust_creditstatus").toString() == "H") && (!_privleges->check("CreateSOForHoldCustomer")) )
+	if ( (check.value("cust_creditstatus").toString() == "H") && (!_privileges->check("CreateSOForHoldCustomer")) )
 	{
 	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
 				tr( "Quote #%1 is for a Customer that has been placed on a Credit Hold and you do not have\n"
@@ -248,7 +248,7 @@ void dspQuotesByCustomer::sConvert()
 	  return;
 	}	
 
-	if ( (check.value("cust_creditstatus").toString() == "W") && (!_privleges->check("CreateSOForWarnCustomer")) )
+	if ( (check.value("cust_creditstatus").toString() == "W") && (!_privileges->check("CreateSOForWarnCustomer")) )
 	{
 	  QMessageBox::warning( this, tr("Cannot Convert Quote"),
 				tr( "Quote #%1 is for a Customer that has been placed on a Credit Warning and you do not have\n"

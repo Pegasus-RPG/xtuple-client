@@ -81,8 +81,7 @@ dspInvalidBillsOfMaterials::dspInvalidBillsOfMaterials(QWidget* parent, const ch
   _exceptions->addColumn(tr("Component Item #"),  _itemColumn, Qt::AlignLeft  );
   _exceptions->addColumn(tr("Component Item Description"), -1, Qt::AlignLeft  );
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _update->setChecked(true);
 }
 
@@ -175,15 +174,15 @@ void dspInvalidBillsOfMaterials::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Parent Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit Parent Item Site..."), this, SLOT(sEditItemSite()), 0);
-  if (!_privleges->check("MaintainItemSites"))
+  if (!_privileges->check("MaintainItemSites"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Create Component Item Site..."), this, SLOT(sCreateItemSite()), 0);
-  if (!_privleges->check("MaintainItemSites"))
+  if (!_privileges->check("MaintainItemSites"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

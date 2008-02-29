@@ -93,7 +93,7 @@ incidentResolutions::incidentResolutions(QWidget* parent, const char* name, Qt::
   _incidentResolutions->addColumn(tr("Resolution"),      100, Qt::AlignLeft );
   _incidentResolutions->addColumn(tr("Description"),    -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainIncidentResolutions"))
+  if (_privileges->check("MaintainIncidentResolutions"))
   {
     connect(_incidentResolutions, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_incidentResolutions, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -189,13 +189,13 @@ void incidentResolutions::sPopulateMenu( QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainIncidentResolutions"))
+  if (!_privileges->check("MaintainIncidentResolutions"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainIncidentResolutions"))
+  if (!_privileges->check("MaintainIncidentResolutions"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

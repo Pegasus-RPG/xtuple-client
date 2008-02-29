@@ -82,7 +82,7 @@ customers::customers(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
 
-  if (_privleges->check("MaintainCustomerMasters"))
+  if (_privileges->check("MaintainCustomerMasters"))
   {
     connect(_cust, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_cust, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -205,15 +205,15 @@ void customers::sPopulateMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem("View...", this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCustomerMasters"))
+  if (!_privileges->check("MaintainCustomerMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem("Reassign Customer Type", this, SLOT(sReassignCustomerType()), 0);
-  if (!_privleges->check("MaintainCustomerMasters"))
+  if (!_privileges->check("MaintainCustomerMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem("Delete", this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainCustomerMasters"))
+  if (!_privileges->check("MaintainCustomerMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -77,8 +77,7 @@ postInvoices::postInvoices(QWidget* parent, const char* name, bool modal, Qt::WF
   if (!_metrics->boolean("EnableBatchManager"))
     _submit->hide();
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
 
   _post->setFocus();

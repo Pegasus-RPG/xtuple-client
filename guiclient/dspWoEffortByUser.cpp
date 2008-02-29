@@ -266,15 +266,15 @@ void dspWoEffortByUser::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
   if (_wotc->id() != -1)
   {
     menuItem = pMenu->insertItem(tr("New"), this, SLOT(sNew()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWoTimeClock"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
     
     menuItem = pMenu->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWoTimeClock"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
 
     menuItem = pMenu->insertItem(tr("View"), this, SLOT(sView()), 0);
 
     menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWoTimeClock"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
 
     pMenu->insertSeparator();
   }
@@ -284,7 +284,7 @@ void dspWoEffortByUser::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
   if ((status == "R") || (status == "I"))
   {
     menuItem = pMenu->insertItem(tr("Close W/O..."), this, SLOT(sCloseWO()), 0);
-    if (!_privleges->check("CloseWorkOrders"))
+    if (!_privileges->check("CloseWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -294,11 +294,11 @@ void dspWoEffortByUser::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *selected)
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatl()), 0);
-    if (!_privleges->check("ViewWoMaterials"))
+    if (!_privileges->check("ViewWoMaterials"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
-    if (!_privleges->check("ViewWoOperations"))
+    if (!_privileges->check("ViewWoOperations"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

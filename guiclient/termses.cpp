@@ -117,7 +117,7 @@ void termses::init()
   _terms->addColumn(tr("A/P"),         _ynColumn,   Qt::AlignCenter );
   _terms->addColumn(tr("A/R"),         _ynColumn,   Qt::AlignCenter );
 
-  if (_privleges->check("MaintainTerms"))
+  if (_privileges->check("MaintainTerms"))
   {
     connect(_terms, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_terms, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

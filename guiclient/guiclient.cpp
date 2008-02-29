@@ -148,7 +148,7 @@
 
 class Metrics;
 class Preferences;
-class Privleges;
+class Privileges;
 class Metricsenc;
 
 #ifdef Q_WS_MACX
@@ -159,7 +159,7 @@ QSplashScreen *_splash;
 
 Metrics       *_metrics=0;
 Preferences   *_preferences=0;
-Privleges     *_privleges=0;
+Privileges    *_privileges=0;
 Metricsenc    *_metricsenc=0;
 QList<QString> _hotkeyList;
 
@@ -285,9 +285,9 @@ class OpenMFGCRMAcctInfoAction : public CRMAcctInfoAction
     {
       ParameterList params;
       params.append("crmacct_id", pid);
-      if (_privleges->check("MaintainCRMAccounts"))
+      if (_privileges->check("MaintainCRMAccounts"))
 	params.append("mode", "edit");
-      else if (_privleges->check("ViewCRMAccounts"))
+      else if (_privileges->check("ViewCRMAccounts"))
 	params.append("mode", "view");
       else
 	return;
@@ -733,14 +733,15 @@ void GUIClient::showEvent(QShowEvent *event)
               " ORDER BY script_order;");
       sq.bindValue(":script_name", "initMenu");
       sq.exec();
-      QScriptEngine * engine;
+      QScriptEngine * engine = 0;
       while(sq.next())
       {
         QString script = sq.value("script_source").toString();
         if(!engine)
+        {
           engine = new QScriptEngine(this);
-        QScriptValue mainwindow = engine->newQObject(this);
-        engine->globalObject().setProperty("mainwindow", mainwindow);
+          loadScriptGlobals(engine);
+        }
   
         QScriptValue result = engine->evaluate(script);
         if (engine->hasUncaughtException())
@@ -1133,7 +1134,7 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
     bool allowed = true;
     QString privname = qry.value("cmd_privname").toString();
     if(!privname.isEmpty())
-      allowed = _privleges->check("Custom"+privname);
+      allowed = _privileges->check("Custom"+privname);
 
     Action * action = new Action( this, QString("custom.")+qry.value("cmd_title").toString(), qry.value("cmd_title").toString(),
       this, SLOT(sCustomCommand()), customMenu, allowed);
@@ -1338,4 +1339,26 @@ void GUIClient::sFocusChanged(QWidget * /*old*/, QWidget * /*now*/)
 QWidget * GUIClient::myActiveWindow()
 {
   return _activeWindow;
+}
+
+void GUIClient::loadScriptGlobals(QScriptEngine * engine)
+{
+  if(!engine)
+    return;
+
+  QScriptValue mainwindowval = engine->newQObject(this);
+  engine->globalObject().setProperty("mainwindow", mainwindowval);
+
+  QScriptValue metricsval = engine->newQObject(_metrics);
+  engine->globalObject().setProperty("metrics", metricsval);
+
+  QScriptValue metricsencval = engine->newQObject(_metricsenc);
+  engine->globalObject().setProperty("metricsenc", metricsencval);
+
+  QScriptValue preferencesval = engine->newQObject(_preferences);
+  engine->globalObject().setProperty("preferences", preferencesval);
+
+  QScriptValue privilegesval = engine->newQObject(_privileges);
+  engine->globalObject().setProperty("privileges", privilegesval);
+
 }

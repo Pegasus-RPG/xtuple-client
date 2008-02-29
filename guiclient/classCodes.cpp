@@ -88,7 +88,7 @@ classCodes::classCodes(QWidget* parent, const char* name, Qt::WFlags fl)
 
   statusBar()->hide();
   
-  if (_privleges->check("MaintainClassCodes"))
+  if (_privileges->check("MaintainClassCodes"))
   {
     connect(_classcode, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_classcode, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

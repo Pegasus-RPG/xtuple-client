@@ -90,8 +90,7 @@ dspCountSlipsByWarehouse::dspCountSlipsByWarehouse(QWidget* parent, const char* 
   _cntslip->addColumn(tr("Qty. Counted"), _qtyColumn,   Qt::AlignRight  );
   _cntslip->addColumn(tr("Posted"),       _dateColumn,  Qt::AlignCenter );
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _showUnposted->setChecked(true);
   
   sFillList();

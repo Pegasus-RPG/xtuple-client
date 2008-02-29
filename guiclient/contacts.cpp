@@ -95,7 +95,7 @@ contacts::contacts(QWidget* parent, const char* name, Qt::WFlags fl)
     _contacts->addColumn(tr("E-Mail"),		100, Qt::AlignLeft );
     _contacts->addColumn(tr("Web Address"),	100, Qt::AlignLeft );
 
-    if (_privleges->check("MaintainContacts"))
+    if (_privileges->check("MaintainContacts"))
     {
       connect(_contacts, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_contacts, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -125,13 +125,13 @@ void contacts::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainContacts"))
+  if (!_privileges->check("MaintainContacts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainContacts"))
+  if (!_privileges->check("MaintainContacts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

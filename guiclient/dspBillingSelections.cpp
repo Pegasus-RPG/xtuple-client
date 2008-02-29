@@ -101,7 +101,7 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
   _cobill->addColumn(tr("Cust. #"),    _itemColumn,   Qt::AlignLeft   );
   _cobill->addColumn(tr("Name"),        -1,           Qt::AlignLeft   );
 
-  if (_privleges->check("PostARDocuments"))
+  if (_privileges->check("PostARDocuments"))
     connect(_cobill, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
   connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
@@ -134,7 +134,7 @@ void dspBillingSelections::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   pMenu->insertItem("Cancel...", this, SLOT(sCancel()), 0);
 
   menuItem = pMenu->insertItem("Create Invoice", this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostARDocuments"))
+  if (!_privileges->check("PostARDocuments"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

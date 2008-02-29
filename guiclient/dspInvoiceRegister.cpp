@@ -153,30 +153,30 @@ void dspInvoiceRegister::sPopulateMenu(QMenu *pMenu)
   if (_gltrans->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("View Invoice..."), this, SLOT(sViewInvoice()), 0);
-    if (! _privleges->check("MaintainMiscInvoices") &&
-        ! _privleges->check("ViewMiscInvoices"))
+    if (! _privileges->check("MaintainMiscInvoices") &&
+        ! _privileges->check("ViewMiscInvoices"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   else if (_gltrans->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewCreditMemo()), 0);
-    if (! _privleges->check("MaintainARMemos") &&
-        ! _privleges->check("ViewARMemos"))
+    if (! _privileges->check("MaintainARMemos") &&
+        ! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (_gltrans->altId() == 3)
   {
     menuItem = pMenu->insertItem(tr("View Debit Memo..."), this, SLOT(sViewCreditMemo()), 0);
-    if (! _privleges->check("MaintainARMemos") &&
-        ! _privleges->check("ViewARMemos"))
+    if (! _privileges->check("MaintainARMemos") &&
+        ! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (_gltrans->altId() == 4)
   {
     menuItem = pMenu->insertItem(tr("View Customer Deposit..."), this, SLOT(sViewCreditMemo()), 0);
-    if (! _privleges->check("MaintainARMemos") &&
-        ! _privleges->check("ViewARMemos"))
+    if (! _privileges->check("MaintainARMemos") &&
+        ! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

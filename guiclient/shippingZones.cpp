@@ -116,7 +116,7 @@ void shippingZones::init()
   _shipzone->addColumn(tr("Name"),        70, Qt::AlignLeft );
   _shipzone->addColumn(tr("Description"), -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainShippingZones"))
+  if (_privileges->check("MaintainShippingZones"))
   {
     connect(_shipzone, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_shipzone, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

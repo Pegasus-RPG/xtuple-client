@@ -118,11 +118,11 @@ void dspItemsWithoutItemSources::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Create Item Source..."), this, SLOT(sCreateItemSource()), 0);
-  if (!_privleges->check("MaintainItemSources"))
+  if (!_privileges->check("MaintainItemSources"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

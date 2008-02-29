@@ -100,7 +100,7 @@ dspTimePhasedSalesByItem::dspTimePhasedSalesByItem(QWidget* parent, const char* 
   _sohist->addColumn(tr("UOM"),         _uomColumn,  Qt::AlignCenter );
   _sohist->addColumn(tr("Whs."),        _whsColumn,  Qt::AlignCenter );
 
-  _salesDollars->setEnabled(_privleges->check("ViewCustomerPrices"));
+  _salesDollars->setEnabled(_privileges->check("ViewCustomerPrices"));
 }
 
 /*
@@ -162,7 +162,7 @@ void dspTimePhasedSalesByItem::sPopulateMenu(QMenu *menuThis, QTreeWidgetItem *,
   _column = pColumn;
 
   menuItem = menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewShipments()), 0);
-  if (!_privleges->check("ViewSalesHistory"))
+  if (!_privileges->check("ViewSalesHistory"))
     menuThis->setItemEnabled(menuItem, FALSE);
 }
 

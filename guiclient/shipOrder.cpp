@@ -101,9 +101,9 @@ shipOrder::shipOrder(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _coitem->addColumn( tr("UOM"),         _uomColumn,  Qt::AlignCenter );
   _coitem->addColumn( tr("Qty."),        _qtyColumn,  Qt::AlignRight  );
 
-  _select->setChecked(_privleges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
-  _select->setEnabled(_privleges->check("SelectBilling"));
-  _create->setEnabled(_privleges->check("SelectBilling"));
+  _select->setChecked(_privileges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
+  _select->setEnabled(_privileges->check("SelectBilling"));
+  _create->setEnabled(_privileges->check("SelectBilling"));
 
   _toNumber->setVisible(_metrics->boolean("MultiWhs"));
 
@@ -143,7 +143,7 @@ enum SetResponse shipOrder::set(const ParameterList &pParams)
       {
 	_toNumber->setId(-1);
 	_soNumber->setId(q.value("shiphead_order_id").toInt());
-	_select->setEnabled(_privleges->check("SelectBilling"));
+	_select->setEnabled(_privileges->check("SelectBilling"));
       }
       else if (q.value("shiphead_order_type").toString() == "TO")
       {
@@ -409,9 +409,9 @@ void shipOrder::sShip()
     _toNumber->setId(-1);
     _soNumber->setEnabled(true);
     _toNumber->setEnabled(true);
-    _select->setChecked(_privleges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
-    _select->setEnabled(_privleges->check("SelectBilling"));
-    _create->setEnabled(_privleges->check("SelectBilling"));
+    _select->setChecked(_privileges->check("SelectBilling") && _metrics->boolean("AutoSelectForBilling"));
+    _select->setEnabled(_privileges->check("SelectBilling"));
+    _create->setEnabled(_privileges->check("SelectBilling"));
     _billToName->clear();
     _shipToName->clear();
     _shipToAddr1->clear();
@@ -694,19 +694,19 @@ void shipOrder::sHandleTo()
 
 void shipOrder::sHandleButtons()
 {
-  _select->setChecked(_privleges->check("SelectBilling") &&
+  _select->setChecked(_privileges->check("SelectBilling") &&
 		     _metrics->boolean("AutoSelectForBilling"));
 
   _select->setEnabled(_soNumber->isValid() &&
-		      _privleges->check("SelectBilling"));
+		      _privileges->check("SelectBilling"));
   _create->setEnabled(_soNumber->isValid() &&
-		      _privleges->check("SelectBilling"));
+		      _privileges->check("SelectBilling"));
   _print->setEnabled(_soNumber->isValid() || _toNumber->isValid());
   _receive->setEnabled(_toNumber->isValid() &&
-		       _privleges->check("EnterReceipts"));
+		       _privileges->check("EnterReceipts"));
 
   // logic here is reversed to ensure that by default all checkboxes are visible
-  if (Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _select->setChecked(! _toNumber->isValid());
     _create->setChecked(! _toNumber->isValid());

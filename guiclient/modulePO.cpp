@@ -151,58 +151,58 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.newPurchaseOrder", tr("Enter New Purchase Order..."),
                                       this, SLOT(sNewPurchaseOrder()),
-                                      ordersMenu, _privleges->check("MaintainPurchaseOrders")));
+                                      ordersMenu, _privileges->check("MaintainPurchaseOrders")));
  //                                     QPixmap(":/images/newPurchaseOrder.xpm"), toolBar ) );
 
   parent->actions.append( new Action( parent, "po.listUnpostedPurchaseOrders", tr("List Unposted Purchase Orders..."),
                                       this, SLOT(sPurchaseOrderEditList()),
-                                      ordersMenu, (_privleges->check("MaintainPurchaseOrders")) || (_privleges->check("ViewPurchaseOrders")),
+                                      ordersMenu, (_privileges->check("MaintainPurchaseOrders")) || (_privileges->check("ViewPurchaseOrders")),
 									  QPixmap(":/images/listUnpostedPo.png"), toolBar ) );
 
   ordersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.printPurchaseOrder", tr("Print Purchase Order..."),
                                       this, SLOT(sPrintPurchaseOrder()),
-                                      ordersMenu, _privleges->check("PrintPurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("PrintPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.printPurchaseOrdersByAgent", tr("Print Purchase Orders by Agent..."),
                                       this, SLOT(sPrintPurchaseOrdersByAgent()),
-                                      ordersMenu, _privleges->check("PrintPurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("PrintPurchaseOrders") ) );
 
   if (_metrics->boolean("EnableBatchManager"))
       parent->actions.append( new Action( parent, "po.schedulePoForEmailDelivery", tr("Schedule P/O for Email Delivery..."),
                                           this, SLOT(sDeliverPurchaseOrder()),
-                                          ordersMenu, _privleges->check("PrintPurchaseOrders") ) );
+                                          ordersMenu, _privileges->check("PrintPurchaseOrders") ) );
 
   ordersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.postPurchaseOrder", tr("Post Purchase Order..."),
                                       this, SLOT(sPostPurchaseOrder()),
-                                      ordersMenu, _privleges->check("PostPurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("PostPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.postPurchaseOrdersByAgent", tr("Post Purchase Orders by Agent..."),
                                       this, SLOT(sPostPurchaseOrdersByAgent()),
-                                      ordersMenu, _privleges->check("PostPurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("PostPurchaseOrders") ) );
 
   ordersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.closePurchaseOrder", tr("Close Purchase Order..."),
                                       this, SLOT(sClosePurchaseOrder()),
-                                      ordersMenu, _privleges->check("MaintainPurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("MaintainPurchaseOrders") ) );
 
   ordersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.reschedulePurchaseOrderItem", tr("Reschedule Purchase Order Item..."),
                                       this, SLOT(sReschedulePoitem()),
-                                      ordersMenu, _privleges->check("ReschedulePurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("ReschedulePurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "wo.changePurchaseOrderItemQty", tr("Change Purchase Order Item Qty..."),
                                       this, SLOT(sChangePoitemQty()),
-                                      ordersMenu, _privleges->check("ChangePurchaseOrderQty") ) );
+                                      ordersMenu, _privileges->check("ChangePurchaseOrderQty") ) );
 
   parent->actions.append( new Action( parent, "wo.addCommentToPurchaseOrder", tr("Add Comment to Purchase Order..."),
                                       this, SLOT(sAddPoComment()),
-                                      ordersMenu, _privleges->check("MaintainPurchaseOrders") ) );
+                                      ordersMenu, _privileges->check("MaintainPurchaseOrders") ) );
 
 
 //  P/O | Vouchers
@@ -210,33 +210,33 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.uninvoicedReceipts", tr("Uninvoiced Receipts and Returns..."),
                                       this, SLOT(sDspUninvoicedReceipts()),
-                                      vouchersMenu, (_privleges->check("ViewUninvoicedReceipts") || _privleges->check("MaintainUninvoicedReceipts")) ) );
+                                      vouchersMenu, (_privileges->check("ViewUninvoicedReceipts") || _privileges->check("MaintainUninvoicedReceipts")) ) );
 
   vouchersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.enterNewVoucher", tr("Enter New Voucher..."),
                                       this, SLOT(sEnterVoucher()),
-                                      vouchersMenu, _privleges->check("MaintainVouchers") ) );
+                                      vouchersMenu, _privileges->check("MaintainVouchers") ) );
 
   parent->actions.append( new Action( parent, "po.enterNewMiscVoucher", tr("Enter New Miscellaneous Voucher..."),
                                       this, SLOT(sEnterMiscVoucher()),
-                                      vouchersMenu, _privleges->check("MaintainVouchers") ) );
+                                      vouchersMenu, _privileges->check("MaintainVouchers") ) );
 
   parent->actions.append( new Action( parent, "po.listUnpostedVouchers", tr("List Unposted Vouchers..."),
                                       this, SLOT(sUnpostedVouchers()),
-                                      vouchersMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")) ) );
+                                      vouchersMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")) ) );
 
   vouchersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.voucheringEditList", tr("Vouchering Edit List..."),
                                       this, SLOT(sVoucheringEditList()),
-                                      vouchersMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")) ) );
+                                      vouchersMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")) ) );
 
   vouchersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.postVouchers", tr("Post Vouchers..."),
                                       this, SLOT(sPostVouchers()),
-                                      vouchersMenu, _privleges->check("PostVouchers") ) );
+                                      vouchersMenu, _privileges->check("PostVouchers") ) );
 
 
 //  P/O | Item Sources
@@ -244,11 +244,11 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.enterNewItemSource", tr("Enter New Item Source..."),
                                       this, SLOT(sNewItemSource()),
-                                      itemSourcesMenu, _privleges->check("MaintainItemSources") ) );
+                                      itemSourcesMenu, _privileges->check("MaintainItemSources") ) );
 
   parent->actions.append( new Action( parent, "po.listItemSources", tr("List Item Sources..."),
                                       this, SLOT(sItemSources()),
-                                      itemSourcesMenu, (_privleges->check("MaintainItemSources") || _privleges->check("ViewItemSources")) ) );
+                                      itemSourcesMenu, (_privileges->check("MaintainItemSources") || _privileges->check("ViewItemSources")) ) );
 
 
 //  P/O | Displays
@@ -256,99 +256,99 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.dspPurchaseRequestsByItem", tr("Purchase Requests by Item..."),
                                       this, SLOT(sDspPurchaseReqsByItem()),
-                                      displaysMenu, _privleges->check("ViewPurchaseRequests") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseRequests") ) );
 
   parent->actions.append( new Action( parent, "po.dspPurchaseRequestsByPlannerCode", tr("Purchase Requests by Planner Code..."),
                                       this, SLOT(sDspPurchaseReqsByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewPurchaseRequests") ,
+                                      displaysMenu, _privileges->check("ViewPurchaseRequests") ,
 									  QPixmap(":/images/dspPurchaseReqByPlannerCode.png"), toolBar ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.dspItemSitesByPlannerCode", tr("Item Sites by Planner Code..."),
                                       this, SLOT(sDspItemSitesByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewItemSites") ) );
+                                      displaysMenu, _privileges->check("ViewItemSites") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.dspPOsByDate", tr("P/Os by Date..."),
                                       this, SLOT(sDspPOsByDate()),
-                                      displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.dspPOsByVendor", tr("P/Os by Vendor..."),
                                       this, SLOT(sDspPOsByVendor()),
-                                      displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.dspPoLineItemsByVendor", tr("P/O Items by Vendor..."),
                                       this, SLOT(sDspPoItemsByVendor()),
-                                      displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.dspPoLineItemsByItem", tr("P/O Items by Item..."),
                                       this, SLOT(sDspPoItemsByItem()),
-                                      displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.dspPoLineItemsByDate", tr("P/O Items by Date..."),
                                       this, SLOT(sDspPoItemsByDate()),
-                                      displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
 
  if ( _metrics->boolean("BufferMgt"))
       parent->actions.append( new Action( parent, "po.dspPoLineItemsByBufferStatus", tr("P/O Items by Buffer Status..."),
                                           this, SLOT(sDspPoItemsByBufferStatus()),
-                                          displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                          displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
   
   parent->actions.append( new Action( parent, "po.dspPoHistory", tr("P/O History..."),
                                       this, SLOT(sDspPoHistory()),
-                                      displaysMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPurchaseOrders") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.dspItemSourcesByVendor", tr("Item Sources by Vendor..."),
                                       this, SLOT(sDspItemSourcesByVendor()),
-                                      displaysMenu, _privleges->check("ViewItemSources") ) );
+                                      displaysMenu, _privileges->check("ViewItemSources") ) );
 
   parent->actions.append( new Action( parent, "po.dspItemSourcesByItem", tr("Item Sources by Item..."),
                                       this, SLOT(sDspItemSourcesByItem()),
-                                      displaysMenu, _privleges->check("ViewItemSources") ) );
+                                      displaysMenu, _privileges->check("ViewItemSources") ) );
 
   parent->actions.append( new Action( parent, "po.dspBuyCard", tr("Buy Card..."),
                                       this, SLOT(sDspBuyCard()),
-                                      displaysMenu, _privleges->check("ViewItemSources") ) );
+                                      displaysMenu, _privileges->check("ViewItemSources") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.dspReceiptsAndReturnsByVendor", tr("Receipts and Returns by Vendor..."),
                                       this, SLOT(sDspReceiptsReturnsByVendor()),
-                                      displaysMenu, _privleges->check("ViewReceiptsReturns") ) );
+                                      displaysMenu, _privileges->check("ViewReceiptsReturns") ) );
 
   parent->actions.append( new Action( parent, "po.dspReceiptsAndReturnsByItem", tr("Receipts and Returns by Item..."),
                                       this, SLOT(sDspReceiptsReturnsByItem()),
-                                      displaysMenu, _privleges->check("ViewReceiptsReturns") ) );
+                                      displaysMenu, _privileges->check("ViewReceiptsReturns") ) );
 
   parent->actions.append( new Action( parent, "po.dspReceiptsAndReturnsByDate", tr("Receipts and Returns by Date..."),
                                       this, SLOT(sDspReceiptsReturnsByDate()),
-                                      displaysMenu, _privleges->check("ViewReceiptsReturns") ) );
+                                      displaysMenu, _privileges->check("ViewReceiptsReturns") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.dspPriceVariancesByVendor", tr("Price Variances by Vendor..."),
                                       this, SLOT(sDspPriceVariancesByVendor()),
-                                      displaysMenu, _privleges->check("ViewVendorPerformance") ) );
+                                      displaysMenu, _privileges->check("ViewVendorPerformance") ) );
 
   parent->actions.append( new Action( parent, "po.dspPriceVariancesByItem", tr("Price Variances by Item..."),
                                       this, SLOT(sDspPriceVariancesByItem()),
-                                      displaysMenu, _privleges->check("ViewVendorPerformance") ) );
+                                      displaysMenu, _privileges->check("ViewVendorPerformance") ) );
 
   parent->actions.append( new Action( parent, "po.dspDeliveryDateVariancesByVendor", tr("Delivery Date Variances by Vendor..."),
                                       this, SLOT(sDspPoDeliveryDateVariancesByVendor()),
-                                      displaysMenu, _privleges->check("ViewVendorPerformance") ) );
+                                      displaysMenu, _privileges->check("ViewVendorPerformance") ) );
 
   parent->actions.append( new Action( parent, "po.dspDeliveryDateVariancesByItem", tr("Delivery Date Variances by Item..."),
                                       this, SLOT(sDspPoDeliveryDateVariancesByItem()),
-                                      displaysMenu, _privleges->check("ViewVendorPerformance") ) );
+                                      displaysMenu, _privileges->check("ViewVendorPerformance") ) );
 
   parent->actions.append( new Action( parent, "po.dspRejectedMaterialByVendor", tr("Rejected Material by Vendor..."),
                                       this, SLOT(sDspRejectedMaterialByVendor()),
-                                      displaysMenu, _privleges->check("ViewVendorPerformance") ) );
+                                      displaysMenu, _privileges->check("ViewVendorPerformance") ) );
 
 
 //  P/O | Reports
@@ -356,17 +356,17 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.printPoForm", tr("Print P/O Form..."),
                                       this, SLOT(sPrintPOForm()),
-                                      reportsMenu, _privleges->check("PrintPurchaseOrders") ) );
+                                      reportsMenu, _privileges->check("PrintPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "po.printVendorForm", tr("Print Vendor Form..."),
                                       this, SLOT(sPrintVendorForm()),
-                                      reportsMenu, (_privleges->check("MaintainVendors") || _privleges->check("ViewVendors")) ) );
+                                      reportsMenu, (_privileges->check("MaintainVendors") || _privileges->check("ViewVendors")) ) );
 
   if(_metrics->boolean("EnablePrintAnnodizingPurchaseRequests"))
   {
     parent->actions.append( new Action( parent, "po.printAnnodizingPurchaseRequests", tr("Print Annodizing Purchase Requests..."),
                                         this, SLOT(sPrintAnnodizingPurchaseRequests()),
-                                        reportsMenu, _privleges->check("ViewPurchaseRequests") ) );
+                                        reportsMenu, _privileges->check("ViewPurchaseRequests") ) );
   }
 
 
@@ -375,43 +375,43 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.newVendor", tr("New Vendor..."),
                                       this, SLOT(sNewVendor()),
-                                      masterInfoMenu, _privleges->check("MaintainVendors") ) );
+                                      masterInfoMenu, _privileges->check("MaintainVendors") ) );
 
   parent->actions.append( new Action( parent, "po.searchForVendor", tr("Search for Vendor..."),
                                       this, SLOT(sSearchForVendor()),
-                                      masterInfoMenu, (_privleges->check("MaintainVendors")) || (_privleges->check("ViewVendors")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainVendors")) || (_privileges->check("ViewVendors")) ) );
 
   parent->actions.append( new Action( parent, "po.vendors", tr("Vendors..."),
                                       this, SLOT(sVendors()),
-                                      masterInfoMenu, (_privleges->check("MaintainVendors")) || (_privleges->check("ViewVendors")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainVendors")) || (_privileges->check("ViewVendors")) ) );
 
   parent->actions.append( new Action( parent, "po.vendorTypes", tr("Vendor Types..."),
                                       this, SLOT(sVendorTypes()),
-                                      masterInfoMenu, (_privleges->check("MaintainVendorTypes")) || (_privleges->check("ViewVendorTypes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainVendorTypes")) || (_privileges->check("ViewVendorTypes")) ) );
 
   masterInfoMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.terms", tr("Terms..."),
                                       this, SLOT(sTerms()),
-                                      masterInfoMenu, (_privleges->check("MaintainTerms")) || (_privleges->check("ViewTerms")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainTerms")) || (_privileges->check("ViewTerms")) ) );
 
   parent->actions.append( new Action( parent, "po.plannerCodes", tr("Planner Codes..."),
                                       this, SLOT(sPlannerCodes()),
-                                      masterInfoMenu, (_privleges->check("MaintainPlannerCodes")) || (_privleges->check("ViewPlannerCodes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainPlannerCodes")) || (_privileges->check("ViewPlannerCodes")) ) );
 
   parent->actions.append( new Action( parent, "po.rejectCodes", tr("Reject Codes..."),
                                       this, SLOT(sRejectCodes()),
-                                      masterInfoMenu, (_privleges->check("MaintainRejectCodes")) || (_privleges->check("ViewRejectCodes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainRejectCodes")) || (_privileges->check("ViewRejectCodes")) ) );
 
   parent->actions.append( new Action( parent, "po.expenseCategories", tr("Expense Categories..."),
                                       this, SLOT(sExpenseCategories()),
-                                      masterInfoMenu, (_privleges->check("MaintainExpenseCategories")) || (_privleges->check("ViewExpenseCategories")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainExpenseCategories")) || (_privileges->check("ViewExpenseCategories")) ) );
 
   masterInfoMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "po.apAccountAssignments", tr("A/P Account Assignments..."),
                                       this, SLOT(sAPAssignments()),
-                                      masterInfoMenu, (_privleges->check("MaintainVendorAccounts")) || (_privleges->check("ViewVendorAccounts")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainVendorAccounts")) || (_privileges->check("ViewVendorAccounts")) ) );
 
 
 //  P/O | Utilities
@@ -419,15 +419,15 @@ modulePO::modulePO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "po.itemsWithoutItemSources", tr("Items without Item Sources..."),
                                       this, SLOT(sItemsWithoutItemSources()),
-                                      utilitiesMenu, _privleges->check("ViewItemMasters") ) );
+                                      utilitiesMenu, _privileges->check("ViewItemMasters") ) );
 
   parent->actions.append( new Action( parent, "po.assignItemToPlannerCode", tr("Assign Item to Planner Code..."),
                                       this, SLOT(sAssignItemToPlannerCode()),
-                                      utilitiesMenu, _privleges->check("AssignItemsToPlannerCode") ) );
+                                      utilitiesMenu, _privileges->check("AssignItemsToPlannerCode") ) );
 
   parent->actions.append( new Action( parent, "po.assignItemsToPlannerCodeByClassCode", tr("Assign Items to Planner Code by Class Code..."),
                                       this, SLOT(sAssignClassCodeToPlannerCode()),
-                                      utilitiesMenu, _privleges->check("AssignItemsToPlannerCode") ) );
+                                      utilitiesMenu, _privileges->check("AssignItemsToPlannerCode") ) );
 
 
 //  P/O

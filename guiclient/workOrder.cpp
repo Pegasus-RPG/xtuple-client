@@ -92,7 +92,7 @@ workOrder::workOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   _woNumber->setValidator(omfgThis->orderVal());
   _qty->setValidator(omfgThis->qtyVal());
 
-  _printTraveler->setEnabled(_privleges->check("PrintWorkOrderPaperWork"));
+  _printTraveler->setEnabled(_privileges->check("PrintWorkOrderPaperWork"));
 
   _project->setType(ProjectLineEdit::WorkOrder);
   if(!_metrics->boolean("UseProjects"))

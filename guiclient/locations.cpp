@@ -117,7 +117,7 @@ void locations::init()
   _location->addColumn(tr("Netable"),     80,          Qt::AlignCenter );
   _location->addColumn(tr("Restricted"),  80,          Qt::AlignCenter );
 
-  if (_privleges->check("MaintainLocations"))
+  if (_privileges->check("MaintainLocations"))
   {
     connect(_location, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_location, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

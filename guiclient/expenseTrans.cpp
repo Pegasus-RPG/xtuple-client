@@ -133,7 +133,7 @@ enum SetResponse expenseTrans::set(const ParameterList &pParams)
 
       setCaption(tr("Enter Expense Transaction"));
       _usernameLit->clear();
-      _transDate->setEnabled(_privleges->check("SetTansactionDates"));
+      _transDate->setEnabled(_privileges->check("SetTansactionDates"));
       _transDate->setDate(omfgThis->dbDate());
 
       _item->setFocus();

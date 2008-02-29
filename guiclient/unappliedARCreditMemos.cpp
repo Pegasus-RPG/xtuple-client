@@ -85,7 +85,7 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_apply, SIGNAL(clicked()), this, SLOT(sApply()));
 
-  _new->setEnabled(_privleges->check("MaintainARMemos"));
+  _new->setEnabled(_privileges->check("MaintainARMemos"));
 
   connect(_aropen, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
@@ -99,7 +99,7 @@ unappliedARCreditMemos::unappliedARCreditMemos(QWidget* parent, const char* name
   if (omfgThis->singleCurrency())
     _aropen->hideColumn(5);
 
-  if (_privleges->check("ApplyARMemos"))
+  if (_privileges->check("ApplyARMemos"))
     connect(_aropen, SIGNAL(valid(bool)), _apply, SLOT(setEnabled(bool)));
 
   sFillList();

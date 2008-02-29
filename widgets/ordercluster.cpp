@@ -63,6 +63,7 @@
 #include <QSqlError>
 
 #include "ordercluster.h"
+#include "xsqlquery.h"
 
 OrderCluster::OrderCluster(QWidget *pParent, const char *pName) :
   VirtualCluster(pParent, pName)

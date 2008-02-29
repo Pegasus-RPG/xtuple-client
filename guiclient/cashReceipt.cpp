@@ -142,7 +142,7 @@ cashReceipt::cashReceipt(QWidget* parent, const char* name, Qt::WFlags fl)
   _cc->addColumn(tr("Name"),            _itemColumn,  Qt::AlignLeft );
   _cc->addColumn(tr("Expiration Date"), -1,           Qt::AlignLeft );
 
-  if (!_metrics->boolean("CCAccept") && ! _privleges->check("ProcessCreditCards"))
+  if (!_metrics->boolean("CCAccept") && ! _privileges->check("ProcessCreditCards"))
     _tab->removeTab(_tab->indexOf(_creditCardTab));
 
   if(_metrics->boolean("HideApplyToBalance"))

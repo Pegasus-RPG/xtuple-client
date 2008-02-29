@@ -154,19 +154,19 @@ void dspSingleLevelWhereUsed::sPopulateMenu(QMenu *menu)
   int menuItem;
 
   menuItem = menu->insertItem(tr("Edit Bill of Materials..."), this, SLOT(sEditBOM()), 0);
-  if (!_privleges->check("MaintainBOMs"))
+  if (!_privileges->check("MaintainBOMs"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Edit Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-  if (!_privleges->check("MaintainBOOs"))
+  if (!_privileges->check("MaintainBOOs"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Edit Item Master..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

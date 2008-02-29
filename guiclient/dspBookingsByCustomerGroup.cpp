@@ -89,20 +89,19 @@ dspBookingsByCustomerGroup::dspBookingsByCustomerGroup(QWidget* parent, const ch
   _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
 
-  if (_privleges->check("ViewCustomerPrices"))
+  if (_privileges->check("ViewCustomerPrices"))
   {
     _sohist->addColumn(tr("Unit Price"),  _priceColumn, Qt::AlignRight  );
     _sohist->addColumn(tr("Total"),       _moneyColumn, Qt::AlignRight  );
   }
 
-  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
-  _showCosts->setEnabled(_privleges->check("ViewCosts"));
+  _showPrices->setEnabled(_privileges->check("ViewCustomerPrices"));
+  _showCosts->setEnabled(_privileges->check("ViewCosts"));
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
-    _showPrices->setChecked(_privleges->check("ViewCustomerPrices"));
-    _showCosts->setChecked(_privleges->check("ViewCosts"));
+    _showPrices->setChecked(_privileges->check("ViewCustomerPrices"));
+    _showCosts->setChecked(_privileges->check("ViewCosts"));
   }
 
   sHandlePrice(_showPrices->isChecked());
@@ -157,7 +156,7 @@ void dspBookingsByCustomerGroup::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("EditSalesHistory"))
+  if (!_privileges->check("EditSalesHistory"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);

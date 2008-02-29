@@ -182,11 +182,12 @@ void XMainWindow::showEvent(QShowEvent *event)
     {
       QString script = q.value("script_source").toString();
       if(!_private->_engine)
+      {
         _private->_engine = new QScriptEngine();
-      QScriptValue mywindow = _private->_engine->newQObject(this);
-      _private->_engine->globalObject().setProperty("mywindow", mywindow);
-      QScriptValue mainwindow = _private->_engine->newQObject(omfgThis);
-      _private->_engine->globalObject().setProperty("mainwindow", mainwindow);
+        omfgThis->loadScriptGlobals(_private->_engine);
+        QScriptValue mywindow = _private->_engine->newQObject(this);
+        _private->_engine->globalObject().setProperty("mywindow", mywindow);
+      }
 
       QScriptValue result = _private->_engine->evaluate(script);
       if (_private->_engine->hasUncaughtException())

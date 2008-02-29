@@ -108,7 +108,7 @@ void carriers::init()
   
   _carrier->addColumn(tr("Name"), -1, Qt::AlignLeft);
   
-  if (_privleges->check("MaintainDestinations"))
+  if (_privileges->check("MaintainDestinations"))
   {
     connect(_carrier, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_carrier, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

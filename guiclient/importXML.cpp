@@ -70,7 +70,7 @@
 
 bool importXML::userHasPriv()
 {
-  return _privleges->check("ImportXML");
+  return _privileges->check("ImportXML");
 }
 
 void importXML::setVisible(bool visible)

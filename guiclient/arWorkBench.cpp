@@ -107,7 +107,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _cashrcpt->addColumn(tr("Dist. Date"), _dateColumn,     Qt::AlignCenter );
   _cashrcpt->addColumn(tr("Amount"),     _bigMoneyColumn, Qt::AlignRight  );
   _cashrcpt->addColumn(tr("Currency"),   _currencyColumn, Qt::AlignLeft   );
-  if (_privleges->check("MaintainCashReceipts"))
+  if (_privileges->check("MaintainCashReceipts"))
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _editCashrcpt, SLOT(setEnabled(bool)));
     connect(_cashrcpt, SIGNAL(valid(bool)), _deleteCashrcpt, SLOT(setEnabled(bool)));
@@ -118,7 +118,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     _newCashrcpt->setEnabled(FALSE);
     connect(_cashrcpt, SIGNAL(itemSelected(int)), _viewCashrcpt, SLOT(animateClick()));
   }
-  if(_privleges->check("PostCashReceipts"))
+  if(_privileges->check("PostCashReceipts"))
     connect(_cashrcpt, SIGNAL(itemSelected(int)), _editCashrcpt, SLOT(animateClick()));
   connect(omfgThis, SIGNAL(cashReceiptsUpdated(int, bool)), this, SLOT(sFillList()));
                                                                        
@@ -143,7 +143,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
   _preauth->addColumn(tr("Amount"),   _bigMoneyColumn, Qt::AlignRight  );
   _preauth->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft   );
 
-  if(_privleges->check("EditAROpenItem"))
+  if(_privileges->check("EditAROpenItem"))
   {
     connect(_aropen, SIGNAL(valid(bool)), _editAropen, SLOT(setEnabled(bool)));
     connect(_aropen, SIGNAL(itemSelected(int)), _editAropen, SLOT(animateClick()));
@@ -155,7 +155,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_aropen, SIGNAL(itemSelected(int)), _viewAropen, SLOT(animateClick()));
     connect(_aropenCM, SIGNAL(itemSelected(int)), _viewAropenCM, SLOT(animateClick()));
   }
-  if (_privleges->check("ApplyARMemos"))
+  if (_privileges->check("ApplyARMemos"))
     connect(_aropenCM, SIGNAL(valid(bool)), _applyAropenCM, SLOT(setEnabled(bool)));
 
   if (omfgThis->singleCurrency())
@@ -166,7 +166,7 @@ arWorkBench::arWorkBench(QWidget* parent, const char* name, Qt::WFlags fl)
     _aropenCM->hideColumn(4);
   }
 
-  if (_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
+  if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
     connect(_aropenCM, SIGNAL(valid(bool)), _ccRefundCM, SLOT(setEnabled(bool)));
   else
   {
@@ -691,16 +691,16 @@ void arWorkBench::sPopulateAropenMenu(QMenu *pMenu)
   if (_aropen->altId() == 0)
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Debit Memo..."), this, SLOT(sViewAropen()), 0);
-    if (! _privleges->check("MaintainARMemos") &&
-        ! _privleges->check("ViewARMemos"))
+    if (! _privileges->check("MaintainARMemos") &&
+        ! _privileges->check("ViewARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   else if (_aropen->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("View Apply-To Invoice..."), this, SLOT(sViewAropen()), 0);
-    if (! _privleges->check("MaintainMiscInvoices") &&
-        ! _privleges->check("ViewMiscInvoices"))
+    if (! _privileges->check("MaintainMiscInvoices") &&
+        ! _privileges->check("ViewMiscInvoices"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
@@ -712,16 +712,16 @@ void arWorkBench::sPopulateAropenCMMenu(QMenu *pMenu)
   if (_aropenCM->altId() == 0)
   {
     menuItem = pMenu->insertItem(tr("Apply Credit Memo..."), this, SLOT(sApplyAropenCM()), 0);
-    if (! _privleges->check("ApplyARMemos"))
+    if (! _privileges->check("ApplyARMemos"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Edit Credit Memo..."), this, SLOT(sEditAropenCM()), 0);
-    if (! _privleges->check("EditAROpenItem"))
+    if (! _privileges->check("EditAROpenItem"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View Credit Memo..."), this, SLOT(sViewAropenCM()), 0);
-    if (! _privleges->check("EditAROpenItem") &&
-        ! _privleges->check("ViewAROpenItems"))
+    if (! _privileges->check("EditAROpenItem") &&
+        ! _privileges->check("ViewAROpenItems"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -737,20 +737,20 @@ void arWorkBench::sPopulateCashRcptMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Cash Receipt..."), this, SLOT(sEditCashrcpt()), 0);
-  if (! _privleges->check("MaintainCashReceipts") &&
-      ! _privleges->check("ViewCashReceipts"))
+  if (! _privileges->check("MaintainCashReceipts") &&
+      ! _privileges->check("ViewCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Cash Receipt..."), this, SLOT(sViewCashrcpt()), 0);
-  if (! _privleges->check("ViewCashReceipts"))
+  if (! _privileges->check("ViewCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete Cash Receipt..."), this, SLOT(sDeleteCashrcpt()), 0);
-  if (! _privleges->check("MaintainCashReceipts"))
+  if (! _privileges->check("MaintainCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Post Cash Receipt..."), this, SLOT(sPostCashrcpt()), 0);
-  if (! _privleges->check("PostCashReceipts"))
+  if (! _privileges->check("PostCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

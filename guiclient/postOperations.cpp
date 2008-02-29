@@ -96,10 +96,10 @@ postOperations::postOperations(QWidget* parent, const char* name, bool modal, Qt
   _wo->setType(cWoExploded | cWoReleased | cWoIssued);
   _wooper->setAllowNull(TRUE);
 
-  _receiveInventory->setEnabled(_privleges->check("ChangeReceiveInventory"));
-  _postStandardSutime->setEnabled(_privleges->check("OverrideWOTCTime"));
-  _postStandardRntime->setEnabled(_privleges->check("OverrideWOTCTime"));
-  _specifiedRntime->setEnabled(_privleges->check("OverrideWOTCTime"));
+  _receiveInventory->setEnabled(_privileges->check("ChangeReceiveInventory"));
+  _postStandardSutime->setEnabled(_privileges->check("OverrideWOTCTime"));
+  _postStandardRntime->setEnabled(_privileges->check("OverrideWOTCTime"));
+  _specifiedRntime->setEnabled(_privileges->check("OverrideWOTCTime"));
 
   _qty->setValidator(omfgThis->qtyVal());
 
@@ -347,7 +347,7 @@ void postOperations::sHandleWooperid(int)
         _issueComponents->setChecked(FALSE);
       }
 
-	  _closeWO->setDisabled((w.value("item_type").toString() == "J" || !_privleges->check("CloseWorkOrders")));
+	  _closeWO->setDisabled((w.value("item_type").toString() == "J" || !_privileges->check("CloseWorkOrders")));
 
       sHandleQty();
     }
@@ -521,7 +521,7 @@ void postOperations::sPost()
 	     .arg(sutime) .arg(rntime) .arg(sutime+rntime) .arg(_wotcTime)
 	     .arg(sutime + rntime - _wotcTime));
     */
-    if (_privleges->check("OverrideWOTCTime"))
+    if (_privileges->check("OverrideWOTCTime"))
     {
       if (QMessageBox::question(this, tr("Work Times Mismatch"),
 			    tr("<p>The specified setup and run times do not equal "
@@ -913,7 +913,7 @@ void postOperations::sHandlePostRunTime(bool)
   _rntimeGroup->setEnabled(_postRntime->isChecked());
   _specifiedRntime->setEnabled(_postRntime->isChecked() && 
 			       _postSpecifiedRntime->isChecked() &&
-			       _privleges->check("OverrideWOTCTime"));
+			       _privileges->check("OverrideWOTCTime"));
 }
 
 
@@ -932,7 +932,7 @@ void postOperations::sSetupChanged()
 {
   if (_wotcTime > 0)
   {
-    if (! _privleges->check("OverrideWOTCTime") &&
+    if (! _privileges->check("OverrideWOTCTime") &&
         _specifiedSutime->text().toDouble() > _wotcTime)
       _specifiedSutime->setText(QString::number(_wotcTime));
     else

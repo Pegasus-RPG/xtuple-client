@@ -93,7 +93,7 @@ arAccountAssignments::arAccountAssignments(QWidget* parent, const char* name, Qt
   if(_metrics->boolean("EnableCustomerDeposits"))
     _araccnt->addColumn(tr("Deferred Rev. Account"), 120, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainSalesAccount"))
+  if (_privileges->check("MaintainSalesAccount"))
   {
     connect(_araccnt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_araccnt, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

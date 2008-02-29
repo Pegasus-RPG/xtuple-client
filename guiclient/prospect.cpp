@@ -84,7 +84,7 @@ prospect::prospect(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_viewQuote,	SIGNAL(clicked()),	this,	SLOT(sViewQuote()));
     connect(omfgThis,	SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillQuotesList()));
 
-    if (_privleges->check("MaintainProspectMasters"))
+    if (_privileges->check("MaintainProspectMasters"))
       connect(_quotes, SIGNAL(itemSelected(int)), _editQuote, SLOT(animateClick()));
     else
       connect(_quotes, SIGNAL(itemSelected(int)), _viewQuote, SLOT(animateClick()));

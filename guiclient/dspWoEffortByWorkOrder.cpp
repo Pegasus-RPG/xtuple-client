@@ -155,15 +155,15 @@ void dspWoEffortByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   if (_wotc->id() != -1)
   {
     menuItem = pMenu->insertItem(tr("New"), this, SLOT(sNew()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWoTimeClock"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
     
     menuItem = pMenu->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWoTimeClock"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
 
     menuItem = pMenu->insertItem(tr("View"), this, SLOT(sView()), 0);
 
     menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainWoTimeClock"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainWoTimeClock"));
   }
 }
 

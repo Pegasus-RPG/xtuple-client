@@ -117,7 +117,7 @@ void productCategories::init()
   _prodcat->addColumn(tr("Category"),    70, Qt::AlignLeft );
   _prodcat->addColumn(tr("Description"), -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainProductCategories"))
+  if (_privileges->check("MaintainProductCategories"))
   {
     connect(_prodcat, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_prodcat, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -201,11 +201,11 @@ void productCategories::sPopulateMenu( QMenu * menu )
   int menuItem;
 
   menuItem = menu->insertItem("Edit Product Cateogry...", this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainProductCategories"))
+  if (!_privileges->check("MaintainProductCategories"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem("Delete Product Category...", this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainProductCategories"))
+  if (!_privileges->check("MaintainProductCategories"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

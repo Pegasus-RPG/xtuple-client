@@ -100,7 +100,7 @@ dspPartiallyShippedOrders::dspPartiallyShippedOrders(QWidget* parent, const char
 
   sHandlePrices(_showPrices->isChecked());
 
-  if ( (!_privleges->check("ViewCustomerPrices")) && (!_privleges->check("MaintainCustomerPrices")) )
+  if ( (!_privileges->check("ViewCustomerPrices")) && (!_privileges->check("MaintainCustomerPrices")) )
     _showPrices->setEnabled(FALSE);
 
   sFillList();
@@ -189,11 +189,11 @@ void dspPartiallyShippedOrders::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if ((!_privleges->check("MaintainSalesOrders")) && (!_privleges->check("ViewSalesOrders")))
+  if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -201,7 +201,7 @@ void dspPartiallyShippedOrders::sPopulateMenu(QMenu *pMenu)
   if ( (_so->currentItem()->text(0) != "P") && (_so->currentItem()->text(0) != "C") )
   {
     menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-    if (!_privleges->check("PrintPackingLists"))
+    if (!_privileges->check("PrintPackingLists"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

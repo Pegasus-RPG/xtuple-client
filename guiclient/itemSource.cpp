@@ -374,11 +374,11 @@ void itemSource::sPopulateMenu(QMenu *pMenu)
   int intMenuItem;
 
   intMenuItem = pMenu->insertItem("Edit Item Source Price...", this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemSources"))
+  if (!_privileges->check("MaintainItemSources"))
     pMenu->setItemEnabled(intMenuItem, FALSE);
 
   intMenuItem = pMenu->insertItem("Delete Item Source Price...", this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainItemSources"))
+  if (!_privileges->check("MaintainItemSources"))
     pMenu->setItemEnabled(intMenuItem, FALSE);
 }
 

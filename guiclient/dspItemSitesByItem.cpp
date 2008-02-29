@@ -146,30 +146,30 @@ void dspItemSitesByItem::sPopulateMenu(QMenu *menu, QTreeWidgetItem *pSelected)
   int menuItem;
 
   menuItem = menu->insertItem(tr("View Item Site..."), this, SLOT(sViewItemsite()), 0);
-  if ((!_privleges->check("MaintainItemSites")) && (!_privleges->check("ViewItemSites")))
+  if ((!_privileges->check("MaintainItemSites")) && (!_privileges->check("ViewItemSites")))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Edit Item Site..."), this, SLOT(sEditItemsite()), 0);
-  if (!_privleges->check("MaintainItemSites"))
+  if (!_privileges->check("MaintainItemSites"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menu->insertSeparator();
 
   menuItem = menu->insertItem(tr("View Inventory Availability..."), this, SLOT(sViewInventoryAvailability()), 0);
-  if (!_privleges->check("ViewInventoryAvailability"))
+  if (!_privileges->check("ViewInventoryAvailability"))
     menu->setItemEnabled(menuItem, FALSE);
 
   if (((XTreeWidgetItem *)pSelected)->altId() == 1)
   {
     menuItem = menu->insertItem(tr("View Location/Lot/Serial # Detail..."), this, SLOT(sViewLocationLotSerialDetail()), 0);
-    if (!_privleges->check("ViewQOH"))
+    if (!_privileges->check("ViewQOH"))
       menu->setItemEnabled(menuItem, FALSE);
   }
 
   menu->insertSeparator();
 
   menuItem = menu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

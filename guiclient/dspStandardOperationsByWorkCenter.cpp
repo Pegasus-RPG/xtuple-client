@@ -109,7 +109,7 @@ void dspStandardOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
   pMenu->insertItem(tr("View Standard Operation..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Edit Standard Operation..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainStandardOperations"))
+  if (!_privileges->check("MaintainStandardOperations"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

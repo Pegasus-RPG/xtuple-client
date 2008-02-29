@@ -95,13 +95,13 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
   _quote->addColumn(tr("Quote Date"), _dateColumn,  Qt::AlignCenter );
   _quote->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  if (_privleges->check("PrintQuotes"))
+  if (_privileges->check("PrintQuotes"))
     connect(_quote, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("ConvertQuotes"))
+  if (_privileges->check("ConvertQuotes"))
     connect(_quote, SIGNAL(valid(bool)), _convert, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("MaintainQuotes"))
+  if (_privileges->check("MaintainQuotes"))
   {
     connect(_quote, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_quote, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -115,8 +115,7 @@ quotes::quotes(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(quotesUpdated(int, bool)), this, SLOT(sFillList()));
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _showProspects->setChecked(true);
 
   sFillList();
@@ -137,25 +136,25 @@ void quotes::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrint()), 0);
-  if (!_privleges->check("PrintQuotes"))
+  if (!_privileges->check("PrintQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Convert..."), this, SLOT(sConvert()), 0);
-  if (!_privleges->check("ConvertQuotes"))
+  if (!_privileges->check("ConvertQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainQuotes"))
+  if (!_privileges->check("MaintainQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainQuotes"))
+  if (!_privileges->check("MaintainQuotes"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -242,7 +241,7 @@ void quotes::sConvert()
                 (_metrics->value("DefaultTerms").toInt() > 0) &&
                 (_metrics->value("DefaultCustType").toInt() > 0) && 
                 (_metrics->value("DefaultShipFormId").toInt() > 0)  && 
-                (_privleges->check("MaintainCustomerMasters"))) 
+                (_privileges->check("MaintainCustomerMasters"))) 
               {
                 if (QMessageBox::question(this, tr("Quote for Prospect"),
                               tr("<p>This Quote is for a Prospect, not "

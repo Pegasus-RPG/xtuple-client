@@ -75,8 +75,7 @@ postChecks::postChecks(QWidget* parent, const char* name, bool modal, Qt::WFlags
   _bankaccnt->setAllowNull(TRUE);
   _bankaccnt->setType(XComboBox::APBankAccounts);
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
 
 }

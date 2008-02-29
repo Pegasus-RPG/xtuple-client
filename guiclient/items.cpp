@@ -134,7 +134,7 @@ void items::init()
   
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), this, SLOT(sFillList(int, bool)));
   
-  if (_privleges->check("MaintainItemMasters"))
+  if (_privileges->check("MaintainItemMasters"))
   {
     connect(_item, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_item, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
@@ -146,7 +146,7 @@ void items::init()
     connect(_item, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  if (_privleges->check("DeleteItemMasters"))
+  if (_privileges->check("DeleteItemMasters"))
     connect(_item, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
   sFillList();
@@ -159,17 +159,17 @@ void items::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Copy..."), this, SLOT(sCopy()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -101,7 +101,7 @@ openReturnAuthorizations::openReturnAuthorizations(QWidget* parent, const char* 
   _ra->addColumn(tr("Created"),          _dateColumn,  Qt::AlignCenter );
   _ra->addColumn(tr("Expires"),        _dateColumn,  Qt::AlignCenter );
   
-  if (_privleges->check("MaintainReturns"))
+  if (_privileges->check("MaintainReturns"))
   {
     connect(_ra, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_ra, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -205,13 +205,13 @@ void openReturnAuthorizations::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainReturns"))
+  if (!_privileges->check("MaintainReturns"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainReturns"))
+  if (!_privileges->check("MaintainReturns"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();

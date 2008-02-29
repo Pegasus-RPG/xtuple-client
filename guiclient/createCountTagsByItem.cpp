@@ -82,7 +82,7 @@ createCountTagsByItem::createCountTagsByItem(QWidget* parent, const char* name, 
   connect(_byLocation, SIGNAL(toggled(bool)), _location, SLOT(setEnabled(bool)));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
 
-  _freeze->setEnabled(_privleges->check("FreezeInventory"));
+  _freeze->setEnabled(_privileges->check("FreezeInventory"));
   _item->setType(ItemLineEdit::cPurchased
                  | ItemLineEdit::cManufactured
                  | ItemLineEdit::cBreeder

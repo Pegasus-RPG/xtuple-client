@@ -100,7 +100,7 @@ crmaccounts::crmaccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     _crmaccount->addColumn(tr("Partner"),	70, Qt::AlignCenter );
     _crmaccount->addColumn(tr("Tax Auth."),	70, Qt::AlignCenter );
 
-    if (_privleges->check("MaintainCRMAccounts"))
+    if (_privileges->check("MaintainCRMAccounts"))
     {
       connect(_crmaccount, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_crmaccount, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -213,13 +213,13 @@ void crmaccounts::sPopulateMenu( QMenu * pMenu )
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCRMAccounts"))
+  if (!_privileges->check("MaintainCRMAccounts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainCRMAccounts"))
+  if (!_privileges->check("MaintainCRMAccounts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

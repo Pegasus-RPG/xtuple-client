@@ -111,7 +111,7 @@ void reasonCodes::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainReasonCodes"))
+  if (_privileges->check("MaintainReasonCodes"))
   {
     connect(_rsncode, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_rsncode, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

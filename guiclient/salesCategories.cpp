@@ -112,7 +112,7 @@ void salesCategories::init()
   _salescat->addColumn(tr("Category"),    _itemColumn, Qt::AlignCenter );
   _salescat->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
 
-  if (_privleges->check("MaintainSalesCategories"))
+  if (_privileges->check("MaintainSalesCategories"))
   {
     connect(_salescat, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_salescat, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));

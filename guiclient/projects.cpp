@@ -111,7 +111,7 @@ void projects::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainProjects"))
+  if (_privileges->check("MaintainProjects"))
   {
     connect(_prj, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_prj, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -215,11 +215,11 @@ void projects::sPopulateMenu(QMenu *pMenu)
   pMenu->insertItem("View...", this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainProjects"))
+  if (!_privileges->check("MaintainProjects"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem("Delete...", this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainProjects"))
+  if (!_privileges->check("MaintainProjects"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -577,11 +577,11 @@ void voucherItem::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
   if (selected->text(3) == "No")
   {
     menuItem = pMenu->insertItem(tr("Correct Receipt..."), this, SLOT(sCorrectReceiving()), 0);
-    if (!_privleges->check("EnterReceipts"))
+    if (!_privileges->check("EnterReceipts"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Split Receipt..."), this, SLOT(sSplitReceipt()), 0);
-    if (!_privleges->check("EnterReceipts"))
+    if (!_privileges->check("EnterReceipts"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

@@ -94,7 +94,7 @@ itemPricingSchedules::itemPricingSchedules(QWidget* parent, const char* name, Qt
   _ipshead->addColumn(tr("Effective"),   _dateColumn, Qt::AlignCenter );
   _ipshead->addColumn(tr("Expires"),     _dateColumn, Qt::AlignCenter );
 
-  if (_privleges->check("MaintainPricingSchedules"))
+  if (_privileges->check("MaintainPricingSchedules"))
   {
     connect(_ipshead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_ipshead, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));

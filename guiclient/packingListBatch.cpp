@@ -105,7 +105,7 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags
   _pack->addColumn(tr("Hold Type"),     _dateColumn,  Qt::AlignCenter );
   _pack->addColumn(tr("Prt'd"),         _ynColumn,    Qt::AlignCenter );
 
-  if (_privleges->check("MaintainPackingListBatch"))
+  if (_privileges->check("MaintainPackingListBatch"))
   {
     _add->setEnabled(TRUE);
     _addTO->setEnabled(TRUE);
@@ -113,7 +113,7 @@ packingListBatch::packingListBatch(QWidget* parent, const char* name, Qt::WFlags
     connect(_pack, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
   }
 
-  if (_privleges->check("PrintPackingLists"))
+  if (_privileges->check("PrintPackingLists"))
   {
     _printBatch->setEnabled(TRUE);
     connect(_pack, SIGNAL(valid(bool)), _printPackingList, SLOT(setEnabled(bool)));
@@ -258,15 +258,15 @@ void packingListBatch::sPopulateMenu(QMenu *pMenu)
 
   menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewSalesOrder()), 0);
   if (_pack->currentItem()->text(TYPE_COL) != "SO" ||
-      (! _privleges->check("MaintainSalesOrders") &&
-       ! _privleges->check("ViewSalesOrders")))
+      (! _privileges->check("MaintainSalesOrders") &&
+       ! _privileges->check("ViewSalesOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
     
 
   menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()), 0);
   if (_pack->currentItem()->text(TYPE_COL) != "TO" ||
-      (! _privleges->check("MaintainTransferOrders") &&
-       ! _privleges->check("ViewTransferOrders")))
+      (! _privileges->check("MaintainTransferOrders") &&
+       ! _privileges->check("ViewTransferOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -444,7 +444,7 @@ void packingListBatch::dragEnterEvent(QDragEnterEvent *pEvent)
 {
   QString dragData;
 
-  if ( (Q3TextDrag::decode(pEvent, dragData)) && (_privleges->check("MaintainPackingListBatch")) )
+  if ( (Q3TextDrag::decode(pEvent, dragData)) && (_privileges->check("MaintainPackingListBatch")) )
   {
     if (dragData.contains("soheadid=") || dragData.contains("toheadid="))
       pEvent->accept(TRUE);

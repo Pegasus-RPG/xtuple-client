@@ -89,8 +89,7 @@ printShippingForms::printShippingForms(QWidget* parent, const char* name, bool m
     }
   }
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _printNew->setChecked(true);
     _printDirty->setChecked(true);

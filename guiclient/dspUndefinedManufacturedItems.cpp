@@ -83,8 +83,7 @@ dspUndefinedManufacturedItems::dspUndefinedManufacturedItems(QWidget* parent, co
     connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
     init();
   
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _boo->setChecked(true);
     _bom->setChecked(true);
@@ -115,13 +114,13 @@ void dspUndefinedManufacturedItems::init()
 {
   statusBar()->hide();
   
-  if (!_privleges->check("ViewBOMs"))
+  if (!_privileges->check("ViewBOMs"))
   {
     _bom->setChecked(FALSE);
     _bom->setEnabled(FALSE);
   }
 
-  if (!_privleges->check("ViewBOOs"))
+  if (!_privileges->check("ViewBOOs"))
   {
     _boo->setChecked(FALSE);
     _boo->setEnabled(FALSE);
@@ -145,18 +144,18 @@ void dspUndefinedManufacturedItems::sPopulateMenu(QMenu *pMenu)
   if (((XTreeWidgetItem *)_item->currentItem())->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Create BOO..."), this, SLOT(sCreateBOO()), 0);
-    if (!_privleges->check("MaintainBOOs"))
+    if (!_privileges->check("MaintainBOOs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (((XTreeWidgetItem *)_item->currentItem())->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Create BOM..."), this, SLOT(sCreateBOM()), 0);
-    if (!_privleges->check("MaintainBOMs"))
+    if (!_privileges->check("MaintainBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -155,19 +155,19 @@ void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (item->id() != -1)
   {
     menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("EditSalesHistory"))
+    if (!_privileges->check("EditSalesHistory"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertItem(tr("View A/P Open..."), this, SLOT(sView()), 0);
 
     menuItem = pMenu->insertItem(tr("View G/L Series..."), this, SLOT(sViewGLSeries()), 0);
-    if (!_privleges->check("ViewGLTransactions"))
+    if (!_privileges->check("ViewGLTransactions"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     if(item->altId() == -1 && item->text(1)==tr("Voucher"))
     {
       menuItem = pMenu->insertItem(tr("View Voucher..."), this, SLOT(sViewVoucher()), 0);
-      if (!_privleges->check("ViewVouchers"))
+      if (!_privileges->check("ViewVouchers"))
         pMenu->setItemEnabled(menuItem, FALSE);
 
       if(item->text(7)==item->text(8))
@@ -175,7 +175,7 @@ void dspVendorAPHistory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
         pMenu->insertSeparator();
   
         menuItem = pMenu->insertItem(tr("Void"), this, SLOT(sVoidVoucher()), 0);
-        if (!_privleges->check("MaintainAPMemos"))
+        if (!_privileges->check("MaintainAPMemos"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
     } 

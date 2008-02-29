@@ -141,7 +141,7 @@ void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Item Master..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Item Master..."), this, SLOT(sView()), 0);
@@ -149,19 +149,19 @@ void dspItemsByCharacteristic::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *sele
   if (selected->text(2) == "M")
   {
     menuItem = pMenu->insertItem(tr("Edit Bill of Material..."), this, SLOT(sEditBOM()), 0);
-    if (!_privleges->check("MaintainBOMs"))
+    if (!_privileges->check("MaintainBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View Bill of Material..."), this, SLOT(sViewBOM()), 0);
-    if ( (!_privleges->check("MaintainBOMs")) && (!_privleges->check("ViewBOMs")) )
+    if ( (!_privileges->check("MaintainBOMs")) && (!_privileges->check("ViewBOMs")) )
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Edit Item Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-    if (!_privleges->check("MaintainBOOs"))
+    if (!_privileges->check("MaintainBOOs"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View Item Bill of Operations..."), this, SLOT(sViewBOO()), 0);
-    if ( (!_privleges->check("MaintainBOOs")) && (!_privleges->check("ViewBOOs")) )
+    if ( (!_privileges->check("MaintainBOOs")) && (!_privileges->check("ViewBOOs")) )
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

@@ -197,7 +197,7 @@ void closeWo::sCloseWo()
 		q.bindValue(":wo_id", _wo->id());
 		if (q.exec() && q.first() && q.value("countClockins").toInt() > 0)
 		{
-		  if (_privleges->check("ViewWoTimeClock") || _privleges->check("MaintainWoTimeClock"))
+		  if (_privileges->check("ViewWoTimeClock") || _privileges->check("MaintainWoTimeClock"))
 		  {
 			if (QMessageBox::question(this, tr("Users Still Clocked In"),
 		  			tr("<p>This Work Order still has %1 user(s) clocked in.\n"

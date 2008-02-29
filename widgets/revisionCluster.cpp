@@ -163,13 +163,13 @@ void RevisionCluster::setType(RevisionLineEdit::RevisionTypes ptype)
 
 void RevisionCluster::sModeChanged()
 {
-  if  (_x_privleges)
+  if  (_x_privileges)
     if (_x_metrics->boolean("RevControl"))
     {
-          _list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("ViewInactiveRevisions") || _x_privleges->check("MaintainRevisions"))) ||
-                                                          ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privleges->check("UseInactiveRevisions")) ||
-                                                              ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privleges->check("MaintainRevisions") || _x_privleges->check("ViewInactiveRevisions"))));
-          (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privleges->check("MaintainRevisions")) ||
+          _list->setVisible(((RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("ViewInactiveRevisions") || _x_privileges->check("MaintainRevisions"))) ||
+                                                          ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) && _x_privileges->check("UseInactiveRevisions")) ||
+                                                              ((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && (_x_privileges->check("MaintainRevisions") || _x_privileges->check("ViewInactiveRevisions"))));
+          (static_cast<RevisionLineEdit*>(_number))->setDisabled(((RevisionLineEdit::Maintain==(static_cast<RevisionLineEdit*>(_number))->mode()) && !_x_privileges->check("MaintainRevisions")) ||
                                                                     ((RevisionLineEdit::Use==(static_cast<RevisionLineEdit*>(_number))->mode()) ||
                                                                         (RevisionLineEdit::View==(static_cast<RevisionLineEdit*>(_number))->mode())));  
         }
@@ -185,8 +185,8 @@ void RevisionLineEdit::setMode(Modes pMode)
   if (_mode!=pMode)
   {
     _mode = pMode;
-    if  (_x_privleges)
-      _allowNew=((pMode=Maintain) && (_x_privleges->check("MaintainRevisions")));
+    if  (_x_privileges)
+      _allowNew=((pMode=Maintain) && (_x_privileges->check("MaintainRevisions")));
     emit modeChanged();
   }
 }
@@ -232,9 +232,9 @@ void RevisionLineEdit::setId(const int pId)
 {
   VirtualClusterLineEdit::setId(pId);
   _cachenum = text();
-  if  (_x_privleges)
+  if  (_x_privileges)
     emit canActivate((_mode==Maintain) && 
-                        (_x_privleges->check("MaintainRevisions")) &&
+                        (_x_privileges->check("MaintainRevisions")) &&
                                         (_description=="Pending"));
 }
 

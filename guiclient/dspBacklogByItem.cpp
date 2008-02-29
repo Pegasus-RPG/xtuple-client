@@ -95,10 +95,10 @@ dspBacklogByItem::dspBacklogByItem(QWidget* parent, const char* name, Qt::WFlags
   _soitem->addColumn(tr("Ordered"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Shipped"),   _qtyColumn,   Qt::AlignRight  );
   _soitem->addColumn(tr("Balance"),   _qtyColumn,   Qt::AlignRight  );
-  if (_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"))
+  if (_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"))
     _soitem->addColumn(tr("Amount $"),  _moneyColumn, Qt::AlignRight  );
 
-  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices") || _privleges->check("MaintainCustomerPrices"));
+  _showPrices->setEnabled(_privileges->check("ViewCustomerPrices") || _privileges->check("MaintainCustomerPrices"));
 
   if (! _showPrices->isChecked())
     _soitem->hideColumn(AMOUNT_COL);
@@ -198,28 +198,28 @@ void dspBacklogByItem::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if ((!_privleges->check("MaintainSalesOrders")) && (!_privleges->check("ViewSalesOrders")))
+  if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Item..."), this, SLOT(sViewItem()), 0);
-  if ((!_privleges->check("MaintainSalesOrders")) && (!_privleges->check("ViewSalesOrders")))
+  if ((!_privileges->check("MaintainSalesOrders")) && (!_privileges->check("ViewSalesOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-  if (!_privleges->check("PrintPackingLists"))
+  if (!_privileges->check("PrintPackingLists"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

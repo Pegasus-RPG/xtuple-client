@@ -169,38 +169,38 @@ void dspUsageStatisticsByItemGroup::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
   int menuItem;
 
   menuItem = pMenu->insertItem("View All Transactions...", this, SLOT(sViewAll()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   switch (pColumn)
   {
     case 3:
       menuItem = pMenu->insertItem("View Receipt Transactions...", this, SLOT(sViewReceipt()), 0);
-      if (!_privleges->check("ViewInventoryHistory"))
+      if (!_privileges->check("ViewInventoryHistory"))
         pMenu->setItemEnabled(menuItem, FALSE);
       break;
 
     case 4:
       menuItem = pMenu->insertItem("View Issue Transactions...", this, SLOT(sViewIssue()), 0);
-      if (!_privleges->check("ViewInventoryHistory"))
+      if (!_privileges->check("ViewInventoryHistory"))
         pMenu->setItemEnabled(menuItem, FALSE);
       break;
 
     case 5:
       menuItem = pMenu->insertItem("View Sold Transactions...", this, SLOT(sViewSold()), 0);
-      if (!_privleges->check("ViewInventoryHistory"))
+      if (!_privileges->check("ViewInventoryHistory"))
         pMenu->setItemEnabled(menuItem, FALSE);
       break;
 
     case 6:
       menuItem = pMenu->insertItem("View Scrap Transactions...", this, SLOT(sViewScrap()), 0);
-      if (!_privleges->check("ViewInventoryHistory"))
+      if (!_privileges->check("ViewInventoryHistory"))
         pMenu->setItemEnabled(menuItem, FALSE);
       break;
 
     case 7:
       menuItem = pMenu->insertItem("View Adjustment Transactions...", this, SLOT(sViewAdjustment()), 0);
-      if (!_privleges->check("ViewInventoryHistory"))
+      if (!_privileges->check("ViewInventoryHistory"))
         pMenu->setItemEnabled(menuItem, FALSE);
       break;
   }

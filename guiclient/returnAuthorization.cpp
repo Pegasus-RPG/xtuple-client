@@ -168,7 +168,7 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   _clearAuthorization->hide();
   _authorizeAll->hide();
 
-  if (! _metrics->boolean("CCAccept") || !_privleges->check("ProcessCreditCards"))
+  if (! _metrics->boolean("CCAccept") || !_privileges->check("ProcessCreditCards"))
   {
     _refund->hide();
     _CCCVVLit->hide();
@@ -180,8 +180,8 @@ returnAuthorization::returnAuthorization(QWidget* parent, const char* name, Qt::
   
   _printRA->setChecked(_metrics->boolean("DefaultPrintRAOnSave"));
 
-  _receiveAll->setEnabled(_privleges->check("EnterReceipts"));
-  _postReceipts->setEnabled(_privleges->check("EnterReceipts"));
+  _receiveAll->setEnabled(_privileges->check("EnterReceipts"));
+  _postReceipts->setEnabled(_privileges->check("EnterReceipts"));
 }
 
 returnAuthorization::~returnAuthorization()
@@ -1442,7 +1442,7 @@ void returnAuthorization::sDispositionChanged()
   _new->setEnabled(_cust->isValid() || 
 	              (_disposition->currentIndex() == 1 && _creditBy->currentIndex() == 0));
   
-  bool enableReceipt = _privleges->check("EnterReceipts") &&
+  bool enableReceipt = _privileges->check("EnterReceipts") &&
 		      (_disposition->currentItem() != 0);
 
   _receiveAll->setEnabled(enableReceipt);
@@ -1779,7 +1779,7 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
   if (selected->text(16).length() != 0)
   {
     pMenu->insertItem(tr("View Original Order..."), this, SLOT(sViewOrigOrder()), 0);
-    if(!_privleges->check("ViewSalesOrders"))
+    if(!_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   
@@ -1788,19 +1788,19 @@ void returnAuthorization::sPopulateMenu( QMenu * pMenu,  QTreeWidgetItem *select
   if (selected->text(17).length() != 0)
   {
     menuItem = pMenu->insertItem(tr("Edit New Order..."), this, SLOT(sEditNewOrder()), 0);
-    if(!_privleges->check("MaintainSalesOrders"))
+    if(!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
     pMenu->insertItem(tr("View New Order..."), this, SLOT(sViewNewOrder()), 0);
-    if(!_privleges->check("ViewSalesOrders"))
+    if(!_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Edit New Order Line..."), this, SLOT(sEditNewOrderLine()), 0);
-    if(!_privleges->check("MaintainSalesOrders"))
+    if(!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
     pMenu->insertItem(tr("View New Order Line..."), this, SLOT(sViewNewOrderLine()), 0);
-    if(!_privleges->check("ViewSalesOrders"))
+    if(!_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   
     pMenu->insertSeparator();

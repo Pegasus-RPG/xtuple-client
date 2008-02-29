@@ -92,7 +92,7 @@ opportunityTypes::opportunityTypes(QWidget* parent, const char* name, Qt::WFlags
   _oplist->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
   _oplist->addColumn(tr("Description"), -1,          Qt::AlignLeft );
 
-  if (_privleges->check("MaintainOpportunityTypes"))
+  if (_privileges->check("MaintainOpportunityTypes"))
   {
     connect(_oplist, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_oplist, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

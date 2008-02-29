@@ -159,7 +159,7 @@ void dspGLSeries::sPopulateMenu(QMenu * pMenu)
   }
 
   menuItem = pMenu->insertItem(tr("Reverse Journal..."), this, SLOT(sReverse()), 0);
-  if (!reversible || !_privleges->check("PostStandardJournals"))
+  if (!reversible || !_privileges->check("PostStandardJournals"))
     pMenu->setItemEnabled(menuItem, false);
 }
 

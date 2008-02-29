@@ -98,10 +98,10 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
     _cmhead->addColumn(tr("Hold"),      _whsColumn,   Qt::AlignCenter );
     _cmhead->addColumn(tr("G/L Dist Date"), _dateColumn, Qt::AlignCenter );
 
-    if (! _privleges->check("ChangeSOMemoPostDate"))
+    if (! _privileges->check("ChangeSOMemoPostDate"))
       _cmhead->hideColumn(5);
 
-    if (_privleges->check("MaintainCreditMemos"))
+    if (_privileges->check("MaintainCreditMemos"))
     {
       connect(_cmhead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_cmhead, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -113,10 +113,10 @@ unpostedCreditMemos::unpostedCreditMemos(QWidget* parent, const char* name, Qt::
       connect(_cmhead, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     }
     
-    if (_privleges->check("PrintCreditMemos"))
+    if (_privileges->check("PrintCreditMemos"))
       connect(_cmhead, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
 
-    if (_privleges->check("PostARDocuments"))
+    if (_privileges->check("PostARDocuments"))
       connect(_cmhead, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
     connect(omfgThis, SIGNAL(creditMemosUpdated()), this, SLOT(sFillList()));
@@ -139,17 +139,17 @@ void unpostedCreditMemos::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCreditMemos"))
+  if (!_privileges->check("MaintainCreditMemos"))
     pMenu->setItemEnabled(menuItem, false);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainCreditMemos")) && (!_privleges->check("ViewCreditMemos")))
+  if ((!_privileges->check("MaintainCreditMemos")) && (!_privileges->check("ViewCreditMemos")))
     pMenu->setItemEnabled(menuItem, false);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostARDocuments"))
+  if (!_privileges->check("PostARDocuments"))
     pMenu->setItemEnabled(menuItem, false);
 }
 
@@ -214,7 +214,7 @@ void unpostedCreditMemos::sPost()
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
 
-  if (_privleges->check("ChangeSOMemoPostDate"))
+  if (_privileges->check("ChangeSOMemoPostDate"))
   {
     getGLDistDate newdlg(this, "", TRUE);
     newdlg.sSetDefaultLit(tr("Credit Memo Date"));

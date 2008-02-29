@@ -110,10 +110,10 @@ unpostedPoReceipts::unpostedPoReceipts(QWidget* parent, const char* name, Qt::WF
   _recv->addColumn(tr("Receipt Date"),  _dateColumn,  Qt::AlignCenter );
   _recv->addColumn(tr("G/L Post Date"), _dateColumn,  Qt::AlignCenter );
 
-  if (! _privleges->check("ChangePORecvPostDate"))
+  if (! _privileges->check("ChangePORecvPostDate"))
     _recv->hideColumn(RECV_GLDISTDATE_COL);
 
-  if(!_privleges->check("ViewPurchaseOrders"))
+  if(!_privileges->check("ViewPurchaseOrders"))
     disconnect(_recv, SIGNAL(valid(bool)), _viewOrderItem, SLOT(setEnabled(bool)));
 
   sFillList();
@@ -218,7 +218,7 @@ void unpostedPoReceipts::sPost()
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
 
-  if (_privleges->check("ChangePORecvPostDate"))
+  if (_privileges->check("ChangePORecvPostDate"))
   {
     getGLDistDate newdlg(this, "", TRUE);
     newdlg.sSetDefaultLit(tr("Receipt Date"));
@@ -334,9 +334,9 @@ void unpostedPoReceipts::sPopulateMenu(QMenu *pMenu,QTreeWidgetItem *pItem)
 
   menuItem = pMenu->insertItem(tr("View Order Item..."),this, SLOT(sViewOrderItem()));
   pMenu->setItemEnabled(menuItem, ((pItem->text(RECV_ORDER_TYPE_COL) == "PO" &&
-				    _privleges->check("ViewPurchaseOrders")) ||
+				    _privileges->check("ViewPurchaseOrders")) ||
 				   (pItem->text(RECV_ORDER_TYPE_COL) == "TO" &&
-				    _privleges->check("ViewTransferOrders"))) );
+				    _privileges->check("ViewTransferOrders"))) );
 }
 
 void unpostedPoReceipts::sFillList()

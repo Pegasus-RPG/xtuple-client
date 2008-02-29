@@ -72,7 +72,10 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 {
   setupUi(this);
 
-  if(!_privleges->check("MaintainPreferencesOthers"))
+  _pref = _preferences;
+  _altPref = 0;
+
+  if(!_privileges->check("MaintainPreferencesOthers"))
     _selectedUser->setEnabled(false);
 
   connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
@@ -120,7 +123,7 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 
   _user->setType(XComboBox::Users);
 
-  _userGroup->setEnabled(_privleges->check("MaintainUsers"));
+  _userGroup->setEnabled(_privileges->check("MaintainUsers"));
 
   _ellipsesAction->append(1, tr("List"));
   _ellipsesAction->append(2, tr("Search"));
@@ -131,6 +134,8 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 userPreferences::~userPreferences()
 {
   // no need to delete child widgets, Qt does it all for us
+  if(_altPref)
+    delete _altPref;
 }
 
 void userPreferences::languageChange()
@@ -173,14 +178,19 @@ void userPreferences::sBackgroundList()
 void userPreferences::sPopulate()
 {
   if (_currentUser->isChecked())
-    _pref = Preferences(omfgThis->username());
+    _pref = _preferences;
   else
-    _pref = Preferences(_user->currentText());
+  {
+    if(_altPref)
+      delete _altPref;
+    _altPref = new Preferences(_user->currentText());
+    _pref = _altPref;
+  }
 
-  if (_pref.value("BackgroundImageid").toInt() > 0)
+  if (_pref->value("BackgroundImageid").toInt() > 0)
   {
     _backgroundImage->setChecked(TRUE);
-    setBackgroundImage(_pref.value("BackgroundImageid").toInt());
+    setBackgroundImage(_pref->value("BackgroundImageid").toInt());
   }
   else
   {
@@ -188,84 +198,84 @@ void userPreferences::sPopulate()
     _backgroundImageid = -1;
   }
 
-  if (_pref.value("PreferredWarehouse").toInt() == -1)
+  if (_pref->value("PreferredWarehouse").toInt() == -1)
     _noWarehouse->setChecked(TRUE);
   else
   {
     _selectedWarehouse->setChecked(TRUE);
-    _warehouse->setId(_pref.value("PreferredWarehouse").toInt());
+    _warehouse->setId(_pref->value("PreferredWarehouse").toInt());
   }
 
-  if (_pref.value("InterfaceWindowOption") == "TopLevel")
+  if (_pref->value("InterfaceWindowOption") == "TopLevel")
     _interfaceTopLevel->setChecked(true);
   else
     _interfaceWorkspace->setChecked(true);
 
-  _rememberCheckBoxes->setChecked(! _pref.boolean("XCheckBox/forgetful"));
+  _rememberCheckBoxes->setChecked(! _pref->boolean("XCheckBox/forgetful"));
 
-  _itemCache->setChecked(_pref.boolean("UseItemCache"));
-  _customerCache->setChecked(_pref.boolean("UseCustCache"));
+  _itemCache->setChecked(_pref->boolean("UseItemCache"));
+  _customerCache->setChecked(_pref->boolean("UseCustCache"));
   
-  _standard->setChecked(_pref.boolean("UseOldMenu"));
+  _standard->setChecked(_pref->boolean("UseOldMenu"));
   sStyleChanged();
   	
   //New Menus
-  _inventoryMenu->setChecked(_pref.boolean("ShowIMMenu"));
-  _productsMenu->setChecked(_pref.boolean("ShowPDMenu"));
-  _scheduleMenu->setChecked(_pref.boolean("ShowMSMenu"));
-  _manufactureMenu->setChecked(_pref.boolean("ShowWOMenu"));
-  _crmMenu2->setChecked(_pref.boolean("ShowCRMMenu"));
-  _purchaseMenu->setChecked(_pref.boolean("ShowPOMenu"));
-  _salesMenu->setChecked(_pref.boolean("ShowSOMenu"));
-  _accountingMenu->setChecked(_pref.boolean("ShowGLMenu"));
+  _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
+  _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
+  _scheduleMenu->setChecked(_pref->boolean("ShowMSMenu"));
+  _manufactureMenu->setChecked(_pref->boolean("ShowWOMenu"));
+  _crmMenu2->setChecked(_pref->boolean("ShowCRMMenu"));
+  _purchaseMenu->setChecked(_pref->boolean("ShowPOMenu"));
+  _salesMenu->setChecked(_pref->boolean("ShowSOMenu"));
+  _accountingMenu->setChecked(_pref->boolean("ShowGLMenu"));
 
-  _inventoryToolbar->setChecked(_pref.boolean("ShowIMToolbar"));
-  _productsToolbar->setChecked(_pref.boolean("ShowPDToolbar"));
-  _scheduleToolbar->setChecked(_pref.boolean("ShowMSToolbar"));
-  _manufactureToolbar->setChecked(_pref.boolean("ShowWOToolbar"));
-  _crmToolbar2->setChecked(_pref.boolean("ShowCRMToolbar"));
-  _purchaseToolbar->setChecked(_pref.boolean("ShowPOToolbar"));
-  _salesToolbar->setChecked(_pref.boolean("ShowSOToolbar"));
-  _accountingToolbar->setChecked(_pref.boolean("ShowGLToolbar"));
+  _inventoryToolbar->setChecked(_pref->boolean("ShowIMToolbar"));
+  _productsToolbar->setChecked(_pref->boolean("ShowPDToolbar"));
+  _scheduleToolbar->setChecked(_pref->boolean("ShowMSToolbar"));
+  _manufactureToolbar->setChecked(_pref->boolean("ShowWOToolbar"));
+  _crmToolbar2->setChecked(_pref->boolean("ShowCRMToolbar"));
+  _purchaseToolbar->setChecked(_pref->boolean("ShowPOToolbar"));
+  _salesToolbar->setChecked(_pref->boolean("ShowSOToolbar"));
+  _accountingToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
   
   //Old Menus  
-  _imMenu->setChecked(_pref.boolean("ShowIMMenu"));
-  _pdMenu->setChecked(_pref.boolean("ShowPDMenu"));
-  _msMenu->setChecked(_pref.boolean("ShowMSMenu"));
-  _cpMenu->setChecked(_pref.boolean("ShowCPMenu"));
-  _woMenu->setChecked(_pref.boolean("ShowWOMenu"));
-  _crmMenu->setChecked(_pref.boolean("ShowCRMMenu"));
-  _poMenu->setChecked(_pref.boolean("ShowPOMenu"));
-  _soMenu->setChecked(_pref.boolean("ShowSOMenu"));
-  _srMenu->setChecked(_pref.boolean("ShowSRMenu"));
-  _saMenu->setChecked(_pref.boolean("ShowSAMenu"));
-  _pmMenu->setChecked(_pref.boolean("ShowPMMenu"));
-  _arMenu->setChecked(_pref.boolean("ShowARMenu"));
-  _apMenu->setChecked(_pref.boolean("ShowAPMenu")); 
-  _glMenu->setChecked(_pref.boolean("ShowGLMenu"));
+  _imMenu->setChecked(_pref->boolean("ShowIMMenu"));
+  _pdMenu->setChecked(_pref->boolean("ShowPDMenu"));
+  _msMenu->setChecked(_pref->boolean("ShowMSMenu"));
+  _cpMenu->setChecked(_pref->boolean("ShowCPMenu"));
+  _woMenu->setChecked(_pref->boolean("ShowWOMenu"));
+  _crmMenu->setChecked(_pref->boolean("ShowCRMMenu"));
+  _poMenu->setChecked(_pref->boolean("ShowPOMenu"));
+  _soMenu->setChecked(_pref->boolean("ShowSOMenu"));
+  _srMenu->setChecked(_pref->boolean("ShowSRMenu"));
+  _saMenu->setChecked(_pref->boolean("ShowSAMenu"));
+  _pmMenu->setChecked(_pref->boolean("ShowPMMenu"));
+  _arMenu->setChecked(_pref->boolean("ShowARMenu"));
+  _apMenu->setChecked(_pref->boolean("ShowAPMenu")); 
+  _glMenu->setChecked(_pref->boolean("ShowGLMenu"));
 
-  _imToolbar->setChecked(_pref.boolean("ShowIMToolbar"));
-  _pdToolbar->setChecked(_pref.boolean("ShowPDToolbar"));
-  _msToolbar->setChecked(_pref.boolean("ShowMSToolbar"));
-  _cpToolbar->setChecked(_pref.boolean("ShowCPToolbar"));
-  _woToolbar->setChecked(_pref.boolean("ShowWOToolbar"));
-  _crmToolbar->setChecked(_pref.boolean("ShowCRMToolbar"));
-  _poToolbar->setChecked(_pref.boolean("ShowPOToolbar"));
-  _soToolbar->setChecked(_pref.boolean("ShowSOToolbar"));
-  _srToolbar->setChecked(_pref.boolean("ShowSRToolbar"));
-  _saToolbar->setChecked(_pref.boolean("ShowSAToolbar"));
-  _pmToolbar->setChecked(_pref.boolean("ShowPMToolbar"));
-  _arToolbar->setChecked(_pref.boolean("ShowARToolbar"));
-  _apToolbar->setChecked(_pref.boolean("ShowAPToolbar")); 
-  _glToolbar->setChecked(_pref.boolean("ShowGLToolbar"));
+  _imToolbar->setChecked(_pref->boolean("ShowIMToolbar"));
+  _pdToolbar->setChecked(_pref->boolean("ShowPDToolbar"));
+  _msToolbar->setChecked(_pref->boolean("ShowMSToolbar"));
+  _cpToolbar->setChecked(_pref->boolean("ShowCPToolbar"));
+  _woToolbar->setChecked(_pref->boolean("ShowWOToolbar"));
+  _crmToolbar->setChecked(_pref->boolean("ShowCRMToolbar"));
+  _poToolbar->setChecked(_pref->boolean("ShowPOToolbar"));
+  _soToolbar->setChecked(_pref->boolean("ShowSOToolbar"));
+  _srToolbar->setChecked(_pref->boolean("ShowSRToolbar"));
+  _saToolbar->setChecked(_pref->boolean("ShowSAToolbar"));
+  _pmToolbar->setChecked(_pref->boolean("ShowPMToolbar"));
+  _arToolbar->setChecked(_pref->boolean("ShowARToolbar"));
+  _apToolbar->setChecked(_pref->boolean("ShowAPToolbar")); 
+  _glToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
 
-  _fixedWidthFonts->setChecked(_pref.boolean("UsedFixedWidthFonts"));
-  _listNumericItemsFirst->setChecked(_pref.boolean("ListNumericItemNumbersFirst"));
-  _showSoitemAvailability->setChecked(_pref.boolean("ShowSOItemAvailability"));
+  _fixedWidthFonts->setChecked(_pref->boolean("UsedFixedWidthFonts"));
+  _listNumericItemsFirst->setChecked(_pref->boolean("ListNumericItemNumbersFirst"));
+  _showSoitemAvailability->setChecked(_pref->boolean("ShowSOItemAvailability"));
 
-  _idleTimeout->setValue(_pref.value("IdleTimeout").toInt());
+  _idleTimeout->setValue(_pref->value("IdleTimeout").toInt());
 
-  if(_pref.value("DefaultEllipsesAction") == "search")
+  if(_pref->value("DefaultEllipsesAction") == "search")
     _ellipsesAction->setId(2);
   else
     _ellipsesAction->setId(1);
@@ -292,86 +302,86 @@ void userPreferences::sPopulate()
 void userPreferences::sSave()
 {
   if (_backgroundImage->isChecked())
-    _pref.set("BackgroundImageid", _backgroundImageid);
+    _pref->set("BackgroundImageid", _backgroundImageid);
   else
-    _pref.set("BackgroundImageid", -1);
+    _pref->set("BackgroundImageid", -1);
   
-  _pref.set("UseOldMenu", _standard->isChecked());
+  _pref->set("UseOldMenu", _standard->isChecked());
   
   if (_neo->isChecked())
   {
-    _pref.set("ShowIMMenu", _inventoryMenu->isChecked());
-    _pref.set("ShowPDMenu", _productsMenu->isChecked());
-    _pref.set("ShowMSMenu", _scheduleMenu->isChecked());
-    _pref.set("ShowWOMenu", _manufactureMenu->isChecked());
-    _pref.set("ShowCRMMenu", _crmMenu2->isChecked());
-    _pref.set("ShowPOMenu", _purchaseMenu->isChecked());
-    _pref.set("ShowSOMenu", _salesMenu->isChecked());
-    _pref.set("ShowGLMenu", _accountingMenu->isChecked());
+    _pref->set("ShowIMMenu", _inventoryMenu->isChecked());
+    _pref->set("ShowPDMenu", _productsMenu->isChecked());
+    _pref->set("ShowMSMenu", _scheduleMenu->isChecked());
+    _pref->set("ShowWOMenu", _manufactureMenu->isChecked());
+    _pref->set("ShowCRMMenu", _crmMenu2->isChecked());
+    _pref->set("ShowPOMenu", _purchaseMenu->isChecked());
+    _pref->set("ShowSOMenu", _salesMenu->isChecked());
+    _pref->set("ShowGLMenu", _accountingMenu->isChecked());
   
-    _pref.set("ShowIMToolbar", _inventoryToolbar->isChecked());
-    _pref.set("ShowPDToolbar", _productsToolbar->isChecked());
-    _pref.set("ShowMSToolbar", _scheduleToolbar->isChecked());
-    _pref.set("ShowWOToolbar", _manufactureToolbar->isChecked());
-    _pref.set("ShowCRMToolbar", _crmToolbar2->isChecked());
-    _pref.set("ShowPOToolbar", _purchaseToolbar->isChecked());
-    _pref.set("ShowSOToolbar", _salesToolbar->isChecked());
-    _pref.set("ShowGLToolbar", _accountingToolbar->isChecked());
+    _pref->set("ShowIMToolbar", _inventoryToolbar->isChecked());
+    _pref->set("ShowPDToolbar", _productsToolbar->isChecked());
+    _pref->set("ShowMSToolbar", _scheduleToolbar->isChecked());
+    _pref->set("ShowWOToolbar", _manufactureToolbar->isChecked());
+    _pref->set("ShowCRMToolbar", _crmToolbar2->isChecked());
+    _pref->set("ShowPOToolbar", _purchaseToolbar->isChecked());
+    _pref->set("ShowSOToolbar", _salesToolbar->isChecked());
+    _pref->set("ShowGLToolbar", _accountingToolbar->isChecked());
   }
   else
   {
-    _pref.set("ShowIMMenu", _imMenu->isChecked());
-    _pref.set("ShowPDMenu", _pdMenu->isChecked());
-    _pref.set("ShowMSMenu", _msMenu->isChecked());
-    _pref.set("ShowCPMenu", _cpMenu->isChecked());
-    _pref.set("ShowWOMenu", _woMenu->isChecked());
-    _pref.set("ShowCRMMenu", _crmMenu->isChecked());
-    _pref.set("ShowPOMenu", _poMenu->isChecked());
-    _pref.set("ShowSOMenu", _soMenu->isChecked());
-    _pref.set("ShowSRMenu", _srMenu->isChecked());
-    _pref.set("ShowSAMenu", _saMenu->isChecked());
-    _pref.set("ShowPMMenu", _pmMenu->isChecked());
-    _pref.set("ShowAPMenu", _apMenu->isChecked());
-    _pref.set("ShowARMenu", _arMenu->isChecked());
-    _pref.set("ShowGLMenu", _glMenu->isChecked());
+    _pref->set("ShowIMMenu", _imMenu->isChecked());
+    _pref->set("ShowPDMenu", _pdMenu->isChecked());
+    _pref->set("ShowMSMenu", _msMenu->isChecked());
+    _pref->set("ShowCPMenu", _cpMenu->isChecked());
+    _pref->set("ShowWOMenu", _woMenu->isChecked());
+    _pref->set("ShowCRMMenu", _crmMenu->isChecked());
+    _pref->set("ShowPOMenu", _poMenu->isChecked());
+    _pref->set("ShowSOMenu", _soMenu->isChecked());
+    _pref->set("ShowSRMenu", _srMenu->isChecked());
+    _pref->set("ShowSAMenu", _saMenu->isChecked());
+    _pref->set("ShowPMMenu", _pmMenu->isChecked());
+    _pref->set("ShowAPMenu", _apMenu->isChecked());
+    _pref->set("ShowARMenu", _arMenu->isChecked());
+    _pref->set("ShowGLMenu", _glMenu->isChecked());
   
-    _pref.set("ShowIMToolbar", _imToolbar->isChecked());
-    _pref.set("ShowPDToolbar", _pdToolbar->isChecked());
-    _pref.set("ShowMSToolbar", _msToolbar->isChecked());
-    _pref.set("ShowCPToolbar", _cpToolbar->isChecked());
-    _pref.set("ShowWOToolbar", _woToolbar->isChecked());
-    _pref.set("ShowCRMToolbar", _crmToolbar->isChecked());
-    _pref.set("ShowPOToolbar", _poToolbar->isChecked());
-    _pref.set("ShowSOToolbar", _soToolbar->isChecked());
-    _pref.set("ShowSRToolbar", _srToolbar->isChecked());
-    _pref.set("ShowSAToolbar", _saToolbar->isChecked());
-    _pref.set("ShowPMToolbar", _pmToolbar->isChecked());
-    _pref.set("ShowAPToolbar", _apToolbar->isChecked());
-    _pref.set("ShowARToolbar", _arToolbar->isChecked()); 
-    _pref.set("ShowGLToolbar", _glToolbar->isChecked());
+    _pref->set("ShowIMToolbar", _imToolbar->isChecked());
+    _pref->set("ShowPDToolbar", _pdToolbar->isChecked());
+    _pref->set("ShowMSToolbar", _msToolbar->isChecked());
+    _pref->set("ShowCPToolbar", _cpToolbar->isChecked());
+    _pref->set("ShowWOToolbar", _woToolbar->isChecked());
+    _pref->set("ShowCRMToolbar", _crmToolbar->isChecked());
+    _pref->set("ShowPOToolbar", _poToolbar->isChecked());
+    _pref->set("ShowSOToolbar", _soToolbar->isChecked());
+    _pref->set("ShowSRToolbar", _srToolbar->isChecked());
+    _pref->set("ShowSAToolbar", _saToolbar->isChecked());
+    _pref->set("ShowPMToolbar", _pmToolbar->isChecked());
+    _pref->set("ShowAPToolbar", _apToolbar->isChecked());
+    _pref->set("ShowARToolbar", _arToolbar->isChecked()); 
+    _pref->set("ShowGLToolbar", _glToolbar->isChecked());
   }
   
-  _pref.set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
-  _pref.set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
-  _pref.set("UseItemCache", _itemCache->isChecked());
-  _pref.set("UseCustCache", _customerCache->isChecked());
+  _pref->set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
+  _pref->set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
+  _pref->set("UseItemCache", _itemCache->isChecked());
+  _pref->set("UseCustCache", _customerCache->isChecked());
 
-  _pref.set("UsedFixedWidthFonts", _fixedWidthFonts->isChecked());
-  _pref.set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
-  _pref.set("ShowSOItemAvailability", _showSoitemAvailability->isChecked());
+  _pref->set("UsedFixedWidthFonts", _fixedWidthFonts->isChecked());
+  _pref->set("ListNumericItemNumbersFirst", _listNumericItemsFirst->isChecked());
+  _pref->set("ShowSOItemAvailability", _showSoitemAvailability->isChecked());
 
-  _pref.set("IdleTimeout", _idleTimeout->value());
+  _pref->set("IdleTimeout", _idleTimeout->value());
   omfgThis->_timeoutHandler->setIdleMinutes(_idleTimeout->value());
 
   if(_ellipsesAction->id() == 2)
-    _pref.set("DefaultEllipsesAction", QString("search"));
+    _pref->set("DefaultEllipsesAction", QString("search"));
   else
-    _pref.set("DefaultEllipsesAction", QString("list"));
+    _pref->set("DefaultEllipsesAction", QString("list"));
 
   if(_interfaceTopLevel->isChecked())
-    _pref.set("InterfaceWindowOption", QString("TopLevel"));
+    _pref->set("InterfaceWindowOption", QString("TopLevel"));
   else
-    _pref.set("InterfaceWindowOption", QString("Workspace"));
+    _pref->set("InterfaceWindowOption", QString("Workspace"));
 
   if (_currentUser->isChecked())
   {

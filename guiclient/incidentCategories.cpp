@@ -93,7 +93,7 @@ incidentCategories::incidentCategories(QWidget* parent, const char* name, Qt::WF
   _incidentCategories->addColumn(tr("Category"),      100, Qt::AlignLeft );
   _incidentCategories->addColumn(tr("Description"),    -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainIncidentCategories"))
+  if (_privileges->check("MaintainIncidentCategories"))
   {
     connect(_incidentCategories, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_incidentCategories, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -189,13 +189,13 @@ void incidentCategories::sPopulateMenu( QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainIncidentCategories"))
+  if (!_privileges->check("MaintainIncidentCategories"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainIncidentCategories"))
+  if (!_privileges->check("MaintainIncidentCategories"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

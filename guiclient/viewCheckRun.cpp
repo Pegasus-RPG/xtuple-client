@@ -263,7 +263,7 @@ void viewCheckRun::sHandleItemSelection()
     _printCheck->setEnabled(TRUE);
 
     _edit->setEnabled((selected->text(1) == tr("Yes")) && (selected->text(2) == tr("No")));
-    _postCheck->setEnabled((selected->text(2) == tr("Yes")) && (_privleges->check("PostPayments")));
+    _postCheck->setEnabled((selected->text(2) == tr("Yes")) && (_privileges->check("PostPayments")));
   }
 }
 

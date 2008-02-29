@@ -97,7 +97,7 @@ printCreditMemo::printCreditMemo(QWidget* parent, const char* name, bool modal, 
       }
     }
 
-    if(!_privleges->check("PostARDocuments"))
+    if(!_privileges->check("PostARDocuments"))
     {
       _post->setChecked(false);
       _post->setEnabled(false);

@@ -622,16 +622,16 @@ void incident::sPopulateTodoMenu(QMenu *pMenu)
   int menuItem;
 
   bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privleges->check("MaintainPersonalTodoList") ||
-       _privleges->check("MaintainOtherTodoLists") );
+      (_privileges->check("MaintainPersonalTodoList") ||
+       _privileges->check("MaintainOtherTodoLists") );
 
   bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (_myUsrId == _todoList->altId() && _privleges->check("MaintainPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privleges->check("MaintainOtherTodoLists")) );
+      (_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      (_myUsrId != _todoList->altId() && _privileges->check("MaintainOtherTodoLists")) );
 
   bool viewPriv =
-      (_myUsrId == _todoList->altId() && _privleges->check("ViewPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privleges->check("ViewOtherTodoLists"));
+      (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      (_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
 
   menuItem = pMenu->insertItem(tr("New..."), this, SLOT(sNewTodoItem()), 0);
   pMenu->setItemEnabled(menuItem, newPriv);
@@ -649,16 +649,16 @@ void incident::sPopulateTodoMenu(QMenu *pMenu)
 void incident::sHandleTodoPrivs()
 {
   bool newPriv = (cNew == _mode || cEdit == _mode) &&
-      (_privleges->check("MaintainPersonalTodoList") ||
-       _privleges->check("MaintainOtherTodoLists") );
+      (_privileges->check("MaintainPersonalTodoList") ||
+       _privileges->check("MaintainOtherTodoLists") );
 
   bool editPriv = (cNew == _mode || cEdit == _mode) && (
-      (_myUsrId == _todoList->altId() && _privleges->check("MaintainPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privleges->check("MaintainOtherTodoLists")) );
+      (_myUsrId == _todoList->altId() && _privileges->check("MaintainPersonalTodoList")) ||
+      (_myUsrId != _todoList->altId() && _privileges->check("MaintainOtherTodoLists")) );
 
   bool viewPriv =
-      (_myUsrId == _todoList->altId() && _privleges->check("ViewPersonalTodoList")) ||
-      (_myUsrId != _todoList->altId() && _privleges->check("ViewOtherTodoLists"));
+      (_myUsrId == _todoList->altId() && _privileges->check("ViewPersonalTodoList")) ||
+      (_myUsrId != _todoList->altId() && _privileges->check("ViewOtherTodoLists"));
 
   _newTodoItem->setEnabled(newPriv);
   _editTodoItem->setEnabled(editPriv && _todoList->id() > 0);

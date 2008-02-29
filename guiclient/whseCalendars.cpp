@@ -85,7 +85,7 @@ whseCalendars::whseCalendars(QWidget* parent, const char* name, Qt::WFlags fl)
 
   statusBar()->hide();
   
-  if (_privleges->check("MaintainWarehouseCalendarExceptions"))
+  if (_privileges->check("MaintainWarehouseCalendarExceptions"))
   {
     connect(_whsecal, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_whsecal, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

@@ -95,55 +95,55 @@ moduleCP::moduleCP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "cp.runBufferStatusByItem", tr("Run Buffer Status by Item..."),
                                       this, SLOT(sCreateBufferStatusByItem()),
-                                      bufferManagementMenu, _privleges->check("CreateBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("CreateBufferStatus") ) );
 
   parent->actions.append( new Action( parent, "cp.runBufferStatusByPlannerCode", tr("Run Buffer Status by Planner Code..."),
                                       this, SLOT(sCreateBufferStatusByPlannerCode()),
-                                      bufferManagementMenu, _privleges->check("CreateBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("CreateBufferStatus") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "cp.dspInventoryBufferStatusByItemGroup", tr("Inventory Buffer Status by Item Group..."),
                                       this, SLOT(sDspInventoryBufferStatusByItemGroup()),
-                                      bufferManagementMenu, _privleges->check("ViewInventoryBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("ViewInventoryBufferStatus") ) );
 
   parent->actions.append( new Action( parent, "cp.dspInventoryBufferStatusByClassCode", tr("Inventory Buffer Status by Class Code..."),
                                       this, SLOT(sDspInventoryBufferStatusByClassCode()),
-                                      bufferManagementMenu, _privleges->check("ViewInventoryBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("ViewInventoryBufferStatus") ) );
 
   parent->actions.append( new Action( parent, "cp.dspInventoryBufferStatusByPlannerCode", tr("Inventory Buffer Status by Planner Code..."),
                                       this, SLOT(sDspInventoryBufferStatusByPlannerCode()),
-                                      bufferManagementMenu, _privleges->check("ViewInventoryBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("ViewInventoryBufferStatus") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "cp.dspCapacityBufferStatusByWorkCenter", tr("Capacity Buffer Status by Work Center..."),
                                       this, SLOT(sDspCapacityBufferStatusByWorkCenter()),
-                                      bufferManagementMenu, _privleges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
+                                      bufferManagementMenu, _privileges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "cp.dspWoBufferStatusByItemGroup", tr("Work Order Buffer Status by Item Group..."),
                                       this, SLOT(sDspWoBufferStatusByItemGroup()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "cp.dspWoBufferStatusByClassCode", tr("Work Order Buffer Status by Class Code..."),
                                       this, SLOT(sDspWoBufferStatusByClassCode()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "cp.dspWoBufferStatusByPlannerCode", tr("Work Order Buffer Status by Planner Code..."),
                                       this, SLOT(sDspWoBufferStatusByPlannerCode()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "cp.dspWoOperationBufrStsByWorkCenter", tr("W/O Operation Buffer Status by Work Center..."),
                                       this, SLOT(sDspWoOperationBufrStsByWorkCenter()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")) && _metrics->boolean("Routings") ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")) && _metrics->boolean("Routings") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "cp.dspPoLineItemsByBufferStatus", tr("P/O Items by Buffer Status..."),
                                       this, SLOT(sDspPoItemsByBufferStatus()),
-                                      bufferManagementMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      bufferManagementMenu, _privileges->check("ViewPurchaseOrders") ) );
 
 
 //  Displays Menu
@@ -151,35 +151,35 @@ moduleCP::moduleCP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "cp.dspTimePhasedCapacityByWorkCenter", tr("Time-Phased Capacity by Work Center..."),
                                       this, SLOT(sDspTimePhasedCapacityByWorkCenter()),
-                                      displaysMenu, _privleges->check("ViewWorkCenterCapacity") && _metrics->boolean("Routings") ) );
+                                      displaysMenu, _privileges->check("ViewWorkCenterCapacity") && _metrics->boolean("Routings") ) );
 
   parent->actions.append( new Action( parent, "cp.dspTimePhasedAvailableCapacityByWorkCenter", tr("Time-Phased Available Capacity by Work Center..."),
                                       this, SLOT(sDspTimePhasedAvailableCapacityByWorkCenter()),
-                                      displaysMenu, _privleges->check("ViewWorkCenterCapacity") && _metrics->boolean("Routings") ) );
+                                      displaysMenu, _privileges->check("ViewWorkCenterCapacity") && _metrics->boolean("Routings") ) );
 
   parent->actions.append( new Action( parent, "cp.dspTimePhasedLoadByWorkCenter", tr("Time-Phased Load by Work Center..."),
                                       this, SLOT(sDspTimePhasedLoadByWorkCenter()),
-                                      displaysMenu, _privleges->check("ViewWorkCenterLoad") && _metrics->boolean("Routings") ) );
+                                      displaysMenu, _privileges->check("ViewWorkCenterLoad") && _metrics->boolean("Routings") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "cp.dspTimePhasedDemandByPlannerCode", tr("Time-Phased Demand by Planner Code..."),
                                       this, SLOT(sDspTimePhasedDemandByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewProductionDemand") ) );
+                                      displaysMenu, _privileges->check("ViewProductionDemand") ) );
 
   parent->actions.append( new Action( parent, "cp.dspTimePhasedProductionByItem", tr("Time-Phased Production by Item..."),
                                       this, SLOT(sDspTimePhasedProductionByItem()),
-                                      displaysMenu, _privleges->check("ViewProduction") ) );
+                                      displaysMenu, _privileges->check("ViewProduction") ) );
 
   parent->actions.append( new Action( parent, "cp.dspTimePhasedProductionByPlannerCode", tr("Time-Phased Production by Planner Code..."),
                                       this, SLOT(sDspTimePhasedProductionByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewProduction") ) );
+                                      displaysMenu, _privileges->check("ViewProduction") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "cp.dspCapacityBufferStatusByWorkCenter", tr("Capacity Buffer Status by Work Center..."),
                                       this, SLOT(sDspCapacityBufferStatusByWorkCenter()),
-                                      displaysMenu, _privleges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
+                                      displaysMenu, _privileges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
 
 
 //  Master Information
@@ -187,7 +187,7 @@ moduleCP::moduleCP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "cp.workCenters", tr("Work Centers..."),
                                       this, SLOT(sWorkCenters()),
-                                      masterInfoMenu, (_privleges->check("MaintainWorkCenters") && _privleges->check("ViewWorkCenters") && _metrics->boolean("Routings")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainWorkCenters") && _privileges->check("ViewWorkCenters") && _metrics->boolean("Routings")) ) );
 
   mainMenu = new QMenu();
 

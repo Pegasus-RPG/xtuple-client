@@ -73,8 +73,8 @@ selectBillingQty::selectBillingQty(QWidget* parent, const char* name, bool modal
   connect(_taxType,	SIGNAL(newID(int)),	this, SLOT(sLookupTaxCode()));
   connect(_toBill, SIGNAL(textChanged(const QString&)), this, SLOT(sHandleBillingQty()));
 
-  _taxType->setEnabled(_privleges->check("OverrideTax"));
-  _taxCode->setEnabled(_privleges->check("OverrideTax"));
+  _taxType->setEnabled(_privileges->check("OverrideTax"));
+  _taxCode->setEnabled(_privileges->check("OverrideTax"));
 
   _taxauthid = -1;
 }

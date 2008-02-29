@@ -74,7 +74,7 @@ recallOrders::recallOrders(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_recall,	   SIGNAL(clicked()),	  this, SLOT(sRecall()));
   connect(_showInvoiced, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
-  _showInvoiced->setEnabled(_privleges->check("RecallInvoicedShipment"));
+  _showInvoiced->setEnabled(_privileges->check("RecallInvoicedShipment"));
   
   _ship->addColumn(tr("Ship Date"),	_dateColumn,  Qt::AlignCenter );
   _ship->addColumn(tr("Order #"),	_orderColumn, Qt::AlignLeft   );

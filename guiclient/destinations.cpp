@@ -109,7 +109,7 @@ void destinations::init()
   _destination->addColumn(tr("Name"),  -1,  Qt::AlignLeft);
   _destination->addColumn(tr("State"), 150, Qt::AlignLeft);
   
-  if (_privleges->check("MaintainDestinations"))
+  if (_privileges->check("MaintainDestinations"))
   {
     connect(_destination, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_destination, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

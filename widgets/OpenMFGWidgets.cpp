@@ -124,7 +124,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   _x_preferences = 0;
   _x_metrics = 0;
   _x_workspace = 0;
-  _x_privleges = 0;
+  _x_privileges = 0;
 
   m_plugins.append(new AddressClusterPlugin(this));
   m_plugins.append(new CalendarComboBoxPlugin(this));
@@ -199,12 +199,12 @@ Q_EXPORT_PLUGIN(OpenMFGPlugin)
 Preferences *_x_preferences;
 Metrics     *_x_metrics;
 QWorkspace  *_x_workspace;
-Privleges   *_x_privleges;
+Privileges  *_x_privileges;
 
-void initializePlugin(Preferences *pPreferences, Metrics *pMetrics, Privleges *pPrivleges, QWorkspace *pWorkspace)
+void initializePlugin(Preferences *pPreferences, Metrics *pMetrics, Privileges *pPrivileges, QWorkspace *pWorkspace)
 {
   _x_preferences = pPreferences;
   _x_metrics = pMetrics;
   _x_workspace = pWorkspace;
-  _x_privleges = pPrivleges;
+  _x_privileges = pPrivileges;
 }

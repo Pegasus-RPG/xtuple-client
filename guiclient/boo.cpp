@@ -253,7 +253,7 @@ void boo::sPopulateMenu(QMenu *pMenu)
   pMenu->insertItem(tr("View"), this, SLOT(sView()), 0);
 
   if ( ((_mode == cNew) || (_mode == cEdit)) &&
-       (_privleges->check("MaintainBOOs")) )
+       (_privileges->check("MaintainBOOs")) )
   {
     pMenu->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
     pMenu->insertItem(tr("Expire"), this, SLOT(sExpire()), 0);

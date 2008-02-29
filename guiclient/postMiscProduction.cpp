@@ -75,7 +75,7 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
   _item->setType(ItemLineEdit::cManufactured);
   _qtyToPost->setValidator(omfgThis->transQtyVal());
   
-  _immediateTransfer->setEnabled(_privleges->check("CreateInterWarehouseTrans"));
+  _immediateTransfer->setEnabled(_privileges->check("CreateInterWarehouseTrans"));
     
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs")) 
@@ -86,12 +86,11 @@ postMiscProduction::postMiscProduction(QWidget* parent, const char* name, bool m
     _transferWarehouse->hide();
   }
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _backflush->setChecked(true);
 
   _nonPickItems->setEnabled(_backflush->isChecked() &&
-			    _privleges->check("ChangeNonPickItems"));
+			    _privileges->check("ChangeNonPickItems"));
 
   // TODO: unhide as part of implementation of 5847
   _nonPickItems->hide();

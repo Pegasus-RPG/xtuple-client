@@ -85,7 +85,7 @@ taxRegistrations::taxRegistrations(QWidget* parent, const char* name, Qt::WFlags
 
   statusBar()->hide();
   
-  if (_privleges->check("MaintainChartOfAccounts"))
+  if (_privileges->check("MaintainChartOfAccounts"))
   {
     connect(_taxreg, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_taxreg, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

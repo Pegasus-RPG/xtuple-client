@@ -112,8 +112,7 @@ dspInventoryAvailabilityBySourceVendor::dspInventoryAvailabilityBySourceVendor(Q
   _availability->addColumn(tr("OUT Level"),    _qtyColumn,  Qt::AlignRight  );
   _availability->addColumn(tr("Available"),    _qtyColumn,  Qt::AlignRight  );
   
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _ignoreReorderAtZero->setChecked(true);
 
   sHandleShowReorder(_showReorder->isChecked());
@@ -207,11 +206,11 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
   menu->insertSeparator();
 
   menuItem = menu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
-  if (!_privleges->check("MaintainPurchaseRequests"))
+  if (!_privileges->check("MaintainPurchaseRequests"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
-  if (!_privleges->check("MaintainPurchaseOrders"))
+  if (!_privileges->check("MaintainPurchaseOrders"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menu->insertSeparator();
@@ -221,11 +220,11 @@ void dspInventoryAvailabilityBySourceVendor::sPopulateMenu(QMenu *menu, QTreeWid
   menu->insertSeparator();
 
   menuItem = menu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
-  if (!_privleges->check("EnterMiscCounts"))
+  if (!_privileges->check("EnterMiscCounts"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 
@@ -361,7 +360,7 @@ void dspInventoryAvailabilityBySourceVendor::sEnterMiscCount()
 void dspInventoryAvailabilityBySourceVendor::sHandleShowReorder(bool pValue)
 {
   _ignoreReorderAtZero->setEnabled(pValue);
-  if (pValue && Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  if (pValue && _preferences->boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
 }
 

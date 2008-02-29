@@ -111,7 +111,7 @@ void customerTypes::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainCustomerTypes"))
+  if (_privileges->check("MaintainCustomerTypes"))
   {
     connect(_custtype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_custtype, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

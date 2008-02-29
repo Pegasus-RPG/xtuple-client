@@ -120,7 +120,7 @@ void deleteWoMaterialItem::sDelete()
 {
   if (_womatl->qtyIssued() > 0)
   {
-    if(_privleges->check("ReturnWoMaterials"))
+    if(_privileges->check("ReturnWoMaterials"))
     {
       if (  QMessageBox::critical(  this, tr("W/O Material Requirement cannot be Deleted"),
                                     tr( "This W/O Material Requirement cannot be deleted as it has has material issued to it.\n"

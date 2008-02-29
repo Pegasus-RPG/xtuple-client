@@ -92,10 +92,10 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   _invchead->addColumn(tr("G/L Dist Date"), _dateColumn,  Qt::AlignCenter );
   _invchead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-  if (! _privleges->check("ChangeARInvcDistDate"))
+  if (! _privileges->check("ChangeARInvcDistDate"))
     _invchead->hideColumn(6);
 
-  if (_privleges->check("MaintainMiscInvoices"))
+  if (_privileges->check("MaintainMiscInvoices"))
   {
     _new->setEnabled(TRUE);
     connect(_invchead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -105,13 +105,13 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
   else
     connect(_invchead, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
 
-  if (_privleges->check("MaintainMiscInvoices") || _privleges->check("ViewMiscInvoices"))
+  if (_privileges->check("MaintainMiscInvoices") || _privileges->check("ViewMiscInvoices"))
     connect(_invchead, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("PrintInvoices"))
+  if (_privileges->check("PrintInvoices"))
     connect(_invchead, SIGNAL(valid(bool)), _print, SLOT(setEnabled(bool)));
   
-  if (_privleges->check("PostMiscInvoices"))
+  if (_privileges->check("PostMiscInvoices"))
   {
     connect(_invchead, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
     connect(_invchead, SIGNAL(valid(bool)), _printJournal, SLOT(setEnabled(bool)));
@@ -119,8 +119,7 @@ unpostedInvoices::unpostedInvoices(QWidget* parent, const char* name, Qt::WFlags
 
   connect(omfgThis, SIGNAL(invoicesUpdated(int, bool)), this, SLOT(sFillList()));
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
 
   sFillList();
@@ -217,7 +216,7 @@ void unpostedInvoices::sPost()
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
 
-  if (_privleges->check("ChangeARInvcDistDate"))
+  if (_privileges->check("ChangeARInvcDistDate"))
   {
     getGLDistDate newdlg(this, "", TRUE);
     newdlg.sSetDefaultLit(tr("Invoice Date"));
@@ -394,25 +393,25 @@ void unpostedInvoices::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainMiscInvoices"))
+  if (!_privileges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainMiscInvoices")) && (!_privleges->check("ViewMiscInvoices")))
+  if ((!_privileges->check("MaintainMiscInvoices")) && (!_privileges->check("ViewMiscInvoices")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainMiscInvoices"))
+  if (!_privileges->check("MaintainMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Print..."), this, SLOT(sPrint()), 0);
-  if (!_privleges->check("PrintInvoices"))
+  if (!_privileges->check("PrintInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostMiscInvoices"))
+  if (!_privileges->check("PostMiscInvoices"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

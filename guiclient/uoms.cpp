@@ -87,7 +87,7 @@ uoms::uoms(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
   connect(_uoms, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("MaintainUOMs"))
+  if (_privileges->check("MaintainUOMs"))
   {
     connect(_uoms, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_uoms, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

@@ -219,7 +219,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _ignoreSignals = FALSE;
 
-  if(!_privleges->check("ShowMarginsOnSalesOrder"))
+  if(!_privileges->check("ShowMarginsOnSalesOrder"))
   {
     _margin->hide();
     _marginLit->hide();
@@ -239,7 +239,7 @@ salesOrder::salesOrder(QWidget* parent, const char* name, Qt::WFlags fl)
   if (!_metrics->boolean("EnableReturnAuth"))
     _holdType->removeItem(4);
 
-  if(!_metrics->boolean("CCAccept") && !_privleges->check("ProcessCreditCards"))
+  if(!_metrics->boolean("CCAccept") && !_privileges->check("ProcessCreditCards"))
   {
     _salesOrderInformation->removeTab(_salesOrderInformation->indexOf(_creditCardPage));
   }
@@ -552,8 +552,8 @@ enum SetResponse salesOrder::set(const ParameterList &pParams)
 
   if (ISNEW(_mode) || ISEDIT(_mode))
   {
-    _orderDate->setEnabled(_privleges->check("OverrideSODate"));
-    _packDate->setEnabled(_privleges->check("AlterPackDate"));
+    _orderDate->setEnabled(_privileges->check("OverrideSODate"));
+    _packDate->setEnabled(_privileges->check("AlterPackDate"));
   }
   else
   {
@@ -1083,11 +1083,11 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
       pMenu->insertSeparator();
 
       menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
       menuid = pMenu->insertItem(tr("Reserve Stock..."), this, SLOT(sReserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
       menuid = pMenu->insertItem(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
 
       didsomething = true;
     }
@@ -1098,11 +1098,11 @@ void salesOrder::sPopulateMenu(QMenu *pMenu)
         pMenu->insertSeparator();
 
       menuid = pMenu->insertItem(tr("Return Stock"), this, SLOT(sReturnStock()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("IssueStockToShipping"));
+      pMenu->setItemEnabled(menuid, _privileges->check("IssueStockToShipping"));
       menuid = pMenu->insertItem(tr("Issue Stock..."), this, SLOT(sIssueStock()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("IssueStockToShipping"));
+      pMenu->setItemEnabled(menuid, _privileges->check("IssueStockToShipping"));
       menuid = pMenu->insertItem(tr("Issue Line Balance"), this, SLOT(sIssueLineBalance()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("IssueStockToShipping"));
+      pMenu->setItemEnabled(menuid, _privileges->check("IssueStockToShipping"));
 
       didsomething = true;
     }
@@ -1363,7 +1363,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
       if (_mode == cNew)
       {
         if ( (cust.value("cust_creditstatus").toString() == "H") &&
-             (!_privleges->check("CreateSOForHoldCustomer")) )
+             (!_privileges->check("CreateSOForHoldCustomer")) )
         {
           QMessageBox::warning( this, tr("Selected Customer on Credit Hold"),
                                 tr( "<p>The selected Customer has been placed "
@@ -1379,7 +1379,7 @@ void salesOrder::sPopulateCustomerInfo(int pCustid)
         }      
 
         if ( (cust.value("cust_creditstatus").toString() == "W") &&
-             (!_privleges->check("CreateSOForWarnCustomer")) )
+             (!_privileges->check("CreateSOForWarnCustomer")) )
         {
           QMessageBox::warning( this, tr("Selected Customer on Credit Warning"),
                                 tr( "<p>The selected Customer has been placed on "
@@ -1649,10 +1649,10 @@ void salesOrder::sHandleButtons()
 
   if (selected)
   {
-    _issueStock->setEnabled(_privleges->check("IssueStockToShipping"));
-    _issueLineBalance->setEnabled(_privleges->check("IssueStockToShipping"));
-    _reserveStock->setEnabled(_privleges->check("MaintainReservations"));
-    _reserveLineBalance->setEnabled(_privleges->check("MaintainReservations"));
+    _issueStock->setEnabled(_privileges->check("IssueStockToShipping"));
+    _issueLineBalance->setEnabled(_privileges->check("IssueStockToShipping"));
+    _reserveStock->setEnabled(_privileges->check("MaintainReservations"));
+    _reserveLineBalance->setEnabled(_privileges->check("MaintainReservations"));
 
     if(_numSelected == 1)
     {

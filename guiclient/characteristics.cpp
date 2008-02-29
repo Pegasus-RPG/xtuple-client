@@ -90,7 +90,7 @@ characteristics::characteristics(QWidget* parent, const char* name, Qt::WFlags f
 
     statusBar()->hide();
     
-    if (_privleges->check("MaintainCharacteristics"))
+    if (_privileges->check("MaintainCharacteristics"))
     {
       connect(_char, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_char, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

@@ -85,7 +85,7 @@ taxCodes::taxCodes(QWidget* parent, const char* name, Qt::WFlags fl)
     _tax->addColumn(tr("Code"),        _itemColumn, Qt::AlignLeft );
     _tax->addColumn(tr("Description"), -1,          Qt::AlignLeft );
 
-    if (_privleges->check("MaintainTaxCodes"))
+    if (_privileges->check("MaintainTaxCodes"))
     {
       connect(_tax, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_tax, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

@@ -112,7 +112,7 @@ void currencies::init()
 {
   statusBar()->hide();
 
-  if (_privleges->check("MaintainCurrencies"))
+  if (_privileges->check("MaintainCurrencies"))
   {
     connect(_curr, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_curr, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -241,11 +241,11 @@ void currencies::sPopulateMenu(QMenu* pMenu)
     pMenu->insertItem("View...", this, SLOT(sView()), 0);
     
     menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainCurrencies"))
+    if (!_privileges->check("MaintainCurrencies"))
 	pMenu->setItemEnabled(menuItem, FALSE);
     
     menuItem = pMenu->insertItem("Delete...", this, SLOT(sDelete()), 0);
-    if (!_privleges->check("MaintainCurrencies"))
+    if (!_privileges->check("MaintainCurrencies"))
 	pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -295,23 +295,23 @@ void dspItemSitesByParameterList::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Item Site..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainItemSites")) && (!_privleges->check("ViewItemSites")))
+  if ((!_privileges->check("MaintainItemSites")) && (!_privileges->check("ViewItemSites")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit Item Site..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemSites"))
+  if (!_privileges->check("MaintainItemSites"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("View Inventory Availability..."), this, SLOT(sInventoryAvailability()), 0);
-  if (!_privleges->check("ViewInventoryAvailability"))
+  if (!_privileges->check("ViewInventoryAvailability"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

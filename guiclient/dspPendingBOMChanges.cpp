@@ -128,11 +128,11 @@ void dspPendingBOMChanges::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit BOM Item..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainBOMs"))
+  if (!_privileges->check("MaintainBOMs"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View BOM Item..."), this, SLOT(sView()), 0);
-  if ( (!_privleges->check("MaintainBOMs")) && (!_privleges->check("ViewBOMs")) )
+  if ( (!_privileges->check("MaintainBOMs")) && (!_privileges->check("ViewBOMs")) )
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

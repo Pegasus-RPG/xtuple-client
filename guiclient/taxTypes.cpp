@@ -90,7 +90,7 @@ taxTypes::taxTypes(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxtype->addColumn(tr("Name"),    70, Qt::AlignLeft );
   _taxtype->addColumn(tr("Description"), -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainTaxTypes"))
+  if (_privileges->check("MaintainTaxTypes"))
   {
     connect(_taxtype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_taxtype, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

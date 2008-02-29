@@ -171,7 +171,7 @@ void dspTimePhasedSalesByCustomerGroup::sPopulateMenu(QMenu *menuThis, QTreeWidg
   if (pColumn > 1)
   {
     intMenuItem = menuThis->insertItem(tr("View Sales Detail..."), this, SLOT(sViewShipments()), 0);
-    if (!_privleges->check("ViewSalesHistory"))
+    if (!_privileges->check("ViewSalesHistory"))
       menuThis->setItemEnabled(intMenuItem, FALSE);
   }
 }

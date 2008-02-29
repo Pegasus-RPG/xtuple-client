@@ -115,7 +115,7 @@ void itemSources::init()
   _itemsrc->addColumn(tr("Vendor"),      _itemColumn, Qt::AlignLeft );
   _itemsrc->addColumn(tr("Vendor Item"), _itemColumn, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainItemSources"))
+  if (_privileges->check("MaintainItemSources"))
   {
     connect(_itemsrc, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_itemsrc, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -207,15 +207,15 @@ void itemSources::sPopulateMenu(QMenu *menuThis)
   int intMenuItem;
 
   intMenuItem = menuThis->insertItem(tr("Edit Item Source..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemSource"))
+  if (!_privileges->check("MaintainItemSource"))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 
   intMenuItem = menuThis->insertItem(tr("View Item Source..."), this, SLOT(sView()), 0);
-  if ((!_privleges->check("MaintainItemSource")) && (!_privleges->check("ViewItemSource")))
+  if ((!_privileges->check("MaintainItemSource")) && (!_privileges->check("ViewItemSource")))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 
   intMenuItem = menuThis->insertItem(tr("Delete Item Source..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainItemSource"))
+  if (!_privileges->check("MaintainItemSource"))
     menuThis->setItemEnabled(intMenuItem, FALSE);
 }
 

@@ -110,7 +110,7 @@ void labelForms::init()
   _labelforms->addColumn(tr("Form Name"), -1,           Qt::AlignLeft   );
   _labelforms->addColumn(tr("#/Page"),    _orderColumn, Qt::AlignCenter );
 
-  if (_privleges->check("MaintainShippingForms"))
+  if (_privileges->check("MaintainShippingForms"))
   {
     connect(_labelforms, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_labelforms, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

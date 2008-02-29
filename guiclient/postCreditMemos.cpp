@@ -70,8 +70,7 @@ postCreditMemos::postCreditMemos(QWidget* parent, const char* name, bool modal, 
 
   connect(_post, SIGNAL(clicked()), this, SLOT(sPost()));
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _printJournal->setChecked(true);
 
   _post->setFocus();

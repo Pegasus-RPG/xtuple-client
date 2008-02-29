@@ -113,157 +113,157 @@ moduleSA::moduleSA(GUIClient *pParent) :
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByCustomer", tr("Sales History by Customer..."),
                                       this, SLOT(sDspSalesHistoryByCustomer()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByBillToName", tr("Sales History by Bill-To Name..."),
                                       this, SLOT(sDspSalesHistoryByBilltoName()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByShipTo", tr("Sales History by Ship-To..."),
                                       this, SLOT(sDspSalesHistoryByShipTo()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByItem", tr("Sales History by Item..."),
                                       this, SLOT(sDspSalesHistoryByItem()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryBySalesRep", tr("Sales History by Sales Rep..."),
                                       this, SLOT(sDspSalesHistoryBySalesRep()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByProductCategory", tr("Sales History by Product Category..."),
                                       this, SLOT(sDspSalesHistoryByProductCategory()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByCustomerType", tr("Sales History by Customer Type..."),
                                       this, SLOT(sDspSalesHistoryByCustomerType()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSalesHistoryByCustomerGroup", tr("Sales History by Customer Group..."),
                                       this, SLOT(sDspSalesHistoryByCustomerGroup()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "sa.dspBriefSalesHistoryByCustomer", tr("Brief Sales History by Customer..."),
                                       this, SLOT(sDspBriefSalesHistoryByCustomer()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBriefSalesHistoryByCustomerType", tr("Brief Sales History by Customer Type..."),
                                       this, SLOT(sDspBriefSalesHistoryByCustomerType()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBriefSalesHistoryBySalesRep", tr("Brief Sales History by Sales Rep..."),
                                       this, SLOT(sDspBriefSalesHistoryBySalesRep()),
-                                      displaysMenu, _privleges->check("ViewSalesHistory") ) );
+                                      displaysMenu, _privileges->check("ViewSalesHistory") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "sa.dspBookingsByCustomer", tr("Bookings by Customer..."),
                                       this, SLOT(sDspBookingsByCustomer()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBookingsByCustomerGroup", tr("Bookings by Customer Group..."),
                                       this, SLOT(sDspBookingsByCustomerGroup()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBookingsByShipTo", tr("Bookings by Ship-To..."),
                                       this, SLOT(sDspBookingsByShipTo()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBookingsByItem", tr("Bookings by Item..."),
                                       this, SLOT(sDspBookingsByItem()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBookingsByProductCategory", tr("Bookings by Product Category..."),
                                       this, SLOT(sDspBookingsByProductCategory()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspBookingsBySalesRep", tr("Bookings by Sales Rep..."),
                                       this, SLOT(sDspBookingsBySalesRep()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryByCustomer", tr("Summarized Sales History by Customer..."),
                                       this, SLOT(sDspSummarizedSalesByCustomer()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryByCustomerType", tr("Summarized Sales History by Customer Type..."),
                                       this, SLOT(sDspSummarizedSalesByCustomerType()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryByCustomerByItem", tr("Summarized Sales History by Customer by Item..."),
                                       this, SLOT(sDspSummarizedSalesByCustomerByItem()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryByCustomerTypeByItem", tr("Summarized Sales History by Customer Type by Item..."),
                                       this, SLOT(sDspSummarizedSalesByCustomerTypeByItem()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryByItem", tr("Summarized Sales History by Item..."),
                                       this, SLOT(sDspSummarizedSalesByItem()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryBySalesRep", tr("Summarized Sales History by Sales Rep..."),
                                       this, SLOT(sDspSummarizedSalesBySalesRep()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspSummarizedSalesHistoryByShippingZoneByItem", tr("Summarized Sales History by Shipping Zone by Item..."),
                                       this, SLOT(sDspSummarizedSalesHistoryByShippingZone()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedBookingsByItem", tr("Time-Phased Bookings by Item..."),
                                       this, SLOT(sDspTimePhasedBookingsByItem()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedBookingsByProductCategory", tr("Time-Phased Bookings by Product Category..."),
                                       this, SLOT(sDspTimePhasedBookingsByProductCategory()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedBookingsByCustomer", tr("Time-Phased Bookings by Customer..."),
                                       this, SLOT(sDspTimePhasedBookingsByCustomer()),
-                                      displaysMenu, _privleges->check("ViewSalesOrders") ) );
+                                      displaysMenu, _privileges->check("ViewSalesOrders") ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedSalesHistoryByItem", tr("Time-Phased Sales History by Item..."),
                                       this, SLOT(sDspTimePhasedSalesByItem()),
-                                      displaysMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewSalesHistory") && _privileges->check("ViewCustomerPrices")) ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedSalesHistoryByProductCategory", tr("Time-Phased Sales History by Product Category..."),
                                       this, SLOT(sDspTimePhasedSalesByProductCategory()),
-                                      displaysMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewSalesHistory") && _privileges->check("ViewCustomerPrices")) ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedSalesHistoryByCustomer", tr("Time-Phased Sales History by Customer..."),
                                       this, SLOT(sDspTimePhasedSalesByCustomer()),
-                                      displaysMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewSalesHistory") && _privileges->check("ViewCustomerPrices")) ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedSalesHistoryByCustomerGroup", tr("Time-Phased Sales History by Customer Group..."),
                                       this, SLOT(sDspTimePhasedSalesByCustomerGroup()),
-                                      displaysMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewSalesHistory") && _privileges->check("ViewCustomerPrices")) ) );
 
   parent->actions.append( new Action( parent, "sa.dspTimePhasedSalesHistoryByCustomerByItem", tr("Time-Phased Sales History by Customer by Item..."),
                                       this, SLOT(sDspTimePhasedSalesByCustomerByItem()),
-                                      displaysMenu, (_privleges->check("ViewSalesHistory") && _privleges->check("ViewCustomerPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewSalesHistory") && _privileges->check("ViewCustomerPrices")) ) );
 
 //  Reports
   reportsMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "sa.rptPrintSASpecialCalendarForm", tr("Print S/A Special Calendar Form..."),
                                       this, SLOT(sPrintSASpecialCalendarForm()),
-                                      reportsMenu, _privleges->check("ViewSalesHistory") ) );
+                                      reportsMenu, _privileges->check("ViewSalesHistory") ) );
 
 //  Utilities
   utilitiesMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "sa.archieveSalesHistory", tr("Archive Sales History..."),
                                       this, SLOT(sArchiveSalesHistory()),
-                                      utilitiesMenu, _privleges->check("ArchiveSalesHistory") ) );
+                                      utilitiesMenu, _privileges->check("ArchiveSalesHistory") ) );
 
   parent->actions.append( new Action( parent, "sa.restoreSalesHistory", tr("Restore Sales History..."),
                                       this, SLOT(sRestoreSalesHistory()),
-                                      utilitiesMenu, _privleges->check("RestoreSalesHistory") ) );
+                                      utilitiesMenu, _privileges->check("RestoreSalesHistory") ) );
 
 
   mainMenu = new QMenu();

@@ -67,8 +67,8 @@
 
 #define UNITPRICE_COL	7
 #define EXTPRICE_COL	8
-#define UNITCOST_COL	( 9 - (_privleges->check("ViewCustomerPrices") ? 0 : 2))
-#define EXTCOST_COL	(10 - (_privleges->check("ViewCustomerPrices") ? 0 : 2))
+#define UNITCOST_COL	( 9 - (_privileges->check("ViewCustomerPrices") ? 0 : 2))
+#define EXTCOST_COL	(10 - (_privileges->check("ViewCustomerPrices") ? 0 : 2))
 
 /*
  *  Constructs a dspSalesHistoryByShipTo as a child of 'parent', with the
@@ -100,19 +100,19 @@ dspSalesHistoryByShipTo::dspSalesHistoryByShipTo(QWidget* parent, const char* na
   _sohist->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
   _sohist->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _sohist->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
-  if (_privleges->check("ViewCustomerPrices"))
+  if (_privileges->check("ViewCustomerPrices"))
   {
     _sohist->addColumn(tr("Unit Price"),  _priceColumn,    Qt::AlignRight );
     _sohist->addColumn(tr("Ext. Price"),  _bigMoneyColumn, Qt::AlignRight );
   }
-  if (_privleges->check("ViewCosts"))
+  if (_privileges->check("ViewCosts"))
   {
     _sohist->addColumn(tr("Unit Cost"),   _costColumn, Qt::AlignRight );
     _sohist->addColumn(tr("Ext. Cost"),   _costColumn, Qt::AlignRight );
   }
 
-  _showCosts->setEnabled(_privleges->check("ViewCosts"));
-  _showPrices->setEnabled(_privleges->check("ViewCustomerPrices"));
+  _showCosts->setEnabled(_privileges->check("ViewCosts"));
+  _showPrices->setEnabled(_privileges->check("ViewCustomerPrices"));
 
   sHandleParams();
 
@@ -166,7 +166,7 @@ void dspSalesHistoryByShipTo::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("EditSalesHistory"))
+  if (!_privileges->check("EditSalesHistory"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);

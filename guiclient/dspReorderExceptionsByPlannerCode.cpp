@@ -187,7 +187,7 @@ void dspReorderExceptionsByPlannerCode::sPopulateMenu( QMenu *pMenu )
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Running Availability..."), this, SLOT(sRunningAvailability()), 0);
-  if (!_privleges->check("ViewInventoryAvailability"))
+  if (!_privileges->check("ViewInventoryAvailability"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   if (_exception->altId() == 1)
@@ -195,7 +195,7 @@ void dspReorderExceptionsByPlannerCode::sPopulateMenu( QMenu *pMenu )
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Create Work Order..."), this, SLOT(sCreateWorkOrder()), 0);
-    if (!_privleges->check("MaintainWorkOrders"))
+    if (!_privileges->check("MaintainWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

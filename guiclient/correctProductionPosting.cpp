@@ -80,14 +80,13 @@ correctProductionPosting::correctProductionPosting(QWidget* parent, const char* 
   _wo->setType(cWoIssued);
   _qty->setValidator(omfgThis->qtyVal());
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _backFlush->setChecked(true);
     _backflushOperations->setChecked(true);
   }
   _nonPickItems->setEnabled(_backFlush->isChecked() &&
-			    _privleges->check("ChangeNonPickItems"));
+			    _privileges->check("ChangeNonPickItems"));
 
   // TODO: unhide as part of implementation of 5847
   _nonPickItems->hide();

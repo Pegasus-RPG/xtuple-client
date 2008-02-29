@@ -107,7 +107,7 @@ void itemCost::init()
   _captive = false;
   _itemcostid = -1;
 
-  _postCost->setEnabled(_privleges->check("PostActualCosts"));
+  _postCost->setEnabled(_privileges->check("PostActualCosts"));
   _foundCostElems = true; // assume it's true until sPopulateCostelem
 }
 

@@ -89,7 +89,7 @@ dspPoItemReceivingsByItem::dspPoItemReceivingsByItem(QWidget* parent, const char
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
   
-  _showVariances->setEnabled(_privleges->check("ViewCosts"));
+  _showVariances->setEnabled(_privileges->check("ViewCosts"));
 
   _porecv->addColumn(tr("P/O #"),        _orderColumn, Qt::AlignRight  );
   _porecv->addColumn(tr("Vendor"),       120,          Qt::AlignLeft   );
@@ -99,7 +99,7 @@ dspPoItemReceivingsByItem::dspPoItemReceivingsByItem(QWidget* parent, const char
   _porecv->addColumn(tr("Description"),  -1,           Qt::AlignLeft   );
   _porecv->addColumn(tr("Rcvd/Rtnd"),    _qtyColumn,   Qt::AlignRight  );
   _porecv->addColumn(tr("Qty."),         _qtyColumn,   Qt::AlignRight  );
-  if (_privleges->check("ViewCosts"))
+  if (_privileges->check("ViewCosts"))
   {
     _porecv->addColumn(tr("Purch. Cost"), _priceColumn,  Qt::AlignRight );
     _porecv->addColumn(tr("Recv. Cost"),  _priceColumn,  Qt::AlignRight );

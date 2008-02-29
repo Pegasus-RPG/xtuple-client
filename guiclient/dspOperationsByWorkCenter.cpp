@@ -131,21 +131,21 @@ void dspOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Operation..."), this, SLOT(sViewOperation()), 0);
-  if (!_privleges->check("ViewBOOs"))
+  if (!_privileges->check("ViewBOOs"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
-  if (!_privleges->check("ViewBOOs"))
+  if (!_privileges->check("ViewBOOs"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Edit Operation..."), this, SLOT(sEditOperation()), 0);
-  if (!_privleges->check("MaintainBOOs"))
+  if (!_privileges->check("MaintainBOOs"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-  if (!_privleges->check("MaintainBOOs"))
+  if (!_privileges->check("MaintainBOOs"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

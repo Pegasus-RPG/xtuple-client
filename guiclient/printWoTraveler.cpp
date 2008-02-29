@@ -90,16 +90,15 @@ printWoTraveler::printWoTraveler(QWidget* parent, const char* name, bool modal, 
 
     omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-    Preferences _pref = Preferences(omfgThis->username());
-    if (_pref.boolean("XCheckBox/forgetful"))
-	{
+    if (_preferences->boolean("XCheckBox/forgetful"))
+    {
       _pickList->setChecked(true);
-	  _routing->setChecked(true);
-	}
+      _routing->setChecked(true);
+    }
 
     _wo->setType(cWoExploded | cWoReleased | cWoIssued);
 
-    if (!_privleges->check("ReleaseWorkOrders"))
+    if (!_privileges->check("ReleaseWorkOrders"))
       _releaseWo->setEnabled(FALSE);
       
     if (!_metrics->boolean("Routings"))

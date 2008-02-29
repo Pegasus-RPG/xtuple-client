@@ -95,8 +95,7 @@ dspOrderActivityByProject::dspOrderActivityByProject(QWidget* parent, const char
   _orders->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _orders->addColumn(tr("Qty"),         _qtyColumn,   Qt::AlignLeft   );
   
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _showPo->setChecked(true);
     _showSo->setChecked(true);
@@ -128,44 +127,44 @@ void dspOrderActivityByProject::sPopulateMenu( QMenu * pMenu )
   if(_orders->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainSalesOrders"))
+    if (!_privileges->check("MaintainSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sView()), 0);
-    if (!_privleges->check("MaintainSalesOrders") && !_privleges->check("ViewSalesOrders"))
+    if (!_privileges->check("MaintainSalesOrders") && !_privileges->check("ViewSalesOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if(_orders->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Edit Quote..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainQuotes"))
+    if (!_privileges->check("MaintainQuotes"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View Quote..."), this, SLOT(sView()), 0);
-    if (!_privleges->check("MaintainQuotes") && !_privleges->check("ViewQuotes"))
+    if (!_privileges->check("MaintainQuotes") && !_privileges->check("ViewQuotes"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if(_orders->altId() == 3)
   {
     menuItem = pMenu->insertItem(tr("Edit Invoice..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainMiscInvoices"))
+    if (!_privileges->check("MaintainMiscInvoices"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View Invoice..."), this, SLOT(sView()), 0);
-    if (!_privleges->check("MaintainMiscInvoices") && !_privleges->check("ViewMiscInvoices"))
+    if (!_privileges->check("MaintainMiscInvoices") && !_privileges->check("ViewMiscInvoices"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if(_orders->altId() == 5)
   {
     menuItem = pMenu->insertItem(tr("Edit P/O Item..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View P/O Item..."), this, SLOT(sView()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders") && !_privleges->check("ViewPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders") && !_privileges->check("ViewPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 

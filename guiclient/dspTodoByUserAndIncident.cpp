@@ -130,19 +130,19 @@ void dspTodoByUserAndIncident::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEditTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("MaintainOtherTodoLists"));
+  pMenu->setItemEnabled(menuItem, _privileges->check("MaintainOtherTodoLists"));
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sViewTodoItem()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("ViewOtherTodoLists"));
+  pMenu->setItemEnabled(menuItem, _privileges->check("ViewOtherTodoLists"));
 
   if (_todoitem->altId() > 0)
   {
     pMenu->insertSeparator();
     menuItem = pMenu->insertItem(tr("Edit Incident"), this, SLOT(sEditIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainIncidents"));
     menuItem = pMenu->insertItem(tr("View Incident"), this, SLOT(sViewIncident()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewIncidents") ||
-				    _privleges->check("MaintainIncidents"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewIncidents") ||
+				    _privileges->check("MaintainIncidents"));
   }
 }
 

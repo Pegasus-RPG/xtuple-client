@@ -86,7 +86,7 @@ workCenters::workCenters(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(workCentersUpdated()), SLOT(sFillList()));
 
-  if (_privleges->check("MaintainWorkCenters"))
+  if (_privileges->check("MaintainWorkCenters"))
   {
     connect(_wrkcnt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_wrkcnt, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
@@ -192,17 +192,17 @@ void workCenters::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Work Center"), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainWorkCenters"))
+  if (!_privileges->check("MaintainWorkCenters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Work Center"), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Copy Work Center"), this, SLOT(sCopy()), 0);
-  if (!_privleges->check("MaintainWorkCenters"))
+  if (!_privileges->check("MaintainWorkCenters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete Work Center"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainWorkCenters"))
+  if (!_privileges->check("MaintainWorkCenters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
 }

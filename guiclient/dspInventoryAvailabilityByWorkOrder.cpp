@@ -186,20 +186,20 @@ void dspInventoryAvailabilityByWorkOrder::sPopulateMenu(QMenu *pMenu, QTreeWidge
   {
     pMenu->insertSeparator();
     menuItem = pMenu->insertItem("Issue Purchase Order...", this, SLOT(sIssuePO()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (selected->text(1) == "M")
   {
     pMenu->insertSeparator();
     menuItem = pMenu->insertItem("Issue Work Order...", this, SLOT(sIssueWO()), 0);
-    if (!_privleges->check("MaintainWorkOrders"))
+    if (!_privileges->check("MaintainWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   pMenu->insertSeparator();
   menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

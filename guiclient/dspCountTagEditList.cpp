@@ -117,19 +117,19 @@ dspCountTagEditList::dspCountTagEditList(QWidget* parent, const char* name, Qt::
   _cnttag->addColumn(tr("Amount"),       _costColumn,  Qt::AlignRight );
   _cnttag->setIndentation(10);
   
-  if (_privleges->check("EnterCountTags"))
+  if (_privileges->check("EnterCountTags"))
   {
     connect(_cnttag, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
     connect(_cnttag, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
   }
 
-  if (_privleges->check("DeleteCountTags"))
+  if (_privileges->check("DeleteCountTags"))
     connect(_cnttag, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("PostCountTags"))
+  if (_privileges->check("PostCountTags"))
     connect(_cnttag, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
-  if (_privleges->check("EnterCountSlips"))
+  if (_privileges->check("EnterCountSlips"))
     connect(_cnttag, SIGNAL(valid(bool)), _enterSlip, SLOT(setEnabled(bool)));
 
   _searchFor->setFocus();
@@ -186,7 +186,7 @@ void dspCountTagEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected
   if (((XTreeWidgetItem *)pSelected)->altId() == -1)
   {
     menuItem = pMenu->insertItem("Enter Count Slip...", this, SLOT(sEnterCountSlip()), 0);
-    if (!_privleges->check("EnterCountSlips"))
+    if (!_privileges->check("EnterCountSlips"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem("Count Slip Edit List...", this, SLOT(sCountSlipEditList()), 0);
@@ -194,30 +194,30 @@ void dspCountTagEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem("View Pending Inventory History...", this, SLOT(sViewInventoryHistory()), 0);
-    if (!_privleges->check("ViewInventoryHistory"))
+    if (!_privileges->check("ViewInventoryHistory"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem("Edit Count Tag...", this, SLOT(sEdit()), 0);
-    if (!_privleges->check("EnterCountTags"))
+    if (!_privileges->check("EnterCountTags"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     if (pSelected->text(5) != "")
     {
       menuItem = pMenu->insertItem("Post Count Tag...", this, SLOT(sPost()), 0);
-      if (!_privleges->check("PostCountTags"))
+      if (!_privileges->check("PostCountTags"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
     menuItem = pMenu->insertItem("Delete Count Tag", this, SLOT(sDelete()), 0);
-    if (!_privleges->check("DeleteCountTags"))
+    if (!_privileges->check("DeleteCountTags"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else
   {
     menuItem = pMenu->insertItem("Edit Count Slip...", this, SLOT(sEdit()), 0);
-    if (!_privleges->check("EnterCountSlips"))
+    if (!_privileges->check("EnterCountSlips"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

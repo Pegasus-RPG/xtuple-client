@@ -211,7 +211,7 @@ void dspTimePhasedDemandByPlannerCode::sPopulateMenu(QMenu *menu, QTreeWidgetIte
   if (_column > 1)
   {
     menuItem = menu->insertItem(tr("View Demand..."), this, SLOT(sViewDemand()), 0);
-    if ( (!_privleges->check("MaintainWorkOrders")) && (!_privleges->check("ViewWorkOrders")) )
+    if ( (!_privileges->check("MaintainWorkOrders")) && (!_privileges->check("ViewWorkOrders")) )
       menu->setItemEnabled(menuItem, FALSE);
   }
 }

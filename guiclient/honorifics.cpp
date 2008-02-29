@@ -99,7 +99,7 @@ honorifics::honorifics(QWidget* parent, const char* name, Qt::WFlags fl)
     
     _honorifics->addColumn(tr("Title"),        _itemColumn, Qt::AlignLeft   );
 
-    if (_privleges->check("MaintainTitles"))
+    if (_privileges->check("MaintainTitles"))
     {
       connect(_honorifics, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_honorifics, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -201,13 +201,13 @@ void honorifics::sPopulateMenu( QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainTitles"))
+  if (!_privileges->check("MaintainTitles"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainTitles"))
+  if (!_privileges->check("MaintainTitles"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

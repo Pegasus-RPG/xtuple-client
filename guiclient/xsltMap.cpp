@@ -65,7 +65,7 @@
 
 bool xsltMap::userHasPriv()
 {
-  return _privleges->check("ConfigureImportExport");
+  return _privileges->check("ConfigureImportExport");
 }
 
 int xsltMap::exec()

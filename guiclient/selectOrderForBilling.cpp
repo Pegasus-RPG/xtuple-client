@@ -123,10 +123,10 @@ selectOrderForBilling::selectOrderForBilling(QWidget* parent, const char* name, 
   _soitem->addColumn(tr("Extended"),   _moneyColumn, Qt::AlignRight  );
   _soitem->addColumn(tr("Close"),      _ynColumn,    Qt::AlignCenter );
 
-  if (_privleges->check("MaintainSalesOrders"))
+  if (_privileges->check("MaintainSalesOrders"))
     connect(_so, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
 
-  if(!_privleges->check("AllowSelectOrderEditing"))
+  if(!_privileges->check("AllowSelectOrderEditing"))
   {
     _miscCharge->setEnabled(false);
     _miscChargeDescription->setEnabled(false);

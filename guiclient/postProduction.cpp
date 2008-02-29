@@ -82,7 +82,7 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
 
     omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
 
-    _closeWo->setEnabled(_privleges->check("CloseWorkOrders"));
+    _closeWo->setEnabled(_privileges->check("CloseWorkOrders"));
 
     _qty->setValidator(omfgThis->qtyVal());
     _fromWOTC = false;
@@ -102,15 +102,14 @@ postProduction::postProduction(QWidget* parent, const char* name, bool modal, Qt
       _runUser->hide();
     }
   
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _backflush->setChecked(true);
     _backflushOperations->setChecked(true);
   }
 
   _nonPickItems->setEnabled(_backflush->isChecked() &&
-			    _privleges->check("ChangeNonPickItems"));
+			    _privileges->check("ChangeNonPickItems"));
   // TODO: unhide as part of implementation of 5847
   _nonPickItems->hide();
 

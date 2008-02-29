@@ -113,7 +113,7 @@ void departments::init()
     _deptList->addColumn(tr("Dept. Number"),	_userColumn,	Qt::AlignLeft );
     _deptList->addColumn(tr("Dept. Name"),	-1,		Qt::AlignLeft );
 
-    if (_privleges->check("MaintainDepartments"))
+    if (_privileges->check("MaintainDepartments"))
     {
 	connect(_deptList, SIGNAL(valid(bool)),	_edit,	SLOT(setEnabled(bool)));
 	connect(_deptList, SIGNAL(valid(bool)),	_delete,SLOT(setEnabled(bool)));
@@ -205,12 +205,12 @@ void departments::sPopulateMenu(QMenu *pMenu )
     int menuItem;
 
     menuItem = pMenu->insertItem(tr("Edit"), this, SLOT(sEdit()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainDepartments"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainDepartments"));
 
     menuItem = pMenu->insertItem(tr("View"), this, SLOT(sView()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewDepartments") ||
-				    _privleges->check("MaintainDepartments"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewDepartments") ||
+				    _privileges->check("MaintainDepartments"));
 
     menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainDepartments"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainDepartments"));
 }

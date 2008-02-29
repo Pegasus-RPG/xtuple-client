@@ -157,29 +157,29 @@ void dspOrders::sPopulateMenu(QMenu *pMenu)
   if (_orders->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Reschedule P/O Item..."), this, SLOT(sReschedulePoitem()), 0);
-    if (!_privleges->check("ReschedulePurchaseOrders"))
+    if (!_privileges->check("ReschedulePurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Change P/O Item Quantity..."), this, SLOT(sChangePoitemQty()), 0);
-    if (!_privleges->check("ChangePurchaseOrderQty"))
+    if (!_privileges->check("ChangePurchaseOrderQty"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (_orders->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()), 0);
-    if (!_privleges->check("ReprioritizeWorkOrders"))
+    if (!_privileges->check("ReprioritizeWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()), 0);
-    if (!_privleges->check("RescheduleWorkOrders"))
+    if (!_privileges->check("RescheduleWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()), 0);
-    if (!_privleges->check("ChangeWorkOrderQty"))
+    if (!_privileges->check("ChangeWorkOrderQty"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
-    if (!_privleges->check("PrintWorkOrderPaperWork"))
+    if (!_privileges->check("PrintWorkOrderPaperWork"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

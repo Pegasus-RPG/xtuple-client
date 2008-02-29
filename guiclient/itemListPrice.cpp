@@ -84,7 +84,7 @@ itemListPrice::itemListPrice(QWidget* parent, const char* name, bool modal, Qt::
   _item->setType(ItemLineEdit::cSold);
   _listPrice->setValidator(omfgThis->priceVal());
 
-  if (!_privleges->check("MaintainListPrices"))
+  if (!_privileges->check("MaintainListPrices"))
   {
     _listPrice->setEnabled(FALSE);
     _close->setText(tr("&Close"));

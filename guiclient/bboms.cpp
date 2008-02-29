@@ -115,7 +115,7 @@ void bboms::init()
 
   connect(omfgThis, SIGNAL(bbomsUpdated(int, bool)), SLOT(sFillList(int, bool)));
 
-  if (_privleges->check("MaintainBBOMs"))
+  if (_privileges->check("MaintainBBOMs"))
   {
     connect(_bbom, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_bbom, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

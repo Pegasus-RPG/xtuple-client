@@ -114,7 +114,7 @@ void standardJournals::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainStandardJournals"))
+  if (_privileges->check("MaintainStandardJournals"))
   {
     connect(_stdjrnl, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_stdjrnl, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -123,7 +123,7 @@ void standardJournals::init()
   else
     _new->setEnabled(FALSE);
 
-  if (_privleges->check("PostStandardJournals"))
+  if (_privileges->check("PostStandardJournals"))
     connect(_stdjrnl, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
   _stdjrnl->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );

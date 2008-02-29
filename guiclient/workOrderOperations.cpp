@@ -91,7 +91,7 @@ workOrderOperations::workOrderOperations(QWidget* parent, const char* name, Qt::
   _wooper->addColumn(tr("Setup Remain."), _itemColumn, Qt::AlignRight  );
   _wooper->addColumn(tr("Run Remain."),   _itemColumn, Qt::AlignRight  );
   
-  if (_privleges->check("MaintainWoOperations"))
+  if (_privileges->check("MaintainWoOperations"))
   {
     connect(_wooper, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_wooper, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -141,15 +141,15 @@ void workOrderOperations::sPopulateMenu(QMenu *menu)
   int menuItem;
 
   menuItem = menu->insertItem(tr("View Operation..."), this, SLOT(sViewOperation()), 0);
-  if ((!_privleges->check("ViewWoOperations")) && (!_privleges->check("MaintainWoOperations")))
+  if ((!_privileges->check("ViewWoOperations")) && (!_privileges->check("MaintainWoOperations")))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Edit Operation..."), this, SLOT(sEditOperation()), 0);
-  if (!_privleges->check("MaintainWoOperations"))
+  if (!_privileges->check("MaintainWoOperations"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Delete Operation..."), this, SLOT(sDeleteOperation()), 0);
-  if (!_privleges->check("MaintainWoOperations"))
+  if (!_privileges->check("MaintainWoOperations"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

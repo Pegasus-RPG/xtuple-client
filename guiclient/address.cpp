@@ -323,48 +323,48 @@ void address::sPopulateMenu(QMenu *pMenu)
   switch (_uses->altId())
   {
     case 1:
-      if (_privleges->check("MaintainContacts") &&
+      if (_privileges->check("MaintainContacts") &&
 	  (cNew == _mode || cEdit == _mode))
 	menuItem = pMenu->insertItem(editStr, this, SLOT(sEditContact()));
-      else if (_privleges->check("ViewContacts"))
+      else if (_privileges->check("ViewContacts"))
 	menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewContact()));
 
       break;
 
     case 2:	// ship-to
-      if (_privleges->check("MaintainShiptos") &&
+      if (_privileges->check("MaintainShiptos") &&
 	  (cNew == _mode || cEdit == _mode))
 	menuItem = pMenu->insertItem(editStr, this, SLOT(sEditShipto()));
-      else if (_privleges->check("ViewShiptos"))
+      else if (_privileges->check("ViewShiptos"))
 	menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewShipto()));
 
       break;
 
     case 3:	// vendor
       /* comment out until we make vendor a XDialog or address a XMainWindow
-      if (_privleges->check("MaintainVendors") &&
+      if (_privileges->check("MaintainVendors") &&
 	  (cNew == _mode || cEdit == _mode))
 	menuItem = pMenu->insertItem(editStr, this, SLOT(sEditVendor()));
-      else if (_privleges->check("ViewVendors"))
+      else if (_privileges->check("ViewVendors"))
 	menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewVendor()));
       */
 
       break;
 
     case 4:	// vendaddr
-      if (_privleges->check("MaintainVendorAddresses") &&
+      if (_privileges->check("MaintainVendorAddresses") &&
 	  (cNew == _mode || cEdit == _mode))
 	menuItem = pMenu->insertItem(editStr, this, SLOT(sEditVendorAddress()));
-      else if (_privleges->check("ViewVendorAddresses"))
+      else if (_privileges->check("ViewVendorAddresses"))
 	menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewVendorAddress()));
 
       break;
 
     case 5:	// warehouse
-      if (_privleges->check("MaintainWarehouses") &&
+      if (_privileges->check("MaintainWarehouses") &&
 	  (cNew == _mode || cEdit == _mode))
 	menuItem = pMenu->insertItem(editStr, this, SLOT(sEditWarehouse()));
-      else if (_privleges->check("ViewWarehouses"))
+      else if (_privileges->check("ViewWarehouses"))
 	menuItem = pMenu->insertItem(viewStr, this, SLOT(sViewWarehouse()));
 
       break;

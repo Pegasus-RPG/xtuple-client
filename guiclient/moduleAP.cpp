@@ -129,55 +129,55 @@ moduleAP::moduleAP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ap.enterPurchaseOrder", tr("Enter Purchase Order..."),
                                       this, SLOT(sEnterPurchaseOrder()),
-                                      posMenu, _privleges->check("MaintainPurchaseOrders") ) );
+                                      posMenu, _privileges->check("MaintainPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "ap.listUnpostedPurchaseOrders", tr("List Unposted Purchase Orders..."),
                                       this, SLOT(sUnpostedPurchaseOrders()),
-                                      posMenu, (_privleges->check("MaintainPurchaseOrders") || _privleges->check("ViewPurchaseOrders")) ) );
+                                      posMenu, (_privileges->check("MaintainPurchaseOrders") || _privileges->check("ViewPurchaseOrders")) ) );
 
   posMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.printPurchaseOrder", tr("Print Purchase Order..."),
                                       this, SLOT(sPrintPurchaseOrder()),
-                                      posMenu, _privleges->check("PrintPurchaseOrders") ) );
+                                      posMenu, _privileges->check("PrintPurchaseOrders") ) );
 
   parent->actions.append( new Action( parent, "ap.postPurchaseOrder", tr("Post Purchase Order..."),
                                       this, SLOT(sPostPurchaseOrder()),
-                                      posMenu, _privleges->check("PostPurchaseOrders") ) );
+                                      posMenu, _privileges->check("PostPurchaseOrders") ) );
 
 //  P/O | Vouchers
   vouchersMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ap.uninvoicedReceipts", tr("Uninvoiced Receipts and Returns..."),
                                       this, SLOT(sDspUninvoicedReceipts()),
-                                      vouchersMenu, (_privleges->check("ViewUninvoicedReceipts") || _privleges->check("MaintainUninvoicedReceipts")) ) );
+                                      vouchersMenu, (_privileges->check("ViewUninvoicedReceipts") || _privileges->check("MaintainUninvoicedReceipts")) ) );
 
   vouchersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.enterNewVoucher", tr("Enter New Voucher..."),
                                       this, SLOT(sEnterVoucher()),
-                                      vouchersMenu, _privleges->check("MaintainVouchers") ) );
+                                      vouchersMenu, _privileges->check("MaintainVouchers") ) );
 
   parent->actions.append( new Action( parent, "ap.enterNewMiscVoucher", tr("Enter New Miscellaneous Voucher..."),
                                       this, SLOT(sEnterMiscVoucher()),
-                                      vouchersMenu, _privleges->check("MaintainVouchers") ) );
+                                      vouchersMenu, _privileges->check("MaintainVouchers") ) );
 
   parent->actions.append( new Action( parent, "ap.listUnpostedVouchers", tr("List Unposted Vouchers..."),
                                       this, SLOT(sUnpostedVouchers()),
-                                      vouchersMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")),
+                                      vouchersMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")),
 									  QPixmap(":/images/listUnpostedVouchers.png"), toolBar ) );
 
   vouchersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.voucheringEditList", tr("Vouchering Edit List..."),
                                       this, SLOT(sVoucheringEditList()),
-                                      vouchersMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")) ) );
+                                      vouchersMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")) ) );
 
   vouchersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.postVouchers", tr("Post Vouchers..."),
                                       this, SLOT(sPostVouchers()),
-                                      vouchersMenu, _privleges->check("PostVouchers") ) );
+                                      vouchersMenu, _privileges->check("PostVouchers") ) );
 
 
 //  Payments
@@ -185,54 +185,54 @@ moduleAP::moduleAP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ap.selectPayments", tr("Select Payments..."),
                                       this, SLOT(sSelectPayments()),
-                                      paymentsMenu, _privleges->check("MaintainPayments"),
+                                      paymentsMenu, _privileges->check("MaintainPayments"),
                                       QPixmap(":/images/selectPayments.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "ap.listSelectPayments", tr("List Selected Payments..."),
                                       this, SLOT(sSelectedPayments()),
-                                      paymentsMenu, _privleges->check("MaintainPayments") ) );
+                                      paymentsMenu, _privileges->check("MaintainPayments") ) );
 
   paymentsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.prepareCheckRun", tr("Prepare Check Run..."),
                                       this, SLOT(sPrepareCheckRun()),
-                                      paymentsMenu, _privleges->check("MaintainPayments"),
+                                      paymentsMenu, _privileges->check("MaintainPayments"),
                                       QPixmap(":/images/prepareCheckRun.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "ap.createMiscCheck", tr("Create Miscellaneous Check..."),
                                       this, SLOT(sCreateMiscCheck()),
-                                      paymentsMenu, _privleges->check("MaintainPayments") ) );
+                                      paymentsMenu, _privileges->check("MaintainPayments") ) );
 
   parent->actions.append( new Action( parent, "ap.viewCheckRun", tr("View Check Run..."),
                                       this, SLOT(sViewCheckRun()),
-                                      paymentsMenu, _privleges->check("MaintainPayments"),
+                                      paymentsMenu, _privileges->check("MaintainPayments"),
                                       QPixmap(":/images/viewCheckRun.png"), toolBar ) );
 
   paymentsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.printCheck", tr("Print Check..."),
                                       this, SLOT(sPrintCheck()),
-                                      paymentsMenu, _privleges->check("MaintainPayments") ) );
+                                      paymentsMenu, _privileges->check("MaintainPayments") ) );
 
   parent->actions.append( new Action( parent, "ap.printCheckRun", tr("Print Check Run..."),
                                       this, SLOT(sPrintCheckRun()),
-                                      paymentsMenu, _privleges->check("MaintainPayments") ) );
+                                      paymentsMenu, _privileges->check("MaintainPayments") ) );
 
   paymentsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.voidCheckRun", tr("Void Check Run..."),
                                       this, SLOT(sVoidCheckRun()),
-                                      paymentsMenu, _privleges->check("MaintainPayments") ) );
+                                      paymentsMenu, _privileges->check("MaintainPayments") ) );
 
   paymentsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.postCheck", tr("Post Check..."),
                                       this, SLOT(sPostCheck()),
-                                      paymentsMenu, _privleges->check("PostPayments") ) );
+                                      paymentsMenu, _privileges->check("PostPayments") ) );
 
   parent->actions.append( new Action( parent, "ap.postChecks", tr("Post Checks..."),
                                       this, SLOT(sPostChecks()),
-                                      paymentsMenu, _privleges->check("PostPayments") ) );
+                                      paymentsMenu, _privileges->check("PostPayments") ) );
 
 
 //  Memos
@@ -240,17 +240,17 @@ moduleAP::moduleAP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ap.enterMiscCreditMemo", tr("Enter Misc. Credit Memo..."),
                                       this, SLOT(sEnterMiscCreditMemo()),
-                                      memosMenu, _privleges->check("MaintainAPMemos") ) );
+                                      memosMenu, _privileges->check("MaintainAPMemos") ) );
 
   parent->actions.append( new Action( parent, "ap.unapplidCreditMemo", tr("List Unapplied Credit Memos..."),
                                       this, SLOT(sUnappliedCreditMemos()),
-                                      memosMenu, (_privleges->check("MaintainAPMemos") || _privleges->check("ViewAPMemos")) ) );
+                                      memosMenu, (_privileges->check("MaintainAPMemos") || _privileges->check("ViewAPMemos")) ) );
 
   memosMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.enterMiscDebitMemo", tr("Enter Misc. Debit Memo..."),
                                       this, SLOT(sEnterMiscDebitMemo()),
-                                      memosMenu, _privleges->check("MaintainAPMemos") ) );
+                                      memosMenu, _privileges->check("MaintainAPMemos") ) );
 
 
 //  Displays
@@ -258,25 +258,25 @@ moduleAP::moduleAP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ap.dspVendorHistory", tr("Vendor History..."),
                                       this, SLOT(sDspVendorHistory()),
-                                      displaysMenu, _privleges->check("ViewAPOpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAPOpenItems") ) );
 
   parent->actions.append( new Action( parent, "ap.dspCheckRegister", tr("Check Register..."),
                                       this, SLOT(sDspCheckRegister()),
-                                      displaysMenu, _privleges->check("MaintainPayments") ) );
+                                      displaysMenu, _privileges->check("MaintainPayments") ) );
 
   parent->actions.append( new Action( parent, "ap.dspVoucherRegister", tr("Voucher Register..."),
                                       this, SLOT(sDspVoucherRegister()),
-                                      displaysMenu, (_privleges->check("MaintainVouchers") || _privleges->check("ViewVouchers")) ) );
+                                      displaysMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")) ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.dspOpenAPItemsByVendor", tr("Open Items by Vendor..."),
                                       this, SLOT(sDspAPOpenItemsByVendor()),
-                                      displaysMenu, _privleges->check("ViewAPOpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAPOpenItems") ) );
 
   parent->actions.append( new Action( parent, "ap.dspAPAging", tr("A/P Aging..."),
                                       this, SLOT(sDspTimePhasedOpenAPItems()),
-                                      displaysMenu, _privleges->check("ViewAPOpenItems"),
+                                      displaysMenu, _privileges->check("ViewAPOpenItems"),
                                       QPixmap(":/images/apAging.png"), toolBar ) );
 
 
@@ -285,44 +285,44 @@ moduleAP::moduleAP(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ap.rptPayablesJournal", tr("Payables Journal..."),
                                       this, SLOT(sRptPayablesJournal()),
-                                      reportsMenu, _privleges->check("PrintAPJournals") ) );
+                                      reportsMenu, _privileges->check("PrintAPJournals") ) );
 
   parent->actions.append( new Action( parent, "ap.rptCheckJournal", tr("Check Journal..."),
                                       this, SLOT(sRptCheckJournal()),
-                                      reportsMenu, _privleges->check("PrintAPJournals") ) );
+                                      reportsMenu, _privileges->check("PrintAPJournals") ) );
 
 //  Master Information
   masterInfoMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ap.terms", tr("Terms..."),
                                       this, SLOT(sTerms()),
-                                      masterInfoMenu, (_privleges->check("MaintainTerms") || _privleges->check("ViewTerms")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainTerms") || _privileges->check("ViewTerms")) ) );
 
   parent->actions.append( new Action( parent, "ap.vendors", tr("Vendors..."),
                                       this, SLOT(sVendors()),
-                                      masterInfoMenu, (_privleges->check("MaintainVendors") || _privleges->check("ViewVendors")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainVendors") || _privileges->check("ViewVendors")) ) );
 
   parent->actions.append( new Action( parent, "ap.bankAccounts", tr("Bank Accounts..."),
                                       this, SLOT(sBankAccounts()),
-                                      masterInfoMenu, (_privleges->check("MaintainBankAccounts") || _privleges->check("ViewBankAccounts")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainBankAccounts") || _privileges->check("ViewBankAccounts")) ) );
 
   parent->actions.append( new Action( parent, "ap.checkFormats", tr("Check Formats..."),
                                       this, SLOT(sCheckFormats()),
-                                      masterInfoMenu, (_privleges->check("MaintainCheckFormats") || _privleges->check("ViewCheckFormats")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainCheckFormats") || _privileges->check("ViewCheckFormats")) ) );
 
   masterInfoMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ap.apAccountAssignments", tr("A/P Account Assignments..."),
                                       this, SLOT(sAPAssignments()),
-                                      masterInfoMenu, (_privleges->check("MaintainVendorAccounts") || _privleges->check("ViewVendorAccounts")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainVendorAccounts") || _privileges->check("ViewVendorAccounts")) ) );
 
   parent->actions.append( new Action( parent, "ap.costCategories", tr("Cost Categories..."),
                                       this, SLOT(sCostCategories()),
-                                      masterInfoMenu, (_privleges->check("MaintainCostCategories")) || (_privleges->check("ViewCostCategories")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainCostCategories")) || (_privileges->check("ViewCostCategories")) ) );
 
   parent->actions.append( new Action( parent, "ap.expenseCategories", tr("Expense Categories..."),
                                       this, SLOT(sExpenseCategories()),
-                                      masterInfoMenu, (_privleges->check("MaintainExpenseCategories")) || (_privleges->check("ViewExpenseCategories")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainExpenseCategories")) || (_privileges->check("ViewExpenseCategories")) ) );
 
   mainMenu = new QMenu();
   mainMenu->insertItem(tr("Purchase Orders"),           posMenu        );

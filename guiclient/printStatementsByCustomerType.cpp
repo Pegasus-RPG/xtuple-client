@@ -74,8 +74,7 @@ printStatementsByCustomerType::printStatementsByCustomerType(QWidget* parent, co
 
   _customerTypes->setType(CustomerType);
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _dueonly->setChecked(true);
 }
 

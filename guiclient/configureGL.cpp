@@ -260,7 +260,7 @@ void configureGL::sSave()
     _metrics->set("GLProfitSize", _profitCenterSize->value());
     _metrics->set("GLFFProfitCenters", _ffProfitCenters->isChecked());
     if(profitcenter)
-      profitcenter->setEnabled(_privleges->check("MaintainChartOfAccounts"));
+      profitcenter->setEnabled(_privileges->check("MaintainChartOfAccounts"));
   }
   else
   {
@@ -275,7 +275,7 @@ void configureGL::sSave()
     _metrics->set("GLSubaccountSize", _subaccountSize->value());
     _metrics->set("GLFFSubaccounts", _ffSubaccounts->isChecked());
     if(subaccounts)
-      subaccounts->setEnabled(_privleges->check("MaintainChartOfAccounts"));
+      subaccounts->setEnabled(_privileges->check("MaintainChartOfAccounts"));
 
   }
   else

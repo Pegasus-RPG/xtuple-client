@@ -156,7 +156,7 @@ moduleWO::moduleWO(GUIClient *Pparent) :
   {
   parent->actions.append( new Action( parent, "wo.woTimeClock", tr("Shop Floor Workbench..."),
                                       this, SLOT(sWoTimeClock()),
-                                      controlMenu, _privleges->check("WoTimeClock"),
+                                      controlMenu, _privileges->check("WoTimeClock"),
 									  QPixmap(":/images/shopFloorWorkbench.png"), toolBar ) );
 
   controlMenu->insertSeparator();
@@ -164,158 +164,158 @@ moduleWO::moduleWO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "wo.newWorkOrder", tr("Create New Work Order..."),
                                       this, SLOT(sNewWorkOrder()),
-                                      controlMenu, _privleges->check("MaintainWorkOrders") ) );
+                                      controlMenu, _privileges->check("MaintainWorkOrders") ) );
 
   controlMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.explodeWorkOrder", tr("Explode Work Order..."),
                                       this, SLOT(sExplodeWorkOrder()),
-                                      controlMenu, _privleges->check("ExplodeWorkOrders") ) );
+                                      controlMenu, _privileges->check("ExplodeWorkOrders") ) );
 
   parent->actions.append( new Action( parent, "wo.implodeWorkOrder", tr("Implode Work Order..."),
                                       this, SLOT(sImplodeWorkOrder()),
-                                      controlMenu, _privleges->check("ImplodeWorkOrders") ) );
+                                      controlMenu, _privileges->check("ImplodeWorkOrders") ) );
 
   parent->actions.append( new Action( parent, "wo.closeWorkOrder", tr("Close Work Order..."),
                                       this, SLOT(sCloseWorkOrder()),
-                                      controlMenu, _privleges->check("CloseWorkOrders") ) );
+                                      controlMenu, _privileges->check("CloseWorkOrders") ) );
 
   controlMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.printTraveler", tr("Print Traveler..."),
                                       this, SLOT(sPrintTraveler()),
-                                      controlMenu, _privleges->check("PrintWorkOrderPaperWork") ) );
+                                      controlMenu, _privileges->check("PrintWorkOrderPaperWork") ) );
 
   parent->actions.append( new Action( parent, "wo.printPickList", tr("Print Pick List..."),
                                       this, SLOT(sPrintPickList()),
-                                      controlMenu, _privleges->check("PrintWorkOrderPaperWork") ) );
+                                      controlMenu, _privileges->check("PrintWorkOrderPaperWork") ) );
  
   if ( _metrics->boolean("Routings") )
   parent->actions.append( new Action( parent, "wo.printRouting", tr("Print Routing..."),
                                       this, SLOT(sPrintRouting()),
-                                      controlMenu, _privleges->check("PrintWorkOrderPaperWork") ) );
+                                      controlMenu, _privileges->check("PrintWorkOrderPaperWork") ) );
 
   controlMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.releaseWorkOrdersByPlannerCode", tr("Release Work Orders by Planner Code..."),
                                       this, SLOT(sReleaseWorkOrdersByPlannerCode()),
-                                      controlMenu, _privleges->check("ReleaseWorkOrders") ) );
+                                      controlMenu, _privileges->check("ReleaseWorkOrders") ) );
 
   parent->actions.append( new Action( parent, "wo.reprioritizeWorkOrder", tr("Reprioritize Work Order..."),
                                       this, SLOT(sReprioritizeWorkOrder()),
-                                      controlMenu, _privleges->check("ReprioritizeWorkOrders") ) );
+                                      controlMenu, _privileges->check("ReprioritizeWorkOrders") ) );
 
   parent->actions.append( new Action( parent, "wo.rescheduleWorkOrder", tr("Reschedule Work Order..."),
                                       this, SLOT(sRescheduleWorkOrder()),
-                                      controlMenu, _privleges->check("RescheduleWorkOrders") ) );
+                                      controlMenu, _privileges->check("RescheduleWorkOrders") ) );
 
   parent->actions.append( new Action( parent, "wo.changeWorkOrderQuantity", tr("Change Work Order Quantity..."),
                                       this, SLOT(sChangeWorkOrderQty()),
-                                      controlMenu, _privleges->check("ChangeWorkOrderQty") ) );
+                                      controlMenu, _privileges->check("ChangeWorkOrderQty") ) );
 
   controlMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.purgeClosedWorkOrder", tr("Purge Closed Work Orders..."),
                                       this, SLOT(sPurgeClosedWorkOrders()),
-                                      controlMenu, _privleges->check("PurgeWorkOrders") ) );
+                                      controlMenu, _privileges->check("PurgeWorkOrders") ) );
 
 //  W/O | W/O Materials
   materialsMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "wo.createWoMaterialRequirement", tr("Create W/O Material Requirement..."),
                                       this, SLOT(sCreateWoMaterialRequirement()),
-                                      materialsMenu, _privleges->check("MaintainWoMaterials") ) );
+                                      materialsMenu, _privileges->check("MaintainWoMaterials") ) );
 
   parent->actions.append( new Action( parent, "wo.deleteWoMaterialRequirement", tr("Delete W/O Material Requirement..."),
                                       this, SLOT(sDeleteWoMaterialRequirement()),
-                                      materialsMenu, _privleges->check("MaintainWoMaterials") ) );
+                                      materialsMenu, _privileges->check("MaintainWoMaterials") ) );
 
   parent->actions.append( new Action( parent, "wo.maintainWoMaterialRequirements", tr("Maintain W/O Material Requirements..."),
                                       this, SLOT(sMaintainWoMaterials()),
-                                      materialsMenu, _privleges->check("MaintainWoMaterials") ) );
+                                      materialsMenu, _privileges->check("MaintainWoMaterials") ) );
 
   materialsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.issueWoMaterialBatch", tr("Issue W/O Material Batch..."),
                                       this, SLOT(sIssueWoMaterialBatch()),
-                                      materialsMenu, _privleges->check("IssueWoMaterials") ) );
+                                      materialsMenu, _privileges->check("IssueWoMaterials") ) );
 
   parent->actions.append( new Action( parent, "wo.issueWoMaterialItem", tr("Issue W/O Material Item..."),
                                       this, SLOT(sIssueWoMaterialItem()),
-                                      materialsMenu, _privleges->check("IssueWoMaterials") ) );
+                                      materialsMenu, _privileges->check("IssueWoMaterials") ) );
 
   parent->actions.append( new Action( parent, "wo.returnWoMaterialBatch", tr("Return W/O Material Batch..."),
                                       this, SLOT(sReturnWoMaterialBatch()),
-                                      materialsMenu, _privleges->check("ReturnWoMaterials") ) );
+                                      materialsMenu, _privileges->check("ReturnWoMaterials") ) );
 
   parent->actions.append( new Action( parent, "wo.returnWoMaterialItem", tr("Return W/O Material Item..."),
                                       this, SLOT(sReturnWoMaterialItem()),
-                                      materialsMenu, _privleges->check("ReturnWoMaterials") ) );
+                                      materialsMenu, _privileges->check("ReturnWoMaterials") ) );
 
   parent->actions.append( new Action( parent, "wo.scrapWoMaterialFromWo", tr("Scrap W/O Material from W/O..."),
                                       this, SLOT(sScrapWoMaterialFromWo()),
-                                      materialsMenu, _privleges->check("ScrapWoMaterials") ) );
+                                      materialsMenu, _privileges->check("ScrapWoMaterials") ) );
 
   materialsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.postProduction", tr("Post Production..."),
                                       this, SLOT(sPostProduction()),
-                                      materialsMenu, _privleges->check("PostProduction") ) );
+                                      materialsMenu, _privileges->check("PostProduction") ) );
 
   parent->actions.append( new Action( parent, "wo.correctProductionPosting", tr("Correct Production Posting..."),
                                       this, SLOT(sCorrectProductionPosting()),
-                                      materialsMenu, _privleges->check("PostProduction") ) );
+                                      materialsMenu, _privileges->check("PostProduction") ) );
 
   parent->actions.append( new Action( parent, "wo.postMiscProduction", tr("Post Miscellaneous Production..."),
                                       this, SLOT(sPostMiscProduction()),
-                                      materialsMenu, _privleges->check("PostMiscProduction") ) );
+                                      materialsMenu, _privileges->check("PostMiscProduction") ) );
 
 //  W/O | Operations
   operationsMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "wo.createWoOperation", tr("Create W/O Operation..."),
                                       this, SLOT(sCreateWoOperation()),
-                                      operationsMenu, _privleges->check("MaintainWoOperations") && _metrics->boolean("Routings") ) );
+                                      operationsMenu, _privileges->check("MaintainWoOperations") && _metrics->boolean("Routings") ) );
 
   parent->actions.append( new Action( parent, "wo.maintainWoOperation", tr("Maintain W/O Operations..."),
                                       this, SLOT(sMaintainWoOperations()),
-                                      operationsMenu, _privleges->check("MaintainWoOperations") && _metrics->boolean("Routings") ) );
+                                      operationsMenu, _privileges->check("MaintainWoOperations") && _metrics->boolean("Routings") ) );
 
   operationsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.postOperations", tr("Post Operations..."),
                                       this, SLOT(sPostOperations()),
-                                      operationsMenu, _privleges->check("PostWoOperations") && _metrics->boolean("Routings") ) );
+                                      operationsMenu, _privileges->check("PostWoOperations") && _metrics->boolean("Routings") ) );
 
   parent->actions.append( new Action( parent, "wo.correctOperationsPosting", tr("Correct Operations Posting..."),
                                       this, SLOT(sCorrectOperationsPosting()),
-                                      operationsMenu, _privleges->check("PostWoOperations") && _metrics->boolean("Routings") ) );
+                                      operationsMenu, _privileges->check("PostWoOperations") && _metrics->boolean("Routings") ) );
 
 //  W/O | Displays
   displaysMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "wo.dspWoScheduleByItem", tr("Work Order Schedule by Item..."),
                                       this, SLOT(sDspWoScheduleByItem()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders"))));
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"))));
 //                                    QPixmap(":/images/dspWoScheduleByItem.xpm"), toolBar ) );
 
   parent->actions.append( new Action( parent, "wo.dspWoScheduleByItemGroup", tr("Work Order Schedule by Item Group..."),
                                       this, SLOT(sDspWoScheduleByItemGroup()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspWoScheduleByClassCode", tr("Work Order Schedule by Class Code..."),
                                       this, SLOT(sDspWoScheduleByClassCode()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspWoScheduleByPlannerCode", tr("Work Order Schedule by Planner Code..."),
                                       this, SLOT(sDspWoScheduleByPlannerCode()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")),
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")),
 									  QPixmap(":/images/dspWoScheduleByPlannerCode.png"), toolBar ) );
 
   if (_metrics->boolean("Routings"))
       parent->actions.append( new Action( parent, "wo.dspWoScheduleByWorkCenter", tr("Work Order Schedule by Work Center..."),
                                           this, SLOT(sDspWoScheduleByWorkCenter()),
-                                          displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) 
+                                          displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) 
                                           && _metrics->boolean("Routings") ) );
 
   displaysMenu->insertSeparator();
@@ -324,22 +324,22 @@ moduleWO::moduleWO(GUIClient *Pparent) :
  {
     //  parent->actions.append( new Action( parent, "wo.dspWoBufferStatusByItem", tr("Work Order Buffer Status by Item..."),
     //                                      this, SLOT(sDspWoBufferStatusByItem()),
-    //                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders"))  
+    //                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"))  
     //                                      &&  (_metrics->value("Applicaion") == "OpenMFG") ) );
 
       parent->actions.append( new Action( parent, "wo.dspWoBufferStatusByItemGroup", tr("Work Order Buffer Status by Item Group..."),
                                           this, SLOT(sDspWoBufferStatusByItemGroup()),
-                                          displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) 
+                                          displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) 
                                           &&  _metrics->boolean("BufferMgt") ) );
 
       parent->actions.append( new Action( parent, "wo.dspWoBufferStatusByClassCode", tr("Work Order Buffer Status by Class Code..."),
                                           this, SLOT(sDspWoBufferStatusByClassCode()),
-                                          displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders"))  
+                                          displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"))  
                                           &&  _metrics->boolean("BufferMgt") ) );
 
       parent->actions.append( new Action( parent, "wo.dspWoBufferStatusByPlannerCode", tr("Work Order Buffer Status by Planner Code..."),
                                           this, SLOT(sDspWoBufferStatusByPlannerCode()),
-                                          displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders"))  
+                                          displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders"))  
                                           &&  _metrics->boolean("BufferMgt") ) );
                                           
       displaysMenu->insertSeparator();
@@ -347,33 +347,33 @@ moduleWO::moduleWO(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "wo.dspWoHistoryByItem", tr("Work Order History by Item..."),
                                       this, SLOT(sDspWoHistoryByItem()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspWoHistoryByNumber", tr("Work Order History by W/O Number..."),
                                       this, SLOT(sDspWoHistoryByNumber()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspWoHistoryByClassCode", tr("Work Order History by Class Code..."),
                                       this, SLOT(sDspWoHistoryByClassCode()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.dspWoMaterialRequirementsByComponentItem", tr("W/O Material Requirements by Component Item..."),
                                       this, SLOT(sDspWoMaterialsByComponentItem()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspWoMaterialRequirementsByWorkOrder", tr("W/O Material Requirements by Work Order..."),
                                       this, SLOT(sDspWoMaterialsByWo()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspInventoryAvailabilityByWorkOrder", tr("Inventory Availability by Work Order..."),
                                       this, SLOT(sDspInventoryAvailabilityByWorkOrder()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
   parent->actions.append( new Action( parent, "wo.dspPendingWoMaterialAvailability", tr("Pending W/O Material Availability..."),
                                       this, SLOT(sDspPendingAvailability()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
  if (_metrics->boolean("BufferMgt") )
  {
@@ -381,15 +381,15 @@ moduleWO::moduleWO(GUIClient *Pparent) :
 
       parent->actions.append( new Action( parent, "wo.dspWoOperationsByWorkCenter", tr("W/O Operations by Work Center..."),
                                           this, SLOT(sDspWoOperationsByWorkCenter()),
-                                          displaysMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")) && _metrics->boolean("Routings") ) );
+                                          displaysMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")) && _metrics->boolean("Routings") ) );
 
       parent->actions.append( new Action( parent, "wo.dspWoOperationsByWorkOrder", tr("W/O Operations by Work Order..."),
                                           this, SLOT(sDspWoOperationsByWo()),
-                                          displaysMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")) && _metrics->boolean("Routings") ) );
+                                          displaysMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")) && _metrics->boolean("Routings") ) );
 
       parent->actions.append( new Action( parent, "wo.dspWoOperationBufrStsByWorkCenter", tr("W/O Operation Buffer Status by Work Center..."),
                                           this, SLOT(sDspWoOperationBufrStsByWorkCenter()),
-                                          displaysMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")) 
+                                          displaysMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")) 
                                           && _metrics->boolean("Routings") && _metrics->boolean("BufferMgt") ) );
   }
 
@@ -399,34 +399,34 @@ moduleWO::moduleWO(GUIClient *Pparent) :
 
       parent->actions.append( new Action( parent, "wo.dspWoEffortByWorkOrder", tr("Production Time Clock by Work Order..."),
                                           this, SLOT(sDspWoEffortByWorkOrder()),
-                                          displaysMenu, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")) && _metrics->boolean("Routings") ) );
+                                          displaysMenu, (_privileges->check("MaintainWoTimeClock") || _privileges->check("ViewWoTimeClock")) && _metrics->boolean("Routings") ) );
 
       parent->actions.append( new Action( parent, "wo.dspWoEffortByUser", tr("Production Time Clock by User..."),
                                           this, SLOT(sDspWoEffortByUser()),
-                                          displaysMenu, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")) && _metrics->boolean("Routings") ) );
+                                          displaysMenu, (_privileges->check("MaintainWoTimeClock") || _privileges->check("ViewWoTimeClock")) && _metrics->boolean("Routings") ) );
   }
   
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.dspMaterialUsageVarianceByBOMItem", tr("Material Usage Variance by BOM Item..."),
                                       this, SLOT(sDspMaterialUsageVarianceByBOMItem()),
-                                      displaysMenu, _privleges->check("ViewMaterialVariances") ) );
+                                      displaysMenu, _privileges->check("ViewMaterialVariances") ) );
 
   parent->actions.append( new Action( parent, "wo.dspMaterialUsageVarianceByItem", tr("Material Usage Variance by Item..."),
                                       this, SLOT(sDspMaterialUsageVarianceByItem()),
-                                      displaysMenu, _privleges->check("ViewMaterialVariances") ) );
+                                      displaysMenu, _privileges->check("ViewMaterialVariances") ) );
 
   parent->actions.append( new Action( parent, "wo.dspMaterialUsageVarianceByComponentItem", tr("Material Usage Variance by Component Item..."),
                                       this, SLOT(sDspMaterialUsageVarianceByComponentItem()),
-                                      displaysMenu, _privleges->check("ViewMaterialVariances") ) );
+                                      displaysMenu, _privileges->check("ViewMaterialVariances") ) );
 
   parent->actions.append( new Action( parent, "wo.dspMaterialUsageVarianceByWorkOrder", tr("Material Usage Variance by Work Order..."),
                                       this, SLOT(sDspMaterialUsageVarianceByWorkOrder()),
-                                      displaysMenu, _privleges->check("ViewMaterialVariances") ) );
+                                      displaysMenu, _privileges->check("ViewMaterialVariances") ) );
 
   parent->actions.append( new Action( parent, "wo.dspMaterialUsageVarianceByWarehouse", tr("Material Usage Variance by Warehouse..."),
                                       this, SLOT(sDspMaterialUsageVarianceByWarehouse()),
-                                      displaysMenu, _privleges->check("ViewMaterialVariances") ) );
+                                      displaysMenu, _privileges->check("ViewMaterialVariances") ) );
 
   if (_metrics->boolean("Routings"))
   { 
@@ -434,19 +434,19 @@ moduleWO::moduleWO(GUIClient *Pparent) :
       
       parent->actions.append( new Action( parent, "wo.dspLaborVarianceByBOOItem", tr("Labor Variance by BOO Item..."),
                                           this, SLOT(sDspLaborVarianceByBOOItem()),
-                                          displaysMenu, _privleges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
+                                          displaysMenu, _privileges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
 
       parent->actions.append( new Action( parent, "wo.dspLaborVarianceByItem", tr("Labor Variance by Item..."),
                                           this, SLOT(sDspLaborVarianceByItem()),
-                                          displaysMenu, _privleges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
+                                          displaysMenu, _privileges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
 
       parent->actions.append( new Action( parent, "wo.dspLaborVarianceByWorkCenter", tr("Labor Variance by Work Center..."),
                                           this, SLOT(sDspLaborVarianceByWorkCenter()),
-                                          displaysMenu, _privleges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
+                                          displaysMenu, _privileges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
 
       parent->actions.append( new Action( parent, "wo.dspLaborVarianceByWorkOrder", tr("Labor Variance by Work Order..."),
                                           this, SLOT(sDspLaborVarianceByWorkOrder()),
-                                          displaysMenu, _privleges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
+                                          displaysMenu, _privileges->check("ViewLaborVariances") && _metrics->boolean("Routings") ) );
 
       displaysMenu->insertSeparator();
   }
@@ -455,33 +455,33 @@ moduleWO::moduleWO(GUIClient *Pparent) :
   { 
       parent->actions.append( new Action( parent, "wo.dspBreederDistributionVarianceByItem", tr("Breeder Distribution Variance by Item..."),
                                           this, SLOT(sDspBreederDistributionVarianceByItem()),
-                                          displaysMenu, _privleges->check("ViewBreederVariances") && _metrics->boolean("BBOM") ) );
+                                          displaysMenu, _privileges->check("ViewBreederVariances") && _metrics->boolean("BBOM") ) );
 
       parent->actions.append( new Action( parent, "wo.dspBreederDistributionVarianceByWarehouse", tr("Breeder Distribution Variance by Warehouse..."),
                                           this, SLOT(sDspBreederDistributionVarianceByWarehouse()),
-                                          displaysMenu, _privleges->check("ViewBreederVariances") && _metrics->boolean("BBOM") ) );
+                                          displaysMenu, _privileges->check("ViewBreederVariances") && _metrics->boolean("BBOM") ) );
   }
   
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "wo.dspOpenWorkOrdersWithClosedParentSalesOrders", tr("Open Work Orders with Closed Parent Sales Orders..."),
                                       this, SLOT(sDspWoSoStatusMismatch()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "wo.dspOpenWorkOrdersWithParentSalesOrders", tr("Open Work Orders with Parent Sales Orders..."),
                                       this, SLOT(sDspWoSoStatus()),
-                                      displaysMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      displaysMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
 //  W/O | Reports
   reportsMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "wo.rptPrintWorkOrderForm", tr("Print Work Order Form..."),
                                       this, SLOT(sPrintWorkOrderForm()),
-                                      reportsMenu, _privleges->check("PrintWorkOrderPaperWork") ) );
+                                      reportsMenu, _privileges->check("PrintWorkOrderPaperWork") ) );
 
   parent->actions.append( new Action( parent, "wo.rptPrintProductionEntrySheet", tr("Print Production Entry Sheet..."),
                                       this, SLOT(sPrintProductionEntrySheet()),
-                                      reportsMenu, _privleges->check("PrintWorkOrderPaperWork") ) );
+                                      reportsMenu, _privileges->check("PrintWorkOrderPaperWork") ) );
 
   mainMenu = new QMenu();
 

@@ -91,8 +91,7 @@ dspCountTagsByClassCode::dspCountTagsByClassCode(QWidget* parent, const char* na
   _cnttag->addColumn(tr("Variance"),     _qtyColumn,   Qt::AlignRight  );
   _cnttag->addColumn(tr("%"),            _prcntColumn, Qt::AlignRight  );
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _showUnposted->setChecked(true);
   
   sFillList();

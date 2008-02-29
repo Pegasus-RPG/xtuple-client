@@ -493,7 +493,7 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
   int     menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit W/O"), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainWorkOrders"))
+  if (!_privileges->check("MaintainWorkOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View W/O"), this, SLOT(sView()), 0);
@@ -503,39 +503,39 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
   if (status == "E")
   {
     menuItem = pMenu->insertItem(tr("Release W/O"), this, SLOT(sReleaseWO()), 0);
-    if (!_privleges->check("ReleaseWorkOrders"))
+    if (!_privileges->check("ReleaseWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (status == "R")
   {
     menuItem = pMenu->insertItem(tr("Recall W/O"), this, SLOT(sRecallWO()), 0);
-    if (!_privleges->check("RecallWorkOrders"))
+    if (!_privileges->check("RecallWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if ((status == "E") || (status == "R") || (status == "I"))
   {
     menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
-    if (!_privleges->check("PostProduction"))
+    if (!_privileges->check("PostProduction"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     if (status != "E")
     {
       menuItem = pMenu->insertItem(tr("Correct Production Posting..."), this, SLOT(sCorrectProductionPosting()), 0);
-      if (!_privleges->check("PostProduction"))
+      if (!_privileges->check("PostProduction"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
     if (_metrics->boolean("Routings"))
     {
       menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
-      if (!_privleges->check("PostWoOperations"))
+      if (!_privileges->check("PostWoOperations"))
         pMenu->setItemEnabled(menuItem, FALSE);
 
       if (status != "E")
       { 
         menuItem = pMenu->insertItem(tr("Correct Operations Posting..."), this, SLOT(sCorrectOperationsPosting()), 0);
-        if (!_privleges->check("PostWoOperations"))
+        if (!_privileges->check("PostWoOperations"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
     }
@@ -546,26 +546,26 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
   if (status == "O")
   {
     menuItem = pMenu->insertItem(tr("Explode W/O..."), this, SLOT(sExplodeWO()), 0);
-    if (!_privleges->check("ExplodeWorkOrders"))
+    if (!_privileges->check("ExplodeWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (status == "E")
   {
     menuItem = pMenu->insertItem(tr("Implode W/O..."), this, SLOT(sImplodeWO()), 0);
-    if (!_privleges->check("ImplodeWorkOrders"))
+    if (!_privileges->check("ImplodeWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   if ((status == "O") || (status == "E"))
   {
     menuItem = pMenu->insertItem(tr("Delete W/O..."), this, SLOT(sDeleteWO()), 0);
-    if (!_privleges->check("DeleteWorkOrders"))
+    if (!_privileges->check("DeleteWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else
   {
     menuItem = pMenu->insertItem(tr("Close W/O..."), this, SLOT(sCloseWO()), 0);
-    if (!_privleges->check("CloseWorkOrders"))
+    if (!_privileges->check("CloseWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -574,30 +574,30 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
   if ((status == "E") || (status == "R") || (status == "I"))
   {
     menuItem = pMenu->insertItem(tr("View W/O Material Requirements..."), this, SLOT(sViewWomatl()), 0);
-    if (!_privleges->check("ViewWoMaterials"))
+    if (!_privileges->check("ViewWoMaterials"))
       pMenu->setItemEnabled(menuItem, FALSE);
       
     if (_metrics->boolean("Routings"))
     {
       menuItem = pMenu->insertItem(tr("View W/O Operations..."), this, SLOT(sViewWooper()), 0);
-      if (!_privleges->check("ViewWoOperations"))
+      if (!_privileges->check("ViewWoOperations"))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
 
     menuItem = pMenu->insertItem(tr("Inventory Availability by Work Order..."), this, SLOT(sInventoryAvailabilityByWorkOrder()), 0);
-    if (!_privleges->check("ViewInventoryAvailability"))
+    if (!_privileges->check("ViewInventoryAvailability"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Print Traveler..."), this, SLOT(sPrintTraveler()), 0);
-    if (!_privleges->check("PrintWorkOrderPaperWork"))
+    if (!_privileges->check("PrintWorkOrderPaperWork"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Issue Material Item..."), this, SLOT(sIssueWoMaterialItem()));
-    pMenu->setItemEnabled(menuItem, _privleges->check("IssueWoMaterials"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("IssueWoMaterials"));
   }
 
   if ((status == "O") || (status == "E"))
@@ -605,26 +605,26 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("Reprioritize W/O..."), this, SLOT(sReprioritizeWo()), 0);
-    if (!_privleges->check("ReprioritizeWorkOrders"))
+    if (!_privileges->check("ReprioritizeWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Reschedule W/O..."), this, SLOT(sRescheduleWO()), 0);
-    if (!_privleges->check("RescheduleWorkOrders"))
+    if (!_privileges->check("RescheduleWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Change W/O Quantity..."), this, SLOT(sChangeWOQty()), 0);
-    if (!_privleges->check("ChangeWorkOrderQty"))
+    if (!_privileges->check("ChangeWorkOrderQty"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   pMenu->insertSeparator();
   
   menuItem = pMenu->insertItem(tr("View Bill of Materials..."), this, SLOT(sViewBOM()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOMs"));
+  pMenu->setItemEnabled(menuItem, _privileges->check("ViewBOMs"));
   if (_metrics->boolean("Routings"))
   {
     menuItem = pMenu->insertItem(tr("View Bill of Operations..."), this, SLOT(sViewBOO()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewBOOs"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewBOOs"));
   }
 
   pMenu->insertSeparator();
@@ -634,7 +634,7 @@ void dspWoScheduleByParameterList::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem 
   if (_metrics->boolean("Routings"))
   {
     menuItem = pMenu->insertItem(tr("Production Time Clock by Work Order..."), this, SLOT(sDspWoEffortByWorkOrder()), 0);
-    pMenu->setItemEnabled(menuItem, (_privleges->check("MaintainWoTimeClock") || _privleges->check("ViewWoTimeClock")));
+    pMenu->setItemEnabled(menuItem, (_privileges->check("MaintainWoTimeClock") || _privileges->check("ViewWoTimeClock")));
   }
 
   if (_wo->altId() != -1)
@@ -768,9 +768,9 @@ void dspWoScheduleByParameterList::sHandleButtons()
   {
     if((selected->text(2) == "E") || (selected->text(2) == "R") || (selected->text(2) == "I"))
     {
-      _postProduction->setEnabled(_privleges->check("PostProduction"));
-      _postOperations->setEnabled(_privleges->check("PostWoOperations"));
-      _printTraveler->setEnabled(_privleges->check("PrintWorkOrderPaperWork"));      
+      _postProduction->setEnabled(_privileges->check("PostProduction"));
+      _postOperations->setEnabled(_privileges->check("PostWoOperations"));
+      _printTraveler->setEnabled(_privileges->check("PrintWorkOrderPaperWork"));      
       return;
     }
   }

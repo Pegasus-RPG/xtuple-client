@@ -149,7 +149,7 @@ void dspSalesOrdersByParameterList::sPopulateMenu(QMenu *menuThis)
   menuThis->insertItem(tr("Shipment Status..."), this, SLOT(sDspShipmentStatus()), 0);
   menuThis->insertItem(tr("Shipments..."), this, SLOT(sDspShipments()), 0);
 
-  if (_privleges->check("MaintainReturns"))
+  if (_privileges->check("MaintainReturns"))
   {
     menuThis->insertSeparator();
     menuThis->insertItem(tr("Create Return Authorization..."), this, SLOT(sCreateRA()));

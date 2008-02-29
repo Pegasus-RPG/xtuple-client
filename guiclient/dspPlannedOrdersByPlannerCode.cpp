@@ -122,33 +122,33 @@ void dspPlannedOrdersByPlannerCode::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem 
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sDspRunningAvailability()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("ViewInventoryAvailability"));
+  pMenu->setItemEnabled(menuItem, _privileges->check("ViewInventoryAvailability"));
   menuItem = pMenu->insertItem(tr("Usage Statistics..."), this, SLOT(sDspUsageStatistics()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("ViewInventoryHistory"));
+  pMenu->setItemEnabled(menuItem, _privileges->check("ViewInventoryHistory"));
 
   pMenu->insertSeparator();
 
   if (pSelected->text(8) == "No")
   {
     menuItem = pMenu->insertItem(tr("Firm Order..."), this, SLOT(sFirmOrder()), 0);
-    if (!_privleges->check("FirmPlannedOrders"))
+    if (!_privileges->check("FirmPlannedOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else
   {
     menuItem = pMenu->insertItem(tr("Soften Order..."), this, SLOT(sSoftenOrder()), 0);
-    if (!_privleges->check("SoftenPlannedOrders"))
+    if (!_privileges->check("SoftenPlannedOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = pMenu->insertItem(tr("Release Order..."), this, SLOT(sReleaseOrder()), 0);
-  if ( (!_privleges->check("ReleasePlannedOrders")) ||
-       ((pSelected->text(1) == "W/O") && (!_privleges->check("MaintainWorkOrders")) ) ||
-       ((pSelected->text(1) == "P/O") && (!_privleges->check("MaintainPurchaseRequests")) ) )
+  if ( (!_privileges->check("ReleasePlannedOrders")) ||
+       ((pSelected->text(1) == "W/O") && (!_privileges->check("MaintainWorkOrders")) ) ||
+       ((pSelected->text(1) == "P/O") && (!_privileges->check("MaintainPurchaseRequests")) ) )
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete Order..."), this, SLOT(sDeleteOrder()), 0);
-  if (!_privleges->check("DeletePlannedOrders"))
+  if (!_privileges->check("DeletePlannedOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

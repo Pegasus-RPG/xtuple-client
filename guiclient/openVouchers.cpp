@@ -96,10 +96,10 @@ openVouchers::openVouchers(QWidget* parent, const char* name, Qt::WFlags fl)
   _vohead->addColumn(tr("Dist. Date"),     _dateColumn,  Qt::AlignCenter );
   _vohead->addColumn(tr("G/L Post Date"),  _dateColumn,  Qt::AlignCenter );
 
-  if (! _privleges->check("ChangeVOPostDate"))
+  if (! _privileges->check("ChangeVOPostDate"))
     _vohead->hideColumn(6);
 
-  if (_privleges->check("MaintainVouchers"))
+  if (_privileges->check("MaintainVouchers"))
   {
     connect(_vohead, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_vohead, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -112,7 +112,7 @@ openVouchers::openVouchers(QWidget* parent, const char* name, Qt::WFlags fl)
     connect(_vohead, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
 
-  if (_privleges->check("PostVouchers"))
+  if (_privileges->check("PostVouchers"))
     connect(_vohead, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
 
   connect(omfgThis, SIGNAL(vouchersUpdated()), this, SLOT(sFillList()));
@@ -237,7 +237,7 @@ void openVouchers::sPost()
   bool changeDate = false;
   QDate newDate = QDate::currentDate();
 
-  if (_privleges->check("ChangeVOPostDate"))
+  if (_privileges->check("ChangeVOPostDate"))
   {
     getGLDistDate newdlg(this, "", TRUE);
     newdlg.sSetDefaultLit(tr("Distribution Date"));
@@ -350,19 +350,19 @@ void openVouchers::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Voucher..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainVouchers"))
+  if (!_privileges->check("MaintainVouchers"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View Voucher..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete Voucher..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainVouchers"))
+  if (!_privileges->check("MaintainVouchers"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Post Voucher..."), this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostVouchers"))
+  if (!_privileges->check("PostVouchers"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

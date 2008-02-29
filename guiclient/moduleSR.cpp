@@ -133,40 +133,40 @@ moduleSR::moduleSR(GUIClient *Pparent) :
   actionProperties acts[] = {
     //  S/R | Shipping
     { "menu",	tr("Shipping"),  (char*)shippingMenu,	srMenu,	true,	NULL, NULL, true },
-    { "sr.packingListBatch", tr("Packing List Batch..."), SLOT(sPackingListBatch()), shippingMenu, (_privleges->check("MaintainPackingListBatch") || _privleges->check("ViewPackingListBatch")), NULL, NULL, true},
-    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingMenu, _privleges->check("PrintPackingLists"), NULL, NULL, true},
+    { "sr.packingListBatch", tr("Packing List Batch..."), SLOT(sPackingListBatch()), shippingMenu, (_privileges->check("MaintainPackingListBatch") || _privileges->check("ViewPackingListBatch")), NULL, NULL, true},
+    { "sr.printPackingListBatchByShipvia", tr("Print Packing List Batch by Ship Via..."), SLOT(sPrintPackingListBatchByShipvia()), shippingMenu, _privileges->check("PrintPackingLists"), NULL, NULL, true},
 
     { "separator", NULL, NULL, shippingMenu, true, NULL, NULL, true},
-    { "sr.issueStockToShipping", tr("Issue Stock to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, _privleges->check("IssueStockToShipping"), new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true},
-    { "sr.maintainShippingContents", tr("Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
+    { "sr.issueStockToShipping", tr("Issue Stock to Shipping..."), SLOT(sIssueStockToShipping()), shippingMenu, _privileges->check("IssueStockToShipping"), new QPixmap(":/images/issueStockToShipping.png"), toolBar,  true},
+    { "sr.maintainShippingContents", tr("Maintain Shipping Contents..."), SLOT(sDspShippingContents()), shippingMenu, _privileges->check("ViewShipping"), NULL, NULL, true},
     { "separator", NULL, NULL, shippingMenu, true, NULL, NULL, true},
-    { "sr.shipOrder", tr("Ship Order..."), SLOT(sShipOrders()), shippingMenu, _privleges->check("ShipOrders"), NULL, NULL, true},
-    { "sr.recallOrdersToShipping", tr("Recall Orders to Shipping..."), SLOT(sRecallOrders()), shippingMenu, _privleges->check("RecallOrders"), NULL, NULL, true},
+    { "sr.shipOrder", tr("Ship Order..."), SLOT(sShipOrders()), shippingMenu, _privileges->check("ShipOrders"), NULL, NULL, true},
+    { "sr.recallOrdersToShipping", tr("Recall Orders to Shipping..."), SLOT(sRecallOrders()), shippingMenu, _privileges->check("RecallOrders"), NULL, NULL, true},
     { "separator", NULL, NULL, shippingMenu, true, NULL, NULL, true},
-    { "sr.purgeShippingRecords", tr("Purge Shipping Records..."), SLOT(sPurgeShippingRecords()), shippingMenu, _privleges->check("PurgeShippingRecords"), NULL, NULL, true},
+    { "sr.purgeShippingRecords", tr("Purge Shipping Records..."), SLOT(sPurgeShippingRecords()), shippingMenu, _privileges->check("PurgeShippingRecords"), NULL, NULL, true},
 
     //  S/R | Receiving
     { "menu",	tr("Receiving"),  (char*)receivingMenu,	srMenu,	true,	NULL, NULL, true },
-    { "sr.enterReceipt", tr("Enter Receipt..."), SLOT(sEnterReceipt()), receivingMenu, _privleges->check("EnterReceipts"), NULL, NULL, true},
-    { "sr.postReceipts", tr("List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, _privleges->check("EnterReceipts"), new QPixmap(":/images/postReceipts.png"), toolBar,  true},
+    { "sr.enterReceipt", tr("Enter Receipt..."), SLOT(sEnterReceipt()), receivingMenu, _privileges->check("EnterReceipts"), NULL, NULL, true},
+    { "sr.postReceipts", tr("List Unposted Receipts..."), SLOT(sPostReceipts()), receivingMenu, _privileges->check("EnterReceipts"), new QPixmap(":/images/postReceipts.png"), toolBar,  true},
     { "separator", NULL, NULL, receivingMenu, true, NULL, NULL, true},
-    { "sr.enterReturn", tr("Enter P/O Return..."), SLOT(sEnterReturn()), receivingMenu, _privleges->check("EnterReturns"), NULL, NULL, true},
+    { "sr.enterReturn", tr("Enter P/O Return..."), SLOT(sEnterReturn()), receivingMenu, _privileges->check("EnterReturns"), NULL, NULL, true},
 
 
     //  S/R | Forms
     { "menu",	tr("Forms"),  (char*)formsMenu,	srMenu,	true,	NULL, NULL, true },
-    { "sr.printPackingList", tr("Print Packing List..."), SLOT(sPrintPackingLists()), formsMenu, _privleges->check("PrintPackingLists"), NULL, NULL, true},
-    { "sr.printShippingForm", tr("Print Shipping Form..."), SLOT(sPrintShippingForm()), formsMenu, _privleges->check("PrintBillsOfLading"), NULL, NULL, true},
-    { "sr.printShippingForms", tr("Print Shipping Forms..."), SLOT(sPrintShippingForms()), formsMenu, _privleges->check("PrintBillsOfLading"), NULL, NULL, true},
-    { "sr.printShippingLabelsBySo", tr("Print Shipping Labels by S/O #..."), SLOT(sPrintShippingLabelsBySo()), formsMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
-    { "sr.printShippingLabelsByInvoice", tr("Print Shipping Labels by Invoice..."), SLOT(sPrintShippingLabelsByInvoice()), formsMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
-    { "sr.printReceivingLabelsByPo", tr("Print Receiving Labels by P/O #..."), SLOT(sPrintReceivingLabelsByPo()), formsMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
+    { "sr.printPackingList", tr("Print Packing List..."), SLOT(sPrintPackingLists()), formsMenu, _privileges->check("PrintPackingLists"), NULL, NULL, true},
+    { "sr.printShippingForm", tr("Print Shipping Form..."), SLOT(sPrintShippingForm()), formsMenu, _privileges->check("PrintBillsOfLading"), NULL, NULL, true},
+    { "sr.printShippingForms", tr("Print Shipping Forms..."), SLOT(sPrintShippingForms()), formsMenu, _privileges->check("PrintBillsOfLading"), NULL, NULL, true},
+    { "sr.printShippingLabelsBySo", tr("Print Shipping Labels by S/O #..."), SLOT(sPrintShippingLabelsBySo()), formsMenu, _privileges->check("ViewShipping"), NULL, NULL, true},
+    { "sr.printShippingLabelsByInvoice", tr("Print Shipping Labels by Invoice..."), SLOT(sPrintShippingLabelsByInvoice()), formsMenu, _privileges->check("ViewShipping"), NULL, NULL, true},
+    { "sr.printReceivingLabelsByPo", tr("Print Receiving Labels by P/O #..."), SLOT(sPrintReceivingLabelsByPo()), formsMenu, _privileges->check("ViewShipping"), NULL, NULL, true},
 
     //  S/R | Rates
     { "menu",	tr("Rates"),	(char*)ratesMenu,	srMenu,	true, NULL, NULL, true},
-    { "sr.destinations", tr("Destinations..."), SLOT(sDestinations()), ratesMenu, (_privleges->check("MaintainDestinations") || _privleges->check("ViewDestinations")), NULL, NULL, true},
+    { "sr.destinations", tr("Destinations..."), SLOT(sDestinations()), ratesMenu, (_privileges->check("MaintainDestinations") || _privileges->check("ViewDestinations")), NULL, NULL, true},
     { "separator", NULL, NULL, ratesMenu, true, NULL, NULL, true},
-    { "sr.carries", tr("Carriers..."), SLOT(sCarriers()), ratesMenu, (_privleges->check("MaintainCarriers") || _privleges->check("ViewCarriers")), NULL, NULL, true},
+    { "sr.carries", tr("Carriers..."), SLOT(sCarriers()), ratesMenu, (_privileges->check("MaintainCarriers") || _privileges->check("ViewCarriers")), NULL, NULL, true},
     
 #if 0
     { "separator", NULL, NULL, ratesMenu, true, NULL, NULL, true},
@@ -181,14 +181,14 @@ moduleSR::moduleSR(GUIClient *Pparent) :
 
     //  S/R | Displays
     { "menu",	tr("Displays"),	(char*)displaysMenu,	srMenu,	true, NULL, NULL, true},
-    { "sr.dspBacklogByItem", tr("Backlog by Item..."), SLOT(sDspBacklogByItem()), displaysMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
-    { "sr.dspBacklogByCustomer", tr("Backlog by Customer..."), SLOT(sDspBacklogByCustomer()), displaysMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
-    { "sr.dspBacklogByProductCategory", tr("Backlog by Product Category..."), SLOT(sDspBacklogByProductCategory()), displaysMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
+    { "sr.dspBacklogByItem", tr("Backlog by Item..."), SLOT(sDspBacklogByItem()), displaysMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true},
+    { "sr.dspBacklogByCustomer", tr("Backlog by Customer..."), SLOT(sDspBacklogByCustomer()), displaysMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true},
+    { "sr.dspBacklogByProductCategory", tr("Backlog by Product Category..."), SLOT(sDspBacklogByProductCategory()), displaysMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true},
     { "separator", NULL, NULL, displaysMenu, true, NULL, NULL, true},
-    { "sr.dspSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."), SLOT(sDspSummarizedBacklogByWarehouse()), displaysMenu, _privleges->check("ViewSalesOrders"), NULL, NULL, true},
+    { "sr.dspSummarizedBacklogByWarehouse", tr("Summarized Backlog by Warehouse..."), SLOT(sDspSummarizedBacklogByWarehouse()), displaysMenu, _privileges->check("ViewSalesOrders"), NULL, NULL, true},
     { "separator", NULL, NULL, displaysMenu, true, NULL, NULL, true},
-    { "sr.dspShipmentsBySalesOrder", tr("Shipments by Sales Order..."), SLOT(sDspShipmentsBySalesOrder()), displaysMenu, _privleges->check("ViewShipping"), NULL, NULL, true},
-    { "sr.dspShipmentsByDate", tr("Shipments by Date..."), SLOT(sDspShipmentsByDate()), displaysMenu, _privleges->check("ViewShipping"), NULL, NULL, true}
+    { "sr.dspShipmentsBySalesOrder", tr("Shipments by Sales Order..."), SLOT(sDspShipmentsBySalesOrder()), displaysMenu, _privileges->check("ViewShipping"), NULL, NULL, true},
+    { "sr.dspShipmentsByDate", tr("Shipments by Date..."), SLOT(sDspShipmentsByDate()), displaysMenu, _privileges->check("ViewShipping"), NULL, NULL, true}
   };
 
   for (unsigned int i = 0; i < sizeof(acts) / sizeof(acts[0]); i++)

@@ -77,7 +77,7 @@ createCycleCountTags::createCycleCountTags(QWidget* parent, const char* name, bo
 
     _parameter->setType(ClassCode);
 
-    _freeze->setEnabled(_privleges->check("CreateReceiptTrans"));
+    _freeze->setEnabled(_privileges->check("CreateReceiptTrans"));
     
     //If not multi-warehouse hide whs control
     if (!_metrics->boolean("MultiWhs"))
@@ -86,8 +86,7 @@ createCycleCountTags::createCycleCountTags(QWidget* parent, const char* name, bo
       _warehouse->hide();
     }
 
-    Preferences _pref = Preferences(omfgThis->username());
-    if (_pref.boolean("XCheckBox/forgetful"))
+    if (_preferences->boolean("XCheckBox/forgetful"))
       _priority->setChecked(true);
 
     sPopulateLocations();

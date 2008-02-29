@@ -86,7 +86,7 @@ taxAuthorities::taxAuthorities(QWidget* parent, const char* name, Qt::WFlags fl)
   _taxauth->addColumn(tr("Code"), 70, Qt::AlignLeft );
   _taxauth->addColumn(tr("Name"), -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainTaxAuthorities"))
+  if (_privileges->check("MaintainTaxAuthorities"))
   {
     connect(_taxauth, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_taxauth, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

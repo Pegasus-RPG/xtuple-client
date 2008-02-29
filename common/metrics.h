@@ -59,15 +59,16 @@
 #ifndef metrics_h
 #define metrics_h
 
-#include <qstring.h>
-#include <qmap.h>
-
-#include "xsqlquery.h"
+#include <QObject>
+#include <QString>
+#include <QMap>
 
 typedef QMap<QString, QString> MetricMap;
 
-class Parameters
+class Parameters : public QObject
 {
+  Q_OBJECT
+
   protected:
     MetricMap _values;
     QString   _readSql;
@@ -76,15 +77,13 @@ class Parameters
     bool      _dirty;
 
   public:
-    Parameters();
+    Parameters(QObject * parent = 0);
     virtual ~Parameters() {};
 
     void load();
 
     QString value(const char *);
-    QString value(const QString &);
     bool    boolean(const char *);
-    bool    boolean(const QString &);
 
     void set(const char *, bool);
     void set(const QString &, bool);
@@ -95,18 +94,27 @@ class Parameters
 
     QString parent(const QString &);
 
+  public slots:
+    QString value(const QString &);
+    bool    boolean(const QString &);
+
+  protected:
     void _set(const QString &, QVariant);
 
 };
 
 class Metrics : public Parameters
 {
+  Q_OBJECT
+
   public:
     Metrics();
 };
 
 class Preferences : public Parameters
 {
+  Q_OBJECT
+
   public:
     Preferences() {};
     Preferences(const QString &);
@@ -114,11 +122,14 @@ class Preferences : public Parameters
     void remove(const QString &);
 };
 
-class Privleges : public Parameters
+class Privileges : public Parameters
 {
-  public:
-    Privleges();
+  Q_OBJECT
 
+  public:
+    Privileges();
+
+  public slots:
     bool check(const QString &);
 };
 

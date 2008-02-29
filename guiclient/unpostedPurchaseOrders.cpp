@@ -103,7 +103,7 @@ unpostedPurchaseOrders::unpostedPurchaseOrders(QWidget* parent, const char* name
 
     _pohead->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
-    if (_privleges->check("MaintainPurchaseOrders"))
+    if (_privileges->check("MaintainPurchaseOrders"))
       _new->setEnabled(TRUE);
 
     sFillList();
@@ -135,8 +135,8 @@ void unpostedPurchaseOrders::sEdit()
   bool done = false;
   for (int i = 0; i < list.size(); i++)
   {
-    if ((list[i]->text(3) == "U" && _privleges->check("MaintainPurchaseOrders")) ||
-	(list[i]->text(3) == "O" && _privleges->check("MaintainPostedPurchaseOrders")))
+    if ((list[i]->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")) ||
+	(list[i]->text(3) == "O" && _privileges->check("MaintainPostedPurchaseOrders")))
     {
       ParameterList params;
       params.append("mode", "edit");
@@ -256,7 +256,7 @@ void unpostedPurchaseOrders::sPost()
     bool done = false;
     for (int i = 0; i < list.size(); i++)
     {
-      if (list[i]->text(3) == "U" && _privleges->check("PostPurchaseOrders"))
+      if (list[i]->text(3) == "U" && _privileges->check("PostPurchaseOrders"))
       {
 	q.bindValue(":pohead_id", ((XTreeWidgetItem*)(list[i]))->id());
 	q.exec();
@@ -287,17 +287,17 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
 {
   int menuItem;
 
-  bool canMaintain = (pItem->text(3) == "U" && _privleges->check("MaintainPurchaseOrders")) ||
-		     (pItem->text(3) == "O" && _privleges->check("MaintainPostedPurchaseOrders"));
+  bool canMaintain = (pItem->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")) ||
+		     (pItem->text(3) == "O" && _privileges->check("MaintainPostedPurchaseOrders"));
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
   pMenu->setItemEnabled(menuItem, canMaintain);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
-  pMenu->setItemEnabled(menuItem, canMaintain || _privleges->check("ViewPurchaseOrders"));
+  pMenu->setItemEnabled(menuItem, canMaintain || _privileges->check("ViewPurchaseOrders"));
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  pMenu->setItemEnabled(menuItem, (pItem->text(3) == "U" && _privleges->check("MaintainPurchaseOrders")));
+  pMenu->setItemEnabled(menuItem, (pItem->text(3) == "U" && _privileges->check("MaintainPurchaseOrders")));
 
   pMenu->insertSeparator();
 
@@ -311,7 +311,7 @@ void unpostedPurchaseOrders::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pItem)
   }
 
   menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
-  pMenu->setItemEnabled(menuItem, _privleges->check("PostPurchaseOrders") &&
+  pMenu->setItemEnabled(menuItem, _privileges->check("PostPurchaseOrders") &&
 				  pItem->text(3) == "U");
 }
 
@@ -331,15 +331,15 @@ void unpostedPurchaseOrders::sHandleButtons()
       break;
   }
 
-  _delete->setEnabled(unposted && _privleges->check("MaintainPurchaseOrders"));
-  _edit->setEnabled((unposted && _privleges->check("MaintainPurchaseOrders")) ||
-		    (open && _privleges->check("MaintainPostedPurchaseOrders")));
-  _post->setEnabled(unposted && _privleges->check("PostPurchaseOrders"));
-  _print->setEnabled((unposted && _privleges->check("MaintainPurchaseOrders")) ||
-		     (open && _privleges->check("MaintainPostedPurchaseOrders")));
+  _delete->setEnabled(unposted && _privileges->check("MaintainPurchaseOrders"));
+  _edit->setEnabled((unposted && _privileges->check("MaintainPurchaseOrders")) ||
+		    (open && _privileges->check("MaintainPostedPurchaseOrders")));
+  _post->setEnabled(unposted && _privileges->check("PostPurchaseOrders"));
+  _print->setEnabled((unposted && _privileges->check("MaintainPurchaseOrders")) ||
+		     (open && _privileges->check("MaintainPostedPurchaseOrders")));
 
-  if ((unposted && _privleges->check("MaintainPurchaseOrders")) ||
-      (open && _privleges->check("MaintainPostedPurchaseOrders")))
+  if ((unposted && _privileges->check("MaintainPurchaseOrders")) ||
+      (open && _privileges->check("MaintainPostedPurchaseOrders")))
   {
     disconnect(_pohead, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
     connect(_pohead, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));

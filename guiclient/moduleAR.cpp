@@ -128,46 +128,46 @@ moduleAR::moduleAR(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ar.createInvoice", tr("Create Invoice..."),
                                       this, SLOT(sCreateInvoice()),
-                                      invoicesMenu, _privleges->check("MaintainMiscInvoices") ) );
+                                      invoicesMenu, _privileges->check("MaintainMiscInvoices") ) );
 
   parent->actions.append( new Action( parent, "ar.listUnpostedInvoices", tr("List Unposted Invoices..."),
                                       this, SLOT(sUnpostedInvoices()),
-                                      invoicesMenu, _privleges->check("SelectBilling"),
+                                      invoicesMenu, _privileges->check("SelectBilling"),
 									  QPixmap(":/images/unpostedInvoices.png"), toolBar ) );
 
   invoicesMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.arWorkBench", tr("A/R Workbench..."),
                                       this, SLOT(sArWorkBench()),
-                                      invoicesMenu, _privleges->check("ViewAROpenItems") ,
+                                      invoicesMenu, _privileges->check("ViewAROpenItems") ,
 									  QPixmap(":/images/arWorkbench.png"), toolBar ) );
   
   invoicesMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.printInvoices", tr("Print Invoices..."),
                                       this, SLOT(sPrintInvoices()),
-                                      invoicesMenu, _privleges->check("PrintInvoices") ) );
+                                      invoicesMenu, _privileges->check("PrintInvoices") ) );
 
   parent->actions.append( new Action( parent, "ar.reprintInvoices", tr("Re-Print Invoices..."),
                                       this, SLOT(sReprintInvoices()),
-                                      invoicesMenu, _privleges->check("PrintInvoices") ) );
+                                      invoicesMenu, _privileges->check("PrintInvoices") ) );
 
   if   (_metrics->boolean("EnableBatchManager"))
       parent->actions.append( new Action( parent, "ar.scheduleInvoiceForEmailDelivery", tr("Schedule Invoice for Email Delivery..."),
                                           this, SLOT(sDeliverInvoice()),
-                                          invoicesMenu, _privleges->check("PrintInvoices")  ) );
+                                          invoicesMenu, _privileges->check("PrintInvoices")  ) );
 
   invoicesMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.postInvoices", tr("Post Invoices..."),
                                       this, SLOT(sPostInvoices()),
-                                      invoicesMenu, _privleges->check("PostMiscInvoices") ) );
+                                      invoicesMenu, _privileges->check("PostMiscInvoices") ) );
 
   invoicesMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "so.purgeInvoices", tr("Purge Invoices..."),
                                       this, SLOT(sPurgeInvoices()),
-                                      invoicesMenu, _privleges->check("PurgeInvoices") ) );
+                                      invoicesMenu, _privileges->check("PurgeInvoices") ) );
 
 
 
@@ -176,16 +176,16 @@ moduleAR::moduleAR(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ar.enterCashReceipt", tr("Enter Cash Receipt..."),
                                       this, SLOT(sEnterCashReceipt()),
-                                      cashReceiptsMenu, _privleges->check("MaintainCashReceipts") ) );
+                                      cashReceiptsMenu, _privileges->check("MaintainCashReceipts") ) );
 
   parent->actions.append( new Action( parent, "ar.cashReceiptEditList", tr("Cash Receipt Edit List..."),
                                       this, SLOT(sCashReceiptEditList()),
-                                      cashReceiptsMenu, (_privleges->check("MaintainCashReceipts") || _privleges->check("ViewCashReceipt")),
+                                      cashReceiptsMenu, (_privileges->check("MaintainCashReceipts") || _privileges->check("ViewCashReceipt")),
 									  QPixmap(":/images/editCashReceipts.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "ar.postCashReceipts", tr("Post Cash Receipts..."),
                                       this, SLOT(sPostCashReceipts()),
-                                      cashReceiptsMenu, _privleges->check("PostCashReceipts") ) );
+                                      cashReceiptsMenu, _privileges->check("PostCashReceipts") ) );
 
 
 
@@ -194,59 +194,59 @@ moduleAR::moduleAR(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ar.enterMiscCreditMemo", tr("Enter Misc. Credit Memo..."),
                                       this, SLOT(sEnterMiscCreditMemo()),
-                                      memosMenu, _privleges->check("MaintainARMemos") ) );
+                                      memosMenu, _privileges->check("MaintainARMemos") ) );
 
   parent->actions.append( new Action( parent, "ar.unapplidCreditMemo", tr("List Unapplied Credit Memos..."),
                                       this, SLOT(sUnappliedCreditMemos()),
-                                      memosMenu, (_privleges->check("MaintainARMemos") || _privleges->check("ViewARMemos")) ) );
+                                      memosMenu, (_privileges->check("MaintainARMemos") || _privileges->check("ViewARMemos")) ) );
 
   memosMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.enterMiscDebitMemo", tr("Enter Misc. Debit Memo..."),
                                       this, SLOT(sEnterMiscDebitMemo()),
-                                      memosMenu, _privleges->check("MaintainARMemos") ) );
+                                      memosMenu, _privileges->check("MaintainARMemos") ) );
 
 //  Displays
   displaysMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ar.dspCustomerHistory", tr("Customer History..."),
                                       this, SLOT(sDspCustomerHistory()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.dspCashReceipts", tr("Cash Receipts by Customer..."),
                                       this, SLOT(sDspCashReceipts()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.dspARApplications", tr("A/R Applications..."),
                                       this, SLOT(sDspARApplications()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.dspInvoiceInformation", tr("Invoice Information..."),
                                       this, SLOT(sDspInvoiceInformation()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.dspInvoiceRegister", tr("Invoice Register..."),
                                       this, SLOT(sDspInvoiceRegister()),
-                                      displaysMenu, _privleges->check("ViewInvoiceRegister") ) );
+                                      displaysMenu, _privileges->check("ViewInvoiceRegister") ) );
 
   parent->actions.append( new Action( parent, "ar.dspDepositsRegister", tr("Deposits Register..."),
                                       this, SLOT(sDspDepositsRegister()),
-                                      displaysMenu, _privleges->check("ViewDepositsRegister") ) );
+                                      displaysMenu, _privileges->check("ViewDepositsRegister") ) );
 
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.dspOpenItems", tr("Open Items..."),
                                       this, SLOT(sDspAROpenItems()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.dspOpenItemsByCustomer", tr("Open Items by Customer..."),
                                       this, SLOT(sDspAROpenItemsByCustomer()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems") ) );
+                                      displaysMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.dspARAging", tr("A/R Aging..."),
                                       this, SLOT(sDspTimePhasedOpenItems()),
-                                      displaysMenu, _privleges->check("ViewAROpenItems"),
+                                      displaysMenu, _privileges->check("ViewAROpenItems"),
 									  QPixmap(":/images/arAging.png"), toolBar ) );
 
 //  Reports
@@ -254,21 +254,21 @@ moduleAR::moduleAR(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ar.printStatementByCustomer", tr("Print Statement by Customer..."),
                                       this, SLOT(sPrintStatementByCustomer()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
+                                      reportsMenu, _privileges->check("ViewAROpenItems") ) );
 
   parent->actions.append( new Action( parent, "ar.printStatementsByCustomerType", tr("Print Statements by Customer Type..."),
                                       this, SLOT(sPrintStatementsByCustomerType()),
-                                      reportsMenu, _privleges->check("ViewAROpenItems") ) );
+                                      reportsMenu, _privileges->check("ViewAROpenItems") ) );
 
   reportsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ar.rptSalesJournal", tr("Sales Journal..."),
                                       this, SLOT(sRptSalesJournal()),
-                                      reportsMenu, _privleges->check("PrintARJournals") ) );
+                                      reportsMenu, _privileges->check("PrintARJournals") ) );
 
   parent->actions.append( new Action( parent, "ar.rptCreditMemoJournal", tr("Credit Memo Journal..."),
                                       this, SLOT(sRptCreditMemoJournal()),
-                                      reportsMenu, _privleges->check("PrintARJournals") ) );
+                                      reportsMenu, _privileges->check("PrintARJournals") ) );
 
 
 //  Master Information
@@ -276,35 +276,35 @@ moduleAR::moduleAR(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ar.customers", tr("Customers..."),
                                       this, SLOT(sCustomers()),
-                                      masterInfoMenu, (_privleges->check("MaintainCustomerMasters") || _privleges->check("ViewCustomerMasters")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainCustomerMasters") || _privileges->check("ViewCustomerMasters")) ) );
 
   parent->actions.append( new Action( parent, "ar.customerTypes", tr("Customer Types..."),
                                       this, SLOT(sCustomerTypes()),
-                                      masterInfoMenu, (_privleges->check("MaintainCustomerTypes") || _privleges->check("ViewCustomerTypes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainCustomerTypes") || _privileges->check("ViewCustomerTypes")) ) );
 
   parent->actions.append( new Action( parent, "ar.taxCodes", tr("Tax Codes..."),
                                       this, SLOT(sTaxCodes()),
-                                      masterInfoMenu, (_privleges->check("MaintainTaxCodes") || _privleges->check("ViewTaxCodes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainTaxCodes") || _privileges->check("ViewTaxCodes")) ) );
 
   parent->actions.append( new Action( parent, "ar.terms", tr("Terms..."),
                                       this, SLOT(sTerms()),
-                                      masterInfoMenu, (_privleges->check("MaintainTerms") || _privleges->check("ViewTerms")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainTerms") || _privileges->check("ViewTerms")) ) );
 
   parent->actions.append( new Action( parent, "ar.backAccounts", tr("Bank Accounts..."),
                                       this, SLOT(sBankAccounts()),
-                                      masterInfoMenu, (_privleges->check("MaintainBankAccounts") || _privleges->check("ViewBankAccounts")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainBankAccounts") || _privileges->check("ViewBankAccounts")) ) );
 
   parent->actions.append( new Action( parent, "ar.salesCategories", tr("Sales Categories..."),
                                       this, SLOT(sSalesCategories()),
-                                      masterInfoMenu, (_privleges->check("MaintainSalesCategories")) || (_privleges->check("ViewSalesCategories")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainSalesCategories")) || (_privileges->check("ViewSalesCategories")) ) );
 
   parent->actions.append( new Action( parent, "ar.reasonCodes", tr("Reason Codes..."),
                                       this, SLOT(sReasonCodes()),
-                                      masterInfoMenu, _privleges->check("MaintainReasonCodes") ) );
+                                      masterInfoMenu, _privileges->check("MaintainReasonCodes") ) );
 
   parent->actions.append( new Action( parent, "ar.arAccountAssignments", tr("A/R Account Assignments..."),
                                       this, SLOT(sARAccountAssignments()),
-                                      masterInfoMenu, (_privleges->check("MaintainSalesAccount") || _privleges->check("ViewSalesAccount")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainSalesAccount") || _privileges->check("ViewSalesAccount")) ) );
 
   mainMenu = new QMenu();
   mainMenu->insertItem(tr("Invoices"), invoicesMenu);

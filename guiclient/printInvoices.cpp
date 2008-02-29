@@ -133,7 +133,7 @@ void printInvoices::init()
   if (q.first())
     _firstInvoiceNum->setText(q.value("orderseq_number").toString());
 
-  if(!_privleges->check("PostMiscInvoices"))
+  if(!_privileges->check("PostMiscInvoices"))
   {
     _post->setChecked(false);
     _post->setEnabled(false);

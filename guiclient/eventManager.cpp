@@ -94,7 +94,7 @@ eventManager::eventManager(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_usr,			SIGNAL(newID(int)),    this, SLOT(sFillList()));
   connect(_warehouse,		SIGNAL(updated()),     this, SLOT(sFillList()));
 
-  if (!_privleges->check("ViewOtherEvents"))
+  if (!_privileges->check("ViewOtherEvents"))
     _selectedUser->setEnabled(FALSE);
 
   _event->addColumn("orderId",         0,               Qt::AlignCenter );
@@ -122,11 +122,11 @@ void eventManager::languageChange()
 void eventManager::sHandleEventValid(bool pvalid)
 {
   _ack->setEnabled(pvalid &&
-      ((_currentUser->isChecked() && _privleges->check("DispatchOwnEvents")) ||
-       (_selectedUser->isChecked() && _privleges->check("DispatchOtherEvents"))) );
+      ((_currentUser->isChecked() && _privileges->check("DispatchOwnEvents")) ||
+       (_selectedUser->isChecked() && _privileges->check("DispatchOtherEvents"))) );
   _delete->setEnabled(pvalid &&
-      ((_currentUser->isChecked() && _privleges->check("DeleteOwnEvents")) ||
-       (_selectedUser->isChecked() && _privleges->check("DeleteOtherEvents"))) );
+      ((_currentUser->isChecked() && _privileges->check("DeleteOwnEvents")) ||
+       (_selectedUser->isChecked() && _privileges->check("DeleteOtherEvents"))) );
 }
 
 void eventManager::sPopulateMenu(QMenu *menu)
@@ -136,14 +136,14 @@ void eventManager::sPopulateMenu(QMenu *menu)
   if (_event->currentItem()->text(5).length() == 0)
   {
     menuItem = menu->insertItem(tr("Acknowledge"), this, SLOT(sAcknowledge()), 0);
-    if ( ((_currentUser->isChecked()) && (!_privleges->check("DispatchOwnEvents"))) ||
-         ((_selectedUser->isChecked()) && (!_privleges->check("DispatchOtherEvents"))) )
+    if ( ((_currentUser->isChecked()) && (!_privileges->check("DispatchOwnEvents"))) ||
+         ((_selectedUser->isChecked()) && (!_privileges->check("DispatchOtherEvents"))) )
         menu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = menu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if ( ((_currentUser->isChecked()) && (!_privleges->check("DeleteOwnEvents"))) ||
-       ((_selectedUser->isChecked()) && (!_privleges->check("DeleteOtherEvents"))) )
+  if ( ((_currentUser->isChecked()) && (!_privileges->check("DeleteOwnEvents"))) ||
+       ((_selectedUser->isChecked()) && (!_privileges->check("DeleteOtherEvents"))) )
       menu->setItemEnabled(menuItem, FALSE);
 
   // if multiple items are selected then keep the menu short

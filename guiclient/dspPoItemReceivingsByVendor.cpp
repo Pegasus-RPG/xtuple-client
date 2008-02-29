@@ -94,13 +94,13 @@ dspPoItemReceivingsByVendor::dspPoItemReceivingsByVendor(QWidget* parent, const 
   _porecv->addColumn(tr("Description"), -1,           Qt::AlignLeft   );
   _porecv->addColumn(tr("Rcvd/Rtnd"),   _qtyColumn,   Qt::AlignRight  );
   _porecv->addColumn(tr("Qty."),        _qtyColumn,   Qt::AlignRight  );
-  if (_privleges->check("ViewCosts"))
+  if (_privileges->check("ViewCosts"))
   {
     _porecv->addColumn(tr("Purch. Cost"), _priceColumn,  Qt::AlignRight );
     _porecv->addColumn(tr("Recv. Cost"),  _priceColumn,  Qt::AlignRight );
   }
 
-  _showVariances->setEnabled(_privleges->check("ViewCosts"));
+  _showVariances->setEnabled(_privileges->check("ViewCosts"));
   sHandleVariance(_showVariances->isChecked());
 }
 

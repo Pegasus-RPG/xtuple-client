@@ -195,17 +195,17 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (pSelected->text(POITEM_STATUS_COL) == "U")
   {
     menuItem = pMenu->insertItem(tr("Edit Order..."), this, SLOT(sEditOrder()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = pMenu->insertItem(tr("View Order..."), this, SLOT(sViewOrder()), 0);
-  if ((!_privleges->check("MaintainPurchaseOrders")) && (!_privleges->check("ViewPurchaseOrders")))
+  if ((!_privileges->check("MaintainPurchaseOrders")) && (!_privileges->check("ViewPurchaseOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
 
-  if (!_privleges->check("ViewInventoryAvailability"))
+  if (!_privileges->check("ViewInventoryAvailability"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -213,22 +213,22 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (pSelected->text(POITEM_STATUS_COL) == "U")
   {
     menuItem = pMenu->insertItem(tr("Edit Item..."), this, SLOT(sEditItem()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
   menuItem = pMenu->insertItem(tr("View Item..."), this, SLOT(sViewItem()), 0);
-  if ((!_privleges->check("MaintainPurchaseOrders")) && (!_privleges->check("ViewPurchaseOrders")))
+  if ((!_privileges->check("MaintainPurchaseOrders")) && (!_privileges->check("ViewPurchaseOrders")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   if (pSelected->text(POITEM_STATUS_COL) != "C")
   {
     menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sReschedule()), 0);
-    if (!_privleges->check("ReschedulePurchaseOrders"))
+    if (!_privileges->check("ReschedulePurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Change Qty..."), this, SLOT(sChangeQty()), 0);
-    if (!_privleges->check("ChangePurchaseOrderQty"))
+    if (!_privileges->check("ChangePurchaseOrderQty"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
@@ -237,13 +237,13 @@ void dspPoItemsByItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   if (pSelected->text(POITEM_STATUS_COL) == "O")
   {
     menuItem = pMenu->insertItem(tr("Close Item..."), this, SLOT(sCloseItem()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
   else if (pSelected->text(POITEM_STATUS_COL) == "C")
   {
     menuItem = pMenu->insertItem(tr("Open Item..."), this, SLOT(sOpenItem()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

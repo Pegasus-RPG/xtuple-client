@@ -296,7 +296,7 @@ void configureIM::sSave()
   }
 
   _metrics->load();
-  _privleges->load();
+  _privileges->load();
   omfgThis->saveToolbarPositions();
   _preferences->load();
   omfgThis->initMenuBar();

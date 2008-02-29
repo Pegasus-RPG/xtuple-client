@@ -109,7 +109,7 @@ void standardOperations::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainStandardOperations"))
+  if (_privileges->check("MaintainStandardOperations"))
   {
     connect(_stdopn, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_stdopn, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

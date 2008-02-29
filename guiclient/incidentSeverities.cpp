@@ -93,7 +93,7 @@ incidentSeverities::incidentSeverities(QWidget* parent, const char* name, Qt::WF
   _incidentSeverities->addColumn(tr("Severity"),      100, Qt::AlignLeft );
   _incidentSeverities->addColumn(tr("Description"),    -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainIncidentSeverities"))
+  if (_privileges->check("MaintainIncidentSeverities"))
   {
     connect(_incidentSeverities, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_incidentSeverities, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -189,13 +189,13 @@ void incidentSeverities::sPopulateMenu( QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainIncidentSeverities"))
+  if (!_privileges->check("MaintainIncidentSeverities"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainIncidentSeverities"))
+  if (!_privileges->check("MaintainIncidentSeverities"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

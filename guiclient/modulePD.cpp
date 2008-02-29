@@ -153,37 +153,37 @@ modulePD::modulePD(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pd.enterNewItem", tr("Enter New Item..."),
                                       this, SLOT(sNewItem()),
-                                      itemsMenu, _privleges->check("MaintainItemMasters") ) );
+                                      itemsMenu, _privileges->check("MaintainItemMasters") ) );
   //                                    QPixmap(":/images/newItem.xpm"), toolBar ) );
 
   parent->actions.append( new Action( parent, "pd.listItems", tr("List Items..."),
                                       this, SLOT(sItems()),
-                                      itemsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")),
+                                      itemsMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")),
                                       QPixmap(":/images/items.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "pd.searchForItems", tr("Search for Items..."),
                                       this, SLOT(sSearchForItems()),
-                                      itemsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                      itemsMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
 
   parent->actions.append( new Action( parent, "pd.copyItem", tr("Copy Item..."),
                                       this, SLOT(sCopyItem()),
-                                      itemsMenu, _privleges->check("MaintainItemMasters") ) );
+                                      itemsMenu, _privileges->check("MaintainItemMasters") ) );
 
   itemsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.itemAvailabilityWorkbench", tr("Item Availability Workbench..."),
                                       this, SLOT(sDspItemAvailabilityWorkbench()),
-                                      itemsMenu, _privleges->check("ViewItemAvailabilityWorkbench") ) );
+                                      itemsMenu, _privileges->check("ViewItemAvailabilityWorkbench") ) );
 
   itemsMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.itemGroups", tr("Item Groups..."),
                                       this, SLOT(sItemGroups()),
-                                      itemsMenu, (_privleges->check("MaintainItemGroups") || _privleges->check("ViewItemGroups")) ) );
+                                      itemsMenu, (_privileges->check("MaintainItemGroups") || _privileges->check("ViewItemGroups")) ) );
 
   parent->actions.append( new Action( parent, "pd.itemImages", tr("Item Images..."),
                                       this, SLOT(sItemImages()),
-                                      itemsMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                      itemsMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
 
 
 //  P/D | Bills of Materials
@@ -191,27 +191,27 @@ modulePD::modulePD(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pd.enterNewBOM", tr("Enter New Bill of Materials..."),
                                       this, SLOT(sNewBOM()),
-                                      bomMenu, _privleges->check("MaintainBOMs") ) );
+                                      bomMenu, _privileges->check("MaintainBOMs") ) );
 //                                               QPixmap(":/images/newBOM.xpm"), toolBar ) );
 
   parent->actions.append( new Action( parent, "pd.listBOMs", tr("List Bills of Materials..."),
                                       this, SLOT(sBOMs()),
-                                      bomMenu, (_privleges->check("MaintainBOMs") || _privleges->check("ViewBOMs")),
+                                      bomMenu, (_privileges->check("MaintainBOMs") || _privileges->check("ViewBOMs")),
                                       QPixmap(":/images/boms.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "pd.copyBOM", tr("Copy Bill of Materials..."),
                                       this, SLOT(sCopyBOM()),
-                                      bomMenu, _privleges->check("MaintainBOMs") ) );
+                                      bomMenu, _privileges->check("MaintainBOMs") ) );
 
   bomMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.massReplaceComponentItem", tr("Mass Replace Component Item..."),
                                       this, SLOT(sMassReplaceComponent()),
-                                      bomMenu, _privleges->check("MaintainBOMs") ) );
+                                      bomMenu, _privileges->check("MaintainBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.massExpireComponentItem", tr("Mass Expire Component Item..."),
                                       this, SLOT(sMassExpireComponent()),
-                                      bomMenu, _privleges->check("MaintainBOMs") ) );
+                                      bomMenu, _privileges->check("MaintainBOMs") ) );
 
 
 //  P/D | Bills of Operations...
@@ -220,16 +220,16 @@ modulePD::modulePD(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pd.enterNewBOO", tr("Enter New Bill of Operations..."),
                                       this, SLOT(sNewBOO()),
-                                      booMenu, (_privleges->check("MaintainBOOs") && _metrics->boolean("Routings")) ) );
+                                      booMenu, (_privileges->check("MaintainBOOs") && _metrics->boolean("Routings")) ) );
 
   parent->actions.append( new Action( parent, "pd.listBOOs", tr("List Bills of Operations..."),
                                       this, SLOT(sBOOs()),
-                                      booMenu, ((_privleges->check("MaintainBOOs") || _privleges->check("ViewBOOs")) && _metrics->boolean("Routings")),
+                                      booMenu, ((_privileges->check("MaintainBOOs") || _privileges->check("ViewBOOs")) && _metrics->boolean("Routings")),
                                       QPixmap(":/images/boos.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "pd.copyBOO", tr("Copy Bill of Operations..."),
                                       this, SLOT(sCopyBOO()),
-                                      booMenu, (_privleges->check("MaintainBOOs") && _metrics->boolean("Routings")) ) );
+                                      booMenu, (_privileges->check("MaintainBOOs") && _metrics->boolean("Routings")) ) );
 
 
 //  P/D | Breeder Bills of Materials
@@ -238,74 +238,74 @@ modulePD::modulePD(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pd.enterNewBreederBOM", tr("Enter New Breeder Bill of Materials..."),
                                       this, SLOT(sNewBreederBOM()),
-                                      breederBOMMenu, (_privleges->check("MaintainBBOMs") && _metrics->boolean("BBOM")) ) );
+                                      breederBOMMenu, (_privileges->check("MaintainBBOMs") && _metrics->boolean("BBOM")) ) );
 
   parent->actions.append( new Action( parent, "pd.listBreederBOMs", tr("List Breeder Bills of Materials..."),
                                       this, SLOT(sBreederBOMs()),
-                                      breederBOMMenu, ((_privleges->check("MaintainBBOMs") || _privleges->check("ViewBBOMs")) && _metrics->boolean("BBOM")) ) );
+                                      breederBOMMenu, ((_privileges->check("MaintainBBOMs") || _privileges->check("ViewBBOMs")) && _metrics->boolean("BBOM")) ) );
 
 //  P/D | Costing
   costingDisplaysMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "pd.dspCostedSingleLevelBOM", tr("Costed Single Level BOM..."),
                                       this, SLOT(sDspCostedSingleLevelBOM()),
-                                      costingDisplaysMenu, _privleges->check("ViewCosts") ) );
+                                      costingDisplaysMenu, _privileges->check("ViewCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.dspCostedIndentedBOM", tr("Costed Indented BOM..."),
                                       this, SLOT(sDspCostedIndentedBOM()),
-                                      costingDisplaysMenu, _privleges->check("ViewCosts") ) );
+                                      costingDisplaysMenu, _privileges->check("ViewCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.dspCostedSummarizedBOM", tr("Costed Summarized BOM..."),
                                       this, SLOT(sDspCostedSummarizedBOM()),
-                                      costingDisplaysMenu, _privleges->check("ViewCosts") ) );
+                                      costingDisplaysMenu, _privileges->check("ViewCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.dspItemCostsByClassCode", tr("Item Costs by Class Code..."),
                                       this, SLOT(sDspItemCostsByClassCode()),
-                                      costingDisplaysMenu, _privleges->check("ViewCosts") ) );
+                                      costingDisplaysMenu, _privileges->check("ViewCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.dspItemCostsSummary", tr("Item Costs Summary..."),
                                       this, SLOT(sDspItemCostSummary()),
-                                      costingDisplaysMenu, _privleges->check("ViewCosts") ) );
+                                      costingDisplaysMenu, _privileges->check("ViewCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.dspItemCostsHistory", tr("Item Costs History..."),
                                       this, SLOT(sDspItemCostHistory()),
-                                      costingDisplaysMenu, _privleges->check("ViewCosts") ) );
+                                      costingDisplaysMenu, _privileges->check("ViewCosts") ) );
 
   costingMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "pd.maintainItemCosts", tr("Maintain Item Costs..."),
                                       this, SLOT(sMaintainItemCosts()),
-                                      costingMenu, _privleges->check("ViewCosts") ) );
+                                      costingMenu, _privileges->check("ViewCosts") ) );
 
   costingMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.updateActualCostsByItem", tr("Update Actual Costs by Item..."),
                                       this, SLOT(sUpdateActualCostsByItem()),
-                                      costingMenu, _privleges->check("UpdateActualCosts") ) );
+                                      costingMenu, _privileges->check("UpdateActualCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.updateActualCostsByClassCode", tr("Update Actual Costs by Class Code..."),
                                       this, SLOT(sUpdateActualCostsByClassCode()),
-                                      costingMenu, _privleges->check("UpdateActualCosts") ) );
+                                      costingMenu, _privileges->check("UpdateActualCosts") ) );
 
   costingMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.postActualCostsByItem", tr("Post Actual Costs by Item..."),
                                       this, SLOT(sPostActualCostsByItem()),
-                                      costingMenu, _privleges->check("PostActualCosts") ) );
+                                      costingMenu, _privileges->check("PostActualCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.postActualCostsByClassCode", tr("Post Actual Costs by Class Code..."),
                                       this, SLOT(sPostActualCostsByClassCode()),
-                                      costingMenu, _privleges->check("PostActualCosts") ) );
+                                      costingMenu, _privileges->check("PostActualCosts") ) );
 
   costingMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.updateStandardCostsByItem", tr("Post Standard Costs by Item..."),
                                       this, SLOT(sUpdateStandardCostsByItem()),
-                                      costingMenu, _privleges->check("PostStandardCosts") ) );
+                                      costingMenu, _privileges->check("PostStandardCosts") ) );
 
   parent->actions.append( new Action( parent, "pd.updateStandardCostsByClassCode", tr("Post Standard Costs by Class Code..."),
                                       this, SLOT(sUpdateStandardCostsByClassCode()),
-                                      costingMenu, _privleges->check("PostStandardCosts") ) );
+                                      costingMenu, _privileges->check("PostStandardCosts") ) );
 
 
   costingMenu->insertSeparator();
@@ -316,7 +316,7 @@ modulePD::modulePD(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pd.userDefinedCostingElements", tr("User-Defined Costing Elements..."),
                                       this, SLOT(sUserCostingElements()),
-                                      costingMenu, _privleges->check("MaintainUserCostingElements") ) );
+                                      costingMenu, _privileges->check("MaintainUserCostingElements") ) );
 
 
 //  P/D | Displays
@@ -324,50 +324,50 @@ modulePD::modulePD(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "pd.dspItemsByClassCode", tr("Items by Class Code..."),
                                       this, SLOT(sDspItemsByClassCode()),
-                                      displaysMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                      displaysMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
 
   parent->actions.append( new Action( parent, "pd.dspItemsByProductCategory", tr("Items by Product Category..."),
                                       this, SLOT(sDspItemsByProductCategory()),
-                                      displaysMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                      displaysMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
 
   parent->actions.append( new Action( parent, "pd.dspItemsByCharacteristic", tr("Items by Characteristic..."),
                                       this, SLOT(sDspItemsByCharacteristic()),
-                                      displaysMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                      displaysMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.dspSingleLevelBOM", tr("Single Level Bill of Materials..."),
                                       this, SLOT(sDspSingleLevelBOM()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.dspIndentedBOM", tr("Indented Bill of Materials..."),
                                       this, SLOT(sDspIndentedBOM()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.dspSummarizedBOM", tr("Summarized Bill of Materials..."),
                                       this, SLOT(sDspSummarizedBOM()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 
 if (_metrics->boolean("Routings") )
 {
   parent->actions.append( new Action( parent, "pd.dspSequencedBOM", tr("Sequenced Bill of Materials..."),
                                       this, SLOT(sDspSequencedBOM()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 }
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.dspSingleLevelWhereUsed", tr("Single Level Where Used..."),
                                       this, SLOT(sDspSingleLevelWhereUsed()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.dspIndentedWhereUsed", tr("Indented Where Used..."),
                                       this, SLOT(sDspIndentedWhereUsed()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.dspPendingBOMChanges", tr("Pending BOM Changes..."),
                                       this, SLOT(sDspPendingBOMChanges()),
-                                      displaysMenu, _privleges->check("ViewBOMs") ) );
+                                      displaysMenu, _privileges->check("ViewBOMs") ) );
 
  if (_metrics->boolean("Routings") )
  {
@@ -375,21 +375,21 @@ if (_metrics->boolean("Routings") )
 
       parent->actions.append( new Action( parent, "pd.dspOperationsByWorkCenter", tr("Operations by Work Center..."),
                                           this, SLOT(sDspOperationsByWorkCenter()),
-                                          displaysMenu,((_privleges->check("ViewBOOs")) && (_metrics->boolean("Routings"))) ) );
+                                          displaysMenu,((_privileges->check("ViewBOOs")) && (_metrics->boolean("Routings"))) ) );
 
       parent->actions.append( new Action( parent, "pd.dspStandardOperationsByWorkCenter", tr("Standard Operations by Work Center..."),
                                           this, SLOT(sDspStandardOperByWorkCenter()),
-                                          displaysMenu, ((_privleges->check("ViewStandardOperations")) && (_metrics->boolean("Routings"))) ) );
+                                          displaysMenu, ((_privileges->check("ViewStandardOperations")) && (_metrics->boolean("Routings"))) ) );
 
       displaysMenu->insertSeparator();
 
       parent->actions.append( new Action( parent, "pd.dspCapacityUOMsByClassCode", tr("Capacity UOMs by Class Code..."),
                                           this, SLOT(sDspCapacityUOMsByClassCode()),
-                                          displaysMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                          displaysMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
 
       parent->actions.append( new Action( parent, "pd.dspCapacityUOMsByProductCategory", tr("Capacity UOMs by Product Category..."),
                                           this, SLOT(sDspCapacityUOMsByProductCategory()),
-                                          displaysMenu, (_privleges->check("MaintainItemMasters") || _privleges->check("ViewItemMasters")) ) );
+                                          displaysMenu, (_privileges->check("MaintainItemMasters") || _privileges->check("ViewItemMasters")) ) );
   }
   
 //  P/D | Master Information
@@ -397,19 +397,19 @@ if (_metrics->boolean("Routings") )
 
   parent->actions.append( new Action( parent, "pd.unitsOfMeasure", tr("Units of Measure..."),
                                       this, SLOT(sUnitsOfMeasure()),
-                                      masterInfoMenu, (_privleges->check("MaintainUOMs") || _privleges->check("ViewUOMs")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainUOMs") || _privileges->check("ViewUOMs")) ) );
 
   parent->actions.append( new Action( parent, "pd.classCodes", tr("Class Codes..."),
                                       this, SLOT(sClassCodes()),
-                                      masterInfoMenu, (_privleges->check("MaintainClassCodes") || _privleges->check("ViewClassCodes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainClassCodes") || _privileges->check("ViewClassCodes")) ) );
 
   parent->actions.append( new Action( parent, "pd.productCategories", tr("Product Categories..."),
                                       this, SLOT(sProductCategories()),
-                                      masterInfoMenu, (_privleges->check("MaintainProductCategories") || _privleges->check("ViewProductCategories")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainProductCategories") || _privileges->check("ViewProductCategories")) ) );
 
   parent->actions.append( new Action( parent, "pd.characteristics", tr("Characteristics..."),
                                       this, SLOT(sCharacteristics()),
-                                      masterInfoMenu, (_privleges->check("MaintainCharacteristics") || _privleges->check("ViewCharacteristics")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics")) ) );
 
  if (_metrics->boolean("Routings") )
  {
@@ -417,15 +417,15 @@ if (_metrics->boolean("Routings") )
 
       parent->actions.append( new Action( parent, "pd.standardLaborRates", tr("Standard Labor Rates..."),
                                           this, SLOT(sStandardLaborRates()),
-                                          masterInfoMenu, ((_privleges->check("MaintainLaborRates") || _privleges->check("ViewLaborRates")) && _metrics->boolean("Routings")) ) );
+                                          masterInfoMenu, ((_privileges->check("MaintainLaborRates") || _privileges->check("ViewLaborRates")) && _metrics->boolean("Routings")) ) );
 
       parent->actions.append( new Action( parent, "pd.workCenters", tr("Work Centers..."),
                                           this, SLOT(sWorkCenters()),
-                                          masterInfoMenu, ((_privleges->check("MaintainWorkCenters") || _privleges->check("ViewWorkCenters")) && _metrics->boolean("Routings")) ) );
+                                          masterInfoMenu, ((_privileges->check("MaintainWorkCenters") || _privileges->check("ViewWorkCenters")) && _metrics->boolean("Routings")) ) );
 
       parent->actions.append( new Action( parent, "pd.standardOperations", tr("Standard Operations..."),
                                           this, SLOT(sStandardOperations()),
-                                          masterInfoMenu, ((_privleges->check("MaintainStandardOperations") || _privleges->check("ViewStandardOperations")) && _metrics->boolean("Routings")) ) );
+                                          masterInfoMenu, ((_privileges->check("MaintainStandardOperations") || _privileges->check("ViewStandardOperations")) && _metrics->boolean("Routings")) ) );
   }
 
 
@@ -434,25 +434,25 @@ if (_metrics->boolean("Routings") )
 
   parent->actions.append( new Action( parent, "pd.dspUnusedPurchasedItems", tr("Unused Purchased Items..."),
                                       this, SLOT(sDspUnusedPurchasedItems()),
-                                      utilitiesMenu, _privleges->check("ViewBOMs") ) );
+                                      utilitiesMenu, _privileges->check("ViewBOMs") ) );
 
   parent->actions.append( new Action( parent, "pd.dspUndefinedManufacturedItems", tr("Undefined Manufactured Items..."),
                                       this, SLOT(sDspUndefinedManufacturedItems()),
-                                      utilitiesMenu, (_privleges->check("ViewBOMs") || _privleges->check("ViewBOOs")) ) );
+                                      utilitiesMenu, (_privileges->check("ViewBOMs") || _privileges->check("ViewBOOs")) ) );
 
   parent->actions.append( new Action( parent, "pd.dspBillsOfMaterialsWithoutComponentItemSites", tr("Bills of Materials without Component Item Sites..."),
                                       this, SLOT(sDspInvalidBillsOfMaterials()),
-                                      utilitiesMenu, _privleges->check("ViewBOMs") ) );
+                                      utilitiesMenu, _privileges->check("ViewBOMs") ) );
 
   utilitiesMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "pd.reassignClassCodeByClassCode", tr("Reassign Class Code by Class Code..."),
                                       this, SLOT(sReassignClassCodeByClassCode()),
-                                      utilitiesMenu, _privleges->check("MaintainItemMasters") ) );
+                                      utilitiesMenu, _privileges->check("MaintainItemMasters") ) );
 
   parent->actions.append( new Action( parent, "pd.reassignProductCategoryByProductCategory", tr("Reassign Product Category by Product Category..."),
                                       this, SLOT(sReassignProductCategoryByProductCategory()),
-                                      utilitiesMenu, _privleges->check("MaintainItemMasters") ) );
+                                      utilitiesMenu, _privileges->check("MaintainItemMasters") ) );
 
   mainMenu = new QMenu();
   mainMenu->insertItem(tr("&Items"),                      itemsMenu      );

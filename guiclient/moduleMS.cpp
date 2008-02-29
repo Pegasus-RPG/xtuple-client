@@ -124,183 +124,183 @@ moduleMS::moduleMS(GUIClient *Pparent) :
 
   parent->actions.append( new Action( parent, "ms.listProductionPlans", tr("List Production Plans..."),
                                       this, SLOT(sListProductionPlans()),
-                                      planningMenu, (_privleges->check("MaintainPlannedSchedules") || _privleges->check("ViewPlannedSchedules")) ) );
+                                      planningMenu, (_privileges->check("MaintainPlannedSchedules") || _privileges->check("ViewPlannedSchedules")) ) );
 
   parent->actions.append( new Action( parent, "ms.newProductionPlan", tr("New Production Plan..."),
                                       this, SLOT(sNewProductionPlan()),
-                                      planningMenu, _privleges->check("MaintainPlannedSchedules") ) );
+                                      planningMenu, _privileges->check("MaintainPlannedSchedules") ) );
 
 //  Planned Ordered
   plannedOrdersMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ms.createPlannedOrder", tr("Create Planned Order..."),
                                       this, SLOT(sCreatePlannedOrder()),
-                                      plannedOrdersMenu, _privleges->check("CreatePlannedOrders") ) );
+                                      plannedOrdersMenu, _privileges->check("CreatePlannedOrders") ) );
 
   plannedOrdersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.runMPSByPlannerCode", tr("Run MPS by Planner Code..."),
                                       this, SLOT(sRunMPSByPlannerCode()),
-                                      plannedOrdersMenu, _privleges->check("CreatePlannedOrders")));
+                                      plannedOrdersMenu, _privileges->check("CreatePlannedOrders")));
 
   parent->actions.append( new Action( parent, "ms.runMRPByPlannerCode", tr("Run MRP by Planner Code..."),
                                       this, SLOT(sCreatePlannedReplenOrdersByPlannerCode()),
-                                      plannedOrdersMenu, _privleges->check("CreatePlannedOrders"),
+                                      plannedOrdersMenu, _privileges->check("CreatePlannedOrders"),
 									  QPixmap(":/images/runMrpByPlannerCode.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "ms.runMRPByItem", tr("Run MRP by Item..."),
                                       this, SLOT(sCreatePlannedReplenOrdersByItem()),
-                                      plannedOrdersMenu, _privleges->check("CreatePlannedOrders") ) );
+                                      plannedOrdersMenu, _privileges->check("CreatePlannedOrders") ) );
 
   plannedOrdersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.firmPlannedOrdersByPlannerCode", tr("Firm Planned Orders by Planner Code..."),
                                       this, SLOT(sFirmPlannedOrdersByPlannerCode()),
-                                      plannedOrdersMenu, _privleges->check("FirmPlannedOrders") ) );
+                                      plannedOrdersMenu, _privileges->check("FirmPlannedOrders") ) );
 
   parent->actions.append( new Action( parent, "ms.releasePlannedOrdersByPlannerCode", tr("Release Planned Orders by Planner Code..."),
                                       this, SLOT(sReleasePlannedOrdersByPlannerCode()),
-                                      plannedOrdersMenu, _privleges->check("ReleasePlannedOrders") ) );
+                                      plannedOrdersMenu, _privileges->check("ReleasePlannedOrders") ) );
 
   plannedOrdersMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.deletePlannedOrdersByPlannerCode", tr("Delete Planned Orders by Planner Code..."),
                                       this, SLOT(sDeletePlannedOrdersByPlannerCode()),
-                                      plannedOrdersMenu, _privleges->check("DeletePlannedOrders") ) );
+                                      plannedOrdersMenu, _privileges->check("DeletePlannedOrders") ) );
 
   parent->actions.append( new Action( parent, "ms.deletePlannedOrder", tr("Delete Planned Order..."),
                                       this, SLOT(sDeletePlannedOrder()),
-                                      plannedOrdersMenu, _privleges->check("DeletePlannedOrders") ) );
+                                      plannedOrdersMenu, _privileges->check("DeletePlannedOrders") ) );
 
 //  Buffer Management
   bufferManagementMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ms.runBufferStatusByItem", tr("Run Buffer Status by Item..."),
                                       this, SLOT(sCreateBufferStatusByItem()),
-                                      bufferManagementMenu, _privleges->check("CreateBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("CreateBufferStatus") ) );
 
   parent->actions.append( new Action( parent, "ms.runBufferStatusByPlannerCode", tr("Run Buffer Status by Planner Code..."),
                                       this, SLOT(sCreateBufferStatusByPlannerCode()),
-                                      bufferManagementMenu, _privleges->check("CreateBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("CreateBufferStatus") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspInventoryBufferStatusByItemGroup", tr("Inventory Buffer Status by Item Group..."),
                                       this, SLOT(sDspInventoryBufferStatusByItemGroup()),
-                                      bufferManagementMenu, _privleges->check("ViewInventoryBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("ViewInventoryBufferStatus") ) );
 
   parent->actions.append( new Action( parent, "ms.dspInventoryBufferStatusByClassCode", tr("Inventory Buffer Status by Class Code..."),
                                       this, SLOT(sDspInventoryBufferStatusByClassCode()),
-                                      bufferManagementMenu, _privleges->check("ViewInventoryBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("ViewInventoryBufferStatus") ) );
 
   parent->actions.append( new Action( parent, "ms.dspInventoryBufferStatusByPlannerCode", tr("Inventory Buffer Status by Planner Code..."),
                                       this, SLOT(sDspInventoryBufferStatusByPlannerCode()),
-                                      bufferManagementMenu, _privleges->check("ViewInventoryBufferStatus") ) );
+                                      bufferManagementMenu, _privileges->check("ViewInventoryBufferStatus") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspCapacityBufferStatusByWorkCenter", tr("Capacity Buffer Status by Work Center..."),
                                       this, SLOT(sDspCapacityBufferStatusByWorkCenter()),
-                                      bufferManagementMenu, _privleges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
+                                      bufferManagementMenu, _privileges->check("ViewWorkCenterBufferStatus") && _metrics->boolean("Routings") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspWoBufferStatusByItemGroup", tr("Work Order Buffer Status by Item Group..."),
                                       this, SLOT(sDspWoBufferStatusByItemGroup()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "ms.dspWoBufferStatusByClassCode", tr("Work Order Buffer Status by Class Code..."),
                                       this, SLOT(sDspWoBufferStatusByClassCode()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "ms.dspWoBufferStatusByPlannerCode", tr("Work Order Buffer Status by Planner Code..."),
                                       this, SLOT(sDspWoBufferStatusByPlannerCode()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWorkOrders") || _privleges->check("ViewWorkOrders")) ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWorkOrders") || _privileges->check("ViewWorkOrders")) ) );
 
   parent->actions.append( new Action( parent, "ms.dspWoOperationBufrStsByWorkCenter", tr("W/O Operation Buffer Status by Work Center..."),
                                       this, SLOT(sDspWoOperationBufrStsByWorkCenter()),
-                                      bufferManagementMenu, (_privleges->check("MaintainWoOperations") || _privleges->check("ViewWoOperations")) &&  _metrics->boolean("Routings") ) );
+                                      bufferManagementMenu, (_privileges->check("MaintainWoOperations") || _privileges->check("ViewWoOperations")) &&  _metrics->boolean("Routings") ) );
 
   bufferManagementMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspPoLineItemsByBufferStatus", tr("P/O Items by Buffer Status..."),
                                       this, SLOT(sDspPoItemsByBufferStatus()),
-                                      bufferManagementMenu, _privleges->check("ViewPurchaseOrders") ) );
+                                      bufferManagementMenu, _privileges->check("ViewPurchaseOrders") ) );
 
 //  Displays
   displaysMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ms.dspPlannedOrdersByItem", tr("Planned Orders by Item..."),
                                       this, SLOT(sDspPlannedOrdersByItem()),
-                                      displaysMenu, _privleges->check("ViewPlannedOrders") ) );
+                                      displaysMenu, _privileges->check("ViewPlannedOrders") ) );
 
   parent->actions.append( new Action( parent, "ms.dspPlannedOrdersByPlannerCode", tr("Planned Orders by Planner Code..."),
                                       this, SLOT(sDspPlannedOrdersByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewPlannedOrders"),
+                                      displaysMenu, _privileges->check("ViewPlannedOrders"),
 									  QPixmap(":/images/dspPlannedOrdersByPlannerCode.png"), toolBar ) );
 
   parent->actions.append( new Action( parent, "ms.dspMPSDetail", tr("MPS Detail..."),
                                       this, SLOT(sDspMPSDetail()),
-                                      displaysMenu, _privleges->check("ViewMPS") ) );
+                                      displaysMenu, _privileges->check("ViewMPS") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspRoughCutByWorkCenter", tr("Rough Cut Capacity Plan by Work Center..."),
                                       this, SLOT(sDspRoughCutByWorkCenter()),
-                                      displaysMenu, _privleges->check("ViewRoughCut") && _metrics->boolean("Routings") ) );
+                                      displaysMenu, _privileges->check("ViewRoughCut") && _metrics->boolean("Routings") ) );
 
   parent->actions.append( new Action( parent, "ms.dspTimePhasedRoughCutByWorkCenter", tr("Time-Phased Rough Cut Capacity Plan by Work Center..."),
                                       this, SLOT(sDspTimePhasedRoughCutByWorkCenter()),
-                                      displaysMenu, _privleges->check("ViewRoughCut") && _metrics->boolean("Routings") ) );
+                                      displaysMenu, _privileges->check("ViewRoughCut") && _metrics->boolean("Routings") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspPlannedRevenue/ExpensesByPlannerCode", tr("Planned Revenue/Expenses by Planner Code..."),
                                       this, SLOT(sDspPlannedRevenueExpensesByPlannerCode()),
-                                      displaysMenu, (_privleges->check("ViewPlannedOrders") && _privleges->check("ViewCosts") && _privleges->check("ViewListPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewPlannedOrders") && _privileges->check("ViewCosts") && _privileges->check("ViewListPrices")) ) );
 
   parent->actions.append( new Action( parent, "ms.dspTimePhasedPlannedRevenue/ExpensesByPlannerCode", tr("Time-Phased Planned Revenue/Expenses by Planner Code..."),
                                       this, SLOT(sDspTimePhasedPlannedREByPlannerCode()),
-                                      displaysMenu, (_privleges->check("ViewPlannedOrders") && _privleges->check("ViewCosts") && _privleges->check("ViewListPrices")) ) );
+                                      displaysMenu, (_privileges->check("ViewPlannedOrders") && _privileges->check("ViewCosts") && _privileges->check("ViewListPrices")) ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspTimePhasedAvailabiltiy", tr("Time-Phased Availability..."),
                                       this, SLOT(sDspTimePhasedAvailability()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
   parent->actions.append( new Action( parent, "ms.dspRunningAvailability", tr("Running Availability..."),
                                       this, SLOT(sDspRunningAvailability()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
   parent->actions.append( new Action( parent, "ms.dspMRPDetail", tr("MRP Detail..."),
                                       this, SLOT(sDspMRPDetail()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
   displaysMenu->insertSeparator();
 
   parent->actions.append( new Action( parent, "ms.dspExpediteExceptionsByPlannerCode", tr("Expedite Exceptions by Planner Code..."),
                                       this, SLOT(sDspExpediteExceptionsByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
   parent->actions.append( new Action( parent, "ms.dspReorderExceptionsByPlannerCode", tr("Reorder Exceptions by Planner Code..."),
                                       this, SLOT(sDspReorderExceptionsByPlannerCode()),
-                                      displaysMenu, _privleges->check("ViewInventoryAvailability") ) );
+                                      displaysMenu, _privileges->check("ViewInventoryAvailability") ) );
 
 //  Master Information
   masterInfoMenu = new QMenu();
 
   parent->actions.append( new Action( parent, "ms.plannerCodes", tr("Planner Codes..."),
                                       this, SLOT(sPlannerCodes()),
-                                      masterInfoMenu, (_privleges->check("MaintainPlannerCodes") && _privleges->check("ViewPlannerCodes")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainPlannerCodes") && _privileges->check("ViewPlannerCodes")) ) );
 
   parent->actions.append( new Action( parent, "ms.warehouseWeek", tr("Warehouse Week..."),
                                       this, SLOT(sWarehouseWeek()),
-                                      masterInfoMenu, _privleges->check("MaintainWarehouseWorkWeek") ) );
+                                      masterInfoMenu, _privileges->check("MaintainWarehouseWorkWeek") ) );
 
   parent->actions.append( new Action( parent, "ms.warehouseCalendarExceptions", tr("Warehouse Calendar Exceptions..."),
                                       this, SLOT(sWarehouseCalendarExceptions()),
-                                      masterInfoMenu, (_privleges->check("MaintainWarehouseCalendarExceptions") || _privleges->check("ViewWarehouseCalendarExceptions")) ) );
+                                      masterInfoMenu, (_privileges->check("MaintainWarehouseCalendarExceptions") || _privileges->check("ViewWarehouseCalendarExceptions")) ) );
 
   mainMenu = new QMenu();
   mainMenu->insertItem(tr("Planning"), planningMenu);

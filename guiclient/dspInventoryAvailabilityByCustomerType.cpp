@@ -212,14 +212,14 @@ void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeW
       {
         pMenu->insertSeparator();
         menuItem = pMenu->insertItem("Issue Purchase Order...", this, SLOT(sIssuePO()), 0);
-        if (!_privleges->check("MaintainPurchaseOrders"))
+        if (!_privileges->check("MaintainPurchaseOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
       else if (q.value("item_type") == "M")
       {
         pMenu->insertSeparator();
         menuItem = pMenu->insertItem("Issue Work Order...", this, SLOT(sIssueWO()), 0);
-        if (!_privleges->check("MaintainWorkOrders"))
+        if (!_privileges->check("MaintainWorkOrders"))
           pMenu->setItemEnabled(menuItem, FALSE);
       }
     }
@@ -233,16 +233,16 @@ void dspInventoryAvailabilityByCustomerType::sPopulateMenu(QMenu *pMenu,  QTreeW
 
       int menuid;
       menuid = pMenu->insertItem(tr("Unreserve Stock"), this, SLOT(sUnreserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
       menuid = pMenu->insertItem(tr("Reserve Stock..."), this, SLOT(sReserveStock()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
       menuid = pMenu->insertItem(tr("Reserve Line Balance"), this, SLOT(sReserveLineBalance()), 0);
-      pMenu->setItemEnabled(menuid, _privleges->check("MaintainReservations"));
+      pMenu->setItemEnabled(menuid, _privileges->check("MaintainReservations"));
     }
 
     pMenu->insertSeparator();
     menuItem = pMenu->insertItem("Issue Count Tag...", this, SLOT(sIssueCountTag()), 0);
-    if (!_privleges->check("IssueCountTags"))
+    if (!_privileges->check("IssueCountTags"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

@@ -125,7 +125,7 @@ void dspUninvoicedReceivings::sPopulateMenu(QMenu *pMenu)
 {
   int menuItem;
 
-  if(_privleges->check("MaintainUninvoicedReceipts"))
+  if(_privileges->check("MaintainUninvoicedReceipts"))
   {
     if(_porecv->altId() < 3)
     {

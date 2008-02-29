@@ -92,7 +92,7 @@ pricingScheduleAssignments::pricingScheduleAssignments(QWidget* parent, const ch
   _ipsass->addColumn(tr("Cust. Type"),       _itemColumn, Qt::AlignCenter );
   _ipsass->addColumn(tr("Pricing Schedule"), -1, Qt::AlignCenter );
 
-  if (_privleges->check("AssignPricingSchedules"))
+  if (_privileges->check("AssignPricingSchedules"))
   {
     connect(_ipsass, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_ipsass, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

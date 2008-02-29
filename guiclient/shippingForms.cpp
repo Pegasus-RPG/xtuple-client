@@ -109,7 +109,7 @@ void shippingForms::init()
   
   _bolformat->addColumn(tr("Form Name"), -1, Qt::AlignLeft);
 
-  if (_privleges->check("MaintainShippingForms"))
+  if (_privileges->check("MaintainShippingForms"))
   {
     connect(_bolformat, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_bolformat, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

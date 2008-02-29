@@ -113,7 +113,7 @@ void laborRates::init()
   _lbrrate->addColumn(tr("Description"), -1,          Qt::AlignLeft  );
   _lbrrate->addColumn(tr("Rate"),        _costColumn, Qt::AlignRight );
 
-  if (_privleges->check("MaintainLaborRates"))
+  if (_privileges->check("MaintainLaborRates"))
   {
     connect(_lbrrate, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_lbrrate, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

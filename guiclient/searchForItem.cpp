@@ -89,7 +89,7 @@ searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->addColumn(tr("Description"), -1,          Qt::AlignLeft   );
   _item->addColumn(tr("Type"),        _itemColumn, Qt::AlignLeft   );
 
-  if (_privleges->check("MaintainItemMasters"))
+  if (_privileges->check("MaintainItemMasters"))
   {
     connect(_item, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_item, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
@@ -99,8 +99,7 @@ searchForItem::searchForItem(QWidget* parent, const char* name, Qt::WFlags fl)
 
   connect(omfgThis, SIGNAL(itemsUpdated(int, bool)), SLOT(sFillList()));
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
   {
     _searchNumber->setChecked(true);
     _searchDescrip1->setChecked(true);
@@ -152,7 +151,7 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   if (((XTreeWidgetItem *)pSelected)->altId() & 1)
@@ -160,11 +159,11 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("View BOM..."), this, SLOT(sViewBOM()), 0);
-    if (!hasBOM || !_privleges->check("ViewBOMs"))
+    if (!hasBOM || !_privileges->check("ViewBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Edit BOM..."), this, SLOT(sEditBOM()), 0);
-    if (!hasBOM || !_privleges->check("MaintainBOMs"))
+    if (!hasBOM || !_privileges->check("MaintainBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -173,11 +172,11 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("View BOO..."), this, SLOT(sViewBOO()), 0);
-    if (!hasBOO || !_privleges->check("ViewBOOs"))
+    if (!hasBOO || !_privileges->check("ViewBOOs"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Edit BOO..."), this, SLOT(sEditBOO()), 0);
-    if (!hasBOO || !_privleges->check("MaintainBOOs"))
+    if (!hasBOO || !_privileges->check("MaintainBOOs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 
@@ -186,11 +185,11 @@ void searchForItem::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
     pMenu->insertSeparator();
 
     menuItem = pMenu->insertItem(tr("View Breeder BOM..."), this, SLOT(sViewBBOM()), 0);
-    if (!_privleges->check("ViewBBOMs"))
+    if (!_privileges->check("ViewBBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Edit Breeder BOM..."), this, SLOT(sEditBBOM()), 0);
-    if (!_privleges->check("MaintainBBOMs"))
+    if (!_privileges->check("MaintainBBOMs"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }

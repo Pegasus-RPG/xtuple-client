@@ -82,7 +82,7 @@ prospects::prospects(QWidget* parent, const char* name, Qt::WFlags fl)
 
     statusBar()->hide();
     
-    if (_privleges->check("MaintainProspectMasters"))
+    if (_privileges->check("MaintainProspectMasters"))
     {
       connect(_prospect, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
       connect(_prospect, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
@@ -177,14 +177,14 @@ void prospects::sPopulateMenu(QMenu *pMenu)
   menuItem = pMenu->insertItem("View...", this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem("Edit...", this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainProspectMasters"))
+  if (!_privileges->check("MaintainProspectMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
-  if (!_privleges->check("MaintainProspectMasters"))
+  if (!_privileges->check("MaintainProspectMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem("Delete", this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainProspectMasters"))
+  if (!_privileges->check("MaintainProspectMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

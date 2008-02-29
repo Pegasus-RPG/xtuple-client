@@ -116,13 +116,13 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
 					_moneyColumn,    Qt::AlignRight  );
   _radue->addColumn(tr("Credit By"),    _itemColumn,     Qt::AlignRight  );
 
-  if (!_privleges->check("MaintainReturns"))
+  if (!_privileges->check("MaintainReturns"))
   {
     _edit->hide();
     _editdue->hide();
   }
 
-  if (_metrics->boolean("CCAccept") && _privleges->check("ProcessCreditCards"))
+  if (_metrics->boolean("CCAccept") && _privileges->check("ProcessCreditCards"))
   {
     /*
     if (! CreditCardProcessor::getProcessor())
@@ -136,7 +136,7 @@ returnAuthorizationWorkbench::returnAuthorizationWorkbench(QWidget* parent, cons
     _creditcard->hide();
   }
 
-  if (!_privleges->check("PostARDocuments"))
+  if (!_privileges->check("PostARDocuments"))
   {
     _postmemos->setChecked(false);
     _postmemos->setEnabled(false);
@@ -161,23 +161,23 @@ void returnAuthorizationWorkbench::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *
   if (QString(pSelected->text(0)) == "W/O")
   {
     menuItem = pMenu->insertItem(tr("View Work Order..."), this, SLOT(sViewWorkOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewWorkOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewWorkOrders"));
   }
   else if (QString(pSelected->text(0)) == "S/O")
   {
     menuItem = pMenu->insertItem(tr("View Sales Order..."), this, SLOT(sViewCustomerOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewSalesOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewSalesOrders"));
 
     pMenu->insertItem(tr("Edit Sales Order..."), this, SLOT(sEditCustomerOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainSalesOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainSalesOrders"));
   }
   else if (QString(pSelected->text(0)) == "T/O")
   {
     menuItem = pMenu->insertItem(tr("View Transfer Order..."), this, SLOT(sViewTransferOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("ViewTransferOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("ViewTransferOrders"));
 
     pMenu->insertItem(tr("Edit Transfer Order..."), this, SLOT(sEditTransferOrder()), 0);
-    pMenu->setItemEnabled(menuItem, _privleges->check("MaintainTransferOrders"));
+    pMenu->setItemEnabled(menuItem, _privileges->check("MaintainTransferOrders"));
   }
 }
 */
@@ -274,13 +274,13 @@ void returnAuthorizationWorkbench::sViewDue()
 
 void returnAuthorizationWorkbench::sHandleButton()
 {
-  _process->setEnabled(((_radue->altId() == 1 && _privleges->check("MaintainCreditMemos")) ||
-	   (_radue->altId() == 2 && _privleges->check("MaintainPayments") && 
-                                _privleges->check("MaintainCreditMemos") && 
-								_privleges->check("PostARDocuments")) ||
-	   (_radue->altId() == 3 && _privleges->check("ProcessCreditCards") &&
-				    _privleges->check("PostARDocuments") &&
-	                            _privleges->check("MaintainCreditMemos"))));   
+  _process->setEnabled(((_radue->altId() == 1 && _privileges->check("MaintainCreditMemos")) ||
+	   (_radue->altId() == 2 && _privileges->check("MaintainPayments") && 
+                                _privileges->check("MaintainCreditMemos") && 
+								_privileges->check("PostARDocuments")) ||
+	   (_radue->altId() == 3 && _privileges->check("ProcessCreditCards") &&
+				    _privileges->check("PostARDocuments") &&
+	                            _privileges->check("MaintainCreditMemos"))));   
 
   if (_radue->altId() > 1)
     _postmemos->hide();

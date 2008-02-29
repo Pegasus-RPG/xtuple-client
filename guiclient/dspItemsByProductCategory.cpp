@@ -134,7 +134,7 @@ void dspItemsByProductCategory::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit Item Master..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

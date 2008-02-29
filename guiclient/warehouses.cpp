@@ -85,7 +85,7 @@ warehouses::warehouses(QWidget* parent, const char* name, Qt::WFlags fl)
   _warehouse->addColumn(tr("Description"), 130,        Qt::AlignLeft   );
   _warehouse->addColumn(tr("Address"),     -1,         Qt::AlignLeft   );
 
-  if (_privleges->check("MaintainWarehouses"))
+  if (_privileges->check("MaintainWarehouses"))
   {
     connect(_warehouse, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_warehouse, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
@@ -184,14 +184,14 @@ void warehouses::sPopulateMenu( QMenu * pMenu )
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainWarehouses"))
+  if (!_privileges->check("MaintainWarehouses"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("List Item Sites..."), this, SLOT(sListItemSites()), 0);
-  if (!_privleges->check("ViewItemSites"))
+  if (!_privileges->check("ViewItemSites"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

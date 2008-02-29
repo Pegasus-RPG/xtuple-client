@@ -221,20 +221,20 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   // General
   _item->setFocus();
 
-  if(!_privleges->check("ViewBOMs"))
+  if(!_privileges->check("ViewBOMs"))
     _tab->removeTab(5);
-  if(!_privleges->check("ViewQOH"))
+  if(!_privileges->check("ViewQOH"))
     _tab->removeTab(4);
-  if(!_privleges->check("ViewInventoryHistory"))
+  if(!_privileges->check("ViewInventoryHistory"))
     _tab->removeTab(3);
-  if(!_privleges->check("ViewBOMs"))
+  if(!_privileges->check("ViewBOMs"))
     _tab->removeTab(2);
-  if(!_privleges->check("ViewInventoryAvailability"))
+  if(!_privileges->check("ViewInventoryAvailability"))
   {
     _tab->removeTab(1);
     _tab->removeTab(0);
   }
-  if(!_privleges->check("ViewCosts"))
+  if(!_privileges->check("ViewCosts"))
   {
     _costsGroup->setEnabled(false);
     _costsGroup->setChecked(false);
@@ -257,8 +257,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   if (!_metrics->boolean("LotSerialControl"))
     _tab->removePage(_tab->page(4));
   
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _ignoreReorderAtZero->setChecked(true);
 
   _ignoreReorderAtZero->setEnabled(_showReorder->isChecked());
@@ -1043,7 +1042,7 @@ void itemAvailabilityWorkbench::sFillListRunning()
 void itemAvailabilityWorkbench::sHandleShowReorder( bool pValue )
 {
   _ignoreReorderAtZero->setEnabled(pValue);
-  if (pValue && Preferences(omfgThis->username()).boolean("XCheckBox/forgetful"))
+  if (pValue && _preferences->boolean("XCheckBox/forgetful"))
     _showShortages->setChecked(TRUE);
 }
 
@@ -1327,7 +1326,7 @@ void itemAvailabilityWorkbench::sPopulateMenuAvail( QMenu *pMenu, QTreeWidgetIte
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Inventory History..."), this, SLOT(sViewHistory()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -1347,11 +1346,11 @@ void itemAvailabilityWorkbench::sPopulateMenuAvail( QMenu *pMenu, QTreeWidgetIte
   if (((XTreeWidgetItem *)selected)->altId() == 1)
   {
     menuItem = pMenu->insertItem(tr("Create P/R..."), this, SLOT(sCreatePR()), 0);
-    if (!_privleges->check("MaintainPurchaseRequests"))
+    if (!_privileges->check("MaintainPurchaseRequests"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Create P/O..."), this, SLOT(sCreatePO()), 0);
-    if (!_privleges->check("MaintainPurchaseOrders"))
+    if (!_privileges->check("MaintainPurchaseOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
@@ -1359,18 +1358,18 @@ void itemAvailabilityWorkbench::sPopulateMenuAvail( QMenu *pMenu, QTreeWidgetIte
   else if (((XTreeWidgetItem *)selected)->altId() == 2)
   {
     menuItem = pMenu->insertItem(tr("Create W/O..."), this, SLOT(sCreateWO()), 0);
-    if (!_privleges->check("MaintainWorkOrders"))
+    if (!_privileges->check("MaintainWorkOrders"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     pMenu->insertSeparator();
   }
 
   menuItem = pMenu->insertItem(tr("Issue Count Tag..."), this, SLOT(sIssueCountTag()), 0);
-  if (!_privleges->check("IssueCountTags"))
+  if (!_privileges->check("IssueCountTags"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Enter Misc. Inventory Count..."), this, SLOT(sEnterMiscCount()), 0);
-  if (!_privleges->check("EnterMiscCounts"))
+  if (!_privileges->check("EnterMiscCounts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
@@ -1380,7 +1379,7 @@ void itemAvailabilityWorkbench::sPopulateMenuAvail( QMenu *pMenu, QTreeWidgetIte
 
 void itemAvailabilityWorkbench::sPopulateMenuCosted( QMenu * pMenu, QTreeWidgetItem * pSelected )
 {
-  if(!_privleges->check("ViewCosts"))
+  if(!_privileges->check("ViewCosts"))
     return;
  
   if (((XTreeWidgetItem *)pSelected)->id() != -1)
@@ -1409,7 +1408,7 @@ void itemAvailabilityWorkbench::sPopulateMenuHistory( QMenu * pMenu, QTreeWidget
     if ( (mainNumber) && (subNumber) )
     {
       menuItem = pMenu->insertItem(tr("View Work Order Information..."), this, SLOT(sViewWOInfoHistory()), 0);
-      if ((!_privleges->check("MaintainWorkOrders")) && (!_privleges->check("ViewWorkOrders")))
+      if ((!_privileges->check("MaintainWorkOrders")) && (!_privileges->check("ViewWorkOrders")))
         pMenu->setItemEnabled(menuItem, FALSE);
     }
   }
@@ -1422,11 +1421,11 @@ void itemAvailabilityWorkbench::sPopulateMenuLocation( QMenu * pMenu, QTreeWidge
   if (((XTreeWidgetItem *)pSelected)->altId() == -1)
   {
     menuItem = pMenu->insertItem(tr("Relocate..."), this, SLOT(sRelocateInventory()), 0);
-    if (!_privleges->check("RelocateInventory"))
+    if (!_privileges->check("RelocateInventory"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("Reassign Lot/Serial #..."), this, SLOT(sReassignLotSerial()), 0);
-    if (!_privleges->check("ReassignLotSerial"))
+    if (!_privileges->check("ReassignLotSerial"))
       pMenu->setItemEnabled(menuItem, FALSE);
   }
 }
@@ -1436,19 +1435,19 @@ void itemAvailabilityWorkbench::sPopulateMenuWhereUsed( QMenu *menu, QTreeWidget
   int menuItem;
 
   menuItem = menu->insertItem(tr("Edit Bill of Materials..."), this, SLOT(sEditBOM()), 0);
-  if (!_privleges->check("MaintainBOMs"))
+  if (!_privileges->check("MaintainBOMs"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Edit Bill of Operations..."), this, SLOT(sEditBOO()), 0);
-  if (!_privleges->check("MaintainBOOs"))
+  if (!_privileges->check("MaintainBOOs"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("Edit Item Master..."), this, SLOT(sEditItem()), 0);
-  if (!_privleges->check("MaintainItemMasters"))
+  if (!_privileges->check("MaintainItemMasters"))
     menu->setItemEnabled(menuItem, FALSE);
 
   menuItem = menu->insertItem(tr("View Item Inventory History..."), this, SLOT(sViewInventoryHistory()), 0);
-  if (!_privleges->check("ViewInventoryHistory"))
+  if (!_privileges->check("ViewInventoryHistory"))
     menu->setItemEnabled(menuItem, FALSE);
 }
 

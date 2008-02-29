@@ -78,7 +78,7 @@ taxSelections::taxSelections(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_taxauth,	SIGNAL(newID(int)),	 this, SLOT(sFillList()));
   connect(_view,	SIGNAL(clicked()),	 this, SLOT(sView()));
 
-  if (_privleges->check("MaintainTaxSel"))
+  if (_privileges->check("MaintainTaxSel"))
   {
     connect(_taxsel,	SIGNAL(valid(bool)),  _delete, SLOT(setEnabled(bool)));
     connect(_taxsel,	SIGNAL(valid(bool)),	_edit, SLOT(setEnabled(bool)));

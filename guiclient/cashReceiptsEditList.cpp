@@ -88,7 +88,7 @@ cashReceiptsEditList::cashReceiptsEditList(QWidget* parent, const char* name, Qt
   if (omfgThis->singleCurrency())
       _cashrcpt->hideColumn(3);
 
-  if (_privleges->check("MaintainCashReceipts"))
+  if (_privileges->check("MaintainCashReceipts"))
   {
     connect(_cashrcpt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_cashrcpt, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -120,19 +120,19 @@ void cashReceiptsEditList::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCashReceipts"))
+  if (!_privileges->check("MaintainCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainCashReceipts"))
+  if (!_privileges->check("MaintainCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Post..."), this, SLOT(sPost()), 0);
-  if (!_privleges->check("PostCashReceipts"))
+  if (!_privileges->check("PostCashReceipts"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

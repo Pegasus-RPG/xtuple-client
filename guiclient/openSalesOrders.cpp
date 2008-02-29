@@ -95,7 +95,7 @@ openSalesOrders::openSalesOrders(QWidget* parent, const char* name, Qt::WFlags f
   _so->addColumn(tr("Ordered"),          _dateColumn,  Qt::AlignCenter );
   _so->addColumn(tr("Scheduled"),        _dateColumn,  Qt::AlignCenter );
   
-  if (_privleges->check("MaintainSalesOrders"))
+  if (_privileges->check("MaintainSalesOrders"))
   {
     connect(_so, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_so, SIGNAL(valid(bool)), _copy, SLOT(setEnabled(bool)));
@@ -191,7 +191,7 @@ void openSalesOrders::sDelete()
     {
       bool closeInstead = false;
       int result = q.value("result").toInt();
-      if (result == -4 && _privleges->check("ProcessCreditCards"))
+      if (result == -4 && _privileges->check("ProcessCreditCards"))
       {
 	if ( QMessageBox::question(this, tr("Cannot Delete Sales Order"),
 				   storedProcErrorLookup("deleteSo", result) + 
@@ -365,31 +365,31 @@ void openSalesOrders::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Copy..."), this, SLOT(sCopy()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Reschedule..."), this, SLOT(sReschedule()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete..."), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainSalesOrders"))
+  if (!_privileges->check("MaintainSalesOrders"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Print Packing List..."), this, SLOT(sPrintPackingList()), 0);
-  if (!_privleges->check("PrintPackingLists"))
+  if (!_privileges->check("PrintPackingLists"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Add to Packing List Batch..."), this, SLOT(sAddToPackingListBatch()), 0);
-  if (!_privleges->check("MaintainPackingListBatch"))
+  if (!_privileges->check("MaintainPackingListBatch"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   if (_metrics->boolean("EnableBatchManager"))

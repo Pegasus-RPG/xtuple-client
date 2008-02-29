@@ -121,7 +121,7 @@ void printCreditMemos::init()
     }
   }
 
-  if(!_privleges->check("PostARDocuments"))
+  if(!_privileges->check("PostARDocuments"))
   {
     _post->setChecked(false);
     _post->setEnabled(false);

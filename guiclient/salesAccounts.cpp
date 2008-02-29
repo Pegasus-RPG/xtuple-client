@@ -94,7 +94,7 @@ salesAccounts::salesAccounts(QWidget* parent, const char* name, Qt::WFlags fl)
     _salesaccnt->hideColumn(8);
   }
 
-  if (_privleges->check("MaintainSalesAccount"))
+  if (_privileges->check("MaintainSalesAccount"))
   {
     connect(_salesaccnt, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_salesaccnt, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

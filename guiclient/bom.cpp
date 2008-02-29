@@ -105,7 +105,7 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _bomitem->setDragString("bomid=");
   _bomitem->setAltDragString("itemid=");
   
-  if (!_privleges->check("ViewCosts"))
+  if (!_privileges->check("ViewCosts"))
   {
     _currentStdCostLit->hide();
     _currentActCostLit->hide();
@@ -537,7 +537,7 @@ void BOM::sFillList(int pItemid, bool)
     _totalQtyPer->setText(formatQtyPer(totalQtyPer));
     _totalQtyPerCache = totalQtyPer;
     
-    if (_privleges->check("ViewCosts"))
+    if (_privileges->check("ViewCosts"))
     {
       sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
             "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"

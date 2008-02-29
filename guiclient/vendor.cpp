@@ -164,7 +164,7 @@ void vendor::set(const ParameterList &pParams)
   
       connect(_number, SIGNAL(lostFocus()), this, SLOT(sCheck()));
 
-      if (_privleges->check("MaintainVendorAddresses"))
+      if (_privileges->check("MaintainVendorAddresses"))
       {
         connect(_vendaddr, SIGNAL(valid(bool)), _editAddress, SLOT(setEnabled(bool)));
         connect(_vendaddr, SIGNAL(valid(bool)), _deleteAddress, SLOT(setEnabled(bool)));
@@ -182,7 +182,7 @@ void vendor::set(const ParameterList &pParams)
     {
       _mode = cEdit;
 
-      if (_privleges->check("MaintainVendorAddresses"))
+      if (_privileges->check("MaintainVendorAddresses"))
       {
         connect(_vendaddr, SIGNAL(valid(bool)), _editAddress, SLOT(setEnabled(bool)));
         connect(_vendaddr, SIGNAL(valid(bool)), _deleteAddress, SLOT(setEnabled(bool)));

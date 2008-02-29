@@ -408,7 +408,7 @@ void dspInventoryHistoryByParameterList::sPopulateMenu(QMenu *pMenu, QTreeWidget
       if (q.first())
       {
           menuItem = pMenu->insertItem(tr("View Work Order Information..."), this, SLOT(sViewWOInfo()), 0);
-          if ((!_privleges->check("MaintainWorkOrders")) && (!_privleges->check("ViewWorkOrders")))
+          if ((!_privileges->check("MaintainWorkOrders")) && (!_privileges->check("ViewWorkOrders")))
             pMenu->setItemEnabled(menuItem, FALSE);
       }
     }

@@ -244,7 +244,7 @@ void configurePD::sSave()
     _metrics->set("DefaultWomatlIssueMethod", QString("M"));
 
   _metrics->load();
-  _privleges->load();
+  _privileges->load();
   omfgThis->saveToolbarPositions();
   _preferences->load();
   omfgThis->initMenuBar();

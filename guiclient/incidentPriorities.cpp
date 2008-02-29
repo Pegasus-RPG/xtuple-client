@@ -93,7 +93,7 @@ incidentPriorities::incidentPriorities(QWidget* parent, const char* name, Qt::WF
   _incidentPriorities->addColumn(tr("Priority"),      100, Qt::AlignLeft );
   _incidentPriorities->addColumn(tr("Description"),    -1, Qt::AlignLeft );
 
-  if (_privleges->check("MaintainIncidentPriorities"))
+  if (_privileges->check("MaintainIncidentPriorities"))
   {
     connect(_incidentPriorities, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_incidentPriorities, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -189,13 +189,13 @@ void incidentPriorities::sPopulateMenu( QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainIncidentPriorities"))
+  if (!_privileges->check("MaintainIncidentPriorities"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainIncidentPriorities"))
+  if (!_privileges->check("MaintainIncidentPriorities"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

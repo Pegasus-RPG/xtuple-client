@@ -72,8 +72,7 @@ rescheduleWo::rescheduleWo(QWidget* parent, const char* name, bool modal, Qt::WF
   _wo->setType(cWoOpen | cWoExploded);
   _cmnttype->setType(XComboBox::AllCommentTypes);
 
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _changeChildren->setChecked(true);
   _commentGroup->setEnabled(_postComment->isChecked());
 }

@@ -133,7 +133,7 @@ void voucheringEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *)
   if (_vo->altId() == -1)
   {
     menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-    if (!_privleges->check("MaintainVouchers"))
+    if (!_privileges->check("MaintainVouchers"))
       pMenu->setItemEnabled(menuItem, FALSE);
 
     menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);

@@ -188,7 +188,7 @@ void dspQOHByLocation::sPopulateMenu(QMenu *menu)
   if (_itemloc->id() != -1)
   {
     menuItem = menu->insertItem(tr("Relocate..."), this, SLOT(sRelocate()), 0);
-    if (!_privleges->check("RelocateInventory"))
+    if (!_privileges->check("RelocateInventory"))
       menu->setItemEnabled(menuItem, FALSE);
   }
 }

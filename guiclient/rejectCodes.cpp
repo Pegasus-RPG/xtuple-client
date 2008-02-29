@@ -111,7 +111,7 @@ void rejectCodes::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainRejectCodes"))
+  if (_privileges->check("MaintainRejectCodes"))
   {
     connect(_rjctcode, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_rjctcode, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

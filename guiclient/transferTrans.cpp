@@ -152,7 +152,7 @@ enum SetResponse transferTrans::set(ParameterList &pParams)
 
       setCaption(tr("Enter Inter-Warehouse Transfer"));
       _usernameLit->clear();
-      _transDate->setEnabled(_privleges->check("AlterTransactionDates"));
+      _transDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transDate->setDate(omfgThis->dbDate());
 
       if (!_item->isValid())

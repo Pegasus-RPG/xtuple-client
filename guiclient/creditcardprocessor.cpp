@@ -653,7 +653,7 @@ int CreditCardProcessor::testConfiguration()
     qDebug("CCP:testConfiguration()");
   reset();
 
-  if (!_privleges->check("ProcessCreditCards"))
+  if (!_privileges->check("ProcessCreditCards"))
   {
     _errorMsg = errorMsg(-2);
     return -2;

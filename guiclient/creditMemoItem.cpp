@@ -107,8 +107,8 @@ creditMemoItem::creditMemoItem(QWidget* parent, const char* name, bool modal, Qt
   _qtyReturned->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
 
-  _taxType->setEnabled(_privleges->check("OverrideTax"));
-  _taxCode->setEnabled(_privleges->check("OverrideTax"));
+  _taxType->setEnabled(_privileges->check("OverrideTax"));
+  _taxCode->setEnabled(_privileges->check("OverrideTax"));
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))

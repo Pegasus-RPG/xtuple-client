@@ -88,8 +88,8 @@ invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _ordered->setValidator(omfgThis->qtyVal());
   _billed->setValidator(omfgThis->qtyVal());
 
-  _taxtype->setEnabled(_privleges->check("OverrideTax"));
-  _taxcode->setEnabled(_privleges->check("OverrideTax"));
+  _taxtype->setEnabled(_privileges->check("OverrideTax"));
+  _taxcode->setEnabled(_privileges->check("OverrideTax"));
 
   _mode = cNew;
   _invcheadid	= -1;

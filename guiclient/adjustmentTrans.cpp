@@ -166,7 +166,7 @@ enum SetResponse adjustmentTrans::set(const ParameterList &pParams)
 
       setCaption(tr("Enter Miscellaneous Adjustment"));
       _usernameLit->clear();
-      _transactionDate->setEnabled(_privleges->check("AlterTransactionDates"));
+      _transactionDate->setEnabled(_privileges->check("AlterTransactionDates"));
       _transactionDate->setDate(omfgThis->dbDate());
 
       if (!_item->isValid())

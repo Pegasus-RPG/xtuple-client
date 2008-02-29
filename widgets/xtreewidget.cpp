@@ -67,6 +67,8 @@
 #include <QSettings>
 #include <QAction>
 
+#include "xsqlquery.h"
+
 XTreeWidget::XTreeWidget(QWidget *pParent) :
   QTreeWidget(pParent)
 {

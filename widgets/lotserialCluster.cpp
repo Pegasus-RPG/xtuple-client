@@ -64,6 +64,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 
+#include "xsqlquery.h"
+
 LotserialList::LotserialList(QWidget* pParent, Qt::WindowFlags flags)
   : VirtualList(pParent, flags)
 {

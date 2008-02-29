@@ -150,15 +150,15 @@ void dspWoOperationsByWorkOrder::sPopulateMenu(QMenu *pMenu)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("View Operation..."), this, SLOT(sViewOperation()), 0);
-  if ((!_privleges->check("ViewWoOperations")) && (!_privleges->check("MaintainWoOperations")))
+  if ((!_privileges->check("ViewWoOperations")) && (!_privileges->check("MaintainWoOperations")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit Operation..."), this, SLOT(sEditOperation()), 0);
-  if (!_privleges->check("MaintainWoOperations"))
+  if (!_privileges->check("MaintainWoOperations"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete Operation..."), this, SLOT(sDeleteOperation()), 0);
-  if (!_privleges->check("MaintainWoOperations"))
+  if (!_privileges->check("MaintainWoOperations"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

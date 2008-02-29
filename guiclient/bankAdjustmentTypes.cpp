@@ -112,7 +112,7 @@ void bankAdjustmentTypes::init()
 {
   statusBar()->hide();
   
-  if (_privleges->check("MaintainAdjustmentTypes"))
+  if (_privileges->check("MaintainAdjustmentTypes"))
   {
     connect(_bankadjtype, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
     connect(_bankadjtype, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));

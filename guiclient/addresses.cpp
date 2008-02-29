@@ -102,7 +102,7 @@ addresses::addresses(QWidget* parent, const char* name, Qt::WFlags fl)
     _address->addColumn(tr("Country"),	 50, Qt::AlignLeft );
     _address->addColumn(tr("Postal Code"),50,Qt::AlignLeft );
 
-    if (_privleges->check("MaintainAddresses"))
+    if (_privileges->check("MaintainAddresses"))
     {
       connect(_address, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
       connect(_address, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
@@ -140,13 +140,13 @@ void addresses::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem*, int)
   int menuItem;
 
   menuItem = pMenu->insertItem(tr("Edit..."), this, SLOT(sEdit()), 0);
-  if (!_privleges->check("MaintainAddresses"))
+  if (!_privileges->check("MaintainAddresses"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("View..."), this, SLOT(sView()), 0);
 
   menuItem = pMenu->insertItem(tr("Delete"), this, SLOT(sDelete()), 0);
-  if (!_privleges->check("MaintainAddresses"))
+  if (!_privileges->check("MaintainAddresses"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 

@@ -86,7 +86,7 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
 
   _so->setType((cSoOpen && cSoReleased));
 
-  _ship->setEnabled(_privleges->check("ShipOrders"));
+  _ship->setEnabled(_privileges->check("ShipOrders"));
 
   omfgThis->inputManager()->notify(cBCItem, this, this, SLOT(sCatchItemid(int)));
   omfgThis->inputManager()->notify(cBCItemSite, this, this, SLOT(sCatchItemsiteid(int)));

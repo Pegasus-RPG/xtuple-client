@@ -106,8 +106,7 @@ dspWoOperationsByWorkCenter::dspWoOperationsByWorkCenter(QWidget* parent, const 
   _wooper->addColumn(tr("Qty. Remain."),  _qtyColumn,   Qt::AlignRight  );
   _wooper->addColumn(tr("UOM"),           _uomColumn,   Qt::AlignCenter );
   
-  Preferences _pref = Preferences(omfgThis->username());
-  if (_pref.boolean("XCheckBox/forgetful"))
+  if (_preferences->boolean("XCheckBox/forgetful"))
     _loadOnly->setChecked(true);
 
   sFillList();
@@ -183,41 +182,41 @@ void dspWoOperationsByWorkCenter::sPopulateMenu(QMenu *pMenu)
   multi = (cnt > 1);
 
   menuItem = pMenu->insertItem(tr("View Operation..."), this, SLOT(sViewOperation()), 0);
-  if (multi || (!_privleges->check("ViewWoOperations")) && (!_privleges->check("MaintainWoOperations")))
+  if (multi || (!_privileges->check("ViewWoOperations")) && (!_privileges->check("MaintainWoOperations")))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Edit Operation..."), this, SLOT(sEditOperation()), 0);
-  if (multi || !_privleges->check("MaintainWoOperations"))
+  if (multi || !_privileges->check("MaintainWoOperations"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Delete Operation..."), this, SLOT(sDeleteOperation()), 0);
-  if (multi || !_privleges->check("MaintainWoOperations"))
+  if (multi || !_privileges->check("MaintainWoOperations"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Post Production..."), this, SLOT(sPostProduction()), 0);
-  if (multi || !_privleges->check("PostProduction"))
+  if (multi || !_privileges->check("PostProduction"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("Post Operations..."), this, SLOT(sPostOperations()), 0);
-  if (multi || !_privleges->check("PostWoOperations"))
+  if (multi || !_privileges->check("PostWoOperations"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Running Availability..."), this, SLOT(sRunningAvailability()), 0);
-  if (!_privleges->check("ViewInventoryAvailability"))
+  if (!_privileges->check("ViewInventoryAvailability"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   menuItem = pMenu->insertItem(tr("MPS Detail..."), this, SLOT(sMPSDetail()), 0);
-  if (!_privleges->check("ViewMPS"))
+  if (!_privileges->check("ViewMPS"))
     pMenu->setItemEnabled(menuItem, FALSE);
 
   pMenu->insertSeparator();
 
   menuItem = pMenu->insertItem(tr("Print Pick List(s)..."), this, SLOT(sPrintPickLists()), 0);
-  if (!_privleges->check("PrintWorkOrderPaperWork"))
+  if (!_privileges->check("PrintWorkOrderPaperWork"))
     pMenu->setItemEnabled(menuItem, FALSE);
 }
 
