@@ -81,10 +81,12 @@ public slots:
     virtual void sPopulateItemsiteInfo();
     virtual void sListPrices();
     virtual void sDeterminePrice();
-    virtual void sDeterminePrice(bool p);
+    virtual void sDeterminePrice( bool p );
     virtual void sRecalcPrice();
     virtual void sPopulateItemInfo( int pItemid );
+    virtual void sRecalcAvailability();
     virtual void sDetermineAvailability();
+    virtual void sDetermineAvailability( bool p );
     virtual void sCalculateDiscountPrcnt();
     virtual void sCalculateExtendedPrice();
     virtual void sHandleWo( bool pCreate );

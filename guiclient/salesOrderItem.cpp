@@ -704,6 +704,8 @@ void salesOrderItem::clear()
   _modified = false;
   _updateItemsite = false;
   _soitemid=-1;
+  _baseUnitPrice->clear();
+  _itemcharView->setEnabled(TRUE);
 }
 
 void salesOrderItem::sSave()
@@ -769,6 +771,10 @@ void salesOrderItem::sSave()
   else
     promiseDate = omfgThis->endOfTime();
 
+  XSqlQuery rollback;
+  rollback.prepare("ROLLBACK;"); //In case of failure along the way
+  q.exec("BEGIN;");
+
   if (_mode == cNew)
   {
 //  Grab the next coitem_id
@@ -777,11 +783,13 @@ void salesOrderItem::sSave()
       _soitemid = q.value("_coitem_id").toInt();
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
     {
+      rollback.exec();
       reject();
       return;
     }
@@ -834,6 +842,7 @@ void salesOrderItem::sSave()
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -882,6 +891,7 @@ void salesOrderItem::sSave()
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -910,6 +920,7 @@ void salesOrderItem::sSave()
 	    int result = q.value("result").toInt();
 	    if (result < 0)
 	    {
+              rollback.exec();
 	      systemError(this, storedProcErrorLookup("changeWoDates", result),
 			  __FILE__, __LINE__);
 	      return;
@@ -917,6 +928,7 @@ void salesOrderItem::sSave()
 	  }
 	  else if (q.lastError().type() != QSqlError::None)
 	  {
+            rollback.exec();
 	    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	    return;
 	  }
@@ -945,6 +957,7 @@ void salesOrderItem::sSave()
 	      int result = q.value("result").toInt();
 	      if (result < 0)
 	      {
+                rollback.exec();
 		systemError(this, storedProcErrorLookup("changeWoQty", result),
 			    __FILE__, __LINE__);
 		return;
@@ -952,6 +965,7 @@ void salesOrderItem::sSave()
 	    }
 	    else if (q.lastError().type() != QSqlError::None)
 	    {
+              rollback.exec();
 	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
 	    }
@@ -977,12 +991,14 @@ void salesOrderItem::sSave()
 	      bool result = q.value("result").toBool();
 	      if (! result)
 	      {
+                rollback.exec();
 		systemError(this, tr("changePrQty failed"), __FILE__, __LINE__);
 		return;
 	      }
 	    }
 	    else if (q.lastError().type() != QSqlError::None)
 	    {
+              rollback.exec();
 	      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	      return;
 	    }
@@ -1000,11 +1016,13 @@ void salesOrderItem::sSave()
       _soitemid = q.value("_quitem_id").toInt();
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
     else
     {
+      rollback.exec();
       reject();
       return;
     }
@@ -1048,6 +1066,7 @@ void salesOrderItem::sSave()
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -1082,6 +1101,7 @@ void salesOrderItem::sSave()
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
@@ -1096,12 +1116,13 @@ void salesOrderItem::sSave()
       q.exec();
       if (q.lastError().type() != QSqlError::None)
       {
+        rollback.exec();
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
     }
   }
-
+  
   if ( (_mode != cView) && (_mode != cViewQuote) )
   {
     QString type = "SI";
@@ -1130,6 +1151,7 @@ void salesOrderItem::sSave()
 	int result = q.value("result").toInt();
 	if (result < 0)
 	{
+          rollback.exec();
 	  systemError(this, storedProcErrorLookup("updateCharAssignment", result),
 		      __FILE__, __LINE__);
 	  return;
@@ -1137,6 +1159,7 @@ void salesOrderItem::sSave()
       }
       else if (q.lastError().type() != QSqlError::None)
       {
+        rollback.exec();
 	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	return;
       }
@@ -1151,7 +1174,7 @@ void salesOrderItem::sSave()
     QString chartype;
     if ((_item->itemType() == "M") || (_item->itemType() == "J"))
     {
-		q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments, :parent_type, :parent_id ) AS result, itemsite_id "
+      q.prepare( "SELECT createWo(:orderNumber, itemsite_id, :qty, itemsite_leadtime, :dueDate, :comments, :parent_type, :parent_id ) AS result, itemsite_id "
                  "FROM itemsite "
                  "WHERE ( (itemsite_item_id=:item_id)"
                  " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -1161,8 +1184,8 @@ void salesOrderItem::sSave()
       q.bindValue(":comments", _custName + "\n" + _notes->text());
       q.bindValue(":item_id", _item->id());
       q.bindValue(":warehous_id", _supplyWarehouse->id());
-	  q.bindValue(":parent_type", QString("S"));
-	  q.bindValue(":parent_id", _soitemid);
+      q.bindValue(":parent_type", QString("S"));
+      q.bindValue(":parent_id", _soitemid);
       q.exec();
     }
     else if (_item->itemType() == "P")
@@ -1178,6 +1201,7 @@ void salesOrderItem::sSave()
       _orderId = q.value("result").toInt();
       if (_orderId < 0)
       {
+        rollback.exec();
 	QString procname;
 	if ((_item->itemType() == "M") || (_item->itemType() == "J"))
 	  procname = "createWo";
@@ -1203,6 +1227,7 @@ void salesOrderItem::sSave()
         q.exec();
 	if (q.lastError().type() != QSqlError::None)
 	{
+          rollback.exec();
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
@@ -1218,6 +1243,7 @@ void salesOrderItem::sSave()
         q.exec();
 	if (q.lastError().type() != QSqlError::None)
 	{
+          rollback.exec();
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
@@ -1233,6 +1259,7 @@ void salesOrderItem::sSave()
         q.exec();
 	if (q.lastError().type() != QSqlError::None)
 	{
+          rollback.exec();
 	  systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 	  return;
 	}
@@ -1240,11 +1267,14 @@ void salesOrderItem::sSave()
     }
     else if (q.lastError().type() != QSqlError::None)
     {
+      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
   }
 
+  q.exec("COMMIT;");
+  
   if (_mode == cNew)
     omfgThis->sSalesOrdersUpdated(_soheadid);
   else if (_mode == cNewQuote)
@@ -1374,9 +1404,9 @@ void salesOrderItem::sDeterminePrice(bool p)
 
       for(int i = 0; i < _itemchar->rowCount(); i++)
       {
-        idx1 = _itemchar->index(i, 0);
-        idx2 = _itemchar->index(i, 1);
-        idx3 = _itemchar->index(i, 2);
+        idx1 = _itemchar->index(i, CHAR_ID);
+        idx2 = _itemchar->index(i, CHAR_VALUE);
+        idx3 = _itemchar->index(i, CHAR_PRICE);
         q.bindValue(":item_id", _item->id());
         q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
         q.bindValue(":value", _itemchar->data(idx2, Qt::DisplayRole));
@@ -1406,7 +1436,7 @@ void salesOrderItem::sDeterminePrice(bool p)
 
       for(int i = 0; i < _itemchar->rowCount(); i++)
       {
-        idx = _itemchar->index(i, 2);
+        idx = _itemchar->index(i, CHAR_PRICE);
         charTotal += _itemchar->data(idx, Qt::DisplayRole).toDouble();
       }
     }
@@ -1583,22 +1613,8 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     }
     
     _charVars.replace(ITEM_ID, _item->id());
-    
-    //Setup widgets and signals needed to handle configuration
-    if (_item->itemType() == "J")
-    {
-      connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
-      _itemcharView->showColumn(CHAR_PRICE);
-      _baseUnitPriceLit->show();
-      _baseUnitPrice->setVisible(TRUE);
-    }
-    else
-    {
-      disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
-      _itemcharView->hideColumn(CHAR_PRICE);
-      _baseUnitPriceLit->hide();
-      _baseUnitPrice->setVisible(FALSE);
-    }
+    disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
+    disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcAvailability()));
     
     //Populate Characteristics
     q.prepare("SELECT "
@@ -1657,17 +1673,46 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
+    
+    //Setup widgets and signals needed to handle configuration
+    if (_item->itemType() == "J")
+    {
+      connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
+      connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcAvailability()));
+      _itemcharView->showColumn(CHAR_PRICE);
+      _baseUnitPriceLit->show();
+      _baseUnitPrice->setVisible(TRUE);
+    }
+    else
+    {
+      disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
+      disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcAvailability()));
+      _itemcharView->hideColumn(CHAR_PRICE);
+      _baseUnitPriceLit->hide();
+      _baseUnitPrice->setVisible(FALSE);
+    }
   }
 }
 
+void salesOrderItem::sRecalcAvailability()
+{
+  sDetermineAvailability(TRUE);
+}
+
 void salesOrderItem::sDetermineAvailability()
+{
+  sDetermineAvailability(FALSE);
+}
+
+void salesOrderItem::sDetermineAvailability( bool p )
 {
   if(  (_item->id()==_availabilityLastItemid)
     && (_warehouse->id()==_availabilityLastWarehousid)
     && (_scheduledDate->date()==_availabilityLastSchedDate)
     && (_showAvailability->isChecked()==_availabilityLastShow)
     && (_showIndented->isChecked()==_availabilityLastShowIndent)
-    && ((_qtyOrdered->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered) )
+    && ((_qtyOrdered->toDouble() * _qtyinvuomratio)==_availabilityQtyOrdered)
+    && (!p) )
     return;
 
   _availabilityLastItemid = _item->id();
@@ -1720,7 +1765,7 @@ void salesOrderItem::sDetermineAvailability()
       {
         if(_showIndented->isChecked())
 	{
-	  availability.prepare(
+	  QString sql(
 	     "SELECT itemsite_id, reorderlevel,"
 	     "       bomdata_bomwork_level,"
 	     "       bomdata_bomwork_id,"
@@ -1759,9 +1804,30 @@ void salesOrderItem::sDetermineAvailability()
              "                            0,0) ib LEFT OUTER JOIN"
 	     "                itemsite ON ((itemsite_item_id=bomdata_item_id)"
 	     "                         AND (itemsite_warehous_id=:warehous_id))"
-	     "          WHERE (bomdata_item_id > 0)"
-	     "       ) AS data "
-	     "ORDER BY bomdata_bomwork_level, bomdata_bomwork_seqnumber;");
+	     "          WHERE (bomdata_item_id > 0)");
+             
+             
+          if (_item->itemType() == "J") // For job items limit to bomitems associated with selected characteristic values
+          {
+            QModelIndex charidx;
+            QModelIndex valueidx;
+            
+            sql +=  "        AND ((bomdata_char_id IS NULL) ";
+
+            for(int i = 0; i < _itemchar->rowCount(); i++)
+            {
+              charidx  = _itemchar->index(i, CHAR_ID);
+              valueidx = _itemchar->index(i, CHAR_VALUE);
+              sql += QString(" OR ((bomdata_char_id=%1) AND (bomdata_value='%2'))").arg(_itemchar->data(charidx, Qt::UserRole).toString()).arg(_itemchar->data(valueidx, Qt::DisplayRole).toString());
+            }
+
+            sql +=  " ) ";
+          }     
+             
+	  sql += "       ) AS data "
+	         "ORDER BY bomdata_bomwork_level, bomdata_bomwork_seqnumber;";
+                 
+          availability.prepare(sql);
 	  availability.bindValue(":item_id",        _item->id());
 	  availability.bindValue(":warehous_id",    _warehouse->id());
 	  availability.bindValue(":qty",            _availabilityQtyOrdered);
@@ -1821,7 +1887,7 @@ void salesOrderItem::sDetermineAvailability()
         else
         {
           int itemsiteid = availability.value("itemsite_id").toInt();
-          availability.prepare( "SELECT itemsiteid, reorderlevel,"
+          QString sql( "SELECT itemsiteid, reorderlevel,"
                                 "       bomitem_seqnumber, item_number, item_descrip, uom_name,"
                                 "       pendalloc, formatQty(pendalloc) AS f_pendalloc,"
                                 "       ordered, formatQty(ordered) AS f_ordered,"
@@ -1844,9 +1910,27 @@ void salesOrderItem::sDetermineAvailability()
                                 "       WHERE ( (bomitem_item_id=item_id)"
                                 "        AND (item_inv_uom_id=uom_id)"
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
-                                "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))"
-                                "        AND (ps.itemsite_id=:itemsite_id) ) ) AS data "
-                                "ORDER BY bomitem_seqnumber;" );
+                                "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
+
+          if (_item->itemType() == "J") // For job items limit to bomitems associated with selected characteristic values
+          {
+            QModelIndex charidx;
+            QModelIndex valueidx;
+            
+            sql +=  "        AND ((bomitem_char_id IS NULL) ";
+
+            for(int i = 0; i < _itemchar->rowCount(); i++)
+            {
+              charidx  = _itemchar->index(i, CHAR_ID);
+              valueidx = _itemchar->index(i, CHAR_VALUE);
+              sql += QString(" OR ((bomitem_char_id=%1) AND (bomitem_value='%2'))").arg(_itemchar->data(charidx, Qt::UserRole).toString()).arg(_itemchar->data(valueidx, Qt::DisplayRole).toString());
+            }
+
+            sql +=  " ) ";
+          } 
+          sql +=  "        AND (ps.itemsite_id=:itemsite_id) ) ) AS data "
+                  "ORDER BY bomitem_seqnumber;";
+          availability.prepare(sql);
           availability.bindValue(":itemsite_id", itemsiteid);
           availability.bindValue(":qty", _availabilityQtyOrdered);
           availability.bindValue(":schedDate", _scheduledDate->date());
@@ -1906,6 +1990,7 @@ void salesOrderItem::sDetermineAvailability()
 void salesOrderItem::sCalculateDiscountPrcnt()
 {
   double netUnitPrice = _netUnitPrice->baseValue();
+  double charTotal = 0;
 
   if (netUnitPrice == 0.0)
   {
@@ -1923,6 +2008,18 @@ void salesOrderItem::sCalculateDiscountPrcnt()
       _discountFromCust->setText(tr("N/A"));
     else
       _discountFromCust->setText(formatSalesPrice((1 - (netUnitPrice / _customerPrice->baseValue())) * 100));
+  }
+  
+  if (_item->itemType() == "J") //Total up price for job item characteristics
+  {
+    QModelIndex idx;
+
+    for(int i = 0; i < _itemchar->rowCount(); i++)
+    {
+      idx = _itemchar->index(i, CHAR_PRICE);
+      charTotal += _itemchar->data(idx, Qt::DisplayRole).toDouble();
+    }
+    _baseUnitPrice->setLocalValue(_netUnitPrice->localValue() - charTotal);
   }
 
   sCalculateExtendedPrice();
@@ -2277,6 +2374,9 @@ void salesOrderItem::populate()
 
 	if ((query.value("wo_status").toString() == "R") || (query.value("wo_status").toString() == "C"))
 	  _createOrder->setEnabled(FALSE);
+          
+        if ((_item->itemType() == "J") && (query.value("wo_status").toString() != "O"))
+          _itemcharView->setEnabled(FALSE);
 
 	_supplyWarehouse->clear();
 	_supplyWarehouse->append(query.value("warehous_id").toInt(), query.value("warehous_code").toString());
