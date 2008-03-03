@@ -108,6 +108,8 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _discount->setValidator(omfgThis->percentVal());
   _item->setType(ItemLineEdit::cSold);
   _prodcat->setType(XComboBox::ProductCategories);
+  
+  _configuredPrices->setEnabled(FALSE);
 }
 
 /*
@@ -205,6 +207,11 @@ enum SetResponse itemPricingScheduleItem::set(const ParameterList &pParams)
 
 void itemPricingScheduleItem::sSave()
 {
+  sSave(TRUE);
+}
+
+void itemPricingScheduleItem::sSave( bool pClose)
+{
   if (_mode == cNew)
   {
     if(_itemSelected->isChecked())
@@ -295,11 +302,23 @@ void itemPricingScheduleItem::sSave()
   q.bindValue(":qty_uom_id", _qtyUOM->id());
   q.bindValue(":price_uom_id", _priceUOM->id());
   q.exec();
-
-  if(_itemSelected->isChecked())
-    done(_ipsitemid);
+  
+  if (pClose)
+  {
+    if(_itemSelected->isChecked())
+      done(_ipsitemid);
+    else
+      done(_ipsprodcatid);
+  }
   else
-    done(_ipsprodcatid);
+  {
+    _mode = cEdit;
+
+    _item->setReadOnly(TRUE);
+    _prodcat->setEnabled(FALSE);
+    _typeGroup->setEnabled(FALSE);
+  }
+
 }
 
 void itemPricingScheduleItem::populate()
@@ -394,6 +413,11 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
     _qtyUOM->setId(cost.value("item_inv_uom_id").toInt());
     _priceUOM->setId(cost.value("item_price_uom_id").toInt());
   }
+  
+  if (_item->itemType() == "J")
+    _configuredPrices->setEnabled(TRUE);
+  else
+    _configuredPrices->setEnabled(FALSE);
 }
 
 void itemPricingScheduleItem::sUpdateMargins()
@@ -492,6 +516,8 @@ void itemPricingScheduleItem::sPriceUOMChanged()
 
 void itemPricingScheduleItem::sNew()
 {
+  if (_mode == cNew)
+    sSave(FALSE);
   ParameterList params;
   params.append("mode", "new");
   params.append("ipsitem_id", _ipsitemid);

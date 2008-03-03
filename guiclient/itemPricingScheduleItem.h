@@ -75,6 +75,7 @@ public:
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
     virtual void sSave();
+    virtual void sSave( bool pClose);
     virtual void populate();
     virtual void sUpdateCosts( int pItemid );
     virtual void sUpdateMargins();
