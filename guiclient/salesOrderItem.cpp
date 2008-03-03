@@ -896,7 +896,7 @@ void salesOrderItem::sSave()
       return;
     }
 
-//  Check to see if a S/O should be re-scheduled
+//  Check to see if a W/O needs changes
     if (_orderId != -1)
     {
       if (_scheduledDate->date() != _cScheduledDate)
@@ -1005,6 +1005,40 @@ void salesOrderItem::sSave()
           }
         }
       }
+      
+      //Update Work Order Characteristics
+      QModelIndex idx1, idx2, idx3;
+
+      q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
+
+      for(int i = 0; i < _itemchar->rowCount(); i++)
+      {
+        idx1 = _itemchar->index(i, CHAR_ID);
+        idx2 = _itemchar->index(i, CHAR_VALUE);
+        q.bindValue(":target_type", "W");
+        q.bindValue(":target_id", _orderId);
+        q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
+        q.bindValue(":char_value", _itemchar->data(idx2, Qt::DisplayRole));
+        q.exec();
+        if (q.first())
+        {
+          int result = q.value("result").toInt();
+          if (result < 0)
+          {
+            rollback.exec();
+            systemError(this, storedProcErrorLookup("updateCharAssignment", result),
+                        __FILE__, __LINE__);
+            return;
+          }
+        }
+        else if (q.lastError().type() != QSqlError::None)
+        {
+          rollback.exec();
+          systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+          return;
+        }
+      }
+      
       _cQtyOrdered = _qtyOrdered->toDouble();
     }
   }
@@ -1137,9 +1171,9 @@ void salesOrderItem::sSave()
 
     for(int i = 0; i < _itemchar->rowCount(); i++)
     {
-      idx1 = _itemchar->index(i, 0);
-      idx2 = _itemchar->index(i, 1);
-      idx3 = _itemchar->index(i, 2);
+      idx1 = _itemchar->index(i, CHAR_ID);
+      idx2 = _itemchar->index(i, CHAR_VALUE);
+      idx3 = _itemchar->index(i, CHAR_PRICE);
       q.bindValue(":target_type", type);
       q.bindValue(":target_id", _soitemid);
       q.bindValue(":char_id", _itemchar->data(idx1, Qt::UserRole));
@@ -1657,13 +1691,13 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     while(q.next())
     {
       _itemchar->insertRow(_itemchar->rowCount());
-      idx = _itemchar->index(row, 0);
+      idx = _itemchar->index(row, CHAR_ID);
       _itemchar->setData(idx, q.value("char_name"), Qt::DisplayRole);
       _itemchar->setData(idx, q.value("char_id"), Qt::UserRole);
-      idx = _itemchar->index(row, 1);
+      idx = _itemchar->index(row, CHAR_VALUE);
       _itemchar->setData(idx, q.value("charass_value"), Qt::DisplayRole);
       _itemchar->setData(idx, _item->id(), Qt::UserRole);
-      idx = _itemchar->index(row, 2);
+      idx = _itemchar->index(row, CHAR_PRICE);
       _itemchar->setData(idx, q.value("charass_price"), Qt::DisplayRole);
       _itemchar->setData(idx, QVariant(_charVars), Qt::UserRole);
       row++;
