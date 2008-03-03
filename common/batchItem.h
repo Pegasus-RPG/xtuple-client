@@ -58,7 +58,8 @@
 #ifndef BATCHITEM_H
 #define BATCHITEM_H
 
-#include <QtGui/QDialog>
+#include <QDialog>
+#include <QSqlDatabase>
 
 #include "ui_batchItem.h"
 

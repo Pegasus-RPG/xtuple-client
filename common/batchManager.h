@@ -58,7 +58,7 @@
 #ifndef BATCHMANAGER_H
 #define BATCHMANAGER_H
 
-class QSqlDatabase;
+#include <QSqlDatabase>
 
 #include <QMainWindow>
 
