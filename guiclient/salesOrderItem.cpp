@@ -703,7 +703,6 @@ void salesOrderItem::clear()
   _originalQtyOrd = 0.0;
   _modified = false;
   _updateItemsite = false;
-  _soitemid=-1;
   _baseUnitPrice->clear();
   _itemcharView->setEnabled(TRUE);
 }
