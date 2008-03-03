@@ -78,6 +78,9 @@ characteristicAssignment::characteristicAssignment(QWidget* parent, const char* 
 
   _char->setAllowNull(TRUE);
   
+  _listpriceLit->hide();
+  _listprice->hide();
+  
   resize(minimumSize());
 }
 
@@ -190,6 +193,13 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
 
       _close->setFocus();
     }
+  }
+  
+  param = pParams.value("showPrices", &valid);
+  if (valid)
+  {
+    _listpriceLit->show();
+    _listprice->show();
   }
 
   return NoError;

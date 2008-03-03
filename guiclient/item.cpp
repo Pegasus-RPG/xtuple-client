@@ -164,8 +164,8 @@ item::item(QWidget* parent, const char* name, Qt::WFlags fl)
 
   _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
   _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
-  _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight );
   _charass->addColumn(tr("Default"),        _ynColumn,   Qt::AlignCenter );
+  _charass->addColumn(tr("List Price"),     _priceColumn,Qt::AlignRight );
 
   _uomconv->addColumn(tr("Conversions/Where Used"), _itemColumn*2, Qt::AlignLeft);
   _uomconv->addColumn(tr("Ratio"),      _qtyColumn*2, Qt::AlignRight  );
@@ -693,9 +693,12 @@ void item::sSave()
 
 void item::sNew()
 {
+  QString itemType = QString(*(_itemTypes + _itemtype->currentItem()));
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _itemid);
+  if (itemType == "J")
+    params.append("showPrices", TRUE);
 
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -706,9 +709,12 @@ void item::sNew()
 
 void item::sEdit()
 {
+  QString itemType = QString(*(_itemTypes + _itemtype->currentItem()));
   ParameterList params;
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
+  if (itemType == "J")
+    params.append("showPrices", TRUE);
 
   characteristicAssignment newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -729,7 +735,7 @@ void item::sDelete()
 
 void item::sFillList()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value, charass_price, formatBoolYN(charass_default) "
+  q.prepare( "SELECT charass_id, char_name, charass_value, formatBoolYN(charass_default), charass_price "
              "FROM charass, char "
              "WHERE ( (charass_target_type='I')"
              " AND (charass_char_id=char_id)"
@@ -1004,6 +1010,7 @@ void item::sHandleItemtype()
   bool shipUOM  = FALSE;
   bool capUOM   = FALSE;
   bool planType = FALSE;
+  bool charPrice= FALSE;
 
   if (itemType == "P")
   {
@@ -1012,7 +1019,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
-	planType = TRUE;
+    planType = TRUE;
   }
 
   if (itemType == "M")
@@ -1023,7 +1030,7 @@ void item::sHandleItemtype()
     config   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
-	planType = TRUE;
+    planType = TRUE;
 
   }
 
@@ -1033,6 +1040,7 @@ void item::sHandleItemtype()
     weight   = TRUE;
     capUOM   = TRUE;
     shipUOM  = TRUE;
+    charPrice= TRUE;
   }
 
   if (itemType == "F")
@@ -1083,13 +1091,13 @@ void item::sHandleItemtype()
   if (itemType == "O")
   {
     capUOM   = TRUE;
-	planType = TRUE;
+    planType = TRUE;
   }
 
   if (itemType == "A")
   {
     sold     = TRUE;
-	planType = TRUE;
+    planType = TRUE;
   }
 
   if (itemType == "L")
@@ -1109,6 +1117,11 @@ void item::sHandleItemtype()
   _packWeight->setEnabled(weight);
 
   _planningType->setEnabled(planType);
+  
+  if (charPrice)
+    _charass->showColumn(3);
+  else
+    _charass->hideColumn(3);
 
 }
 
