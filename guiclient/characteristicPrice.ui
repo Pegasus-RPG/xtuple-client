@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>457</width>
-    <height>117</height>
+    <width>455</width>
+    <height>176</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -14,88 +14,22 @@
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
+    <widget class="QLabel" name="_characteristicLit" >
+     <property name="text" >
+      <string>Characteristic:</string>
      </property>
-     <item>
-      <layout class="QGridLayout" >
-       <item row="1" column="1" >
-        <widget class="XLineEdit" name="_value" />
-       </item>
-       <item row="0" column="0" >
-        <widget class="QLabel" name="_characteristicLit" >
-         <property name="text" >
-          <string>Characteristic:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_char</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_valueLit" >
-         <property name="text" >
-          <string>&amp;Value:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_value</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1" >
-        <widget class="XComboBox" name="_char" />
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_priceLit" >
-         <property name="text" >
-          <string>&amp;Price:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_value</cstring>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1" >
-        <widget class="CurrCluster" name="_price" >
-         <property name="currencyEditable" stdset="0" >
-          <bool>false</bool>
-         </property>
-         <property name="decimals" >
-          <number>2</number>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>332</width>
-         <height>16</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>_char</cstring>
+     </property>
+    </widget>
    </item>
    <item row="0" column="1" >
+    <widget class="XComboBox" name="_char" />
+   </item>
+   <item rowspan="4" row="0" column="2" >
     <layout class="QVBoxLayout" >
      <item>
       <widget class="QPushButton" name="_close" >
@@ -135,6 +69,78 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="_valueLit" >
+     <property name="text" >
+      <string>Value:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="XComboBox" name="_value" />
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="_priceLit" >
+     <property name="text" >
+      <string>Price:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="CurrCluster" name="_price" >
+     <property name="currencyEditable" stdset="0" >
+      <bool>false</bool>
+     </property>
+     <property name="decimals" >
+      <number>2</number>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="_listPriceLit" >
+     <property name="text" >
+      <string>List Price:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="CurrCluster" name="_listPrice" >
+     <property name="currencyEditable" stdset="0" >
+      <bool>false</bool>
+     </property>
+     <property name="decimals" >
+      <number>2</number>
+     </property>
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>332</width>
+       <height>16</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
@@ -150,20 +156,15 @@
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
   </customwidget>
-  <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_char</tabstop>
   <tabstop>_value</tabstop>
   <tabstop>_price</tabstop>
+  <tabstop>_listPrice</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

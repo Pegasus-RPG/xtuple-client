@@ -47,7 +47,7 @@
  * Attribution URL: www.xtuple.org 
  * (to be included in the "Community" menu of the application if possible)
  * 
- * Graphic Image as provided in the Covered Code, if any. 
+ * Graphic Image as pmakrovided in the Covered Code, if any. 
  * (online at www.xtuple.com/poweredby)
  * 
  * Display of Attribution Information is required in Larger Works which 
@@ -75,6 +75,9 @@ characteristicPrice::characteristicPrice(QWidget* parent, const char* name, bool
 
   // signals and slots connections
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_char, SIGNAL(newID(int)), this, SLOT(sCharIdChanged()));
+  connect(_char, SIGNAL(newID(int)), this, SLOT(sCheck()));
+  connect(_value, SIGNAL(activated(int)), this, SLOT(sCheck()));
 
   _char->setAllowNull(TRUE);
 }
@@ -133,14 +136,13 @@ enum SetResponse characteristicPrice::set(const ParameterList &pParams)
     {
       _mode = cNew;
       _char->setFocus();
-      connect(_char, SIGNAL(newID(int)), this, SLOT(sCheck()));
-      connect(_value, SIGNAL(lostFocus()), this, SLOT(sCheck()));
     }
     else if (param.toString() == "edit")
     {
       _mode = cEdit;
       _save->setFocus();
       populate();
+      populateItemcharInfo();
     }
     else if (param.toString() == "view")
     {
@@ -187,7 +189,7 @@ void characteristicPrice::sSave()
   q.bindValue(":ipsitem_id", _ipsitemid);
   q.bindValue(":ipsitemchar_id", _ipsitemcharid);
   q.bindValue(":ipsitemchar_char_id", _char->id());
-  q.bindValue(":ipsitemchar_value", _value->text());
+  q.bindValue(":ipsitemchar_value", _value->currentText());
   q.bindValue(":ipsitemchar_price", _price->localValue());;
   q.exec();
 
@@ -203,7 +205,7 @@ void characteristicPrice::sCheck()
              " AND (ipsitemchar_ipsitem_id=:ipsitem_id));" );
   q.bindValue(":ipsitem_id", _ipsitemid);
   q.bindValue(":char_id", _char->id());
-  q.bindValue(":ipsitemchar_value", _value->text());
+  q.bindValue(":ipsitemchar_value", _value->currentText());
   q.exec();
   if (q.first())
   {
@@ -213,12 +215,13 @@ void characteristicPrice::sCheck()
   }
   else
     _mode = cNew;
+  populateItemcharInfo();
 }
 
 void characteristicPrice::populate()
 {
   disconnect(_char, SIGNAL(newID(int)), this, SLOT(sCheck()));
-  disconnect(_value, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  disconnect(_value, SIGNAL(activated(int)), this, SLOT(sCheck()));
   q.prepare( "SELECT ipsitemchar_char_id, ipsitemchar_value, ipsitemchar_price  "
              "FROM ipsitemchar "
              "WHERE (ipsitemchar_id=:ipsitemchar_id);" );
@@ -236,5 +239,46 @@ void characteristicPrice::populate()
     return;
   }
   connect(_char, SIGNAL(newID(int)), this, SLOT(sCheck()));
-  connect(_value, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_value, SIGNAL(activated(int)), this, SLOT(sCheck()));
 }
+
+void characteristicPrice::populateItemcharInfo()
+{
+  q.prepare("SELECT charass_price "
+            "FROM charass "
+            "WHERE ((charass_target_type='I') "
+            "AND (charass_target_id=:item_id) "
+            "AND (charass_char_id=:char_id) "
+            "AND (charass_value=:value)) ");
+  q.bindValue(":item_id", _itemid);
+  q.bindValue(":char_id", _char->id());
+  q.bindValue(":value", _value->currentText());
+  q.exec();
+  if (q.first())
+    _listPrice->setLocalValue(q.value("charass_price").toDouble());
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  else
+    _listPrice->setLocalValue(0);
+}
+
+void characteristicPrice::sCharIdChanged()
+{
+  XSqlQuery charass;
+  charass.prepare("SELECT charass_id, charass_value "
+            "FROM charass "
+            "WHERE ((charass_target_type='I') "
+            "AND (charass_target_id=:item_id) "
+            "AND (charass_char_id=:char_id) "
+            "AND (COALESCE(charass_value,'')!='')); ");
+  charass.bindValue(":item_id", _itemid);
+  charass.bindValue(":char_id", _char->id());
+  charass.exec();
+  _value->populate(charass);
+}
+
+
+
