@@ -113,6 +113,8 @@ invoiceItem::invoiceItem(QWidget* parent, const char* name, bool modal, Qt::WFla
     _warehouseLit->hide();
     _warehouse->hide();
   }
+  
+  resize(minimumSize());
 }
 
 invoiceItem::~invoiceItem()
@@ -440,7 +442,7 @@ void invoiceItem::populate()
     _qtyinvuomratio = invcitem.value("invcitem_qty_invuomratio").toDouble();
     _pricingUOM->setId(invcitem.value("invcitem_price_uom_id").toInt());
     _priceinvuomratio = invcitem.value("invcitem_price_invuomratio").toDouble();
-    _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
+    //_priceRatio->setText(formatUOMRatio(_priceinvuomratio));
 
     _ordered->setText(formatQty(invcitem.value("invcitem_ordered").toDouble()));
     _billed->setText(formatQty(invcitem.value("invcitem_billed").toDouble()));
@@ -523,7 +525,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
         sDeterminePrice();
 
       _priceRatioCache = q.value("invpricerat").toDouble();
-      _priceRatio->setText(q.value("f_invpricerat").toString());
+     // _priceRatio->setText(q.value("f_invpricerat").toString());
       _listPrice->setBaseValue(q.value("item_listprice").toDouble());
 
       _invuomid = q.value("item_inv_uom_id").toInt();
@@ -545,7 +547,7 @@ void invoiceItem::sPopulateItemInfo(int pItemid)
     _priceRatioCache = 1.0;
     _qtyinvuomratio = 1.0;
     _priceinvuomratio = 1.0;
-    _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
+  //_priceRatio->setText(formatUOMRatio(_priceinvuomratio));
     _qtyUOM->clear();
     _pricingUOM->clear();
     _listPrice->clear();
@@ -747,7 +749,7 @@ void invoiceItem::sPriceUOMChanged()
     else
       systemError(this, invuom.lastError().databaseText(), __FILE__, __LINE__);
   }
-  _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
+//  _priceRatio->setText(formatUOMRatio(_priceinvuomratio));
 
   XSqlQuery item;
   item.prepare("SELECT item_listprice"
