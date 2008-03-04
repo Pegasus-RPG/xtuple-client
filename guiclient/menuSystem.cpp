@@ -103,6 +103,7 @@
 #include "shifts.h"
 #include "customCommands.h"
 #include "countries.h"
+#include "groups.h"
 
 #include "fixSerial.h"
 #include "importXML.h"
@@ -184,6 +185,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.rescanPrivileges",		tr("Rescan &Privileges"),		SLOT(sRescanPrivileges()),	systemMenu,	TRUE,						NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.maintainUsers",		tr("Maintain &Users..."),		SLOT(sMaintainUsers()),		systemMenu,	_privileges->check("MaintainUsers"),		NULL,	NULL,	true	},
+    { "sys.maintainGroups",		tr("Maintain &Groups..."),		SLOT(sMaintainGroups()),	systemMenu,	_privileges->check("MaintainGroups"),		NULL,	NULL,	true	},
     { "separator",			NULL,					NULL,				systemMenu,	true,						NULL,	NULL,	true	},
     { "sys.scheduleServerMaintenance",	tr("Schedule S&erver Maintenance..."),	SLOT(sScheduleServerMaintenance()),systemMenu,	_privileges->check("MaintainServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
     { "sys.scheduleServerBackup",	tr("Schedule Server Bac&kup..."),	SLOT(sScheduleServerBackup()),	systemMenu,	_privileges->check("BackupServer"),		NULL,	NULL,	_metrics->boolean("EnableBatchManager")		},
@@ -628,6 +630,11 @@ void menuSystem::sConfigureCRM()
 void menuSystem::sMaintainUsers()
 {
   omfgThis->handleNewWindow(new users());
+}
+
+void menuSystem::sMaintainGroups()
+{
+  omfgThis->handleNewWindow(new groups());
 }
 
 void menuSystem::sScheduleServerMaintenance()

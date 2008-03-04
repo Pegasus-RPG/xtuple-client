@@ -55,47 +55,31 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef USER_H
-#define USER_H
+#ifndef GROUPS_H
+#define GROUPS_H
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
-#include "ui_user.h"
+#include "xmainwindow.h"
+#include "ui_groups.h"
 
-class user : public XDialog, public Ui::user
+class groups : public XMainWindow, public Ui::groups
 {
     Q_OBJECT
 
 public:
-    user(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~user();
+    groups(QWidget* parent = 0, const char* name = 0, Qt::WFlags fl = Qt::WType_TopLevel);
+    ~groups();
 
 public slots:
-    virtual enum SetResponse set( const ParameterList & pParams );
-    virtual void sCheck();
-    virtual void populate();
+    virtual void sDelete();
+    virtual void sEdit();
+    virtual void sView();
+    virtual void sFillList();
+    virtual void sNew();
+    virtual void sPrint();
 
 protected slots:
     virtual void languageChange();
 
-    virtual void sClose();
-    virtual void sSave();
-    virtual void sModuleSelected( const QString & pModule );
-    virtual void sAdd();
-    virtual void sAddAll();
-    virtual void sRevoke();
-    virtual void sRevokeAll();
-    virtual void sEnhancedAuthUpdate();
-    virtual void sAddGroup();
-    virtual void sRevokeGroup();
-
-
-private:
-    QString _cUsername;
-    int _mode;
-    bool _authCache;
-
 };
 
-#endif // USER_H
+#endif // GROUPS_H

@@ -55,21 +55,23 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "users.h"
+#include "groups.h"
 
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+
 #include <parameter.h>
 #include <openreports.h>
-#include "user.h"
+#include "group.h"
+#include "guiclient.h"
 
 /*
- *  Constructs a users as a child of 'parent', with the
+ *  Constructs a groups as a child of 'parent', with the
  *  name 'name' and widget flags set to 'f'.
  *
  */
-users::users(QWidget* parent, const char* name, Qt::WFlags fl)
+groups::groups(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
@@ -77,35 +79,38 @@ users::users(QWidget* parent, const char* name, Qt::WFlags fl)
   (void)statusBar();
 
   // signals and slots connections
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
-  connect(_usr, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_usr, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_showInactive, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   statusBar()->hide();
+  _print->hide();
   
-  _usr->addColumn(tr("Username"),    80, Qt::AlignLeft   );
-  _usr->addColumn(tr("Proper Name"), -1, Qt::AlignLeft   );
-  _usr->addColumn(tr("Status"),      50, Qt::AlignCenter );
+  
+  _list->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
+  _list->addColumn(tr("Description"), -1,          Qt::AlignLeft );
 
-  q.exec("SELECT userCanCreateUsers(CURRENT_USER) AS cancreate;");
-  if (q.first())
-    _new->setEnabled(q.value("cancreate").toBool());
+  if (_privileges->check("MaintainGroups"))
+  {
+    connect(_list, SIGNAL(valid(bool)), _edit, SLOT(setEnabled(bool)));
+    connect(_list, SIGNAL(valid(bool)), _delete, SLOT(setEnabled(bool)));
+    connect(_list, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
+  }
   else
-    systemError(this, tr("A System Error occurred at %1::%2.")
-                      .arg(__FILE__)
-                      .arg(__LINE__) );
-     
-  sFillList();
+  {
+    connect(_list, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
+    _new->setEnabled(FALSE);
+  }
+
+   sFillList();
 }
 
 /*
  *  Destroys the object and frees any allocated resources
  */
-users::~users()
+groups::~groups()
 {
   // no need to delete child widgets, Qt does it all for us
 }
@@ -114,67 +119,86 @@ users::~users()
  *  Sets the strings of the subwidgets using the current
  *  language.
  */
-void users::languageChange()
+void groups::languageChange()
 {
   retranslateUi(this);
 }
 
-void users::sFillList()
+void groups::sDelete()
 {
-  QString sql( "SELECT usr_id, usr_username, usr_propername,"
-               "       CASE WHEN (usr_active) THEN :active"
-               "            ELSE :inactive"
-               "       END "
-               "FROM usr ");
-
-  if (!_showInactive->isChecked())
-    sql += "WHERE (usr_active) ";
-
-  sql += "ORDER BY usr_username;";
-
-  q.prepare(sql);
-  q.bindValue(":active", tr("Active"));
-  q.bindValue(":inactive", tr("Inactive"));
+  q.prepare( "SELECT usrgrp_id "
+             "FROM usrgrp "
+             "WHERE (usrgrp_grp_id=:grp_id);" );
+  q.bindValue(":grp_id", _list->id());
   q.exec();
-  _usr->populate(q);
+  if (q.first())
+  {
+    QMessageBox::critical( this, tr("Cannot Delete Group"),
+                           tr( "The selected Group cannot be deleted as there are one or more Users currently assigned to it.\n"
+                               "You must reassign these Users before you may delete the selected Group." ) );
+    return;
+  }
+
+  q.prepare( "DELETE FROM grppriv"
+             " WHERE (grppriv_grp_id=:grp_id);"
+             "DELETE FROM grp "
+             " WHERE (grp_id=:grp_id);" );
+  q.bindValue(":grp_id", _list->id());
+  q.exec();
+
+  sFillList();
 }
 
-void users::sNew()
+void groups::sNew()
 {
   ParameterList params;
   params.append("mode", "new");
 
-  user newdlg(this, "", TRUE);
+  group newdlg(this, "", TRUE);
   newdlg.set(params);
-
-  newdlg.exec();
-  sFillList();
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
-void users::sEdit()
+void groups::sEdit()
 {
   ParameterList params;
   params.append("mode", "edit");
-  params.append("username", _usr->selectedItems().first()->text(0));
+  params.append("grp_id", _list->id());
 
-  user newdlg(this, "", TRUE);
+  group newdlg(this, "", TRUE);
   newdlg.set(params);
-
-  newdlg.exec();
-  sFillList();
+  
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
-void users::sPrint()
+void groups::sView()
 {
   ParameterList params;
+  params.append("mode", "view");
+  params.append("grp_id", _list->id());
 
-  if(_showInactive->isChecked())
-    params.append("showInactive");
+  group newdlg(this, "", TRUE);
+  newdlg.set(params);
+  newdlg.exec();
+}
 
-  orReport report("UsersMasterList", params);
+void groups::sFillList()
+{
+  _list->populate( "SELECT grp_id, grp_name, grp_descrip "
+                   "  FROM grp "
+                   " ORDER BY grp_name;" );
+}
+
+void groups::sPrint()
+{
+  orReport report("GroupMasterList");
   if (report.isValid())
     report.print();
   else
     report.reportError(this);
 }
+
 

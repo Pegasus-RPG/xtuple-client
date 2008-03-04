@@ -207,9 +207,15 @@ void Preferences::remove(const QString &pPrefName)
 Privileges::Privileges()
 {
   _readSql = "SELECT priv_name AS key, TEXT('t') AS value "
-             "FROM usrpriv, priv, usr "
-             "WHERE ( (usrpriv_priv_id=priv_id)"
-             " AND (usrpriv_username=CURRENT_USER) );";
+             "  FROM usrpriv, priv, usr "
+             " WHERE((usrpriv_priv_id=priv_id)"
+             "   AND (usrpriv_username=CURRENT_USER)) "
+             " UNION "
+             "SELECT priv_name AS key, TEXT('t') AS value "
+             "  FROM priv, grppriv, usrgrp"
+             " WHERE((usrgrp_grp_id=grppriv_grp_id)"
+             "   AND (grppriv_priv_id=priv_id)"
+             "   AND (usrgrp_username=CURRENT_USER));";
 
   load();
 }

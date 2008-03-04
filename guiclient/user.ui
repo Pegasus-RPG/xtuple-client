@@ -6,28 +6,13 @@
     <x>0</x>
     <y>0</y>
     <width>631</width>
-    <height>493</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>User Information</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="spacing" >
-    <number>5</number>
-   </property>
-   <property name="leftMargin" >
-    <number>5</number>
-   </property>
-   <property name="topMargin" >
-    <number>5</number>
-   </property>
-   <property name="rightMargin" >
-    <number>5</number>
-   </property>
-   <property name="bottomMargin" >
-    <number>5</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
      <property name="spacing" >
@@ -323,6 +308,9 @@
             </item>
             <item>
              <widget class="DeptCluster" name="_dept" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
+              </property>
               <property name="label" >
                <string>Dept.:</string>
               </property>
@@ -330,6 +318,9 @@
             </item>
             <item>
              <widget class="ShiftCluster" name="_shift" >
+              <property name="focusPolicy" >
+               <enum>Qt::StrongFocus</enum>
+              </property>
               <property name="label" >
                <string>Shift:</string>
               </property>
@@ -547,7 +538,7 @@
                <enum>Qt::Vertical</enum>
               </property>
               <property name="sizeType" >
-               <enum>QSizePolicy::Minimum</enum>
+               <enum>QSizePolicy::Expanding</enum>
               </property>
               <property name="sizeHint" >
                <size>
@@ -719,12 +710,12 @@
           <enum>Qt::Vertical</enum>
          </property>
          <property name="sizeType" >
-          <enum>QSizePolicy::MinimumExpanding</enum>
+          <enum>QSizePolicy::Expanding</enum>
          </property>
          <property name="sizeHint" >
           <size>
            <width>20</width>
-           <height>20</height>
+           <height>0</height>
           </size>
          </property>
         </spacer>
@@ -734,92 +725,223 @@
     </layout>
    </item>
    <item>
-    <layout class="QVBoxLayout" >
-     <property name="spacing" >
-      <number>1</number>
+    <widget class="QTabWidget" name="_tab" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
      </property>
-     <property name="leftMargin" >
+     <property name="currentIndex" >
       <number>0</number>
      </property>
-     <property name="topMargin" >
-      <number>0</number>
-     </property>
-     <property name="rightMargin" >
-      <number>0</number>
-     </property>
-     <property name="bottomMargin" >
-      <number>0</number>
-     </property>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>6</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
+     <widget class="QWidget" name="_privTab" >
+      <attribute name="title" >
+       <string>Privileges</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
        <item>
-        <widget class="QLabel" name="_moduleLit" >
-         <property name="text" >
-          <string>&amp;Module:</string>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>6</number>
          </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         <property name="leftMargin" >
+          <number>0</number>
          </property>
-         <property name="buddy" >
-          <cstring>_module</cstring>
+         <property name="topMargin" >
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="_moduleLit" >
+           <property name="text" >
+            <string>&amp;Module:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+           <property name="buddy" >
+            <cstring>_module</cstring>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="XComboBox" name="_module" />
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="XComboBox" name="_module" />
-       </item>
-       <item>
-        <spacer>
-         <property name="orientation" >
-          <enum>Qt::Horizontal</enum>
+        <layout class="QHBoxLayout" >
+         <property name="spacing" >
+          <number>5</number>
          </property>
-         <property name="sizeType" >
-          <enum>QSizePolicy::Expanding</enum>
+         <property name="leftMargin" >
+          <number>0</number>
          </property>
-         <property name="sizeHint" >
-          <size>
-           <width>20</width>
-           <height>20</height>
-          </size>
+         <property name="topMargin" >
+          <number>0</number>
          </property>
-        </spacer>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="XTreeWidget" name="_available" />
+         </item>
+         <item>
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>5</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
+           </property>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_add" >
+               <property name="text" >
+                <string>Add-></string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_addAll" >
+               <property name="text" >
+                <string>Add All->></string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QVBoxLayout" >
+             <property name="spacing" >
+              <number>0</number>
+             </property>
+             <property name="leftMargin" >
+              <number>0</number>
+             </property>
+             <property name="topMargin" >
+              <number>0</number>
+             </property>
+             <property name="rightMargin" >
+              <number>0</number>
+             </property>
+             <property name="bottomMargin" >
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="_revoke" >
+               <property name="text" >
+                <string>&lt;-Revoke</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="_revokeAll" >
+               <property name="text" >
+                <string>&lt;&lt;-Revoke All</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="XTreeWidget" name="_granted" />
+         </item>
+        </layout>
        </item>
       </layout>
-     </item>
-     <item>
+     </widget>
+     <widget class="QWidget" name="_groupTab" >
+      <attribute name="title" >
+       <string>Groups</string>
+      </attribute>
       <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <property name="leftMargin" >
-        <number>0</number>
-       </property>
-       <property name="topMargin" >
-        <number>0</number>
-       </property>
-       <property name="rightMargin" >
-        <number>0</number>
-       </property>
-       <property name="bottomMargin" >
-        <number>0</number>
-       </property>
        <item>
-        <widget class="XTreeWidget" name="_available" />
+        <widget class="XTreeWidget" name="_availableGroup" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
@@ -849,7 +971,7 @@
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -872,16 +994,9 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_add" >
+            <widget class="QPushButton" name="_addGroup" >
              <property name="text" >
               <string>Add-></string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_addAll" >
-             <property name="text" >
-              <string>Add All->></string>
              </property>
             </widget>
            </item>
@@ -905,16 +1020,9 @@
             <number>0</number>
            </property>
            <item>
-            <widget class="QPushButton" name="_revoke" >
+            <widget class="QPushButton" name="_revokeGroup" >
              <property name="text" >
               <string>&lt;-Revoke</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="_revokeAll" >
-             <property name="text" >
-              <string>&lt;&lt;-Revoke All</string>
              </property>
             </widget>
            </item>
@@ -931,7 +1039,7 @@
            <property name="sizeHint" >
             <size>
              <width>20</width>
-             <height>20</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -939,11 +1047,11 @@
         </layout>
        </item>
        <item>
-        <widget class="XTreeWidget" name="_granted" />
+        <widget class="XTreeWidget" name="_grantedGroup" />
        </item>
       </layout>
-     </item>
-    </layout>
+     </widget>
+    </widget>
    </item>
   </layout>
  </widget>
@@ -984,10 +1092,13 @@
   <tabstop>_email</tabstop>
   <tabstop>_passwd</tabstop>
   <tabstop>_verify</tabstop>
-  <tabstop>_agent</tabstop>
-  <tabstop>_createUsers</tabstop>
   <tabstop>_dept</tabstop>
   <tabstop>_shift</tabstop>
+  <tabstop>_agent</tabstop>
+  <tabstop>_createUsers</tabstop>
+  <tabstop>_exportContents</tabstop>
+  <tabstop>_enhancedAuth</tabstop>
+  <tabstop>_woTimeClockOnly</tabstop>
   <tabstop>_locale</tabstop>
   <tabstop>_module</tabstop>
   <tabstop>_available</tabstop>
@@ -996,10 +1107,14 @@
   <tabstop>_revoke</tabstop>
   <tabstop>_revokeAll</tabstop>
   <tabstop>_granted</tabstop>
-  <tabstop>_save</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_availableGroup</tabstop>
+  <tabstop>_addGroup</tabstop>
+  <tabstop>_revokeGroup</tabstop>
+  <tabstop>_grantedGroup</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_save</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -1009,12 +1124,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>41</x>
+     <y>425</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>292</x>
+     <y>435</y>
     </hint>
    </hints>
   </connection>
@@ -1025,12 +1140,44 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>386</x>
+     <y>425</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>292</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_availableGroup</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_addGroup</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>230</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>307</x>
+     <y>438</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_grantedGroup</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_revokeGroup</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>365</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>320</x>
+     <y>476</y>
     </hint>
    </hints>
   </connection>

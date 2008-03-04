@@ -118,6 +118,7 @@ class menuSystem : public QObject
     void sPreferences();
     void sRescanPrivileges();
     void sMaintainUsers();
+    void sMaintainGroups();
     void sScheduleServerMaintenance();
     void sScheduleServerBackup();
     void sErrorLog();

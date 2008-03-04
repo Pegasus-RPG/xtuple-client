@@ -60,6 +60,7 @@
 #include <QVariant>
 #include <QMessageBox>
 #include <QStatusBar>
+#include <QSqlError>
 #include <qmd5.h>
 
 /*
@@ -72,50 +73,31 @@
 user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
-    connect(_addAll, SIGNAL(clicked()), this, SLOT(sAddAll()));
-    connect(_revoke, SIGNAL(clicked()), this, SLOT(sRevoke()));
-    connect(_revokeAll, SIGNAL(clicked()), this, SLOT(sRevokeAll()));
-    connect(_module, SIGNAL(activated(const QString&)), this, SLOT(sModuleSelected(const QString&)));
-    connect(_available, SIGNAL(valid(bool)), _add, SLOT(setEnabled(bool)));
-    connect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
-    connect(_granted, SIGNAL(valid(bool)), _revoke, SLOT(setEnabled(bool)));
-    connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
-    connect(_username, SIGNAL(lostFocus()), this, SLOT(sCheck()));
-    connect(_enhancedAuth, SIGNAL(toggled(bool)), this, SLOT(sEnhancedAuthUpdate()));
-    init();
-}
+  // signals and slots connections
+  connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_add, SIGNAL(clicked()), this, SLOT(sAdd()));
+  connect(_addAll, SIGNAL(clicked()), this, SLOT(sAddAll()));
+  connect(_revoke, SIGNAL(clicked()), this, SLOT(sRevoke()));
+  connect(_revokeAll, SIGNAL(clicked()), this, SLOT(sRevokeAll()));
+  connect(_module, SIGNAL(activated(const QString&)), this, SLOT(sModuleSelected(const QString&)));
+  connect(_granted, SIGNAL(itemSelected(int)), this, SLOT(sRevoke()));
+  connect(_available, SIGNAL(itemSelected(int)), this, SLOT(sAdd()));
+  connect(_username, SIGNAL(lostFocus()), this, SLOT(sCheck()));
+  connect(_enhancedAuth, SIGNAL(toggled(bool)), this, SLOT(sEnhancedAuthUpdate()));
+  connect(_grantedGroup, SIGNAL(itemSelected(int)), this, SLOT(sRevokeGroup()));
+  connect(_availableGroup, SIGNAL(itemSelected(int)), this, SLOT(sAddGroup()));
+  connect(_addGroup, SIGNAL(clicked()), this, SLOT(sAddGroup()));
+  connect(_revokeGroup, SIGNAL(clicked()), this, SLOT(sRevokeGroup()));
 
-/*
- *  Destroys the object and frees any allocated resources
- */
-user::~user()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void user::languageChange()
-{
-    retranslateUi(this);
-}
-
-//Added by qt3to4:
-#include <QSqlError>
-
-void user::init()
-{
   _available->addColumn("Available Privileges", -1, Qt::AlignLeft);
   _granted->addColumn("Granted Privileges", -1, Qt::AlignLeft);
+
+  _availableGroup->addColumn("Available Groups", -1, Qt::AlignLeft);
+  _grantedGroup->addColumn("Granted Groups", -1, Qt::AlignLeft);
 
   _locale->populate( "SELECT locale_id, locale_code "
                      "FROM locale "
@@ -141,10 +123,26 @@ void user::init()
     _woTimeClockOnly->setChecked(FALSE);
     _woTimeClockOnly->hide();
   }
-  
 }
 
-enum SetResponse user::set(ParameterList &pParams)
+/*
+ *  Destroys the object and frees any allocated resources
+ */
+user::~user()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+/*
+ *  Sets the strings of the subwidgets using the current
+ *  language.
+ */
+void user::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse user::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -345,6 +343,25 @@ void user::sSave()
 
 void user::sModuleSelected(const QString &pModule)
 {
+  XTreeWidgetItem *granted = NULL;
+  XTreeWidgetItem *available = NULL;
+
+  _availableGroup->clear();
+  _grantedGroup->clear();
+  XSqlQuery groups;
+  groups.prepare("SELECT grp_id, grp_name, usrgrp_id"
+                 "  FROM grp LEFT OUTER JOIN usrgrp"
+                 "    ON (usrgrp_grp_id=grp_id AND usrgrp_username=:username);");
+  groups.bindValue(":username", _cUsername);
+  groups.exec();
+  while(groups.next())
+  {
+    if (groups.value("usrgrp_id").toInt() == 0)
+      available = new XTreeWidgetItem(_availableGroup, available, groups.value("grp_id").toInt(), groups.value("grp_name"));
+    else
+      granted = new XTreeWidgetItem(_grantedGroup, granted, groups.value("grp_id").toInt(), groups.value("grp_name"));
+  }
+
   _available->clear();
   _granted->clear();
 
@@ -357,8 +374,8 @@ void user::sModuleSelected(const QString &pModule)
   privs.exec();
   if (privs.first())
   {
-    XTreeWidgetItem *granted = NULL;
-    XTreeWidgetItem *available = NULL;
+    granted = NULL;
+    available = NULL;
 
 //  Insert each priv into either the available or granted list
     XSqlQuery usrpriv;
@@ -370,12 +387,28 @@ void user::sModuleSelected(const QString &pModule)
     usrpriv.bindValue(":username", _cUsername);
     usrpriv.bindValue(":priv_module", _module->currentText());
     usrpriv.exec();
+
+    XSqlQuery grppriv;
+    grppriv.prepare("SELECT priv_id"
+                    "  FROM priv, grppriv, usrgrp"
+                    " WHERE((usrgrp_grp_id=grppriv_grp_id)"
+                    "   AND (grppriv_priv_id=priv_id)"
+                    "   AND (usrgrp_username=:username)"
+                    "   AND (priv_module=:priv_module));");
+    grppriv.bindValue(":username", _cUsername);
+    grppriv.bindValue(":priv_module", _module->currentText());
+    grppriv.exec();
+
     do
     {
-      if (usrpriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
+      if (usrpriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1 && grppriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
         available = new XTreeWidgetItem(_available, available, privs.value("priv_id").toInt(), privs.value("priv_name"));
       else
+      {
         granted = new XTreeWidgetItem(_granted, granted, privs.value("priv_id").toInt(), privs.value("priv_name"));
+        if(usrpriv.findFirst("priv_id", privs.value("priv_id").toInt()) == -1)
+          granted->setTextColor(Qt::gray);
+      }
     }
     while (privs.next());
   }
@@ -416,6 +449,26 @@ void user::sRevokeAll()
   q.prepare("SELECT revokeAllModulePriv(:username, :module) AS result;");
   q.bindValue(":username", _cUsername);
   q.bindValue(":module", _module->currentText());
+  q.exec();
+
+  sModuleSelected(_module->currentText());
+}
+
+void user::sAddGroup()
+{
+  q.prepare("SELECT grantGroup(:username, :grp_id) AS result;");
+  q.bindValue(":username", _cUsername);
+  q.bindValue(":grp_id", _availableGroup->id());
+  q.exec();
+
+  sModuleSelected(_module->currentText());
+}
+
+void user::sRevokeGroup()
+{
+  q.prepare("SELECT revokeGroup(:username, :grp_id) AS result;");
+  q.bindValue(":username", _cUsername);
+  q.bindValue(":grp_id", _grantedGroup->id());
   q.exec();
 
   sModuleSelected(_module->currentText());
