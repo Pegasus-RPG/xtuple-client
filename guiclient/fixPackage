@@ -1,4 +1,7 @@
 #!/bin/bash
+PROG=`basename $0`
+set -x
+trap read DEBUG
 
 if ! [ -d $QTDIR ]; then
   echo "Cannot find QTDIR"
@@ -8,62 +11,68 @@ if ! [ -d $PGDIR/lib ]; then
   echo "Cannot find PGDIR/lib"
   exit 1
 fi
-FRAMEWORKSDIR=../bin/xtuple.app/Contents/Frameworks
 
-if ! [ -d $FRAMEWORKSDIR ] && ! mkdir $FRAMEWORKSDIR    ; then exit 1 ; fi
-if ! cd $FRAMEWORKSDIR                                  ; then exit 1 ; fi
-
-LIBRARIES="$QTDIR/lib/libQt3Support.4.dylib
-           $QTDIR/lib/libQtAssistantClient.4.dylib
-           $QTDIR/lib/libQtNetwork.4.dylib
-           $QTDIR/lib/libQtSql.4.dylib
-           $QTDIR/lib/libQtXml.4.dylib
-           $QTDIR/lib/libQtGui.4.dylib
-           $QTDIR/lib/libQtCore.4.dylib
-           $PGDIR/lib/libpq.4.dylib"
-if ! cp $LIBRARIES .                                    ; then exit 1 ; fi
-for TOFIX in $LIBRARIES ; do
-  BASETOFIX=`basename $TOFIX`
-  install_name_tool -id @executable_path/../Frameworks/$BASETOFIX $BASETOFIX
-  for RENAME in $LIBRARIES ; do
-    install_name_tool -change $RENAME @executable_path/../Frameworks/`basename $RENAME` $BASETOFIX
-    install_name_tool -change $RENAME @executable_path/../Frameworks/`basename $RENAME` ../MacOS/xtuple
-  done
-done
-
-if ! [ -d "../plugins" ] && ! mkdir ../plugins  ; then exit 2 ; fi
-if ! cd ../plugins                              ; then exit 2 ; fi
-if ! [ -d "sqldrivers" ] && ! mkdir sqldrivers  ; then exit 2 ; fi
-if ! cd sqldrivers                              ; then exit 2 ; fi
-
-cp $QTDIR/plugins/sqldrivers/libqsqlpsql.dylib .
-install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libqsqlpsql.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqsqlpsql.dylib
-install_name_tool -change $PGDIR/lib/libpq.4.dylib @executable_path/../Frameworks/libpq.4.dylib libqsqlpsql.dylib
-
-cp $QTDIR/plugins/sqldrivers/libqsqlodbc.dylib .
-install_name_tool -change $QTDIR/lib/libQtSql.4.dylib @executable_path/../Frameworks/libQtSql.4.dylib libqsqlodbc.dylib
-install_name_tool -change $QTDIR/lib/libQtCore.4.dylib @executable_path/../Frameworks/libQtCore.4.dylib libqsqlodbc.dylib
-
-cd ..
-if ! [ -d "imageformats" ]; then
-  mkdir imageformats
+if [ $# -lt 1 ] ; then
+  APPROOT=../bin/xtuple.app
+elif [ $# -eq 1 ] ; then
+  APPROOT=$1
+else
+  echo "$PROG: ../bin/xtuple.app does not exist so either rebuild or specify a .app directory"
+  exit 1
 fi
-cd imageformats
 
-LIBRARIES="$QTDIR/plugins/imageformats/libqgif.dylib
-           $QTDIR/plugins/imageformats/libqjpeg.dylib
-           $QTDIR/plugins/imageformats/libqmng.dylib"
-if ! cp $LIBRARIES .                            ; then exit 2 ; fi
-for TOFIX in $LIBRARIES ; do
-  BASETOFIX=`basename $TOFIX`
-  for RENAME in $QTDIR/lib/libQtGui.4.dylib \
-                $QTDIR/lib/libQtCore.4.dylib ; do
-    install_name_tool -change $RENAME @executable_path/../Frameworks/`basename $RENAME` $BASETOFIX
+cd $APPROOT                                                     || exit 1
+APPROOT=`pwd`
+
+collectAndRenameLibs() {
+  if [ $# -ne 1 ] ; then
+    echo "$PROG collectAndRenameLibs() expected 1 args and got $#: $*"
+    return 1
+  fi
+  if expr "$1" : '\/' ; then
+    FILE="$1"
+  else
+    FILE="`pwd`/$1"
+  fi
+
+  STARTDIR=`pwd`
+  NEWLOC="@executable_path/../Frameworks"
+
+  FRAMEWORKSDIR=$APPROOT/Contents/Frameworks
+  [ -d $FRAMEWORKSDIR ] || mkdir $FRAMEWORKSDIR                     || return 1
+  cd $FRAMEWORKSDIR                                                 || return 1
+
+  LIBSTORENAME=`otool -L $FILE | egrep "($QTDIR|$PGDIR)" |  awk '{print $1}'`
+  for TORENAME in $LIBSTORENAME ; do
+    BASETORENAME=`basename $TORENAME`
+    [ -e "$BASETORENAME" ] || cp "$TORENAME" .                      || return 1
+    install_name_tool -id $NEWLOC/$BASETORENAME $BASETORENAME       || return 1
+    install_name_tool -change $TORENAME $NEWLOC/$BASETORENAME $FILE || return 1
+  done
+
+  cd $STARTDIR                                                      || return 1
+  return 0
+}
+
+collectAndRenameLibs $APPROOT/Contents/MacOS/xtuple             || exit 2
+
+[ -d "$APPROOT/Contents/plugins/sqldrivers" ] || mkdir -p $APPROOT/Contents/plugins/sqldrivers || exit 2
+[ -d "$APPROOT/Contents/plugins/imageformats" ] || mkdir -p $APPROOT/Contents/plugins/imageformats || exit 2
+
+for PLUGIN in sqldrivers/libqsqlpsql.dylib sqldrivers/libqsqlodbc.dylib \
+              imageformats/libqgif.dylib imageformats/libqjpeg.dylib \
+              imageformats/libqmng.dylib ; do
+  cp $QTDIR/plugins/$PLUGIN $APPROOT/Contents/plugins/$PLUGIN   || exit 2
+  collectAndRenameLibs $APPROOT/Contents/plugins/$PLUGIN        || exit 2
+done
+
+while [ `otool -L $APPROOT/Contents/Frameworks/* | egrep "($QTDIR|$PGDIR)" | wc -l` -gt 0 ] ; do
+  for LIB in $APPROOT/Contents/Frameworks/* ; do
+    collectAndRenameLibs $LIB                                   || exit 2
   done
 done
 
-if ! cd ../../Resources                         ; then exit 3 ; fi
+cd $APPROOT/Contents/Resources                                  || exit 3
 
 echo "[Paths]" > qt.conf
 echo "Prefix = .." >> qt.conf
