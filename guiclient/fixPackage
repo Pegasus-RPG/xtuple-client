@@ -1,7 +1,5 @@
 #!/bin/bash
 PROG=`basename $0`
-set -x
-trap read DEBUG
 
 if ! [ -d $QTDIR ]; then
   echo "Cannot find QTDIR"
