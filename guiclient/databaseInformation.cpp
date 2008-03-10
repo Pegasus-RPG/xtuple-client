@@ -108,6 +108,7 @@ void databaseInformation::init()
   _description->setText(_metrics->value("DatabaseName"));
   _comments->setText(_metrics->value("DatabaseComments"));
   _version->setText(_metrics->value("OpenMFGServerVersion"));
+  _patch->setText(_metrics->value("ServerPatchVersion"));
 
   //Disable batch manager if PostBooks
   if ( (_metrics->value("Application") != "OpenMFG")
