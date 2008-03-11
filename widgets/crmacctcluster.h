@@ -63,6 +63,7 @@
 #define _crmaccttCluster_h
 
 #include "virtualCluster.h"
+#include "xcheckbox.h"
 
 class XComboBox;
 
@@ -141,15 +142,15 @@ class OPENMFGWIDGETS_EXPORT CRMAcctSearch : public VirtualSearch
     protected:
 	QLabel*		_addressLit;
 	QWidget*	_parent;
-	QCheckBox*	_searchContact;
-	QCheckBox*	_searchPhone;
-	QCheckBox*	_searchStreet;
-	QCheckBox*	_searchCity;
-	QCheckBox*	_searchState;
-	QCheckBox*	_searchPostalCode;
-	QCheckBox*	_searchCountry;
+	XCheckBox*	_searchContact;
+	XCheckBox*	_searchPhone;
+	XCheckBox*	_searchStreet;
+	XCheckBox*	_searchCity;
+	XCheckBox*	_searchState;
+	XCheckBox*	_searchPostalCode;
+	XCheckBox*	_searchCountry;
 	QCheckBox*	_showInactive;
-        QCheckBox*      _searchCombo;
+        XCheckBox*      _searchCombo;
         XComboBox*      _comboCombo;
 
 	enum CRMAcctLineEdit::CRMAcctSubtype _subtype;

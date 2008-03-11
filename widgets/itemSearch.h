@@ -63,9 +63,9 @@
 
 #include "OpenMFGWidgets.h"
 #include "itemcluster.h"
+#include "xcheckbox.h"
 
 class QLineEdit;
-class QCheckBox;
 class QPushButton;
 class XTreeWidget;
 class ParameterList;
@@ -78,10 +78,10 @@ public:
     itemSearch( QWidget* parent = 0, const char* name = 0, bool modal = FALSE, Qt::WFlags fl = 0 );
 
     QLineEdit* _search;
-    QCheckBox* _searchNumber;
-    QCheckBox* _searchDescrip1;
-    QCheckBox* _searchDescrip2;
-    QCheckBox* _showInactive;
+    XCheckBox* _searchNumber;
+    XCheckBox* _searchDescrip1;
+    XCheckBox* _searchDescrip2;
+    XCheckBox* _showInactive;
     QPushButton* _close;
     QPushButton* _select;
     XTreeWidget* _item;

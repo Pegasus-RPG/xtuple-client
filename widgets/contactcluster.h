@@ -63,6 +63,7 @@
 #include "xcombobox.h"
 #include "addresscluster.h"
 #include "crmacctcluster.h"
+#include "xcheckbox.h"
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -108,14 +109,14 @@ class OPENMFGWIDGETS_EXPORT ContactSearch : public VirtualSearch
 
     protected:
 	ContactCluster*	_parent;
-	QCheckBox*	_searchFirst;
-	QCheckBox*	_searchLast;
-	QCheckBox*	_searchTitle;
-	QCheckBox*	_searchCRMAcct;
-	QCheckBox*	_searchPhones;
-	QCheckBox*	_searchEmail;
-	QCheckBox*	_searchWebAddr;
-	QCheckBox*	_searchInactive;
+	XCheckBox*	_searchFirst;
+	XCheckBox*	_searchLast;
+	XCheckBox*	_searchTitle;
+	XCheckBox*	_searchCRMAcct;
+	XCheckBox*	_searchPhones;
+	XCheckBox*	_searchEmail;
+	XCheckBox*	_searchWebAddr;
+	XCheckBox*	_searchInactive;
 
     private:
 	int _id;

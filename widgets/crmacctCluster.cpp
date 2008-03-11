@@ -420,16 +420,25 @@ CRMAcctSearch::CRMAcctSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
   _listTab->setColumnCount(0);
 
   _addressLit	    = new QLabel(tr("Primary Contact Address:"),this, "_addressLit");
-  _searchStreet	    = new QCheckBox(tr("Street Address"), this, "_searchStreet");
-  _searchCity	    = new QCheckBox(tr("City"),		  this, "_searchCity");
-  _searchState	    = new QCheckBox(tr("State"),	  this, "_searchState");
-  _searchPostalCode = new QCheckBox(tr("Postal Code"),	  this, "_searchPostalCode");
-  _searchCountry    = new QCheckBox(tr("Country"),	  this, "_searchCountry");
-  _searchContact    = new QCheckBox(tr("Contact Name"),	  this, "_searchContact");
-  _searchPhone	    = new QCheckBox(tr("Contact Phone #"),this, "_searchPhone");
-  _showInactive	    = new QCheckBox(tr("Show Inactive"),  this, "_showInactive");
-  _searchCombo      = new QCheckBox(tr("Search Combo"),   this, "_searchCombo");
+  _searchStreet	    = new XCheckBox(tr("Street Address"), this);
+  _searchCity	    = new XCheckBox(tr("City"),this);
+  _searchState	    = new XCheckBox(tr("State"),this);
+  _searchPostalCode = new XCheckBox(tr("Postal Code"),this);
+  _searchCountry    = new XCheckBox(tr("Country"),this);
+  _searchContact    = new XCheckBox(tr("Contact Name"),this);
+  _searchPhone	    = new XCheckBox(tr("Contact Phone #"),this);
+  _showInactive	    = new QCheckBox(tr("Show Inactive"),this, "_showInactive");
+  _searchCombo      = new XCheckBox(tr("Search Combo"),this);
   _comboCombo       = new XComboBox(this, "_comboCombo");
+  
+  _searchStreet->setObjectName("_searchStreet");
+  _searchCity->setObjectName("_searchCity");
+  _searchState->setObjectName("_searchState");
+  _searchPostalCode->setObjectName("_searchPostalCode");
+  _searchCountry->setObjectName("_searchCountry");
+  _searchContact->setObjectName("_searchContact");
+  _searchPhone->setObjectName("_searchPhone");
+  _searchCombo->setObjectName("_searchCombo");
 
   selectorsLyt->removeWidget(_searchName);
   selectorsLyt->removeWidget(_searchNumber);

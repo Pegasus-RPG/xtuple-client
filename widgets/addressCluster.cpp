@@ -66,6 +66,7 @@
 #include <metasql.h>
 
 #include "xsqlquery.h"
+#include "xcheckbox.h"
 
 #include "addresscluster.h"
 
@@ -636,12 +637,12 @@ AddressSearch::AddressSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _listTab->setColumnCount(0);
 
-    _searchStreet     = new QCheckBox(tr("Search Street Address"));
-    _searchCity       = new QCheckBox(tr("Search City"));
-    _searchState      = new QCheckBox(tr("Search State"));
-    _searchCountry    = new QCheckBox(tr("Search Country"));
-    _searchPostalCode = new QCheckBox(tr("Search Postal Code"));
-    _searchInactive   = new QCheckBox(tr("Show Inactive Addresses"));
+    _searchStreet     = new XCheckBox(tr("Search Street Address"));
+    _searchCity       = new XCheckBox(tr("Search City"));
+    _searchState      = new XCheckBox(tr("Search State"));
+    _searchCountry    = new XCheckBox(tr("Search Country"));
+    _searchPostalCode = new XCheckBox(tr("Search Postal Code"));
+    _searchInactive   = new XCheckBox(tr("Show Inactive Addresses"));
 
     selectorsLyt->addWidget(_searchStreet,     0, 0);
     selectorsLyt->addWidget(_searchCity,       1, 0);

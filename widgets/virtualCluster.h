@@ -62,6 +62,7 @@
 #include "parameter.h"
 #include "xlineedit.h"
 #include "xtreewidget.h"
+#include "xcheckbox.h"
 
 #include <QCheckBox>
 #include <QDialog>
@@ -122,9 +123,9 @@ class OPENMFGWIDGETS_EXPORT VirtualSearch : public QDialog
         int  _id;
         QLabel*      _searchLit;
         QLineEdit*   _search;
-        QCheckBox*   _searchNumber;
-        QCheckBox*   _searchName;
-        QCheckBox*   _searchDescrip;
+        XCheckBox*   _searchNumber;
+        XCheckBox*   _searchName;
+        XCheckBox*   _searchDescrip;
         QLabel*      _titleLit;
         QPushButton* _close;
         QPushButton* _select;

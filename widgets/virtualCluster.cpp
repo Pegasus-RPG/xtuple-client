@@ -67,6 +67,7 @@
 
 #include "xsqlquery.h"
 #include "xlineedit.h"
+#include "xcheckbox.h"
 
 #include "virtualCluster.h"
 
@@ -620,12 +621,12 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
 
     _search = new QLineEdit(this, "_search");
     _searchLit = new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
-    _searchNumber = new QCheckBox(tr("Search through Numbers"), this,
-				  "_searchNumber");
-    _searchName = new QCheckBox(tr("Search through Names"), this,
-				  "_searchName");
-    _searchDescrip = new QCheckBox(tr("Search through Descriptions"), this,
-				  "_searchDescrip");
+    _searchNumber = new XCheckBox(tr("Search through Numbers"));
+    _searchNumber->setObjectName("_searchNumber");
+    _searchName = new XCheckBox(tr("Search through Names"));
+    _searchName->setObjectName("_searchName");
+    _searchDescrip = new XCheckBox(tr("Search through Descriptions"));
+    _searchDescrip->setObjectName("_searchDescrip");
     _close = new QPushButton(tr("&Cancel"), this, "_close");
     _select = new QPushButton(tr("&Select"), this, "_select");
     _listTab = new XTreeWidget(this);
@@ -634,9 +635,6 @@ VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     _listTab->setName("_listTab");
 
     _searchLit->setAlignment(Qt::AlignVCenter | Qt::AlignRight);
-    _searchNumber->setChecked(true);
-    _searchName->setChecked(true);
-    _searchDescrip->setChecked(true);
     _select->setEnabled(false);
     _select->setAutoDefault(true);
     _select->setDefault(true);

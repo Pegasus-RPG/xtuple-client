@@ -110,20 +110,24 @@ itemSearch::itemSearch( QWidget* parent, const char* name, bool modal, Qt::WFlag
     Layout70->addWidget( _search );
     Layout71->addLayout( Layout70 );
 
-    _searchNumber = new QCheckBox(tr("Search through Item Numbers"), this, "_searchNumber");
+    _searchNumber = new XCheckBox(tr("Search through Item Numbers"));
     _searchNumber->setChecked( TRUE );
+    _searchNumber->setObjectName("_searchNumber");
     Layout64->addWidget( _searchNumber );
 
-    _searchDescrip1 = new QCheckBox(tr("Search through Description 1"), this, "_searchDescrip1");
+    _searchDescrip1 = new XCheckBox(tr("Search through Description 1"));
     _searchDescrip1->setChecked( TRUE );
+    _searchDescrip1->setObjectName("searchDescrip1");
     Layout64->addWidget( _searchDescrip1 );
 
-    _searchDescrip2 = new QCheckBox(tr("Search through Description 2"), this, "_searchDescrip2");
+    _searchDescrip2 = new XCheckBox(tr("Search through Description 2"));
     _searchDescrip2->setChecked( TRUE );
+    _searchDescrip2->setObjectName("_searchDescrip2");
     Layout64->addWidget( _searchDescrip2 );
     Layout66->addLayout( Layout64 );
 
-    _showInactive = new QCheckBox(tr("Show &Inactive Items"), this, "_showInactive");
+    _showInactive = new XCheckBox(tr("Show &Inactive Items"));
+    _showInactive->setObjectName("_showInactive");
     Layout65->addWidget( _showInactive );
 
     QSpacerItem* spacer = new QSpacerItem( 20, 20, QSizePolicy::Minimum, QSizePolicy::Preferred );

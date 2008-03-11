@@ -60,6 +60,7 @@
 
 #include "OpenMFGWidgets.h"
 #include "virtualCluster.h"
+#include "xcheckbox.h"XCheckBox
 
 #include <QCheckBox>
 #include <QComboBox>
@@ -112,12 +113,12 @@ class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
 
     protected:
 	AddressCluster*	_parent;
-	QCheckBox*	_searchStreet;
-	QCheckBox*	_searchCity;
-	QCheckBox*	_searchState;
-	QCheckBox*	_searchCountry;
-	QCheckBox*	_searchPostalCode;
-	QCheckBox*	_searchInactive;
+	XCheckBox*	_searchStreet;
+	XCheckBox*	_searchCity;
+	XCheckBox*	_searchState;
+	XCheckBox*	_searchCountry;
+	XCheckBox*	_searchPostalCode;
+	XCheckBox*	_searchInactive;
 
     private:
 	int _id;

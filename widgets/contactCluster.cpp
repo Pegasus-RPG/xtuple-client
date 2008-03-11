@@ -835,14 +835,14 @@ ContactSearch::ContactSearch(QWidget* pParent, Qt::WindowFlags pFlags)
 
     _listTab->setColumnCount(0);
 
-    _searchFirst	= new QCheckBox(tr("Search First Name"));
-    _searchLast		= new QCheckBox(tr("Search Last Name"));
-    _searchCRMAcct	= new QCheckBox(tr("Search CRM Account"));
-    _searchTitle	= new QCheckBox(tr("Search Title"));
-    _searchPhones	= new QCheckBox(tr("Search Phone Numbers"));
-    _searchEmail	= new QCheckBox(tr("Search Email Address"));
-    _searchWebAddr	= new QCheckBox(tr("Search Web Address"));
-    _searchInactive	= new QCheckBox(tr("Show Inactive Contacts"));
+    _searchFirst	= new XCheckBox(tr("Search First Name"));
+    _searchLast		= new XCheckBox(tr("Search Last Name"));
+    _searchCRMAcct	= new XCheckBox(tr("Search CRM Account"));
+    _searchTitle	= new XCheckBox(tr("Search Title"));
+    _searchPhones	= new XCheckBox(tr("Search Phone Numbers"));
+    _searchEmail	= new XCheckBox(tr("Search Email Address"));
+    _searchWebAddr	= new XCheckBox(tr("Search Web Address"));
+    _searchInactive	= new XCheckBox(tr("Show Inactive Contacts"));
 
     selectorsLyt->addWidget(_searchFirst,    0, 0);
     selectorsLyt->addWidget(_searchLast,     1, 0);
