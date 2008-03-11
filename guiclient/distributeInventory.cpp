@@ -84,6 +84,7 @@ distributeInventory::distributeInventory(QWidget* parent, const char* name, bool
   connect(_post,            SIGNAL(clicked()), this, SLOT(sPost()));
   connect(_taggedOnly,  SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_bc,   SIGNAL(textChanged(QString)), this, SLOT(sBcChanged(QString)));
+  connect(_qtyOnly,     SIGNAL(toggled(bool)), this, SLOT(sFillList()));
 
   omfgThis->inputManager()->notify(cBCLotSerialNumber, this, this, SLOT(sCatchLotSerialNumber(QString)));
 
@@ -442,6 +443,9 @@ void distributeInventory::sFillList()
       _default->setEnabled(FALSE);
       _defaultAndPost->setEnabled(FALSE);
     }
+    
+    if (q.value("qtytodistribute").toDouble() < 0)
+      _qtyOnly->hide();
 
     QString sql( "SELECT id, type,"
                  "       locationname,"
@@ -519,10 +523,14 @@ void distributeInventory::sFillList()
 		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
 		 "<? endif ?>"
 		 ") AS data "
+                 "WHERE ((id != -2) "
 		 "<? if exists(\"showOnlyTagged\") ?>"
-		 "WHERE (qtytagged != 0) "
+		 "AND (qtytagged != 0) "
 		 "<? endif ?>"
-		 "ORDER BY locationname;");
+                 "<? if exists(\"showQtyOnly\") ?>"
+                 "AND (qty > 0) "
+                 "<? endif ?>"
+		 ") ORDER BY locationname;");
 
     ParameterList params;
 
@@ -533,6 +541,10 @@ void distributeInventory::sFillList()
 
     if (_taggedOnly->isChecked())
       params.append("showOnlyTagged");
+      
+    if ( (_qtyOnly->isChecked())  ||
+        (q.value("qtytodistribute").toDouble() < 0) )
+      params.append("showQtyOnly");
 
     params.append("locationType",   cLocation);
     params.append("itemlocType",    cItemloc);

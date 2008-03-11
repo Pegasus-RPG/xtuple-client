@@ -270,6 +270,13 @@
           </spacer>
          </item>
          <item>
+          <widget class="XCheckBox" name="_qtyOnly" >
+           <property name="text" >
+            <string>Only show locations with Qty</string>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="XCheckBox" name="_taggedOnly" >
            <property name="text" >
             <string>Only Show Tagged Lines</string>
@@ -511,13 +518,18 @@
  </customwidgets>
  <tabstops>
   <tabstop>_defaultAndPost</tabstop>
-  <tabstop>_item</tabstop>
-  <tabstop>_warehouse</tabstop>
-  <tabstop>_itemloc</tabstop>
   <tabstop>_default</tabstop>
+  <tabstop>_cancel</tabstop>
   <tabstop>_post</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_qtyOnly</tabstop>
+  <tabstop>_taggedOnly</tabstop>
+  <tabstop>_distribute</tabstop>
+  <tabstop>_itemloc</tabstop>
+  <tabstop>_bc</tabstop>
+  <tabstop>_bcQty</tabstop>
+  <tabstop>_bcDistribute</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
