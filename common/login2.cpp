@@ -345,6 +345,7 @@ void login2::sLogin()
         default:
           _user = login.value("user").toString();
           _userid = login.value("usr_id").toInt();
+          _databaseURL = databaseURL;
           accept();
           break;
       }
@@ -364,6 +365,7 @@ void login2::sLogin()
   else
   {
     setCursor(QCursor(Qt::arrowCursor));
+    _databaseURL = databaseURL;
     accept();
   }
 }
