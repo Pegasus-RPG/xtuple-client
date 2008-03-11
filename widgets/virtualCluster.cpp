@@ -468,6 +468,7 @@ VirtualSearch* VirtualClusterLineEdit::searchFactory()
 void VirtualList::init()
 {
     setWindowModality(Qt::WindowModal);
+    setAttribute(Qt::WA_DeleteOnClose);
     _search	= new QLineEdit(this, "_search");
     _searchLit	= new QLabel(_search, tr("S&earch for:"), this, "_searchLit");
     _close	= new QPushButton(tr("&Cancel"), this, "_close");
@@ -613,6 +614,7 @@ void VirtualList::sFillList()
 VirtualSearch::VirtualSearch(QWidget* pParent, Qt::WindowFlags pFlags) :
     QDialog(pParent, pFlags)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowModality(Qt::WindowModal);
     setObjectName("virtualSearch");
 
@@ -777,6 +779,7 @@ void VirtualSearch::sFillList()
 VirtualInfo::VirtualInfo(QWidget* pParent, Qt::WindowFlags pFlags) :
     QDialog(pParent, pFlags)
 {
+    setAttribute(Qt::WA_DeleteOnClose);
     setWindowModality(Qt::WindowModal);
     _parent = (VirtualClusterLineEdit*)(pParent);
     setObjectName("virtualInfo");
