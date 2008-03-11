@@ -1787,7 +1787,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
       _unallocated->setText(availability.value("f_unallocated").toString());
       _onOrder->setText(availability.value("f_ordered").toString());
       _available->setText(availability.value("f_available").toString());
-	  _leadtime->setText(availability.value("itemsite_leadtime").toString());
+      _leadtime->setText(availability.value("itemsite_leadtime").toString());
 
       if (availability.value("available").toDouble() < _availabilityQtyOrdered)
         _available->setPaletteForegroundColor(QColor("red"));
@@ -1936,13 +1936,12 @@ void salesOrderItem::sDetermineAvailability( bool p )
                                 "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :origQtyOrd)) AS totalalloc,"
                                 "              noNeg(cs.itemsite_qtyonhand) AS qoh,"
                                 "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
-                                "       FROM item, bomitem, uom,"
-				"            itemsite AS ps LEFT OUTER JOIN"
-				"            itemsite AS cs ON ((cs.itemsite_warehous_id=ps.itemsite_warehous_id)"
-				"                           AND (cs.itemsite_item_id=ps.itemsite_item_id)) "
+                                "       FROM item, bomitem, uom, itemsite AS ps, itemsite AS cs "
                                 "       WHERE ( (bomitem_item_id=item_id)"
                                 "        AND (item_inv_uom_id=uom_id)"
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
+                                "        AND (cs.itemsite_warehous_id=ps.itemsite_warehous_id)"
+				"        AND (cs.itemsite_item_id=bomitem_item_id) "
                                 "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
 
           if (_item->itemType() == "J") // For job items limit to bomitems associated with selected characteristic values
