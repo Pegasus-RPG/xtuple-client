@@ -55,53 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
+#ifndef __SCRIPTTOOLBOX_H__
+#define __SCRIPTTOOLBOX_H__
 
-#ifndef xlineedit_h
-#define xlineedit_h
+#include <QObject>
+#include <QVariant>
 
-#include <QLineEdit>
-#include <QFocusEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
+class QWidget;
+class QLayout;
+class QGridLayout;
+class QBoxLayout;
+class QStackedLayout;
+class QScriptEngine;
 
-#include "OpenMFGWidgets.h"
-
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+class ScriptToolbox : public QObject
 {
   Q_OBJECT
 
   public:
-    XLineEdit(QWidget *, const char * = 0);
-
-    Q_INVOKABLE bool isValid();
-    Q_INVOKABLE int  id();
-
-    double toDouble(bool * = 0);
-
-    void   setText(const QVariant &);
+    ScriptToolbox(QScriptEngine * engine);
+    virtual ~ScriptToolbox();
 
   public slots:
-    virtual void sParse();
 
-  signals:
-    void clicked();
-    void requestList();
-    void requestSearch();
-    void requestInfo();
-    void requestAlias();
+    QObject * executeQuery(const QString & query, QVariantMap parameters);
 
-  protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
+    QLayout * widgetGetLayout(QWidget * w);
+    void layoutBoxInsertWidget(QBoxLayout *, int index, QWidget *, int stretch, Qt::Alignment alignment);
+    void layoutGridAddWidget(QGridLayout *, QWidget *, int row, int column, Qt::Alignment alignment);
+    void layoutGridAddWidget(QGridLayout *, QWidget *, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment);
+    void layoutStackedInsertWidget(QStackedLayout *, int index, QWidget *);
 
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
+    int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
+  private:
+    QScriptEngine * _engine;
 };
 
-#endif
-
+#endif // __SCRIPTTOOLBOX_H__

@@ -137,6 +137,8 @@
 
 #include "splashconst.h"
 
+#include "scripttoolbox.h"
+
 #if defined(Q_OS_WIN32)
 #define NOCRYPT
 #include <windows.h>
@@ -1345,6 +1347,10 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
 {
   if(!engine)
     return;
+
+  ScriptToolbox * tb = new ScriptToolbox(engine);
+  QScriptValue toolbox = engine->newQObject(tb);
+  engine->globalObject().setProperty("toolbox", toolbox);
 
   QScriptValue mainwindowval = engine->newQObject(this);
   engine->globalObject().setProperty("mainwindow", mainwindowval);

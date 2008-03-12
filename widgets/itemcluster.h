@@ -204,7 +204,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     inline QString itemNumber() const         { return _itemNumber->itemNumber();           }
     inline QString itemType() const           { return _itemNumber->itemType();             }
     inline bool isConfigured()                { return _itemNumber->isConfigured();         }
-    inline int id()                           { return _itemNumber->id();                   }
+    Q_INVOKABLE inline int id()               { return _itemNumber->id();                   }
     inline int isValid()                      { return _itemNumber->isValid();              }
     inline QString uom()                      { return _itemNumber->uom();                  }
 

@@ -55,53 +55,88 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
+#include "scripttoolbox.h"
 
-#ifndef xlineedit_h
-#define xlineedit_h
+#include <QWidget>
+#include <QLayout>
+#include <QGridLayout>
+#include <QBoxLayout>
+#include <QStackedLayout>
+#include <QMessageBox>
+#include <QScriptEngine>
 
-#include <QLineEdit>
-#include <QFocusEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
+#include <parameter.h>
+#include <metasql.h>
 
-#include "OpenMFGWidgets.h"
+#include "scriptquery.h"
 
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+ScriptToolbox::ScriptToolbox(QScriptEngine * engine)
+  : QObject(engine)
 {
-  Q_OBJECT
+  _engine = engine;
+}
 
-  public:
-    XLineEdit(QWidget *, const char * = 0);
+ScriptToolbox::~ScriptToolbox()
+{
+}
 
-    Q_INVOKABLE bool isValid();
-    Q_INVOKABLE int  id();
+QObject * ScriptToolbox::executeQuery(const QString & query, QVariantMap parameters)
+{
+  ParameterList params;
+  QMapIterator<QString, QVariant> i(parameters);
+  while (i.hasNext())
+  {
+    i.next();
+    params.append(i.key(), i.value());
+  }
 
-    double toDouble(bool * = 0);
+  ScriptQuery * sq = new ScriptQuery(_engine);
+  MetaSQLQuery mql(query);
+  sq->setQuery(mql.toQuery(params));
+  return sq;
+}
 
-    void   setText(const QVariant &);
+QLayout * ScriptToolbox::widgetGetLayout(QWidget * w)
+{
+  if(w)
+    return w->layout();
+  return NULL;
+}
 
-  public slots:
-    virtual void sParse();
+void ScriptToolbox::layoutBoxInsertWidget(QBoxLayout * layout, int index, QWidget * widget, int stretch, Qt::Alignment alignment)
+{
+  if(layout && widget)
+    layout->insertWidget(index, widget, stretch, alignment);
+}
 
-  signals:
-    void clicked();
-    void requestList();
-    void requestSearch();
-    void requestInfo();
-    void requestAlias();
+void ScriptToolbox::layoutGridAddWidget(QGridLayout * layout, QWidget * widget, int row, int column, Qt::Alignment alignment)
+{
+  if(layout && widget)
+    layout->addWidget(widget, row, column, alignment);
+}
 
-  protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
+void ScriptToolbox::layoutGridAddWidget(QGridLayout * layout, QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment)
+{
+  if(layout && widget)
+    layout->addWidget(widget, fromRow, fromColumn, rowSpan, columnSpan, alignment);
+}
 
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
-};
+void ScriptToolbox::layoutStackedInsertWidget(QStackedLayout * layout, int index, QWidget * widget)
+{
+  if(layout && widget)
+    layout->insertWidget(index, widget);
+}
 
-#endif
-
+int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
+{
+  int btn;
+  if(type == "critical")
+    btn = QMessageBox::critical(parent, title, text, buttons, defaultButton);
+  else if(type == "information")
+    btn = QMessageBox::information(parent, title, text, buttons, defaultButton);
+  else if(type == "question")
+    btn = QMessageBox::question(parent, title, text, buttons, defaultButton);
+  else //if(type == "warning")
+    btn = QMessageBox::warning(parent, title, text, buttons, defaultButton);
+  return btn;
+}

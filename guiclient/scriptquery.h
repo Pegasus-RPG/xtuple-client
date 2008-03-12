@@ -55,53 +55,49 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
+#ifndef __SCRIPTQUERY_H__
+#define __SCRIPTQUERY_H__
 
-#ifndef xlineedit_h
-#define xlineedit_h
+#include <QObject>
+#include <QVariant>
+#include <QScriptValue>
 
-#include <QLineEdit>
-#include <QFocusEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
+#include <xsqlquery.h>
 
-#include "OpenMFGWidgets.h"
+class QScriptEngine;
 
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+class ScriptQuery : public QObject
 {
   Q_OBJECT
 
   public:
-    XLineEdit(QWidget *, const char * = 0);
+    ScriptQuery(QScriptEngine * engine);
+    virtual ~ScriptQuery();
 
-    Q_INVOKABLE bool isValid();
-    Q_INVOKABLE int  id();
-
-    double toDouble(bool * = 0);
-
-    void   setText(const QVariant &);
+    void setQuery(XSqlQuery query);
 
   public slots:
-    virtual void sParse();
+    bool isActive();
+    bool isValid();
+    bool isForwardOnly();
+    bool isSelect();
 
-  signals:
-    void clicked();
-    void requestList();
-    void requestSearch();
-    void requestInfo();
-    void requestAlias();
+    bool first();
+    bool last();
+    bool next();
+    bool previous();
 
-  protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
+    int size();
+    int numRowsAffected();
 
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
+    QScriptValue value(int index);
+    QScriptValue value(const QString & field);
+
+    QVariantMap lastError();
+
+  private:
+    QScriptEngine * _engine;
+    XSqlQuery _query;
 };
 
-#endif
-
+#endif // __SCRIPTQUERY_H__

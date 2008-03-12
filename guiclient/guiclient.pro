@@ -593,6 +593,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                salesOrder.h salesOrderInformation.h salesOrderItem.h                                  \
                salesReps.h salesRep.h                                                                 \
                salesHistoryInformation.h scrapTrans.h scrapWoMaterialFromWIP.h                        \
+               scriptquery.h scripttoolbox.h                                                          \
                searchForCRMAccount.h searchForContact.h searchForItem.h                               \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
                selectedPayments.h selectPayment.h selectPayments.h                                    \
@@ -911,6 +912,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                salesOrder.cpp salesOrderInformation.cpp salesOrderItem.cpp                            \
                salesReps.cpp salesRep.cpp                                                             \
                salesHistoryInformation.cpp scrapTrans.cpp scrapWoMaterialFromWIP.cpp                  \
+               scriptquery.cpp scripttoolbox.cpp                                                      \
                searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp                         \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
                selectedPayments.cpp selectPayment.cpp selectPayments.cpp                              \
