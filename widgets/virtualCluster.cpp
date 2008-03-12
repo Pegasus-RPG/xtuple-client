@@ -582,7 +582,7 @@ void VirtualList::sFillList()
     _listTab->clear();
     XSqlQuery query(_parent->_query +
 		    (_parent->_extraClause.isEmpty() ? "" :
-					    " WHERE " + _parent->_extraClause) +
+					    " AND " + _parent->_extraClause) +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
     if (query.first())
