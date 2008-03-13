@@ -209,6 +209,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
     void setColumnVisible(int, bool);
     void setColumnLocked(int, bool);
+    XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
+    XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 
   signals:
     void  valid(bool);
