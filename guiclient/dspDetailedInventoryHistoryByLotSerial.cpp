@@ -79,6 +79,7 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_invhist, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_item, SIGNAL(newId(int)), _lotSerial, SLOT(setItemId(int)));
 
   _transType->append(cTransAll,       tr("All Transactions")       );
   _transType->append(cTransReceipts,  tr("Receipts")               );
@@ -89,6 +90,7 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentItem(0);
 
+  _invhist->addColumn(tr("Whs"),          _whsColumn,          Qt::AlignLeft   );
   _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight  );
   _invhist->addColumn(tr("Type"),         _transColumn,        Qt::AlignCenter );
   _invhist->addColumn(tr("Order #"),      _orderColumn,        Qt::AlignLeft   );
@@ -123,7 +125,7 @@ void dspDetailedInventoryHistoryByLotSerial::sPrint()
 
   ParameterList params;
   _dates->appendValue(params);
-  params.append("lotSerial", _lotSerial->text());
+  params.append("lotSerial", _lotSerial->number().trimmed());
   params.append("transType", _transType->id());
 
   orReport report("DetailedInventoryHistoryByLotSerial", params);
@@ -194,75 +196,100 @@ void dspDetailedInventoryHistoryByLotSerial::sPopulateMenu(QMenu *menuThis)
 
 void dspDetailedInventoryHistoryByLotSerial::sFillList()
 {
+  QString trace;
   _invhist->clear();
 
-  if (!_dates->startDate().isValid())
+  if (_dateGroup->isChecked())
   {
-    QMessageBox::critical( this, tr("Enter Start Date"),
-                           tr("Please enter a valid Start Date.") );
-    _dates->setFocus();
-    return;
+    if (!_dates->startDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter Start Date"),
+                             tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
+      return;
+    }
+
+    if (!_dates->endDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter End Date"),
+                             tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+      return;
+    }
   }
 
-  if (!_dates->endDate().isValid())
-  {
-    QMessageBox::critical( this, tr("Enter End Date"),
-                           tr("Please enter a valid End Date.") );
-    _dates->setFocus();
-    return;
-  }
 
-  if (_lotSerial->text().stripWhiteSpace().length() == 0)
+  if ( ((_selected->isChecked() && _lotSerial->number().trimmed().length() == 0)
+     || (_pattern->isChecked() && _lotSerialPattern->text().trimmed().length() == 0))
+     && (!_item->isValid()) )
   {
     QMessageBox::warning( this, tr("Enter Lot/Serial #"),
-                          tr("<p>You must enter a Lot/Serial to view Inventory "
+                          tr("<p>You must enter a Lot/Serial or Item criteria to view Inventory "
 			     "Detail by Lot/Serial #.</p>") );
     _lotSerial->setFocus();
     return;
   }
 
-  q.prepare( "SELECT invhist_id,"
-             "       formatDateTime(invhist_transdate) AS transdate,"
-             "       invhist_transtype, (invhist_ordtype || '-' || invhist_ordnumber) AS ordernumber,"
-             "       invhist_invuom,"
-             "       item_number, invdetail_lotserial,"
-             "       CASE WHEN (invdetail_location_id=-1) THEN :undefined"
-             "            ELSE formatLocationName(invdetail_location_id)"
-             "       END AS locationname,"
-             "       formatQty(invdetail_qty) AS transqty,"
-             "       formatQty(invdetail_qty_before) AS qohbefore,"
-             "       formatQty(invdetail_qty_after) AS qohafter,"
-             "       invhist_posted "
-             "FROM invdetail, invhist, itemsite, item "
-             "WHERE ( (invdetail_invhist_id=invhist_id)"
-             " AND (invhist_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=item_id)"
-             " AND (invdetail_lotserial ~ :lotserial)"
-             " AND (DATE(invhist_transdate) BETWEEN :startDate AND :endDate)"
-             " AND (transType(invhist_transtype, :transType)) ) "
-             "ORDER BY invhist_transdate DESC, invhist_transtype;" );
+
+  if (_traceGroup->isChecked())
+  {
+    if (_forward->isChecked())
+      trace="F";
+    else
+      trace="B";
+  }
+  else
+    trace="N";
+
+  q.prepare( "SELECT * FROM lshist(:itemid,:warehouseid,:lotserial,:pattern,:transType,:startDate,:endDate,:trace); ");
   _dates->bindValue(q);
-  q.bindValue(":undefined", tr("Undefined"));
-  q.bindValue(":lotserial", _lotSerial->text());
+  if (_item->isValid())
+    q.bindValue(":itemid", _item->id());
+  if (_warehouse->isSelected())
+    q.bindValue(":warehouseid", _warehouse->id());
+  if (_selected->isChecked() && _lotSerial->isValid())
+  {
+    q.bindValue(":lotserial", _lotSerial->number().trimmed());
+    q.bindValue(":pattern", FALSE);
+  }
+  else
+  {   
+    q.bindValue(":lotserial", _lotSerialPattern->text().trimmed());
+    q.bindValue(":pattern", TRUE);
+  }
   q.bindValue(":transType", _transType->id());
+  q.bindValue(":trace", trace);
   q.exec();
 
-  XTreeWidgetItem *last = 0;
   while (q.next())
   {
-    last = new XTreeWidgetItem( _invhist, last, q.value("invhist_id").toInt(),
-			     q.value("transdate"), q.value("invhist_transtype"),
-			     q.value("ordernumber"), q.value("item_number"),
-			     q.value("locationname"), q.value("invdetail_lotserial"),
-			     q.value("invhist_invuom"), q.value("transqty") );
-
-    if (q.value("invhist_posted").toBool())
+    XTreeWidgetItem *last = NULL;
+    
+    if (q.value("lshist_parent_id").toInt() == -1)
+      last = new XTreeWidgetItem( _invhist, q.value("lshist_invhist_id").toInt(),
+                             q.value("lshist_warehous_code"),
+			     q.value("lshist_transdate"), q.value("lshist_transtype"),
+			     q.value("lshist_ordernumber"), q.value("lshist_item_number"),
+			     q.value("lshist_locationname"), q.value("lshist_lotserial"),
+			     q.value("lshist_invuom"), q.value("lshist_transqty") );
+    else
+      last = new XTreeWidgetItem( _invhist->findXTreeWidgetItemWithId(_invhist,
+						    q.value("lshist_parent_id").toInt()),
+                             q.value("lshist_invhist_id").toInt(),
+                             q.value("lshist_warehous_code"),
+			     q.value("lshist_transdate"), q.value("lshist_transtype"),
+			     q.value("lshist_ordernumber"), q.value("lshist_item_number"),
+			     q.value("lshist_locationname"), q.value("lshist_lotserial"),
+			     q.value("lshist_invuom"), q.value("lshist_transqty") );
+                             
+    if (q.value("lshist_posted").toBool())
     {
-      last->setText(8, q.value("qohbefore").toString());
-      last->setText(9, q.value("qohafter").toString());
+      last->setText(9, q.value("lshist_qty_before").toString());
+      last->setText(10, q.value("lshist_qty_after").toString());
     }
     else
       last->setTextColor("orange");
   }
+  _invhist->expandAll();
 }
 

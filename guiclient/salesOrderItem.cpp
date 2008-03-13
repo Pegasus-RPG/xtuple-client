@@ -1887,7 +1887,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
 	    else
 	    {
 	      last = new XTreeWidgetItem(
-			  findXTreeWidgetItemWithId(_availability,
+			  _availability->findXTreeWidgetItemWithId(_availability,
 						    availability.value("bomdata_bomwork_parent_id").toInt()),
 			  availability.value("bomdata_bomwork_id").toInt(),
 			  availability.value("bomdata_bomwork_seqnumber"),
@@ -2923,47 +2923,4 @@ void salesOrderItem::sCalcWoUnitCost()
 	if (q.first())
       _unitCost->setBaseValue(q.value("wo_value").toDouble() / _qtyOrdered->toDouble() * _qtyinvuomratio);
   }
-}
-
-// TODO: if this works well then move to XTreeWidget
-XTreeWidgetItem *salesOrderItem::findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid)
-{
-  if (pid < 0)
-    return 0;
-
-  for (int i = 0; i < ptree->topLevelItemCount(); i++)
-  {
-    XTreeWidgetItem *item = ptree->topLevelItem(i);
-    if (item->id() == pid)
-      return item;
-    else
-    {
-      item = findXTreeWidgetItemWithId(item, pid);
-      if (item)
-	return item;
-    }
-  }
-
-  return 0;
-}
-
-XTreeWidgetItem *salesOrderItem::findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid)
-{
-  if (pid < 0)
-    return 0;
-
-  for (int i = 0; i < ptreeitem->childCount(); i++)
-  {
-    XTreeWidgetItem *item = ptreeitem->child(i);
-    if (item->id() == pid)
-      return item;
-    else
-    {
-      item = findXTreeWidgetItemWithId(item, pid);
-      if (item)
-	return item;
-    }
-  }
-
-  return 0;
 }

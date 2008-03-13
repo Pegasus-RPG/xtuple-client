@@ -155,8 +155,8 @@ private:
     
     enum {
       CHAR_ID      = 0,
-      CHAR_VALUE     = 1,
-      CHAR_PRICE     = 2
+      CHAR_VALUE   = 1,
+      CHAR_PRICE   = 2
     };
     
     enum {
@@ -167,10 +167,6 @@ private:
       CURR_ID   = 4,
       EFFECTIVE = 5
     };
-
-    XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
-    XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
-
 
 };
 

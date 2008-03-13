@@ -5,7 +5,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>1000</width>
     <height>600</height>
    </rect>
   </property>
@@ -26,38 +26,139 @@
   </property>
   <widget class="QWidget" name="widget" >
    <layout class="QGridLayout" >
-    <item row="0" column="3" >
-     <spacer>
-      <property name="orientation" >
-       <enum>Qt::Horizontal</enum>
+    <item row="0" column="0" >
+     <widget class="QGroupBox" name="_itemGroup" >
+      <property name="title" >
+       <string/>
       </property>
-      <property name="sizeHint" >
-       <size>
-        <width>40</width>
-        <height>20</height>
-       </size>
-      </property>
-     </spacer>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="ItemCluster" name="_item" >
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
     </item>
-    <item row="3" column="0" colspan="5" >
+    <item rowspan="2" row="0" column="1" >
      <layout class="QGridLayout" >
-      <item row="1" column="0" >
-       <widget class="XTreeWidget" name="_invhist" >
-        <property name="rootIsDecorated" >
-         <bool>true</bool>
+      <item row="0" column="0" >
+       <widget class="QGroupBox" name="_transGroup" >
+        <property name="title" >
+         <string/>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QLabel" name="_transTypeLit" >
+           <property name="text" >
+            <string>Trans. Types:</string>
+           </property>
+           <property name="alignment" >
+            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <widget class="XComboBox" name="_transType" >
+           <property name="sizePolicy" >
+            <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="WarehouseGroup" name="_warehouse" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
         </property>
        </widget>
       </item>
-      <item row="0" column="0" >
-       <widget class="QLabel" name="_inventoryHistoryLit" >
-        <property name="text" >
-         <string>Inventory History:</string>
+      <item row="1" column="0" >
+       <widget class="QGroupBox" name="_dateGroup" >
+        <property name="title" >
+         <string>Range</string>
         </property>
+        <property name="checkable" >
+         <bool>true</bool>
+        </property>
+        <property name="checked" >
+         <bool>false</bool>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="DateCluster" name="_dates" >
+           <property name="focusPolicy" >
+            <enum>Qt::StrongFocus</enum>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QGroupBox" name="_traceGroup" >
+        <property name="title" >
+         <string>Multi-Level Trace</string>
+        </property>
+        <property name="checkable" >
+         <bool>true</bool>
+        </property>
+        <property name="checked" >
+         <bool>false</bool>
+        </property>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QRadioButton" name="_forward" >
+           <property name="text" >
+            <string>Forward</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QRadioButton" name="_backward" >
+           <property name="text" >
+            <string>Backward</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item row="2" column="0" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </item>
-    <item rowspan="3" row="0" column="4" >
+    <item rowspan="2" row="0" column="2" >
      <layout class="QVBoxLayout" >
       <property name="spacing" >
        <number>5</number>
@@ -97,7 +198,7 @@
         <property name="sizeHint" >
          <size>
           <width>20</width>
-          <height>40</height>
+          <height>0</height>
          </size>
         </property>
        </spacer>
@@ -105,84 +206,95 @@
      </layout>
     </item>
     <item row="1" column="0" >
-     <widget class="QLabel" name="_transTypeLit" >
-      <property name="text" >
-       <string>Trans. Types:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="1" column="1" >
-     <widget class="XComboBox" name="_transType" >
+     <widget class="QGroupBox" name="_lotserialGroup" >
       <property name="sizePolicy" >
        <sizepolicy vsizetype="Fixed" hsizetype="Expanding" >
         <horstretch>0</horstretch>
         <verstretch>0</verstretch>
        </sizepolicy>
       </property>
+      <property name="title" >
+       <string>Lot/Serial #</string>
+      </property>
+      <layout class="QGridLayout" >
+       <item rowspan="2" row="0" column="0" >
+        <layout class="QVBoxLayout" >
+         <property name="topMargin" >
+          <number>5</number>
+         </property>
+         <item>
+          <widget class="QRadioButton" name="_selected" >
+           <property name="text" >
+            <string>Selected</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Preferred</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>25</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="QRadioButton" name="_pattern" >
+           <property name="text" >
+            <string>Pattern</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1" >
+        <widget class="LotserialCluster" name="_lotSerial" >
+         <property name="focusPolicy" >
+          <enum>Qt::StrongFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="XLineEdit" name="_lotSerialPattern" >
+         <property name="enabled" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </widget>
     </item>
-    <item row="0" column="0" >
-     <widget class="QLabel" name="_lotSerialLit" >
-      <property name="text" >
-       <string>Lot/Serial #:</string>
-      </property>
-      <property name="alignment" >
-       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-      </property>
-     </widget>
-    </item>
-    <item row="0" column="1" >
-     <widget class="XLineEdit" name="_lotSerial" />
-    </item>
-    <item rowspan="3" row="0" column="2" >
-     <layout class="QVBoxLayout" >
-      <property name="spacing" >
-       <number>0</number>
-      </property>
-      <item>
-       <layout class="QHBoxLayout" >
-        <property name="spacing" >
-         <number>0</number>
+    <item row="2" column="0" colspan="3" >
+     <layout class="QGridLayout" >
+      <item row="1" column="0" >
+       <widget class="XTreeWidget" name="_invhist" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+          <horstretch>0</horstretch>
+          <verstretch>1</verstretch>
+         </sizepolicy>
         </property>
-        <item>
-         <widget class="DateCluster" name="_dates" />
-        </item>
-        <item>
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeType" >
-           <enum>QSizePolicy::Preferred</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>0</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+        <property name="rootIsDecorated" >
+         <bool>true</bool>
+        </property>
+       </widget>
       </item>
-      <item>
-       <spacer>
-        <property name="orientation" >
-         <enum>Qt::Vertical</enum>
+      <item row="0" column="0" >
+       <widget class="QLabel" name="_inventoryHistoryLit" >
+        <property name="text" >
+         <string>Inventory History:</string>
         </property>
-        <property name="sizeType" >
-         <enum>QSizePolicy::Expanding</enum>
-        </property>
-        <property name="sizeHint" >
-         <size>
-          <width>20</width>
-          <height>62</height>
-         </size>
-        </property>
-       </spacer>
+       </widget>
       </item>
      </layout>
     </item>
@@ -196,6 +308,21 @@
    <class>DateCluster</class>
    <extends>QWidget</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LotserialCluster</class>
+   <extends>QWidget</extends>
+   <header>lotserialcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>WarehouseGroup</class>
+   <extends>QGroupBox</extends>
+   <header>warehousegroup.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -214,14 +341,23 @@
   </customwidget>
  </customwidgets>
  <tabstops>
+  <tabstop>_item</tabstop>
+  <tabstop>_selected</tabstop>
   <tabstop>_lotSerial</tabstop>
+  <tabstop>_pattern</tabstop>
+  <tabstop>_lotSerialPattern</tabstop>
   <tabstop>_transType</tabstop>
-  <tabstop>_close</tabstop>
+  <tabstop>_dateGroup</tabstop>
+  <tabstop>_dates</tabstop>
+  <tabstop>_warehouse</tabstop>
+  <tabstop>_traceGroup</tabstop>
+  <tabstop>_forward</tabstop>
+  <tabstop>_backward</tabstop>
   <tabstop>_query</tabstop>
   <tabstop>_print</tabstop>
+  <tabstop>_close</tabstop>
   <tabstop>_invhist</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -231,12 +367,44 @@
    <slot>close()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>929</x>
+     <y>32</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_selected</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_lotSerial</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>71</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>151</x>
+     <y>167</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_pattern</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_lotSerialPattern</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>58</x>
+     <y>219</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>147</x>
+     <y>219</y>
     </hint>
    </hints>
   </connection>
