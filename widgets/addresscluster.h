@@ -60,7 +60,7 @@
 
 #include "OpenMFGWidgets.h"
 #include "virtualCluster.h"
-#include "xcheckbox.h"XCheckBox
+#include "xcheckbox.h"
 
 #include <QCheckBox>
 #include <QComboBox>

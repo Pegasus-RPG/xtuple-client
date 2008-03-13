@@ -1,7 +1,7 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on assistant
+CONFIG   += qt warn_on assistant uitools
 TEMPLATE = app
 
 INCLUDEPATH += ../common ../widgets .

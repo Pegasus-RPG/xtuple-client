@@ -80,11 +80,13 @@ class ScriptToolbox : public QObject
 
     QObject * executeQuery(const QString & query, QVariantMap parameters);
 
-    QLayout * widgetGetLayout(QWidget * w);
-    void layoutBoxInsertWidget(QBoxLayout *, int index, QWidget *, int stretch, Qt::Alignment alignment);
-    void layoutGridAddWidget(QGridLayout *, QWidget *, int row, int column, Qt::Alignment alignment);
-    void layoutGridAddWidget(QGridLayout *, QWidget *, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment);
-    void layoutStackedInsertWidget(QStackedLayout *, int index, QWidget *);
+    QObject * widgetGetLayout(QWidget * w);
+    void layoutBoxInsertWidget(QObject *, int index, QWidget *, int stretch = 0, int alignment = 0);
+    void layoutGridAddWidget(QObject *, QWidget *, int row, int column, int alignment = 0);
+    void layoutGridAddWidget(QObject *, QWidget *, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment = 0);
+    void layoutStackedInsertWidget(QObject *, int index, QWidget *);
+
+    QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
 
     int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
   private:

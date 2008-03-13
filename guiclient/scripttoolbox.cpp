@@ -64,6 +64,8 @@
 #include <QStackedLayout>
 #include <QMessageBox>
 #include <QScriptEngine>
+#include <QUiLoader>
+#include <QList>
 
 #include <parameter.h>
 #include <metasql.h>
@@ -96,35 +98,53 @@ QObject * ScriptToolbox::executeQuery(const QString & query, QVariantMap paramet
   return sq;
 }
 
-QLayout * ScriptToolbox::widgetGetLayout(QWidget * w)
+QObject * ScriptToolbox::widgetGetLayout(QWidget * w)
 {
-  if(w)
-    return w->layout();
+  QObject * p = w->parentWidget();
+  while(p)
+  {
+    QList<QLayout*> list = p->findChildren<QLayout*>();
+    for (int i = 0; i < list.size(); ++i)
+    {
+      if (list.at(i)->indexOf(w) != -1)
+        return list.at(i);
+    }
+  }
   return NULL;
 }
 
-void ScriptToolbox::layoutBoxInsertWidget(QBoxLayout * layout, int index, QWidget * widget, int stretch, Qt::Alignment alignment)
+void ScriptToolbox::layoutBoxInsertWidget(QObject * obj, int index, QWidget * widget, int stretch, int alignment)
 {
+  QBoxLayout * layout = qobject_cast<QBoxLayout*>(obj);
   if(layout && widget)
-    layout->insertWidget(index, widget, stretch, alignment);
+    layout->insertWidget(index, widget, stretch, (Qt::Alignment)alignment);
 }
 
-void ScriptToolbox::layoutGridAddWidget(QGridLayout * layout, QWidget * widget, int row, int column, Qt::Alignment alignment)
+void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int row, int column, int alignment)
 {
+  QGridLayout * layout = qobject_cast<QGridLayout*>(obj);
   if(layout && widget)
-    layout->addWidget(widget, row, column, alignment);
+    layout->addWidget(widget, row, column, (Qt::Alignment)alignment);
 }
 
-void ScriptToolbox::layoutGridAddWidget(QGridLayout * layout, QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, Qt::Alignment alignment)
+void ScriptToolbox::layoutGridAddWidget(QObject * obj, QWidget * widget, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment)
 {
+  QGridLayout * layout = qobject_cast<QGridLayout*>(obj);
   if(layout && widget)
-    layout->addWidget(widget, fromRow, fromColumn, rowSpan, columnSpan, alignment);
+    layout->addWidget(widget, fromRow, fromColumn, rowSpan, columnSpan, (Qt::Alignment)alignment);
 }
 
-void ScriptToolbox::layoutStackedInsertWidget(QStackedLayout * layout, int index, QWidget * widget)
+void ScriptToolbox::layoutStackedInsertWidget(QObject * obj, int index, QWidget * widget)
 {
+  QStackedLayout * layout = qobject_cast<QStackedLayout*>(obj);
   if(layout && widget)
     layout->insertWidget(index, widget);
+}
+
+QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * parent, const QString & name)
+{
+  QUiLoader ui;
+  return ui.createWidget(className, parent, name);
 }
 
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
