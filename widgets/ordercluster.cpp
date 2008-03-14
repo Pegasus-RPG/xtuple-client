@@ -283,7 +283,7 @@ OrderLineEdit::OrderLineEdit(QWidget *pParent, const char *pName) :
   _query = "SELECT orderhead_id AS id, orderhead_number AS number,"
 	   "       orderhead_type AS name, orderhead_status AS description,"
 	   "       orderhead_from, orderhead_to "
-	   "FROM orderhead ";
+	   "FROM orderhead WHERE (TRUE) ";
 }
 
 void OrderLineEdit::sNewId(const int p)
@@ -308,7 +308,7 @@ void OrderLineEdit::sParse()
       QString oldExtraClause = _extraClause;
 
       XSqlQuery countQ;
-      countQ.prepare("SELECT COUNT(*) AS count FROM orderhead " +
+      countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE (TRUE) " +
 		      _numClause +
 		      (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
 		      QString(";"));
@@ -623,7 +623,7 @@ void OrderLineEdit::silentSetId(const int pId)
     QString oldExtraClause = _extraClause;
 
     XSqlQuery countQ;
-    countQ.prepare("SELECT COUNT(*) AS count FROM orderhead " + _idClause +
+    countQ.prepare("SELECT COUNT(*) AS count FROM orderhead WHERE (TRUE) " + _idClause +
 		    (_extraClause.isEmpty() || !_strict ? "" : " AND " + _extraClause) +
 		    QString(";"));
     countQ.bindValue(":id", pId);
@@ -688,6 +688,7 @@ void OrderLineEdit::silentSetId(const int pId)
 OrderList::OrderList(QWidget *pParent, Qt::WindowFlags pFlags) :
   VirtualList(pParent, pFlags)
 {
+  setAttribute(Qt::WA_DeleteOnClose, false);
   QTreeWidgetItem *headerItem = _listTab->headerItem();
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));
@@ -718,6 +719,7 @@ void OrderList::done(int p)
 OrderSearch::OrderSearch(QWidget *pParent, Qt::WindowFlags pFlags) :
   VirtualSearch(pParent, pFlags)
 {
+  setAttribute(Qt::WA_DeleteOnClose, false);
   QTreeWidgetItem *headerItem = _listTab->headerItem();
   headerItem->setText(1, tr("Order Type"));
   headerItem->setText(2, tr("Status"));

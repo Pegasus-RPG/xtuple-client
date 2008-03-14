@@ -263,10 +263,10 @@ void VirtualClusterLineEdit::setTableAndColumnNames(const char* pTabName,
   if (_hasDescription)
        _query += QString(", %1 AS description ").arg(pDescripColumn);
 
-  _query += QString("FROM %1 ").arg(pTabName);
+  _query += QString("FROM %1 WHERE (TRUE) ").arg(pTabName);
 
-  _idClause = QString("WHERE (%1=:id) ").arg(pIdColumn);
-  _numClause = QString("WHERE (%1=:number) ").arg(pNumberColumn);
+  _idClause = QString(" AND (%1=:id) ").arg(pIdColumn);
+  _numClause = QString(" AND (%1=:number) ").arg(pNumberColumn);
 
   _extraClause = "";
 }
@@ -727,7 +727,7 @@ void VirtualSearch::sFillList()
 
     XSqlQuery qry(_parent->_query +
 		    (_parent->_extraClause.isEmpty() ? "" :
-					    " WHERE " + _parent->_extraClause) +
+					    " AND " + _parent->_extraClause) +
 		    QString(" ORDER BY ") +
 		    QString((_parent->_hasName) ? "name" : "number"));
     if (qry.first())
