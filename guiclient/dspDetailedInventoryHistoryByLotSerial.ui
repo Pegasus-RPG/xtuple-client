@@ -95,7 +95,7 @@
       <item row="1" column="0" >
        <widget class="QGroupBox" name="_dateGroup" >
         <property name="title" >
-         <string>Range</string>
+         <string>Date Range</string>
         </property>
         <property name="checkable" >
          <bool>true</bool>
@@ -130,6 +130,9 @@
           <widget class="QRadioButton" name="_forward" >
            <property name="text" >
             <string>Forward</string>
+           </property>
+           <property name="checked" >
+            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -373,22 +376,6 @@
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>_selected</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>_lotSerial</receiver>
-   <slot>setEnabled(bool)</slot>
-   <hints>
-    <hint type="sourcelabel" >
-     <x>71</x>
-     <y>164</y>
-    </hint>
-    <hint type="destinationlabel" >
-     <x>151</x>
-     <y>167</y>
     </hint>
    </hints>
   </connection>

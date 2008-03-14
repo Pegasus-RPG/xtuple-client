@@ -58,6 +58,7 @@
 #include "dspDetailedInventoryHistoryByLotSerial.h"
 
 #include <QMenu>
+#include <QStack>
 #include <QMessageBox>
 
 #include <openreports.h>
@@ -90,7 +91,7 @@ dspDetailedInventoryHistoryByLotSerial::dspDetailedInventoryHistoryByLotSerial(Q
   _transType->append(cTransScraps,    tr("Scraps")                 );
   _transType->setCurrentItem(0);
 
-  _invhist->addColumn(tr("Whs"),          _whsColumn,          Qt::AlignLeft   );
+  _invhist->addColumn(tr("Whs"),          _whsColumn,          Qt::AlignCenter    );
   _invhist->addColumn(tr("Date"),         (_dateColumn + 30),  Qt::AlignRight  );
   _invhist->addColumn(tr("Type"),         _transColumn,        Qt::AlignCenter );
   _invhist->addColumn(tr("Order #"),      _orderColumn,        Qt::AlignLeft   );
@@ -115,18 +116,67 @@ void dspDetailedInventoryHistoryByLotSerial::languageChange()
 
 void dspDetailedInventoryHistoryByLotSerial::sPrint()
 {
-  if (!_dates->allValid())
+  QString trace;
+
+  if (_dateGroup->isChecked())
   {
-    QMessageBox::warning( this, tr("Enter a Valid Start Date and End Date"),
-                          tr("You must enter a valid Start Date and End Date for this report.") );
-    _dates->setFocus();
+    if (!_dates->startDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter Start Date"),
+                             tr("Please enter a valid Start Date.") );
+      _dates->setFocus();
+      return;
+    }
+
+    if (!_dates->endDate().isValid())
+    {
+      QMessageBox::critical( this, tr("Enter End Date"),
+                             tr("Please enter a valid End Date.") );
+      _dates->setFocus();
+      return;
+    }
+  }
+
+
+  if ( ((_selected->isChecked() && _lotSerial->number().trimmed().length() == 0)
+     || (_pattern->isChecked() && _lotSerialPattern->text().trimmed().length() == 0))
+     && (!_item->isValid()) )
+  {
+    QMessageBox::warning( this, tr("Enter Lot/Serial #"),
+                          tr("<p>You must enter a Lot/Serial or Item criteria to print Inventory "
+			     "Detail by Lot/Serial #.</p>") );
+    _lotSerial->setFocus();
     return;
   }
 
+  if (_traceGroup->isChecked())
+  {
+    if (_forward->isChecked())
+      trace="F";
+    else
+      trace="B";
+  }
+  else
+    trace="N";
+
   ParameterList params;
   _dates->appendValue(params);
-  params.append("lotSerial", _lotSerial->number().trimmed());
+  if (_item->isValid())
+    params.append("itemid", _item->id());
+  if (_warehouse->isSelected())
+    params.append("warehouseid", _warehouse->id());
   params.append("transType", _transType->id());
+  params.append("trace", trace);
+  if (_selected->isChecked())
+  {
+    if (_lotSerial->number().trimmed().length() > 0)
+      params.append("lotSerial", _lotSerial->number().trimmed());
+  }
+  else
+  {
+    params.append("pattern");
+    params.append("lotSerial", _lotSerialPattern->text().trimmed());
+  }
 
   orReport report("DetailedInventoryHistoryByLotSerial", params);
   if (report.isValid())
@@ -137,7 +187,7 @@ void dspDetailedInventoryHistoryByLotSerial::sPrint()
 
 void dspDetailedInventoryHistoryByLotSerial::sViewTransInfo()
 {
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(2));
 
   ParameterList params;
   params.append("mode", "view");
@@ -183,7 +233,7 @@ void dspDetailedInventoryHistoryByLotSerial::sViewTransInfo()
 
 void dspDetailedInventoryHistoryByLotSerial::sPopulateMenu(QMenu *menuThis)
 {
-  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(1));
+  QString transType(((XTreeWidgetItem *)_invhist->currentItem())->text(2));
 
   if ( (transType == "AD") ||
        (transType == "TW") ||
@@ -241,15 +291,16 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
   else
     trace="N";
 
-  q.prepare( "SELECT * FROM lshist(:itemid,:warehouseid,:lotserial,:pattern,:transType,:startDate,:endDate,:trace); ");
+  q.prepare( "SELECT * FROM lshist(:itemid,:warehouseid,:lotserial,:pattern,:transType,:startDate,:endDate,:trace,1); ");
   _dates->bindValue(q);
   if (_item->isValid())
     q.bindValue(":itemid", _item->id());
   if (_warehouse->isSelected())
     q.bindValue(":warehouseid", _warehouse->id());
-  if (_selected->isChecked() && _lotSerial->isValid())
+  if (_selected->isChecked())
   {
-    q.bindValue(":lotserial", _lotSerial->number().trimmed());
+    if (_lotSerial->number().trimmed().length() > 0)
+      q.bindValue(":lotserial", _lotSerial->number().trimmed());
     q.bindValue(":pattern", FALSE);
   }
   else
@@ -261,21 +312,33 @@ void dspDetailedInventoryHistoryByLotSerial::sFillList()
   q.bindValue(":trace", trace);
   q.exec();
 
+  QStack<XTreeWidgetItem*> parent;
+  XTreeWidgetItem *last = 0;
+  int level = 1;
   while (q.next())
   {
-    XTreeWidgetItem *last = NULL;
+    while(q.value("lshist_level").toInt() < level)
+    {
+      level--;
+      last = parent.pop();
+    }
     
-    if (q.value("lshist_parent_id").toInt() == -1)
-      last = new XTreeWidgetItem( _invhist, q.value("lshist_invhist_id").toInt(),
+    while(q.value("lshist_level").toInt() > level)
+    {
+      level++;
+      parent.push(last);
+      last = 0;
+    }
+    
+    if(!parent.isEmpty() && parent.top())
+      last = new XTreeWidgetItem(parent.top(), last, q.value("lshist_id").toInt(),
                              q.value("lshist_warehous_code"),
 			     q.value("lshist_transdate"), q.value("lshist_transtype"),
 			     q.value("lshist_ordernumber"), q.value("lshist_item_number"),
 			     q.value("lshist_locationname"), q.value("lshist_lotserial"),
 			     q.value("lshist_invuom"), q.value("lshist_transqty") );
     else
-      last = new XTreeWidgetItem( _invhist->findXTreeWidgetItemWithId(_invhist,
-						    q.value("lshist_parent_id").toInt()),
-                             q.value("lshist_invhist_id").toInt(),
+      last = new XTreeWidgetItem(_invhist, last, q.value("lshist_id").toInt(),
                              q.value("lshist_warehous_code"),
 			     q.value("lshist_transdate"), q.value("lshist_transtype"),
 			     q.value("lshist_ordernumber"), q.value("lshist_item_number"),
