@@ -138,9 +138,15 @@ void initErrorLookupHash()
   { "closeAccountingYearPeriod", -3, "", -3, "closeAccountingPeriod" },
   { "closeAccountingYearPeriod", -4, "", -4, "closeAccountingPeriod" },
   { "closeAccountingYearPeriod", -5, "", -5, "closeAccountingPeriod" },
+  { "closeAccountingYearPeriod", -6, "", -6, "closeAccountingPeriod" },
   { "closeAccountingYearPeriod", -7, TR("The selected Fiscal Year cannot be closed "
                                         "because you have not specified a Year End Equity Account "
                                         "in the accounting configuration."), 0, "" },
+  { "closeAccountingYearPeriod", -8, TR("The selected Fiscal Year cannot be "
+                                        "closed because there does not seem to "
+                                        "be an Accounting Period defined for "
+                                        "the beginning of the next Fiscal "
+                                        "Year."),                       0, "" },
   { "closeAccountingYearPeriod", -9, TR("The selected Fiscal Year cannot be closed "
                                         "because there is no Trial Balance record for "
                                         "the account in the required Period. Or you have "
