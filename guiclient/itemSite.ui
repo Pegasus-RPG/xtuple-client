@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>554</height>
+    <height>562</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -1377,6 +1377,106 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_warrantyTab" >
+        <attribute name="title" >
+         <string>Warranty</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <layout class="QGridLayout" >
+           <item row="0" column="0" >
+            <widget class="QCheckBox" name="_purchWarranty" >
+             <property name="text" >
+              <string>Enable Purchase Warranty</string>
+             </property>
+            </widget>
+           </item>
+           <item row="1" column="0" >
+            <widget class="QGroupBox" name="_salesWarranty" >
+             <property name="title" >
+              <string>Enable Sales Warranty</string>
+             </property>
+             <property name="checkable" >
+              <bool>true</bool>
+             </property>
+             <property name="checked" >
+              <bool>false</bool>
+             </property>
+             <layout class="QGridLayout" >
+              <item row="0" column="0" >
+               <widget class="QLabel" name="_warrantyDaysLit" >
+                <property name="text" >
+                 <string>Default Warranty Period:</string>
+                </property>
+                <property name="alignment" >
+                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="1" >
+               <widget class="QSpinBox" name="_warrantyPeriod" >
+                <property name="maximum" >
+                 <number>9999</number>
+                </property>
+               </widget>
+              </item>
+              <item row="0" column="2" >
+               <widget class="QLabel" name="_warrantyDaysLit_2" >
+                <property name="text" >
+                 <string>Days</string>
+                </property>
+               </widget>
+              </item>
+              <item row="1" column="0" colspan="2" >
+               <widget class="QCheckBox" name="_warrantyAtShip" >
+                <property name="text" >
+                 <string>Require Expire Date at Shipping</string>
+                </property>
+               </widget>
+              </item>
+              <item row="2" column="0" colspan="2" >
+               <widget class="QCheckBox" name="_warrantyAtReg" >
+                <property name="text" >
+                 <string>Require Expire Date at Registration</string>
+                </property>
+                <property name="checked" >
+                 <bool>true</bool>
+                </property>
+               </widget>
+              </item>
+              <item row="3" column="0" >
+               <spacer>
+                <property name="orientation" >
+                 <enum>Qt::Vertical</enum>
+                </property>
+                <property name="sizeHint" >
+                 <size>
+                  <width>20</width>
+                  <height>0</height>
+                 </size>
+                </property>
+               </spacer>
+              </item>
+             </layout>
+            </widget>
+           </item>
+           <item row="1" column="1" >
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>241</width>
+               <height>164</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -1434,7 +1534,6 @@
   <tabstop>_tab</tabstop>
   <tabstop>_locationControl</tabstop>
   <tabstop>_useDefaultLocation</tabstop>
-  <tabstop>_locationGroup</tabstop>
   <tabstop>_locations</tabstop>
   <tabstop>_miscLocation</tabstop>
   <tabstop>_miscLocationName</tabstop>
@@ -1462,6 +1561,12 @@
   <tabstop>_toggleRestricted</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_restricted</tabstop>
+  <tabstop>_purchWarranty</tabstop>
+  <tabstop>_salesWarranty</tabstop>
+  <tabstop>_warrantyPeriod</tabstop>
+  <tabstop>_warrantyAtShip</tabstop>
+  <tabstop>_warrantyAtReg</tabstop>
+  <tabstop>_location</tabstop>
  </tabstops>
  <resources/>
  <connections>

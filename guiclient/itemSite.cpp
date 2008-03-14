@@ -76,10 +76,12 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_supply, SIGNAL(toggled(bool)), this, SLOT(sHandleSupplied(bool)));
   connect(_item, SIGNAL(typeChanged(const QString&)), this, SLOT(sCacheItemType(const QString&)));
   connect(_item, SIGNAL(newId(int)), this, SLOT(sCheckItemsite()));
+  connect(_controlMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(sHandleControlMethod()));
   connect(_controlMethod, SIGNAL(activated(int)), this, SLOT(sHandleControlMethod()));
   connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sFillRestricted()));
   connect(_toggleRestricted, SIGNAL(clicked()), this, SLOT(sToggleRestricted()));
   connect(_useDefaultLocation, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
+  connect(_locationControl, SIGNAL(toggled(bool)), this, SLOT(sDefaultLocChanged()));
 
   _itemType = 0;
 
@@ -92,8 +94,6 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _maximumOrder->setValidator(omfgThis->qtyVal());
   _orderMultiple->setValidator(omfgThis->qtyVal());
   _safetyStock->setValidator(omfgThis->qtyVal());
-  //_cycleCountFreq->setValidator(omfgThis->dayVal());
-  //_leadTime->setValidator(omfgThis->dayVal());
     
   _restricted->addColumn(tr("Location"), _itemColumn, Qt::AlignLeft );
   _restricted->addColumn(tr("Description"), -1, Qt::AlignLeft );
@@ -117,6 +117,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _controlMethod->removeItem(3);
     _controlMethod->removeItem(2);
     _perishable->hide();
+    _tab->removeTab(_tab->indexOf(_warrantyTab));
   }
   
   //If routings disabled, hide options
@@ -223,6 +224,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
           _cycleCountFreq->setValue(0);
           _leadTime->setValue(0);
           _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
+          _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
         } 
       }
     }
@@ -384,7 +386,9 @@ void itemSite::sSave()
                          "  itemsite_abcclass, itemsite_autoabcclass,"
                          "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup,"
                          "  itemsite_mps_timefence,"
-                         "  itemsite_disallowblankwip ) "
+                         "  itemsite_disallowblankwip, "
+                         "  itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod "
+                         "  itemsite_warrship, itemsite_warrreg ) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
                          "  :itemsite_useparams, :itemsite_useparamsmanual, :itemsite_reorderlevel,"
@@ -400,7 +404,9 @@ void itemSite::sSave()
                          "  :itemsite_abcclass, :itemsite_autoabcclass,"
                          "  FALSE, startOfTime(), :itemsite_ordergroup,"
                          "  :itemsite_mps_timefence,"
-                         "  :itemsite_disallowblankwip );" );
+                         "  :itemsite_disallowblankwip "
+                         "  :itemsite_warrpurc, :itemsite_warrsell, :itemsite_warrperiod "
+                         "  :itemsite_warrship, :itemsite_warrreg  );" );
   }
   else if (_mode == cEdit)
   {
@@ -474,7 +480,10 @@ void itemSite::sSave()
                          "    itemsite_notes=:itemsite_notes,"
                          "    itemsite_ordergroup=:itemsite_ordergroup,"
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
-                         "    itemsite_disallowblankwip=:itemsite_disallowblankwip "
+                         "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
+                         "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_warrsell=:itemsite_warrsell, "
+                         "    itemsite_warrperiod=:itemsite_warrperiod, itemsite_warrship=:itemsite_warrship, "
+                         "    itemsite_warrreg=:itemsite_warrreg, itemsite_warehous_id=:itemsite_warehous_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
 
@@ -545,6 +554,12 @@ void itemSite::sSave()
   else if (_controlMethod->currentItem() == 3)
     newItemSite.bindValue(":itemsite_controlmethod", "S");
     
+  newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_warrsell", QVariant(_salesWarranty->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_warrperiod", _warrantyPeriod->value());
+  newItemSite.bindValue(":itemsite_warrship", QVariant(_warrantyAtShip->isChecked(), 0));
+  newItemSite.bindValue(":itemsite_warrreg", QVariant(_warrantyAtReg->isChecked(), 0));
+    
   newItemSite.exec();
   if (newItemSite.lastError().type() != QSqlError::None)
   {
@@ -565,6 +580,7 @@ void itemSite::sSave()
 
 void itemSite::sCheckItemsite()
 {
+  int whsCache;
   if ( (_item->isValid()) &&
        (_updates) &&
        (_warehouse->id() != -1) )
@@ -575,7 +591,7 @@ void itemSite::sCheckItemsite()
     query.prepare( "SELECT itemsite_id "
                    "FROM itemsite "
                    "WHERE ( (itemsite_item_id=:item_id)"
-                   " AND (itemsite_warehous_id=:warehous_id) );" );
+                   " AND (COALESCE(itemsite_warehous_id,:warehous_id)=:warehous_id) );" );
     query.bindValue(":item_id", _item->id());
     query.bindValue(":warehous_id", _warehouse->id());
     query.exec();
@@ -583,7 +599,15 @@ void itemSite::sCheckItemsite()
     {
       _mode = cEdit;
       _itemsiteid = query.value("itemsite_id").toInt();
+      whsCache=_warehouse->id();
+      disconnect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckItemsite()));
       populate();
+      if (_warehouse->id() == -1)
+      {
+        _warehouse->setId(whsCache);
+        populateLocations();
+      }
+      connect(_warehouse, SIGNAL(newID(int)), this, SLOT(sCheckItemsite()));
     }
     else
     { 
@@ -622,10 +646,16 @@ void itemSite::sHandleSupplied(bool pSupplied)
 void itemSite::sHandleControlMethod()
 {
   if ( (_controlMethod->currentItem() == 2) ||
-       (_controlMethod->currentItem() == 3) )    
+       (_controlMethod->currentItem() == 3) )  
+  {
     _perishable->setEnabled(TRUE);
+    _tab->setTabEnabled(_tab->indexOf(_warrantyTab),TRUE);
+  }
   else
+  {
     _perishable->setEnabled(FALSE);
+    _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
+  }
 }
 
 void itemSite::sCacheItemType(const QString &pItemType)
@@ -766,7 +796,9 @@ void itemSite::populate()
                     "       itemsite_cyclecountfreq,"
                     "       itemsite_costcat_id, itemsite_notes,"
                     "       itemsite_ordergroup, itemsite_mps_timefence,"
-                    "       itemsite_disallowblankwip "
+                    "       itemsite_disallowblankwip, "
+                    "       itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod,"
+                    "       itemsite_warrship, itemsite_warrreg "
                     "FROM itemsite, item "
                     "WHERE ( (itemsite_item_id=item_id)"
                     " AND (itemsite_id=:itemsite_id) );" );
@@ -853,17 +885,9 @@ void itemSite::populate()
       _createWo->setEnabled(FALSE);
 
     if (itemsite.value("itemsite_loccntrl").toBool())
-    {
       _locationControl->setChecked(TRUE);
-      _miscLocation->setEnabled(FALSE);
-      _miscLocationName->setEnabled(FALSE);
-    }
     else
-    {
       _locationControl->setChecked(FALSE);
-      _miscLocation->setEnabled(TRUE);
-      _miscLocationName->setEnabled(TRUE);
-    }
     _wasLocationControl = itemsite.value("itemsite_loccntrl").toBool();
     _disallowBlankWIP->setChecked(itemsite.value("itemsite_disallowblankwip").toBool());
 
@@ -875,14 +899,13 @@ void itemSite::populate()
         {
           _useDefaultLocation->setChecked(TRUE);
           _miscLocation->setChecked(TRUE);
-          _miscLocationName->setEnabled(TRUE);
           _miscLocationName->setText(itemsite.value("itemsite_location").toString());
         }
         else
-        {
           _useDefaultLocation->setChecked(FALSE);
-        }
       }
+      else
+        _useDefaultLocation->setChecked(FALSE);
     }
     else
     {
@@ -902,6 +925,16 @@ void itemSite::populate()
     sHandleSupplied(itemsite.value("itemsite_supply").toBool());
     sCacheItemType(_itemType);
     _comments->setId(_itemsiteid);
+    
+    
+    _purchWarranty->setChecked(itemsite.value("itemsite_warrpurc").toBool());
+    if (itemsite.value("itemsite_warrsell").toBool())
+    {
+      _salesWarranty->setChecked(itemsite.value("itemsite_warrsell").toBool());
+      _warrantyPeriod->setValue(itemsite.value("itemsite_warrperiod").toInt());
+      _warrantyAtShip->setChecked(itemsite.value("itemsite_warrship").toBool());
+      _warrantyAtReg->setChecked(itemsite.value("itemsite_warrreg").toBool());
+    }
 
     _updates = TRUE;
   }
@@ -942,6 +975,13 @@ void itemSite::clear()
   _locationComments->clear();
     
   _costcat->setId(-1);
+  
+  _purchWarranty->setChecked(FALSE);
+  _salesWarranty->setChecked(FALSE);
+  _warrantyPeriod->setValue(0);
+  _warrantyAtShip->setChecked(FALSE);
+  _warrantyAtReg->setChecked(TRUE);
+  _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
     
   populateLocations();
 }
@@ -1131,17 +1171,23 @@ int itemSite::createItemSite(QWidget* pparent, int pitemsiteid, int pwhsid, bool
   return -90;	// catchall: we didn't successfully find/create an itemsite
 }
 
+
 void itemSite::sDefaultLocChanged()
 {
   if (_useDefaultLocation->isChecked())
   {
-    if (_locations->count())
-	  _location->setEnabled(TRUE);
-    else
-    {
-	  _location->setEnabled(FALSE);
-      _locations->setEnabled(FALSE);
-      _miscLocation->setChecked(TRUE);
-    }
+    _location->setChecked(_locationControl->isChecked());
+    _location->setEnabled(_locationControl->isChecked());
+    _locations->setEnabled(_locationControl->isChecked());
+    _miscLocation->setChecked(!_locationControl->isChecked());
+    _miscLocation->setEnabled(!_locationControl->isChecked());
+    _miscLocationName->setEnabled(!_locationControl->isChecked());
+  }
+  else
+  {
+    _location->setEnabled(FALSE);
+    _locations->setEnabled(FALSE);
+    _miscLocation->setEnabled(FALSE);
+    _miscLocationName->setEnabled(FALSE);
   }
 }
