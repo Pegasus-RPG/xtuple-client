@@ -523,7 +523,7 @@ void distributeInventory::sFillList()
 		 " AND (itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
 		 "<? endif ?>"
 		 ") AS data "
-                 "WHERE ((id != -2) "
+                 "WHERE ((TRUE) "
 		 "<? if exists(\"showOnlyTagged\") ?>"
 		 "AND (qtytagged != 0) "
 		 "<? endif ?>"
