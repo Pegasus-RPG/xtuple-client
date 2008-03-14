@@ -109,7 +109,7 @@ itemPricingScheduleItem::itemPricingScheduleItem(QWidget* parent, const char* na
   _item->setType(ItemLineEdit::cSold);
   _prodcat->setType(XComboBox::ProductCategories);
   
-  _configuredPrices->setEnabled(FALSE);
+  _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);
 }
 
 /*
@@ -415,9 +415,9 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
   }
   
   if (_item->itemType() == "J")
-    _configuredPrices->setEnabled(TRUE);
+    _tab->setTabEnabled(_tab->indexOf(_configuredPrices),TRUE);
   else
-    _configuredPrices->setEnabled(FALSE);
+    _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);
 }
 
 void itemPricingScheduleItem::sUpdateMargins()
