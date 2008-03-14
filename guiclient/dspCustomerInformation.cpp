@@ -1469,7 +1469,6 @@ void dspCustomerInformation::sPrintSalesOrder()
 
 void dspCustomerInformation::sPrintQuote()
 {
-  QPrinter printer;
   q.prepare( "SELECT findCustomerForm(quhead_cust_id, 'Q') AS reportname "
              "FROM quhead "
              "WHERE (quhead_id=:quheadid); " );

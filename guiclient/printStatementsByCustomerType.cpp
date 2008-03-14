@@ -128,7 +128,7 @@ void printStatementsByCustomerType::sPrint()
   q.exec();
   if (q.first())
   {
-    QPrinter printer;
+    QPrinter printer(QPrinter::HighResolution);
     bool userCanceled = false;
     if (orReport::beginMultiPrint(&printer, userCanceled) == false)
     {
