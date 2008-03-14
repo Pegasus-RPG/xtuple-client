@@ -5,6 +5,7 @@ CONFIG   += qt warn_on assistant uitools
 TEMPLATE = app
 
 INCLUDEPATH += ../common ../widgets .
+DEPENDPATH  += ../common ../widgets
 LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
@@ -967,7 +968,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                xmainwindow.cpp xdialog.cpp                                                            \
                idleShutdown.cpp storedProcErrorLookup.cpp xdateinputdialog.cpp xsltMap.cpp
 
-QT += xml assistant sql script
+QT += xml assistant sql script network
 
 RESOURCES += guiclient.qrc sql/querydata.qrc
 
