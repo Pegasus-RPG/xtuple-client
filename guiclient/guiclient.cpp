@@ -1348,6 +1348,9 @@ void GUIClient::loadScriptGlobals(QScriptEngine * engine)
   if(!engine)
     return;
 
+  qScriptRegisterMetaType(engine, ParameterListtoScriptValue, ParameterListfromScriptValue);
+  qScriptRegisterMetaType(engine, SetResponsetoScriptValue, SetResponsefromScriptValue);
+
   ScriptToolbox * tb = new ScriptToolbox(engine);
   QScriptValue toolbox = engine->newQObject(tb);
   engine->globalObject().setProperty("toolbox", toolbox);

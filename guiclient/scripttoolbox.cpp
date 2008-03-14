@@ -64,6 +64,8 @@
 #include <QStackedLayout>
 #include <QMessageBox>
 #include <QScriptEngine>
+#include <QScriptValueIterator>
+#include <QDateTime>
 #include <QUiLoader>
 #include <QList>
 
@@ -159,4 +161,84 @@ int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QStr
   else //if(type == "warning")
     btn = QMessageBox::warning(parent, title, text, buttons, defaultButton);
   return btn;
+}
+
+QScriptValue ScriptToolbox::variantToScriptValue(QScriptEngine * engine, QVariant var)
+{
+  if(var.isNull())
+    return engine->nullValue();
+
+  switch(var.type())
+  {
+    case QVariant::Invalid:
+      return engine->nullValue();
+    case QVariant::Bool:
+      return QScriptValue(engine, var.toBool());
+    case QVariant::Int:
+      return QScriptValue(engine, var.toInt());
+    case QVariant::UInt:
+      return QScriptValue(engine, var.toUInt());
+    case QVariant::Double:
+      return QScriptValue(engine, var.toDouble());
+    case QVariant::Char:
+      return QScriptValue(engine, var.toChar().unicode());
+    case QVariant::String:
+      return QScriptValue(engine, var.toString());
+    case QVariant::LongLong:
+      return QScriptValue(engine, qsreal(var.toLongLong()));
+    case QVariant::ULongLong:
+      return QScriptValue(engine, qsreal(var.toULongLong()));
+    case QVariant::Date:
+    case QVariant::Time:
+    case QVariant::DateTime:
+      return engine->newDate(var.toDateTime());
+    case QVariant::RegExp:
+      return engine->newRegExp(var.toRegExp());
+/*
+ * Would be ideal to have these as well but I don't know if they are really necessary
+    case QVariant::StringList:
+    case QVariant::List:
+
+    case QVariant::Map:
+*/
+  }
+
+  // If we are not doing an explicity conversion just pass the variant back
+  // and see what happens
+  return engine->newVariant(var);
+}
+
+
+// ParameterList Conversion functions
+QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params)
+{
+  QScriptValue obj = engine->newObject();
+  for(int i = 0; i < params.count(); i++)
+  {
+    obj.setProperty(params.name(i), ScriptToolbox::variantToScriptValue(engine, params.value(i)));
+  }
+
+  return obj;
+}
+
+void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params)
+{
+  QScriptValueIterator it(obj);
+  while (it.hasNext())
+  {
+    it.next();
+    if(it.flags() & QScriptValue::SkipInEnumeration)
+      continue;
+    params.append(it.name(), it.value().toVariant());
+  }
+}
+
+QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr)
+{
+  return QScriptValue(engine, (int)sr);
+}
+
+void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr)
+{
+  sr = (enum SetResponse)obj.toInt32();
 }

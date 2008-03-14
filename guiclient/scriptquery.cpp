@@ -62,7 +62,7 @@
 #include <QRegExp>
 #include <QDateTime>
 
-static QScriptValue variantToScriptValue(QScriptEngine *, QVariant);
+#include "scripttoolbox.h"
 
 ScriptQuery::ScriptQuery(QScriptEngine * engine)
   : QObject(engine)
@@ -131,12 +131,12 @@ int ScriptQuery::numRowsAffected()
 
 QScriptValue ScriptQuery::value(int index)
 {
-  return variantToScriptValue(_engine, _query.value(index));
+  return ScriptToolbox::variantToScriptValue(_engine, _query.value(index));
 }
 
 QScriptValue ScriptQuery::value(const QString & field)
 {
-  return variantToScriptValue(_engine, _query.value(field));
+  return ScriptToolbox::variantToScriptValue(_engine, _query.value(field));
 }
 
 QVariantMap ScriptQuery::lastError()
@@ -151,50 +151,5 @@ QVariantMap ScriptQuery::lastError()
   m.insert("isValid", QVariant(err.isValid(), 0));
 
   return m;
-}
-
-QScriptValue variantToScriptValue(QScriptEngine * engine, QVariant var)
-{
-  if(var.isNull())
-    return engine->nullValue();
-
-  switch(var.type())
-  {
-    case QVariant::Invalid:
-      return engine->nullValue();
-    case QVariant::Bool:
-      return QScriptValue(engine, var.toBool());
-    case QVariant::Int:
-      return QScriptValue(engine, var.toInt());
-    case QVariant::UInt:
-      return QScriptValue(engine, var.toUInt());
-    case QVariant::Double:
-      return QScriptValue(engine, var.toDouble());
-    case QVariant::Char:
-      return QScriptValue(engine, var.toChar().unicode());
-    case QVariant::String:
-      return QScriptValue(engine, var.toString());
-    case QVariant::LongLong:
-      return QScriptValue(engine, qsreal(var.toLongLong()));
-    case QVariant::ULongLong:
-      return QScriptValue(engine, qsreal(var.toULongLong()));
-    case QVariant::Date:
-    case QVariant::Time:
-    case QVariant::DateTime:
-      return engine->newDate(var.toDateTime());
-    case QVariant::RegExp:
-      return engine->newRegExp(var.toRegExp());
-/*
- * Would be ideal to have these as well but I don't know if they are really necessary
-    case QVariant::StringList:
-    case QVariant::List:
-
-    case QVariant::Map:
-*/
-  }
-
-  // If we are not doing an explicity conversion just pass the variant back
-  // and see what happens
-  return engine->newVariant(var);
 }
 

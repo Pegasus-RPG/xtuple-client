@@ -60,6 +60,10 @@
 
 #include <QObject>
 #include <QVariant>
+#include <QScriptValue>
+
+#include "parameter.h"
+#include "guiclient.h"
 
 class QWidget;
 class QLayout;
@@ -68,6 +72,15 @@ class QBoxLayout;
 class QStackedLayout;
 class QScriptEngine;
 
+Q_DECLARE_METATYPE(ParameterList)
+Q_DECLARE_METATYPE(enum SetResponse)
+
+QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
+void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
+
+QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr);
+void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr);
+
 class ScriptToolbox : public QObject
 {
   Q_OBJECT
@@ -75,6 +88,8 @@ class ScriptToolbox : public QObject
   public:
     ScriptToolbox(QScriptEngine * engine);
     virtual ~ScriptToolbox();
+
+    static QScriptValue variantToScriptValue(QScriptEngine *, QVariant);
 
   public slots:
 
