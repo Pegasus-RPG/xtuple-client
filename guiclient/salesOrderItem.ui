@@ -1299,40 +1299,38 @@
         <attribute name="title" >
          <string>Pending Availability</string>
         </attribute>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
+        <widget class="XTreeWidget" name="_availability" >
+         <property name="geometry" >
+          <rect>
+           <x>20</x>
+           <y>36</y>
+           <width>601</width>
+           <height>123</height>
+          </rect>
          </property>
-         <property name="leftMargin" >
-          <number>5</number>
+         <property name="focusPolicy" >
+          <enum>Qt::NoFocus</enum>
          </property>
-         <property name="topMargin" >
-          <number>5</number>
+         <property name="rootIsDecorated" >
+          <bool>true</bool>
          </property>
-         <property name="rightMargin" >
-          <number>5</number>
+        </widget>
+        <widget class="XCheckBox" name="_showIndented" >
+         <property name="geometry" >
+          <rect>
+           <x>18</x>
+           <y>9</y>
+           <width>612</width>
+           <height>21</height>
+          </rect>
          </property>
-         <property name="bottomMargin" >
-          <number>5</number>
+         <property name="focusPolicy" >
+          <enum>Qt::NoFocus</enum>
          </property>
-         <item>
-          <widget class="QCheckBox" name="_showIndented" >
-           <property name="text" >
-            <string>Show Pending Availability as Indented BOM</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XTreeWidget" name="_availability" >
-           <property name="focusPolicy" >
-            <enum>Qt::NoFocus</enum>
-           </property>
-           <property name="rootIsDecorated" >
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
+         <property name="text" >
+          <string>Show Pending Availability as Indented BOM</string>
+         </property>
+        </widget>
        </widget>
        <widget class="QWidget" name="_costs" >
         <attribute name="title" >
@@ -1738,6 +1736,11 @@
    <header>wcombobox.h</header>
   </customwidget>
   <customwidget>
+   <class>XCheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>xcheckbox.h</header>
+  </customwidget>
+  <customwidget>
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
@@ -1777,7 +1780,6 @@
   <tabstop>_taxcode</tabstop>
   <tabstop>_tax</tabstop>
   <tabstop>_comments</tabstop>
-  <tabstop>_showIndented</tabstop>
   <tabstop>_availability</tabstop>
   <tabstop>_altCosAccnt</tabstop>
   <tabstop>_close</tabstop>

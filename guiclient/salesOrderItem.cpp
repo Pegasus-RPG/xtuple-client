@@ -1936,12 +1936,14 @@ void salesOrderItem::sDetermineAvailability( bool p )
                                 "              (qtyAllocated(cs.itemsite_id, DATE(:schedDate)) - ((itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap))) * :origQtyOrd)) AS totalalloc,"
                                 "              noNeg(cs.itemsite_qtyonhand) AS qoh,"
                                 "              qtyOrdered(cs.itemsite_id, DATE(:schedDate)) AS ordered "
-                                "       FROM item, bomitem, uom, itemsite AS ps, itemsite AS cs "
+                                "       FROM item, bomitem LEFT OUTER JOIN"
+ 			        "            itemsite AS cs ON ((cs.itemsite_warehous_id=:warehous_id)"
+ 			        "                           AND (cs.itemsite_item_id=bomitem_item_id)),"
+                                "            uom,"
+ 				"            itemsite AS ps "
                                 "       WHERE ( (bomitem_item_id=item_id)"
                                 "        AND (item_inv_uom_id=uom_id)"
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
-                                "        AND (cs.itemsite_warehous_id=ps.itemsite_warehous_id)"
-				"        AND (cs.itemsite_item_id=bomitem_item_id) "
                                 "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
 
           if (_item->itemType() == "J") // For job items limit to bomitems associated with selected characteristic values
@@ -1964,6 +1966,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
                   "ORDER BY bomitem_seqnumber;";
           availability.prepare(sql);
           availability.bindValue(":itemsite_id", itemsiteid);
+          availability.bindValue(":warehous_id", _warehouse->id());
           availability.bindValue(":qty", _availabilityQtyOrdered);
           availability.bindValue(":schedDate", _scheduledDate->date());
           availability.bindValue(":origQtyOrd", _originalQtyOrd);
