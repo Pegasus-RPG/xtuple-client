@@ -387,8 +387,8 @@ void itemSite::sSave()
                          "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup,"
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
-                         "  itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod "
-                         "  itemsite_warrship, itemsite_warrreg ) "
+                         "  itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod, "
+                         "  itemsite_warrstart ) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
                          "  :itemsite_useparams, :itemsite_useparamsmanual, :itemsite_reorderlevel,"
@@ -404,9 +404,9 @@ void itemSite::sSave()
                          "  :itemsite_abcclass, :itemsite_autoabcclass,"
                          "  FALSE, startOfTime(), :itemsite_ordergroup,"
                          "  :itemsite_mps_timefence,"
-                         "  :itemsite_disallowblankwip "
-                         "  :itemsite_warrpurc, :itemsite_warrsell, :itemsite_warrperiod "
-                         "  :itemsite_warrship, :itemsite_warrreg  );" );
+                         "  :itemsite_disallowblankwip, "
+                         "  :itemsite_warrpurc, :itemsite_warrsell, :itemsite_warrperiod, "
+                         "  :itemsite_warrstart  );" );
   }
   else if (_mode == cEdit)
   {
@@ -482,8 +482,8 @@ void itemSite::sSave()
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_warrsell=:itemsite_warrsell, "
-                         "    itemsite_warrperiod=:itemsite_warrperiod, itemsite_warrship=:itemsite_warrship, "
-                         "    itemsite_warrreg=:itemsite_warrreg, itemsite_warehous_id=:itemsite_warehous_id "
+                         "    itemsite_warrperiod=:itemsite_warrperiod, itemsite_warrstart=:itemsite_warrstart, "
+                         "    itemsite_warehous_id=:itemsite_warehous_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
 
@@ -557,8 +557,10 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked(), 0));
   newItemSite.bindValue(":itemsite_warrsell", QVariant(_salesWarranty->isChecked(), 0));
   newItemSite.bindValue(":itemsite_warrperiod", _warrantyPeriod->value());
-  newItemSite.bindValue(":itemsite_warrship", QVariant(_warrantyAtShip->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_warrreg", QVariant(_warrantyAtReg->isChecked(), 0));
+  if (_salesWarranty->isChecked() && _warrantyShip->isChecked())
+    newItemSite.bindValue(":itemsite_warrstart", QString("S"));
+  else if (_salesWarranty->isChecked() && _warrantyReg->isChecked())
+    newItemSite.bindValue(":itemsite_warrstart", QString("R"));
     
   newItemSite.exec();
   if (newItemSite.lastError().type() != QSqlError::None)
@@ -798,7 +800,7 @@ void itemSite::populate()
                     "       itemsite_ordergroup, itemsite_mps_timefence,"
                     "       itemsite_disallowblankwip, "
                     "       itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod,"
-                    "       itemsite_warrship, itemsite_warrreg "
+                    "       itemsite_warrstart "
                     "FROM itemsite, item "
                     "WHERE ( (itemsite_item_id=item_id)"
                     " AND (itemsite_id=:itemsite_id) );" );
@@ -932,8 +934,7 @@ void itemSite::populate()
     {
       _salesWarranty->setChecked(itemsite.value("itemsite_warrsell").toBool());
       _warrantyPeriod->setValue(itemsite.value("itemsite_warrperiod").toInt());
-      _warrantyAtShip->setChecked(itemsite.value("itemsite_warrship").toBool());
-      _warrantyAtReg->setChecked(itemsite.value("itemsite_warrreg").toBool());
+      _warrantyReg->setChecked(itemsite.value("itemsite_warrstart").toString()=="R");
     }
 
     _updates = TRUE;
@@ -979,8 +980,7 @@ void itemSite::clear()
   _purchWarranty->setChecked(FALSE);
   _salesWarranty->setChecked(FALSE);
   _warrantyPeriod->setValue(0);
-  _warrantyAtShip->setChecked(FALSE);
-  _warrantyAtReg->setChecked(TRUE);
+  _warrantyShip->setChecked(TRUE);
   _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
     
   populateLocations();
