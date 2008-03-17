@@ -417,6 +417,9 @@ void postOperations::sHandleWooperid(int)
 
 void postOperations::sHandleQty()
 {
+  double qty = _qty->toDouble();
+  _markRnComplete->setChecked(qty >= _qtyBalance->text().toDouble());
+  
   if (_wooper->id() == -1)
   {
     _standardRntime->clear();
@@ -426,14 +429,11 @@ void postOperations::sHandleQty()
   }
   else if (_closeWO->isEnabled())
   {
-    double qty = _qty->toDouble();
-
     if (_productionUOM->isChecked())
       _standardRntime->setText(formatQty(_rnqtyper * qty));
     else
       _standardRntime->setText(formatQty(_rnqtyper / _invProdUOMRatio * qty));
 
-    _markRnComplete->setChecked(qty >= _qtyBalance->text().toDouble());
     _closeWO->setChecked(FALSE);
 
     if(qty >= _balance)
