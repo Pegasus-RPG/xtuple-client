@@ -90,16 +90,7 @@ configureCRM::configureCRM(QWidget* parent, const char* name, bool modal, Qt::WF
   _useProjects->setChecked(_metrics->boolean("UseProjects"));
   _autoCreate->setChecked(_metrics->boolean("AutoCreateProjectsForOrders"));  
     
-  //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("CRM Configuration");
-  }
-  else
-  {
-    _useProjects->hide();
-    _autoCreate->hide();
-  }
+  this->setCaption("CRM Configuration");
 }
 
 /*

@@ -188,15 +188,7 @@ configureIM::configureIM(QWidget* parent, const char* name, bool modal, Qt::WFla
   _tolerance->setText(_metrics->value("ReceiptQtyTolerancePct"));
   
     
-//Remove this when old menu system goes away
-if (!_preferences->boolean("UseOldMenu"))
-{
   this->setCaption("Inventory Configuration");
-}
-else
-{
-  _tab->removePage(_tab->page(1));
-}
 
   resize(minimumSize());
 

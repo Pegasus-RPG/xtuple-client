@@ -214,11 +214,7 @@ configureSO::configureSO(QWidget* parent, const char* name, bool modal, Qt::WFla
   else if(_metrics->value("UpdatePriceLineEdit").toInt() == 3)
     _updatePrice->setChecked(true);
     
-  //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("Sales Configuration");
-  }
+  this->setCaption("Sales Configuration");
 
   //Set status of Returns Authorization based on context
   if ( (_metrics->value("Application") != "OpenMFG")

@@ -169,16 +169,7 @@ configureGL::configureGL(QWidget* parent, const char* name, bool modal, Qt::WFla
   _taxauth->setId(_metrics->value("DefaultTaxAuthority").toInt());
   
   //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("Accounting Configuration");
-  }
-  else
-  {
-    _tab->removePage(_tab->page(1));
-    _tab->removePage(_tab->page(1));
-  }
-  
+  this->setCaption("Accounting Configuration");
 }
 
 /*

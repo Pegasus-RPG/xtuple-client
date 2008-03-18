@@ -95,22 +95,6 @@ class menuSales;
 class menuAccounting;
 class menuSystem;
 
-class moduleIM;
-class moduleMS;
-class moduleCP;
-class modulePD;
-class moduleWO;
-class moduleCRM;
-class modulePO;
-class moduleSO;
-class moduleSR;
-class moduleSA;
-class modulePM;
-class moduleAR;
-class moduleAP;
-class moduleGL;
-class moduleSys;
-
 class TimeoutHandler;
 class InputManager;
 class ReportHandler;
@@ -407,22 +391,6 @@ class GUIClient : public QMainWindow
     menuSales       *salesMenu;
     menuAccounting  *accountingMenu;
     menuSystem      *systemMenu;
-
-    moduleIM    *imModule;
-    modulePD    *pdModule;
-    moduleMS    *msModule;
-    moduleCP    *cpModule;
-    moduleWO    *woModule;
-    moduleCRM	*crmModule;
-    modulePO    *poModule;
-    moduleSO    *soModule;
-    moduleSR    *srModule;
-    moduleSA    *saModule;
-    modulePM    *pmModule;
-    moduleAR    *arModule;
-    moduleAP    *apModule;
-    moduleGL    *glModule;
-    moduleSys   *sysModule;
 
     QDate _startOfTime;
     QDate _endOfTime;

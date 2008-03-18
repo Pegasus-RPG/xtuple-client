@@ -77,7 +77,6 @@ public slots:
     virtual void sPopulate();
     virtual void sSave();
     virtual void sClose();
-    virtual void sStyleChanged();
 
     virtual void sFillList();
     virtual void sNew();

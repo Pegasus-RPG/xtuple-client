@@ -133,11 +133,7 @@ configureWO::configureWO(QWidget* parent, const char* name, bool modal, Qt::WFla
   else
     _todate->setChecked(TRUE);
     
-  //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("Manufacture Configuration");
-  }
+  this->setCaption("Manufacture Configuration");
 }
 
 /*

@@ -143,11 +143,7 @@ configurePO::configurePO(QWidget* parent, const char* name, bool modal, Qt::WFla
 
   _defaultShipVia->setText(_metrics->value("DefaultPOShipVia"));
 
-  //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("Purchase Configuration");
-  }
+  this->setCaption("Purchase Configuration");
 }
 
 /*

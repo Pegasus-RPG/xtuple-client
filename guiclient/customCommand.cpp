@@ -91,22 +91,17 @@ customCommand::customCommand(QWidget* parent, const char* name, bool modal, Qt::
   _arguments->addColumn(tr("Order"), _whsColumn, Qt::AlignCenter );
   _arguments->addColumn(tr("Argument"), -1, Qt::AlignLeft );
   
-  //Remove this and update UI when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    _module->clear();
-    _module->addItem("Products");
-    _module->addItem("Inventory");
-    if (_metrics->value("Application") == "OpenMFG")
-      _module->addItem("Schedule");
-    _module->addItem("Purchase");
-    _module->addItem("Manufacture");
-    _module->addItem("CRM");
-    _module->addItem("Sales");
-    _module->addItem("Accounting");
-    _module->addItem("System");
-  }
-
+  _module->clear();
+  _module->addItem("Products");
+  _module->addItem("Inventory");
+  if (_metrics->value("Application") == "OpenMFG")
+    _module->addItem("Schedule");
+  _module->addItem("Purchase");
+  _module->addItem("Manufacture");
+  _module->addItem("CRM");
+  _module->addItem("Sales");
+  _module->addItem("Accounting");
+  _module->addItem("System");
 }
 
 /*

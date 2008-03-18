@@ -92,11 +92,7 @@ configureMS::configureMS(QWidget* parent, const char* name, bool modal, Qt::WFla
   else
     _bufferMgt->hide();
     
-  //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("Schedule Configuration");
-  }
+  this->setCaption("Schedule Configuration");
 }
 
 /*

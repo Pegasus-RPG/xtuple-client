@@ -158,11 +158,7 @@ configurePD::configurePD(QWidget* parent, const char* name, bool modal, Qt::WFla
       _revControl->setChecked(_metrics->boolean("RevControl"));
   }
   
-  //Remove this when old menu system goes away
-  if (!_preferences->boolean("UseOldMenu"))
-  {
-    this->setCaption("Products Configuration");
-  }
+  this->setCaption("Products Configuration");
 
   resize(minimumSize());
 }

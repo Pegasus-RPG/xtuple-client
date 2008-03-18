@@ -335,13 +335,11 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                zeroUncountedCountTagsByWarehouse.ui                                                   \
                idleShutdown.ui xdateinputdialog.ui xsltMap.ui
 
-HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface.h             \
+HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface.h                    \
                ../common/format.h SaveSizePositionEventFilter.h                                       \
                menuProducts.h menuInventory.h menuSchedule.h menuPurchase.h                           \
                menuManufacture.h menuCRM.h menuSales.h menuAccounting.h menuSystem.h                  \
-               moduleAP.h moduleAR.h moduleSO.h moduleCP.h moduleGL.h moduleIM.h                      \
-               moduleMS.h modulePD.h modulePM.h modulePO.h moduleSA.h moduleWO.h                      \
-               moduleSR.h moduleSys.h moduleCRM.h taxCache.h xmessagebox.h                            \
+               taxCache.h xmessagebox.h                                                               \
                absoluteCalendarItem.h accountNumber.h accountNumbers.h                                \
                accountingPeriod.h accountingPeriods.h accountingYearPeriod.h accountingYearPeriods.h  \
                addPoComment.h address.h addresses.h                                                   \
@@ -652,12 +650,9 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h xsltMap.h
 
 
-SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInterface.cpp      \
+SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInterface.cpp             \
                menuProducts.cpp menuInventory.cpp menuSchedule.cpp menuPurchase.cpp                   \
                menuManufacture.cpp menuCRM.cpp menuSales.cpp menuAccounting.cpp menuSystem.cpp        \
-               moduleAP.cpp moduleAR.cpp moduleSO.cpp moduleCP.cpp moduleGL.cpp                       \
-               moduleIM.cpp moduleMS.cpp modulePD.cpp modulePM.cpp modulePO.cpp                       \
-               moduleSA.cpp moduleWO.cpp moduleSR.cpp moduleSys.cpp moduleCRM.cpp                     \
                taxCache.cpp xmessagebox.cpp                                                           \
                absoluteCalendarItem.cpp accountNumber.cpp accountNumbers.cpp                          \
                accountingPeriod.cpp accountingPeriods.cpp accountingYearPeriod.cpp accountingYearPeriods.cpp \

@@ -80,7 +80,6 @@ userPreferences::userPreferences(QWidget* parent, const char* name, bool modal, 
 
   connect(_backgroundList,SIGNAL(clicked()),     this, SLOT(sBackgroundList()));
   connect(_close,         SIGNAL(clicked()),     this, SLOT(sClose()));
-  connect(_neo,           SIGNAL(toggled(bool)), this, SLOT(sStyleChanged()));
   connect(_save,          SIGNAL(clicked()),     this, SLOT(sSave()));
   connect(_selectedUser,  SIGNAL(toggled(bool)), this, SLOT(sPopulate()));
   connect(_user,          SIGNAL(newID(int)),    this, SLOT(sPopulate()));
@@ -216,10 +215,6 @@ void userPreferences::sPopulate()
   _itemCache->setChecked(_pref->boolean("UseItemCache"));
   _customerCache->setChecked(_pref->boolean("UseCustCache"));
   
-  _standard->setChecked(_pref->boolean("UseOldMenu"));
-  sStyleChanged();
-  	
-  //New Menus
   _inventoryMenu->setChecked(_pref->boolean("ShowIMMenu"));
   _productsMenu->setChecked(_pref->boolean("ShowPDMenu"));
   _scheduleMenu->setChecked(_pref->boolean("ShowMSMenu"));
@@ -238,37 +233,6 @@ void userPreferences::sPopulate()
   _salesToolbar->setChecked(_pref->boolean("ShowSOToolbar"));
   _accountingToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
   
-  //Old Menus  
-  _imMenu->setChecked(_pref->boolean("ShowIMMenu"));
-  _pdMenu->setChecked(_pref->boolean("ShowPDMenu"));
-  _msMenu->setChecked(_pref->boolean("ShowMSMenu"));
-  _cpMenu->setChecked(_pref->boolean("ShowCPMenu"));
-  _woMenu->setChecked(_pref->boolean("ShowWOMenu"));
-  _crmMenu->setChecked(_pref->boolean("ShowCRMMenu"));
-  _poMenu->setChecked(_pref->boolean("ShowPOMenu"));
-  _soMenu->setChecked(_pref->boolean("ShowSOMenu"));
-  _srMenu->setChecked(_pref->boolean("ShowSRMenu"));
-  _saMenu->setChecked(_pref->boolean("ShowSAMenu"));
-  _pmMenu->setChecked(_pref->boolean("ShowPMMenu"));
-  _arMenu->setChecked(_pref->boolean("ShowARMenu"));
-  _apMenu->setChecked(_pref->boolean("ShowAPMenu")); 
-  _glMenu->setChecked(_pref->boolean("ShowGLMenu"));
-
-  _imToolbar->setChecked(_pref->boolean("ShowIMToolbar"));
-  _pdToolbar->setChecked(_pref->boolean("ShowPDToolbar"));
-  _msToolbar->setChecked(_pref->boolean("ShowMSToolbar"));
-  _cpToolbar->setChecked(_pref->boolean("ShowCPToolbar"));
-  _woToolbar->setChecked(_pref->boolean("ShowWOToolbar"));
-  _crmToolbar->setChecked(_pref->boolean("ShowCRMToolbar"));
-  _poToolbar->setChecked(_pref->boolean("ShowPOToolbar"));
-  _soToolbar->setChecked(_pref->boolean("ShowSOToolbar"));
-  _srToolbar->setChecked(_pref->boolean("ShowSRToolbar"));
-  _saToolbar->setChecked(_pref->boolean("ShowSAToolbar"));
-  _pmToolbar->setChecked(_pref->boolean("ShowPMToolbar"));
-  _arToolbar->setChecked(_pref->boolean("ShowARToolbar"));
-  _apToolbar->setChecked(_pref->boolean("ShowAPToolbar")); 
-  _glToolbar->setChecked(_pref->boolean("ShowGLToolbar"));
-
   _fixedWidthFonts->setChecked(_pref->boolean("UsedFixedWidthFonts"));
   _listNumericItemsFirst->setChecked(_pref->boolean("ListNumericItemNumbersFirst"));
   _showSoitemAvailability->setChecked(_pref->boolean("ShowSOItemAvailability"));
@@ -285,11 +249,6 @@ void userPreferences::sPopulate()
   {
     _scheduleMenu->hide();
     _scheduleToolbar->hide();
-    
-    _msMenu->hide();
-    _msToolbar->hide();
-    _cpMenu->hide();
-    _cpToolbar->hide();
   }
   
   if (!_metrics->boolean("MultiWhs"))
@@ -306,60 +265,23 @@ void userPreferences::sSave()
   else
     _pref->set("BackgroundImageid", -1);
   
-  _pref->set("UseOldMenu", _standard->isChecked());
-  
-  if (_neo->isChecked())
-  {
-    _pref->set("ShowIMMenu", _inventoryMenu->isChecked());
-    _pref->set("ShowPDMenu", _productsMenu->isChecked());
-    _pref->set("ShowMSMenu", _scheduleMenu->isChecked());
-    _pref->set("ShowWOMenu", _manufactureMenu->isChecked());
-    _pref->set("ShowCRMMenu", _crmMenu2->isChecked());
-    _pref->set("ShowPOMenu", _purchaseMenu->isChecked());
-    _pref->set("ShowSOMenu", _salesMenu->isChecked());
-    _pref->set("ShowGLMenu", _accountingMenu->isChecked());
-  
-    _pref->set("ShowIMToolbar", _inventoryToolbar->isChecked());
-    _pref->set("ShowPDToolbar", _productsToolbar->isChecked());
-    _pref->set("ShowMSToolbar", _scheduleToolbar->isChecked());
-    _pref->set("ShowWOToolbar", _manufactureToolbar->isChecked());
-    _pref->set("ShowCRMToolbar", _crmToolbar2->isChecked());
-    _pref->set("ShowPOToolbar", _purchaseToolbar->isChecked());
-    _pref->set("ShowSOToolbar", _salesToolbar->isChecked());
-    _pref->set("ShowGLToolbar", _accountingToolbar->isChecked());
-  }
-  else
-  {
-    _pref->set("ShowIMMenu", _imMenu->isChecked());
-    _pref->set("ShowPDMenu", _pdMenu->isChecked());
-    _pref->set("ShowMSMenu", _msMenu->isChecked());
-    _pref->set("ShowCPMenu", _cpMenu->isChecked());
-    _pref->set("ShowWOMenu", _woMenu->isChecked());
-    _pref->set("ShowCRMMenu", _crmMenu->isChecked());
-    _pref->set("ShowPOMenu", _poMenu->isChecked());
-    _pref->set("ShowSOMenu", _soMenu->isChecked());
-    _pref->set("ShowSRMenu", _srMenu->isChecked());
-    _pref->set("ShowSAMenu", _saMenu->isChecked());
-    _pref->set("ShowPMMenu", _pmMenu->isChecked());
-    _pref->set("ShowAPMenu", _apMenu->isChecked());
-    _pref->set("ShowARMenu", _arMenu->isChecked());
-    _pref->set("ShowGLMenu", _glMenu->isChecked());
-  
-    _pref->set("ShowIMToolbar", _imToolbar->isChecked());
-    _pref->set("ShowPDToolbar", _pdToolbar->isChecked());
-    _pref->set("ShowMSToolbar", _msToolbar->isChecked());
-    _pref->set("ShowCPToolbar", _cpToolbar->isChecked());
-    _pref->set("ShowWOToolbar", _woToolbar->isChecked());
-    _pref->set("ShowCRMToolbar", _crmToolbar->isChecked());
-    _pref->set("ShowPOToolbar", _poToolbar->isChecked());
-    _pref->set("ShowSOToolbar", _soToolbar->isChecked());
-    _pref->set("ShowSRToolbar", _srToolbar->isChecked());
-    _pref->set("ShowSAToolbar", _saToolbar->isChecked());
-    _pref->set("ShowPMToolbar", _pmToolbar->isChecked());
-    _pref->set("ShowAPToolbar", _apToolbar->isChecked());
-    _pref->set("ShowARToolbar", _arToolbar->isChecked()); 
-    _pref->set("ShowGLToolbar", _glToolbar->isChecked());
-  }
+  _pref->set("ShowIMMenu", _inventoryMenu->isChecked());
+  _pref->set("ShowPDMenu", _productsMenu->isChecked());
+  _pref->set("ShowMSMenu", _scheduleMenu->isChecked());
+  _pref->set("ShowWOMenu", _manufactureMenu->isChecked());
+  _pref->set("ShowCRMMenu", _crmMenu2->isChecked());
+  _pref->set("ShowPOMenu", _purchaseMenu->isChecked());
+  _pref->set("ShowSOMenu", _salesMenu->isChecked());
+  _pref->set("ShowGLMenu", _accountingMenu->isChecked());
+ 
+  _pref->set("ShowIMToolbar", _inventoryToolbar->isChecked());
+  _pref->set("ShowPDToolbar", _productsToolbar->isChecked());
+  _pref->set("ShowMSToolbar", _scheduleToolbar->isChecked());
+  _pref->set("ShowWOToolbar", _manufactureToolbar->isChecked());
+  _pref->set("ShowCRMToolbar", _crmToolbar2->isChecked());
+  _pref->set("ShowPOToolbar", _purchaseToolbar->isChecked());
+  _pref->set("ShowSOToolbar", _salesToolbar->isChecked());
+  _pref->set("ShowGLToolbar", _accountingToolbar->isChecked());
   
   _pref->set("PreferredWarehouse", ((_noWarehouse->isChecked()) ? -1 : _warehouse->id())  );
   _pref->set("XCheckBox/forgetful", !_rememberCheckBoxes->isChecked());
@@ -398,18 +320,6 @@ void userPreferences::sClose()
     omfgThis->initMenuBar();
 
   reject();
-}
-
-void userPreferences::sStyleChanged()
-{
-  if(!_neo->isChecked())
-  {
-    _widgetStack->setCurrentIndex(0);
-  }
-  else
-  {
-    _widgetStack->setCurrentIndex(1);
-  }
 }
 
 void userPreferences::sFillList()

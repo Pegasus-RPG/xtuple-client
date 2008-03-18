@@ -110,22 +110,6 @@
 #include "menuAccounting.h"
 #include "menuSystem.h"
 
-#include "moduleIM.h"
-#include "moduleMS.h"
-#include "moduleCP.h"
-#include "modulePD.h"
-#include "moduleWO.h"
-#include "modulePO.h"
-#include "moduleSO.h"
-#include "moduleSR.h"
-#include "moduleSA.h"
-#include "modulePM.h"
-#include "moduleAR.h"
-#include "moduleAP.h"
-#include "moduleGL.h"
-#include "moduleSys.h"
-#include "moduleCRM.h"
-
 #include "timeoutHandler.h"
 #include "idleShutdown.h"
 #include "inputManager.h"
@@ -524,179 +508,69 @@ void GUIClient::initMenuBar()
   while(!toolbars.isEmpty())
     delete toolbars.takeFirst();
 
-  if (!_preferences->boolean("UseOldMenu"))
+  if (_preferences->boolean("ShowPDMenu"))
   {
-      if (_preferences->boolean("ShowPDMenu"))
-      {
-          _splash->showMessage(tr("Initializing the Products Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          productsMenu = new menuProducts(this);
-      }
+    _splash->showMessage(tr("Initializing the Products Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    productsMenu = new menuProducts(this);
+  }
       
-      if (_preferences->boolean("ShowIMMenu"))
-      {
-          _splash->showMessage(tr("Initializing the Inventory Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          inventoryMenu = new menuInventory(this);
-      }
+  if (_preferences->boolean("ShowIMMenu"))
+  {
+    _splash->showMessage(tr("Initializing the Inventory Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    inventoryMenu = new menuInventory(this);
+  }
       
-      if (_metrics->value("Application") == "OpenMFG")
-      {
-          if (_preferences->boolean("ShowMSMenu"))
-          {
-              _splash->showMessage(tr("Initializing the Scheduling Module"), SplashTextAlignment, SplashTextColor);
-              qApp->processEvents();
-              scheduleMenu = new menuSchedule(this);
-          }
-      }
-      
-      if (_preferences->boolean("ShowPOMenu"))
-      {
-          _splash->showMessage(tr("Initializing the Purchase Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          purchaseMenu = new menuPurchase(this);
-      }
-      
-      if (_preferences->boolean("ShowWOMenu"))
-      {
-          _splash->showMessage(tr("Initializing the Manufacture Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          manufactureMenu = new menuManufacture(this);
-      }
-      
-      if (_preferences->boolean("ShowCRMMenu"))
-      {
-          _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          crmMenu = new menuCRM(this);
-      }
-      
-      if (_preferences->boolean("ShowSOMenu"))
-      {
-          _splash->showMessage(tr("Initializing the Sales Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          salesMenu = new menuSales(this);
-      }
-      
-      if (_preferences->boolean("ShowGLMenu"))
-      {
-          _splash->showMessage(tr("Initializing the Accounting Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          accountingMenu = new menuAccounting(this);
-      }
-      
-      _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
+  if (_metrics->value("Application") == "OpenMFG")
+  {
+    if (_preferences->boolean("ShowMSMenu"))
+    {
+      _splash->showMessage(tr("Initializing the Scheduling Module"), SplashTextAlignment, SplashTextColor);
       qApp->processEvents();
-      systemMenu = new menuSystem(this);
-
+      scheduleMenu = new menuSchedule(this);
+    }
   }
-  else
+  
+  if (_preferences->boolean("ShowPOMenu"))
   {
-      if (_preferences->boolean("ShowIMMenu"))
-      {
-          _splash->showMessage(tr("Initializing the I/M Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          imModule = new moduleIM(this);
-      }
-      
-      if (_preferences->boolean("ShowPDMenu"))
-      {
-          _splash->showMessage(tr("Initializing the P/D Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          pdModule = new modulePD(this);
-      }
-      
-      if (_metrics->value("Application") == "OpenMFG")
-      {
-          if (_preferences->boolean("ShowMSMenu"))
-          {
-              _splash->showMessage(tr("Initializing the M/S Module"), SplashTextAlignment, SplashTextColor);
-              qApp->processEvents();
-              msModule = new moduleMS(this);
-          }
-          
-          if (_preferences->boolean("ShowCPMenu"))
-          {
-              _splash->showMessage(tr("Initializing the C/P Module"), SplashTextAlignment, SplashTextColor);
-              qApp->processEvents();
-              cpModule = new moduleCP(this);
-          }
-      }
-      
-      if (_preferences->boolean("ShowPOMenu"))
-      {
-          _splash->showMessage(tr("Initializing the P/O Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          poModule = new modulePO(this);
-      }
-      
-      if (_preferences->boolean("ShowWOMenu"))
-      {
-          _splash->showMessage(tr("Initializing the W/O Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          woModule = new moduleWO(this);
-      }
-      
-      if (_preferences->boolean("ShowCRMMenu"))
-      {
-          _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          crmModule = new moduleCRM(this);
-      }
-      
-      if (_preferences->boolean("ShowSOMenu"))
-      {
-          _splash->showMessage(tr("Initializing the S/O Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          soModule = new moduleSO(this);
-      }
-      
-      if (_preferences->boolean("ShowSRMenu"))
-      {
-          _splash->showMessage(tr("Initializing the S/R Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          srModule = new moduleSR(this);
-      }
-      
-      if (_preferences->boolean("ShowSAMenu"))
-      {
-          _splash->showMessage(tr("Initializing the S/A Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          saModule = new moduleSA(this);
-      }
-      
-      if (_preferences->boolean("ShowPMMenu"))
-      {
-          _splash->showMessage(tr("Initializing the P/M Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          pmModule = new modulePM(this);
-      }
-      
-      if (_preferences->boolean("ShowAPMenu"))
-      {
-          _splash->showMessage(tr("Initializing the A/P Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          apModule = new moduleAP(this);
-      }
-      
-      if (_preferences->boolean("ShowARMenu"))
-      {
-          _splash->showMessage(tr("Initializing the A/R Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          arModule = new moduleAR(this);
-      }
-      
-      if (_preferences->boolean("ShowGLMenu"))
-      {
-          _splash->showMessage(tr("Initializing the G/L Module"), SplashTextAlignment, SplashTextColor);
-          qApp->processEvents();
-          glModule = new moduleGL(this);
-      }
- 
-     _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
-     qApp->processEvents();
-     sysModule = new moduleSys(this);
+    _splash->showMessage(tr("Initializing the Purchase Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    purchaseMenu = new menuPurchase(this);
   }
+  
+  if (_preferences->boolean("ShowWOMenu"))
+  {
+    _splash->showMessage(tr("Initializing the Manufacture Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    manufactureMenu = new menuManufacture(this);
+  }
+  
+  if (_preferences->boolean("ShowCRMMenu"))
+  {
+    _splash->showMessage(tr("Initializing the CRM Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    crmMenu = new menuCRM(this);
+  }
+  
+  if (_preferences->boolean("ShowSOMenu"))
+  {
+    _splash->showMessage(tr("Initializing the Sales Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    salesMenu = new menuSales(this);
+  }
+      
+  if (_preferences->boolean("ShowGLMenu"))
+  {
+    _splash->showMessage(tr("Initializing the Accounting Module"), SplashTextAlignment, SplashTextColor);
+    qApp->processEvents();
+    accountingMenu = new menuAccounting(this);
+  }
+  
+  _splash->showMessage(tr("Initializing the System Module"), SplashTextAlignment, SplashTextColor);
+  qApp->processEvents();
+  systemMenu = new menuSystem(this);
+
   // QSettings config("OpenMFG", "OpenMFG");
   // restoreState(config.value("MainWindowState", QByteArray()).toByteArray(), 1);
 
@@ -821,17 +695,13 @@ void GUIClient::sTick()
           statusBar()->setMinimumHeight(36);
           statusBar()->addWidget(_eventButton);
 
-          if(!_preferences->boolean("UseOldMenu"))
-            connect(_eventButton, SIGNAL(clicked()), systemMenu, SLOT(sEventManager()));
-          else
-            connect(_eventButton, SIGNAL(clicked()), sysModule, SLOT(sEventManager()));
+          connect(_eventButton, SIGNAL(clicked()), systemMenu, SLOT(sEventManager()));
         }
       }
       else if ( (_eventButton) && (_eventButton->isVisible()) )
         _eventButton->hide();
 
-      if (_metrics->value("Application") != "OpenMFG" &&
-          !_preferences->boolean("UseOldMenu"))
+      if (_metrics->value("Application") != "OpenMFG")
       {
         if (_registerButton)
           _registerButton->setVisible(_metrics->value("Registered") != "Yes");

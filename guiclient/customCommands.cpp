@@ -137,10 +137,6 @@ void customCommands::sFillList()
             "  WHERE ((cmd_module='CRM') "
             "  OR (cmd_module ");
             
-  //Remove this when old menu system goes away
-  if (_preferences->boolean("UseOldMenu"))
-    sql += " NOT ";
-  
   sql +=    " IN ('Products','Inventory','Schedule','Purchase', "
             " 'Manufacture','CRM','Sales','Accounting','System'))) "
             " ORDER BY cmd_module, cmd_title;";
