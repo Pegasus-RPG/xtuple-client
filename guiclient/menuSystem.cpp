@@ -104,6 +104,7 @@
 #include "customCommands.h"
 #include "countries.h"
 #include "groups.h"
+#include "scripts.h"
 
 #include "fixSerial.h"
 #include "importXML.h"
@@ -225,6 +226,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.shifts",		tr("S&hifts..."),	SLOT(sShifts()),	masterInfoMenu,	(_privileges->check("ViewShifts") || _privileges->check("MaintainShifts")) ,	NULL,	NULL, _metrics->boolean("Routings")	},
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, configureIE::userHasPriv(),	NULL, NULL, true },
     { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), masterInfoMenu, _privileges->check("MaintainCustomCommands"),	NULL, NULL, true },
+    { "sys.scripts",    	tr("Scripts..."),	SLOT(sScripts()), masterInfoMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
 
     { "menu",			tr("&System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
     { "sys.fixSerial",		tr("&Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privileges->check("FixSerial"), NULL, NULL, true	},
@@ -560,6 +562,11 @@ void menuSystem::sConfigureIE()
 void menuSystem::sCustomCommands()
 {
   omfgThis->handleNewWindow(new customCommands());
+}
+
+void menuSystem::sScripts()
+{
+  omfgThis->handleNewWindow(new scripts());
 }
 
 void menuSystem::sConfigureIM()

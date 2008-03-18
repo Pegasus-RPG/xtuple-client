@@ -283,6 +283,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                salesOrder.ui salesOrderInformation.ui salesOrderItem.ui                               \
                salesReps.ui salesRep.ui                                                               \
                salesHistoryInformation.ui scrapTrans.ui scrapWoMaterialFromWIP.ui                     \
+               scriptEditor.ui scripts.ui                                                             \
                searchForCRMAccount.ui searchForContact.ui searchForItem.ui                            \
                selectBankAccount.ui selectBillingQty.ui selectOrderForBilling.ui                      \
                selectedPayments.ui selectPayment.ui selectPayments.ui                                 \
@@ -594,6 +595,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                salesOrder.h salesOrderInformation.h salesOrderItem.h                                  \
                salesReps.h salesRep.h                                                                 \
                salesHistoryInformation.h scrapTrans.h scrapWoMaterialFromWIP.h                        \
+               scriptEditor.h scripts.h                                                               \
                scriptquery.h scripttoolbox.h                                                          \
                searchForCRMAccount.h searchForContact.h searchForItem.h                               \
                selectBankAccount.h selectBillingQty.h selectOrderForBilling.h                         \
@@ -913,6 +915,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                salesOrder.cpp salesOrderInformation.cpp salesOrderItem.cpp                            \
                salesReps.cpp salesRep.cpp                                                             \
                salesHistoryInformation.cpp scrapTrans.cpp scrapWoMaterialFromWIP.cpp                  \
+               scriptEditor.cpp scripts.cpp                                                           \
                scriptquery.cpp scripttoolbox.cpp                                                      \
                searchForCRMAccount.cpp searchForContact.cpp searchForItem.cpp                         \
                selectBankAccount.cpp selectBillingQty.cpp selectOrderForBilling.cpp                   \
@@ -921,7 +924,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                shippingForm.cpp shippingForms.cpp shipTo.cpp                                          \
                shippingChargeType.cpp shippingChargeTypes.cpp                                         \
                shippingZones.cpp shippingZone.cpp                                                     \
-               shipVias.cpp shipVia.cpp splitReceipt.cpp standardOperations.cpp standardOperation.cpp   \
+               shipVias.cpp shipVia.cpp splitReceipt.cpp standardOperations.cpp standardOperation.cpp \
                standardJournal.cpp standardJournals.cpp                                               \
                standardJournalGroup.cpp standardJournalGroupItem.cpp standardJournalGroups.cpp        \
                standardJournalItem.cpp subaccount.cpp subaccounts.cpp subAccntTypes.cpp subAccntType.cpp \

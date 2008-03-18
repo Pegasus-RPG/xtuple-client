@@ -141,6 +141,7 @@ class menuSystem : public QObject
     void sDepartments();
     void sShifts();
     void sCustomCommands();
+    void sScripts();
 
     void sFixSerial();
     void sImportXML();
