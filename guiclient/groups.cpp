@@ -157,8 +157,8 @@ void groups::sNew()
   group newdlg(this, "", TRUE);
   newdlg.set(params);
   
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  newdlg.exec();
+  sFillList();
 }
 
 void groups::sEdit()
@@ -170,8 +170,8 @@ void groups::sEdit()
   group newdlg(this, "", TRUE);
   newdlg.set(params);
   
-  if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+  newdlg.exec();
+  sFillList();
 }
 
 void groups::sView()

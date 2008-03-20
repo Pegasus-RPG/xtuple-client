@@ -134,7 +134,7 @@ enum SetResponse group::set(const ParameterList &pParams)
     {
       q.exec("SELECT NEXTVAL('grp_grp_id_seq') AS grp_id;");
       if (q.first())
-        _grpid = q.value("invchead_id").toInt();
+        _grpid = q.value("grp_id").toInt();
       else if (q.lastError().type() != QSqlError::None)
       {
         systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
@@ -145,7 +145,7 @@ enum SetResponse group::set(const ParameterList &pParams)
       q.exec("BEGIN;");
       q.prepare( "INSERT INTO grp "
                  "( grp_id, grp_name, grp_descrip)"
-                 "VALUES( :grp_id, '', '' );" );
+                 "VALUES( :grp_id, :grp_id, '' );" );
       q.bindValue(":grp_id", _grpid);
       q.exec();
       if (q.lastError().type() != QSqlError::None)
