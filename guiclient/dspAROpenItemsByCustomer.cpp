@@ -253,16 +253,16 @@ void dspAROpenItemsByCustomer::sFillList()
              "       formatDate(aropen_docdate) AS f_docdate,"
              "       formatDate(aropen_duedate) AS f_duedate,"
              "       formatMoney(aropen_amount) AS f_amount,"
-             "       formatMoney(aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate))) AS f_paid,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid+aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate))) * -1)"
-             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid+aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
-             "            ELSE (aropen_amount - aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
+             "       formatMoney(aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate))) AS f_paid,"
+             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate))) * -1)"
+             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
+             "            ELSE (aropen_amount - aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
              "       END AS balance,"
              "       currConcat(aropen_curr_id) AS currAbbr,"
              "       currToBase(aropen_curr_id,"
-             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid+aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate))) * -1)"
-             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid+aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
-             "            ELSE (aropen_amount - aropen_paid+SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
+             "       CASE WHEN (aropen_doctype IN ('C', 'R')) THEN ((aropen_amount - aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate))) * -1)"
+             "            WHEN (aropen_doctype IN ('I', 'D')) THEN (aropen_amount - aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
+             "            ELSE (aropen_amount - aropen_paid + SUM(currtobase(arapply_curr_id,arapply_applied,arapply_postdate)))"
              "       END, aropen_docdate) AS base_balance "
              "  FROM aropen "
              "  LEFT OUTER JOIN arapply ON (((aropen_id=arapply_source_aropen_id) "
@@ -276,10 +276,10 @@ void dspAROpenItemsByCustomer::sFillList()
              " ORDER BY aropen_docdate;" );
   _dates->bindValue(q);
   q.bindValue(":cust_id", _cust->id());
-  q.bindValue(":creditMemo", tr("C/M"));
-  q.bindValue(":debitMemo", tr("D/M"));
+  q.bindValue(":creditMemo", tr("Credit Memo"));
+  q.bindValue(":debitMemo", tr("Debit Memo"));
   q.bindValue(":invoice", tr("Invoice"));
-  q.bindValue(":cashdeposit", tr("C/D"));
+  q.bindValue(":cashdeposit", tr("Cash Deposit"));
   q.bindValue(":asofdate", _asOf->date());
   q.exec();
   if (q.first())
