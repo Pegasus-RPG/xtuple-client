@@ -59,7 +59,7 @@ bundle() {
   mkdir "$BUNDLEDIR"                                                  || return 3
 
   if ! $DEMO ; then
-    mv "$BASEDIR/bin/$BINARY" "$BUNDLEDIR"                            || return 4
+    cp -R -L "$BASEDIR/bin/$BINARY" "$BUNDLEDIR"                      || return 4
     mkdir "$BUNDLEDIR/${BINARY}/Contents/Resources/helpXTupleGUIClient" || return 5
     cp "$BASEDIR/share/empty_help.html" \
        "$BASEDIR/share/XTupleGUIClient.adp" \
@@ -199,7 +199,11 @@ if $BUILD ; then
 fi
 
 cd "$BASEDIR"/guiclient                                                 || exit 4
-./fixPackage                                                            || exit 4
+if [ `set -o | awk '/xtrace/ {print $2}'` = "on" ] ; then
+  sh -x ./fixPackage                                                    || exit 4
+else
+  ./fixPackage                                                          || exit 4
+fi
 cd "$BASEDIR"/bin                                                       || exit 4
 bundle xtuple "${BASEDIR}/.."                                           || exit 4
 
