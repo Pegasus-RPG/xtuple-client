@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>732</height>
+    <height>819</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -671,6 +671,11 @@
                   <string/>
                  </property>
                 </item>
+                <item>
+                 <property name="text" >
+                  <string/>
+                 </property>
+                </item>
                </widget>
               </item>
              </layout>
@@ -1220,7 +1225,11 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="_graceDays" />
+              <widget class="QSpinBox" name="_graceDays" >
+               <property name="maximum" >
+                <number>9999</number>
+               </property>
+              </widget>
              </item>
             </layout>
            </widget>
@@ -2236,7 +2245,6 @@
   <tabstop>_close</tabstop>
   <tabstop>_chartempl</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
