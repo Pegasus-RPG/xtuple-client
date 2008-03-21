@@ -127,7 +127,7 @@ void dspTimePhasedOpenARItems::languageChange()
 
 void dspTimePhasedOpenARItems::sPrint()
 {
-  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked()))
   {
     QString reportName;
     if(_custom->isChecked())
@@ -151,7 +151,7 @@ void dspTimePhasedOpenARItems::sPrint()
 
 void dspTimePhasedOpenARItems::sSubmit()
 {
-  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked() && _asOf->isValid()))
+  if ((_custom->isChecked() && _periods->isPeriodSelected()) || (!_custom->isChecked()))
   {
     ParameterList params(buildParameters());
     if(_custom->isChecked())
