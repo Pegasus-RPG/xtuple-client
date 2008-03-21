@@ -121,10 +121,10 @@ void CLineEdit::sEllipses()
 
 void CLineEdit::sSearch()
 {
-  CRMAcctSearch newdlg(this);
-  newdlg.setId(_id);
+  CRMAcctSearch * newdlg = new CRMAcctSearch(this);
+  newdlg->setId(_id);
 
-  int id = newdlg.exec();
+  int id = newdlg->exec();
   if (id != QDialog::Rejected)
   {
     setId(id);
@@ -136,10 +136,10 @@ void CLineEdit::sSearch()
 
 void CLineEdit::sList()
 {
-  CRMAcctList newdlg(this);
-  newdlg.setId(_id);
+  CRMAcctList * newdlg = new CRMAcctList(this);
+  newdlg->setId(_id);
 
-  int id = newdlg.exec();
+  int id = newdlg->exec();
   setId(id);
 
   if (_autoFocus && id != -1)

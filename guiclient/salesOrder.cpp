@@ -1214,7 +1214,7 @@ void salesOrder::sHandleOrderNumber()
     {
       query.prepare("SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
       query.bindValue(":sohead_id", _soheadid);
-      query.bindValue(":sohead_number", _orderNumberGen);
+      query.bindValue(":sohead_number", QString("%1").arg(_orderNumberGen));
       query.exec();
       if (query.first())
       {
@@ -1234,7 +1234,7 @@ void salesOrder::sHandleOrderNumber()
       query.prepare( "SELECT cohead_id "
                      "FROM cohead "
                      "WHERE (cohead_number=:cohead_number);" );
-      query.bindValue(":cohead_number", _orderNumber->text().toInt());
+      query.bindValue(":cohead_number", _orderNumber->text());
       query.exec();
       if (query.first())
       {
@@ -1793,7 +1793,7 @@ void salesOrder::sDelete()
         {
           q.prepare( "SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
           q.bindValue(":sohead_id", _soheadid);
-          q.bindValue(":sohead_number", _orderNumber->text().toInt());
+          q.bindValue(":sohead_number", _orderNumber->text());
           q.exec();
           if (q.first())
           {
@@ -1890,7 +1890,7 @@ void salesOrder::populate()
                 "       cohead_shipchrg_id, cohead_shipform_id,"
                 "       cohead_misc,"
                 "       cohead_misc_accnt_id, cohead_misc_descrip,"
-                "       CASE WHEN(cohead_wasquote) THEN COALESCE(cohead_quote_number, text(cohead_number))"
+                "       CASE WHEN(cohead_wasquote) THEN COALESCE(cohead_quote_number, cohead_number)"
                 "            ELSE formatBoolYN(cohead_wasquote)"
                 "       END AS fromQuote,"
                 "       cohead_shipcomplete, cohead_prj_id,"
@@ -1902,7 +1902,7 @@ void salesOrder::populate()
     so.exec();
     if (so.first())
     {
-      _orderNumber->setText(so.value("cohead_number"));
+      _orderNumber->setText(so.value("cohead_number").toString());
       _orderNumber->setEnabled(FALSE);
 
       _orderDate->setDate(so.value("cohead_orderdate").toDate(), true);
@@ -2233,7 +2233,7 @@ void salesOrder::sFillItemList()
                 "       CASE WHEN (coitem_status='O' AND (SELECT cust_creditstatus FROM custinfo WHERE cust_id=:cust_id)='H') THEN 'H'"
                 "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
                 "                                            FROM cohead, invchead, invcitem"
-                "                                           WHERE ((invchead_ordernumber=cohead_number)"
+                "                                           WHERE ((CAST(invchead_ordernumber AS text)=cohead_number)"
                 "                                             AND  (invcitem_invchead_id=invchead_id)"
                 "                                             AND  (invcitem_item_id=item_id)"
                 "                                             AND  (invcitem_warehous_id=warehous_id)"
@@ -2241,7 +2241,7 @@ void salesOrder::sFillItemList()
                 "                                             AND  (cohead_id=coitem_cohead_id))) >= coitem_qtyord)) THEN 'I'"
                 "            WHEN (coitem_status='O' AND ((SELECT SUM(invcitem_billed)"
                 "                                            FROM cohead, invchead, invcitem"
-                "                                           WHERE ((invchead_ordernumber=cohead_number)"
+                "                                           WHERE ((CAST(invchead_ordernumber AS text)=cohead_number)"
                 "                                             AND  (invcitem_invchead_id=invchead_id)"
                 "                                             AND  (invcitem_item_id=item_id)"
                 "                                             AND  (invcitem_warehous_id=warehous_id)"
@@ -2487,7 +2487,7 @@ bool salesOrder::deleteForCancel()
   {
     query.prepare("SELECT deleteSO(:sohead_id, :sohead_number) AS result;");
     query.bindValue(":sohead_id", _soheadid);
-    query.bindValue(":sohead_number", _orderNumber->text().toInt());
+    query.bindValue(":sohead_number", _orderNumber->text());
     query.exec();
     if (query.first())
     {

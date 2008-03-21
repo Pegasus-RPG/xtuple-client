@@ -191,7 +191,7 @@ void PoLineEdit::setNumber(int pNumber)
   poheadid.prepare( "SELECT pohead_id "
                     "FROM pohead "
                     "WHERE (pohead_number=:pohead_number);" );
-  poheadid.bindValue(":pohead_number", pNumber);
+  poheadid.bindValue(":pohead_number", QString("%1").arg(pNumber));
   poheadid.exec();
   if (poheadid.first())
     setId(poheadid.value("pohead_id").toInt());

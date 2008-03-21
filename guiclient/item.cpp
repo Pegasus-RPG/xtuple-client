@@ -411,9 +411,24 @@ void item::saveCore()
   _inTransaction = true;
 
   q.prepare("INSERT INTO item"
-            "      (item_id, item_inv_uom_id, item_price_uom_id)"
-            "VALUES(:item_id, :item_inv_uom_id, :item_inv_uom_id);");
+            "      (item_id, item_number, item_Descrip1, item_descrip2,"
+            "       item_classcode_id,"
+            "       item_picklist, item_sold, item_fractional, item_active,"
+            "       item_type,"
+            "       item_prodweight, item_packweight, item_prodcat_id,"
+            "       item_exclusive, item_listprice, item_maxcost,"
+            "       item_inv_uom_id, item_price_uom_id)"
+            "VALUES(:item_id, :item_number, '', '',"
+            "       :item_classcode_id,"
+            "       false, false, false, false,"
+            "       :item_type,"
+            "       0.0, 0.0, -1,"
+            "       true, 0.0, 0.0,"
+            "       :item_inv_uom_id, :item_inv_uom_id);");
   q.bindValue(":item_id", _itemid);
+  q.bindValue(":item_number", _itemNumber->text().stripWhiteSpace().upper());
+  q.bindValue(":item_type", _itemTypes[_itemtype->currentItem()]);
+  q.bindValue(":item_classcode_id", _classcode->id());
   q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
   if(!q.exec() || q.lastError().type() != QSqlError::None)
   {

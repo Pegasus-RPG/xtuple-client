@@ -196,11 +196,11 @@ void VendorLineEdit::sEllipses()
 
 void VendorLineEdit::sSearch()
 {
-  CRMAcctSearch newdlg(this);
-  newdlg.setId(_id);
-  newdlg.setShowInactive(_type != __activeVendors);
+  CRMAcctSearch * newdlg = new CRMAcctSearch(this);
+  newdlg->setId(_id);
+  newdlg->setShowInactive(_type != __activeVendors);
 
-  int id = newdlg.exec();
+  int id = newdlg->exec();
 
   if (id != QDialog::Rejected)
   {
@@ -213,11 +213,11 @@ void VendorLineEdit::sSearch()
 
 void VendorLineEdit::sList()
 {
-  CRMAcctList newdlg(this);
-  newdlg.setId(_id);
-  newdlg.setShowInactive(_type != __activeVendors);
+  CRMAcctList * newdlg = new CRMAcctList(this);
+  newdlg->setId(_id);
+  newdlg->setShowInactive(_type != __activeVendors);
 
-  int newId = newdlg.exec();
+  int newId = newdlg->exec();
   setId(newId);
 
   if (newId != -1)
