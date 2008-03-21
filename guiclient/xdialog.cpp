@@ -150,31 +150,40 @@ void XDialog::showEvent(QShowEvent *event)
     if(!pos.isNull() && availableGeometry.contains(r) && settings.value(objName + "/geometry/rememberPos", true).toBool())
       move(pos);
 
-    // load and run an QtScript that applies to this window
-qDebug() << "Looking for a script on window " << objectName();
-    q.prepare("SELECT script_source, script_order"
-              "  FROM script"
-              " WHERE((script_name=:script_name)"
-              "   AND (script_enabled))"
-              " ORDER BY script_order;");
-    q.bindValue(":script_name", objectName());
-    q.exec();
-    if(q.first())
+    QStringList parts = objectName().split(" ");
+    QStringList search_parts;
+    QString oName;
+    while(!parts.isEmpty())
     {
-      QString script = q.value("script_source").toString();
-      if(!_private->_engine)
-      {
-        _private->_engine = new QScriptEngine();
-        omfgThis->loadScriptGlobals(_private->_engine);
-        QScriptValue mywindow = _private->_engine->newQObject(this);
-        _private->_engine->globalObject().setProperty("mywindow", mywindow);
-      }
+      search_parts.append(parts.takeFirst());
+      oName = search_parts.join(" ");
 
-      QScriptValue result = _private->_engine->evaluate(script);
-      if (_private->_engine->hasUncaughtException())
+      // load and run an QtScript that applies to this window
+  qDebug() << "Looking for a script on window " << oName;
+      q.prepare("SELECT script_source, script_order"
+                "  FROM script"
+                " WHERE((script_name=:script_name)"
+                "   AND (script_enabled))"
+                " ORDER BY script_order;");
+      q.bindValue(":script_name", oName);
+      q.exec();
+      if(q.first())
       {
-        int line = _private->_engine->uncaughtExceptionLineNumber();
-        qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+        QString script = q.value("script_source").toString();
+        if(!_private->_engine)
+        {
+          _private->_engine = new QScriptEngine();
+          omfgThis->loadScriptGlobals(_private->_engine);
+          QScriptValue mywindow = _private->_engine->newQObject(this);
+          _private->_engine->globalObject().setProperty("mywindow", mywindow);
+        }
+  
+        QScriptValue result = _private->_engine->evaluate(script);
+        if (_private->_engine->hasUncaughtException())
+        {
+          int line = _private->_engine->uncaughtExceptionLineNumber();
+          qDebug() << "uncaught exception at line" << line << ":" << result.toString();
+        }
       }
     }
   }
