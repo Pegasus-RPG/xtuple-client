@@ -122,13 +122,18 @@ SELECT COALESCE(shiphead_number::TEXT, 'Not Issued To Shipping') AS shiphead_num
        item_descrip2,
 
        formatQty(coitem_qtyord) AS ordered,
-       formatQty(qtyAtShipping('SO', coitem_id)) AS atshipping,
+       formatQty(&lt;? if exists("shiphead_id") ?>
+                 qtyInShipment('SO', coitem_id, &lt;? value("shiphead_id") ?>)
+                 &lt;? else ?> qtyAtShipping('SO', coitem_id) &lt;? endif ?>
+                ) AS atshipping,
 
        formatQty(roundUp((coitem_qtyord * coitem_qty_invuomratio) /
                          CASE WHEN(item_shipinvrat = 0) THEN 1
                                                         ELSE item_shipinvrat
                          END)) AS shipordered,
-       formatQty(roundUp(qtyAtShipping('SO', coitem_id) /
+       formatQty(roundUp(&lt;? if exists("shiphead_id") ?>
+                 qtyInShipment('SO', coitem_id, &lt;? value("shiphead_id") ?>)
+                 &lt;? else ?> qtyAtShipping('SO', coitem_id) &lt;? endif ?> /
                          CASE WHEN(item_shipinvrat = 0) THEN 1
                                                         ELSE item_shipinvrat
                          END)) AS shipatshipping,
@@ -191,13 +196,18 @@ SELECT 2 AS groupby,
        item_descrip2,
 
        formatQty(toitem_qty_ordered) AS ordered,
-       formatQty(qtyAtShipping('TO', toitem_id)) AS atshipping,
-
+       formatQty(&lt;? if exists("shiphead_id") ?>
+                 qtyInShipment('TO', toitem_id, &lt;? value("shiphead_id") ?>)
+                 &lt;? else ?> qtyAtShipping('TO', toitem_id) &lt;? endif ?>
+                ) AS atshipping,
        formatQty(roundUp(toitem_qty_ordered /
                          CASE WHEN (item_shipinvrat = 0) THEN 1
                                                          ELSE item_shipinvrat
                          END)) AS shipordered,
-       formatQty(roundUp(qtyAtShipping('TO', toitem_id) /
+       formatQty(roundUp(&lt;? if exists("shiphead_id") ?>
+                         qtyInShipment('TO', toitem_id, &lt;? value("shiphead_id")?>)
+                         &lt;? else ?> qtyAtShipping('TO', toitem_id) &lt;? endif ?>
+                         /
                          CASE WHEN (item_shipinvrat = 0) THEN 1
                                                          ELSE item_shipinvrat
                          END)) AS shipatshipping,
