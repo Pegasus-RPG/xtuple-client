@@ -3,12 +3,13 @@ SELECT evntlog_id, evntlog_ord_id, formatDate(evntlog_newdate),
        formatDateTime(evntlog_evnttime),
        formatDateTime(evntlog_dispatched),
        evnttype_name, evntlog_number 
-FROM evnttype, evntlog LEFT OUTER JOIN warehous ON (evntlog_warehous_id=warehous_id <? if exists("warehous_id") ?>
+FROM evntlog, evnttype, warehous 
+WHERE ( (evntlog_evnttype_id=evnttype_id)
+ AND (evntlog_warehous_id=warehous_id)
+ AND (evntlog_username=<? value("username") ?>)
+<? if exists("warehous_id") ?>
  AND (warehous_id=<? value("warehous_id") ?>)
 <? endif ?>
-)
-WHERE ( (evntlog_evnttype_id=evnttype_id)
- AND (evntlog_username=<? value("username") ?>)
 <? if not exists("showAcknowledged") ?>
  AND (evntlog_dispatched IS NULL)
 <? endif ?>
