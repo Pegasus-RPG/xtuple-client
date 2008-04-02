@@ -388,7 +388,7 @@ void itemSite::sSave()
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
                          "  itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod, "
-                         "  itemsite_warrstart ) "
+                         "  itemsite_autoreg) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
                          "  :itemsite_useparams, :itemsite_useparamsmanual, :itemsite_reorderlevel,"
@@ -406,7 +406,7 @@ void itemSite::sSave()
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
                          "  :itemsite_warrpurc, :itemsite_warrsell, :itemsite_warrperiod, "
-                         "  :itemsite_warrstart  );" );
+                         "  :itemsite_autoreg  );" );
   }
   else if (_mode == cEdit)
   {
@@ -482,7 +482,7 @@ void itemSite::sSave()
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
                          "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_warrsell=:itemsite_warrsell, "
-                         "    itemsite_warrperiod=:itemsite_warrperiod, itemsite_warrstart=:itemsite_warrstart, "
+                         "    itemsite_warrperiod=:itemsite_warrperiod, itemsite_autoreg=:itemsite_autoreg, "
                          "    itemsite_warehous_id=:itemsite_warehous_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
@@ -557,10 +557,7 @@ void itemSite::sSave()
   newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked(), 0));
   newItemSite.bindValue(":itemsite_warrsell", QVariant(_salesWarranty->isChecked(), 0));
   newItemSite.bindValue(":itemsite_warrperiod", _warrantyPeriod->value());
-  if (_salesWarranty->isChecked() && _warrantyShip->isChecked())
-    newItemSite.bindValue(":itemsite_warrstart", QString("S"));
-  else if (_salesWarranty->isChecked() && _warrantyReg->isChecked())
-    newItemSite.bindValue(":itemsite_warrstart", QString("R"));
+  newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked(), 0));
     
   newItemSite.exec();
   if (newItemSite.lastError().type() != QSqlError::None)
@@ -800,7 +797,7 @@ void itemSite::populate()
                     "       itemsite_ordergroup, itemsite_mps_timefence,"
                     "       itemsite_disallowblankwip, "
                     "       itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod,"
-                    "       itemsite_warrstart "
+                    "       itemsite_autoreg "
                     "FROM itemsite, item "
                     "WHERE ( (itemsite_item_id=item_id)"
                     " AND (itemsite_id=:itemsite_id) );" );
@@ -934,7 +931,7 @@ void itemSite::populate()
     {
       _salesWarranty->setChecked(itemsite.value("itemsite_warrsell").toBool());
       _warrantyPeriod->setValue(itemsite.value("itemsite_warrperiod").toInt());
-      _warrantyReg->setChecked(itemsite.value("itemsite_warrstart").toString()=="R");
+      _autoRegister->setChecked(itemsite.value("itemsite_autoreg").toBool());
     }
 
     _updates = TRUE;
@@ -980,7 +977,7 @@ void itemSite::clear()
   _purchWarranty->setChecked(FALSE);
   _salesWarranty->setChecked(FALSE);
   _warrantyPeriod->setValue(0);
-  _warrantyShip->setChecked(TRUE);
+  _autoRegister->setChecked(FALSE);
   _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
     
   populateLocations();
