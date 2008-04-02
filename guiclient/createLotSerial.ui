@@ -1,204 +1,35 @@
 <ui version="4.0" >
- <author></author>
- <comment></comment>
- <exportmacro></exportmacro>
  <class>createLotSerial</class>
  <widget class="QDialog" name="createLotSerial" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>458</width>
-    <height>102</height>
+    <width>473</width>
+    <height>172</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Create Lot/Serial #</string>
   </property>
-  <layout class="QHBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
-   <property name="spacing" >
-    <number>7</number>
-   </property>
-   <item>
-    <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="_lotSerialLit" >
+     <property name="text" >
+      <string>Lot/Serial #:</string>
      </property>
-     <property name="spacing" >
-      <number>0</number>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_lotSerialLit" >
-           <property name="text" >
-            <string>Lot/Serial #:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_expirationDateLit" >
-           <property name="text" >
-            <string>Expiration Date:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_qtyToAssignLit" >
-           <property name="text" >
-            <string>Qty. to Assign:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
-         <property name="spacing" >
-          <number>5</number>
-         </property>
-         <item>
-          <widget class="XLineEdit" name="_lotSerial" />
-         </item>
-         <item>
-          <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
-           <property name="spacing" >
-            <number>0</number>
-           </property>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="DLineEdit" name="_expiration" />
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>31</width>
-                 <height>10</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" >
-             <property name="margin" >
-              <number>0</number>
-             </property>
-             <property name="spacing" >
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="XLineEdit" name="_qtyToAssign" >
-               <property name="maximumSize" >
-                <size>
-                 <width>80</width>
-                 <height>32767</height>
-                </size>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer>
-               <property name="orientation" >
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeType" >
-                <enum>QSizePolicy::Expanding</enum>
-               </property>
-               <property name="sizeHint" >
-                <size>
-                 <width>132</width>
-                 <height>16</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </item>
-      </layout>
-     </item>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
-       </property>
-       <property name="sizeHint" >
-        <size>
-         <width>20</width>
-         <height>16</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-    </layout>
+    </widget>
    </item>
-   <item>
+   <item rowspan="4" row="0" column="2" >
     <layout class="QVBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
      <property name="spacing" >
       <number>0</number>
      </property>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
        </property>
@@ -248,34 +79,104 @@
      </item>
     </layout>
    </item>
+   <item row="1" column="0" >
+    <widget class="QLabel" name="_expirationDateLit" >
+     <property name="text" >
+      <string>Expiration Date:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="DLineEdit" name="_expiration" />
+   </item>
+   <item row="2" column="0" >
+    <widget class="QLabel" name="_warrantyDateLit" >
+     <property name="text" >
+      <string>Warranty Date:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="1" >
+    <widget class="DLineEdit" name="_warranty" />
+   </item>
+   <item row="3" column="0" >
+    <widget class="QLabel" name="_qtyToAssignLit" >
+     <property name="text" >
+      <string>Qty. to Assign:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1" >
+    <widget class="XLineEdit" name="_qtyToAssign" >
+     <property name="maximumSize" >
+      <size>
+       <width>80</width>
+       <height>32767</height>
+      </size>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0" colspan="2" >
+    <spacer>
+     <property name="orientation" >
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeType" >
+      <enum>QSizePolicy::Expanding</enum>
+     </property>
+     <property name="sizeHint" >
+      <size>
+       <width>352</width>
+       <height>0</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="0" column="1" >
+    <widget class="XComboBox" name="_lotSerial" >
+     <property name="editable" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
  <pixmapfunction>qPixmapFromMimeSource</pixmapfunction>
  <customwidgets>
   <customwidget>
-   <class>XLineEdit</class>
-   <extends>QLineEdit</extends>
-   <header>xlineedit.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
-  </customwidget>
-  <customwidget>
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
-   <container>0</container>
-   <pixmap></pixmap>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>xlineedit.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_lotSerial</tabstop>
   <tabstop>_expiration</tabstop>
+  <tabstop>_warranty</tabstop>
   <tabstop>_qtyToAssign</tabstop>
   <tabstop>_assign</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

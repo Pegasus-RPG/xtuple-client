@@ -82,6 +82,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
   _itemlocdist->addColumn( tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
   _itemlocdist->addColumn( tr("Expires"),      _dateColumn, Qt::AlignCenter );
   _itemlocdist->addColumn( tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
+
 }
 
 assignLotSerial::~assignLotSerial()
@@ -122,6 +123,7 @@ enum SetResponse assignLotSerial::set(const ParameterList &pParams)
       }
 
       sFillList();
+        sNew();
     }
     else if (q.lastError().type() != QSqlError::None)
     {
@@ -156,7 +158,11 @@ void assignLotSerial::sNew()
   createLotSerial newdlg(this, "", TRUE);
   newdlg.set(params);
   if (newdlg.exec() != XDialog::Rejected)
+  {
     sFillList();
+    if (_qtyBalance->text().toDouble() > 0)
+      sNew();
+  }
 }
 
 void assignLotSerial::sDelete()

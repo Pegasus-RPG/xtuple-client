@@ -84,7 +84,9 @@ private:
     int  _itemlocSeries;
     int  _itemlocdistid;
     int  _itemsiteid;
+    int _lsdetailid;
     bool _serial;
+    bool _preassigned;
 };
 
 #endif // CREATELOTSERIAL_H
