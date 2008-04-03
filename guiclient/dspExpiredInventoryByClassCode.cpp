@@ -95,7 +95,6 @@ dspExpiredInventoryByClassCode::dspExpiredInventoryByClassCode(QWidget* parent, 
   connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
 
   _classCode->setType(ClassCode);
-  _costsGroup->setEnabled(_showValue->isChecked());
   _inventoryValue->setEnabled(_showValue->isChecked());
 
   _expired->addColumn(tr("Whs."),         _whsColumn,  Qt::AlignCenter );
@@ -132,6 +131,11 @@ void dspExpiredInventoryByClassCode::sPrint()
 
   _warehouse->appendValue(params);
   _classCode->appendValue(params);
+  
+  if(_perishability->isChecked())
+    params.append("perishability");
+  else
+    params.append("warranty");
 
   if(_showValue->isChecked())
     params.append("showValue");
@@ -263,14 +267,18 @@ void dspExpiredInventoryByClassCode::sFillList()
   _expired->clear();
 
   QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, uom_name,"
-               "       itemloc_lotserial, formatDate(itemloc_expiration) AS f_expiration,"
+               "       itemloc_lotserial, formatdate(itemloc_expiration) AS f_expiration, "
                "       formatQty(itemloc_qty) AS f_qty,"
                "       formatCost(cost) AS f_unitcost,"
                "       noNeg(cost * itemloc_qty) AS value,"
                "       formatMoney(noNeg(cost * itemloc_qty)) AS f_value,"
                "       cost "
                "FROM ( SELECT itemsite_id, itemloc_id, warehous_code, item_number,"
-               "              uom_name, itemloc_lotserial, itemloc_expiration,"
+               "              uom_name, itemloc_lotserial, "
+               "       CASE WHEN :expiretype='Perishability' THEN "
+               "         itemloc_expiration "
+               "       ELSE itemloc_warrpurc "
+               "       END AS itemloc_expiration, "
                "              itemloc_qty," );
 
   if (_useStandardCosts->isChecked())
@@ -282,9 +290,13 @@ void dspExpiredInventoryByClassCode::sFillList()
          "WHERE ( (itemloc_itemsite_id=itemsite_id)"
          " AND (itemsite_item_id=item_id)"
          " AND (item_inv_uom_id=uom_id)"
-         " AND (itemsite_warehous_id=warehous_id)"
-         " AND (itemsite_perishable)"
-         " AND (itemloc_expiration < (CURRENT_DATE + :thresholdDays))";
+         " AND (itemsite_warehous_id=warehous_id)";
+  if (_perishability->isChecked())
+    sql += " AND (itemsite_perishable)"
+           " AND (itemloc_expiration < (CURRENT_DATE + :thresholdDays))";
+  else
+    sql += " AND (itemsite_warrpurc)"
+           " AND (itemloc_warrpurc < (CURRENT_DATE + :thresholdDays))";
 
   if (_warehouse->isSelected())
     sql += " AND (itemsite_warehous_id=:warehous_id)";
@@ -304,6 +316,11 @@ void dspExpiredInventoryByClassCode::sFillList()
     sql += "ORDER BY warehous_code, noNeg(cost * itemloc_qty) DESC;";
 
   q.prepare(sql);
+  if (_perishability->isChecked())
+    q.bindValue(":expiretype", QString("Perishability"));
+  else
+    q.bindValue(":expiretype", QString("Warranty"));
+    
   q.bindValue(":thresholdDays", _thresholdDays->value());
   _warehouse->bindValue(q);
   _classCode->bindValue(q);
