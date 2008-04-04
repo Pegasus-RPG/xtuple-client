@@ -267,14 +267,14 @@ void dspExpiredInventoryByClassCode::sFillList()
   _expired->clear();
 
   QString sql( "SELECT itemsite_id, itemloc_id, warehous_code, item_number, uom_name,"
-               "       itemloc_lotserial, formatdate(itemloc_expiration) AS f_expiration, "
+               "       ls_number, formatdate(itemloc_expiration) AS f_expiration, "
                "       formatQty(itemloc_qty) AS f_qty,"
                "       formatCost(cost) AS f_unitcost,"
                "       noNeg(cost * itemloc_qty) AS value,"
                "       formatMoney(noNeg(cost * itemloc_qty)) AS f_value,"
                "       cost "
                "FROM ( SELECT itemsite_id, itemloc_id, warehous_code, item_number,"
-               "              uom_name, itemloc_lotserial, "
+               "              uom_name, ls_number, "
                "       CASE WHEN :expiretype='Perishability' THEN "
                "         itemloc_expiration "
                "       ELSE itemloc_warrpurc "
@@ -286,11 +286,13 @@ void dspExpiredInventoryByClassCode::sFillList()
   else if (_useActualCosts->isChecked())
     sql += " actcost(itemsite_item_id) AS cost ";
 
-  sql += "FROM itemloc, itemsite, item, warehous, uom "
+  sql += "FROM itemloc, itemsite, item, warehous, uom, ls "
          "WHERE ( (itemloc_itemsite_id=itemsite_id)"
          " AND (itemsite_item_id=item_id)"
          " AND (item_inv_uom_id=uom_id)"
-         " AND (itemsite_warehous_id=warehous_id)";
+         " AND (itemsite_warehous_id=warehous_id)"
+         " AND (itemloc_ls_id=ls_id)";
+         
   if (_perishability->isChecked())
     sql += " AND (itemsite_perishable)"
            " AND (itemloc_expiration < (CURRENT_DATE + :thresholdDays))";
@@ -334,7 +336,7 @@ void dspExpiredInventoryByClassCode::sFillList()
 			       q.value("warehous_code"),
 			       q.value("item_number"),
 			       q.value("uom_name"),
-			       q.value("itemloc_lotserial"),
+			       q.value("ls_number"),
 			       q.value("f_expiration"),
 			       q.value("f_qty"),
 			       q.value("f_unitcost"),

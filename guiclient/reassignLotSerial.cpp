@@ -82,6 +82,7 @@ reassignLotSerial::reassignLotSerial(QWidget* parent, const char* name, bool mod
     _source->addColumn(tr("Location"),     _itemColumn, Qt::AlignLeft   );
     _source->addColumn(tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
     _source->addColumn(tr("Expires"),      _dateColumn, Qt::AlignCenter );
+    _source->addColumn(tr("Warranty"), _dateColumn, Qt::AlignCenter);
     _source->addColumn(tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
     
     //If not multi-warehouse hide whs control
@@ -168,7 +169,7 @@ void reassignLotSerial::sReassign()
 
   QDoubleValidator* qtyVal = (QDoubleValidator*)(_qty->validator());
   q.prepare("SELECT reassignLotSerial(:source, CAST (:qty AS NUMERIC(100,:decimals)), "
-	    "                         :lotNumber, :expirationDate) AS result;");
+	    "                         :lotNumber, :expirationDate, :warrantyDate) AS result;");
   q.bindValue(":source", _source->id());
   q.bindValue(":qty", _qty->toDouble());
   q.bindValue(":decimals", qtyVal->decimals());
@@ -178,6 +179,9 @@ void reassignLotSerial::sReassign()
     q.bindValue(":expirationDate", _expirationDate->date());
   else
     q.bindValue(":expirationDate", omfgThis->startOfTime());
+
+  if (_warrantyDate->isEnabled())
+    q.bindValue(":warrantyDate", _warrantyDate->date());
 
   q.exec();
   if (q.first())
@@ -210,6 +214,7 @@ void reassignLotSerial::sReassign()
     _qty->setFocus();
     _lotNumber->clear();
     _expirationDate->setNull();
+    _warrantyDate->setNull();
   }
 }
 
@@ -217,7 +222,7 @@ void reassignLotSerial::sFillList()
 {
   if (_item->isValid())
   {
-    q.prepare( "SELECT itemsite_id, itemsite_perishable, itemsite_controlmethod "
+    q.prepare( "SELECT itemsite_id, itemsite_perishable, itemsite_controlmethod, itemsite_warrpurc "
                "FROM itemsite "
                "WHERE ( (itemsite_item_id=:item_id)"
                " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -241,12 +246,14 @@ void reassignLotSerial::sFillList()
 
       int itemsiteid = q.value("itemsite_id").toInt();
       _expirationDate->setEnabled(q.value("itemsite_perishable").toBool());
+      _warrantyDate->setEnabled(q.value("itemsite_warrpurc").toBool());
 
-      q.prepare( "SELECT itemloc_id, formatLocationName(itemloc_location_id) AS locationname, itemloc_lotserial,"
-                 "       formatDate(itemloc_expiration, :never), formatQtyPer(itemloc_qty) "
-                 "FROM itemloc, itemsite "
+      q.prepare( "SELECT itemloc_id, formatLocationName(itemloc_location_id) AS locationname, ls_number,"
+                 "       formatDate(itemloc_expiration, :never), formatDate(itemloc_warrpurc, :never), formatQtyPer(itemloc_qty) "
+                 "FROM itemloc, itemsite, ls "
                  "WHERE ( (itemloc_itemsite_id=itemsite_id)"
-                 " AND (itemsite_id=:itemsite_id) ) "
+                 " AND (itemsite_id=:itemsite_id)"
+                 " AND (ls_id=itemloc_ls_id) ) "
                  "ORDER BY locationname;" );
       q.bindValue(":never", tr("Never"));
       q.bindValue(":itemsite_id", itemsiteid);

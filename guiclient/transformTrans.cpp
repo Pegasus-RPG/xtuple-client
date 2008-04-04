@@ -265,9 +265,11 @@ void transformTrans::sFillList()
                  "       CASE WHEN (location_id IS NULL) THEN :na"
                  "            ELSE formatLocationName(location_id)"
                  "       END AS locationname,"
-                 "       itemloc_lotserial AS lotserial,"
+                 "       ls_number AS lotserial,"
                  "       itemloc_qty AS qty "
-                 "FROM itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
+                 "FROM itemloc "
+                 "  LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
+                 "  LEFT OUTER JOIN ls ON (itemloc_ls_id=ls_id)"
                  "WHERE ( (itemloc_qty > 0)"
                  " AND (itemloc_itemsite_id=:itemsite_id) );" ); 
     else

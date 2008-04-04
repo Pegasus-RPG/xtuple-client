@@ -117,7 +117,7 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _controlMethod->removeItem(3);
     _controlMethod->removeItem(2);
     _perishable->hide();
-    _tab->removeTab(_tab->indexOf(_warrantyTab));
+    _tab->removeTab(_tab->indexOf(_expirationTab));
   }
   
   //If routings disabled, hide options
@@ -224,7 +224,7 @@ enum SetResponse itemSite::set(const ParameterList &pParams)
           _cycleCountFreq->setValue(0);
           _leadTime->setValue(0);
           _eventFence->setValue(_metrics->value("DefaultEventFence").toInt());
-          _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
+          _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
         } 
       }
     }
@@ -347,7 +347,7 @@ void itemSite::sSave()
     {
       QMessageBox::critical( this, tr("Cannot Save Item Site"),
                              tr( "<p>You have indicated that this Item Site "
-				"should be mutiply located but there are no "
+				"should be multiply located but there are no "
                                  "non-restrictive Locations in the selected "
 				 "Warehouse nor restrictive Locations that "
 				 "will accept the selected Item."
@@ -648,12 +648,12 @@ void itemSite::sHandleControlMethod()
        (_controlMethod->currentItem() == 3) )  
   {
     _perishable->setEnabled(TRUE);
-    _tab->setTabEnabled(_tab->indexOf(_warrantyTab),TRUE);
+    _tab->setTabEnabled(_tab->indexOf(_expirationTab),TRUE);
   }
   else
   {
     _perishable->setEnabled(FALSE);
-    _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
+    _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
   }
 }
 
@@ -978,7 +978,7 @@ void itemSite::clear()
   _salesWarranty->setChecked(FALSE);
   _warrantyPeriod->setValue(0);
   _autoRegister->setChecked(FALSE);
-  _tab->setTabEnabled(_tab->indexOf(_warrantyTab),FALSE);
+  _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
     
   populateLocations();
 }

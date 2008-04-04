@@ -205,11 +205,11 @@ void distributeToLocation::sDistribute()
   else if (_mode == cLocation)
   {
     q.prepare( "SELECT itemlocdist_id "
-               "FROM itemlocdist "
+               "FROM itemlocdist, ls "
                "WHERE ( (itemlocdist_itemlocdist_id=:itemlocdist_id)"
                " AND (itemlocdist_source_type='L')"
                " AND (itemlocdist_source_id=:location_id)"
-               " AND (itemlocdist_lotserial=:lotSerial) );" );
+               " AND (formatlotserialnumber(itemlocdist_ls_id)=:lotSerial) );" );
     q.bindValue(":itemlocdist_id", _sourceItemlocdistid);
     q.bindValue(":location_id", _locationid);
     q.bindValue(":lotSerial", _lotSerial);
@@ -230,10 +230,10 @@ void distributeToLocation::sDistribute()
       q.prepare( "INSERT INTO itemlocdist "
                  "( itemlocdist_itemlocdist_id,"
                  "  itemlocdist_source_type, itemlocdist_source_id,"
-                 "  itemlocdist_qty, itemlocdist_lotserial, itemlocdist_expiration ) "
+                 "  itemlocdist_qty, itemlocdist_ls_id, itemlocdist_expiration ) "
                  "SELECT itemlocdist_id,"
                  "       'L', :location_id,"
-                 "       :qty, itemlocdist_lotserial, endOfTime() "
+                 "       :qty, itemlocdist_ls_id, endOfTime() "
                  "FROM itemlocdist "
                  "WHERE (itemlocdist_id=:itemlocdist_id);" );
       q.bindValue(":location_id", _locationid);
@@ -269,11 +269,11 @@ void distributeToLocation::sDistribute()
       q.prepare( "INSERT INTO itemlocdist "
                  "( itemlocdist_itemlocdist_id,"
                  "  itemlocdist_source_type, itemlocdist_source_id,"
-                 "  itemlocdist_qty, itemlocdist_expiration, itemlocdist_lotserial ) "
+                 "  itemlocdist_qty, itemlocdist_expiration ) "
                  "VALUES "
                  "( :sItemlocdist_id,"
                  "  'I',  :itemlocdist_id,"
-                 "  :qty, endOfTime(), '' );" );
+                 "  :qty, endOfTime() );" );
       q.bindValue(":sItemlocdist_id", _sourceItemlocdistid);
       q.bindValue(":itemlocdist_id", _itemlocdistid);
       q.bindValue(":qty", qty);
@@ -321,11 +321,11 @@ void distributeToLocation::populate()
     _availToDistribute = q.value("availqty").toDouble();
   }
 
-  q.prepare( "SELECT parent.itemlocdist_lotserial AS lotserial,"
+  q.prepare( "SELECT parent.lotserial AS lotserial,"
              "       qtydistrib,"
              "       qtytagged,"
              "       (qtydistrib - qtytagged) AS qtybalance "
-             "FROM ( SELECT itemlocdist_lotserial, itemlocdist_qty AS qtydistrib"
+             "FROM ( SELECT formatlotserialnumber(itemlocdist_ls_id) AS lotserial, itemlocdist_qty AS qtydistrib"
              "       FROM itemlocdist"
              "       WHERE (itemlocdist_id=:itemlocdist_id) ) AS parent,"
              "     ( SELECT COALESCE(SUM(itemlocdist_qty), 0) AS qtytagged"

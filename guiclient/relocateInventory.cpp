@@ -301,7 +301,7 @@ void relocateInventory::sFillList()
                    "       CASE WHEN (itemloc_location_id=-1) THEN :undefined"
                    "            ELSE formatLocationName(itemloc_location_id)"
                    "       END AS locationname,"
-                   "       itemloc_lotserial, formatQty(itemloc_qty) "
+                   "       formatlotserialnumber(itemloc_ls_id), formatQty(itemloc_qty) "
                    "FROM itemloc, itemsite "
                    "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                    " AND (itemsite_item_id=:item_id)"

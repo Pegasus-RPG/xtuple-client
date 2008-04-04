@@ -207,6 +207,7 @@ itemAvailabilityWorkbench::itemAvailabilityWorkbench(QWidget* parent, const char
   _itemloc->addColumn(tr("Netable"),      _orderColumn, Qt::AlignCenter );
   _itemloc->addColumn(tr("Lot/Serial #"), -1,           Qt::AlignLeft   );
   _itemloc->addColumn(tr("Expiration"),   _dateColumn,  Qt::AlignCenter );
+  _itemloc->addColumn(tr("Warranty"),   _dateColumn,  Qt::AlignCenter );
   _itemloc->addColumn(tr("Qty."),         _qtyColumn,   Qt::AlignRight  );
   
   // Where Used
@@ -366,14 +367,20 @@ void itemAvailabilityWorkbench::sFillListItemloc()
                  "            ELSE :no"
                  "       END AS netable,"
                  "       CASE WHEN (itemsite_controlmethod NOT IN ('L', 'S')) THEN :na"
-                 "            ELSE itemloc_lotserial"
+                 "            ELSE formatlotserialnumber(itemloc_ls_id)"
                  "       END AS lotserial,"
                  "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
                  "            ELSE :na"
                  "       END AS f_expiration,"
+                 "       CASE WHEN (itemsite_warrpurc) THEN formatDate(itemloc_warrpurc)"
+                 "            ELSE :na"
+                 "       END AS f_warranty,"
                  "       CASE WHEN (itemsite_perishable) THEN (itemloc_expiration <= CURRENT_DATE)"
                  "            ELSE FALSE"
                  "       END AS expired,"
+                 "       CASE WHEN (itemsite_warrpurc) THEN (itemloc_warrpurc <= CURRENT_DATE)"
+                 "            ELSE FALSE"
+                 "       END AS warrantyexp,"
                  "       formatQty(itemloc_qty) AS f_qoh "
                  "FROM itemsite, warehous,"
                  "     itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
@@ -391,7 +398,9 @@ void itemAvailabilityWorkbench::sFillListItemloc()
            "             :na AS netable,"
            "             :na AS lotserial,"
            "             :na AS f_expiration,"
+           "             :na AS f_warranty,"
            "             FALSE  AS expired,"
+           "             FALSE  AS warrantyexp,"
            "             formatQty(itemsite_qtyonhand) AS f_qoh "
            "FROM itemsite, warehous "
            "WHERE ( (NOT itemsite_loccntrl)"
@@ -422,8 +431,8 @@ void itemAvailabilityWorkbench::sFillListItemloc()
                                                q.value("itemloc_id").toInt(), q.value("type").toInt(),
                                                q.value("warehous_code"), q.value("locationname"),
                                                q.value("netable"), q.value("lotserial"),
-                                               q.value("f_expiration"), q.value("f_qoh") );
-      if (q.value("expired").toBool())
+                                               q.value("f_expiration"), q.value("f_warranty"),q.value("f_qoh") );
+      if (q.value("expired").toBool() || q.value("warrantyexp").toBool())
         last->setTextColor("red");
     }
   }

@@ -211,7 +211,7 @@ void dspQOHByLocation::sFillList()
     }
 
     q.prepare( "SELECT itemloc_id, warehous_code, item_number, (item_descrip1 || ' ' || item_descrip2),"
-               "       itemloc_lotserial, uom_name, formatQty(itemloc_qty) "
+               "       formatlotserialnumber(itemloc_ls_id) AS lotserial, uom_name, formatQty(itemloc_qty) "
                "FROM itemloc, itemsite, warehous, item, uom "
                "WHERE ( (itemloc_itemsite_id=itemsite_id)"
                " AND (itemsite_item_id=item_id)"

@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>594</height>
+    <height>580</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -328,6 +328,9 @@
           <property name="text" >
            <string>Control Method:</string>
           </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
          </widget>
         </item>
         <item row="0" column="1" >
@@ -361,13 +364,32 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="QCheckBox" name="_perishable" >
-          <property name="enabled" >
-           <bool>false</bool>
-          </property>
+         <widget class="QLabel" name="_controlMethodLit_2" >
           <property name="text" >
-           <string>Perishable</string>
+           <string>Costing:</string>
           </property>
+          <property name="alignment" >
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1" >
+         <widget class="XComboBox" name="xcomboBox" >
+          <item>
+           <property name="text" >
+            <string>Standard</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string>Job</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
+            <string/>
+           </property>
+          </item>
          </widget>
         </item>
        </layout>
@@ -379,37 +401,6 @@
         <string/>
        </property>
        <layout class="QGridLayout" >
-        <property name="leftMargin" >
-         <number>9</number>
-        </property>
-        <property name="topMargin" >
-         <number>9</number>
-        </property>
-        <property name="rightMargin" >
-         <number>9</number>
-        </property>
-        <property name="bottomMargin" >
-         <number>9</number>
-        </property>
-        <property name="horizontalSpacing" >
-         <number>6</number>
-        </property>
-        <property name="verticalSpacing" >
-         <number>6</number>
-        </property>
-        <item row="0" column="2" >
-         <spacer>
-          <property name="orientation" >
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" >
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
         <item row="0" column="0" >
          <widget class="QLabel" name="_plannerCodeLit" >
           <property name="text" >
@@ -438,6 +429,19 @@
            <enum>XComboBox::PlannerCodes</enum>
           </property>
          </widget>
+        </item>
+        <item row="0" column="2" >
+         <spacer>
+          <property name="orientation" >
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" >
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
         <item row="1" column="0" >
          <widget class="QLabel" name="_costcatLit" >
@@ -1377,22 +1381,32 @@
          </item>
         </layout>
        </widget>
-       <widget class="QWidget" name="_warrantyTab" >
+       <widget class="QWidget" name="_expirationTab" >
         <attribute name="title" >
-         <string>Warranty</string>
+         <string>Expiration</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
-          <widget class="QCheckBox" name="_purchWarranty" >
+          <widget class="QCheckBox" name="_perishable" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
            <property name="text" >
-            <string>Enable Purchase Warranty</string>
+            <string>Perishable</string>
            </property>
           </widget>
          </item>
          <item row="1" column="0" >
+          <widget class="QCheckBox" name="_purchWarranty" >
+           <property name="text" >
+            <string>Purchase Warranty</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0" >
           <widget class="QGroupBox" name="_salesWarranty" >
            <property name="title" >
-            <string>Enable Sales Warranty</string>
+            <string>Sales Warranty</string>
            </property>
            <property name="checkable" >
             <bool>true</bool>
@@ -1435,7 +1449,7 @@
            </layout>
           </widget>
          </item>
-         <item rowspan="2" row="1" column="1" >
+         <item rowspan="2" row="2" column="1" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1448,7 +1462,7 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="0" >
+         <item row="3" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -1456,7 +1470,7 @@
            <property name="sizeHint" >
             <size>
              <width>246</width>
-             <height>51</height>
+             <height>0</height>
             </size>
            </property>
           </spacer>
@@ -1514,7 +1528,7 @@
   <tabstop>_sold</tabstop>
   <tabstop>_soldRanking</tabstop>
   <tabstop>_controlMethod</tabstop>
-  <tabstop>_perishable</tabstop>
+  <tabstop>xcomboBox</tabstop>
   <tabstop>_plannerCode</tabstop>
   <tabstop>_costcat</tabstop>
   <tabstop>_tab</tabstop>
@@ -1547,9 +1561,11 @@
   <tabstop>_toggleRestricted</tabstop>
   <tabstop>_comments</tabstop>
   <tabstop>_restricted</tabstop>
+  <tabstop>_perishable</tabstop>
   <tabstop>_purchWarranty</tabstop>
   <tabstop>_salesWarranty</tabstop>
   <tabstop>_warrantyPeriod</tabstop>
+  <tabstop>_autoRegister</tabstop>
   <tabstop>_location</tabstop>
  </tabstops>
  <resources/>
