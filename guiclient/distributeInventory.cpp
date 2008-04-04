@@ -161,17 +161,17 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
         {
           query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
           if(query.first())
-          {
+          {/*
             itemlocSeries = query.value("_itemloc_series").toInt();
             query.exec("SELECT NEXTVAL('itemlocdist_itemlocdist_id_seq') AS itemlocdist_id;");
             query.first();
             int itemlocdistid = query.value("itemlocdist_id").toInt();
             query.prepare( "INSERT INTO itemlocdist "
                            "( itemlocdist_id, itemlocdist_source_type, itemlocdist_source_id,"
-                           "  itemlocdist_itemsite_id, itemlocdist_lotserial, itemlocdist_expiration,"
+                           "  itemlocdist_itemsite_id, itemlocdist_ls_id, itemlocdist_expiration,"
                            "  itemlocdist_qty, itemlocdist_series, itemlocdist_invhist_id ) "
                            "SELECT :newItemlocdist_id, 'D', itemlocdist_id,"
-                           "       itemlocdist_itemsite_id, :lotSerialNumber, :itemsite_expiration,"
+                           "       itemlocdist_itemsite_id, :ls_id, :itemsite_expiration,"
                            "       :qtyToAssign, :itemlocdist_series, itemlocdist_invhist_id "
                            "FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);" );
@@ -196,16 +196,27 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
                            "WHERE (itemlocdist_id=:itemlocdist_id);" );
             query.bindValue(":lotSerialNumber", pPresetLotnum);
             query.bindValue(":itemlocdist_id", itemlocdistid);
-            query.exec();
+            query.exec(); */
+            
 
-            query.prepare( "UPDATE itemlocdist "
+            query.prepare( "PERFORM createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocseries,'I',itemlocdist_source_id,:qty,:expiration,:warranty)"
+                           "FROM itemlocdist "
+                           "WHERE (itemlocdist_id=:itemlocdist_id);"
+                           
+                           "UPDATE itemlocdist "
                            "SET itemlocdist_source_type='O' "
                            "WHERE (itemlocdist_series=:itemlocdist_series);"
               
                            "DELETE FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);" );
+            query.bindValue(":lotserial", pPresetLotnum);
+            query.bindValue(":qty", itemloc.value("itemlocdist_qty"));
             query.bindValue(":itemlocdist_series", itemlocSeries);
             query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
+            if(itemloc.value("itemsite_perishable").toBool())
+              query.bindValue(":itemsite_expiration", pPresetLotexp);
+            else
+              query.bindValue(":itemsite_expiration", omfgThis->startOfTime());
             query.exec();
           }
         }
@@ -410,7 +421,7 @@ void distributeInventory::sFillList()
 {
   q.prepare( "SELECT itemsite_id, "
 	     "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
-	     "       itemlocdist_lotserial,"
+	     "       ls_number,"
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
@@ -419,15 +430,16 @@ void distributeInventory::sFillList()
              "       (parent.itemlocdist_qty - ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
              "                                     FROM itemlocdist AS child"
              "                                    WHERE (child.itemlocdist_itemlocdist_id=parent.itemlocdist_id) ) ) AS qtybalance "
-             "FROM itemsite, itemlocdist AS parent "
+             "FROM itemsite, itemlocdist AS parent,ls "
              "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
+             " AND (itemlocdist_ls_id=ls_id)"
              " AND (itemlocdist_id=:itemlocdist_id) );" );
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
   if (q.first())
   {
     _item->setItemsiteid(q.value("itemsite_id").toInt());
-    _lotSerial->setText(q.value("itemlocdist_lotserial").toString());
+    _lotSerial->setText(q.value("ls_number").toString());
     _qtyToDistribute->setText(formatNumber(q.value("qtytodistribute").toDouble(),6));
     _qtyTagged->setText(formatNumber(q.value("qtytagged").toDouble(),6));
     _qtyRemaining->setText(formatNumber(q.value("qtybalance").toDouble(),6));
@@ -485,7 +497,7 @@ void distributeInventory::sFillList()
 		 "       (location_id IS NOT NULL"
 		 "        AND location_id=itemsite_location_id) AS defaultlocation,"
 		 "       COALESCE(location_netable, false) AS location_netable,"
-		 "       itemloc_lotserial AS lotserial,"
+		 "       ls_number AS lotserial,"
 		 "       CASE WHEN (itemsite_perishable) THEN formatDate(itemloc_expiration)"
 		 "            ELSE <? value(\"na\") ?>"
 		 "       END AS f_expiration,"
@@ -498,7 +510,9 @@ void distributeInventory::sFillList()
 		 "         WHERE ( (target.itemlocdist_source_type='I')"
 		 "          AND (target.itemlocdist_source_id=itemloc_id)"
 		 "          AND (target.itemlocdist_itemlocdist_id=source.itemlocdist_id)) ) AS qtytagged "
-		 "FROM itemlocdist AS source, itemsite, itemloc LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
+		 "FROM itemlocdist AS source, itemsite, itemloc "
+                 "  LEFT OUTER JOIN location ON (itemloc_location_id=location_id) "
+                 "  LEFT OUTER JOIN ls ON (itemloc_ls_id=ls_id) "
 		 "WHERE ( (source.itemlocdist_itemsite_id=itemsite_id)"
 		 " AND (itemloc_itemsite_id=itemsite_id)"
 		 " AND (source.itemlocdist_id=<? value(\"itemlocdist_id\") ?>) ) "
@@ -587,11 +601,12 @@ void distributeInventory::sBcDistribute()
   }
 
   q.prepare( "SELECT itemloc_id "
-	     "FROM  itemlocdist, itemloc, itemsite "
+	     "FROM  itemlocdist, itemloc, itemsite, ls "
 	     "WHERE ((itemlocdist_itemsite_id=itemloc_itemsite_id)"
 	     "  AND  (itemloc_itemsite_id=itemsite_id)"
              "  AND  (itemsite_controlmethod IN ('L', 'S'))"
-	     "  AND  (itemloc_lotserial=:lotserial)"
+             "  AND  (itemsite_item_number=ls_item_id"
+	     "  AND  (ls_number=:lotserial)"
 	     "  AND  (itemlocdist_id=:itemlocdist_id));");
 
   q.bindValue(":itemlocdist_id", _itemlocdistid);

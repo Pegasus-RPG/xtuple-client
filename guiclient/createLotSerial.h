@@ -75,6 +75,7 @@ public:
 public slots:
     virtual enum SetResponse set(const ParameterList & pParams );
     virtual void sAssign();
+    virtual void sHandleLotSerial();
 
 protected slots:
     virtual void languageChange();
@@ -84,7 +85,6 @@ private:
     int  _itemlocSeries;
     int  _itemlocdistid;
     int  _itemsiteid;
-    int _lsdetailid;
     bool _serial;
     bool _preassigned;
 };

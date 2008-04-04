@@ -81,6 +81,7 @@ assignLotSerial::assignLotSerial(QWidget* parent, const char* name, bool modal, 
 
   _itemlocdist->addColumn( tr("Lot/Serial #"), -1,          Qt::AlignLeft   );
   _itemlocdist->addColumn( tr("Expires"),      _dateColumn, Qt::AlignCenter );
+  _itemlocdist->addColumn( tr("Warranty"),     _dateColumn, Qt::AlignCenter );
   _itemlocdist->addColumn( tr("Qty."),         _qtyColumn,  Qt::AlignRight  );
 
 }
@@ -154,6 +155,7 @@ void assignLotSerial::sNew()
   ParameterList params;
   params.append("itemloc_series", _itemlocSeries);
   params.append("itemlocdist_id", _itemlocdistid);
+  params.append("qtyRemaining",    _qtyBalance->text());
 
   createLotSerial newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -268,12 +270,14 @@ void assignLotSerial::sFillList()
   }
 
 
-  q.prepare( "SELECT itemlocdist_id, itemlocdist_lotserial,"
+  q.prepare( "SELECT itemlocdist_id, ls_number,"
              "       formatDate(itemlocdist_expiration, :never),"
+             "       formatDate(itemlocdist_warranty, :never),"
              "       itemlocdist_qty "
-             "FROM itemlocdist "
+             "FROM itemlocdist, ls "
              "WHERE (itemlocdist_series=:itemlocdist_series) "
-             "ORDER BY itemlocdist_lotserial;" );
+             "AND (itemlocdist_ls_id=ls_id) "
+             "ORDER BY ls_number;" );
   q.bindValue(":never", tr("Never"));
   q.bindValue(":itemlocdist_series", _itemlocSeries);
   q.exec();

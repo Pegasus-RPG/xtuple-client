@@ -71,10 +71,12 @@ createLotSerial::createLotSerial(QWidget* parent, const char* name, bool modal, 
   setupUi(this);
 
   connect(_assign, SIGNAL(clicked()), this, SLOT(sAssign()));
+  connect(_lotSerial, SIGNAL(textChanged(QString)), this, SLOT(sHandleLotSerial()));
+
+  _item->setReadOnly(TRUE);
 
   _serial = false;
   _itemsiteid = -1;
-  _lsdetailid = -1;
   _preassigned = false;
   resize(minimumSize());
 }
@@ -103,7 +105,7 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
   {
     _itemlocdistid = param.toInt();
 
-    q.prepare( "SELECT item_fractional, itemsite_controlmethod, "
+    q.prepare( "SELECT item_fractional, itemsite_controlmethod, itemsite_item_id,"
 	       "       itemsite_id, itemsite_perishable, itemsite_warrpurc, "
                "       invhist_ordtype, invhist_ordnumber "
                "FROM itemlocdist, itemsite, item, invhist "
@@ -120,19 +122,18 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
 	_serial = true;
         _qtyToAssign->setText("1");
         _qtyToAssign->setEnabled(FALSE);
-        _expiration->setEnabled(q.value("itemsite_perishable").toBool());
-        _warranty->setEnabled(q.value("itemsite_warrpurc").toBool() && q.value("invhist_ordtype").toString() == "PO");
       }
       else
 	_serial = false;
 
+      _item->setItemsiteid(q.value("itemsite_id").toInt());
       _itemsiteid = q.value("itemsite_id").toInt();
       _expiration->setEnabled(q.value("itemsite_perishable").toBool());
       _warranty->setEnabled(q.value("itemsite_warrpurc").toBool() && q.value("invhist_ordtype").toString() == "PO");
       _fractional = q.value("item_fractional").toBool();
       
       //If there is preassigned trace info for an associated order, force user to select from list
-      q.prepare("SELECT lsdetail_id, lsdetail_lotserial "
+      q.prepare("SELECT lsdetail_id "
                 "FROM lsdetail "
                 "WHERE ( (lsdetail_source_number=:ordernumber) "
                 "AND (lsdetail_source_type=:ordertype)"
@@ -158,12 +159,23 @@ enum SetResponse createLotSerial::set(const ParameterList &pParams)
       return UndefinedError;
     }
   }
+  
+  param = pParams.value("qtyRemaining", &valid);
+  if (valid)
+    _qtyRemaining->setText(param.toString());
 
   return NoError;
 }
 
+void createLotSerial::sHandleLotSerial()
+{
+  _lotSerial->setCurrentText(_lotSerial->currentText().upper());
+}
+
 void createLotSerial::sAssign()
 {
+  int  lsid=-1;
+  
   if (_lotSerial->currentText().isEmpty())
   {
     QMessageBox::critical( this, tr("Enter Lot/Serial Number"),
@@ -222,19 +234,42 @@ void createLotSerial::sAssign()
       return;
     }
   }
+  
+  if (_preassigned)
+  {
+    q.prepare("SELECT lsdetail_qtytoassign "
+              "FROM lsdetail "
+              "WHERE (lsdetail_id=:lsdetail_id);");
+    q.bindValue(":lsdetail_id", _lotSerial->id());
+    q.exec();
+    if (q.first())
+    {
+      if ( _qtyToAssign->toDouble() > q.value("lsdetail_qtytoassign").toDouble() )
+      {
+        QMessageBox::critical( this, tr("Invalid Qty"),
+                             tr( "<p>The quantity being assigned is greater than the "
+                             " quantity preassigned to the order being received." ) );
+        return;
+      }
+    }
+  }
 
   if (_serial)
   {
 	q.prepare("SELECT COUNT(*) AS count FROM "
 		  "(SELECT itemloc_id AS count "
-		  "FROM itemloc "
+		  "FROM itemloc,itemsite,ls "
 		  "WHERE ((itemloc_itemsite_id=:itemsite_id)"
-		  "  AND (itemloc_lotserial=:lotserial))"
+                  "  AND (itemloc_itemsite_id=itemsite_id)"
+                  "  AND (itemsite_item_id=ls_item_id)"
+		  "  AND (ls_number=:lotserial))"
 		  "UNION "
 		  "SELECT itemlocdist_id "
-		  "FROM itemlocdist "
+		  "FROM itemlocdist,itemsite,ls "
 		  "WHERE ((itemlocdist_itemsite_id=:itemsite_id) "
-		  "  AND (itemlocdist_lotserial=:lotserial) "
+                  "  AND (itemlocdist_itemsite_id=itemsite_id)"
+                  "  AND (itemsite_item_id=ls_item_id)"
+		  "  AND (ls_number=:lotserial) "
 		  "  AND (itemlocdist_source_type='D'))) as data;");
     q.bindValue(":itemsite_id", _itemsiteid);
     q.bindValue(":lotserial", _lotSerial->currentText());
@@ -256,98 +291,53 @@ void createLotSerial::sAssign()
       return;
     }
   }
-  
-  q.prepare("SELECT lsdetail_id, lsdetail_created, formatdate(lsdetail_created) AS f_created, lsdetail_qtytoassign "
-            "FROM lsdetail "
-            "WHERE ( (lsdetail_lotserial=:lotserial) "
-            "AND (lsdetail_itemsite_id=:itemsiteid) );");
-  q.bindValue(":itemsiteid", _itemsiteid);
-  q.bindValue(":lotserial", _lotSerial->currentText());
-  q.exec();
-  if (q.first())
+  else
   {
-    if ( (_preassigned) && (_qtyToAssign->toDouble() > q.value("lsdetail_qtytoassign").toDouble()) )
+    q.prepare("SELECT ls_id, ls_number "
+              "FROM ls,itemsite "
+              "WHERE ( (UPPER(ls_number)=UPPER(:lotserial)) "
+              "AND (ls_item_id=itemsite_id) "
+              "AND (itemsite_id=:itemsiteid) );");
+    q.bindValue(":itemsiteid", _itemsiteid);
+    q.bindValue(":lotserial", _lotSerial->currentText());
+    q.exec();
+    if (q.first())
     {
-      QMessageBox::critical( this, tr("Invalid Qty"),
-                           tr( "<p>The quantity being assigned is greater than the "
-                           " quantity preassigned to the order being received." ) );
+      if (!_serial)
+        if (QMessageBox::question(this, tr("Use Existing?"),
+                                    tr("<p>A record with for lot number %1 for this item already exists.  "
+                                    "Reference existing lot?").arg(q.value("ls_number").toString().upper()),
+                                       QMessageBox::Yes | QMessageBox::Default,
+                                       QMessageBox::No  | QMessageBox::Escape) == QMessageBox::No)
+          return;
+      lsid=q.value("ls_id").toInt();
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-    if (!_preassigned)
-      if (QMessageBox::question(this, tr("Use Existing?"),
-				  tr("<p>A record with this lot number already exists with a create date of %1.  "
-                                  "Reference this lot?").arg(q.value("f_created").toString()),
-				     QMessageBox::Yes | QMessageBox::Default,
-				     QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
-         _lsdetailid=q.value("lsdetail_id").toInt();;
-  }
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-  else if (_preassigned)
-  {
-    QMessageBox::critical( this, tr("Lot/Serial not found"),
-                           tr( "<p>The preassigned lot number was not found." ) );
-    return;
   }
 
-  q.exec("SELECT NEXTVAL('itemlocdist_itemlocdist_id_seq') AS itemlocdist_id;");
-  if (!q.first() || q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
- 
-  int itemlocdistid = q.value("itemlocdist_id").toInt();
-
-   q.prepare( "INSERT INTO itemlocdist "
-              "( itemlocdist_id, itemlocdist_source_type, itemlocdist_source_id,"
-              "  itemlocdist_itemsite_id, itemlocdist_lotserial, itemlocdist_expiration,"
-              "  itemlocdist_qty, itemlocdist_series, itemlocdist_invhist_id, itemlocdist_warranty ) "
-              "SELECT :newItemlocdist_id, 'D', itemlocdist_id,"
-              "       itemlocdist_itemsite_id, :lotSerialNumber, :itemsite_expiration,"
-              "       :qtyToAssign, :itemlocdist_series, itemlocdist_invhist_id, :itemlocdist_warranty "
-              "FROM itemlocdist "
-              "WHERE (itemlocdist_id=:itemlocdist_id);" );
-
+  q.prepare("SELECT createlotserial(:itemsite_id,:lotserial,:itemlocseries,'I',itemlocdist_id,:qty,:expiration,:warranty) "
+            "FROM itemlocdist "
+            "WHERE (itemlocdist_id=:itemlocdist_id);" );
+  q.bindValue(":itemsite_id", _itemsiteid);
+  q.bindValue(":lotserial", _lotSerial->currentText().upper());
+  q.bindValue(":itemlocseries", _itemlocSeries);
+  q.bindValue(":qty", _qtyToAssign->toDouble());
   if (_expiration->isEnabled())
-    q.bindValue(":itemsite_expiration", _expiration->date());
+    q.bindValue(":expiration", _expiration->date());
   else
-    q.bindValue(":itemsite_expiration", omfgThis->startOfTime());
-
-  q.bindValue(":newItemlocdist_id", itemlocdistid);
-  q.bindValue(":lotSerialNumber", _lotSerial->currentText());
-  q.bindValue(":qtyToAssign", _qtyToAssign->toDouble());
-  q.bindValue(":itemlocdist_series", _itemlocSeries);
-  q.bindValue(":itemlocdist_id", _itemlocdistid);
+    q.bindValue(":expiration", omfgThis->startOfTime());
   if (_warranty->isEnabled())
-    q.bindValue(":itemlocdist_warranty", _warranty->date());
+    q.bindValue(":warranty", _warranty->date());
+  q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
-
-  if (_preassigned)
+  if (q.lastError().type() != QSqlError::None)
   {
-    q.prepare(  "UPDATE lsdetail SET "
-                "  lsdetail_qtytoassign=lsdetail_qtytoassign-COALESCE(:qty,0) "
-                "WHERE (lsdetail_id=:lsdetail_id);");
-    q.bindValue(":qty",_qtyToAssign->toDouble());
-    q.bindValue(":lsdetail_id", _lotSerial->id());
-    q.exec();
-  }
-
-  else if (_lsdetailid == -1)
-  {
-    q.prepare( "INSERT INTO lsdetail "
-               "( lsdetail_itemsite_id, lsdetail_lotserial, lsdetail_created,"
-               "  lsdetail_source_type, lsdetail_source_id, lsdetail_source_number ) "
-               "SELECT itemlocdist_itemsite_id, :lotSerialNumber, CURRENT_TIMESTAMP,"
-               "       'I', itemlocdist_id, '' "
-               "FROM itemlocdist "
-               "WHERE (itemlocdist_id=:itemlocdist_id);" );
-    q.bindValue(":lotSerialNumber", _lotSerial->currentText());
-    q.bindValue(":itemlocdist_id", itemlocdistid);
-    q.exec();
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 
   accept();

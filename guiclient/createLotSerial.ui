@@ -5,25 +5,70 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>473</width>
-    <height>172</height>
+    <width>569</width>
+    <height>226</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Create Lot/Serial #</string>
   </property>
   <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QLabel" name="_lotSerialLit" >
-     <property name="text" >
-      <string>Lot/Serial #:</string>
+   <item row="0" column="0" colspan="4" >
+    <widget class="QGroupBox" name="_itemGroup" >
+     <property name="title" >
+      <string/>
      </property>
-     <property name="alignment" >
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" colspan="3" >
+       <widget class="ItemCluster" name="_item" >
+        <property name="enabled" >
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="_qtyRemainingLit" >
+        <property name="text" >
+         <string>Qty. Remaining:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="QLabel" name="_qtyRemaining" >
+        <property name="minimumSize" >
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="text" >
+         <string/>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2" >
+       <spacer>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" >
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
     </widget>
    </item>
-   <item rowspan="4" row="0" column="2" >
+   <item row="0" column="4" >
     <layout class="QVBoxLayout" >
      <property name="spacing" >
       <number>0</number>
@@ -80,6 +125,23 @@
     </layout>
    </item>
    <item row="1" column="0" >
+    <widget class="QLabel" name="_lotSerialLit" >
+     <property name="text" >
+      <string>Lot/Serial #:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="1" >
+    <widget class="XComboBox" name="_lotSerial" >
+     <property name="editable" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2" >
     <widget class="QLabel" name="_expirationDateLit" >
      <property name="text" >
       <string>Expiration Date:</string>
@@ -89,13 +151,13 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
+   <item row="1" column="3" colspan="2" >
     <widget class="DLineEdit" name="_expiration" />
    </item>
    <item row="2" column="0" >
-    <widget class="QLabel" name="_warrantyDateLit" >
+    <widget class="QLabel" name="_qtyToAssignLit" >
      <property name="text" >
-      <string>Warranty Date:</string>
+      <string>Qty To Assign:</string>
      </property>
      <property name="alignment" >
       <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -103,19 +165,6 @@
     </widget>
    </item>
    <item row="2" column="1" >
-    <widget class="DLineEdit" name="_warranty" />
-   </item>
-   <item row="3" column="0" >
-    <widget class="QLabel" name="_qtyToAssignLit" >
-     <property name="text" >
-      <string>Qty. to Assign:</string>
-     </property>
-     <property name="alignment" >
-      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1" >
     <widget class="XLineEdit" name="_qtyToAssign" >
      <property name="maximumSize" >
       <size>
@@ -125,28 +174,18 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2" >
-    <spacer>
-     <property name="orientation" >
-      <enum>Qt::Vertical</enum>
+   <item row="2" column="2" >
+    <widget class="QLabel" name="_warrantyDateLit" >
+     <property name="text" >
+      <string>Warranty Date:</string>
      </property>
-     <property name="sizeType" >
-      <enum>QSizePolicy::Expanding</enum>
-     </property>
-     <property name="sizeHint" >
-      <size>
-       <width>352</width>
-       <height>0</height>
-      </size>
-     </property>
-    </spacer>
-   </item>
-   <item row="0" column="1" >
-    <widget class="XComboBox" name="_lotSerial" >
-     <property name="editable" >
-      <bool>true</bool>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
+   </item>
+   <item row="2" column="3" colspan="2" >
+    <widget class="DLineEdit" name="_warranty" />
    </item>
   </layout>
  </widget>
@@ -157,6 +196,11 @@
    <class>DLineEdit</class>
    <extends>XLineEdit</extends>
    <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
   </customwidget>
   <customwidget>
    <class>XComboBox</class>
@@ -171,9 +215,9 @@
  </customwidgets>
  <tabstops>
   <tabstop>_lotSerial</tabstop>
+  <tabstop>_qtyToAssign</tabstop>
   <tabstop>_expiration</tabstop>
   <tabstop>_warranty</tabstop>
-  <tabstop>_qtyToAssign</tabstop>
   <tabstop>_assign</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
