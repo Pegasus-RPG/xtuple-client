@@ -217,11 +217,11 @@ void itemPricingScheduleItem::sSave( bool pClose)
     if(_itemSelected->isChecked())
     {
       q.prepare( "SELECT ipsitem_id "
-                 "FROM ipsitem "
-                 "WHERE ( (ipsitem_ipshead_id=:ipshead_id)"
-                 " AND (ipsitem_item_id=:item_id)"
-                 " AND (ipsitem_qty_uom_id=:uom_id"
-                 " AND (ipsitem_qtybreak=:qtybreak) );" );
+                 "  FROM ipsitem "
+                 " WHERE((ipsitem_ipshead_id=:ipshead_id)"
+                 "   AND (ipsitem_item_id=:item_id)"
+                 "   AND (ipsitem_qty_uom_id=:uom_id)"
+                 "   AND (ipsitem_qtybreak=:qtybreak));" );
       q.bindValue(":ipshead_id", _ipsheadid);
       q.bindValue(":item_id", _item->id());
       q.bindValue(":qtybreak", _qtyBreak->toDouble());
