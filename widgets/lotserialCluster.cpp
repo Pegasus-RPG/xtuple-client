@@ -93,18 +93,17 @@ LotserialCluster::LotserialCluster(QWidget* pParent, const char* pName) :
 }
 
 LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
-    VirtualClusterLineEdit(pParent, "lsdetail", "lsdetail_id", "lsdetail_lotserial", "item_number", "lsdetail_created", 0, pName)
+    VirtualClusterLineEdit(pParent, "ls", "ls_id", "ls_number", "item_number", "ls_notes", 0, pName)
 {
     setTitles(tr("Lot/Serial Number"), tr("Lot/Serial Numbers"));
-    _query = QString("SELECT lsdetail_id AS id, "
-                     "       lsdetail_lotserial AS number, "
+    _query = QString("SELECT ls_id AS id, "
+                     "       ls_number AS number, "
                      "       item_number AS name, "
-                     "       lsdetail_created AS description "
-                     "FROM lsdetail, itemsite, item "
-                     "WHERE (lsdetail_itemsite_id=itemsite_id) "
-                     "  AND (itemsite_item_id = item_id)");
-    _idClause = QString("AND (lsdetail_id=:id)");
-    _numClause = QString("AND (UPPER(lsdetail_lotserial)=UPPER(:number))");
+                     "       ls_notes AS description "
+                     "FROM ls, item "
+                     "WHERE (ls_item_id=item_id) ");
+    _idClause = QString("AND (ls_id=:id)");
+    _numClause = QString("AND (UPPER(ls_number)=UPPER(:number))");
     _strict = true;
 }
 
@@ -140,18 +139,20 @@ void LotserialLineEdit::setItemId(const int itemid)
   {
     _itemid = -1;
     _extraClause = "";
+    VirtualClusterLineEdit::clear();
   }
   else
   {
     _itemid = itemid;
     _extraClause = QString(" (item_id=%1) ").arg(itemid);
+    _parsed=false;
+    sParse();
   }
 }
 
 void LotserialLineEdit::clear()
 {
   VirtualClusterLineEdit::clear();
-  setItemId(-1);
 }
 
 /* copied from virtualCluster.cpp but with one important difference:
@@ -189,7 +190,7 @@ void LotserialLineEdit::sParse()
                                     numQ.lastError().databaseText());
               return;
             }
-            else if (_strict)
+            else if (_strict || _itemid == -1)
               VirtualClusterLineEdit::clear();
             else if (isVisible() && QMessageBox::question(this, tr("Lot/Serial # Not Found"),
                                            tr("This Lot/Serial # was not found" +
@@ -203,8 +204,23 @@ void LotserialLineEdit::sParse()
             }
             else
             {
-              VirtualClusterLineEdit::clear();
-              setText(stripped);
+              numQ.exec("SELECT nextval('ls_ls_seq_id') AS ls_id;");
+              int lsid= numQ.value("ls_id").toInt();
+              numQ.prepare("INSERT INTO ls (ls_id,ls_item_id,ls_number) "
+                           "VALUES (:ls_id,:item_id,:number)");
+              numQ.bindValue(":ls_id", lsid);
+              numQ.bindValue(":item_id", _itemid);
+              numQ.bindValue(":number", stripped);
+              numQ.exec();
+              if (numQ.lastError().type() != QSqlError::None)
+              {
+                QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                              .arg(__FILE__)
+                                              .arg(__LINE__),
+                                      numQ.lastError().databaseText());
+                return;
+              }
+              setId(lsid);
             }
         }
     }

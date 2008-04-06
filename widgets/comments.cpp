@@ -86,7 +86,7 @@ const Comments::CommentMap Comments::_commentMap[] =
     CommentMap( ItemSite,          "IS"  ),
     CommentMap( ItemSource,        "IR"  ),
     CommentMap( Location,          "L"   ),
-    CommentMap( LotSerial,         "O"   ),
+    CommentMap( LotSerial,         "LS"   ),
     CommentMap( Opportunity,       "OPP" ),
     CommentMap( Project,           "J"   ),
     CommentMap( PurchaseOrder,     "P"   ),
