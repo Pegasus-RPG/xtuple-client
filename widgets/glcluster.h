@@ -65,6 +65,7 @@
 #include <QWidget>
 
 #include "OpenMFGWidgets.h"
+#include "xlineedit.h"
 
 class QLineEdit;
 class QPushButton;
@@ -123,7 +124,7 @@ class OPENMFGWIDGETS_EXPORT GLCluster : public QWidget
 
     QLineEdit   *_company;
     QLineEdit   *_profit;
-    QLineEdit   *_main;
+    XLineEdit   *_main;
     QLineEdit   *_sub;
     QLineEdit   *_account;
     QPushButton *_list;

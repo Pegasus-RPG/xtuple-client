@@ -127,7 +127,7 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
     }
   }
 
-  _main = new QLineEdit(_layoutFieldsWidget, "_main");
+  _main = new XLineEdit(_layoutFieldsWidget, "_main");
   _main->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
   _main->setAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
   if(!(_x_metrics && _x_metrics->boolean("AllowManualGLAccountEntry")))
@@ -182,6 +182,8 @@ GLCluster::GLCluster(QWidget *pParent, const char *name) :
   {
     connect(_main, SIGNAL(lostFocus()), this, SLOT(sParse()));
     connect(_main, SIGNAL(textChanged(const QString &)), this, SLOT(sTextChanged(const QString &)));
+    connect(_main, SIGNAL(requestList()), this, SLOT(sList()));
+    connect(_main, SIGNAL(requestSearch()), this, SLOT(sSearch()));
   }
 
   setTabOrder(_main, _list);
