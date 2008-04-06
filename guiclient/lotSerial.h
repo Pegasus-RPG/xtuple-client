@@ -55,49 +55,36 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#include "lotSerialComments.h"
+#ifndef LOTSERIAL_H
+#define LOTSERIAL_H
 
-#include <QSqlError>
-#include <QVariant>
+#include "guiclient.h"
+#include "xdialog.h"
+#include <parameter.h>
 
-#include <comments.h>
+#include "ui_lotSerial.h"
 
-lotSerialComments::lotSerialComments(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+class lotSerial : public XDialog, public Ui::lotSerial
 {
-    setupUi(this);
+    Q_OBJECT
 
-    connect(_item, SIGNAL(newId(int)), this, SLOT(sPopulateLotSerial(int)));
+public:
+    lotSerial(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~lotSerial();
+
+public slots:
+    virtual void populate();
+    virtual void sSave();
+    virtual void sChanged();
+
+protected slots:
+    virtual void languageChange();
     
-    //Remove these controls until functionality is implemented
-    _tab->removePage(_tab->page(0));
-    _tab->removePage(_tab->page(0));
-    _save->hide();
-}
+private:
+    int _lsidCache;
+    int _itemidCache;
+    bool _changed;
 
-lotSerialComments::~lotSerialComments()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
+};
 
-void lotSerialComments::languageChange()
-{
-    retranslateUi(this);
-}
-
-void lotSerialComments::sPopulateLotSerial(int pItemid)
-{
-  q.prepare( "SELECT lsdetail_id, (lsdetail_lotserial || ' (' || :created || formatDate(lsdetail_created) || ')') "
-             "FROM lsdetail, itemsite "
-             "WHERE ( (lsdetail_itemsite_id=itemsite_id)"
-             " AND (itemsite_item_id=:item_id) );" );
-  q.bindValue(":item_id", pItemid);
-  q.bindValue(":created", tr("Created"));
-  q.exec();
-  _lotSerial->populate(q);
-  if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
-  }
-}
+#endif // LOTSERIAL_H

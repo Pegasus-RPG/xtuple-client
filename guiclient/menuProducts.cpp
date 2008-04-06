@@ -77,7 +77,7 @@
 #include "copyItem.h"
 #include "itemGroups.h"
 #include "itemImages.h"
-
+#include "lotSerial.h"
 #include "bom.h"
 #include "bomList.h"
 #include "copyBOM.h"
@@ -239,9 +239,12 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.enterNewBreederBOM", tr("&New..."), SLOT(sNewBreederBOM()), breederBOMMenu, _privileges->check("MaintainBBOMs"), NULL, NULL, _metrics->boolean("BBOM") , NULL },
   { "pd.listBreederBOMs", tr("&List..."), SLOT(sBreederBOMs()), breederBOMMenu, _privileges->check("MaintainBBOMs") || _privileges->check("ViewBBOMs"), NULL, NULL, _metrics->boolean("BBOM") , NULL },
   
-  // Produtc | Costing
+  // Product | Costing
   { "menu",	tr("&Costing"), (char*)costingMenu,	mainMenu, true, NULL, NULL, true , NULL },
   { "pd.maintainItemCosts", tr("&Maintain Item Costs..."), SLOT(sMaintainItemCosts()), costingMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
+  
+  // Product | Lot Serial
+  { "im.lotSerial",tr("&Lot/Serial..."),SLOT(sLotSerial()),mainMenu, TRUE,NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
 
   { "separator", NULL, NULL, costingMenu,	true, NULL, NULL, true , NULL },
   
@@ -548,6 +551,12 @@ void menuProducts::sDspItemCostHistory()
 void menuProducts::sUserCostingElements()
 {
   omfgThis->handleNewWindow(new costingElements());
+}
+
+void menuProducts::sLotSerial()
+{
+  lotSerial newdlg(parent, "", TRUE);
+  newdlg.exec();
 }
 
 //  Displays

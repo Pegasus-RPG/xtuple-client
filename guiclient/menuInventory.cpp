@@ -86,7 +86,6 @@
 #include "relocateInventory.h"
 
 #include "lotSerialHistory.h"
-#include "lotSerialComments.h"
 #include "reassignLotSerial.h"
 
 #include "createCountTagsByParameterList.h"
@@ -451,7 +450,6 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     
     //  Inventory | Lot/Serial Control
     { "menu",				tr("&Lot/Serial Control"),	(char*)lotSerialControlMenu,	mainMenu, true,	NULL, NULL, _metrics->boolean("LotSerialControl") , NULL },
-    { "im.lotSerialComments",		tr("&Comments..."),	SLOT(sLotSerialComments()),	lotSerialControlMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
     { "im.dspLocationLotSerialDetail",	tr("&Location Detail..."),	SLOT(sDspLocationLotSerialDetail()), lotSerialControlMenu, _privileges->check("ViewQOH"),	NULL, NULL,  _metrics->boolean("LotSerialControl"), NULL }, 
     { "im.dspDetailedInventoryHistoryByLot/SerialNumber", tr("&Detailed Inventory History..."), SLOT(sDspDetailedInventoryHistoryByLotSerial()), lotSerialControlMenu, _privileges->check("ViewInventoryHistory"),	NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
     { "separator",			NULL,				NULL,	lotSerialControlMenu,	true, NULL, NULL,  _metrics->boolean("LotSerialControl") , NULL },
@@ -465,11 +463,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "im.costCategories",	tr("&Cost Categories..."),	SLOT(sCostCategories()),     masterInfoMenu, (_privileges->check("MaintainCostCategories")) || (_privileges->check("ViewCostCategories") ),	NULL, NULL, true, NULL }, 
     { "im.expenseCategories",	tr("&Expense Categories..."),	SLOT(sExpenseCategories()),  masterInfoMenu, (_privileges->check("MaintainExpenseCategories")) || (_privileges->check("ViewExpenseCategories") ),	NULL, NULL, true, NULL },
     { "im.characteristics",	tr("C&haracteristics..."),	SLOT(sCharacteristics()),    masterInfoMenu, (_privileges->check("MaintainCharacteristics") || _privileges->check("ViewCharacteristics") ),	NULL, NULL, true, NULL },
-/*  Remove by version 3.0 if no objections...
-    { "separator", NULL, NULL, masterInfoMenu, true, NULL, NULL, true, NULL },
-    { "sr.destinations", tr("Destinations..."), SLOT(sDestinations()), masterInfoMenu, (_privileges->check("MaintainDestinations") || _privileges->check("ViewDestinations")), NULL, NULL, true, NULL },
-    { "sr.carries", tr("Carriers..."), SLOT(sCarriers()), masterInfoMenu, (_privileges->check("MaintainCarriers") || _privileges->check("ViewCarriers")), NULL, NULL, true, NULL },
-*/
+
     // Inventory | Utilities
     { "menu",					  tr("&Utilities"),			 		(char*)utilitiesMenu,			mainMenu,	true,							NULL, NULL, true, NULL },
     { "im.dspUnbalancedQOHByClassCode",		  tr("U&nbalanced QOH..."), 		SLOT(sDspUnbalancedQOHByClassCode()),	utilitiesMenu, _privileges->check("ViewItemSites"),			NULL, NULL, true, NULL },
@@ -670,12 +664,6 @@ void menuInventory::sRelocateInventory()
 void menuInventory::sLotSerialHistory()
 {
   lotSerialHistory newdlg(parent, "", TRUE);
-  newdlg.exec();
-}
-
-void menuInventory::sLotSerialComments()
-{
-  lotSerialComments newdlg(parent, "", TRUE);
   newdlg.exec();
 }
 

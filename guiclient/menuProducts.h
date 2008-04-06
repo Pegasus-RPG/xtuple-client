@@ -91,6 +91,7 @@ class menuProducts : public QObject
   private slots:
     void sNewItem();
     void sItems();
+    void sLotSerial();
     void sSearchForItems();
     void sCopyItem();
     void sItemGroups();

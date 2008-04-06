@@ -104,7 +104,6 @@ class menuInventory : public QObject
     void sRelocateInventory();
 
     void sLotSerialHistory();
-    void sLotSerialComments();
     void sReassignLotSerialNumber();
 
     void sCreateCountTagsByClassCode();

@@ -21,7 +21,7 @@
  * If left blank, the Original Developer is the Initial Developer. 
  * The Initial Developer of the Original Code is OpenMFG, LLC, 
  * d/b/a xTuple. All portions of the code written by xTuple are Copyright 
- * (c) 1999-2008 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
+ * (c) 1999-2007 OpenMFG, LLC, d/b/a xTuple. All Rights Reserved. 
  * 
  * Contributor(s): ______________________.
  * 
@@ -39,7 +39,7 @@
  * EXHIBIT B.  Attribution Information
  * 
  * Attribution Copyright Notice: 
- * Copyright (c) 1999-2008 by OpenMFG, LLC, d/b/a xTuple
+ * Copyright (c) 1999-2007 by OpenMFG, LLC, d/b/a xTuple
  * 
  * Attribution Phrase: 
  * Powered by PostBooks, an open source solution from xTuple
@@ -55,29 +55,75 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef LOTSERIALCOMMENTS_H
-#define LOTSERIALCOMMENTS_H
+#include "lotSerial.h"
 
-#include "guiclient.h"
-#include "xdialog.h"
-#include <parameter.h>
+#include <QSqlError>
+#include <QVariant>
 
-#include "ui_lotSerialComments.h"
+#include <comments.h>
 
-class lotSerialComments : public XDialog, public Ui::lotSerialComments
+lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
+    : XDialog(parent, name, modal, fl)
 {
-    Q_OBJECT
+    setupUi(this);
 
-public:
-    lotSerialComments(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~lotSerialComments();
+    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+    connect(_lotSerial, SIGNAL(valid(bool)), this, SLOT(populate()));
+    connect(_notes, SIGNAL(textChanged()), this, SLOT(sChanged()));
+    
+    _changed=false;
+}
 
-public slots:
-    virtual void sPopulateLotSerial( int );
+lotSerial::~lotSerial()
+{
+    // no need to delete child widgets, Qt does it all for us
+}
 
-protected slots:
-    virtual void languageChange();
+void lotSerial::languageChange()
+{
+    retranslateUi(this);
+}
 
-};
+void lotSerial::populate()
+{
+  q.prepare( "SELECT ls_item_id,ls_notes "
+             "FROM ls "
+             "WHERE (ls_id=:ls_id );" );
+  q.bindValue(":ls_id", _lotSerial->id());
+  q.exec();
+  if (q.first())
+  {
+    _lsidCache=_lotSerial->id();
+    if (_item->id() == -1)
+      _item->setId(q.value("ls_item_id").toInt());
+    _itemidCache=_item->id();
+    _notes->setText(q.value("ls_notes").toString());
+    _changed=false;
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+}
 
-#endif // LOTSERIALCOMMENTS_H
+void lotSerial::sSave()
+{
+  q.prepare("UPDATE ls SET"
+            " ls_notes=:notes "
+            "WHERE (ls_id=:ls_id);");
+  q.bindValue(":notes",_notes->text());
+  q.bindValue(":ls_id", _lotSerial->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  close();
+}
+
+void lotSerial::sChanged()
+{
+  _changed=true;
+}
