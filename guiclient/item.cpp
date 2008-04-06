@@ -690,7 +690,7 @@ void item::sSave()
                                                     (_itemTypes[_itemtype->currentItem()] != "S") ) )
   {
     if (QMessageBox::information( this, tr("Create New Item Sites"),
-                                  tr("Would you like to create new Item Sites for the newly created Item?"),
+                                  tr("Would you like to create Item site inventory settings for the newly created Item now?"),
                                   tr("&Yes"), tr("&No"), QString::null, 0, 1) == 0)
     {
       ParameterList params;
