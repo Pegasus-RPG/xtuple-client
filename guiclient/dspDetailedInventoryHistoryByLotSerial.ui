@@ -316,6 +316,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>LotserialCluster</class>
@@ -392,6 +393,22 @@
     <hint type="destinationlabel" >
      <x>147</x>
      <y>219</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_item</sender>
+   <signal>privateIdChanged(int)</signal>
+   <receiver>_lotSerial</receiver>
+   <slot>setItemId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>166</x>
+     <y>46</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>173</x>
+     <y>164</y>
     </hint>
    </hints>
   </connection>

@@ -270,7 +270,7 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
              "       formatDateTime(invhist_transdate) AS transdate,"
              "       invhist_transtype, (invhist_ordtype || '-' || invhist_ordnumber) AS ordernumber,"
              "       invhist_invuom,"
-             "       item_number, invdetail_lotserial,"
+             "       item_number, formatlotserialnumber(invdetail_ls_id) AS lotserial,"
              "       formatQty(invdetail_qty) AS transqty,"
              "       formatQty(invdetail_qty_before) AS qohbefore,"
              "       formatQty(invdetail_qty_after) AS qohafter,"
@@ -296,7 +296,7 @@ void dspDetailedInventoryHistoryByLocation::sFillList()
 			       q.value("invhist_transtype"),
 			       q.value("ordernumber"),
 			       q.value("item_number"),
-			       q.value("invdetail_lotserial"),
+			       q.value("lotserial"),
 			       q.value("invhist_invuom"),
 			       q.value("transqty") );
 

@@ -81,7 +81,7 @@ incident::incident(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_crmacct,	SIGNAL(newId(int)),	this,	SLOT(sCRMAcctChanged(int)));
   connect(_deleteTodoItem, SIGNAL(clicked()),	this,	SLOT(sDeleteTodoItem()));
   connect(_editTodoItem, SIGNAL(clicked()),	this,	SLOT(sEditTodoItem()));
-  connect(_item,	SIGNAL(newId(int)), _lotserial, SLOT(setItemId(int)));
+  connect(_item,	SIGNAL(newId(int)),     _lotserial, SLOT(setItemId(int)));
   connect(_newTodoItem,	SIGNAL(clicked()),	this,	SLOT(sNewTodoItem()));
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
   connect(_todoList,	SIGNAL(itemSelected(int)), _editTodoItem, SLOT(animateClick()));
@@ -153,6 +153,7 @@ enum SetResponse incident::set(const ParameterList &pParams)
   {
     _incdtid = param.toInt();
     populate();
+    _lotserial->setItemId(_item->id());
   }
 
   param = pParams.value("mode", &valid);
@@ -195,8 +196,8 @@ enum SetResponse incident::set(const ParameterList &pParams)
       _priority->setEnabled(false);
       _item->setReadOnly(true);
       _lotserial->setEnabled(false);
-      _summary->setEnabled(false);
       _description->setEnabled(false);
+      _notes->setEnabled(false);
       _deleteTodoItem->setEnabled(false);
       _editTodoItem->setEnabled(false);
       _newTodoItem->setEnabled(false);
@@ -315,18 +316,10 @@ bool incident::save(bool partial)
       return false;
     }
 
-    if(_summary->text().trimmed().isEmpty())
-    {
-      QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify the Summary for this incident report.") );
-      _summary->setFocus();
-      return false;
-    }
-
     if(_description->text().trimmed().isEmpty())
     {
       QMessageBox::critical( this, tr("Incomplete Information"),
-	tr("You must specify the Description for this incident report.") );
+	tr("You must specify a description for this incident report.") );
       _description->setFocus();
       return false;
     }
@@ -358,19 +351,19 @@ bool incident::save(bool partial)
               "       incdt_status, incdt_assigned_username,"
               "       incdt_incdtcat_id, incdt_incdtseverity_id,"
               "       incdt_incdtpriority_id, incdt_incdtresolution_id,"
-              "       incdt_lotserial) "
+              "       incdt_ls_id) "
               "VALUES(:incdt_number, :incdt_crmacct_id, :incdt_cntct_id,"
-              "       :incdt_summary, :incdt_descrip, :incdt_item_id,"
+              "       :incdt_description, :incdt_notes, :incdt_item_id,"
               "       :incdt_status, :incdt_assigned_username,"
               "       :incdt_incdtcat_id, :incdt_incdtseverity_id,"
               "       :incdt_incdtpriority_id, :incdt_incdtresolution_id,"
-              "       :incdt_lotserial);" );
+              "       :incdt_ls_id);" );
   else if (cEdit == _mode || _saved)
     q.prepare("UPDATE incdt"
               "   SET incdt_cntct_id=:incdt_cntct_id,"
               "       incdt_crmacct_id=:incdt_crmacct_id,"
-              "       incdt_summary=:incdt_summary,"
-              "       incdt_descrip=:incdt_descrip,"
+              "       incdt_summary=:incdt_description,"
+              "       incdt_descrip=:incdt_notes,"
               "       incdt_item_id=:incdt_item_id,"
               "       incdt_status=:incdt_status,"
               "       incdt_assigned_username=:incdt_assigned_username,"
@@ -378,7 +371,7 @@ bool incident::save(bool partial)
               "       incdt_incdtpriority_id=:incdt_incdtpriority_id,"
               "       incdt_incdtseverity_id=:incdt_incdtseverity_id,"
               "       incdt_incdtresolution_id=:incdt_incdtresolution_id,"
-              "       incdt_lotserial=:incdt_lotserial"
+              "       incdt_ls_id=:incdt_ls_id"
               " WHERE (incdt_id=:incdt_id); ");
 
   q.bindValue(":incdt_id", _incdtid);
@@ -387,8 +380,8 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_crmacct_id", _crmacct->id());
   if (_cntct->id() > 0)
     q.bindValue(":incdt_cntct_id", _cntct->id());
-  q.bindValue(":incdt_summary", _summary->text().trimmed());
-  q.bindValue(":incdt_descrip", _description->text().trimmed());
+  q.bindValue(":incdt_description", _description->text().trimmed());
+  q.bindValue(":incdt_notes", _notes->text().trimmed());
   if(-1 != _item->id())
     q.bindValue(":incdt_item_id", _item->id());
   if(_assignedTo->isValid())
@@ -402,7 +395,8 @@ bool incident::save(bool partial)
     q.bindValue(":incdt_incdtpriority_id", _priority->id());
   if(_resolution->isValid())
     q.bindValue(":incdt_incdtresolution_id", _resolution->id());
-  q.bindValue(":incdt_lotserial", _lotserial->number().trimmed());
+  if ((_item->id() != -1) && (_lotserial->id() != -1))
+    q.bindValue(":incdt_ls_id", _lotserial->id());
 
   if(!q.exec() && q.lastError().type() != QSqlError::None)
   {
@@ -465,7 +459,7 @@ void incident::populate()
             "       COALESCE(incdt_cntct_id,-1) AS incdt_cntct_id,"
             "       (cntct_first_name || ' ' || cntct_last_name) AS cntct_name,"
             "       incdt_summary, incdt_descrip,"
-            "       incdt_item_id, incdt_lotserial,"
+            "       incdt_item_id, incdt_ls_id,"
             "       incdt_status, incdt_assigned_username,"
             "       incdt_incdtcat_id, incdt_incdtseverity_id,"
             "       incdt_incdtpriority_id, incdt_incdtresolution_id"
@@ -497,9 +491,12 @@ void incident::populate()
       _item->setId(q.value("incdt_item_id").toInt());
     else
       _item->setId(-1);
-    _lotserial->setNumber(q.value("incdt_lotserial").toString());
-    _summary->setText(q.value("incdt_summary").toString());
-    _description->setText(q.value("incdt_descrip").toString());
+    if(!q.value("incdt_ls_id").toString().isEmpty())
+      _lotserial->setId(q.value("incdt_ls_id").toInt());
+    else
+      _lotserial->setId(-1);
+    _description->setText(q.value("incdt_summary").toString());
+    _notes->setText(q.value("incdt_descrip").toString());
 
     _comments->setId(_incdtid);
 
@@ -579,7 +576,7 @@ void incident::sFillTodoList()
   XTreeWidgetItem* last = 0;
   q.prepare("SELECT todoitem_id, todoitem_usr_id, todoitem_seq, "
 	    "       usr_username, todoitem_name, "
-	    "       firstLine(todoitem_description) AS todoitem_description, "
+	    "       firstLine(todoitem_notes) AS todoitem_notes, "
 	    "       todoitem_status, todoitem_due_date "
 	    "FROM usr, todoitem "
 	    "WHERE ( (todoitem_incdt_id=:incdt_id) "
@@ -603,7 +600,7 @@ void incident::sFillTodoList()
 			     q.value("todoitem_seq").toString(),
 			     q.value("usr_username").toString(),
 			     q.value("todoitem_name").toString(),
-			     q.value("todoitem_description").toString(),
+			     q.value("todoitem_notes").toString(),
 			     q.value("todoitem_status").toString(),
 			     q.value("todoitem_due_date").isNull() ? "" :
 				    q.value("todoitem_due_date").toString());
