@@ -1,0 +1,281 @@
+<ui version="4.0" >
+ <class>incident</class>
+ <widget class="QDialog" name="incident" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>681</width>
+    <height>578</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>Incident</string>
+  </property>
+  <layout class="QGridLayout" >
+   <item row="0" column="0" >
+    <widget class="QLabel" name="_numberLit" >
+     <property name="text" >
+      <string>Registration #:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>_number</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="1" colspan="2" >
+    <widget class="QLineEdit" name="_number" >
+     <property name="enabled" >
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="3" >
+    <widget class="QLabel" name="_typeLit" >
+     <property name="text" >
+      <string>Type:</string>
+     </property>
+     <property name="alignment" >
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="buddy" >
+      <cstring>_type</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="4" >
+    <widget class="XComboBox" name="_type" >
+     <property name="allowNull" >
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item rowspan="2" row="0" column="5" >
+    <layout class="QVBoxLayout" >
+     <property name="spacing" >
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QPushButton" name="_cancel" >
+       <property name="text" >
+        <string>Cancel</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="_save" >
+       <property name="text" >
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer>
+       <property name="orientation" >
+        <enum>Qt::Vertical</enum>
+       </property>
+       <property name="sizeHint" >
+        <size>
+         <width>20</width>
+         <height>0</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0" colspan="2" >
+    <widget class="QGroupBox" name="_dateGroup" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="QLabel" name="label" >
+        <property name="text" >
+         <string>Register Date:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" >
+       <widget class="DLineEdit" name="dLineEdit" />
+      </item>
+      <item row="1" column="0" >
+       <widget class="QLabel" name="label_2" >
+        <property name="text" >
+         <string>Expire Date:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="DLineEdit" name="dLineEdit_2" />
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="2" colspan="3" >
+    <widget class="QGroupBox" name="_crmaccntGroup" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QGridLayout" >
+      <item row="0" column="0" >
+       <widget class="CRMAcctCluster" name="_crmacct" >
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
+        <property name="label" >
+         <string>CRM Account:</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="2" column="0" colspan="6" >
+    <widget class="QGroupBox" name="_itemGroup" >
+     <property name="title" >
+      <string/>
+     </property>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="ItemCluster" name="_item" >
+        <property name="focusPolicy" >
+         <enum>Qt::TabFocus</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="LotserialCluster" name="_lotserial" >
+        <property name="focusPolicy" >
+         <enum>Qt::StrongFocus</enum>
+        </property>
+        <property name="label" >
+         <string>  Lot/Serial #:</string>
+        </property>
+        <property name="infoVisible" >
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="6" >
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="_contactTab" >
+      <attribute name="title" >
+       <string>Contact</string>
+      </attribute>
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="ContactCluster" name="_cntct" >
+         <property name="label" >
+          <string/>
+         </property>
+         <property name="accountVisible" >
+          <bool>false</bool>
+         </property>
+         <property name="activeVisible" >
+          <bool>false</bool>
+         </property>
+         <property name="minimalLayout" >
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_characteristicsTab" >
+      <attribute name="title" >
+       <string>Characteristics</string>
+      </attribute>
+      <layout class="QHBoxLayout" />
+     </widget>
+     <widget class="QWidget" name="_notesTab" >
+      <attribute name="title" >
+       <string>Notes</string>
+      </attribute>
+      <layout class="QVBoxLayout" >
+       <item>
+        <widget class="QTextEdit" name="_notes" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="MinimumExpanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize" >
+          <size>
+           <width>0</width>
+           <height>125</height>
+          </size>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <layoutdefault spacing="5" margin="5" />
+ <customwidgets>
+  <customwidget>
+   <class>ContactCluster</class>
+   <extends>QWidget</extends>
+   <header>contactcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>CRMAcctCluster</class>
+   <extends>QWidget</extends>
+   <header>crmacctcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>DLineEdit</class>
+   <extends>XLineEdit</extends>
+   <header>datecluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>ItemCluster</class>
+   <extends>QWidget</extends>
+   <header>itemcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>LotserialCluster</class>
+   <extends>QWidget</extends>
+   <header>lotserialcluster.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XComboBox</class>
+   <extends>QComboBox</extends>
+   <header>xcombobox.h</header>
+  </customwidget>
+ </customwidgets>
+ <tabstops>
+  <tabstop>_number</tabstop>
+  <tabstop>_crmacct</tabstop>
+  <tabstop>_cntct</tabstop>
+  <tabstop>_item</tabstop>
+  <tabstop>_type</tabstop>
+  <tabstop>_lotserial</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>_description</tabstop>
+  <tabstop>_save</tabstop>
+  <tabstop>_cancel</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
