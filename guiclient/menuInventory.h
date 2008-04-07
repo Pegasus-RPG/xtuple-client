@@ -103,7 +103,6 @@ class menuInventory : public QObject
     void sResetQOHBalances();
     void sRelocateInventory();
 
-    void sLotSerialHistory();
     void sReassignLotSerialNumber();
 
     void sCreateCountTagsByClassCode();

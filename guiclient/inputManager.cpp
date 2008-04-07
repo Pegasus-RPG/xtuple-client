@@ -1052,7 +1052,7 @@ void InputManager::dispatchLotSerialNumber()
     XSqlQuery lsdetail;
     lsdetail.prepare( "SELECT lsdetail_id "
 		      "FROM lsdetail "
-		      "WHERE (lsdetail_lotserial=:lotserial);" );
+		      "WHERE (formatlotserialnumber(lsdetail_ls_id)=:lotserial);" );
     lsdetail.bindValue(":lotserial", lotserial);
     lsdetail.exec();
     if (lsdetail.first())

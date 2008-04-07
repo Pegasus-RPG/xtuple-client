@@ -85,7 +85,6 @@
 #include "materialReceiptTrans.h"
 #include "relocateInventory.h"
 
-#include "lotSerialHistory.h"
 #include "reassignLotSerial.h"
 
 #include "createCountTagsByParameterList.h"
@@ -661,12 +660,6 @@ void menuInventory::sRelocateInventory()
 
 
 //  Lot/Serial Control
-void menuInventory::sLotSerialHistory()
-{
-  lotSerialHistory newdlg(parent, "", TRUE);
-  newdlg.exec();
-}
-
 void menuInventory::sReassignLotSerialNumber()
 {
   reassignLotSerial newdlg(parent, "", TRUE);

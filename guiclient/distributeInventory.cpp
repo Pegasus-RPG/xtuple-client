@@ -161,44 +161,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
         {
           query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
           if(query.first())
-          {/*
-            itemlocSeries = query.value("_itemloc_series").toInt();
-            query.exec("SELECT NEXTVAL('itemlocdist_itemlocdist_id_seq') AS itemlocdist_id;");
-            query.first();
-            int itemlocdistid = query.value("itemlocdist_id").toInt();
-            query.prepare( "INSERT INTO itemlocdist "
-                           "( itemlocdist_id, itemlocdist_source_type, itemlocdist_source_id,"
-                           "  itemlocdist_itemsite_id, itemlocdist_ls_id, itemlocdist_expiration,"
-                           "  itemlocdist_qty, itemlocdist_series, itemlocdist_invhist_id ) "
-                           "SELECT :newItemlocdist_id, 'D', itemlocdist_id,"
-                           "       itemlocdist_itemsite_id, :ls_id, :itemsite_expiration,"
-                           "       :qtyToAssign, :itemlocdist_series, itemlocdist_invhist_id "
-                           "FROM itemlocdist "
-                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
-            if(itemloc.value("itemsite_perishable").toBool())
-              query.bindValue(":itemsite_expiration", pPresetLotexp);
-            else
-              query.bindValue(":itemsite_expiration", omfgThis->startOfTime());
-
-            query.bindValue(":newItemlocdist_id", itemlocdistid);
-            query.bindValue(":lotSerialNumber", pPresetLotnum);
-            query.bindValue(":qtyToAssign", itemloc.value("itemlocdist_qty"));
-            query.bindValue(":itemlocdist_series", itemlocSeries);
-            query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
-            query.exec();
-
-            query.prepare( "INSERT INTO lsdetail "
-                           "( lsdetail_itemsite_id, lsdetail_lotserial, lsdetail_created,"
-                           "  lsdetail_source_type, lsdetail_source_id, lsdetail_source_number ) "
-                           "SELECT itemlocdist_itemsite_id, :lotSerialNumber, CURRENT_TIMESTAMP,"
-                           "       'I', itemlocdist_id, '' "
-                           "FROM itemlocdist "
-                           "WHERE (itemlocdist_id=:itemlocdist_id);" );
-            query.bindValue(":lotSerialNumber", pPresetLotnum);
-            query.bindValue(":itemlocdist_id", itemlocdistid);
-            query.exec(); */
-            
-
+          {
             query.prepare( "PERFORM createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocseries,'I',itemlocdist_source_id,:qty,:expiration,:warranty)"
                            "FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);"
