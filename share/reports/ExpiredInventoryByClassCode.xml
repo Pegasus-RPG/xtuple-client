@@ -57,7 +57,7 @@
        item_descrip1,
        item_descrip2,
        uom_name,
-       itemloc_lotserial,
+       ls_number AS itemloc_lotserial,
        formatQty(itemloc_qty) AS f_qoh,
        formatDate(itemloc_expiration) AS f_expiration,
        &lt;? if exists("showValue") ?>
@@ -79,7 +79,7 @@
                 item_descrip1,
                 item_descrip2,
                 uom_name,
-                itemloc_lotserial,
+                ls_number,
                 itemloc_qty,
 &lt;? if exists("perishability") ?>
                 itemloc_expiration,
@@ -92,8 +92,9 @@
                   stdcost(itemsite_item_id)
                 &lt;? endif ?>
                 AS cost
-           FROM itemloc, itemsite, item, warehous, uom
+           FROM itemloc, itemsite, item, warehous, uom, ls
           WHERE ((itemloc_itemsite_id=itemsite_id)
+            AND (itemloc_ls_id=ls_id)
             AND (itemsite_item_id=item_id)
             AND (item_inv_uom_id=uom_id)
             AND (itemsite_warehous_id=warehous_id)
@@ -129,96 +130,6 @@ ORDER BY warehous_code,
   <height>237</height>
   <label>
    <rect>
-    <x>265</x>
-    <y>200</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>102</x>
-    <y>215</y>
-    <width>227</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>40</x>
-    <y>160</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Expire By:</string>
-  </label>
-  <label>
-   <rect>
-    <x>45</x>
-    <y>140</y>
-    <width>80</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Warehouse:</string>
-  </label>
-  <field>
-   <rect>
-    <x>440</x>
-    <y>140</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>showvalues</column>
-   </data>
-  </field>
-  <line>
-   <xstart>5</xstart>
-   <ystart>227</ystart>
-   <xend>745</xend>
-   <yend>227</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
     <x>227</x>
     <y>10</y>
     <width>492</width>
@@ -233,6 +144,25 @@ ORDER BY warehous_code,
    <vcenter/>
    <string>Expired Inventory By Class Code</string>
   </label>
+  <field>
+   <rect>
+    <x>130</x>
+    <y>140</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>490</x>
@@ -251,9 +181,9 @@ ORDER BY warehous_code,
   </label>
   <label>
    <rect>
-    <x>102</x>
+    <x>350</x>
     <y>200</y>
-    <width>150</width>
+    <width>85</width>
     <height>15</height>
    </rect>
    <font>
@@ -263,7 +193,7 @@ ORDER BY warehous_code,
    </font>
    <left/>
    <vcenter/>
-   <string>Item Number</string>
+   <string>Lot/Serial #</string>
   </label>
   <field>
    <rect>
@@ -284,30 +214,11 @@ ORDER BY warehous_code,
     <column>expiretype</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>130</x>
-    <y>120</y>
-    <width>300</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>classcode</column>
-   </data>
-  </field>
   <label>
    <rect>
-    <x>417</x>
-    <y>120</y>
-    <width>112</width>
+    <x>45</x>
+    <y>140</y>
+    <width>80</width>
     <height>20</height>
    </rect>
    <font>
@@ -317,8 +228,27 @@ ORDER BY warehous_code,
    </font>
    <right/>
    <vcenter/>
-   <string>Threshold Days:</string>
+   <string>Warehouse:</string>
   </label>
+  <field>
+   <rect>
+    <x>660</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_value</column>
+   </data>
+  </field>
   <label>
    <rect>
     <x>350</x>
@@ -353,9 +283,9 @@ ORDER BY warehous_code,
   </label>
   <field>
    <rect>
-    <x>130</x>
+    <x>440</x>
     <y>140</y>
-    <width>200</width>
+    <width>300</width>
     <height>20</height>
    </rect>
    <font>
@@ -367,14 +297,14 @@ ORDER BY warehous_code,
    <vcenter/>
    <data>
     <query>head</query>
-    <column>warehouse</column>
+    <column>showvalues</column>
    </data>
   </field>
-  <field>
+  <label>
    <rect>
-    <x>575</x>
+    <x>102</x>
     <y>200</y>
-    <width>80</width>
+    <width>150</width>
     <height>15</height>
    </rect>
    <font>
@@ -382,32 +312,42 @@ ORDER BY warehous_code,
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <right/>
+   <left/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_unitcost</column>
-   </data>
-  </field>
-  <field>
+   <string>Item Number</string>
+  </label>
+  <label>
    <rect>
-    <x>660</x>
-    <y>200</y>
+    <x>40</x>
+    <y>160</y>
     <width>80</width>
-    <height>15</height>
+    <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
-    <size>8</size>
+    <size>10</size>
     <weight>normal</weight>
    </font>
    <right/>
    <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_value</column>
-   </data>
-  </field>
+   <string>Expire By:</string>
+  </label>
+  <label>
+   <rect>
+    <x>417</x>
+    <y>120</y>
+    <width>112</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Threshold Days:</string>
+  </label>
   <field>
    <rect>
     <x>540</x>
@@ -427,6 +367,48 @@ ORDER BY warehous_code,
     <column>f_thresholddays</column>
    </data>
   </field>
+  <field>
+   <rect>
+    <x>130</x>
+    <y>120</y>
+    <width>300</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>classcode</column>
+   </data>
+  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>227</ystart>
+   <xend>745</xend>
+   <yend>227</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>265</x>
+    <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
   <label>
    <rect>
     <x>25</x>
@@ -445,8 +427,66 @@ ORDER BY warehous_code,
   </label>
   <label>
    <rect>
-    <x>350</x>
+    <x>102</x>
+    <y>215</y>
+    <width>227</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <field>
+   <rect>
+    <x>575</x>
     <y>200</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_unitcost</column>
+   </data>
+  </field>
+ </rpthead>
+ <pghead>
+  <firstpage/>
+  <height>6</height>
+ </pghead>
+ <pghead>
+  <height>42</height>
+  <label>
+   <rect>
+    <x>102</x>
+    <y>20</y>
+    <width>227</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>350</x>
+    <y>5</y>
     <width>85</width>
     <height>15</height>
    </rect>
@@ -459,13 +499,25 @@ ORDER BY warehous_code,
    <vcenter/>
    <string>Lot/Serial #</string>
   </label>
- </rpthead>
- <pghead>
-  <firstpage/>
-  <height>6</height>
- </pghead>
- <pghead>
-  <height>42</height>
+  <field>
+   <rect>
+    <x>575</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_unitcost</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>660</x>
@@ -487,6 +539,29 @@ ORDER BY warehous_code,
   </field>
   <label>
    <rect>
+    <x>265</x>
+    <y>5</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>35</ystart>
+   <xend>745</xend>
+   <yend>32</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
     <x>350</x>
     <y>20</y>
     <width>85</width>
@@ -500,54 +575,6 @@ ORDER BY warehous_code,
    <left/>
    <vcenter/>
    <string>Expiration</string>
-  </label>
-  <label>
-   <rect>
-    <x>102</x>
-    <y>20</y>
-    <width>227</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>490</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH</string>
-  </label>
-  <label>
-   <rect>
-    <x>350</x>
-    <y>5</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Lot/Serial #</string>
   </label>
   <label>
    <rect>
@@ -565,25 +592,6 @@ ORDER BY warehous_code,
    <vcenter/>
    <string>Whs.</string>
   </label>
-  <field>
-   <rect>
-    <x>575</x>
-    <y>5</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_unitcost</column>
-   </data>
-  </field>
   <label>
    <rect>
     <x>102</x>
@@ -600,16 +608,9 @@ ORDER BY warehous_code,
    <vcenter/>
    <string>Item Number</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>35</ystart>
-   <xend>745</xend>
-   <yend>32</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>265</x>
+    <x>490</x>
     <y>5</y>
     <width>80</width>
     <height>15</height>
@@ -621,7 +622,7 @@ ORDER BY warehous_code,
    </font>
    <hcenter/>
    <vcenter/>
-   <string>UOM</string>
+   <string>QOH</string>
   </label>
  </pghead>
  <section>
@@ -633,9 +634,9 @@ ORDER BY warehous_code,
    <height>52</height>
    <field>
     <rect>
-     <x>575</x>
-     <y>0</y>
-     <width>80</width>
+     <x>102</x>
+     <y>30</y>
+     <width>300</width>
      <height>15</height>
     </rect>
     <font>
@@ -643,11 +644,11 @@ ORDER BY warehous_code,
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <right/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_unitcost</column>
+     <column>item_descrip2</column>
     </data>
    </field>
    <field>
@@ -671,9 +672,9 @@ ORDER BY warehous_code,
    </field>
    <field>
     <rect>
-     <x>350</x>
-     <y>15</y>
-     <width>135</width>
+     <x>265</x>
+     <y>0</y>
+     <width>80</width>
      <height>15</height>
     </rect>
     <font>
@@ -681,11 +682,30 @@ ORDER BY warehous_code,
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>f_expiration</column>
+     <column>uom_name</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>490</x>
+     <y>0</y>
+     <width>80</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_qoh</column>
     </data>
    </field>
    <field>
@@ -726,9 +746,16 @@ ORDER BY warehous_code,
      <column>item_descrip1</column>
     </data>
    </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
    <field>
     <rect>
-     <x>265</x>
+     <x>575</x>
      <y>0</y>
      <width>80</width>
      <height>15</height>
@@ -738,18 +765,18 @@ ORDER BY warehous_code,
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>uom_name</column>
+     <column>f_unitcost</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>102</x>
-     <y>0</y>
-     <width>150</width>
+     <x>350</x>
+     <y>15</y>
+     <width>135</width>
      <height>15</height>
     </rect>
     <font>
@@ -761,16 +788,9 @@ ORDER BY warehous_code,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_number</column>
+     <column>f_expiration</column>
     </data>
    </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
    <field>
     <rect>
      <x>25</x>
@@ -792,28 +812,9 @@ ORDER BY warehous_code,
    </field>
    <field>
     <rect>
-     <x>490</x>
-     <y>0</y>
-     <width>80</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_qoh</column>
-    </data>
-   </field>
-   <field>
-    <rect>
      <x>102</x>
-     <y>30</y>
-     <width>300</width>
+     <y>0</y>
+     <width>150</width>
      <height>15</height>
     </rect>
     <font>
@@ -825,13 +826,48 @@ ORDER BY warehous_code,
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip2</column>
+     <column>item_number</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>17</height>
+  <label>
+   <rect>
+    <x>615</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Page:</string>
+  </label>
+  <field>
+   <rect>
+    <x>90</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
   <field>
    <rect>
     <x>705</x>
@@ -853,22 +889,6 @@ ORDER BY warehous_code,
   </field>
   <label>
    <rect>
-    <x>615</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Page:</string>
-  </label>
-  <label>
-   <rect>
     <x>0</x>
     <y>0</y>
     <width>85</width>
@@ -883,24 +903,5 @@ ORDER BY warehous_code,
    <vcenter/>
    <string>Report Date:</string>
   </label>
-  <field>
-   <rect>
-    <x>90</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
  </pgfoot>
 </report>

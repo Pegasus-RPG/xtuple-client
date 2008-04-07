@@ -16,10 +16,10 @@
        formatBoolYN(location_netable) AS f_netable,
        formatBoolYN(location_restrict) AS f_restrict,
        warehous_code AS warehouse,
-       formatDate(&lt;? value(&quot;startDate&quot;) ?>) AS startdate,
-       formatDate(&lt;? value(&quot;endDate&quot;) ?>) AS enddate
+       formatDate(&lt;? value("startDate") ?>) AS startdate,
+       formatDate(&lt;? value("endDate") ?>) AS enddate
   FROM location, warehous
- WHERE ((location_id=&lt;? value(&quot;location_id&quot;) ?>)
+ WHERE ((location_id=&lt;? value("location_id") ?>)
    AND (location_warehous_id=warehous_id) );
 </sql>
  </querysource>
@@ -33,7 +33,7 @@
        item_number,
        item_descrip1,
        item_descrip2,
-       invdetail_lotserial,
+       formatlotserialnumber(invdetail_ls_id) AS invdetail_lotserial,
        formatQty(invdetail_qty) AS transqty,
        formatQty(invdetail_qty_before) AS qohbefore,
        formatQty(invdetail_qty_after) AS qohafter,
@@ -43,94 +43,14 @@
  WHERE ((invdetail_invhist_id=invhist_id)
    AND (invhist_itemsite_id=itemsite_id)
    AND (itemsite_item_id=item_id)
-   AND (invdetail_location_id=&lt;? value(&quot;location_id&quot;) ?>)
-   AND (date(invhist_transdate) BETWEEN &lt;? value(&quot;startDate&quot;) ?> AND &lt;? value(&quot;endDate&quot;) ?>)
-   AND (transType(invhist_transtype, &lt;? value(&quot;transType&quot;) ?>))
+   AND (invdetail_location_id=&lt;? value("location_id") ?>)
+   AND (date(invhist_transdate) BETWEEN &lt;? value("startDate") ?> AND &lt;? value("endDate") ?>)
+   AND (transType(invhist_transtype, &lt;? value("transType") ?>))
 )
 ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
  </querysource>
  <rpthead>
   <height>251</height>
-  <label>
-   <rect>
-    <x>509</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Trans-Qty</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>229</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Username</string>
-  </label>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>150</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>End Date:</string>
-  </label>
-  <label>
-   <rect>
-    <x>170</x>
-    <y>200</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>400</x>
-    <y>130</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Start Date:</string>
-  </label>
   <label>
    <rect>
     <x>10</x>
@@ -149,24 +69,8 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
   </label>
   <label>
    <rect>
-    <x>660</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH After</string>
-  </label>
-  <label>
-   <rect>
     <x>60</x>
-    <y>215</y>
+    <y>200</y>
     <width>100</width>
     <height>15</height>
    </rect>
@@ -177,31 +81,12 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Order Number</string>
+   <string>Time</string>
   </label>
   <field>
    <rect>
-    <x>509</x>
-    <y>130</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>startdate</column>
-   </data>
-  </field>
-  <field>
-   <rect>
     <x>140</x>
-    <y>105</y>
+    <y>104</y>
     <width>375</width>
     <height>20</height>
    </rect>
@@ -217,123 +102,11 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
     <column>f_descrip</column>
    </data>
   </field>
-  <field>
-   <rect>
-    <x>600</x>
-    <y>105</y>
-    <width>65</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_restrict</column>
-   </data>
-  </field>
-  <field>
-   <rect>
-    <x>600</x>
-    <y>85</y>
-    <width>65</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>f_netable</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>130</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Warehouse:</string>
-  </label>
-  <field>
-   <rect>
-    <x>509</x>
-    <y>150</y>
-    <width>200</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>enddate</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>30</x>
-    <y>85</y>
-    <width>105</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Location:</string>
-  </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>245</ystart>
-   <xend>745</xend>
-   <yend>245</yend>
-   <weight>2</weight>
-  </line>
-  <label>
-   <rect>
-    <x>241</x>
-    <y>10</y>
-    <width>484</width>
-    <height>38</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>18</size>
-    <weight>bold</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Detailed Inventory History by Location</string>
-  </label>
   <label>
    <rect>
     <x>170</x>
     <y>215</y>
-    <width>229</width>
+    <width>228</width>
     <height>15</height>
    </rect>
    <font>
@@ -347,118 +120,19 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
   </label>
   <label>
    <rect>
-    <x>525</x>
-    <y>105</y>
-    <width>70</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Restricted:</string>
-  </label>
-  <label>
-   <rect>
-    <x>525</x>
-    <y>85</y>
-    <width>70</width>
-    <height>20</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>10</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Netable:</string>
-  </label>
-  <field>
-   <rect>
-    <x>140</x>
+    <x>400</x>
     <y>130</y>
-    <width>200</width>
+    <width>104</width>
     <height>20</height>
    </rect>
    <font>
     <face>Arial</face>
     <size>10</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>head</query>
-    <column>warehouse</column>
-   </data>
-  </field>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>215</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
     <weight>normal</weight>
    </font>
-   <hcenter/>
+   <right/>
    <vcenter/>
-   <string>Type</string>
-  </label>
-  <label>
-   <rect>
-    <x>585</x>
-    <y>200</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>QOH Before</string>
-  </label>
-  <label>
-   <rect>
-    <x>305</x>
-    <y>200</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Lot/Serial #</string>
-  </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>200</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Time</string>
+   <string>Start Date:</string>
   </label>
   <field>
    <rect>
@@ -481,7 +155,301 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
   </field>
   <label>
    <rect>
-    <x>434</x>
+    <x>60</x>
+    <y>215</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>228</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Username</string>
+  </label>
+  <field>
+   <rect>
+    <x>508</x>
+    <y>150</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>enddate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>140</x>
+    <y>130</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>warehouse</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>525</x>
+    <y>104</y>
+    <width>70</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Restricted:</string>
+  </label>
+  <label>
+   <rect>
+    <x>660</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH After</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>85</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Location:</string>
+  </label>
+  <field>
+   <rect>
+    <x>508</x>
+    <y>130</y>
+    <width>200</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>startdate</column>
+   </data>
+  </field>
+  <field>
+   <rect>
+    <x>600</x>
+    <y>104</y>
+    <width>65</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_restrict</column>
+   </data>
+  </field>
+  <label>
+   <rect>
+    <x>305</x>
+    <y>200</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Lot/Serial #</string>
+  </label>
+  <label>
+   <rect>
+    <x>585</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>QOH Before</string>
+  </label>
+  <label>
+   <rect>
+    <x>525</x>
+    <y>85</y>
+    <width>70</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Netable:</string>
+  </label>
+  <label>
+   <rect>
+    <x>241</x>
+    <y>10</y>
+    <width>483</width>
+    <height>37</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>18</size>
+    <weight>bold</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Detailed Inventory History by Location</string>
+  </label>
+  <label>
+   <rect>
+    <x>508</x>
+    <y>200</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Trans-Qty</string>
+  </label>
+  <label>
+   <rect>
+    <x>30</x>
+    <y>130</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Warehouse:</string>
+  </label>
+  <field>
+   <rect>
+    <x>600</x>
+    <y>85</y>
+    <width>65</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>head</query>
+    <column>f_netable</column>
+   </data>
+  </field>
+  <line>
+   <xstart>5</xstart>
+   <ystart>245</ystart>
+   <xend>745</xend>
+   <yend>245</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>170</x>
+    <y>200</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>433</x>
     <y>200</y>
     <width>75</width>
     <height>15</height>
@@ -495,6 +463,38 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    <vcenter/>
    <string>UOM</string>
   </label>
+  <label>
+   <rect>
+    <x>10</x>
+    <y>215</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>400</x>
+    <y>150</y>
+    <width>104</width>
+    <height>20</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>10</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>End Date:</string>
+  </label>
  </rpthead>
  <pghead>
   <firstpage/>
@@ -504,7 +504,110 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
   <height>51</height>
   <label>
    <rect>
-    <x>509</x>
+    <x>10</x>
+    <y>15</y>
+    <width>35</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Type</string>
+  </label>
+  <label>
+   <rect>
+    <x>170</x>
+    <y>0</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Number</string>
+  </label>
+  <label>
+   <rect>
+    <x>433</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>60</x>
+    <y>30</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Username</string>
+  </label>
+  <label>
+   <rect>
+    <x>305</x>
+    <y>0</y>
+    <width>125</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Lot/Serial #</string>
+  </label>
+  <line>
+   <xstart>5</xstart>
+   <ystart>45</ystart>
+   <xend>745</xend>
+   <yend>45</yend>
+   <weight>2</weight>
+  </line>
+  <label>
+   <rect>
+    <x>170</x>
+    <y>15</y>
+    <width>228</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Item Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>508</x>
     <y>0</y>
     <width>75</width>
     <height>15</height>
@@ -536,9 +639,9 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
   </label>
   <label>
    <rect>
-    <x>60</x>
-    <y>15</y>
-    <width>100</width>
+    <x>10</x>
+    <y>0</y>
+    <width>35</width>
     <height>15</height>
    </rect>
    <font>
@@ -546,9 +649,9 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Order Number</string>
+   <string>Whs.</string>
   </label>
   <label>
    <rect>
@@ -566,34 +669,11 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    <vcenter/>
    <string>QOH After</string>
   </label>
-  <line>
-   <xstart>5</xstart>
-   <ystart>45</ystart>
-   <xend>745</xend>
-   <yend>45</yend>
-   <weight>2</weight>
-  </line>
   <label>
    <rect>
-    <x>434</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>170</x>
+    <x>60</x>
     <y>15</y>
-    <width>229</width>
+    <width>100</width>
     <height>15</height>
    </rect>
    <font>
@@ -603,71 +683,7 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </font>
    <left/>
    <vcenter/>
-   <string>Item Description</string>
-  </label>
-  <label>
-   <rect>
-    <x>170</x>
-    <y>0</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Item Number</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>15</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Type</string>
-  </label>
-  <label>
-   <rect>
-    <x>10</x>
-    <y>0</y>
-    <width>35</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Whs.</string>
-  </label>
-  <label>
-   <rect>
-    <x>305</x>
-    <y>0</y>
-    <width>125</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Lot/Serial #</string>
+   <string>Order Number</string>
   </label>
   <label>
    <rect>
@@ -685,22 +701,6 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    <vcenter/>
    <string>Time</string>
   </label>
-  <label>
-   <rect>
-    <x>60</x>
-    <y>30</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Username</string>
-  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -711,7 +711,26 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    <height>51</height>
    <field>
     <rect>
-     <x>509</x>
+     <x>585</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qohbefore</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>508</x>
      <y>0</y>
      <width>75</width>
      <height>15</height>
@@ -726,25 +745,6 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
     <data>
      <query>detail</query>
      <column>transqty</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>10</x>
-     <y>0</y>
-     <width>35</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>warehous_code</column>
     </data>
    </field>
    <field>
@@ -766,18 +766,11 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
      <column>transdate</column>
     </data>
    </field>
-   <line>
-    <xstart>5</xstart>
-    <ystart>45</ystart>
-    <xend>745</xend>
-    <yend>45</yend>
-    <weight>0</weight>
-   </line>
    <field>
     <rect>
-     <x>170</x>
-     <y>30</y>
-     <width>229</width>
+     <x>433</x>
+     <y>0</y>
+     <width>75</width>
      <height>15</height>
     </rect>
     <font>
@@ -785,30 +778,11 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip2</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>60</x>
-     <y>30</y>
-     <width>100</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>username</column>
+     <column>invhist_invuom</column>
     </data>
    </field>
    <field>
@@ -832,9 +806,9 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </field>
    <field>
     <rect>
-     <x>170</x>
-     <y>15</y>
-     <width>229</width>
+     <x>10</x>
+     <y>0</y>
+     <width>35</width>
      <height>15</height>
     </rect>
     <font>
@@ -842,16 +816,16 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <left/>
+    <hcenter/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_descrip1</column>
+     <column>warehous_code</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>585</x>
+     <x>660</x>
      <y>0</y>
      <width>75</width>
      <height>15</height>
@@ -865,7 +839,26 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>qohbefore</column>
+     <column>qohafter</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>170</x>
+     <y>15</y>
+     <width>228</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_descrip1</column>
     </data>
    </field>
    <field>
@@ -889,6 +882,32 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </field>
    <field>
     <rect>
+     <x>170</x>
+     <y>0</y>
+     <width>125</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>item_number</column>
+    </data>
+   </field>
+   <line>
+    <xstart>5</xstart>
+    <ystart>45</ystart>
+    <xend>745</xend>
+    <yend>45</yend>
+    <weight>0</weight>
+   </line>
+   <field>
+    <rect>
      <x>305</x>
      <y>0</y>
      <width>125</width>
@@ -908,9 +927,9 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    </field>
    <field>
     <rect>
-     <x>170</x>
-     <y>0</y>
-     <width>125</width>
+     <x>60</x>
+     <y>30</y>
+     <width>100</width>
      <height>15</height>
     </rect>
     <font>
@@ -922,14 +941,14 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>item_number</column>
+     <column>username</column>
     </data>
    </field>
    <field>
     <rect>
-     <x>434</x>
-     <y>0</y>
-     <width>75</width>
+     <x>170</x>
+     <y>30</y>
+     <width>228</width>
      <height>15</height>
     </rect>
     <font>
@@ -937,71 +956,17 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
      <size>8</size>
      <weight>bold</weight>
     </font>
-    <hcenter/>
+    <left/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>invhist_invuom</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>660</x>
-     <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qohafter</column>
+     <column>item_descrip2</column>
     </data>
    </field>
   </detail>
  </section>
  <pgfoot>
   <height>16</height>
-  <label>
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <field>
-   <rect>
-    <x>90</x>
-    <y>0</y>
-    <width>100</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>bold</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <data>
-    <query>Context Query</query>
-    <column>report_date</column>
-   </data>
-  </field>
   <field>
    <rect>
     <x>705</x>
@@ -1037,5 +1002,40 @@ ORDER BY invhist_transdate DESC, invhist_transtype;</sql>
    <vcenter/>
    <string>Page:</string>
   </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
+  </label>
+  <field>
+   <rect>
+    <x>90</x>
+    <y>0</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>bold</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <data>
+    <query>Context Query</query>
+    <column>report_date</column>
+   </data>
+  </field>
  </pgfoot>
 </report>
