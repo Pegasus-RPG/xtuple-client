@@ -384,7 +384,7 @@ void distributeInventory::sFillList()
 {
   q.prepare( "SELECT itemsite_id, "
 	     "       COALESCE(itemsite_location_id,-1) AS itemsite_location_id,"
-	     "       ls_number,"
+	     "       formatlotserialnumber(itemlocdist_ls_id) AS lotserial,"
              "       (itemsite_controlmethod IN ('L', 'S')) AS lscontrol,"
              "       parent.itemlocdist_qty AS qtytodistribute,"
              "       ( ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
@@ -393,16 +393,15 @@ void distributeInventory::sFillList()
              "       (parent.itemlocdist_qty - ( SELECT COALESCE(SUM(child.itemlocdist_qty), 0)"
              "                                     FROM itemlocdist AS child"
              "                                    WHERE (child.itemlocdist_itemlocdist_id=parent.itemlocdist_id) ) ) AS qtybalance "
-             "FROM itemsite, itemlocdist AS parent,ls "
+             "FROM itemsite, itemlocdist AS parent "
              "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
-             " AND (itemlocdist_ls_id=ls_id)"
              " AND (itemlocdist_id=:itemlocdist_id) );" );
   q.bindValue(":itemlocdist_id", _itemlocdistid);
   q.exec();
   if (q.first())
   {
     _item->setItemsiteid(q.value("itemsite_id").toInt());
-    _lotSerial->setText(q.value("ls_number").toString());
+    _lotSerial->setText(q.value("lotserial").toString());
     _qtyToDistribute->setText(formatNumber(q.value("qtytodistribute").toDouble(),6));
     _qtyTagged->setText(formatNumber(q.value("qtytagged").toDouble(),6));
     _qtyRemaining->setText(formatNumber(q.value("qtybalance").toDouble(),6));
