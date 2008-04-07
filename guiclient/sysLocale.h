@@ -72,16 +72,10 @@ public:
     sysLocale(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~sysLocale();
 
-    virtual void init();
-
 public slots:
     virtual enum SetResponse set( ParameterList & pParams );
+    virtual void close();
     virtual void sSave();
-    virtual void sClose();
-    virtual void sBuildDate();
-    virtual void sBuildTime();
-    virtual void sBuildTimestamp();
-    virtual void sBuildInterval();
     virtual void sBuildCurrency();
     virtual void sBuildSalesPrice();
     virtual void sBuildPurchPrice();
@@ -90,6 +84,8 @@ public slots:
     virtual void sBuildQty();
     virtual void sBuildQtyPer();
     virtual void sBuildUOMRatio();
+    virtual void sUpdateColors();
+    virtual void sUpdateSamples();
     virtual void populate();
 
 protected slots:

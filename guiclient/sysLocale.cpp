@@ -57,60 +57,45 @@
 
 #include "sysLocale.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
 
-/*
- *  Constructs a sysLocale as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 sysLocale::sysLocale(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_country,     SIGNAL(newID(int)), this, SLOT(sUpdateSamples()));
+  connect(_language,    SIGNAL(newID(int)), this, SLOT(sUpdateSamples()));
+  connect(_error,       SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
+  connect(_warning,     SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
+  connect(_alternate,   SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
+  connect(_emphasis,    SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
+  connect(_future,      SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
+  connect(_expired,     SIGNAL(editingFinished()), this, SLOT(sUpdateColors()));
+  connect(_save,        SIGNAL(clicked()),  this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(sClose()));
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_dateDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildDate()));
-    connect(_timeDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildTime()));
-    connect(_timestampDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildTimestamp()));
-    connect(_intervalDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildInterval()));
-    connect(_currencyDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildCurrency()));
-    connect(_salesPriceDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildSalesPrice()));
-    connect(_extPriceDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildExtPrice()));
-    connect(_qtyDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildQty()));
-    connect(_qtyPerDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildQtyPer()));
-    connect(_costDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildCost()));
-    connect(_purchPriceDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildPurchPrice()));
-    connect(_uomRatioDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildUOMRatio()));
-    init();
+  connect(_currencyDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildCurrency()));
+  connect(_salesPriceDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildSalesPrice()));
+  connect(_extPriceDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildExtPrice()));
+  connect(_qtyDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildQty()));
+  connect(_qtyPerDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildQtyPer()));
+  connect(_costDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildCost()));
+  connect(_purchPriceDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildPurchPrice()));
+  connect(_uomRatioDBFormat, SIGNAL(lostFocus()), this, SLOT(sBuildUOMRatio()));
+
+  _localeid = -1;
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 sysLocale::~sysLocale()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void sysLocale::languageChange()
 {
-    retranslateUi(this);
-}
-
-
-void sysLocale::init()
-{
+  retranslateUi(this);
 }
 
 enum SetResponse sysLocale::set(ParameterList &pParams)
@@ -150,11 +135,9 @@ enum SetResponse sysLocale::set(ParameterList &pParams)
         _localeid = q.value("_locale_id").toInt();
 	populate();
       }
-      else
+      else if (q.lastError().type() != QSqlError::None)
       {
-        systemError(this, tr("A System Error occurred at %1::%2.")
-                          .arg(__FILE__)
-                          .arg(__LINE__) );
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
         return UndefinedError;
       }
 
@@ -166,10 +149,7 @@ enum SetResponse sysLocale::set(ParameterList &pParams)
       _code->setEnabled(FALSE);
       _description->setEnabled(FALSE);
       _language->setEnabled(FALSE);
-      _dateDBFormat->setEnabled(FALSE);
-      _timeDBFormat->setEnabled(FALSE);
-      _timestampDBFormat->setEnabled(FALSE);
-      _intervalDBFormat->setEnabled(FALSE);
+      _country->setEnabled(FALSE);
       _currencyDBFormat->setEnabled(FALSE);
       _salesPriceDBFormat->setEnabled(FALSE);
       _purchPriceDBFormat->setEnabled(FALSE);
@@ -194,7 +174,8 @@ void sysLocale::sSave()
   if (_code->text().stripWhiteSpace().length() == 0)
   {
     QMessageBox::critical( this, tr("Cannot Save Locale"),
-                           tr("You must enter a Code for this Locale before you may save it.") );
+                           tr("<p>You must enter a Code for this Locale before "
+                              "you may save it.") );
     _code->setFocus();
     return;
   }
@@ -206,45 +187,52 @@ void sysLocale::sSave()
       _localeid = q.value("_locale_id").toInt();
 
     q.prepare( "INSERT INTO locale "
-               "( locale_id, locale_code, locale_descrip, locale_lang,"
-               "  locale_dateformat, locale_timeformat,"
-               "  locale_timestampformat, locale_intervalformat,"
+               "( locale_id, locale_code, locale_descrip,"
+               "  locale_lang_id, locale_country_id, "
 	       "  locale_currformat,"
                "  locale_salespriceformat, locale_purchpriceformat,"
                "  locale_extpriceformat, locale_costformat,"
                "  locale_qtyformat, locale_qtyperformat, locale_uomratioformat,"
-               "  locale_comments ) "
+               "  locale_comments, "
+               "  locale_error_color, locale_warning_color,"
+               "  locale_emphasis_color, locale_altemphasis_color,"
+               "  locale_expired_color, locale_future_color) "
                "VALUES "
-               "( :locale_id, :locale_code, :locale_descrip, :locale_lang,"
-               "  :locale_dateformat, :locale_timeformat,"
-               "  :locale_timestampformat, :locale_intervalformat,"
+               "( :locale_id, :locale_code, :locale_descrip,"
+               "  :locale_lang_id, :locale_country_id,"
 	       "  :locale_currformat,"
                "  :locale_salespriceformat, :locale_purchpriceformat,"
                "  :locale_extpriceformat, :locale_costformat,"
                "  :locale_qtyformat, :locale_qtyperformat, :locale_uomratioformat,"
-               "  :locale_comments );" );
+               "  :locale_comments,"
+               "  :locale_error_color, :locale_warning_color,"
+               "  :locale_emphasis_color, :locale_altemphasis_color,"
+               "  :locale_expired_color, :locale_future_color);" );
   }
   else if ( (_mode == cEdit) || (_mode == cCopy) )
     q.prepare( "UPDATE locale "
-                "SET locale_code=:locale_code, locale_descrip=:locale_descrip, locale_lang=:locale_lang,"
-                "    locale_dateformat=:locale_dateformat, locale_timeformat=:locale_timeformat,"
-                "    locale_timestampformat=:locale_timestampformat, locale_intervalformat=:locale_intervalformat,"
+                "SET locale_code=:locale_code, locale_descrip=:locale_descrip,"
+                "    locale_lang_id=:locale_lang_id,"
+                "    locale_country_id=:locale_country_id,"
 		"    locale_currformat=:locale_currformat,"
                 "    locale_salespriceformat=:locale_salespriceformat, locale_purchpriceformat=:locale_purchpriceformat,"
                 "    locale_extpriceformat=:locale_extpriceformat, locale_costformat=:locale_costformat,"
                 "    locale_qtyformat=:locale_qtyformat, locale_qtyperformat=:locale_qtyperformat,"
                 "    locale_uomratioformat=:locale_uomratioformat,"
-                "    locale_comments=:locale_comments "
+                "    locale_comments=:locale_comments,"
+                "    locale_error_color=:locale_error_color,"
+                "    locale_warning_color=:locale_warning_color,"
+                "    locale_emphasis_color=:locale_emphasis_color,"
+                "    locale_altemphasis_color=:locale_altemphasis_color,"
+                "    locale_expired_color=:locale_expired_color,"
+                "    locale_future_color=:locale_future_color "
                 "WHERE (locale_id=:locale_id);" );
 
   q.bindValue(":locale_id", _localeid);
   q.bindValue(":locale_code", _code->text());
   q.bindValue(":locale_descrip", _description->text());
-  q.bindValue(":locale_lang", _language->text());
-  q.bindValue(":locale_dateformat", _dateDBFormat->text());
-  q.bindValue(":locale_timeformat", _timeDBFormat->text());
-  q.bindValue(":locale_timestampformat", _timestampDBFormat->text());
-  q.bindValue(":locale_intervalformat", _intervalDBFormat->text());
+  q.bindValue(":locale_lang_id",        _language->id());
+  q.bindValue(":locale_country_id",     _country->id());
   q.bindValue(":locale_currformat", _currencyDBFormat->text());
   q.bindValue(":locale_salespriceformat", _salesPriceDBFormat->text());
   q.bindValue(":locale_purchpriceformat", _purchPriceDBFormat->text());
@@ -254,65 +242,114 @@ void sysLocale::sSave()
   q.bindValue(":locale_qtyperformat", _qtyPerDBFormat->text());
   q.bindValue(":locale_uomratioformat", _uomRatioDBFormat->text());
   q.bindValue(":locale_comments", _comments->text());
+  q.bindValue(":locale_error_color",       _error->text());
+  q.bindValue(":locale_warning_color",     _warning->text());
+  q.bindValue(":locale_emphasis_color",    _emphasis->text());
+  q.bindValue(":locale_altemphasis_color", _alternate->text());
+  q.bindValue(":locale_expired_color",     _expired->text());
+  q.bindValue(":locale_future_color",      _future->text());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   done(_localeid);
 }
 
-void sysLocale::sClose()
+void sysLocale::close()
 {
-  if (_mode == cCopy)
+  qDebug("sysLocale::close()");
+  if (_mode == cCopy && _localeid > 0)
   {
     q.prepare( "DELETE FROM locale "
                "WHERE (locale_id=:locale_id);" );
     q.bindValue(":locale_id", _localeid);
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   reject();
 }
  
-void sysLocale::sBuildDate()
+
+void sysLocale::sUpdateSamples()
 {
-  q.prepare("SELECT LTRIM(TO_CHAR(CURRENT_DATE, :format)) AS result;");
-  q.bindValue(":format", _dateDBFormat->text());
+  QLocale::Language localeLang = QLocale::C;
+  QLocale::Country  localeCountry = QLocale::AnyCountry;
+
+  if (_language->id() > 0)
+  {
+    q.prepare("SELECT lang_qt_number FROM lang WHERE (lang_id=:langid);");
+    q.bindValue(":langid", _language->id());
+    q.exec();
+    if (q.first())
+    {
+      localeLang = QLocale::Language(q.value("lang_qt_number").toInt());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  if (_country->id() > 0)
+  {
+    q.prepare("SELECT country_qt_number "
+              "FROM country "
+              "WHERE (country_id=:countryid);");
+    q.bindValue(":countryid", _country->id());
+    q.exec();
+    if (q.first())
+    {
+      localeCountry = QLocale::Country(q.value("country_qt_number").toInt());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
+  }
+
+  q.prepare("SELECT CURRENT_DATE AS dateSample, CURRENT_TIME AS timeSample,"
+            "       CURRENT_TIMESTAMP AS timestampSample,"
+            "       CURRENT_TIMESTAMP - CURRENT_DATE AS intervalSample;");
   q.exec();
   if (q.first())
-    _dateSample->setText(q.value("result").toString());
-  else
-    _dateSample->setText(tr("Error"));
+  {
+    QLocale sampleLocale = QLocale(localeLang, localeCountry);
+    _dateSample->setText(sampleLocale.toString(q.value("dateSample").toDate()));
+    _timeSample->setText(sampleLocale.toString(q.value("timeSample").toTime()));
+    _timestampSample->setText(sampleLocale.toString(q.value("timestampSample").toDate()) +
+                              " " +
+                              sampleLocale.toString(q.value("timestampSample").toTime()));
+    _intervalSample->setText(sampleLocale.toString(q.value("intervalSample").toTime()));
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
-void sysLocale::sBuildTime()
+void sysLocale::sUpdateColors()
 {
-  q.exec( QString("SELECT LTRIM(TO_CHAR(CURRENT_TIME::TIME, '%1')) AS result;")
-          .arg(_timeDBFormat->text()) );
-  if (q.first())
-    _timeSample->setText(q.value("result").toString());
-  else
-    _timeSample->setText(tr("Error"));
-}
-
-void sysLocale::sBuildTimestamp()
-{
-  q.prepare("SELECT LTRIM(TO_CHAR(CURRENT_TIMESTAMP, :format)) AS result;");
-  q.bindValue(":format", _timestampDBFormat->text());
-  q.exec();
-  if (q.first())
-    _timestampSample->setText(q.value("result").toString());
-  else
-    _timestampSample->setText(tr("Error"));
-}
-
-void sysLocale::sBuildInterval()
-{
-  q.prepare("SELECT LTRIM(TO_CHAR(CURRENT_TIMESTAMP - CURRENT_DATE, :format)) AS result;");
-  q.bindValue(":format", _intervalDBFormat->text());
-  q.exec();
-  if (q.first())
-    _intervalSample->setText(q.value("result").toString());
-  else
-    _intervalSample->setText(tr("Error"));
+  QList<QLineEdit*> colorwidgets;
+  colorwidgets << _error        << _warning << _emphasis
+               << _alternate    << _expired << _future;
+  for (int i = 0; i < colorwidgets.size(); i++)
+  {
+    QLineEdit *widget = colorwidgets.at(i);
+    QPalette colors = widget->palette();
+    colors.setBrush(QPalette::Text, QBrush(QColor(widget->text())));
+    widget->setPalette(colors);
+  }
 }
 
 void sysLocale::sBuildCurrency()
@@ -405,34 +442,37 @@ void sysLocale::sBuildUOMRatio()
 
 void sysLocale::populate()
 {
-  q.prepare( "SELECT * "
+  XSqlQuery popq;
+  popq.prepare( "SELECT * "
              "FROM locale "
              "WHERE (locale_id=:locale_id);" );
-  q.bindValue(":locale_id", _localeid);
-  q.exec();
-  if (q.first())
+  popq.bindValue(":locale_id", _localeid);
+  popq.exec();
+  if (popq.first())
   {
-    _code->setText(q.value("locale_code").toString());
-    _description->setText(q.value("locale_descrip").toString());
-    _language->setText(q.value("locale_lang").toString());
-    _dateDBFormat->setText(q.value("locale_dateformat").toString());
-    _timeDBFormat->setText(q.value("locale_timeformat").toString());
-    _timestampDBFormat->setText(q.value("locale_timestampformat").toString());
-    _intervalDBFormat->setText(q.value("locale_intervalformat").toString());
-    _currencyDBFormat->setText(q.value("locale_currformat").toString());
-    _salesPriceDBFormat->setText(q.value("locale_salespriceformat").toString());
-    _purchPriceDBFormat->setText(q.value("locale_purchpriceformat").toString());
-    _extPriceDBFormat->setText(q.value("locale_extpriceformat").toString());
-    _costDBFormat->setText(q.value("locale_costformat").toString());
-    _qtyDBFormat->setText(q.value("locale_qtyformat").toString());
-    _qtyPerDBFormat->setText(q.value("locale_qtyperformat").toString());
-    _uomRatioDBFormat->setText(q.value("locale_uomratioformat").toString());
-    _comments->setText(q.value("locale_comments").toString());
+    _code->setText(popq.value("locale_code").toString());
+    _description->setText(popq.value("locale_descrip").toString());
+    _language->setId(popq.value("locale_lang_id").toInt());
+    _country->setId(popq.value("locale_country_id").toInt());
+    _currencyDBFormat->setText(popq.value("locale_currformat").toString());
+    _salesPriceDBFormat->setText(popq.value("locale_salespriceformat").toString());
+    _purchPriceDBFormat->setText(popq.value("locale_purchpriceformat").toString());
+    _extPriceDBFormat->setText(popq.value("locale_extpriceformat").toString());
+    _costDBFormat->setText(popq.value("locale_costformat").toString());
+    _qtyDBFormat->setText(popq.value("locale_qtyformat").toString());
+    _qtyPerDBFormat->setText(popq.value("locale_qtyperformat").toString());
+    _uomRatioDBFormat->setText(popq.value("locale_uomratioformat").toString());
+    _comments->setText(popq.value("locale_comments").toString());
+    _error->setText(popq.value("locale_error_color").toString());
+    _warning->setText(popq.value("locale_warning_color").toString());
+    _emphasis->setText(popq.value("locale_emphasis_color").toString());
+    _alternate->setText(popq.value("locale_altemphasis_color").toString());
+    _expired->setText(popq.value("locale_expired_color").toString());
+    _future->setText(popq.value("locale_future_color").toString());
 
-    sBuildDate();
-    sBuildTime();
-    sBuildTimestamp();
-    sBuildInterval();
+    sUpdateSamples();
+    sUpdateColors();
+
     sBuildCurrency();
     sBuildSalesPrice();
     sBuildPurchPrice();
@@ -441,5 +481,10 @@ void sysLocale::populate()
     sBuildQty();
     sBuildQtyPer();
     sBuildUOMRatio();
+  }
+  if (popq.lastError().type() != QSqlError::None)
+  {
+    systemError(this, popq.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }

@@ -496,6 +496,26 @@ void XComboBox::setType(XComboBoxTypes pType)
                  "  FROM optype;");
       break;
 
+    case LocaleLanguages:
+      query.exec("SELECT lang_id, lang_name "
+                 "  FROM lang"
+                 " WHERE lang_qt_number IS NOT NULL"
+                 " ORDER BY lang_name;");
+      break;
+
+    case Countries:
+      query.exec("SELECT country_id, country_name "
+                 "  FROM country"
+                 " ORDER BY country_name;");
+      break;
+
+    case LocaleCountries:
+      query.exec("SELECT country_id, country_name "
+                 "  FROM country"
+                 " WHERE country_qt_number IS NOT NULL"
+                 " ORDER BY country_name;");
+      break;
+
   }
 
   populate(query);

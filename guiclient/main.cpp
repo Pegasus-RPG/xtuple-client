@@ -61,25 +61,24 @@
 
 #include <stdlib.h>
 
-#include <qfont.h>
-#include <qtranslator.h>
-#include <qsqldatabase.h>
-#include <qwindowsstyle.h>
-#include <qfile.h>
-
-#ifdef Q_WS_MACX
-#include <qmacstyle_mac.h>
-#endif
-
-#include <QMessageBox>
-#include <QSplashScreen>
-#include <QImage>
 #include <QApplication>
+#include <QFile>
+#include <QImage>
+#include <QMessageBox>
 #include <QPixmap>
+#include <QSplashScreen>
+#include <QSqlDatabase>
+#include <QSqlError>
+#include <QTranslator>
+#include <QWindowsStyle>
 
 #ifdef Q_WS_WIN
 #include <windows.h>
-#include <qstylefactory.h>
+#include <QStyleFactory>
+#endif
+
+#ifdef Q_WS_MACX
+#include <QMacStyle>
 #endif
 
 #include <dbtools.h>
@@ -311,47 +310,97 @@ int main(int argc, char *argv[])
   qApp->processEvents();
   _privileges = new Privileges();
 
-//  Load the translator defined by the User's locale
+  // Load the translator and set the locale from the User's preferences
+  QTranslator translator(0);
   _splash->showMessage(QObject::tr("Loading Translation Dictionary"), SplashTextAlignment, SplashTextColor);
   qApp->processEvents();
-  QTranslator translator(0);
-  XSqlQuery language( "SELECT locale_lang "
-                      "FROM usr, locale "
-                      "WHERE ( (usr_username=CURRENT_USER)"
-                      " AND (usr_locale_id=locale_id) );" );
-  if (language.first())
+  XSqlQuery langq("SELECT * "
+                  "FROM usr, locale LEFT OUTER JOIN"
+                  "     lang ON (locale_lang_id=lang_id) LEFT OUTER JOIN"
+                  "     country ON (locale_country_id=country_id) "
+                  "WHERE ( (usr_username=CURRENT_USER)"
+                  " AND (usr_locale_id=locale_id) );" );
+  if (langq.first())
   {
-    QString langName = language.value("locale_lang").toString();
-    if (langName.length())
-    {
-      QStringList paths;
-      paths << "dict";
-      paths << "";
-      paths << "../dict";
-      paths << app.applicationDirPath() + "/dict";
-      paths << app.applicationDirPath();
-      paths << app.applicationDirPath() + "/../dict";
+    QStringList paths;
+    paths << "dict";
+    paths << "";
+    paths << "../dict";
+    paths << app.applicationDirPath() + "/dict";
+    paths << app.applicationDirPath();
+    paths << app.applicationDirPath() + "/../dict";
 #if defined Q_WS_MACX
-      paths << app.applicationDirPath() + "/../../../dict";
-      paths << app.applicationDirPath() + "/../../..";
+    paths << app.applicationDirPath() + "/../../../dict";
+    paths << app.applicationDirPath() + "/../../..";
 #endif
+    
+    QStringList files;
+    if (!langq.value("locale_lang_file").toString().isEmpty())
+      files << langq.value("locale_lang_file").toString();
+
+    if (!langq.value("lang_abbr2").toString().isEmpty() && 
+        !langq.value("country_abbr").toString().isEmpty())
+    {
+      files << "xTuple." + langq.value("lang_abbr2").toString() + "_" +
+               langq.value("country_abbr").toString().toLower();
+    }
+    else if (!langq.value("lang_abbr2").toString().isEmpty())
+    {
+      files << "xTuple." + langq.value("lang_abbr2").toString();
+    }
+
+    if (files.size() > 0)
+    {
       bool langFound = false;
-      for(QStringList::Iterator it = paths.begin(); it != paths.end(); ++it)
+
+      for (QStringList::Iterator fit = files.begin(); fit != files.end(); ++fit)
       {
-        if (translator.load(langName, *it))
+        for(QStringList::Iterator pit = paths.begin(); pit != paths.end(); ++pit)
         {
-          app.installTranslator(&translator);
-          langFound = true;
-          break;
+          qDebug("looking for %s in %s",
+                   (*fit).toAscii().data(), (*pit).toAscii().data());
+          if (translator.load(*fit, *pit))
+          {
+            app.installTranslator(&translator);
+            langFound = true;
+            break;
+          }
         }
       }
 
-      if(!langFound)
+      if (!langFound)
         QMessageBox::warning( 0, QObject::tr("Cannot Load Dictionary"),
-                              QObject::tr( "The specified Translation Dictionary, \"dict/%1.qm\" cannot be loaded.\n"
-                                           "Reverting to the default dictionary instead." )
-                                       .arg(langName) );
+                              QObject::tr("<p>The Translation Dictionaries %1 "
+                                          "cannot be loaded. Reverting "
+                                          "to the default dictionary." )
+                                       .arg(files.join(QObject::tr(", "))));
     }
+
+    /* set the locale to langabbr_countryabbr, langabbr, {lang# country#}, or
+       lang#, depending on what information is available
+     */
+    if (! langq.value("lang_abbr2").toString().isEmpty() &&
+        ! langq.value("country_abbr").toString().isEmpty())
+      QLocale::setDefault(QLocale(langq.value("lang_abbr2").toString() + "_" +
+                                  langq.value("country_abbr").toString()));
+    else if (! langq.value("lang_abbr2").toString().isEmpty())
+      QLocale::setDefault(QLocale(langq.value("lang_abbr2").toString()));
+    else if (langq.value("lang_qt_number").toInt() &&
+             langq.value("country_qt_number").toInt())
+      QLocale::setDefault(
+          QLocale(QLocale::Language(langq.value("lang_qt_number").toInt()),
+                  QLocale::Country(langq.value("country_qt_number").toInt())));
+    else
+      QLocale::setDefault(QLocale::system());
+
+    qDebug("Locale set to language %s and country %s",
+           QLocale().languageToString(QLocale().language()).toAscii().data(),
+           QLocale().countryToString(QLocale().country()).toAscii().data());
+
+  }
+  else if (langq.lastError().type() != QSqlError::None)
+  {
+    systemError(0, langq.lastError().databaseText(), __FILE__, __LINE__);
   }
 
   qApp->processEvents();
