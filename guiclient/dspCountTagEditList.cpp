@@ -734,6 +734,8 @@ void dspCountTagEditList::sFillList()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  
+  _cnttag->expandAll();
 
   if (_searchFor->text().stripWhiteSpace().length())
     sSearch(_searchFor->text());

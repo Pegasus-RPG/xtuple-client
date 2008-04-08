@@ -94,6 +94,7 @@ countSlip::countSlip(QWidget* parent, const char* name, bool modal, Qt::WFlags f
   _item->setReadOnly(TRUE);
   _qty->setValidator(omfgThis->qtyVal());
   _expiration->setAllowNullDate(true);
+  _expiration->setAllowNullDate(false);
   
   //If not multi-warehouse hide whs control
   if (!_metrics->boolean("MultiWhs"))
@@ -195,11 +196,15 @@ enum SetResponse countSlip::set(const ParameterList &pParams)
     {
       _mode = cPost;
 
+      _location->setEnabled(FALSE);
+      _lotSerial->setEnabled(FALSE);
       _countTagList->hide();
       _number->setEnabled(FALSE);
       _qty->setEnabled(FALSE);
       _comments->setEnabled(FALSE);
       _save->setText(tr("&Post"));
+      _expiration->setEnabled(FALSE);
+      _warranty->setEnabled(FALSE);
 
       _save->setFocus();
     }
@@ -335,12 +340,14 @@ void countSlip::sSave()
                "  cntslip_number, cntslip_qty,"
                "  cntslip_location_id, cntslip_lotserial,"
                "  cntslip_lotserial_expiration,"
+               "  cntslip_lotserial_warrpurc,"
                "  cntslip_comments ) "
                "SELECT :cntslip_id, :cnttag_id,"
                "       currentUserId(), CURRENT_TIMESTAMP, FALSE,"
                "       :cntslip_number, :cntslip_qty,"
                "       :cntslip_location_id, :cntslip_lotserial,"
                "       :cntslip_lotserial_expiration,"
+               "       :cntslip_lotserial_warrpurc,"
                "       :cntslip_comments;" );
   }
   else if (_mode == cEdit)
@@ -348,7 +355,8 @@ void countSlip::sSave()
                "SET cntslip_user_id=currentUserId(), cntslip_qty=:cntslip_qty, cntslip_comments=:cntslip_comments,"
                "    cntslip_entered=CURRENT_TIMESTAMP,"
                "    cntslip_location_id=:cntslip_location_id, cntslip_lotserial=:cntslip_lotserial,"
-               "    cntslip_lotserial_expiration=:cntslip_lotserial_expiration "
+               "    cntslip_lotserial_expiration=:cntslip_lotserial_expiration, "
+               "    cntslip_lotserial_warrpurc=:cntslip_lotserial_warrpurc "
                "WHERE (cntslip_id=:cntslip_id);" );
   else if (_mode == cPost)
     q.prepare("SELECT postCountSlip(:cntslip_id) AS result;");
@@ -360,10 +368,12 @@ void countSlip::sSave()
   q.bindValue(":cntslip_location_id", _location->id());
   q.bindValue(":cntslip_lotserial", _lotSerial->text());
   q.bindValue(":cntslip_comments", _comments->text());
-  if(!_expiration->isNull() && _expiration->isValid())
+  if(_expiration->isEnabled())
     q.bindValue(":cntslip_lotserial_expiration", _expiration->date());
   else
     q.bindValue(":cntslip_lotserial_expiration", QVariant());
+  if(_warranty->isEnabled())
+    q.bindValue(":cntslip_lotserial_warrpurc", _warranty->date());
   q.exec();
 
   if (_mode == cPost)
@@ -416,6 +426,7 @@ void countSlip::populate()
              "       cntslip_number, cntslip_comments,"
              "       cntslip_location_id, cntslip_lotserial,"
              "       cntslip_lotserial_expiration,"
+             "       cntslip_lotserial_warrpurc,"
              "       formatQty(cntslip_qty) AS qty "
              "FROM cntslip, invcnt "
              "WHERE ( (cntslip_cnttag_id=invcnt_id)"
@@ -435,6 +446,10 @@ void countSlip::populate()
       _expiration->clear();
     else
       _expiration->setDate(r.value("cntslip_lotserial_expiration").toDate());
+    if(r.value("cntslip_lotserial_warrpurc").toString().isEmpty())
+      _warranty->clear();
+    else
+      _warranty->setDate(r.value("cntslip_lotserial_warrpurc").toDate());
     _item->setItemsiteid(r.value("invcnt_itemsite_id").toInt());
     _location->setId(r.value("cntslip_location_id").toInt());
   }
@@ -442,7 +457,8 @@ void countSlip::populate()
 
 void countSlip::sPopulateItemSiteInfo()
 {
-  q.prepare( "SELECT itemsite_loccntrl, itemsite_controlmethod, itemsite_location_id "
+  q.prepare( "SELECT itemsite_loccntrl, itemsite_controlmethod, itemsite_location_id, "
+             "  itemsite_perishable, itemsite_warrpurc "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
              " AND (itemsite_warehous_id=:warehous_id) );" );
@@ -452,6 +468,8 @@ void countSlip::sPopulateItemSiteInfo()
   if (q.first())
   {
     QString controlMethod(q.value("itemsite_controlmethod").toString());
+    _expiration->setEnabled(q.value("itemsite_perishable").toBool());
+    _warranty->setEnabled(q.value("itemsite_warrpurc").toBool());
 
     if (q.value("itemsite_loccntrl").toBool())
     {
