@@ -6,7 +6,7 @@
     <x>0</x>
     <y>0</y>
     <width>702</width>
-    <height>580</height>
+    <height>592</height>
    </rect>
   </property>
   <property name="minimumSize" >
@@ -827,24 +827,6 @@
          <string>Planning</string>
         </attribute>
         <layout class="QGridLayout" >
-         <property name="leftMargin" >
-          <number>9</number>
-         </property>
-         <property name="topMargin" >
-          <number>9</number>
-         </property>
-         <property name="rightMargin" >
-          <number>9</number>
-         </property>
-         <property name="bottomMargin" >
-          <number>9</number>
-         </property>
-         <property name="horizontalSpacing" >
-          <number>6</number>
-         </property>
-         <property name="verticalSpacing" >
-          <number>6</number>
-         </property>
          <item row="0" column="0" >
           <widget class="QGroupBox" name="_useParameters" >
            <property name="enabled" >
@@ -1078,25 +1060,46 @@
             <string/>
            </property>
            <layout class="QGridLayout" >
-            <property name="leftMargin" >
-             <number>9</number>
-            </property>
-            <property name="topMargin" >
-             <number>9</number>
-            </property>
-            <property name="rightMargin" >
-             <number>9</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>9</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>6</number>
-            </property>
-            <property name="verticalSpacing" >
-             <number>6</number>
-            </property>
-            <item row="0" column="1" >
+            <item row="0" column="0" >
+             <widget class="QLabel" name="_planningTypeLit" >
+              <property name="text" >
+               <string>Planning System:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" colspan="2" >
+             <widget class="QComboBox" name="_planningType" >
+              <item>
+               <property name="text" >
+                <string>MRP</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>MPS</string>
+               </property>
+              </item>
+              <item>
+               <property name="text" >
+                <string>None</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item row="1" column="0" >
+             <widget class="QLabel" name="_orderGroupLit" >
+              <property name="text" >
+               <string>Group Planned Orders Every:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1" >
              <widget class="QSpinBox" name="_orderGroup" >
               <property name="minimum" >
                <number>0</number>
@@ -1110,30 +1113,23 @@
              </widget>
             </item>
             <item row="1" column="2" >
-             <widget class="QLabel" name="_mpsTimeFenceDaysLit" >
+             <widget class="QLabel" name="_orderGroupDaysLit" >
               <property name="text" >
                <string>Days</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0" >
+             <widget class="QLabel" name="_mpsTimeFenceLit" >
+              <property name="text" >
+               <string>MPS Time Fence:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
               </property>
              </widget>
             </item>
             <item row="2" column="1" >
-             <widget class="QSpinBox" name="_leadTime" >
-              <property name="minimum" >
-               <number>0</number>
-              </property>
-              <property name="maximum" >
-               <number>999</number>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2" >
-             <widget class="QLabel" name="_days2Lit" >
-              <property name="text" >
-               <string>Days</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
              <widget class="QSpinBox" name="_mpsTimeFence" >
               <property name="minimum" >
                <number>0</number>
@@ -1146,7 +1142,67 @@
               </property>
              </widget>
             </item>
+            <item row="2" column="2" >
+             <widget class="QLabel" name="_mpsTimeFenceDaysLit" >
+              <property name="text" >
+               <string>Days</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="0" >
+             <widget class="QLabel" name="_leadTimeLit" >
+              <property name="text" >
+               <string>&amp;Lead Time:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+              <property name="buddy" >
+               <cstring>_leadTime</cstring>
+              </property>
+             </widget>
+            </item>
             <item row="3" column="1" >
+             <widget class="QSpinBox" name="_leadTime" >
+              <property name="minimum" >
+               <number>0</number>
+              </property>
+              <property name="maximum" >
+               <number>999</number>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="2" >
+             <widget class="QLabel" name="_days2Lit" >
+              <property name="text" >
+               <string>Days</string>
+              </property>
+             </widget>
+            </item>
+            <item row="3" column="3" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Horizontal</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>40</width>
+                <height>20</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item row="4" column="0" >
+             <widget class="QLabel" name="_safetyStockLit" >
+              <property name="text" >
+               <string>Safety Stock:</string>
+              </property>
+              <property name="alignment" >
+               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+              </property>
+             </widget>
+            </item>
+            <item row="4" column="1" >
              <widget class="XLineEdit" name="_safetyStock" >
               <property name="sizePolicy" >
                <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
@@ -1165,77 +1221,14 @@
               </property>
              </widget>
             </item>
-            <item row="0" column="2" >
-             <widget class="QLabel" name="_orderGroupDaysLit" >
-              <property name="text" >
-               <string>Days</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" >
-             <widget class="QLabel" name="_mpsTimeFenceLit" >
-              <property name="text" >
-               <string>MPS Time Fence:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="0" >
-             <widget class="QLabel" name="_safetyStockLit" >
-              <property name="text" >
-               <string>Safety Stock:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="0" >
-             <widget class="QLabel" name="_leadTimeLit" >
-              <property name="text" >
-               <string>&amp;Lead Time:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-              <property name="buddy" >
-               <cstring>_leadTime</cstring>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_orderGroupLit" >
-              <property name="text" >
-               <string>Group MPS/MRP Orders Every:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="4" column="0" >
+            <item row="5" column="0" >
              <spacer>
               <property name="orientation" >
                <enum>Qt::Vertical</enum>
               </property>
               <property name="sizeHint" >
                <size>
-                <width>20</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-            <item row="2" column="3" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Horizontal</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>40</width>
+                <width>186</width>
                 <height>20</height>
                </size>
               </property>
@@ -1396,20 +1389,20 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="0" >
+         <item row="0" column="1" >
           <widget class="QCheckBox" name="_purchWarranty" >
            <property name="text" >
             <string>Purchase Warranty</string>
            </property>
           </widget>
          </item>
-         <item row="2" column="0" >
+         <item row="1" column="0" colspan="2" >
           <widget class="QGroupBox" name="_salesWarranty" >
            <property name="title" >
             <string>Sales Warranty</string>
            </property>
            <property name="checkable" >
-            <bool>true</bool>
+            <bool>false</bool>
            </property>
            <property name="checked" >
             <bool>false</bool>
@@ -1449,7 +1442,7 @@
            </layout>
           </widget>
          </item>
-         <item rowspan="2" row="2" column="1" >
+         <item rowspan="2" row="1" column="2" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1462,7 +1455,7 @@
            </property>
           </spacer>
          </item>
-         <item row="3" column="0" >
+         <item row="2" column="0" colspan="2" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -1470,7 +1463,7 @@
            <property name="sizeHint" >
             <size>
              <width>246</width>
-             <height>0</height>
+             <height>91</height>
             </size>
            </property>
           </spacer>

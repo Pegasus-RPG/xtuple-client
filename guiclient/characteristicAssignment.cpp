@@ -146,6 +146,22 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     handleTargetType();
   }
 
+  param = pParams.value("custtype_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "CT";
+    handleTargetType();
+  }
+  
+  param = pParams.value("ls_id", &valid);
+  if (valid)
+  {
+    _targetId = param.toInt();
+    _targetType = "LS";
+    handleTargetType();
+  }
+
   param = pParams.value("ophead_id", &valid);
   if (valid)
   {
@@ -154,13 +170,7 @@ enum SetResponse characteristicAssignment::set(const ParameterList &pParams)
     handleTargetType();
   }
   
-  param = pParams.value("custtype_id", &valid);
-  if (valid)
-  {
-    _targetId = param.toInt();
-    _targetType = "CT";
-    handleTargetType();
-  }
+  
 
   param = pParams.value("charass_id", &valid);
   if (valid)
@@ -325,6 +335,11 @@ void characteristicAssignment::handleTargetType()
   {
     setCaption(tr("CRM Account Characteristic"));
     boolColumn = "char_crmaccounts";
+  }
+  else if (_targetType == "LS")
+  {
+    setCaption(tr("Lot Serial Characteristic"));
+    boolColumn = "char_lotserial";
   }
   else if (_targetType == "OPP")
   {

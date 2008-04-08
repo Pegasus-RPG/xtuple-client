@@ -100,7 +100,7 @@
       <enum>Qt::TabFocus</enum>
      </property>
      <property name="label" >
-      <string>   lot/serial #:</string>
+      <string>   Lot/Serial #:</string>
      </property>
      <property name="infoVisible" >
       <bool>false</bool>
@@ -127,6 +127,9 @@
          </property>
          <item>
           <widget class="QPushButton" name="_newChar" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
            <property name="text" >
             <string>&amp;New</string>
            </property>
@@ -190,7 +193,7 @@
      </widget>
      <widget class="QWidget" name="_regTab" >
       <attribute name="title" >
-       <string>Registration</string>
+       <string>Registrations</string>
       </attribute>
       <layout class="QGridLayout" >
        <item row="0" column="0" >
@@ -207,6 +210,9 @@
          </property>
          <item>
           <widget class="QPushButton" name="_newReg" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
            <property name="text" >
             <string>&amp;New</string>
            </property>
@@ -427,8 +433,8 @@
      <y>126</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>362</x>
-     <y>243</y>
+     <x>377</x>
+     <y>449</y>
     </hint>
    </hints>
   </connection>
@@ -461,6 +467,38 @@
     <hint type="destinationlabel" >
      <x>568</x>
      <y>51</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_newReg</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>158</x>
+     <y>122</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>522</x>
+     <y>206</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_newChar</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>138</x>
+     <y>110</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>519</x>
+     <y>204</y>
     </hint>
    </hints>
   </connection>

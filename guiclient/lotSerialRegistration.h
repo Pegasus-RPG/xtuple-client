@@ -55,40 +55,40 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef LOTSERIAL_H
-#define LOTSERIAL_H
+#ifndef LOTSERIALREGISTRATION_H
+#define LOTSERIALREGISTRATION_H
 
 #include "guiclient.h"
 #include "xdialog.h"
+#include <QStringList>
 #include <parameter.h>
 
-#include "ui_lotSerial.h"
+#include "ui_lotSerialRegistration.h"
 
-class lotSerial : public XDialog, public Ui::lotSerial
+class lotSerialRegistration : public XDialog, public Ui::lotSerialRegistration
 {
     Q_OBJECT
 
 public:
-    lotSerial(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~lotSerial();
+    lotSerialRegistration(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~lotSerialRegistration();
 
 public slots:
+    virtual SetResponse set( const ParameterList & pParams );
     virtual void populate();
+    virtual void saveContact(ContactCluster* pContact)
+    virtual void sCancel();
     virtual void sSave();
-    virtual void sChanged();
-    virtual void sFillList();
-    virtual void sNewCharass();
-    virtual void sEditCharass();
-    virtual void sDeleteCharass();
+    virtual void sViewTodoItem();
+    virtual bool save(bool);
 
 protected slots:
     virtual void languageChange();
-    
-private:
-    int _lsidCache;
-    int _itemidCache;
-    bool _changed;
 
+private:
+    int		_lsregid;
+    int		_mode;
+    QStringList	_statusCodes;
 };
 
-#endif // LOTSERIAL_H
+#endif // LOTSERIALREGISTRATION_H

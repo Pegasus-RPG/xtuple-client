@@ -1,16 +1,16 @@
 <ui version="4.0" >
- <class>incident</class>
- <widget class="QDialog" name="incident" >
+ <class>lotSerialRegistration</class>
+ <widget class="QDialog" name="lotSerialRegistration" >
   <property name="geometry" >
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>681</width>
-    <height>578</height>
+    <width>647</width>
+    <height>655</height>
    </rect>
   </property>
   <property name="windowTitle" >
-   <string>Incident</string>
+   <string>Lot/Serial Registration</string>
   </property>
   <layout class="QGridLayout" >
    <item row="0" column="0" >
@@ -94,7 +94,7 @@
      </property>
      <layout class="QGridLayout" >
       <item row="0" column="0" >
-       <widget class="QLabel" name="label" >
+       <widget class="QLabel" name="_regDateLit" >
         <property name="text" >
          <string>Register Date:</string>
         </property>
@@ -104,10 +104,23 @@
        </widget>
       </item>
       <item row="0" column="1" >
-       <widget class="DLineEdit" name="dLineEdit" />
+       <widget class="DLineEdit" name="_regDate" />
       </item>
       <item row="1" column="0" >
-       <widget class="QLabel" name="label_2" >
+       <widget class="QLabel" name="_soldDateLit" >
+        <property name="text" >
+         <string>Sold Date:</string>
+        </property>
+        <property name="alignment" >
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1" >
+       <widget class="DLineEdit" name="_soldDate" />
+      </item>
+      <item row="2" column="0" >
+       <widget class="QLabel" name="_expireDateLit" >
         <property name="text" >
          <string>Expire Date:</string>
         </property>
@@ -116,8 +129,8 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="1" >
-       <widget class="DLineEdit" name="dLineEdit_2" />
+      <item row="2" column="1" >
+       <widget class="DLineEdit" name="_expireDate" />
       </item>
      </layout>
     </widget>
@@ -185,15 +198,6 @@
          <property name="label" >
           <string/>
          </property>
-         <property name="accountVisible" >
-          <bool>false</bool>
-         </property>
-         <property name="activeVisible" >
-          <bool>false</bool>
-         </property>
-         <property name="minimalLayout" >
-          <bool>false</bool>
-         </property>
         </widget>
        </item>
       </layout>
@@ -202,7 +206,77 @@
       <attribute name="title" >
        <string>Characteristics</string>
       </attribute>
-      <layout class="QHBoxLayout" />
+      <layout class="QGridLayout" >
+       <item row="0" column="0" >
+        <widget class="XTreeWidget" name="_charass" >
+         <property name="focusPolicy" >
+          <enum>Qt::ClickFocus</enum>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1" >
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_newChar" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;New</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+N</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_editChar" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Edit</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+E</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_deleteChar" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Delete</string>
+           </property>
+           <property name="shortcut" >
+            <string>Alt+D</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
      </widget>
      <widget class="QWidget" name="_notesTab" >
       <attribute name="title" >
@@ -252,6 +326,7 @@
    <class>ItemCluster</class>
    <extends>QWidget</extends>
    <header>itemcluster.h</header>
+   <container>1</container>
   </customwidget>
   <customwidget>
    <class>LotserialCluster</class>
@@ -262,6 +337,11 @@
    <class>XComboBox</class>
    <extends>QComboBox</extends>
    <header>xcombobox.h</header>
+  </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -56,9 +56,11 @@
  */
 
 #include "lotSerial.h"
+#include "characteristicAssignment.h"
 
 #include <QSqlError>
 #include <QVariant>
+#include <QMessageBox>
 
 #include <comments.h>
 
@@ -70,7 +72,13 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
     connect(_lotSerial, SIGNAL(valid(bool)), this, SLOT(populate()));
     connect(_notes, SIGNAL(textChanged()), this, SLOT(sChanged()));
+    connect(_deleteChar,  SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
+    connect(_editChar,    SIGNAL(clicked()), this, SLOT(sEditCharass()));
+    connect(_newChar,     SIGNAL(clicked()), this, SLOT(sNewCharass()));
     
+    _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
+    _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  
     _changed=false;
 }
 
@@ -86,6 +94,23 @@ void lotSerial::languageChange()
 
 void lotSerial::populate()
 {
+  if (_changed)
+  {
+    if (QMessageBox::question(this, tr("Save changes?"),
+                              tr("<p>Notes were changed without saving. "
+                                 "If you continue your changes will be lost. "
+                                 "Would you like an opportunity to save your changes first?"),
+                              QMessageBox::Yes | QMessageBox::Default,
+                              QMessageBox::No) == QMessageBox::Yes)
+    {
+      disconnect(_lotSerial, SIGNAL(valid(bool)), this, SLOT(populate()));
+      _lotSerial->setId(_lsidCache);
+      _item->setId(_itemidCache);
+      connect(_lotSerial, SIGNAL(valid(bool)), this, SLOT(populate()));
+      return;
+    }
+  }
+
   q.prepare( "SELECT ls_item_id,ls_notes "
              "FROM ls "
              "WHERE (ls_id=:ls_id );" );
@@ -105,6 +130,7 @@ void lotSerial::populate()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
+  sFillList();
 }
 
 void lotSerial::sSave()
@@ -120,10 +146,72 @@ void lotSerial::sSave()
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
-  close();
+  _changed=false;
+  _item->setId(-1);
+  _notes->clear();
 }
 
 void lotSerial::sChanged()
 {
   _changed=true;
+}
+
+void lotSerial::sNewCharass()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("ls_id", _lotSerial->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void lotSerial::sEditCharass()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void lotSerial::sDeleteCharass()
+{
+  q.prepare( "DELETE FROM charass "
+             "WHERE (charass_id=:charass_id);" );
+  q.bindValue(":charass_id", _charass->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
+}
+
+void lotSerial::sFillList()
+{
+  q.prepare( "SELECT charass_id, char_name, charass_value "
+             "FROM charass, char "
+             "WHERE ((charass_target_type='LS')"
+             " AND   (charass_char_id=char_id)"
+             " AND   (charass_target_id=:ls_id) ) "
+             "ORDER BY char_name;" );
+  q.bindValue(":ls_id", _lotSerial->id());
+  q.exec();
+  _charass->clear();
+  _charass->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
