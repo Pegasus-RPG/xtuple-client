@@ -105,6 +105,7 @@
 #include "countries.h"
 #include "groups.h"
 #include "scripts.h"
+#include "uiforms.h"
 
 #include "fixSerial.h"
 #include "importXML.h"
@@ -227,6 +228,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, configureIE::userHasPriv(),	NULL, NULL, true },
     { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), masterInfoMenu, _privileges->check("MaintainCustomCommands"),	NULL, NULL, true },
     { "sys.scripts",    	tr("Scripts..."),	SLOT(sScripts()), masterInfoMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
+    { "sys.uiforms",    	tr("UI Forms..."),	SLOT(sUIForms()), masterInfoMenu, _privileges->check("MaintainUIForms"),	NULL, NULL, true },
 
     { "menu",			tr("&System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
     { "sys.fixSerial",		tr("&Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privileges->check("FixSerial"), NULL, NULL, true	},
@@ -567,6 +569,11 @@ void menuSystem::sCustomCommands()
 void menuSystem::sScripts()
 {
   omfgThis->handleNewWindow(new scripts());
+}
+
+void menuSystem::sUIForms()
+{
+  omfgThis->handleNewWindow(new uiforms());
 }
 
 void menuSystem::sConfigureIM()

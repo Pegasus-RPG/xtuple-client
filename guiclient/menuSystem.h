@@ -142,6 +142,7 @@ class menuSystem : public QObject
     void sShifts();
     void sCustomCommands();
     void sScripts();
+    void sUIForms();
 
     void sFixSerial();
     void sImportXML();

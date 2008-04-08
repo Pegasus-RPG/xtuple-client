@@ -308,6 +308,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                transferOrderItem.ui                                                                   \
                transferTrans.ui                                                                       \
                transformTrans.ui                                                                      \
+               uiform.ui uiforms.ui                                                                   \
                unappliedARCreditMemos.ui unappliedAPCreditMemos.ui                                    \
                unpostedCreditMemos.ui                                                                 \
                unpostedGLTransactions.ui unpostedInvoices.ui                                          \
@@ -620,6 +621,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                transferOrderItem.h                                                                    \
                transferTrans.h                                                                        \
                transformTrans.h                                                                       \
+               uiform.h uiforms.h                                                                     \
                unappliedARCreditMemos.h unappliedAPCreditMemos.h                                      \
                unpostedCreditMemos.h                                                                  \
                unpostedGLTransactions.h unpostedInvoices.h                                            \
@@ -937,6 +939,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                transferOrderItem.cpp                                                                  \
                transferTrans.cpp                                                                      \
                transformTrans.cpp                                                                     \
+               uiform.cpp uiforms.cpp                                                                 \
                unappliedARCreditMemos.cpp unappliedAPCreditMemos.cpp                                  \
                unpostedCreditMemos.cpp                                                                \
                unpostedGLTransactions.cpp unpostedInvoices.cpp                                        \
