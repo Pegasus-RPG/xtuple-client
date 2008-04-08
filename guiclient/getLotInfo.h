@@ -74,7 +74,9 @@ public:
 public slots:
     virtual QString lot();
     virtual QDate expiration();
+    virtual QDate warranty();
     virtual void enableExpiration( bool yes );
+    virtual void enableWarranty( bool yes );
     virtual void sAssign();
 
 protected slots:

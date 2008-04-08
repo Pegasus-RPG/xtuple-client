@@ -132,7 +132,7 @@ void distributeInventory::languageChange()
 {
   retranslateUi(this);
 }
-int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp)
+int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, const QString & pPresetLotnum, const QDate & pPresetLotexp, const QDate & pPresetLotwarr)
 {
   if (pItemlocSeries != 0)
   {
@@ -140,7 +140,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
     itemloc.prepare( "SELECT itemlocdist_id, itemlocdist_reqlotserial," 
                      "       itemlocdist_distlotserial, itemlocdist_qty,"
                      "       itemsite_loccntrl, itemsite_controlmethod,"
-                     "       itemsite_perishable "
+                     "       itemsite_perishable, itemsite_warrpurc "
                      "FROM itemlocdist, itemsite "
                      "WHERE ( (itemlocdist_itemsite_id=itemsite_id)"
                      " AND (itemlocdist_series=:itemlocdist_series) ) "
@@ -162,7 +162,8 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           query.exec("SELECT nextval('itemloc_series_seq') AS _itemloc_series;");
           if(query.first())
           {
-            query.prepare( "PERFORM createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocseries,'I',itemlocdist_source_id,:qty,:expiration,:warranty)"
+            itemlocSeries = query.value("_itemloc_series").toInt();
+            query.prepare( "SELECT createlotserial(itemlocdist_itemsite_id,:lotserial,:itemlocdist_series,'I',itemlocdist_id,:qty,:expiration,:warranty)"
                            "FROM itemlocdist "
                            "WHERE (itemlocdist_id=:itemlocdist_id);"
                            
@@ -177,9 +178,11 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
             query.bindValue(":itemlocdist_series", itemlocSeries);
             query.bindValue(":itemlocdist_id", itemloc.value("itemlocdist_id"));
             if(itemloc.value("itemsite_perishable").toBool())
-              query.bindValue(":itemsite_expiration", pPresetLotexp);
+              query.bindValue(":expiration", pPresetLotexp);
             else
-              query.bindValue(":itemsite_expiration", omfgThis->startOfTime());
+              query.bindValue(":expiration", omfgThis->startOfTime());
+            if(itemloc.value("itemsite_warrpurc").toBool())
+              query.bindValue(":warranty", pPresetLotwarr);
             query.exec();
           }
         }
@@ -195,7 +198,7 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           if (itemlocSeries == -1)
             return XDialog::Rejected;
         }
-
+        
         if (itemloc.value("itemsite_loccntrl").toBool())
         {
           query.prepare( "SELECT itemlocdist_id " 
@@ -208,7 +211,6 @@ int distributeInventory::SeriesAdjust(int pItemlocSeries, QWidget *pParent, cons
           {
             ParameterList params;
             params.append("itemlocdist_id", query.value("itemlocdist_id").toInt());
-
             distributeInventory newdlg(pParent, "", TRUE);
             newdlg.set(params);
             if (newdlg.exec() == XDialog::Rejected)

@@ -72,7 +72,7 @@ public:
     distributeInventory(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~distributeInventory();
 
-    static int SeriesAdjust( int pItemlocSeries, QWidget * pParent, const QString & = QString::null, const QDate & = QDate() );
+    static int SeriesAdjust( int pItemlocSeries, QWidget * pParent, const QString & = QString::null, const QDate & = QDate(), const QDate & = QDate() );
     virtual enum SetResponse set( const ParameterList & pParams );
 
 public slots:

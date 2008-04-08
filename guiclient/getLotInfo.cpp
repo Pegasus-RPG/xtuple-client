@@ -109,9 +109,22 @@ QDate getLotInfo::expiration()
     return omfgThis->startOfTime();
 }
 
+QDate getLotInfo::warranty()
+{
+  if(_warranty->isEnabled())
+    return _warranty->date();
+  else
+    return QDate::QDate();
+}
+
 void getLotInfo::enableExpiration( bool yes )
 {
   _expiration->setEnabled(yes);
+}
+
+void getLotInfo::enableWarranty( bool yes )
+{
+  _warranty->setEnabled(yes);
 }
 
 void getLotInfo::sAssign()
@@ -128,6 +141,14 @@ void getLotInfo::sAssign()
   {
     QMessageBox::critical( this, tr("Enter Expiration Date"),
                            tr("You must enter an expiration date to this Perishable Lot/Serial number.") );
+    _expiration->setFocus();
+    return;
+  }
+  
+  if ( (_warranty->isEnabled()) && (!_warranty->isValid()) )
+  {
+    QMessageBox::critical( this, tr("Enter Warranty Date"),
+                           tr("You must enter an warranty date to this Lot/Serial number.") );
     _expiration->setFocus();
     return;
   }

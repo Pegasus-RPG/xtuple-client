@@ -256,6 +256,7 @@ void enterPoReceipt::sPost()
 
     QString lotnum = QString::null;
     QDate expdate = omfgThis->startOfTime();
+    QDate warrdate;
     if(result > 0 && _singleLot->isChecked())
     {
       // first find out if we have any lot controlled items that need distribution
@@ -273,28 +274,21 @@ void enterPoReceipt::sPost()
         getLotInfo newdlg(this, "", TRUE);
 
         // find out if any itemsites that are lot controlled are perishable
-        q.prepare("SELECT (count(*) > 0) AS result"
+        q.prepare("SELECT itemsite_perishable,itemsite_warrpurc AS result"
             "  FROM itemlocdist, itemsite"
             " WHERE ((itemlocdist_itemsite_id=itemsite_id)"
-            "   AND  (itemlocdist_reqlotserial)"
-            "   AND  (itemsite_controlmethod='L')"
-            "   AND  (itemsite_perishable)"
             "   AND  (itemlocdist_series=:itemlocdist_series) ); ");
         q.bindValue(":itemlocdist_series", result);
         q.exec();
         if(q.first())
-          newdlg.enableExpiration(q.value("result").toBool());       
-          else if (q.lastError().type() != QSqlError::None)
-          {
-            systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-            rollback.exec();
-            return;
-          }
+          newdlg.enableExpiration(q.value("itemsite_perishable").toBool());       
+          newdlg.enableWarranty(q.value("itemsite_warrpurc").toBool());
 
           if(newdlg.exec() == XDialog::Accepted)
           {
             lotnum = newdlg.lot();
             expdate = newdlg.expiration();
+            warrdate = newdlg.warranty();
           }
         }
         else if (q.lastError().type() != QSqlError::None)
@@ -305,7 +299,7 @@ void enterPoReceipt::sPost()
         }
       }
 
-      if (distributeInventory::SeriesAdjust(result, this, lotnum, expdate) == XDialog::Rejected)
+      if (distributeInventory::SeriesAdjust(result, this, lotnum, expdate, warrdate) == XDialog::Rejected)
       {
         QMessageBox::information( this, tr("Enter Receipts"), tr("Post Canceled") );
         rollback.exec();
