@@ -179,6 +179,7 @@ class menuSystem : public QObject
     QMenu *sysUtilsMenu;
     QMenu *helpMenu;
     QMenu *communityMenu;
+    QMenu *designMenu;
 
     QMenu *geometryMenu;
 

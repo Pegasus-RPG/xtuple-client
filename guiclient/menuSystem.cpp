@@ -147,6 +147,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   sysUtilsMenu		= new QMenu();
   windowMenu		= new QMenu();
   helpMenu		= new QMenu();
+  designMenu            = new QMenu();
 
 //  Window
   windowMenu = new QMenu();
@@ -211,7 +212,6 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.configureAccountingSystemInterface",tr("Configure Accounting System Interface..."), SLOT(sConfigureAccountingSystemInterface()), masterInfoMenu, _privileges->check("ConfigAccountingInterface"),	NULL,	NULL, _metrics->boolean("EnableExternalAccountingInterface") },
     { "separator",		NULL,			NULL,			masterInfoMenu,	true,					NULL,	NULL,	true	},
     { "sys.images",		tr("&Images..."),	SLOT(sImages()),	masterInfoMenu,	_privileges->check("MaintainImages"),	NULL,	NULL,	true	},
-    { "sys.reports",		tr("&Reports..."),	SLOT(sReports()),	masterInfoMenu,	_privileges->check("MaintainReports"),	NULL,	NULL,	true	},
     { "sys.forms",		tr("&Forms..."),	SLOT(sForms()),		masterInfoMenu,	_privileges->check("MaintainForms"),	NULL,	NULL,	true	},
     { "sys.labelForms",		tr("&Label Forms..."),	SLOT(sLabelForms()),	masterInfoMenu,	_privileges->check("MaintainForms"),	NULL,	NULL,	true	},
     { "sys.calendars",		tr("C&alendars..."),	SLOT(sCalendars()),	masterInfoMenu,	_privileges->check("MaintainCalendars"),	NULL,	NULL,	true	},
@@ -226,10 +226,17 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "sys.departments",	tr("Depart&ments..."),	SLOT(sDepartments()),	masterInfoMenu,	_privileges->check("ViewDepartments") || _privileges->check("MaintainDepartments"),	NULL,	NULL,	true	},
     { "sys.shifts",		tr("S&hifts..."),	SLOT(sShifts()),	masterInfoMenu,	(_privileges->check("ViewShifts") || _privileges->check("MaintainShifts")) ,	NULL,	NULL, _metrics->boolean("Routings")	},
     { "sys.configureIE",	tr("Configure Data Import and E&xport..."),	SLOT(sConfigureIE()),	 masterInfoMenu, configureIE::userHasPriv(),	NULL, NULL, true },
-    { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), masterInfoMenu, _privileges->check("MaintainCustomCommands"),	NULL, NULL, true },
-    { "sys.scripts",    	tr("Scripts..."),	SLOT(sScripts()), masterInfoMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
-    { "sys.uiforms",    	tr("UI Forms..."),	SLOT(sUIForms()), masterInfoMenu, _privileges->check("MaintainUIForms"),	NULL, NULL, true },
 
+  //  Design
+    { "menu",				tr("&Design"),	(char*)designMenu,		systemMenu,	true,						NULL,	NULL,	true	},
+    { "sys.reports",		tr("&Reports..."),	SLOT(sReports()),	designMenu,	_privileges->check("MaintainReports"),	NULL,	NULL,	true	},
+    { "separator",		NULL,			NULL,			designMenu,	true,					NULL,	NULL,	true	},
+    { "sys.uiforms",    	tr("Forms..."),         SLOT(sUIForms()),       designMenu, _privileges->check("MaintainUIForms"),	NULL, NULL, true },
+    { "sys.scripts",    	tr("Scripts..."),	SLOT(sScripts()),       designMenu, _privileges->check("MaintainScripts"),	NULL, NULL, true },
+    { "separator",		NULL,			NULL,			designMenu,	true,					NULL,	NULL,	true	},
+    { "sys.customCommands",	tr("Custom Command&s..."),	SLOT(sCustomCommands()), designMenu, _privileges->check("MaintainCustomCommands"),	NULL, NULL, true },
+
+  // Utilities
     { "menu",			tr("&System Utilities"),	(char*)sysUtilsMenu,	systemMenu,	true, NULL, NULL, true	},
     { "sys.fixSerial",		tr("&Serial Columns"),	SLOT(sFixSerial()),	sysUtilsMenu,	_privileges->check("FixSerial"), NULL, NULL, true	},
     { "sys.importXML",		tr("&Import XML"),	SLOT(sImportXML()),	sysUtilsMenu,	importXML::userHasPriv(),	NULL, NULL, true	},
@@ -237,7 +244,7 @@ menuSystem::menuSystem(GUIClient *Pparent) :
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
     { "sys.printAlignmentPage",	tr("Print &Alignment Page..."),	SLOT(sPrintAlignment()),	systemMenu,	TRUE,	NULL,	NULL,	true	},
     { "separator",		NULL,				NULL,				systemMenu,	true,	NULL,	NULL,	true	},
-    { "sys.exitOpenMFG",	tr("E&xit " + _appname + "..."), SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	}
+    { "sys.exitOpenMFG",	tr("E&xit " + _appname + "..."), SLOT(sExit()),			systemMenu,	TRUE,	NULL,	NULL,	true	},
 
   };
 
