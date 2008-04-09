@@ -428,8 +428,6 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     roles->insert("qteditrole",    pEditColumn);
     if (! pDisplayColumn.isEmpty())
       roles->insert("qtdisplayrole", pDisplayColumn);
-    else
-      roles->insert("qtdisplayrole", pEditColumn);
     _roles.insert(column, roles);
   }
 
