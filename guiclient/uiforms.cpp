@@ -159,40 +159,29 @@ void uiforms::sFillList()
 
 void uiforms::sTest()
 {
-qDebug("a");
   q.prepare("SELECT *"
             "  FROM uiform "
             " WHERE(uiform_id=:uiform_id);");
   q.bindValue(":uiform_id", _uiform->id());
-qDebug("b");
   q.exec();
   if(!q.first())
     return;
   
-qDebug("c");
   XMainWindow * wnd = new XMainWindow();
-qDebug("d");
   wnd->setObjectName(q.value("uiform_name").toString());
-qDebug("e");
 
   QUiLoader loader;
-qDebug("f");
   QByteArray ba = q.value("uiform_source").toByteArray();
   QBuffer uiFile(&ba);
-qDebug("g");
   if(!uiFile.open(QIODevice::ReadOnly))
   {
-    QMessageBox::critical(this, tr("Could not load file"), tr("There was an error loading the UI Form from the database."));
+    QMessageBox::critical(this, tr("Could not load file"),
+        tr("There was an error loading the UI Form from the database."));
     return;
   }
-qDebug("h");
   QWidget *ui = loader.load(&uiFile);
-qDebug("i");
   uiFile.close();
-qDebug("j");
   wnd->setCentralWidget(ui);
 
-qDebug("k");
   omfgThis->handleNewWindow(wnd);
-qDebug("l");
 }

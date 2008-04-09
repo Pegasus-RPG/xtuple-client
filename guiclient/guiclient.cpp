@@ -91,13 +91,18 @@
 #include <QDebug>
 #include <QScriptEngine>
 #include <QScriptValue>
+#include <QUiLoader>
+#include <QBuffer>
 
 #include <parameter.h>
 #include <dbtools.h>
 #include <quuencode.h>
+#include <xvariant.h>
 
 #include "guiclient.h"
 #include "version.h"
+#include "xmainwindow.h"
+#include "xdialog.h"
 
 #include "systemMessage.h"
 #include "menuProducts.h"
@@ -1022,25 +1027,140 @@ void GUIClient::sCustomCommand()
   it = _customCommands.find(obj);
   if(it != _customCommands.end())
   {
-    Q3Process *proc = new Q3Process(this);
-    connect(proc, SIGNAL(processExited()), proc, SLOT(deleteLater()));
-    q.prepare("SELECT 1 AS base,"
-              "       0 AS ord,"
-              "       cmd_executable AS argument"
+    q.prepare("SELECT cmd_executable"
               "  FROM cmd"
-              " WHERE (cmd_id=:cmd_id)"
-              " UNION "
-              "SELECT 2 AS base,"
-              "       cmdarg_order AS ord,"
-              "       cmdarg_arg AS argument"
-              "  FROM cmdarg"
-              " WHERE (cmdarg_cmd_id=:cmd_id)"
-              " ORDER BY base, ord; ");
+              " WHERE(cmd_id=:cmd_id);");
     q.bindValue(":cmd_id", it.data());
     q.exec();
-    while(q.next())
-      proc->addArgument(q.value("argument").toString());
-    proc->start();
+    q.first();
+    QString cmd = q.value("cmd_executable").toString();
+    if(cmd.toLower() == "!customuiform")
+    {
+      bool haveParams = false;
+      ParameterList params;
+      bool asDialog = false;
+      QString asName;
+      q.prepare("SELECT cmdarg_arg AS argument"
+                "  FROM cmdarg"
+                " WHERE (cmdarg_cmd_id=:cmd_id)"
+                " ORDER BY cmdarg_order; ");
+      q.bindValue(":cmd_id", it.data());
+      q.exec();
+      while(q.next())
+      {
+        cmd = q.value("argument").toString();
+        if(cmd.startsWith("uiformtype=", false))
+          asDialog = (cmd.right(cmd.length() - 11).toLower() == "dialog");
+        else if(cmd.startsWith("uiform=", false))
+          asName = cmd.right(cmd.length() - 7);
+        else if (cmd.startsWith("-param=", false))
+        {
+// Taken from OpenRPT/renderapp with slight modifications
+          QString str = cmd.right(cmd.length() - 7);
+          bool active = true;
+          QString name;
+          QString type;
+          QString value;
+          QVariant var;
+          int sep = str.find('=');
+          if(sep == -1)
+            name = str;
+          else
+          {
+            name = str.left(sep);
+            value = str.right(str.length() - (sep + 1));
+          }
+          str = name;
+          sep = str.find(':');
+          if(sep != -1)
+          {
+            name = str.left(sep);
+            type = str.right(str.length() - (sep + 1));
+          }
+          if(name.startsWith("-"))
+          {
+            name = name.right(name.length() - 1);
+            active = false;
+          }
+          else if(name.startsWith("+"))
+            name = name.right(name.length() - 1);
+          if(!value.isEmpty())
+            var = XVariant::decode(type, value);
+          if(active)
+          {
+            haveParams = true;
+            params.append(name, var);
+          }
+// end copied code from OpenRPT/renderapp
+        }
+      }
+      if(asName.isEmpty())
+        return;
+      q.prepare("SELECT *"
+                "  FROM uiform"
+                " WHERE((uiform_name=:uiform_name)"
+                "   AND (uiform_enabled))"
+                " ORDER BY uiform_order"
+                " LIMIT 1;");
+      q.bindValue(":uiform_name", asName);
+      q.exec();
+      if(!q.first())
+      {
+        QMessageBox::critical(this, tr("Could Not Create Form"),
+          tr("Could not create the required form. Either an error occurred or the specified form does not exist.") );
+        return;
+      }
+
+      if(asDialog)
+      {
+        QMessageBox::critical(this, tr("UI Form Type Not Supported"),
+          tr("The UI Form Type of Dialog is currently not supported."));
+      }
+      else
+      {
+// copied code from uiforms::sTest()
+        XMainWindow * wnd = new XMainWindow();
+        wnd->setObjectName(q.value("uiform_name").toString());
+
+        QUiLoader loader;
+        QByteArray ba = q.value("uiform_source").toByteArray();
+        QBuffer uiFile(&ba);
+        if(!uiFile.open(QIODevice::ReadOnly))
+        {
+          QMessageBox::critical(this, tr("Could not load file"),
+              tr("There was an error loading the UI Form from the database."));
+          return;
+        }
+        QWidget *ui = loader.load(&uiFile);
+        uiFile.close();
+        wnd->setCentralWidget(ui);
+
+        handleNewWindow(wnd);
+// end copied code from uiforms::sTest()
+      }
+    }
+    else
+    {
+      Q3Process *proc = new Q3Process(this);
+      connect(proc, SIGNAL(processExited()), proc, SLOT(deleteLater()));
+      q.prepare("SELECT 1 AS base,"
+                "       0 AS ord,"
+                "       cmd_executable AS argument"
+                "  FROM cmd"
+                " WHERE (cmd_id=:cmd_id)"
+                " UNION "
+                "SELECT 2 AS base,"
+                "       cmdarg_order AS ord,"
+                "       cmdarg_arg AS argument"
+                "  FROM cmdarg"
+                " WHERE (cmdarg_cmd_id=:cmd_id)"
+                " ORDER BY base, ord; ");
+      q.bindValue(":cmd_id", it.data());
+      q.exec();
+      while(q.next())
+        proc->addArgument(q.value("argument").toString());
+      proc->start();
+    }
   }
 }
 
