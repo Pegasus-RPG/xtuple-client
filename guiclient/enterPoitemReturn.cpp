@@ -57,49 +57,19 @@
 
 #include "enterPoitemReturn.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qvalidator.h>
+#include <QVariant>
+#include <QMessageBox>
+#include <QSqlError>
 
-/*
- *  Constructs a enterPoitemReturn as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
+#include "storedProcErrorLookup.h"
+
 enterPoitemReturn::enterPoitemReturn(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    connect(_return, SIGNAL(clicked()), this, SLOT(sReturn()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-enterPoitemReturn::~enterPoitemReturn()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void enterPoitemReturn::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void enterPoitemReturn::init()
-{
   _toReturn->setValidator(omfgThis->qtyVal());
   _item->setReadOnly(TRUE);
 
@@ -109,7 +79,17 @@ void enterPoitemReturn::init()
                          "ORDER BY rjctcode_code;" );
 }
 
-enum SetResponse enterPoitemReturn::set(ParameterList &pParams)
+enterPoitemReturn::~enterPoitemReturn()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void enterPoitemReturn::languageChange()
+{
+  retranslateUi(this);
+}
+
+enum SetResponse enterPoitemReturn::set(const ParameterList &pParams)
 {
   QVariant param;
   bool     valid;
@@ -158,6 +138,16 @@ enum SetResponse enterPoitemReturn::set(ParameterList &pParams)
       q.exec();
       if (q.first())
         _toReturn->setText(q.value("qtytoreturn").toString());
+      else if (q.lastError().type() != QSqlError::None)
+      {
+	systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+	return UndefinedError;
+      }
+    }
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return UndefinedError;
     }
   }
 
@@ -195,6 +185,21 @@ void enterPoitemReturn::sReturn()
   q.bindValue(":qty", _toReturn->toDouble());
   q.bindValue(":rjctcode_id", _rejectCode->id());
   q.exec();
+  if (q.first())
+  {
+    int result = q.value("result").toInt();
+    if (result < 0)
+    {
+      QMessageBox::critical(this, tr("Cannot Enter Return"),
+			    storedProcErrorLookup("enterPoReturn", result));
+      return;
+    }
+  }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   accept();
 }
