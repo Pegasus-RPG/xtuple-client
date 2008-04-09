@@ -59,7 +59,6 @@
 
 #include <QMessageBox>
 #include <QSqlError>
-#include <QStatusBar>
 #include <QVariant>
 
 #include <parameter.h>
@@ -69,60 +68,43 @@
 #include "incident.h"
 #include "todoItem.h"
 
-/*
- *  Constructs a dspTodoByUserAndIncident as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspTodoByUserAndIncident::dspTodoByUserAndIncident(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
+  statusBar();
 
-    (void)statusBar();
+  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
+  connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
+  connect(_todoitem, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*)));
 
-    // signals and slots connections
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-    connect(_query, SIGNAL(clicked()), this, SLOT(sFillList()));
-    connect(_todoitem, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateMenu(QMenu*)));
+  _usr->setType(User);
 
-    statusBar()->hide();
-    
-    _usr->setType(User);
+  _dueDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _dueDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _startDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
+  _startDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
 
-    _dueDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _dueDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
-    _startDate->setStartNull(tr("Earliest"), omfgThis->startOfTime(), TRUE);
-    _startDate->setEndNull(tr("Latest"), omfgThis->endOfTime(), TRUE);
+  _todoitem->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter,true, "usr_username");
+  _todoitem->addColumn(tr("Sequence"),    _prcntColumn, Qt::AlignCenter,true, "todoitem_seq");
+  _todoitem->addColumn(tr("Incident"),    _orderColumn, Qt::AlignLeft,  true, "incdt_id", "incdt_number");
+  _todoitem->addColumn(tr("Task Name"),            100, Qt::AlignLeft,  true, "todoitem_name");
+  _todoitem->addColumn(tr("Status"),	 _statusColumn, Qt::AlignCenter,true, "todoitem_status");
+  _todoitem->addColumn(tr("Date Due"),     _dateColumn, Qt::AlignCenter,true, "todoitem_due_date");
+  _todoitem->addColumn(tr("Date Started"), _dateColumn, Qt::AlignCenter,true, "todoitem_start_date");
+  _todoitem->addColumn(tr("Description"),           -1, Qt::AlignLeft,  true, "todoitem_description");
 
-    _todoitem->addColumn(tr("Assigned To"),  _userColumn, Qt::AlignCenter );
-    _todoitem->addColumn(tr("Sequence"),    _prcntColumn, Qt::AlignCenter );
-    _todoitem->addColumn(tr("Incident"),    _orderColumn, Qt::AlignLeft   );
-    _todoitem->addColumn(tr("Task Name"),            100, Qt::AlignCenter );
-    _todoitem->addColumn(tr("Status"),	   _statusColumn, Qt::AlignCenter );
-    _todoitem->addColumn(tr("Date Due"),     _dateColumn, Qt::AlignCenter );
-    _todoitem->addColumn(tr("Date Started"), _dateColumn, Qt::AlignCenter );
-    _todoitem->addColumn(tr("Description"),           -1, Qt::AlignLeft   );
-
-    _incident->setEnabled(_selectedIncident->isChecked());
+  _incident->setEnabled(_selectedIncident->isChecked());
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspTodoByUserAndIncident::~dspTodoByUserAndIncident()
 {
-    // no need to delete child widgets, Qt does it all for us
+  // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspTodoByUserAndIncident::languageChange()
 {
-    retranslateUi(this);
+  retranslateUi(this);
 }
 
 void dspTodoByUserAndIncident::sPopulateMenu(QMenu *pMenu)
@@ -181,10 +163,12 @@ void dspTodoByUserAndIncident::sFillList()
 
   _todoitem->clear();
 
-  QString sql = "SELECT todoitem_id, incdt_id, todoitem_seq, incdt_number, "
-		"       usr_username, todoitem_name, todoitem_due_date, "
-		"       todoitem_start_date, todoitem_status, "
-		"       firstLine(todoitem_description) AS todoitem_description "
+  // explicitly get todoitem_id and incdt_id first to set id() and altId()
+  QString sql = "SELECT todoitem_id, incdt_id, *,"
+		"       firstLine(todoitem_description) AS todoitem_description,"
+                "  CASE WHEN (todoitem_status != 'C' AND todoitem_due_date < CURRENT_DATE) THEN 'expired'"
+                "       WHEN (todoitem_status != 'C' AND todoitem_due_date > CURRENT_DATE) THEN 'future'"
+                "  END AS todoitem_due_date_qtforegroundrole "
 	        "FROM usr, todoitem LEFT OUTER JOIN"
 	        "     incdt ON (todoitem_incdt_id = incdt_id) "
 	        "WHERE ((usr_id=todoitem_usr_id)"
@@ -221,30 +205,7 @@ void dspTodoByUserAndIncident::sFillList()
 
   MetaSQLQuery mql(sql);
   XSqlQuery todos = mql.toQuery(params);
-  todos.exec();
-  XTreeWidgetItem *last = 0;
-  while (todos.next())
-  {
-    last = new XTreeWidgetItem(_todoitem, last,
-			     todos.value("todoitem_id").toInt(),
-			     todos.value("incdt_id").toInt(),
-			     todos.value("usr_username").toString(),
-			     todos.value("todoitem_seq").toString(),
-			     todos.value("incdt_number").isNull() ? "" :
-				      todos.value("incdt_number").toString(),
-			     todos.value("todoitem_name").toString(),
-			     todos.value("todoitem_status").toString(),
-			     todos.value("todoitem_due_date").toString(),
-			     todos.value("todoitem_start_date").toString(),
-			     todos.value("todoitem_description").toString());
-    if (todos.value("todoitem_status") != "C")
-    {
-      if (todos.value("todoitem_due_date").toDate() < QDate::currentDate())
-	last->setTextColor("red");
-      else if (todos.value("todoitem_due_date").toDate() > QDate::currentDate())
-	last->setTextColor("green");
-    }
-  }
+  _todoitem->populate(todos);
   if (todos.lastError().type() != QSqlError::None)
   {
     systemError(this, todos.lastError().databaseText(), __FILE__, __LINE__);

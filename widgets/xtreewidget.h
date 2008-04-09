@@ -187,7 +187,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void populate(const QString &, bool = FALSE);
     void populate(const QString &, int, bool = FALSE);
 
-    void addColumn(const QString &, int, int, bool = true);
+    void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
 
     QString dragString() const;
     void setDragString(QString);
@@ -211,6 +211,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void setColumnLocked(int, bool);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
+
+    static QColor getNamedColor(QString);
 
   signals:
     void  valid(bool);
@@ -236,6 +238,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     QMap<int, int> _defaultColumnWidths;
     QMap<int, int> _savedColumnWidths;
     QMap<int, bool> _savedVisibleColumns;
+    QMap<int, QVariantMap*>	_roles;
     QList<int> _lockedColumns;
     QVector<int> _stretch;
     bool _resizingInProcess;

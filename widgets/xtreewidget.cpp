@@ -57,17 +57,72 @@
 
 #include "xtreewidget.h"
 
-#include <QMenu>
-#include <QFileDialog>
+#include <QAction>
 #include <QApplication>
 #include <QDrag>
+#include <QFileDialog>
+#include <QFont>
+#include <QHeaderView>
+#include <QMenu>
 #include <QMimeData>
 #include <QMouseEvent>
-#include <QHeaderView>
 #include <QSettings>
-#include <QAction>
 
 #include "xsqlquery.h"
+
+// TODO: move this to omfgThis and make a singleton
+QColor XTreeWidget::getNamedColor(QString pName)
+{
+  static bool firstTime = true;
+  static QColor error("red");
+  static QColor warning("orange");
+  static QColor emphasis("blue");
+  static QColor altemphasis("green");
+  static QColor expired("red");
+  static QColor future("blue");
+
+  if (firstTime)
+  {
+    XSqlQuery colorq("SELECT * "
+		     "FROM usr, locale LEFT OUTER JOIN"
+		     "     lang ON (locale_lang_id=lang_id) LEFT OUTER JOIN"
+		     "     country ON (locale_country_id=country_id) "
+		     "WHERE ( (usr_username=CURRENT_USER)"
+		     " AND (usr_locale_id=locale_id) );" );
+    colorq.exec();
+    if (colorq.first())
+    {
+      if (! colorq.value("locale_error_color").toString().isEmpty())
+	error = QColor(colorq.value("locale_error_color").toString());
+      if (! colorq.value("locale_warning_color").toString().isEmpty())
+	warning = QColor(colorq.value("locale_warning_color").toString());
+      if (! colorq.value("locale_emphasis_color").toString().isEmpty())
+	emphasis = QColor(colorq.value("locale_emphasis_color").toString());
+      if (! colorq.value("locale_altemphasis_color").toString().isEmpty())
+	altemphasis = QColor(colorq.value("locale_altemphasis_color").toString());
+      if (! colorq.value("locale_expired_color").toString().isEmpty())
+	expired = QColor(colorq.value("locale_expired_color").toString());
+      if (! colorq.value("locale_future_color").toString().isEmpty())
+	future = QColor(colorq.value("locale_future_color").toString());
+    }
+    firstTime = false;
+  }
+
+  if (pName == "error")
+    return error;
+  else if (pName == "warning")
+    return warning;
+  else if (pName == "emphasis")
+    return emphasis;
+  else if (pName == "altemphasis")
+    return altemphasis;
+  else if (pName == "expired")
+    return expired;
+  else if (pName == "future")
+    return future;
+
+  return QColor(pName);
+}
 
 XTreeWidget::XTreeWidget(QWidget *pParent) :
   QTreeWidget(pParent)
@@ -134,6 +189,9 @@ XTreeWidget::~XTreeWidget()
     else
       _x_preferences->remove(_settingsName + "/columnsShown");
   }
+
+  for (int i = 0; i < _roles.size(); i++)
+    delete _roles.value(i);
 }
 
 void XTreeWidget::populate(const QString &pSql, bool pUseAltId)
@@ -165,7 +223,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 {
   qApp->setOverrideCursor(Qt::waitCursor);
 
-  //QModelIndex position = currentIndex();
+  int position = id();
   
   clear();
 
@@ -177,41 +235,123 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
       XTreeWidgetItem *last     = NULL;
       XTreeWidgetItem *selected = NULL;
 
-      do
+      if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
-        if (pUseAltId)
-          last = new XTreeWidgetItem(this, last, pQuery.value(0).toInt(), pQuery.value(1).toInt(), pQuery.value(2).toString());
-        else
-          last = new XTreeWidgetItem(this, last, pQuery.value(0).toInt(), pQuery.value(1));
+	QStringList knownroles;
+	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
+		   << "qtbackgroundrole"   << "qtforegroundrole"
+		   << "qttooltiprole"      << "qtstatustiprole"
+		   << "qtfontrole"	   << "xtkeyrole"
+		   << "xtrunningrole"	   << "xtgrouprunningrole"
+		   << "xttotalrole";
+	for (int wcol = 0; wcol < _roles.size(); wcol++)
+	{
+	  QVariantMap *role = _roles.value(wcol);
+	  QString colname = role->value("qteditrole").toString();
+	  for (int k = 0; k < knownroles.size(); k++)
+	  {
+	    if (pQuery.record().indexOf(colname + "_" + knownroles.at(k)) >=0)
+	    {
+	      role->insert(knownroles.at(k),
+			   QString(colname + "_" + knownroles.at(k)));
+	    }
+	  }
+	}
 
-        if (fieldCount > ((pUseAltId) ? 3 : 2))
-          for (int counter = ((pUseAltId) ? 3 : 2); counter < fieldCount; counter++)
-            last->setText((counter - ((pUseAltId) ? 2 : 1)), pQuery.value(counter).toString());
+	do
+	{
+	  if (pUseAltId)
+	    last = new XTreeWidgetItem(this, last, pQuery.value(0).toInt(),
+				       pQuery.value(1).toInt(),
+				       pQuery.value(2).toString());
+	  else
+	    last = new XTreeWidgetItem(this, last,
+				       pQuery.value(0).toInt(),
+				       pQuery.value(1));
+	  for (int col = 0; col < _roles.size(); col++)
+	  {
+	    QVariantMap *role = _roles.value(col);
 
-        if (last->_id == pIndex)
-          selected = last;
+	    last->setData(col, Qt::EditRole,
+			  pQuery.value(role->value("qteditrole").toString()));
+
+	    if (role->contains("qtdisplayrole"))
+	      last->setData(col, Qt::DisplayRole,
+		pQuery.value(role->value("qtdisplayrole").toString()).isNull() ?
+		    "" : pQuery.value(role->value("qtdisplayrole").toString()));
+
+	    if (role->contains("qtforegroundrole") &&
+		! pQuery.value(role->value("qtforegroundrole").toString()).isNull() )
+	      last->setData(col, Qt::ForegroundRole,
+			    getNamedColor(pQuery.value(role->value("qtforegroundrole").toString()).toString()));
+
+	    if (role->contains("qtbackgroundrole") &&
+		! pQuery.value(role->value("qtbackgroundrole").toString()).isNull() )
+	      last->setData(col, Qt::BackgroundRole,
+		  getNamedColor(pQuery.value(role->value("qtbackgroundrole").toString()).toString()));
+
+
+	    if (role->contains("qttextalignmentrole") &&
+		! pQuery.value(role->value("qttextalignmentrole").toString()).isNull() )
+	      last->setData(col, Qt::TextAlignmentRole,
+		  pQuery.value(role->value("qttextalignmentrole").toString()));
+
+	    if (role->contains("qttooltiprole") &&
+		! pQuery.value(role->value("qttooltiprole").toString()).isNull() )
+	      last->setData(col, Qt::ToolTipRole,
+			pQuery.value(role->value("qttooltiprole").toString()));
+
+	    if (role->contains("qtstatustiprole") &&
+		! pQuery.value(role->value("qtstatustiprole").toString()).isNull() )
+	      last->setData(col, Qt::StatusTipRole,
+		      pQuery.value(role->value("qtstatustiprole").toString()));
+
+	    if (role->contains("qtfontrole") &&
+		! pQuery.value(role->value("qtfontrole").toString()).isNull() )
+	      last->setData(col, Qt::FontRole,
+		  pQuery.value(role->value("qtfontrole").toString()));
+
+	    /*
+	    if (role->contains("xtkeyrole"))
+	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtkeyrole").toString()));
+	    if (role->contains("xtrunningrole"))
+	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtrunningrole").toString()));
+	    if (role->contains("xtgrouprunningrole"))
+	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtgrouprunningrole").toString()));
+	    if (role->contains("xttotalrole"))
+	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xttotalrole").toString()));
+	    */
+	  }
+	} while (pQuery.next());
       }
-      while (pQuery.next());
+      else // assume xtreewidget columns are defined 1-to-1 with query columns
+      {
+	do
+	{
+	  if (pUseAltId)
+	    last = new XTreeWidgetItem(this, last, pQuery.value(0).toInt(), pQuery.value(1).toInt(), pQuery.value(2).toString());
+	  else
+	    last = new XTreeWidgetItem(this, last, pQuery.value(0).toInt(), pQuery.value(1));
+
+	  if (fieldCount > ((pUseAltId) ? 3 : 2))
+	    for (int counter = ((pUseAltId) ? 3 : 2); counter < fieldCount; counter++)
+	      last->setText((counter - ((pUseAltId) ? 2 : 1)), pQuery.value(counter).toString());
+
+	  if (last->_id == pIndex)
+	    selected = last;
+	} while (pQuery.next());
+      }
 
       if (selected != NULL)
       {
-        setItemSelected(selected, TRUE);
-        scrollToItem(selected);
-        emit valid(TRUE);
+	setItemSelected(selected, TRUE);
+	scrollToItem(selected);
+	emit valid(TRUE);
       }
       else
       {
-/*
-// This was removed as it was causing a crash problem in some situations.
-        setCurrentIndex(position);
-        if(currentItem())
-        {
-          scrollToItem(currentItem());
-          emit valid(TRUE);
-        }
-        else
-*/
-          emit valid(FALSE);
+	setId(position);
+	emit valid(currentItem() != 0);
       }
     }
   }
@@ -221,7 +361,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
   qApp->restoreOverrideCursor();
 }
 
-void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment, bool pVisible)
+void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment, bool pVisible, const QString pEditColumn, const QString pDisplayColumn)
 {
   if(!_settingsLoaded)
   {
@@ -281,6 +421,18 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
   QTreeWidgetItem * hitem = headerItem();
   hitem->setText(column, pString);
   hitem->setTextAlignment(column, pAlignment);
+
+  if (! pEditColumn.isEmpty())
+  {
+    QVariantMap *roles = new QVariantMap();
+    roles->insert("qteditrole",    pEditColumn);
+    if (! pDisplayColumn.isEmpty())
+      roles->insert("qtdisplayrole", pDisplayColumn);
+    else
+      roles->insert("qtdisplayrole", pEditColumn);
+    _roles.insert(column, roles);
+  }
+
   _defaultColumnWidths.insert(column, pWidth);
   if(_savedColumnWidths.contains(column))
     pWidth = _savedColumnWidths.value(column);
