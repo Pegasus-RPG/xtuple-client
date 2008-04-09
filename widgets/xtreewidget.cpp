@@ -70,7 +70,7 @@
 
 #include "xsqlquery.h"
 
-// TODO: move this to omfgThis and make a singleton
+// TODO: is there a better place for this?
 QColor XTreeWidget::getNamedColor(QString pName)
 {
   static bool firstTime = true;
@@ -237,12 +237,14 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 
       if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
+	QMap<int, double> totals; // col, current value
 	QStringList knownroles;
 	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
 		   << "qtbackgroundrole"   << "qtforegroundrole"
 		   << "qttooltiprole"      << "qtstatustiprole"
 		   << "qtfontrole"	   << "xtkeyrole"
-		   << "xtrunningrole"	   << "xtgrouprunningrole"
+		   << "xtrunningrole"	   << "xtrunninginit"
+		   << "xtgrouprunningrole"
 		   << "xttotalrole";
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
@@ -254,6 +256,8 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	    {
 	      role->insert(knownroles.at(k),
 			   QString(colname + "_" + knownroles.at(k)));
+	      if (knownroles.at(k) == "xttotalrole")
+		totals.insert(wcol, 0.0);
 	    }
 	  }
 	}
@@ -311,18 +315,50 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	      last->setData(col, Qt::FontRole,
 		  pQuery.value(role->value("qtfontrole").toString()));
 
+	    if (role->contains("xtrunninginit") &&
+		! pQuery.value(role->value("xtrunninginit").toString()).isNull() )
+	    {
+	      headerItem()->setData(col, Qt::UserRole, 
+				    pQuery.value(role->value("xtrunninginit").toString()));
+	    }
+
+	    if (role->contains("xtrunningrole"))
+	    {
+	      int runningset = pQuery.value(role->value("xtrunningrole").toString()).toInt();
+	      last->setData(col, Qt::UserRole, runningset);
+	      QTreeWidgetItem *prev;
+	      // look for the previous item in this set
+	      for (prev = itemAbove(last);
+		   prev && prev->data(col, Qt::UserRole).toInt() != runningset;
+		   prev = itemAbove(prev))
+		; // empty loop
+	      if (prev)
+		last->setData(col, Qt::DisplayRole,
+			      last->data(col, Qt::EditRole).toDouble() +
+			      prev->data(col, Qt::DisplayRole).toDouble());
+	      else
+		last->setData(col, Qt::DisplayRole,
+			      last->data(col, Qt::EditRole).toDouble() +
+			      headerItem()->data(col, Qt::UserRole).toDouble());
+	    }
+
+	    if (role->contains("xttotalrole"))
+	      totals.insert(col, totals.value(col) + pQuery.value(role->value("qteditrole").toString()).toDouble());
+
 	    /*
 	    if (role->contains("xtkeyrole"))
 	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtkeyrole").toString()));
-	    if (role->contains("xtrunningrole"))
-	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtrunningrole").toString()));
 	    if (role->contains("xtgrouprunningrole"))
 	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtgrouprunningrole").toString()));
-	    if (role->contains("xttotalrole"))
-	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xttotalrole").toString()));
 	    */
 	  }
 	} while (pQuery.next());
+	if (totals.size() > 0)
+	{
+	  last = new XTreeWidgetItem(this, last, -1, -1, tr("Totals"));
+	  for (QMap<int, double>::iterator i = totals.begin(); i != totals.end(); i++)
+	    last->setData(i.key(), Qt::DisplayRole, i.value());
+	}
       }
       else // assume xtreewidget columns are defined 1-to-1 with query columns
       {
