@@ -1123,6 +1123,7 @@ void GUIClient::sCustomCommand()
         wnd->setObjectName(q.value("uiform_name").toString());
 
         QUiLoader loader;
+qDebug() << "plugin path: " << loader.pluginPaths();
         QByteArray ba = q.value("uiform_source").toByteArray();
         QBuffer uiFile(&ba);
         if(!uiFile.open(QIODevice::ReadOnly))
