@@ -607,7 +607,7 @@ void item::sSave()
                "  item_prodcat_id, item_price_uom_id,"
                "  item_exclusive,"
                "  item_listprice, item_upccode, item_config,"
-               "  item_comments, item_extdescrip ) "
+               "  item_comments, item_extdescrip, item_warrdays ) "
                "VALUES "
                "( :item_id, :item_number, :item_active,"
                "  :item_descrip1, :item_descrip2,"
@@ -618,7 +618,7 @@ void item::sSave()
                "  :item_prodcat_id, :item_price_uom_id,"
                "  :item_exclusive,"
                "  :item_listprice, :item_upccode, :item_config,"
-               "  :item_comments, :item_extdescrip );" ;
+               "  :item_comments, :item_extdescrip, :item_wardays );" ;
   else if ((_mode == cEdit) || (cNew == _mode && _inTransaction))
          sql = "UPDATE item "
                "SET item_number=:item_number, item_descrip1=:item_descrip1, item_descrip2=:item_descrip2,"
@@ -631,7 +631,7 @@ void item::sSave()
                "    item_price_uom_id=:item_price_uom_id,"
                "    item_exclusive=:item_exclusive,"
                "    item_listprice=:item_listprice, item_upccode=:item_upccode, item_config=:item_config,"
-               "    item_comments=:item_comments, item_extdescrip=:item_extdescrip "
+               "    item_comments=:item_comments, item_extdescrip=:item_extdescrip, item_warrdays=:item_warrdays "
                "WHERE (item_id=:item_id);";
   q.prepare(sql);
   q.bindValue(":item_id", _itemid);
@@ -657,6 +657,7 @@ void item::sSave()
   q.bindValue(":item_packweight", _packWeight->toDouble());
   q.bindValue(":item_comments", _notes->text());
   q.bindValue(":item_extdescrip", _extDescription->text());
+  q.bindValue(":item_warrdays", _warranty->value());
   q.exec();
 
   if (_mode == cCopy)
@@ -948,6 +949,7 @@ void item::populate()
     _exclusive->setChecked(item.value("item_exclusive").toBool());
     _listprice->setText(formatSalesPrice(item.value("item_listprice").toDouble()));
     _priceUOM->setId(item.value("item_price_uom_id").toInt());
+    _warranty->setValue(item.value("item_warrdays").toInt());
 
     for (int pcounter = 0; pcounter < _planningType->count(); pcounter++)
       if (QString(item.value("item_planning_type").toString()[0]) == _planningTypes[pcounter])

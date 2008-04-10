@@ -105,6 +105,9 @@
      <property name="infoVisible" >
       <bool>false</bool>
      </property>
+     <property name="strict" >
+      <bool>false</bool>
+     </property>
     </widget>
    </item>
    <item row="2" column="0" colspan="3" >

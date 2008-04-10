@@ -377,6 +377,11 @@
          <widget class="XComboBox" name="xcomboBox" >
           <item>
            <property name="text" >
+            <string>Average</string>
+           </property>
+          </item>
+          <item>
+           <property name="text" >
             <string>Standard</string>
            </property>
           </item>
@@ -1382,67 +1387,28 @@
          <item row="0" column="0" >
           <widget class="QCheckBox" name="_perishable" >
            <property name="enabled" >
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="text" >
             <string>Perishable</string>
            </property>
           </widget>
          </item>
-         <item row="0" column="1" >
+         <item row="1" column="0" >
           <widget class="QCheckBox" name="_purchWarranty" >
            <property name="text" >
-            <string>Purchase Warranty</string>
+            <string>Requires Warranty when Purchased</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0" colspan="2" >
-          <widget class="QGroupBox" name="_salesWarranty" >
-           <property name="title" >
-            <string>Sales Warranty</string>
+         <item row="2" column="0" >
+          <widget class="QCheckBox" name="_autoRegister" >
+           <property name="text" >
+            <string>Auto Register Lot/Serial at Shipping</string>
            </property>
-           <property name="checkable" >
-            <bool>false</bool>
-           </property>
-           <property name="checked" >
-            <bool>false</bool>
-           </property>
-           <layout class="QGridLayout" >
-            <item row="0" column="0" >
-             <widget class="QLabel" name="_warrantyPeriodLit" >
-              <property name="text" >
-               <string>Warranty Period:</string>
-              </property>
-              <property name="alignment" >
-               <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="QSpinBox" name="_warrantyPeriod" >
-              <property name="maximum" >
-               <number>9999</number>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" >
-             <widget class="QLabel" name="_warrantyDaysLit" >
-              <property name="text" >
-               <string>Days</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="0" colspan="2" >
-             <widget class="QCheckBox" name="_autoRegister" >
-              <property name="text" >
-               <string>Auto Register at Shipping</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
           </widget>
          </item>
-         <item rowspan="2" row="1" column="2" >
+         <item rowspan="2" row="2" column="1" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Horizontal</enum>
@@ -1455,7 +1421,7 @@
            </property>
           </spacer>
          </item>
-         <item row="2" column="0" colspan="2" >
+         <item row="3" column="0" >
           <spacer>
            <property name="orientation" >
             <enum>Qt::Vertical</enum>
@@ -1556,8 +1522,6 @@
   <tabstop>_restricted</tabstop>
   <tabstop>_perishable</tabstop>
   <tabstop>_purchWarranty</tabstop>
-  <tabstop>_salesWarranty</tabstop>
-  <tabstop>_warrantyPeriod</tabstop>
   <tabstop>_autoRegister</tabstop>
   <tabstop>_location</tabstop>
  </tabstops>

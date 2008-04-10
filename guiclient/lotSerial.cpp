@@ -57,6 +57,7 @@
 
 #include "lotSerial.h"
 #include "characteristicAssignment.h"
+#include "lotSerialRegistration.h"
 
 #include <QSqlError>
 #include <QVariant>
@@ -75,9 +76,20 @@ lotSerial::lotSerial(QWidget* parent, const char* name, bool modal, Qt::WFlags f
     connect(_deleteChar,  SIGNAL(clicked()), this, SLOT(sDeleteCharass()));
     connect(_editChar,    SIGNAL(clicked()), this, SLOT(sEditCharass()));
     connect(_newChar,     SIGNAL(clicked()), this, SLOT(sNewCharass()));
+    connect(_deleteReg,  SIGNAL(clicked()), this, SLOT(sDeleteReg()));
+    connect(_editReg,    SIGNAL(clicked()), this, SLOT(sEditReg()));
+    connect(_newReg,     SIGNAL(clicked()), this, SLOT(sNewReg()));
+
     
     _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
     _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+    
+    _reg->addColumn(tr("Number")      ,        40,  Qt::AlignLeft );
+    _reg->addColumn(tr("CRM Account#"),        80,  Qt::AlignLeft );
+    _reg->addColumn(tr("Name"        ),	      -1,   Qt::AlignLeft );
+    _reg->addColumn(tr("First Name"  ),        80,  Qt::AlignLeft );
+    _reg->addColumn(tr("Last Name"   ),        80,  Qt::AlignLeft );
+    _reg->addColumn(tr("Phone"       ),        80,  Qt::AlignLeft );
   
     _changed=false;
 }
@@ -197,6 +209,52 @@ void lotSerial::sDeleteCharass()
   sFillList();
 }
 
+void lotSerial::sNewReg()
+{
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("ls_id", _lotSerial->id());
+
+  lotSerialRegistration newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void lotSerial::sEditReg()
+{
+  XTreeWidgetItem *reg = static_cast<XTreeWidgetItem*>(_reg->currentItem());
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("number", reg->text(0));
+
+  lotSerialRegistration newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void lotSerial::sDeleteReg()
+{
+  q.prepare( "DELETE FROM lsreg "
+             "WHERE (lsreg_ls_id=:ls_id);"
+             "DELETE FROM charass "
+             "WHERE ((charass_target_type='LSR') "
+             "AND (charass_target_id=:ls_id))" );
+  q.bindValue(":ls_id", _charass->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+
+  sFillList();
+}
+
+
 void lotSerial::sFillList()
 {
   q.prepare( "SELECT charass_id, char_name, charass_value "
@@ -209,6 +267,23 @@ void lotSerial::sFillList()
   q.exec();
   _charass->clear();
   _charass->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
+  
+  q.prepare( "SELECT lsreg_id,lsreg_number,crmacct_number,crmacct_name,"
+             "  cntct_first_name,cntct_last_name,cntct_phone "
+             "FROM lsreg "
+             "  LEFT OUTER JOIN crmacct ON (lsreg_crmacct_id=crmacct_id), "
+             "  cntct "
+             "WHERE ((lsreg_cntct_id=cntct_id) "
+             "AND (lsreg_ls_id=:ls_id));");
+  q.bindValue(":ls_id", _lotSerial->id());
+  q.exec();
+  _reg->clear();
+  _reg->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);

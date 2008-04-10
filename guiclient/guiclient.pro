@@ -223,7 +223,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                forms.ui form.ui labelForm.ui labelForms.ui laborRate.ui laborRates.ui                 \
                forwardUpdateAccounts.ui                                                               \
                sysLocale.ui locales.ui location.ui locations.ui                                       \
-               lotSerial.ui maintainBudget.ui                                                         \
+               lotSerial.ui lotSerialRegistration.ui maintainBudget.ui                                \
                maintainItemCosts.ui massExpireComponent.ui massReplaceComponent.ui                    \
                materialReceiptTrans.ui miscVoucher.ui miscCheck.ui                                    \
                invoice.ui invoiceItem.ui                                                              \
@@ -533,7 +533,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                forms.h form.h labelForm.h labelForms.h laborRate.h laborRates.h                       \
                forwardUpdateAccounts.h                                                                \
                sysLocale.h locales.h location.h locations.h                                           \
-               lotSerial.h maintainBudget.h                                                           \
+               lotSerial.h lotSerialRegistration.h maintainBudget.h                                   \
                maintainItemCosts.h massExpireComponent.h massReplaceComponent.h                       \
                materialReceiptTrans.h miscVoucher.h miscCheck.h                                       \
                mqlutil.h                                                                              \
@@ -850,7 +850,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                forms.cpp form.cpp labelForm.cpp labelForms.cpp laborRate.cpp laborRates.cpp           \
                forwardUpdateAccounts.cpp                                                              \
                sysLocale.cpp locales.cpp location.cpp locations.cpp                                   \
-               lotSerial.cpp maintainBudget.cpp                         	                      \
+               lotSerial.cpp lotSerialRegistration.cpp maintainBudget.cpp                             \
                maintainItemCosts.cpp massExpireComponent.cpp massReplaceComponent.cpp                 \
                materialReceiptTrans.cpp miscVoucher.cpp miscCheck.cpp                                 \
                mqlutil.cpp                                                                            \

@@ -850,6 +850,82 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_tabRegistartions" >
+        <attribute name="title" >
+         <string>Registrations</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="XTreeWidget" name="_reg" >
+           <property name="focusPolicy" >
+            <enum>Qt::ClickFocus</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1" >
+          <layout class="QVBoxLayout" >
+           <property name="spacing" >
+            <number>0</number>
+           </property>
+           <item>
+            <widget class="QPushButton" name="_newReg" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;New</string>
+             </property>
+             <property name="shortcut" >
+              <string>Alt+N</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_editReg" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Edit</string>
+             </property>
+             <property name="shortcut" >
+              <string>Alt+E</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="_deleteReg" >
+             <property name="enabled" >
+              <bool>false</bool>
+             </property>
+             <property name="text" >
+              <string>&amp;Delete</string>
+             </property>
+             <property name="shortcut" >
+              <string>Alt+D</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer>
+             <property name="orientation" >
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType" >
+              <enum>QSizePolicy::Expanding</enum>
+             </property>
+             <property name="sizeHint" >
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
       </widget>
      </item>
     </layout>
@@ -948,12 +1024,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>300</x>
-     <y>106</y>
+     <x>653</x>
+     <y>257</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>615</x>
-     <y>156</y>
+     <x>778</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -964,12 +1040,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>349</x>
-     <y>217</y>
+     <x>653</x>
+     <y>289</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>613</x>
-     <y>258</y>
+     <x>778</x>
+     <y>298</y>
     </hint>
    </hints>
   </connection>
@@ -980,12 +1056,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>803</y>
+     <x>396</x>
+     <y>512</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>803</y>
+     <x>396</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
@@ -996,12 +1072,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>803</y>
+     <x>396</x>
+     <y>512</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>803</y>
+     <x>396</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
@@ -1012,12 +1088,12 @@
    <slot>animateClick(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>294</x>
-     <y>555</y>
+     <x>376</x>
+     <y>512</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>627</x>
-     <y>539</y>
+     <x>475</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
@@ -1028,12 +1104,12 @@
    <slot>animateClick()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>380</x>
-     <y>801</y>
+     <x>396</x>
+     <y>512</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>380</x>
-     <y>801</y>
+     <x>396</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
@@ -1044,12 +1120,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>179</x>
-     <y>180</y>
+     <x>653</x>
+     <y>193</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>247</x>
-     <y>182</y>
+     <x>778</x>
+     <y>202</y>
     </hint>
    </hints>
   </connection>
@@ -1060,12 +1136,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>179</x>
-     <y>148</y>
+     <x>653</x>
+     <y>161</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>247</x>
-     <y>150</y>
+     <x>778</x>
+     <y>170</y>
     </hint>
    </hints>
   </connection>
@@ -1076,12 +1152,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>256</x>
-     <y>371</y>
+     <x>28</x>
+     <y>291</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>525</x>
-     <y>313</y>
+     <x>127</x>
+     <y>262</y>
     </hint>
    </hints>
   </connection>
@@ -1092,12 +1168,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>256</x>
-     <y>371</y>
+     <x>28</x>
+     <y>291</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>525</x>
-     <y>337</y>
+     <x>127</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -1108,12 +1184,44 @@
    <slot>animateClick(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>256</x>
-     <y>371</y>
+     <x>28</x>
+     <y>291</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>525</x>
-     <y>313</y>
+     <x>127</x>
+     <y>262</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_reg</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_editReg</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>435</x>
+     <y>277</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>545</x>
+     <y>269</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_reg</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_deleteReg</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>424</x>
+     <y>295</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>520</x>
+     <y>288</y>
     </hint>
    </hints>
   </connection>

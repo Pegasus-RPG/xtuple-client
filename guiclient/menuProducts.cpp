@@ -244,7 +244,7 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   { "pd.maintainItemCosts", tr("&Maintain Item Costs..."), SLOT(sMaintainItemCosts()), costingMenu, _privileges->check("ViewCosts"), NULL, NULL, true , NULL },
   
   // Product | Lot Serial
-  { "im.lotSerial",tr("&Lot/Serial..."),SLOT(sLotSerial()),mainMenu, TRUE,NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
+  { "pd.lotSerial",tr("&Lot/Serial..."),SLOT(sLotSerial()),mainMenu, TRUE,NULL, NULL, _metrics->boolean("LotSerialControl"), NULL }, 
 
   { "separator", NULL, NULL, costingMenu,	true, NULL, NULL, true , NULL },
   

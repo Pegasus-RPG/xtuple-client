@@ -387,8 +387,7 @@ void itemSite::sSave()
                          "  itemsite_freeze, itemsite_datelastused, itemsite_ordergroup,"
                          "  itemsite_mps_timefence,"
                          "  itemsite_disallowblankwip, "
-                         "  itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod, "
-                         "  itemsite_autoreg) "
+                         "  itemsite_warrpurc, itemsite_autoreg) "
                          "VALUES "
                          "( :itemsite_id, :itemsite_item_id, :itemsite_warehous_id, 0.0,"
                          "  :itemsite_useparams, :itemsite_useparamsmanual, :itemsite_reorderlevel,"
@@ -405,8 +404,7 @@ void itemSite::sSave()
                          "  FALSE, startOfTime(), :itemsite_ordergroup,"
                          "  :itemsite_mps_timefence,"
                          "  :itemsite_disallowblankwip, "
-                         "  :itemsite_warrpurc, :itemsite_warrsell, :itemsite_warrperiod, "
-                         "  :itemsite_autoreg  );" );
+                         "  :itemsite_warrpurc, :itemsite_autoreg  );" );
   }
   else if (_mode == cEdit)
   {
@@ -481,8 +479,7 @@ void itemSite::sSave()
                          "    itemsite_ordergroup=:itemsite_ordergroup,"
                          "    itemsite_mps_timefence=:itemsite_mps_timefence,"
                          "    itemsite_disallowblankwip=:itemsite_disallowblankwip, "
-                         "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_warrsell=:itemsite_warrsell, "
-                         "    itemsite_warrperiod=:itemsite_warrperiod, itemsite_autoreg=:itemsite_autoreg, "
+                         "    itemsite_warrpurc=:itemsite_warrpurc, itemsite_autoreg=:itemsite_autoreg, "
                          "    itemsite_warehous_id=:itemsite_warehous_id "
                          "WHERE (itemsite_id=:itemsite_id);" );
   }
@@ -555,8 +552,6 @@ void itemSite::sSave()
     newItemSite.bindValue(":itemsite_controlmethod", "S");
     
   newItemSite.bindValue(":itemsite_warrpurc", QVariant(_purchWarranty->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_warrsell", QVariant(_salesWarranty->isChecked(), 0));
-  newItemSite.bindValue(":itemsite_warrperiod", _warrantyPeriod->value());
   newItemSite.bindValue(":itemsite_autoreg", QVariant(_autoRegister->isChecked(), 0));
     
   newItemSite.exec();
@@ -796,8 +791,7 @@ void itemSite::populate()
                     "       itemsite_costcat_id, itemsite_notes,"
                     "       itemsite_ordergroup, itemsite_mps_timefence,"
                     "       itemsite_disallowblankwip, "
-                    "       itemsite_warrpurc, itemsite_warrsell, itemsite_warrperiod,"
-                    "       itemsite_autoreg "
+                    "       itemsite_warrpurc, itemsite_autoreg "
                     "FROM itemsite, item "
                     "WHERE ( (itemsite_item_id=item_id)"
                     " AND (itemsite_id=:itemsite_id) );" );
@@ -927,12 +921,7 @@ void itemSite::populate()
     
     
     _purchWarranty->setChecked(itemsite.value("itemsite_warrpurc").toBool());
-    if (itemsite.value("itemsite_warrsell").toBool())
-    {
-      _salesWarranty->setChecked(itemsite.value("itemsite_warrsell").toBool());
-      _warrantyPeriod->setValue(itemsite.value("itemsite_warrperiod").toInt());
-      _autoRegister->setChecked(itemsite.value("itemsite_autoreg").toBool());
-    }
+    _autoRegister->setChecked(itemsite.value("itemsite_autoreg").toBool());
 
     _updates = TRUE;
   }
@@ -975,8 +964,6 @@ void itemSite::clear()
   _costcat->setId(-1);
   
   _purchWarranty->setChecked(FALSE);
-  _salesWarranty->setChecked(FALSE);
-  _warrantyPeriod->setValue(0);
   _autoRegister->setChecked(FALSE);
   _tab->setTabEnabled(_tab->indexOf(_expirationTab),FALSE);
     

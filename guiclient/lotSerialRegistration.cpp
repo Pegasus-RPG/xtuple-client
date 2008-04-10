@@ -61,9 +61,10 @@
 #include <QSqlError>
 #include <QVariant>
 #include <QMenu>
+#include <QSqlRecord>
 
 #include "storedProcErrorLookup.h"
-#include "todoItem.h"
+#include "characteristicAssignment.h"
 
 /*
  *  Constructs a lotSerialRegistration as a child of 'parent', with the
@@ -76,12 +77,22 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   setupUi(this);
 
   // signals and slots connections
-  connect(_cancel,	SIGNAL(clicked()),	this,	SLOT(sCancel()));
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
 
-  _lotserial->setStrict(true);
-  _contact->setAccountVisible(FALSE);
-  _contact->setActiveVisible(FALSE);
+  _lotSerial->setStrict(true);
+  _cntct->setAccountVisible(FALSE);
+  _cntct->setActiveVisible(FALSE);
+
+  _model.setTable("api.lotserialreg");
+  _mapper.setModel(&_model);
+  _mapper.addMapping(_regNumber , REGISTRATION_NUMBER );
+ // _mapper.addMapping(_type      , TYPE                );
+  _mapper.addMapping(_regDate   , REGISTER_DATE       );
+  _mapper.addMapping(_soldDate  , SOLD_DATE           );
+  _mapper.addMapping(_expireDate, EXPIRE_DATE         );
+  _mapper.addMapping(_notes     , NOTES               );
+  
+  resize(minimumSize());
 }
 
 /*
@@ -106,13 +117,13 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
   QVariant param;
   bool     valid;
 
-  param = pParams.value("lsreg_id", &valid);
+  param = pParams.value("ls_id", &valid);
   if (valid)
-  {
-    _lsregid = param.toInt();
-    populate();
-    _lotserial->setItemId(_item->id());
-  }
+    _lotSerial->setId(param.toInt());
+  
+  param = pParams.value("number", &valid);
+  if (valid)
+    _number=param.toString();
 
   param = pParams.value("mode", &valid);
   if (valid)
@@ -120,26 +131,10 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     _mode = cNew;
 
     if (param.toString() == "new")
-    {
-      q.exec("SELECT fetchLotSerialRegNumber() AS result;");
-      if(q.first())
-        _number->setText(q.value("result").toString());
-        q.prepare(" INSERT INTO lsreg (lsreg_number,lsreg_ VALUES "
-                  " (
-      else
-      {
-        QMessageBox::critical( omfgThis, tr("Database Error"),
-                               tr( "A Database Error occured in lotSerialRegistration::New.\n"
-                                   "Contact your Systems Administrator." ));
-        reject();
-      }
-      _comments->setReadOnly(true);
-    }
+      sNew();
     else if (param.toString() == "edit")
-    {
-      _mode = cEdit;
-      _save->setFocus();
-    }
+      sEdit();
+
     else if (param.toString() == "view")
     {
       _mode = cView;
@@ -151,12 +146,11 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       _cntct->setEnabled(false);
       _type->setEnabled(false);
       _item->setReadOnly(true);
-      _lotserial->setEnabled(false);
+      _lotSerial->setEnabled(false);
       _newChar->setEnabled(false);
       _editChar->setEnabled(false);
       _deleteChar->setEnabled(false);
       _notes->setEnabled(false);
-
       _save->hide();
       _cancel->setText(tr("&Close"));
       _cancel->setFocus();
@@ -169,70 +163,77 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     _crmacct->setId(param.toInt());
     _crmacct->setEnabled(false);
   }
-
-  sHandleTodoPrivs();
   return NoError;
 }
 
-int lotSerialRegistration::saveContact(ContactCluster* pContact)
+void lotSerialRegistration::sNewCharass()
 {
-  pContact->setAccount(_crmacct->id());
+  ParameterList params;
+  params.append("mode", "new");
+  params.append("lsreg_id", _lotSerial->id());
 
-  int answer = 2;	// Cancel
-  int saveResult = pContact->save(AddressCluster::CHECK);
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
 
-  if (-1 == saveResult)
-    systemError(this, tr("There was an error saving a Contact (%1, %2).\n"
-			 "Check the database server log for errors.")
-		      .arg(pContact->label()).arg(saveResult),
-		__FILE__, __LINE__);
-  else if (-2 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving Address"),
-		    tr("There are multiple Contacts sharing this address (%1).\n"
-		       "What would you like to do?")
-		    .arg(pContact->label()),
-		    tr("Change This One"),
-		    tr("Change Address for All"),
-		    tr("Cancel"),
-		    2, 2);
-  else if (-10 == saveResult)
-    answer = QMessageBox::question(this,
-		    tr("Question Saving %1").arg(pContact->label()),
-		    tr("Would you like to update the existing Contact or create a new one?"),
-		    tr("Create New"),
-		    tr("Change Existing"),
-		    tr("Cancel"),
-		    2, 2);
-  if (0 == answer)
-    return pContact->save(AddressCluster::CHANGEONE);
-  else if (1 == answer)
-    return pContact->save(AddressCluster::CHANGEALL);
-
-  return saveResult;
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
 }
 
-void lotSerialRegistration::sCancel()
+void lotSerialRegistration::sEditCharass()
 {
-  if (_saved && cNew == _mode)
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("charass_id", _charass->id());
+
+  characteristicAssignment newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void lotSerialRegistration::sDeleteCharass()
+{
+  q.prepare( "DELETE FROM charass "
+             "WHERE (charass_id=:charass_id);" );
+  q.bindValue(":charass_id", _charass->id());
+  q.exec();
+  if (q.lastError().type() != QSqlError::None)
   {
-    q.prepare("DELETE FROM lsreg WHERE (lsreg_id=:lsreg_id");
-    q.bindValue(":lsreg_id", _lsregid);
-    q.exec();
-    else if (q.lastError().type() != QSqlError::None)
-    {
-      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
-  reject();
+
+  sFillList();
+}
+
+void lotSerialRegistration::sFillList()
+{
+}
+
+void lotSerialRegistration::sNew()
+{
+}
+
+void lotSerialRegistration::sEdit()
+{
+  _mode = cEdit;
+  _save->setFocus();
+  
+  _model.setFilter("registration_number = '" + _number + "'");
+  _model.select();
+  _mapper.toFirst();
 }
 
 void lotSerialRegistration::sSave()
 {
-  if (! save(false)) // if error
-    return;
-
-  accept();
+  _mapper.submit();
+  accept(); 
 }
+
+void lotSerialRegistration::sUndo()
+{
+  _mapper.revert();
+}
+
 

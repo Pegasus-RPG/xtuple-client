@@ -80,6 +80,9 @@ public slots:
     virtual void sNewCharass();
     virtual void sEditCharass();
     virtual void sDeleteCharass();
+    virtual void sNewReg();
+    virtual void sEditReg();
+    virtual void sDeleteReg();
 
 protected slots:
     virtual void languageChange();
