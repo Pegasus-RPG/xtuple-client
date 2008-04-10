@@ -57,20 +57,19 @@
 
 #include "voucherItem.h"
 
-#include <QVariant>
+// #include <QCloseEvent>
 #include <QMessageBox>
-#include <QValidator>
+#include <QSqlError>
+#include <QVariant>
+
 #include "voucherItemDistrib.h"
 #include "enterPoitemReceipt.h"
 #include "splitReceipt.h"
-#include <QCloseEvent>
 
 voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
   setupUi(this);
-  
-  _inTransaction = TRUE;
 
   connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
   connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
@@ -78,7 +77,6 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_uninvoiced, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(sToggleReceiving(QTreeWidgetItem*)));
   connect(_uninvoiced, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*)), this, SLOT(sPopulateMenu(QMenu*, QTreeWidgetItem*)));
-  connect(this, SIGNAL(rejected()), this, SLOT(sReject()));
   connect(_freightToVoucher, SIGNAL(lostFocus()), this, SLOT(sFillList()));
 
   _item->setReadOnly(TRUE);
@@ -92,6 +90,10 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _uninvoiced->addColumn(tr("Qty."),           _qtyColumn,  Qt::AlignRight  );
   _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter );
   
+  _rejectedMsg = tr("The application has encountered an error and must "
+                    "stop editing this Voucher Item.\n%1");
+
+  _inTransaction = TRUE;
   q.exec("BEGIN;"); //Lot's of things can happen in here that can cause problems if cancelled out.  Let's make it easy to roll it back.
 }
 
@@ -177,6 +179,13 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       if (q.value("itemsiteid") != -1)
         _item->setItemsiteid(q.value("itemsiteid").toInt());
     }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+      reject();
+      return UndefinedError;
+    }
   }
   else
     _poitemid = -1;
@@ -198,6 +207,13 @@ enum SetResponse voucherItem::set(const ParameterList &pParams)
       _closePoitem->setChecked(q.value("voitem_close").toBool());
       _qtyToVoucher->setText(q.value("f_qty").toString());
       _freightToVoucher->setLocalValue(q.value("voitem_freight").toDouble());
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+      reject();
+      return UndefinedError;
     }
     else
     {
@@ -238,6 +254,13 @@ void voucherItem::sSave()
                            tr("You must make at least one distribution for this Voucher Item before you may save it.") );
     return;
   }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
 // Check for vendor matching requirement
   q.prepare( "SELECT vend_id "
@@ -271,6 +294,13 @@ void voucherItem::sSave()
           return;
     }
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
 //  Update the qty vouchered
   q.prepare( "UPDATE voitem "
@@ -288,6 +318,13 @@ void voucherItem::sSave()
   q.bindValue(":voitem_close", QVariant(_closePoitem->isChecked(), 0));
   q.bindValue(":voitem_freight", _freightToVoucher->localValue());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
   q.exec("COMMIT;");
   _inTransaction = FALSE;
@@ -307,6 +344,13 @@ void voucherItem::sNew()
   q.bindValue(":poitem_id", _poitemid);
   q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
   ParameterList params;
   params.append("vohead_id", _voheadid);
@@ -316,6 +360,13 @@ void voucherItem::sNew()
   params.append("effective", _freightToVoucher->effective());
   if (q.first())
   	params.append("amount", q.value("f_amount").toDouble() );
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
   voucherItemDistrib newdlg(this, "", TRUE);
   newdlg.set(params);
@@ -345,6 +396,13 @@ void voucherItem::sDelete()
              "WHERE (vodist_id=:vodist_id);" );
   q.bindValue(":vodist_id", _vodist->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
   sFillList();
 }
@@ -424,7 +482,7 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   if (_voitemid != -1)
   {
     q.prepare( "UPDATE voitem "
-               "SET voitem_qty=:voitem_qty,"
+               "SET voitem_qty=:voitem_qty "
                "WHERE (voitem_id=:voitem_id);" );
     q.bindValue(":voitem_id", _voitemid);
   }
@@ -434,7 +492,14 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   q.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
   q.exec();
   if (q.first())
-  _voitemid = (q.value("voitemid").toInt());
+    _voitemid = (q.value("voitemid").toInt());
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
   
   q.prepare( "INSERT INTO voitem "
              "(voitem_id,voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
@@ -449,6 +514,13 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   q.bindValue(":voitem_qty", _qtyToVoucher->toDouble());
   q.bindValue(":voitem_freight", _freightToVoucher->localValue());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
   
 //Update the receipt record
   if (item->text(3) == "Yes")
@@ -480,6 +552,13 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   q.bindValue(":voitem_id", _voitemid);
   q.bindValue(":target_id", item->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
 }
 
@@ -497,6 +576,13 @@ void voucherItem::sFillList()
   q.bindValue(":vohead_id", _voheadid);
   q.exec();
   _vodist->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 
   q.prepare( "SELECT SUM(vodist_amount) AS totalamount "
              "FROM vodist "
@@ -508,6 +594,13 @@ void voucherItem::sFillList()
   if (q.first())
     _totalDistributed->setLocalValue(q.value("totalamount").toDouble() +
 					_freightToVoucher->localValue());
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
           
   //Fill univoiced receipts list
   q.prepare( "SELECT porecv_id AS item_id, 1 AS item_type, :receiving AS action,"
@@ -557,6 +650,13 @@ void voucherItem::sFillList()
 
     new XTreeWidgetItem(_uninvoiced, last, -1, QVariant(tr("Uninvoiced")), "", formatQty(totalQty));
   }
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                __FILE__, __LINE__);
+    reject();
+    return;
+  }
 }
 
 void voucherItem::sCorrectReceiving()
@@ -593,22 +693,12 @@ void voucherItem::sPopulateMenu(QMenu *pMenu,  QTreeWidgetItem *selected)
   }
 }
 
-/*
-void voucherItem::closeEvent(QCloseEvent *pEvent)
+void voucherItem::reject()
 {
   if(_inTransaction)
   {
     q.exec("ROLLBACK;");
     _inTransaction = false;
   }
+  XDialog::reject();
 }
-*/
-void voucherItem::sReject()
-{
-  if(_inTransaction)
-  {
-    q.exec("ROLLBACK;");
-    _inTransaction = false;
-  }
-}
-

@@ -440,39 +440,12 @@ void voucher::sDistributions()
       newdlg.set(params);
       if (newdlg.exec() == XDialog::Rejected)
       {
-//Remove distributions and reset tags if new voitem was not saved
-        q.prepare( "DELETE FROM vodist "
-                      "WHERE ( (vodist_vohead_id=:vohead_id) "
-              " AND (vodist_poitem_id=:poitem_id) "
-              " AND NOT EXISTS "
-              "       (SELECT * FROM voitem "
-              "       WHERE ( (voitem_poitem_id=:poitem_id) "
-              "       AND (voitem_vohead_id=:vohead_id) ) ) ); "
-
-              "UPDATE recv SET recv_vohead_id=NULL,recv_invoiced=false "
-              " WHERE ((recv_vohead_id=:vohead_id) "
-              " AND (recv_orderitem_id=:poitem_id)  "
-              " AND (recv_order_type = 'PO')"
-              " AND NOT EXISTS "
-              "       (SELECT * FROM voitem "
-              "       WHERE ( (voitem_poitem_id=:poitem_id) "
-              "       AND (voitem_vohead_id=:vohead_id) ) ) ); "
-
-              "UPDATE poreject SET poreject_vohead_id=NULL,poreject_invoiced=false "
-              " WHERE ((poreject_vohead_id=:vohead_id) "
-              " AND (poreject_poitem_id=:poitem_id) "
-              " AND NOT EXISTS "
-              "       (SELECT * FROM voitem "
-              "       WHERE ( (voitem_poitem_id=:poitem_id) "
-              "       AND (voitem_vohead_id=:vohead_id) ) ) ); " );
-         q.bindValue(":vohead_id", _voheadid);
-         q.bindValue(":poitem_id",  ((XTreeWidgetItem*)(selected[i]))->id());
-         q.exec();
+        // nothing to do:
+        // voucherItem wraps itself in a transaction and rolls back on reject
     }
   }
   sFillList();
   sPopulateDistributed();
-
 }
 
 void voucher::sDistributeLine()

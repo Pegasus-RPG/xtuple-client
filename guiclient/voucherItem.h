@@ -81,8 +81,7 @@ public slots:
     virtual void sPopulateMenu( QMenu * pMenu, QTreeWidgetItem* );
     virtual void sCorrectReceiving();
     virtual void sSplitReceipt();
- //  virtual void closeEvent( QCloseEvent * pEvent );
-    virtual void sReject();
+    virtual void reject();
     
 protected slots:
     virtual void languageChange();
@@ -93,7 +92,7 @@ private:
     int _voitemid;
     int _poitemid;
     bool _inTransaction;
-
+    QString _rejectedMsg;
 };
 
 #endif // VOUCHERITEM_H
