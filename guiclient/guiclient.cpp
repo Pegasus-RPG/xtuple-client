@@ -1111,32 +1111,33 @@ void GUIClient::sCustomCommand()
         return;
       }
 
+      QUiLoader loader;
+      QByteArray ba = q.value("uiform_source").toByteArray();
+      QBuffer uiFile(&ba);
+      if(!uiFile.open(QIODevice::ReadOnly))
+      {
+        QMessageBox::critical(this, tr("Could not load file"),
+            tr("There was an error loading the UI Form from the database."));
+        return;
+      }
+      QWidget *ui = loader.load(&uiFile);
+      uiFile.close();
+
       if(asDialog)
       {
-        QMessageBox::critical(this, tr("UI Form Type Not Supported"),
-          tr("The UI Form Type of Dialog is currently not supported."));
+        XDialog dlg(this);
+        dlg.setObjectName(q.value("uiform_name").toString());
+        QVBoxLayout *layout = new QVBoxLayout;
+        layout->addWidget(ui);
+        dlg.setLayout(layout);
+        dlg.exec();
       }
       else
       {
-// copied code from uiforms::sTest()
         XMainWindow * wnd = new XMainWindow();
         wnd->setObjectName(q.value("uiform_name").toString());
-
-        QUiLoader loader;
-        QByteArray ba = q.value("uiform_source").toByteArray();
-        QBuffer uiFile(&ba);
-        if(!uiFile.open(QIODevice::ReadOnly))
-        {
-          QMessageBox::critical(this, tr("Could not load file"),
-              tr("There was an error loading the UI Form from the database."));
-          return;
-        }
-        QWidget *ui = loader.load(&uiFile);
-        uiFile.close();
         wnd->setCentralWidget(ui);
-
         handleNewWindow(wnd);
-// end copied code from uiforms::sTest()
       }
     }
     else
