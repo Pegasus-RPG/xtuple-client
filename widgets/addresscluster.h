@@ -127,8 +127,14 @@ class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
 class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
-
-    Q_PROPERTY(bool    activeVisible READ activeVisible WRITE setActiveVisible);
+    Q_PROPERTY(bool     activeVisible READ activeVisible  WRITE setActiveVisible);
+    Q_PROPERTY(QString  line1         READ line1          WRITE setLine1);
+    Q_PROPERTY(QString  line2         READ line2          WRITE setLine2);
+    Q_PROPERTY(QString  line3         READ line3          WRITE setLine3);
+    Q_PROPERTY(QString  city          READ city           WRITE setCity);
+    Q_PROPERTY(QString  postalCode    READ postalCode     WRITE setPostalCode);
+    Q_PROPERTY(QString  state         READ state          WRITE setState);
+    Q_PROPERTY(QString  country       READ country        WRITE setCountry);
 
     friend class AddressInfo;
     friend class AddressList;

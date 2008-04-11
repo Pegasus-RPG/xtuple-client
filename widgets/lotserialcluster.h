@@ -106,40 +106,47 @@ class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 
 	inline virtual int	itemId() const		{ return _itemid; };
 	inline virtual bool	strict() const		{ return _strict; };
+        inline virtual QString  itemNumber() const      { return _itemNumber;};
 
     public slots:
 	virtual void clear();
 	virtual void sParse();
 	virtual void setItemId(const int);
+        virtual void setItemNumber(const QString);
 	inline virtual void	setStrict(const bool p)	{ _strict = p; };
 
     protected slots:
 	virtual LotserialList*		listFactory();
 	virtual LotserialSearch*	searchFactory();
-	// virtual LotserialInfo*		infoFactory();
+	// virtual LotserialInfo*	infoFactory();
 
     private:
 	int	_itemid;
 	bool	_strict;
+        QString _itemNumber;
 };
 
 class OPENMFGWIDGETS_EXPORT LotserialCluster : public VirtualCluster
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool strict	READ	strict	WRITE setStrict);
+    Q_PROPERTY(bool     strict          READ  strict          WRITE setStrict);
+    Q_PROPERTY(QString  itemNumber      READ  itemNumber      WRITE setItemNumber);
+    Q_PROPERTY(QString  lotSerialNumber READ  number          WRITE setNumber);
 
     friend class LotserialLineEdit;
 
     public:
 	LotserialCluster(QWidget*, const char* = 0);
 
-	virtual int	itemId() const;
-	virtual bool	strict() const;
+	virtual bool	strict()          const;
+	virtual int	itemId()          const;
+        virtual QString itemNumber()      const;
 
     public slots:
-	virtual void	setItemId(const int);
-	virtual void	setStrict(const bool);
+	virtual void	setItemId           (const int);
+        virtual void    setItemNumber       (const QString);
+	virtual void	setStrict           (const bool);
 };
 
 #endif

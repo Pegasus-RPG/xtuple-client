@@ -77,6 +77,7 @@ QString OPENMFGWIDGETS_EXPORT formatDate(const QDate &);
 class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
 {
   Q_OBJECT
+  Q_PROPERTY(QDate date READ date WRITE setDate )
 
   public:
     DLineEdit(QWidget *parent, const char *name = 0);

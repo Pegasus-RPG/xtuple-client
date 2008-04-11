@@ -127,67 +127,67 @@ void XComboBox::setType(XComboBoxTypes pType)
 
     case UOMs:
       setAllowNull(TRUE);
-      query.exec( "SELECT uom_id, uom_name "
+      query.exec( "SELECT uom_id, uom_name, uom_name "
                   "FROM uom "
                   "ORDER BY uom_name;" );
     break;
 
     case ClassCodes:
-      query.exec( "SELECT classcode_id, (classcode_code || '-' || classcode_descrip) "
+      query.exec( "SELECT classcode_id, (classcode_code || '-' || classcode_descrip), classcode_code  "
                   "FROM classcode "
                   "ORDER BY classcode_code;" );
       break;
 
     case ItemGroups:
-      query.exec( "SELECT itemgrp_id, itemgrp_name "
+      query.exec( "SELECT itemgrp_id, itemgrp_name, itemgrp_name "
                   "FROM itemgrp "
                   "ORDER BY itemgrp_name;" );
       break;
 
     case CostCategories:
-      query.exec( "SELECT costcat_id, (costcat_code || '-' || costcat_descrip) "
+      query.exec( "SELECT costcat_id,  (costcat_code || '-' || costcat_descrip), costcat_code "
                   "FROM costcat "
                   "ORDER BY costcat_code;" );
       break;
 
     case ProductCategories:
-      query.exec( "SELECT prodcat_id, (prodcat_code || ' - ' || prodcat_descrip) "
+      query.exec( "SELECT prodcat_id, (prodcat_code || ' - ' || prodcat_descrip), product_code "
                   "FROM prodcat "
                   "ORDER BY prodcat_code;" );
       break;
 
     case PlannerCodes:
-      query.exec( "SELECT plancode_id, (plancode_code || '-' || plancode_name) "
+      query.exec( "SELECT plancode_id, (plancode_code || '-' || plancode_name), plancode_code "
                   "FROM plancode "
                   "ORDER BY plancode_code;" );
       break;
 
     case CustomerTypes:
-      query.exec( "SELECT custtype_id, (custtype_code || '-' || custtype_descrip) "
+      query.exec( "SELECT custtype_id, (custtype_code || '-' || custtype_descrip), custtype_code "
                   "FROM custtype "
                   "ORDER BY custtype_code;" );
       break;
 
     case CustomerGroups:
-      query.exec( "SELECT custgrp_id, custgrp_name "
+      query.exec( "SELECT custgrp_id, custgrp_name, custgrp_name "
                   "FROM custgrp "
                   "ORDER BY custgrp_name;" );
       break;
 
     case VendorTypes:
-      query.exec( "SELECT vendtype_id, (vendtype_code || '-' || vendtype_descrip) "
+      query.exec( "SELECT vendtype_id, (vendtype_code || '-' || vendtype_descrip), vendtype_code "
                   "FROM vendtype "
                   "ORDER BY vendtype_code;" );
       break;
 
     case VendorGroups:
-      query.exec( "SELECT vendgrp_id, vendgrp_name "
+      query.exec( "SELECT vendgrp_id, vendgrp_name, vendgrp_name "
                   "FROM vendgrp "
                   "ORDER BY vendgrp_name;" );
       break;
 
     case SalesRepsActive:
-      query.exec( "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name) "
+      query.exec( "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
                   "FROM salesrep "
                   "WHERE (salesrep_active) "
                   "ORDER by salesrep_number;" );
@@ -196,85 +196,85 @@ void XComboBox::setType(XComboBoxTypes pType)
     case ShipVias:
       setAllowNull(TRUE);
       setEditable(TRUE);
-      query.exec( "SELECT shipvia_id, (shipvia_code || '-' || shipvia_descrip) "
+      query.exec( "SELECT shipvia_id, (shipvia_code || '-' || shipvia_descrip), shipvia_code "
                   "FROM shipvia "
                   "ORDER BY shipvia_code;" );
       break;
 
     case SalesReps:
-      query.exec( "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name) "
+      query.exec( "SELECT salesrep_id, (salesrep_number || '-' || salesrep_name), salesrep_number "
                   "FROM salesrep "
                   "ORDER by salesrep_number;" );
       break;
 
     case ShippingCharges:
-      query.exec( "SELECT shipchrg_id, (shipchrg_name || '-' || shipchrg_descrip) "
+      query.exec( "SELECT shipchrg_id, (shipchrg_name || '-' || shipchrg_descrip), shipchrg_name "
                   "FROM shipchrg "
                   "ORDER by shipchrg_name;" );
       break;
 
     case ShippingForms:
-      query.exec( "SELECT shipform_id, shipform_name "
+      query.exec( "SELECT shipform_id, shipform_name, shipform_name "
                   "FROM shipform "
                   "ORDER BY shipform_name;" );
       break;
 
     case Terms:
-      query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip) "
+      query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip), terms_code "
                   "FROM terms "
                   "ORDER by terms_code;" );
       break;
 
     case ARTerms:
-      query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip) "
+      query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip), terms_code "
                   "FROM terms "
                   "WHERE (terms_ar) "
                   "ORDER by terms_code;" );
       break;
 
     case APTerms:
-      query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip) "
+      query.exec( "SELECT terms_id, (terms_code || '-' || terms_descrip), terms_code "
                   "FROM terms "
                   "WHERE (terms_ap) "
                   "ORDER by terms_code;" );
       break;
 
     case ARBankAccounts:
-      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip) "
+      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip), bankacct_name "
                   "FROM bankaccnt "
                   "WHERE (bankaccnt_ar) "
                   "ORDER BY bankaccnt_name;" );
       break;
 
     case APBankAccounts:
-      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip) "
+      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip), bankacct_name "
                   "FROM bankaccnt "
                   "WHERE (bankaccnt_ap) "
                   "ORDER BY bankaccnt_name;" );
       break;
 
     case AccountingPeriods:
-      query.exec( "SELECT period_id, (formatDate(period_start) || '-' || formatDate(period_end)) "
+      query.exec( "SELECT period_id, (formatDate(period_start) || '-' || formatDate(period_end), (formatDate(period_start) || '-' || formatDate(period_end)) "
                   "FROM period "
                   "ORDER BY period_start DESC;" );
       break;
 
     case FinancialLayouts:
-      query.exec( "SELECT flhead_id, flhead_name "
+      query.exec( "SELECT flhead_id, flhead_name, flhead_name "
                   "FROM flhead "
                   "WHERE (flhead_active) "
                   "ORDER BY flhead_name;" );
       break;
 
     case FiscalYears:
-      query.exec( "SELECT yearperiod_id, formatdate(yearperiod_start) || '-' || formatdate(yearperiod_end)"
+      query.exec( "SELECT yearperiod_id, formatdate(yearperiod_start) || '-' || formatdate(yearperiod_end), formatdate(yearperiod_start) || '-' || formatdate(yearperiod_end)"
                   "  FROM yearperiod"
                   " ORDER BY yearperiod_start DESC;" );
       break;
 
     case SoProjects:
       setAllowNull(TRUE);
-      query.exec( "SELECT prj_id, (prj_number || '-' || prj_name) "
+      query.exec( "SELECT prj_id, (prj_number || '-' || prj_name), prj_number "
                   "FROM prj "
                   "WHERE (prj_so) "
                   "ORDER BY prj_name;" );
@@ -282,7 +282,7 @@ void XComboBox::setType(XComboBoxTypes pType)
 
     case WoProjects:
       setAllowNull(TRUE);
-      query.exec( "SELECT prj_id, (prj_number || '-' || prj_name) "
+      query.exec( "SELECT prj_id, (prj_number || '-' || prj_name), prj_number "
                   "FROM prj "
                   "WHERE (prj_wo) "
                   "ORDER BY prj_name;" );
@@ -290,187 +290,187 @@ void XComboBox::setType(XComboBoxTypes pType)
 
     case PoProjects:
       setAllowNull(TRUE);
-      query.exec( "SELECT prj_id, (prj_number || '-' || prj_name) "
+      query.exec( "SELECT prj_id, (prj_number || '-' || prj_name), prj_number "
                   "FROM prj "
                   "WHERE (prj_po) "
                   "ORDER BY prj_name;" );
       break;
 
     case Currencies:
-      query.exec( "SELECT curr_id, currConcat(curr_abbr, curr_symbol)"
+      query.exec( "SELECT curr_id, currConcat(curr_abbr, curr_symbol), curr_abbr"
                   " FROM curr_symbol "
                   "ORDER BY curr_base DESC, curr_abbr;" );
       break;
 
     case CurrenciesNotBase:
-      query.exec( "SELECT curr_id, currConcat(curr_abbr, curr_symbol)"
+      query.exec( "SELECT curr_id, currConcat(curr_abbr, curr_symbol), curr_abbr"
                   " FROM curr_symbol "
                   " WHERE curr_base = FALSE "
                   "ORDER BY curr_abbr;" );
       break;
 
     case Companies:
-      query.exec( "SELECT company_id, company_number "
+      query.exec( "SELECT company_id, company_number, company_number "
                   "FROM company "
                   "ORDER BY company_number;" );
       break;
 
     case ProfitCenters:
       setEditable(_x_metrics->boolean("GLFFProfitCenters"));
-      query.exec( "SELECT prftcntr_id, prftcntr_number "
+      query.exec( "SELECT prftcntr_id, prftcntr_number, prftcntr_number "
                   "FROM prftcntr "
                   "ORDER BY prftcntr_number;" );
       break;
 
     case Subaccounts:
       setEditable(_x_metrics->boolean("GLFFSubaccounts"));
-      query.exec( "SELECT subaccnt_id, subaccnt_number "
+      query.exec( "SELECT subaccnt_id, subaccnt_number, subaccnt_number "
                   "FROM subaccnt "
                   "ORDER BY subaccnt_number;" );
       break;
 
     case CustomerCommentTypes:
-      query.exec( "SELECT cmnttype_id, cmnttype_name "
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
                   "WHERE (strpos(cmnttype_usedin, 'C')>0)"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case VendorCommentTypes:
-      query.exec( "SELECT cmnttype_id, cmnttype_name "
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
                   "WHERE (strpos(cmnttype_usedin, 'V')>0)"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case ItemCommentTypes:
-      query.exec( "SELECT cmnttype_id, cmnttype_name "
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
                   "WHERE (strpos(cmnttype_usedin, 'I')>0)"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case ProjectCommentTypes:
-      query.exec( "SELECT cmnttype_id, cmnttype_name "
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
                   "WHERE (strpos(cmnttype_usedin, 'J')>0)"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case LotSerialCommentTypes:
-      query.exec( "SELECT cmnttype_id, cmnttype_name "
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
                   "WHERE (strpos(cmnttype_usedin, 'L')>0)"
                   "ORDER BY cmnttype_name;" );
       break;
 
     case AllCommentTypes:
-      query.exec( "SELECT cmnttype_id, cmnttype_name "
+      query.exec( "SELECT cmnttype_id, cmnttype_name, cmnttype_name "
                   "FROM cmnttype "
                   "ORDER BY cmnttype_name;" );
       break;
 
     case AllProjects:
-      query.exec( "SELECT prj_id, prj_name "
+      query.exec( "SELECT prj_id, prj_name, prj_name "
                   "FROM prj "
                   "ORDER BY prj_name;" );
       break;
 
     case Users:
-      query.exec( "SELECT usr_id, usr_username "
+      query.exec( "SELECT usr_id, usr_username, usr_username "
                   "FROM usr "
                   "ORDER BY usr_username;" );
       break;
 
     case SalesCategories:
-      query.exec( "SELECT salescat_id, (salescat_name || '-' || salescat_descrip) "
+      query.exec( "SELECT salescat_id, (salescat_name || '-' || salescat_descrip), salescat_name "
                   "FROM salescat "
                   "ORDER BY salescat_name;" );
       break;
 
     case ExpenseCategories:
-      query.exec( "SELECT expcat_id, (expcat_code || '-' || expcat_descrip) "
+      query.exec( "SELECT expcat_id, (expcat_code || '-' || expcat_descrip), expcat_code "
                   "FROM expcat "
                   "ORDER BY expcat_code;" );
       break;
 
     case ReasonCodes:
-      query.exec( "SELECT rsncode_id, (rsncode_code || '-' || rsncode_descrip)"
+      query.exec( "SELECT rsncode_id, (rsncode_code || '-' || rsncode_descrip), rsncode_code"
                   "  FROM rsncode "
                   "ORDER BY rsncode_code;" );
       break;
 
     case TaxCodes:
-      query.exec( "SELECT tax_id, (tax_code || '-' || tax_descrip)"
+      query.exec( "SELECT tax_id, (tax_code || '-' || tax_descrip), tax_code"
                   "  FROM tax "
                   "ORDER BY tax_code;" );
       break;
 
     case WorkCenters:
-      query.exec( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip)"
+      query.exec( "SELECT wrkcnt_id, (wrkcnt_code || '-' || wrkcnt_descrip), wrkcnt_code"
                   "  FROM wrkcnt "
                   "ORDER BY wrkcnt_code;" );
       break;
 
     case CRMAccounts:
       setAllowNull(TRUE);
-      query.exec( "SELECT crmacct_id, (crmacct_number || '-' || crmacct_name)"
+      query.exec( "SELECT crmacct_id, (crmacct_number || '-' || crmacct_name), crmacct_number"
                   "  FROM crmacct "
                   "ORDER BY crmacct_number;" );
       break;
 
     case Honorifics:
       setAllowNull(TRUE);
-      query.exec( "SELECT hnfc_id, hnfc_code"
+      query.exec( "SELECT hnfc_id, hnfc_code, hnfc_code"
                   "  FROM hnfc "
                   "ORDER BY hnfc_code;" );
       break;
 
     case IncidentSeverity:
-      query.exec( "SELECT incdtseverity_id, incdtseverity_name"
+      query.exec( "SELECT incdtseverity_id, incdtseverity_name, incdtseverity_name"
                   "  FROM incdtseverity"
                   " ORDER BY incdtseverity_order, incdtseverity_name;" );
       break;
 
     case IncidentPriority:
-      query.exec( "SELECT incdtpriority_id, incdtpriority_name"
+      query.exec( "SELECT incdtpriority_id, incdtpriority_name, incdtpriority_name"
                   "  FROM incdtpriority"
                   " ORDER BY incdtpriority_order, incdtpriority_name;" );
       break;
 
     case IncidentResolution:
-      query.exec( "SELECT incdtresolution_id, incdtresolution_name"
+      query.exec( "SELECT incdtresolution_id, incdtresolution_name, incdtresolution_name"
                   "  FROM incdtresolution"
                   " ORDER BY incdtresolution_order, incdtresolution_name;" );
       break;
 
     case IncidentCategory:
-      query.exec( "SELECT incdtcat_id, incdtcat_name"
+      query.exec( "SELECT incdtcat_id, incdtcat_name, incdtcat_name"
                   "  FROM incdtcat"
                   " ORDER BY incdtcat_order, incdtcat_name;" );
       break;
 
     case TaxAuths:
-      query.exec( "SELECT taxauth_id, taxauth_code"
+      query.exec( "SELECT taxauth_id, taxauth_code, taxauth_code"
                   "  FROM taxauth"
                   " ORDER BY taxauth_code;" );
       break;
 
     case TaxTypes:
-      query.exec( "SELECT taxtype_id, taxtype_name"
+      query.exec( "SELECT taxtype_id, taxtype_name, taxtype_name"
                   "  FROM taxtype"
                   " ORDER BY taxtype_name;" );
       break;
 
     case Agent:
-      query.exec( "SELECT usr_id, usr_username "
+      query.exec( "SELECT usr_id, usr_username, usr_username "
                   "  FROM usr"
                   " WHERE (usr_agent) "
                   " ORDER BY usr_username;" );
       break;
 
     case Reports:
-      query.exec( "SELECT a.report_id, a.report_name "
+      query.exec( "SELECT a.report_id, a.report_name, a.report_name "
                   "FROM report a, "
                   "    (SELECT MIN(report_grade) AS report_grade, report_name "
                   "     FROM report "
@@ -481,39 +481,45 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case OpportunityStages:
-      query.exec("SELECT opstage_id, opstage_name "
+      query.exec("SELECT opstage_id, opstage_name, opstage_name "
                  "  FROM opstage"
                  " ORDER BY opstage_order;");
       break;
 
     case OpportunitySources:
-      query.exec("SELECT opsource_id, opsource_name "
+      query.exec("SELECT opsource_id, opsource_name, opsource_name "
                  "  FROM opsource;");
       break;
 
     case OpportunityTypes:
-      query.exec("SELECT optype_id, optype_name "
+      query.exec("SELECT optype_id, opttype_name, optype_name "
                  "  FROM optype;");
       break;
 
     case LocaleLanguages:
-      query.exec("SELECT lang_id, lang_name "
+      query.exec("SELECT lang_id, lang_name, lang_name "
                  "  FROM lang"
                  " WHERE lang_qt_number IS NOT NULL"
                  " ORDER BY lang_name;");
       break;
 
     case Countries:
-      query.exec("SELECT country_id, country_name "
+      query.exec("SELECT country_id, country_name, country_name "
                  "  FROM country"
                  " ORDER BY country_name;");
       break;
 
     case LocaleCountries:
-      query.exec("SELECT country_id, country_name "
+      query.exec("SELECT country_id, country_name, country_name "
                  "  FROM country"
                  " WHERE country_qt_number IS NOT NULL"
                  " ORDER BY country_name;");
+      break;
+      
+    case RegistrationTypes:
+      query.exec("SELECT regtype_id, regtype_code, regtype_code "
+                 "  FROM regtype"
+                 " ORDER BY regtype_code;");
       break;
 
   }
@@ -577,6 +583,31 @@ void XComboBox::setLabel(QLabel* pLab)
 
     default:
       break;
+  }
+}
+
+void XComboBox::setCode(QString pString)
+{
+  if (count())
+  {
+    for (int counter = ((allowNull()) ? 1 : 0); counter < count(); counter++)
+    {
+      if (_codes.at(counter) == pString)
+      {
+        setCurrentItem(counter);
+        
+        if(_lastId!=_ids.at(counter))
+          setId(_ids.at(counter));
+        
+        return;
+      }
+    }
+  }
+  
+  if (editable())
+  {
+    setId(-1);
+    setCurrentText(pString);
   }
 }
 
@@ -745,6 +776,9 @@ void XComboBox::clear()
 
   if (_ids.count())
     _ids.clear();
+    
+  if (_codes.count())
+    _codes.clear();
 
   if (allowNull())
     append(-1, _nullStr);
@@ -774,7 +808,7 @@ void XComboBox::populate(XSqlQuery &pQuery, int pSelected)
   {
     do
     {
-      append(pQuery.value(0).toInt(), pQuery.value(1).toString());
+      append(pQuery.value(0).toInt(), pQuery.value(1).toString(), pQuery.value(2).toString());
 
       if (pQuery.value(0).toInt() == pSelected)
         selected = counter;
@@ -814,8 +848,14 @@ void XComboBox::populate(const char *pSql, int pSelected)
 
 void XComboBox::append(int pId, const QString &pText)
 {
+  append(pId,pText,pText);
+}
+
+void XComboBox::append(int pId, const QString &pText, const QString &pCode)
+{
   _ids.append(pId);
   insertItem(pText);
+  _codes.append(pCode);
 }
 
 int XComboBox::id(int pIndex) const
@@ -842,6 +882,19 @@ int XComboBox::id() const
   }
   else
     return -1;
+}
+
+QString XComboBox::code() const
+{
+  if (_codes.count())
+  {
+    if ( (allowNull()) && (currentItem() <= 0) )
+      return QString::Null();
+    else
+      return _codes.at(currentItem());
+  }
+  else
+    return QString::Null();
 }
 
 bool XComboBox::isValid() const

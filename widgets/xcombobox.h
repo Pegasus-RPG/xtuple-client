@@ -80,6 +80,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_PROPERTY(bool      allowNull READ allowNull WRITE setAllowNull )
   Q_PROPERTY(QString     nullStr READ nullStr   WRITE setNullStr   )
   Q_PROPERTY(XComboBoxTypes type READ type      WRITE setType      )
+  Q_PROPERTY(QString        code READ code      WRITE setCode      )
 
   public:
     XComboBox(QWidget * = 0, const char * = 0);
@@ -103,7 +104,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
       OpportunityStages, OpportunitySources,    OpportunityTypes,
       PlannerCodes,	PoProjects,		ProductCategories,
       ProfitCenters,	ProjectCommentTypes,
-      ReasonCodes,	Reports,
+      ReasonCodes,	RegistrationTypes,      Reports,                
       SalesCategories,	SalesReps,		SalesRepsActive,
       ShipVias,		ShippingCharges,	ShippingForms,
       SoProjects,	Subaccounts,
@@ -116,9 +117,11 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     XComboBoxTypes type();
     void setType(XComboBoxTypes);
 
+    void setCode(QString);
     void setText(QVariant &);
     void setText(const QString &);
     void setText(const QVariant &);
+    
 
     virtual bool allowNull() const { return _allowNull; };
     virtual void setAllowNull(bool);
@@ -133,20 +136,21 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     inline QLabel* label() const { return _label; };
     void setLabel(QLabel* pLab);
 
-
-    int  id(int) const;
-    int  id() const;
-    bool isValid() const;
+    bool    isValid() const;
+    int     id(int) const;
+    int     id() const;
+    QString code() const;
 
     QSize sizeHint() const;
 
   public slots:
-    void setId(int);
+    void clear();
+    void append(int, const QString &);
+    void append(int, const QString &, const QString &);
     void populate(XSqlQuery &, int = -1);
     void populate(const char *, int = -1);
     void populate();
-    void append(int, const QString &);
-    void clear();
+    void setId(int);
 
   private slots:
     void sHandleNewIndex(int);
@@ -154,17 +158,18 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   signals:
     void clicked();
     void newID(int);
-    void valid(bool);
     void notNull(bool);
+    void valid(bool);
 
   protected:
     void mousePressEvent(QMouseEvent *);
 
-    QList<int>          _ids;
-    int                 _lastId;
     bool                _allowNull;
+    int                 _lastId;
     enum XComboBoxTypes _type;
     QLabel*             _label;
+    QList<int>          _ids;
+    QList<QString>      _codes;
     QString             _nullStr;
 };
 

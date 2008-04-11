@@ -100,6 +100,84 @@ ItemLineEdit::ItemLineEdit(QWidget *pParent, const char *name) : XLineEdit(pPare
   connect(this, SIGNAL(requestAlias()), this, SLOT(sAlias()));
 }
 
+void ItemLineEdit::setItemNumber(QString pNumber)
+{
+  XSqlQuery item;
+  bool      found = FALSE;
+
+  _parsed = TRUE;
+
+  if (_useValidationQuery)
+  {
+    item.prepare(_validationSql);
+    item.bindValue(":item_number", pNumber);
+    item.exec();
+    if (item.first())
+      found = TRUE;
+  }
+  else if (_useQuery)
+  {
+    item.prepare(_sql);
+    item.exec();
+    found = (item.findFirst("item_number", pNumber) != -1);
+  }
+  else if (pNumber != QString::Null())
+  {
+    QString pre( "SELECT DISTINCT item_number, item_descrip1, item_descrip2,"
+                 "                uom_name, item_type, item_config");
+
+    QStringList clauses;
+    clauses = _extraClauses;
+    clauses << "(item_number=:item_number)";
+
+    item.prepare(buildItemLineEditQuery(pre, clauses, QString::null, _type));
+    item.bindValue(":item_number", pNumber);
+    item.exec();
+
+    found = item.first();
+  }
+
+  if (found)
+  {
+    _itemNumber = pNumber;
+    _uom        = item.value("uom_name").toString();
+    _itemType   = item.value("item_type").toString();
+    _configured = item.value("item_config").toBool();
+    _id         = item.value("item_id").toInt();
+    _valid      = TRUE;
+
+    setText(item.value("item_number").toString());
+
+    emit aliasChanged("");
+    emit typeChanged(_itemType);
+    emit descrip1Changed(item.value("item_descrip1").toString());
+    emit descrip2Changed(item.value("item_descrip2").toString());
+    emit uomChanged(item.value("uom_name").toString());
+    emit configured(item.value("item_config").toBool());
+    
+    emit valid(TRUE);
+  }
+  else
+  {
+    _itemNumber = "";
+    _uom        = "";
+    _itemType   = "";
+    _id         = -1;
+    _valid      = FALSE;
+
+    setText("");
+
+    emit aliasChanged("");
+    emit typeChanged("");
+    emit descrip1Changed("");
+    emit descrip2Changed("");
+    emit uomChanged("");
+    emit configured(FALSE);
+
+    emit valid(FALSE);
+  }
+}
+
 void ItemLineEdit::silentSetId(int pId)
 {
   XSqlQuery item;
@@ -582,6 +660,11 @@ void ItemCluster::setId(int pId)
 void ItemCluster::silentSetId(int pId)
 {
   _itemNumber->silentSetId(pId);
+}
+
+void ItemCluster::setItemNumber(QString pNumber)
+{
+  _itemNumber->setItemNumber(pNumber);
 }
 
 void ItemCluster::setItemsiteid(int intPItemsiteid)

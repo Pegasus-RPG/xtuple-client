@@ -126,14 +126,27 @@ class OPENMFGWIDGETS_EXPORT ContactCluster : public VirtualCluster
 {
     Q_OBJECT
 
-    Q_PROPERTY(bool    accountVisible READ accountVisible WRITE setAccountVisible);
-    Q_PROPERTY(bool    activeVisible READ activeVisible WRITE setActiveVisible);
-    Q_PROPERTY(bool    addressVisible READ addressVisible WRITE setAddressVisible);
-    Q_PROPERTY(bool    emailVisible  READ emailVisible  WRITE setEmailVisible);
-    Q_PROPERTY(bool    initialsVisible  READ initialsVisible  WRITE setInitialsVisible);
-    Q_PROPERTY(bool    minimalLayout READ minimalLayout WRITE setMinimalLayout);
-    Q_PROPERTY(bool    phonesVisible READ phonesVisible WRITE setPhonesVisible);
-    Q_PROPERTY(bool    webaddrVisible READ webaddrVisible WRITE setWebaddrVisible);
+    Q_PROPERTY(bool     accountVisible READ accountVisible    WRITE setAccountVisible);
+    Q_PROPERTY(bool     activeVisible   READ activeVisible    WRITE setActiveVisible);
+    Q_PROPERTY(bool     addressVisible  READ addressVisible   WRITE setAddressVisible);
+    Q_PROPERTY(bool     emailVisible    READ emailVisible     WRITE setEmailVisible);
+    Q_PROPERTY(bool     initialsVisible READ initialsVisible  WRITE setInitialsVisible);
+    Q_PROPERTY(bool     minimalLayout   READ minimalLayout    WRITE setMinimalLayout);
+    Q_PROPERTY(bool     phonesVisible   READ phonesVisible    WRITE setPhonesVisible);
+    Q_PROPERTY(bool     webaddrVisible  READ webaddrVisible   WRITE setWebaddrVisible);
+  //  Q_PROPERTY(QString  active          READ active           WRITE setActive);
+    Q_PROPERTY(QString  honorific       READ honorific        WRITE setHonorific);
+    Q_PROPERTY(QString  first           READ first            WRITE setFirst);
+    Q_PROPERTY(QString  last            READ last             WRITE setLast);
+ //   Q_PROPERTY(QString  initials        READ initials         WRITE setInitials);
+    Q_PROPERTY(QString  title           READ title            WRITE setTitle);
+    Q_PROPERTY(QString  phone           READ phone            WRITE setPhone);
+ //   Q_PROPERTY(QString  phone2          READ phone2           WRITE setPhone2);
+ //   Q_PROPERTY(QString  fax             READ fax              WRITE setFax);
+ //   Q_PROPERTY(QString  emailAddress    READ emailAddress     WRITE setEmailAddress);
+    Q_PROPERTY(QString  notes           READ notes            WRITE setNotes);
+ //   Q_PROPERTY(QString  webAddress      READ webAddress       WRITE setWebAddress);
+ //   Q_PROPERTY(QString  Account         READ Account          WRITE setAccount);
 
     friend class ContactInfo;
     friend class ContactList;

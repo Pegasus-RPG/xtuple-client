@@ -150,6 +150,7 @@ friend class ItemCluster;
 
     void silentSetId(int);
     void setId(int);
+    void setItemNumber(QString);
     void setItemsiteid(int);
     void sParse();
 
@@ -190,7 +191,8 @@ friend class ItemCluster;
 class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
-
+  Q_PROPERTY(QString  itemNumber      READ  itemNumber      WRITE setItemNumber);
+  
   public:
     ItemCluster(QWidget *, const char * = 0);
 
@@ -215,6 +217,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
   public slots:
     void silentSetId(int);
     void setId(int);
+    void setItemNumber(QString);
     void setItemsiteid(int);
 
   signals:
