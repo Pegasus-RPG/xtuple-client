@@ -96,6 +96,9 @@
 
 #include "splashconst.h"
 
+#include <QtPlugin>
+Q_IMPORT_PLUGIN(OpenMFGPlugin)
+
 int main(int argc, char *argv[])
 {
   Q_INIT_RESOURCE(guiclient);

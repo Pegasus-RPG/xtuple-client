@@ -3,7 +3,7 @@ include( ../global.pri )
 TARGET      = xtuplewidgets
 
 TEMPLATE    =  lib
-CONFIG      += qt warn_on
+CONFIG      += qt warn_on designer plugin
 #INCLUDEPATH += $$QT_SOURCE_TREE/tools/designer/interfaces ../common .
 INCLUDEPATH += ../common .
 DBFILE      =  widgets.db
@@ -13,7 +13,6 @@ DEPENDPATH += ../common
 
 dynamic {
   DESTDIR = $$[QT_INSTALL_PLUGINS]/designer
-  CONFIG += designer plugin
 
   LIBS += -L../lib -L../$$OPENRPT_DIR/lib -lxtuplecommon -lcommon -lrenderer
   DEFINES += MAKEDLL
@@ -21,67 +20,6 @@ dynamic {
   MOC_DIR = tmp/dll
   OBJECTS_DIR = tmp/dll
   UI_DIR = tmp/dll
-
-  HEADERS += \
-             plugins/addressclusterplugin.h \
-             plugins/calendarcomboboxplugin.h \
-             plugins/clineeditplugin.h \
-             plugins/cmclusterplugin.h \
-             plugins/commentsplugin.h \
-             plugins/contactclusterplugin.h \
-             plugins/crmacctclusterplugin.h \
-             plugins/currclusterplugin.h \
-             plugins/currdisplayplugin.h \
-             plugins/custclusterplugin.h \
-             plugins/custinfoplugin.h \
-             plugins/dateclusterplugin.h \
-             plugins/deptclusterplugin.h \
-             plugins/dlineeditplugin.h \
-             plugins/expenseclusterplugin.h \
-             plugins/expenselineeditplugin.h \
-             plugins/fileclusterplugin.h \
-             plugins/glclusterplugin.h \
-             plugins/invoicelineeditplugin.h \
-             plugins/incidentclusterplugin.h \
-             plugins/itemclusterplugin.h \
-             plugins/itemlineeditplugin.h \
-             plugins/lotserialclusterplugin.h \
-             plugins/orderclusterplugin.h \
-             plugins/opportunityclusterplugin.h \
-             plugins/parametergroupplugin.h \
-             plugins/periodslistviewplugin.h \
-             plugins/planordclusterplugin.h \
-             plugins/planordlineeditplugin.h \
-             plugins/poclusterplugin.h \
-             plugins/polineeditplugin.h \
-             plugins/projectclusterplugin.h \
-             plugins/projectlineeditplugin.h \
-             plugins/raclusterplugin.h\
-             plugins/revisionclusterplugin.h\
-             plugins/shiftclusterplugin.h \
-             plugins/shipmentclusterplugin.h \
-             plugins/shiptoclusterplugin.h \
-             plugins/shiptoeditplugin.h \
-             plugins/soclusterplugin.h \
-             plugins/solineeditplugin.h \
-             plugins/toclusterplugin.h \
-             plugins/usernameclusterplugin.h \
-             plugins/usernamelineeditplugin.h \
-             plugins/vendorclusterplugin.h \
-             plugins/vendorinfoplugin.h \
-             plugins/vendorlineeditplugin.h \
-             plugins/warehousegroupplugin.h \
-             plugins/wcomboboxplugin.h \
-             plugins/woclusterplugin.h \
-             plugins/wolineeditplugin.h \
-             plugins/womatlclusterplugin.h \
-             plugins/workcenterclusterplugin.h \
-             plugins/workcenterlineeditplugin.h \
-             plugins/xcheckboxplugin.h \
-             plugins/xcomboboxplugin.h \
-             plugins/xlineeditplugin.h \
-             plugins/xtreewidgetplugin.h \
-             plugins/xurllabelplugin.h
 } else {
   DESTDIR = ../lib
   CONFIG += staticlib
@@ -90,6 +28,67 @@ dynamic {
   OBJECTS_DIR = tmp/lib
   UI_DIR = tmp/lib
 }
+
+HEADERS += \
+           plugins/addressclusterplugin.h \
+           plugins/calendarcomboboxplugin.h \
+           plugins/clineeditplugin.h \
+           plugins/cmclusterplugin.h \
+           plugins/commentsplugin.h \
+           plugins/contactclusterplugin.h \
+           plugins/crmacctclusterplugin.h \
+           plugins/currclusterplugin.h \
+           plugins/currdisplayplugin.h \
+           plugins/custclusterplugin.h \
+           plugins/custinfoplugin.h \
+           plugins/dateclusterplugin.h \
+           plugins/deptclusterplugin.h \
+           plugins/dlineeditplugin.h \
+           plugins/expenseclusterplugin.h \
+           plugins/expenselineeditplugin.h \
+           plugins/fileclusterplugin.h \
+           plugins/glclusterplugin.h \
+           plugins/invoicelineeditplugin.h \
+           plugins/incidentclusterplugin.h \
+           plugins/itemclusterplugin.h \
+           plugins/itemlineeditplugin.h \
+           plugins/lotserialclusterplugin.h \
+           plugins/orderclusterplugin.h \
+           plugins/opportunityclusterplugin.h \
+           plugins/parametergroupplugin.h \
+           plugins/periodslistviewplugin.h \
+           plugins/planordclusterplugin.h \
+           plugins/planordlineeditplugin.h \
+           plugins/poclusterplugin.h \
+           plugins/polineeditplugin.h \
+           plugins/projectclusterplugin.h \
+           plugins/projectlineeditplugin.h \
+           plugins/raclusterplugin.h\
+           plugins/revisionclusterplugin.h\
+           plugins/shiftclusterplugin.h \
+           plugins/shipmentclusterplugin.h \
+           plugins/shiptoclusterplugin.h \
+           plugins/shiptoeditplugin.h \
+           plugins/soclusterplugin.h \
+           plugins/solineeditplugin.h \
+           plugins/toclusterplugin.h \
+           plugins/usernameclusterplugin.h \
+           plugins/usernamelineeditplugin.h \
+           plugins/vendorclusterplugin.h \
+           plugins/vendorinfoplugin.h \
+           plugins/vendorlineeditplugin.h \
+           plugins/warehousegroupplugin.h \
+           plugins/wcomboboxplugin.h \
+           plugins/woclusterplugin.h \
+           plugins/wolineeditplugin.h \
+           plugins/womatlclusterplugin.h \
+           plugins/workcenterclusterplugin.h \
+           plugins/workcenterlineeditplugin.h \
+           plugins/xcheckboxplugin.h \
+           plugins/xcomboboxplugin.h \
+           plugins/xlineeditplugin.h \
+           plugins/xtreewidgetplugin.h \
+           plugins/xurllabelplugin.h
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \

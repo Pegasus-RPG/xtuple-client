@@ -57,8 +57,6 @@
 
 #include "OpenMFGWidgets.h"
 
-#ifdef MAKEDLL
-
 #include "plugins/addressclusterplugin.h"
 #include "plugins/calendarcomboboxplugin.h"
 #include "plugins/clineeditplugin.h"
@@ -193,8 +191,6 @@ QList<QDesignerCustomWidgetInterface*> OpenMFGPlugin::customWidgets() const
 }
 
 Q_EXPORT_PLUGIN(OpenMFGPlugin)
-
-#endif //MAKEDLL
 
 Preferences *_x_preferences;
 Metrics     *_x_metrics;

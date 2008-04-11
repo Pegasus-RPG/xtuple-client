@@ -85,7 +85,6 @@ extern Metrics     *_x_metrics;
 extern QWorkspace  *_x_workspace;
 extern Privileges  *_x_privileges;
 
-#ifdef MAKEDLL
 class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInterface
 {
   Q_OBJECT
@@ -99,7 +98,6 @@ class OpenMFGPlugin : public QObject, public QDesignerCustomWidgetCollectionInte
   private:
     QList<QDesignerCustomWidgetInterface*> m_plugins;
 };
-#endif
 
 void OPENMFGWIDGETS_EXPORT initializePlugin(Preferences *, Metrics *, Privileges *, QWorkspace *);
 
