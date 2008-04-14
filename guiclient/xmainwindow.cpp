@@ -68,6 +68,7 @@
 #include <QDebug>
 
 #include "guiclient.h"
+#include "scripttoolbox.h"
 
 //
 // XMainWindowPrivate
@@ -100,6 +101,7 @@ XMainWindow::XMainWindow(QWidget * parent, Qt::WindowFlags flags)
   : QMainWindow(parent, flags)
 {
   _private = new XMainWindowPrivate();
+  ScriptToolbox::setLastWindow(this);
 }
 
 XMainWindow::XMainWindow(QWidget * parent, const char * name, Qt::WindowFlags flags)

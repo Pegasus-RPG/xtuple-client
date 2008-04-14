@@ -90,6 +90,7 @@ class ScriptToolbox : public QObject
     virtual ~ScriptToolbox();
 
     static QScriptValue variantToScriptValue(QScriptEngine *, QVariant);
+    static void setLastWindow(QWidget * lw);
 
   public slots:
 
@@ -102,10 +103,12 @@ class ScriptToolbox : public QObject
     void layoutStackedInsertWidget(QObject *, int index, QWidget *);
 
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
+    QWidget * lastWindow() const;
 
     int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
   private:
     QScriptEngine * _engine;
+    static QWidget * _lastWindow;
 };
 
 #endif // __SCRIPTTOOLBOX_H__

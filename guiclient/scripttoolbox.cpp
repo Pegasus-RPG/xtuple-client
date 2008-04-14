@@ -74,6 +74,8 @@
 
 #include "scriptquery.h"
 
+QWidget * ScriptToolbox::_lastWindow = 0;
+
 ScriptToolbox::ScriptToolbox(QScriptEngine * engine)
   : QObject(engine)
 {
@@ -149,6 +151,11 @@ QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * paren
   return ui.createWidget(className, parent, name);
 }
 
+QWidget * ScriptToolbox::lastWindow() const
+{
+  return _lastWindow;
+}
+
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)
 {
   int btn;
@@ -206,6 +213,11 @@ QScriptValue ScriptToolbox::variantToScriptValue(QScriptEngine * engine, QVarian
   // If we are not doing an explicity conversion just pass the variant back
   // and see what happens
   return engine->newVariant(var);
+}
+
+void ScriptToolbox::setLastWindow(QWidget * lw)
+{
+  _lastWindow = lw;
 }
 
 
