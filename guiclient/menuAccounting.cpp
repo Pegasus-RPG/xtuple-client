@@ -294,7 +294,7 @@ menuAccounting::menuAccounting(GUIClient *Pparent) :
     // Accounting | Accaunts Payable |  Reports
     { "menu", tr("&Reports"), (char*)apReportsMenu, apMenu, true, NULL, NULL, true, NULL },
     { "ap.uninvoicedReceipts", tr("&Uninvoiced Receipts and Returns..."), SLOT(sDspUninvoicedReceipts()), apReportsMenu, (_privileges->check("ViewUninvoicedReceipts") || _privileges->check("MaintainUninvoicedReceipts")), NULL, NULL, true , NULL },
-    { "ap.voucheringEditList", tr("Un&posted Vouchers..."), SLOT(sVoucheringEditList()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
+    { "ap.voucheringEditList", tr("Vouchering &Edit List..."), SLOT(sVoucheringEditList()), apReportsMenu, (_privileges->check("MaintainVouchers") || _privileges->check("ViewVouchers")), NULL, NULL, true , NULL },
     { "separator", NULL, NULL, apReportsMenu, true, NULL, NULL, true, NULL },
     { "ap.dspOpenAPItemsByVendor", tr("Open &Items by Vendor..."), SLOT(sDspAPOpenItemsByVendor()), apReportsMenu, _privileges->check("ViewAPOpenItems"), NULL, NULL, true , NULL },
     { "ap.dspAPAging", tr("A/P &Aging..."), SLOT(sDspTimePhasedOpenAPItems()), apReportsMenu, _privileges->check("ViewAPOpenItems"), new QPixmap(":/images/apAging.png"), toolBar, true , NULL },
