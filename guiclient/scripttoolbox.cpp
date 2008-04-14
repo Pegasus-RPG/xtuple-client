@@ -68,6 +68,7 @@
 #include <QDateTime>
 #include <QUiLoader>
 #include <QList>
+#include <QMenu>
 
 #include <parameter.h>
 #include <metasql.h>
@@ -143,6 +144,15 @@ void ScriptToolbox::layoutStackedInsertWidget(QObject * obj, int index, QWidget 
   QStackedLayout * layout = qobject_cast<QStackedLayout*>(obj);
   if(layout && widget)
     layout->insertWidget(index, widget);
+}
+
+QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text)
+{
+  QMenu * m = qobject_cast<QMenu*>(menu);
+  QAction * act = 0;
+  if(m)
+    act = m->addAction(text);
+  return act;
 }
 
 QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * parent, const QString & name)

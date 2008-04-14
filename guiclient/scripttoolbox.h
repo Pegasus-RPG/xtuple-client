@@ -102,6 +102,8 @@ class ScriptToolbox : public QObject
     void layoutGridAddWidget(QObject *, QWidget *, int fromRow, int fromColumn, int rowSpan, int columnSpan, int alignment = 0);
     void layoutStackedInsertWidget(QObject *, int index, QWidget *);
 
+    QObject * menuAddAction(QObject * menu, const QString & text);
+
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
     QWidget * lastWindow() const;
 
