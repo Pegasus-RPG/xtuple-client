@@ -78,6 +78,7 @@ public slots:
     virtual void sCreateCreditMemo();
     virtual void sFillList();
     virtual void sPrint();
+    virtual bool setParams(ParameterList&);
 
 protected slots:
     virtual void languageChange();

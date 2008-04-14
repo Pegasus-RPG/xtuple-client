@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>637</height>
+    <width>583</width>
+    <height>677</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -366,33 +366,33 @@
      <property name="verticalSpacing" >
       <number>0</number>
      </property>
-     <item row="0" column="0" >
+     <item row="1" column="0" >
       <widget class="QLabel" name="_currFormatLit" >
        <property name="text" >
-        <string>Currency Format:</string>
+        <string>Currency:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy" >
-        <cstring>_currencyDBFormat</cstring>
+        <cstring>_currencyScale</cstring>
        </property>
       </widget>
      </item>
-     <item row="0" column="1" >
-      <widget class="XLineEdit" name="_currencyDBFormat" >
-       <property name="minimumSize" >
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
+     <item row="1" column="1" >
+      <widget class="QSpinBox" name="_currencyScale" >
        <property name="alignment" >
         <set>Qt::AlignRight</set>
        </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
+       </property>
       </widget>
      </item>
-     <item row="0" column="2" >
+     <item row="1" column="2" >
       <widget class="QLabel" name="_currencySample" >
        <property name="minimumSize" >
         <size>
@@ -408,33 +408,33 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" >
+     <item row="2" column="0" >
       <widget class="QLabel" name="_salesPriceFormatLit" >
        <property name="text" >
-        <string>Sales Price Format:</string>
+        <string>Sales Price:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy" >
-        <cstring>_salesPriceDBFormat</cstring>
+        <cstring>_salesPriceScale</cstring>
        </property>
       </widget>
      </item>
-     <item row="1" column="1" >
-      <widget class="XLineEdit" name="_salesPriceDBFormat" >
-       <property name="minimumSize" >
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
+     <item row="2" column="1" >
+      <widget class="QSpinBox" name="_salesPriceScale" >
        <property name="alignment" >
         <set>Qt::AlignRight</set>
        </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>4</number>
+       </property>
       </widget>
      </item>
-     <item row="1" column="2" >
+     <item row="2" column="2" >
       <widget class="QLabel" name="_salesPriceSample" >
        <property name="minimumSize" >
         <size>
@@ -450,33 +450,33 @@
        </property>
       </widget>
      </item>
-     <item row="2" column="0" >
+     <item row="3" column="0" >
       <widget class="QLabel" name="_purchPriceFormatLit" >
        <property name="text" >
-        <string>Purch. Price Format:</string>
+        <string>Purch. Price:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy" >
-        <cstring>_purchPriceDBFormat</cstring>
+        <cstring>_purchPriceScale</cstring>
        </property>
       </widget>
      </item>
-     <item row="2" column="1" >
-      <widget class="XLineEdit" name="_purchPriceDBFormat" >
-       <property name="minimumSize" >
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
+     <item row="3" column="1" >
+      <widget class="QSpinBox" name="_purchPriceScale" >
        <property name="alignment" >
         <set>Qt::AlignRight</set>
        </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>4</number>
+       </property>
       </widget>
      </item>
-     <item row="2" column="2" >
+     <item row="3" column="2" >
       <widget class="QLabel" name="_purchPriceSample" >
        <property name="minimumSize" >
         <size>
@@ -492,33 +492,33 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" >
+     <item row="4" column="0" >
       <widget class="QLabel" name="_extPriceFormatLit" >
        <property name="text" >
-        <string>Ext. Price Format:</string>
+        <string>Ext. Price:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy" >
-        <cstring>_extPriceDBFormat</cstring>
+        <cstring>_extPriceScale</cstring>
        </property>
       </widget>
      </item>
-     <item row="3" column="1" >
-      <widget class="XLineEdit" name="_extPriceDBFormat" >
-       <property name="minimumSize" >
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
+     <item row="4" column="1" >
+      <widget class="QSpinBox" name="_extPriceScale" >
        <property name="alignment" >
         <set>Qt::AlignRight</set>
        </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
+       </property>
       </widget>
      </item>
-     <item row="3" column="2" >
+     <item row="4" column="2" >
       <widget class="QLabel" name="_extPriceSample" >
        <property name="minimumSize" >
         <size>
@@ -534,33 +534,33 @@
        </property>
       </widget>
      </item>
-     <item row="4" column="0" >
+     <item row="5" column="0" >
       <widget class="QLabel" name="_costFormatLit" >
        <property name="text" >
-        <string>Cost Format:</string>
+        <string>Cost:</string>
        </property>
        <property name="alignment" >
         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
        <property name="buddy" >
-        <cstring>_costDBFormat</cstring>
+        <cstring>_costScale</cstring>
        </property>
       </widget>
      </item>
-     <item row="4" column="1" >
-      <widget class="XLineEdit" name="_costDBFormat" >
-       <property name="minimumSize" >
-        <size>
-         <width>140</width>
-         <height>0</height>
-        </size>
-       </property>
+     <item row="5" column="1" >
+      <widget class="QSpinBox" name="_costScale" >
        <property name="alignment" >
         <set>Qt::AlignRight</set>
        </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
+       </property>
       </widget>
      </item>
-     <item row="4" column="2" >
+     <item row="5" column="2" >
       <widget class="QLabel" name="_costSample" >
        <property name="minimumSize" >
         <size>
@@ -576,219 +576,138 @@
        </property>
       </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <widget class="Line" name="line_2" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
+     <item row="1" column="3" >
+      <widget class="QLabel" name="_qtyFormatLit" >
+       <property name="text" >
+        <string>Qty.:</string>
        </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
        </property>
-       <property name="sizeHint" >
+       <property name="buddy" >
+        <cstring>_qtyScale</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="4" >
+      <widget class="QSpinBox" name="_qtyScale" >
+       <property name="alignment" >
+        <set>Qt::AlignRight</set>
+       </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>2</number>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="5" >
+      <widget class="QLabel" name="_qtySample" >
+       <property name="minimumSize" >
         <size>
-         <width>0</width>
-         <height>10</height>
+         <width>120</width>
+         <height>0</height>
         </size>
        </property>
-      </spacer>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
      </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
+     <item row="2" column="3" >
+      <widget class="QLabel" name="_qtyPerFormatLit" >
+       <property name="text" >
+        <string>Qty. Per:</string>
        </property>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_qtyFormatLit" >
-           <property name="text" >
-            <string>Qty. Format:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_qtyDBFormat</cstring>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_qtyPerFormatLit" >
-           <property name="text" >
-            <string>Qty. Per Format:</string>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-           <property name="buddy" >
-            <cstring>_qtyPerDBFormat</cstring>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="XLineEdit" name="_qtyDBFormat" >
-           <property name="minimumSize" >
-            <size>
-             <width>140</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="XLineEdit" name="_qtyPerDBFormat" >
-           <property name="minimumSize" >
-            <size>
-             <width>140</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <layout class="QVBoxLayout" >
-         <property name="spacing" >
-          <number>0</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="_qtySample" >
-           <property name="minimumSize" >
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string/>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QLabel" name="_qtyPerSample" >
-           <property name="minimumSize" >
-            <size>
-             <width>120</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="text" >
-            <string/>
-           </property>
-           <property name="alignment" >
-            <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
-      </layout>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_qtyPerScale</cstring>
+       </property>
+      </widget>
      </item>
-    </layout>
-   </item>
-   <item>
-    <layout class="QHBoxLayout" >
-     <property name="spacing" >
-      <number>0</number>
-     </property>
-     <item>
-      <spacer>
-       <property name="orientation" >
-        <enum>Qt::Vertical</enum>
+     <item row="2" column="4" >
+      <widget class="QSpinBox" name="_qtyPerScale" >
+       <property name="alignment" >
+        <set>Qt::AlignRight</set>
        </property>
-       <property name="sizeType" >
-        <enum>QSizePolicy::Expanding</enum>
+       <property name="maximum" >
+        <number>6</number>
        </property>
-       <property name="sizeHint" >
+       <property name="value" >
+        <number>6</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="5" >
+      <widget class="QLabel" name="_qtyPerSample" >
+       <property name="minimumSize" >
         <size>
-         <width>0</width>
-         <height>10</height>
+         <width>120</width>
+         <height>0</height>
         </size>
        </property>
-      </spacer>
-     </item>
-     <item>
-      <layout class="QHBoxLayout" >
-       <property name="spacing" >
-        <number>5</number>
+       <property name="text" >
+        <string/>
        </property>
-       <item>
-        <widget class="QLabel" name="_uomRatioLit" >
-         <property name="text" >
-          <string>UOM Ratio:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-         <property name="buddy" >
-          <cstring>_uomRatioDBFormat</cstring>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="XLineEdit" name="_uomRatioDBFormat" >
-         <property name="minimumSize" >
-          <size>
-           <width>140</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight</set>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="_uomRatioSample" >
-         <property name="minimumSize" >
-          <size>
-           <width>120</width>
-           <height>0</height>
-          </size>
-         </property>
-         <property name="text" >
-          <string/>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-      </layout>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3" >
+      <widget class="QLabel" name="_uomRatioLit" >
+       <property name="text" >
+        <string>UOM Ratio:</string>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+       <property name="buddy" >
+        <cstring>_uomRatioScale</cstring>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="4" >
+      <widget class="QSpinBox" name="_uomRatioScale" >
+       <property name="alignment" >
+        <set>Qt::AlignRight</set>
+       </property>
+       <property name="maximum" >
+        <number>6</number>
+       </property>
+       <property name="value" >
+        <number>6</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="5" >
+      <widget class="QLabel" name="_uomRatioSample" >
+       <property name="minimumSize" >
+        <size>
+         <width>120</width>
+         <height>0</height>
+        </size>
+       </property>
+       <property name="text" >
+        <string/>
+       </property>
+       <property name="alignment" >
+        <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0" colspan="6" >
+      <widget class="QLabel" name="label_2" >
+       <property name="text" >
+        <string>Display Values to # Decimal Places:</string>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -944,14 +863,14 @@
  <tabstops>
   <tabstop>_code</tabstop>
   <tabstop>_description</tabstop>
-  <tabstop>_currencyDBFormat</tabstop>
-  <tabstop>_salesPriceDBFormat</tabstop>
-  <tabstop>_purchPriceDBFormat</tabstop>
-  <tabstop>_extPriceDBFormat</tabstop>
-  <tabstop>_costDBFormat</tabstop>
-  <tabstop>_qtyDBFormat</tabstop>
-  <tabstop>_qtyPerDBFormat</tabstop>
-  <tabstop>_uomRatioDBFormat</tabstop>
+  <tabstop>_currencyScale</tabstop>
+  <tabstop>_salesPriceScale</tabstop>
+  <tabstop>_purchPriceScale</tabstop>
+  <tabstop>_extPriceScale</tabstop>
+  <tabstop>_costScale</tabstop>
+  <tabstop>_qtyScale</tabstop>
+  <tabstop>_qtyPerScale</tabstop>
+  <tabstop>_uomRatioScale</tabstop>
   <tabstop>_error</tabstop>
   <tabstop>_warning</tabstop>
   <tabstop>_emphasis</tabstop>

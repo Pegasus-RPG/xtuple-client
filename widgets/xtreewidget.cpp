@@ -64,49 +64,90 @@
 #include <QFont>
 #include <QHeaderView>
 #include <QMenu>
+#include <QMessageBox>
 #include <QMimeData>
 #include <QMouseEvent>
 #include <QSettings>
+#include <QSqlError>
 
 #include "xsqlquery.h"
+#include "format.h"
 
-// TODO: is there a better place for this?
-QColor XTreeWidget::getNamedColor(QString pName)
+static QColor error("red");
+static QColor warning("orange");
+static QColor emphasis("blue");
+static QColor altemphasis("green");
+static QColor expired("red");
+static QColor future("blue");
+
+static int costscale       = MONEYSCALE + COSTEXTRASCALE;
+static int currvalscale    = MONEYSCALE;
+static int extpricescale   = MONEYSCALE;
+static int purchpricescale = MONEYSCALE + PURCHPRICEEXTRASCALE;
+static int qtyscale        = QTYSCALE;
+static int qtyperscale     = QTYPERSCALE;
+static int salespricescale = MONEYSCALE + SALESPRICEEXTRASCALE;
+static int uomratioscale   = UOMRATIOSCALE;
+
+void XTreeWidget::loadLocale()
 {
   static bool firstTime = true;
-  static QColor error("red");
-  static QColor warning("orange");
-  static QColor emphasis("blue");
-  static QColor altemphasis("green");
-  static QColor expired("red");
-  static QColor future("blue");
 
   if (firstTime)
   {
-    XSqlQuery colorq("SELECT * "
+    XSqlQuery localeq("SELECT * "
 		     "FROM usr, locale LEFT OUTER JOIN"
 		     "     lang ON (locale_lang_id=lang_id) LEFT OUTER JOIN"
 		     "     country ON (locale_country_id=country_id) "
 		     "WHERE ( (usr_username=CURRENT_USER)"
 		     " AND (usr_locale_id=locale_id) );" );
-    colorq.exec();
-    if (colorq.first())
+    localeq.exec();
+    if (localeq.first())
     {
-      if (! colorq.value("locale_error_color").toString().isEmpty())
-	error = QColor(colorq.value("locale_error_color").toString());
-      if (! colorq.value("locale_warning_color").toString().isEmpty())
-	warning = QColor(colorq.value("locale_warning_color").toString());
-      if (! colorq.value("locale_emphasis_color").toString().isEmpty())
-	emphasis = QColor(colorq.value("locale_emphasis_color").toString());
-      if (! colorq.value("locale_altemphasis_color").toString().isEmpty())
-	altemphasis = QColor(colorq.value("locale_altemphasis_color").toString());
-      if (! colorq.value("locale_expired_color").toString().isEmpty())
-	expired = QColor(colorq.value("locale_expired_color").toString());
-      if (! colorq.value("locale_future_color").toString().isEmpty())
-	future = QColor(colorq.value("locale_future_color").toString());
+      if (! localeq.value("locale_error_color").toString().isEmpty())
+	error = QColor(localeq.value("locale_error_color").toString());
+      if (! localeq.value("locale_warning_color").toString().isEmpty())
+	warning = QColor(localeq.value("locale_warning_color").toString());
+      if (! localeq.value("locale_emphasis_color").toString().isEmpty())
+	emphasis = QColor(localeq.value("locale_emphasis_color").toString());
+      if (! localeq.value("locale_altemphasis_color").toString().isEmpty())
+	altemphasis = QColor(localeq.value("locale_altemphasis_color").toString());
+      if (! localeq.value("locale_expired_color").toString().isEmpty())
+	expired = QColor(localeq.value("locale_expired_color").toString());
+      if (! localeq.value("locale_future_color").toString().isEmpty())
+	future = QColor(localeq.value("locale_future_color").toString());
+
+      if (! localeq.value("locale_cost_scale").toString().isEmpty())
+        costscale       = localeq.value("locale_cost_scale").toInt();
+      if (! localeq.value("locale_curr_scale").toString().isEmpty())
+        currvalscale    = localeq.value("locale_curr_scale").toInt();
+      if (! localeq.value("locale_extprice_scale").toString().isEmpty())
+        extpricescale   = localeq.value("locale_extprice_scale").toInt();
+      if (! localeq.value("locale_purchprice_scale").toString().isEmpty())
+        purchpricescale = localeq.value("locale_purchprice_scale").toInt();
+      if (! localeq.value("locale_qty_scale").toString().isEmpty())
+        qtyscale        = localeq.value("locale_qty_scale").toInt();
+      if (! localeq.value("locale_qtyper_scale").toString().isEmpty())
+        qtyperscale     = localeq.value("locale_qtyper_scale").toInt();
+      if (! localeq.value("locale_salesprice_scale").toString().isEmpty())
+        salespricescale = localeq.value("locale_salesprice_scale").toInt();
+      if (! localeq.value("locale_uomratio_scale").toString().isEmpty())
+        uomratioscale   = localeq.value("locale_uomratio_scale").toInt();
+    }
+    else if (localeq.lastError().type() != QSqlError::None)
+    {
+      QMessageBox::critical(0,
+                            tr("A System Error Occurred at %1::%2.").arg(__FILE__, __LINE__),
+                            localeq.lastError().databaseText());
+      return;
     }
     firstTime = false;
   }
+}
+
+QColor XTreeWidget::getNamedColor(QString pName)
+{
+  loadLocale();
 
   if (pName == "error")
     return error;
@@ -122,6 +163,25 @@ QColor XTreeWidget::getNamedColor(QString pName)
     return future;
 
   return QColor(pName);
+}
+
+int XTreeWidget::getDecimalPlaces(QString pName)
+{
+  int returnVal = MONEYSCALE;
+  loadLocale();
+
+  if (pName.contains(QRegExp("^[0-9]+$"))) returnVal = pName.toInt();
+  else if (pName == "cost")       returnVal = costscale;
+  else if (pName == "extprice")   returnVal = extpricescale;
+  else if (pName == "purchprice") returnVal = purchpricescale;
+  else if (pName == "qty")        returnVal = qtyscale;
+  else if (pName == "qtyper")     returnVal = qtyperscale;
+  else if (pName == "salesprice") returnVal = salespricescale;
+  else if (pName == "uomratio")   returnVal = uomratioscale;
+  else if (pName.startsWith("curr"))
+    returnVal = currvalscale;  // TODO: change this to currency-specific value?
+
+  return returnVal;
 }
 
 XTreeWidget::XTreeWidget(QWidget *pParent) :
@@ -245,7 +305,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 		   << "qtfontrole"	   << "xtkeyrole"
 		   << "xtrunningrole"	   << "xtrunninginit"
 		   << "xtgrouprunningrole"
-		   << "xttotalrole";
+		   << "xttotalrole"        << "xtnumericrole";
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
 	  QVariantMap *role = _roles.value(wcol);
@@ -275,14 +335,26 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	  for (int col = 0; col < _roles.size(); col++)
 	  {
 	    QVariantMap *role = _roles.value(col);
+            QVariantMap *userrole = new QVariantMap();
+            QVariant    rawValue = pQuery.value(role->value("qteditrole").toString());
 
-	    last->setData(col, Qt::EditRole,
-			  pQuery.value(role->value("qteditrole").toString()));
+            userrole->insert("raw", rawValue);
+
+            // TODO: this isn't necessary for all columns so do less often?
+            int scale = getDecimalPlaces(pQuery.value(role->value("xtnumericrole").toString()).toString());
 
 	    if (role->contains("qtdisplayrole"))
 	      last->setData(col, Qt::DisplayRole,
 		pQuery.value(role->value("qtdisplayrole").toString()).isNull() ?
 		    "" : pQuery.value(role->value("qtdisplayrole").toString()));
+            else if (rawValue.type() == QVariant::Double ||
+                     role->contains("xtnumericrole"))
+	      last->setData(col, Qt::DisplayRole,
+                            rawValue.isNull() ? "" :
+                            QLocale().toString(rawValue.toDouble(), 'f', scale));
+            else
+              last->setData(col, Qt::EditRole, rawValue);
+
 
 	    if (role->contains("qtforegroundrole") &&
 		! pQuery.value(role->value("qtforegroundrole").toString()).isNull() )
@@ -325,25 +397,30 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	    if (role->contains("xtrunningrole"))
 	    {
 	      int runningset = pQuery.value(role->value("xtrunningrole").toString()).toInt();
-	      last->setData(col, Qt::UserRole, runningset);
-	      QTreeWidgetItem *prev;
+              userrole->insert("runningset", runningset);
+              double subtotal = rawValue.toDouble();
+
 	      // look for the previous item in this set
-	      for (prev = itemAbove(last);
-		   prev && prev->data(col, Qt::UserRole).toInt() != runningset;
-		   prev = itemAbove(prev))
-		; // empty loop
+	      QTreeWidgetItem *prev = 0;
+	      for (prev = itemAbove(last); prev; prev = itemAbove(prev))
+              {
+                if (prev->data(col, Qt::UserRole).type() == QVariant::Map &&
+                    prev->data(col, Qt::UserRole).toMap().contains("runningset") &&
+                    prev->data(col, Qt::UserRole).toMap()["runningset"].toInt() == runningset)
+		break;
+              }
 	      if (prev)
-		last->setData(col, Qt::DisplayRole,
-			      last->data(col, Qt::EditRole).toDouble() +
-			      prev->data(col, Qt::DisplayRole).toDouble());
-	      else
-		last->setData(col, Qt::DisplayRole,
-			      last->data(col, Qt::EditRole).toDouble() +
-			      headerItem()->data(col, Qt::UserRole).toDouble());
+                subtotal += prev->data(col, Qt::UserRole).toMap()["subtotal"].toDouble();
+              else
+                subtotal += headerItem()->data(col, Qt::UserRole).toDouble();
+
+              last->setData(col, Qt::DisplayRole,
+                            QLocale().toString(subtotal, 'f', scale));
+              userrole->insert("subtotal", subtotal);
 	    }
 
 	    if (role->contains("xttotalrole"))
-	      totals.insert(col, totals.value(col) + pQuery.value(role->value("qteditrole").toString()).toDouble());
+	      totals.insert(col, totals.value(col) + rawValue.toDouble());
 
 	    /*
 	    if (role->contains("xtkeyrole"))
@@ -351,6 +428,8 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	    if (role->contains("xtgrouprunningrole"))
 	      last->setData(col, Qt::UserRole, pQuery.value(role->value("xtgrouprunningrole").toString()));
 	    */
+
+            last->setData(col, Qt::UserRole, userrole);
 	  }
 	} while (pQuery.next());
 	if (totals.size() > 0)

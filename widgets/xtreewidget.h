@@ -212,6 +212,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 
+    static int    getDecimalPlaces(QString);
     static QColor getNamedColor(QString);
 
   signals:
@@ -232,20 +233,21 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     virtual void resizeEvent(QResizeEvent*);
 
   private:
-    QString  _dragString;
-    QString  _altDragString;
-    QMenu   *_menu;
-    QMap<int, int> _defaultColumnWidths;
-    QMap<int, int> _savedColumnWidths;
-    QMap<int, bool> _savedVisibleColumns;
+    QString     _dragString;
+    QString     _altDragString;
+    QMenu       *_menu;
+    QMap<int, int>      _defaultColumnWidths;
+    QMap<int, int>      _savedColumnWidths;
+    QMap<int, bool>     _savedVisibleColumns;
     QMap<int, QVariantMap*>	_roles;
-    QList<int> _lockedColumns;
-    QVector<int> _stretch;
-    bool _resizingInProcess;
-    bool _forgetful;
-    bool _settingsLoaded;
-    QString _settingsName;
-    int  _resetWhichWidth;
+    QList<int>          _lockedColumns;
+    QVector<int>        _stretch;
+    bool        _resizingInProcess;
+    bool        _forgetful;
+    bool        _settingsLoaded;
+    QString     _settingsName;
+    int         _resetWhichWidth;
+    static void loadLocale();
 
   private slots:
     void sSelectionChanged();

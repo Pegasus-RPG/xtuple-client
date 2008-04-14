@@ -57,21 +57,18 @@
 
 #include "dspUninvoicedReceivings.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+
+#include <metasql.h>
 #include <openreports.h>
 #include <parameter.h>
+
 #include "enterPoitemReceipt.h"
 #include "poLiabilityDistrib.h"
 #include "postPoReturnCreditMemo.h"
 
-/*
- *  Constructs a dspUninvoicedReceivings as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
@@ -79,10 +76,7 @@ dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* na
 
   (void)statusBar();
 
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), _agent, SLOT(setEnabled(bool)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
   connect(_agent, SIGNAL(newID(int)), this, SLOT(sFillList()));
   connect(_selectedPurchasingAgent, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
   connect(_porecv, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
@@ -91,31 +85,24 @@ dspUninvoicedReceivings::dspUninvoicedReceivings(QWidget* parent, const char* na
   _agent->setType(XComboBox::Agent);
   _agent->setText(omfgThis->username());
 
-  _porecv->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter );
-  _porecv->addColumn(tr("By"),          _orderColumn, Qt::AlignCenter );
-  _porecv->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignLeft   );
-  _porecv->addColumn(tr("#"),           _whsColumn,   Qt::AlignCenter );
-  _porecv->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft   );
-  _porecv->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _porecv->addColumn(tr("Uninvoiced"),  _qtyColumn,   Qt::AlignRight  );
-  _porecv->addColumn(tr("Type"),		_itemColumn,  Qt::AlignLeft   ); 
-  _porecv->addColumn(tr("Value"),       _moneyColumn, Qt::AlignRight  );
+  _porecv->addColumn(tr("Date"),        _dateColumn,  Qt::AlignCenter, true, "thedate");
+  _porecv->addColumn(tr("By"),          _orderColumn, Qt::AlignCenter, true, "f_user" );
+  _porecv->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignLeft,   true, "ponumber");
+  _porecv->addColumn(tr("#"),           _whsColumn,   Qt::AlignCenter, true, "poitem_linenumber");
+  _porecv->addColumn(tr("Vendor"),      -1,           Qt::AlignLeft,   true, "vend_name");
+  _porecv->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true, "itemnumber");
+  _porecv->addColumn(tr("Uninvoiced"),  _qtyColumn,   Qt::AlignRight,  true, "qty");
+  _porecv->addColumn(tr("Type"),	_itemColumn,  Qt::AlignLeft,   true, "type"); 
+  _porecv->addColumn(tr("Value"),       _moneyColumn, Qt::AlignRight,  true, "value");
 
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 dspUninvoicedReceivings::~dspUninvoicedReceivings()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void dspUninvoicedReceivings::languageChange()
 {
   retranslateUi(this);
@@ -157,13 +144,23 @@ void dspUninvoicedReceivings::sMarkAsInvoiced()
     if (newdlg.exec() == XDialog::Rejected)
       update = FALSE;
   }
+  else if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
   if (update)
   {
     q.prepare("UPDATE recv "
-	          "SET recv_invoiced=true "
-			  "WHERE (recv_id=:porecv_id); ");
-	q.bindValue(":porecv_id",_porecv->id());
-	q.exec();
+	      "SET recv_invoiced=true "
+	      "WHERE (recv_id=:porecv_id); ");
+    q.bindValue(":porecv_id",_porecv->id());
+    q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     sFillList();
   }
 }
@@ -186,13 +183,18 @@ void dspUninvoicedReceivings::sCreateCreditMemo()
     sFillList();
 }
 
+bool dspUninvoicedReceivings::setParams(ParameterList &pParams)
+{
+  _warehouse->appendValue(pParams);
+  if(_selectedPurchasingAgent->isChecked())
+    pParams.append("agentUsername", _agent->currentText());
+  return true;
+}
+
 void dspUninvoicedReceivings::sPrint()
 {
   ParameterList params;
-  _warehouse->appendValue(params);
-
-  if(_selectedPurchasingAgent->isChecked())
-    params.append("agentUsername", _agent->currentText());
+  setParams(params);
 
   orReport report("UninvoicedReceipts", params);
   if (report.isValid())
@@ -208,13 +210,16 @@ void dspUninvoicedReceivings::sFillList()
                "       CASE WHEN(poitem_status='C') THEN 2"
                "            ELSE 1"
                "       END AS doctype,"
-               "       formatDate(porecv_date) AS f_date, getUsername(porecv_trans_usr_id) AS f_user,"
+               "       porecv_date AS thedate,"
+               "       getUsername(porecv_trans_usr_id) AS f_user,"
                "       porecv_ponumber AS ponumber, poitem_linenumber,"
-               "       vend_name, COALESCE(item_number, ('Misc. - ' || porecv_vend_item_number)) AS itemnumber,"
-               "       formatQty(porecv_qty) AS f_qty, "
-               "	   'Receipt' AS type, "
-               "       formatMoney(porecv_value) AS f_value, "
-               "       porecv_value AS value "
+               "       vend_name,"
+               "       COALESCE(item_number,"
+               "       ('Misc. - ' || porecv_vend_item_number)) AS itemnumber,"
+               "       porecv_qty AS qty, 'qty' AS qty_xtnumericrole,"
+               "       'Receipt' AS type, "
+               "       porecv_value AS value,"
+               "       'curr' AS value_xtnumericrole, 0 AS value_xttotalrole "
                "FROM porecv, vend, poitem LEFT OUTER JOIN"
                "                   ( itemsite JOIN item"
                "                     ON (itemsite_item_id=item_id)"
@@ -222,24 +227,27 @@ void dspUninvoicedReceivings::sFillList()
                "WHERE ( (porecv_poitem_id=poitem_id)"
                " AND (porecv_vend_id=vend_id)"
                " AND (porecv_posted)"
-               " AND (NOT porecv_invoiced) ");
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (porecv_agent_username=:username)";
-
-  sql +=	   ") "
-			   "UNION "
+               " AND (NOT porecv_invoiced) "
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       "<? if exists(\"agentUsername\") ?>"
+	       " AND (porecv_agent_username=<? value(\"agentUsername\") ?>)"
+	       "<? endif ?>"
+	       ") "
+	       "UNION "
                "SELECT poreject_id,"
                "       3,"
-               "       formatDate(poreject_date), getUsername(poreject_trans_usr_id),"
+               "       poreject_date,"
+               "       getUsername(poreject_trans_usr_id),"
                "       poreject_ponumber AS ponumber, poitem_linenumber,"
-               "       vend_name, COALESCE(item_number, ('Misc. - ' || poreject_vend_item_number)) AS itemnumber,"
-               "       formatQty(poreject_qty), "
-               "	   'Return', "
-               "       formatMoney(poreject_value*-1), "
-               "       poreject_value * -1 "
+               "       vend_name,"
+               "       COALESCE(item_number,"
+               "       ('Misc. - ' || poreject_vend_item_number)) AS itemnumber,"
+               "       poreject_qty, 'qty',"
+               "       'Return', "
+               "       poreject_value * -1,"
+               "       'curr', 0 "
                "FROM poreject, vend, poitem LEFT OUTER JOIN"
                "                   ( itemsite JOIN item"
                "                     ON (itemsite_item_id=item_id)"
@@ -247,42 +255,24 @@ void dspUninvoicedReceivings::sFillList()
                "WHERE ( (poreject_poitem_id=poitem_id)"
                " AND (poreject_vend_id=vend_id)"
                " AND (poreject_posted)"
-               " AND (NOT poreject_invoiced) ";
+               " AND (NOT poreject_invoiced) "
+	       "<? if exists(\"warehous_id\") ?>"
+	       " AND (itemsite_warehous_id=<? value(\"warehous_id\") ?>)"
+	       "<? endif ?>"
+	       "<? if exists(\"agentUsername\") ?>"
+	       " AND (poreject_agent_username=<? value(\"agentUsername\") ?>)"
+	       "<? endif ?>"
+	       ") "
+	       "ORDER BY ponumber, poitem_linenumber;");
 
-  if (_warehouse->isSelected())
-    sql += " AND (itemsite_warehous_id=:warehous_id)";
-
-  if (_selectedPurchasingAgent->isChecked())
-    sql += " AND (poreject_agent_username=:username)";
-
-  sql += ") "
-         "ORDER BY ponumber, poitem_linenumber;";
-
-  q.prepare(sql);
-  _warehouse->bindValue(q);
-  q.bindValue(":username", _agent->currentText());
-  q.exec();
-  if (q.first())
+  ParameterList params;
+  setParams(params);
+  MetaSQLQuery mql(sql);
+  q = mql.toQuery(params);
+  _porecv->populate(q);
+  if (q.lastError().type() != QSqlError::None)
   {
-    double total= 0.0;
-
-    XTreeWidgetItem * last = 0;
-    do
-    {
-      last = new XTreeWidgetItem( _porecv, last, q.value("id").toInt(),
-                                  q.value("doctype").toInt(), q.value("f_date"),
-                                  q.value("f_user"), q.value("ponumber"),
-                                  q.value("poitem_linenumber"), q.value("vend_name"),
-                                  q.value("itemnumber"), q.value("f_qty"), q.value("type"), q.value("f_value") );
- 
-      total+= q.value("value").toDouble();
-    }
-    while (q.next());
-
-    new XTreeWidgetItem( _porecv, last, -1, 4,
-                         QVariant(tr("Total")), "", "", "", "", "", "", "",
-                         formatMoney(total) );
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-
-

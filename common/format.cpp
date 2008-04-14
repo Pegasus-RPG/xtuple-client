@@ -74,14 +74,6 @@
 
 QString formatNumber(double value, int decimals)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatNumber(:value, :decimals) AS result;");
-  sql.bindValue(":value", value);
-  sql.bindValue(":number", number);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
    return QString().sprintf("%0.*f", decimals, value);
 }
 
@@ -97,90 +89,47 @@ QString formatNumber(double value, int decimals)
 	and address more ToDo comments below
 */
 
-QString formatMoney(double value, int curr_id, int extraDecimals)
+QString formatMoney(double value, int /* curr_id */, int extraDecimals)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatMoney(:value) AS result;");
-  sql.bindValue(":value", value);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
-  return QString().sprintf("%0.*f", _moneyScale + extraDecimals, value);
+  return QString().sprintf("%0.*f", MONEYSCALE + extraDecimals, value);
 }
 
 QString formatCost(double value, int curr_id)
 {
-  return formatMoney(value, curr_id, _costExtraScale);
+  return formatMoney(value, curr_id, COSTEXTRASCALE);
 }
 
 QString formatWeight(double value)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatWeight(:value) AS result;");
-  sql.bindValue(":value", value);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
-  return QString().sprintf(_weightFormat, value);
+  return QString().sprintf("%0.*f", WEIGHTSCALE, value);
 }
 
 QString formatQty(double value)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatQty(:value) AS result;");
-  sql.bindValue(":value", value);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
-  return QString().sprintf(_qtyFormat, value);
+  return QString().sprintf("%0.*f", QTYSCALE, value);
 }
 
 QString formatQtyPer(double value)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatQtyPer(:value) AS result;");
-  sql.bindValue(":value", value);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
-  return QString().sprintf(_qtyPerFormat, value);
+  return QString().sprintf("%0.*f", QTYPERSCALE, value);
 }
 
 QString formatSalesPrice(double value, int curr_id)
 {
-  return formatMoney(value, curr_id, _salesPriceExtraScale);
+  return formatMoney(value, curr_id, SALESPRICEEXTRASCALE);
 }
 
 QString formatPurchPrice(double value, int curr_id)
 {
-  return formatMoney(value, curr_id, _purchPriceExtraScale);
+  return formatMoney(value, curr_id, PURCHPRICEEXTRASCALE);
 }
 
 QString formatUOMRatio(double value)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatUOMRatio(:value) AS result;");
-  sql.bindValue(":value", value);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
-  return QString().sprintf(_uomRatioFormat, value);
+  return QString().sprintf("%0.*f", UOMRATIOSCALE, value);
 }
 
 QString formatPercent(double value)
 {
-  /*
-  QSqlQuery sql;
-  sql.prepare("SELECT formatPrcnt(:value) AS result;");
-  sql.bindValue(":value", value);
-  if(sql.exec() && sql.first())
-    return sql.value(0).toString();  
-  */
-  return QString().sprintf(_percentFormat, (value * 100.0));
+  return QString().sprintf("%0.*f", PERCENTSCALE, (value * 100.0));
 }    
-

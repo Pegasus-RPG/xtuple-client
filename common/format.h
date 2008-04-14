@@ -58,7 +58,17 @@
 #ifndef format_h
 #define format_h
 
-#include <qstring.h>
+#include <QString>
+
+#define MONEYSCALE      2
+#define COSTEXTRASCALE  2
+#define WEIGHTSCALE     2
+#define QTYSCALE        2
+#define QTYPERSCALE     6
+#define SALESPRICEEXTRASCALE    2
+#define PURCHPRICEEXTRASCALE    2
+#define UOMRATIOSCALE   6
+#define PERCENTSCALE    2
 
 QString formatNumber(double, int);
 QString formatMoney(double, int = -1, int = 0);
@@ -72,4 +82,3 @@ QString formatUOMRatio(double);
 QString formatPercent(double);
 
 #endif
-

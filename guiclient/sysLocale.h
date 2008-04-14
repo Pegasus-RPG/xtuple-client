@@ -76,14 +76,6 @@ public slots:
     virtual enum SetResponse set( ParameterList & pParams );
     virtual void close();
     virtual void sSave();
-    virtual void sBuildCurrency();
-    virtual void sBuildSalesPrice();
-    virtual void sBuildPurchPrice();
-    virtual void sBuildExtPrice();
-    virtual void sBuildCost();
-    virtual void sBuildQty();
-    virtual void sBuildQtyPer();
-    virtual void sBuildUOMRatio();
     virtual void sUpdateColors();
     virtual void sUpdateSamples();
     virtual void populate();
