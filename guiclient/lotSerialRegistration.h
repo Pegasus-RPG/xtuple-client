@@ -60,9 +60,9 @@
 
 #include "guiclient.h"
 #include "xdialog.h"
+#include "xdatawidgetmapper.h"
 #include <QStringList>
 #include <QSqlTableModel>
-#include <QDataWidgetMapper>
 #include <parameter.h>
 
 #include "ui_lotSerialRegistration.h"
@@ -93,36 +93,7 @@ private:
     int               _mode;
     QString           _number;
     QSqlTableModel    _model;
-    QDataWidgetMapper _mapper;
-    
-    enum {
-      REGISTRATION_NUMBER = 0,
-      TYPE                = 1,
-      REGISTER_DATE       = 2,
-      SOLD_DATE           = 3,
-      EXPIRE_DATE         = 4,
-      CRM_ACCOUNT         = 5,
-      ITEM_NUMBER         = 6,
-      LOTSERIAL_NUMBER    = 7,
-      CONTACT_NUMBER      = 8,
-      HONORIFIC           = 9,
-      FIRST               = 10,
-      LAST                = 11,
-      JOB_TITLE           = 12,
-      VOICE               = 13,
-      FAX                 = 14,
-      EMAIL               = 15,
-      ADDRESS_CHANGE      = 16,
-      ADDRESS1            = 17,
-      ADDRESS2            = 18,
-      ADDRESS3            = 19,
-      CITY                = 20,
-      STATE               = 21,
-      POSTAL_CODE         = 22,
-      COUNTRY             = 23,
-      SALES_ORDER_NUMBER  = 24,
-      SHIPMENT_NUMBER     = 25,
-      NOTES               = 26};
+    XDataWidgetMapper _mapper;
 };
 
 #endif // LOTSERIALREGISTRATION_H

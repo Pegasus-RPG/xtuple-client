@@ -116,7 +116,7 @@
       <enum>Qt::ClickFocus</enum>
      </property>
      <property name="currentIndex" >
-      <number>0</number>
+      <number>1</number>
      </property>
      <widget class="QWidget" name="_char" >
       <attribute name="title" >
@@ -502,6 +502,22 @@
     <hint type="destinationlabel" >
      <x>519</x>
      <y>204</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_reg</sender>
+   <signal>newId(int)</signal>
+   <receiver>_editReg</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>442</x>
+     <y>241</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>533</x>
+     <y>235</y>
     </hint>
    </hints>
   </connection>

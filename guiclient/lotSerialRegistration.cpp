@@ -78,20 +78,25 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
 
   // signals and slots connections
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
-
+ 
   _lotSerial->setStrict(true);
   _cntct->setAccountVisible(FALSE);
   _cntct->setActiveVisible(FALSE);
 
   _model.setTable("api.lotserialreg");
-  _mapper.setModel(&_model);
-  _mapper.addMapping(_regNumber , REGISTRATION_NUMBER );
- // _mapper.addMapping(_type      , TYPE                );
-  _mapper.addMapping(_regDate   , REGISTER_DATE       );
-  _mapper.addMapping(_soldDate  , SOLD_DATE           );
-  _mapper.addMapping(_expireDate, EXPIRE_DATE         );
-  _mapper.addMapping(_notes     , NOTES               );
-  
+  _mapper.setSqlTableModel(&_model);
+  _regNumber->setDataWidgetMap(&_mapper);
+  _type->setDataWidgetMap(&_mapper);
+  _regDate->setDataWidgetMap(&_mapper);
+  _soldDate->setDataWidgetMap(&_mapper);
+  _expireDate->setDataWidgetMap(&_mapper);
+  _item->setDataWidgetMap(&_mapper);
+  _lotSerial->setDataWidgetMap(&_mapper);
+  _crmacct->setDataWidgetMap(&_mapper);
+  _so->setDataWidgetMap(&_mapper);
+  _shipment->setDataWidgetMap(&_mapper);
+  _cntct->setDataWidgetMap(&_mapper);
+  _notes->setDataWidgetMap(&_mapper);
   resize(minimumSize());
 }
 
@@ -221,13 +226,14 @@ void lotSerialRegistration::sEdit()
   _save->setFocus();
   
   _model.setFilter("registration_number = '" + _number + "'");
-  _model.select();
+  _model.select();  
   _mapper.toFirst();
 }
 
 void lotSerialRegistration::sSave()
 {
   _mapper.submit();
+  _model.submitAll();
   accept(); 
 }
 
