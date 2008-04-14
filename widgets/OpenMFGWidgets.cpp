@@ -116,6 +116,7 @@
 #include "plugins/xlineeditplugin.h"
 #include "plugins/xtreewidgetplugin.h"
 #include "plugins/xurllabelplugin.h"
+#include "plugins/xtexteditplugin.h"
 
 OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
 {
@@ -183,6 +184,7 @@ OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
   m_plugins.append(new XLineEditPlugin(this));
   m_plugins.append(new XTreeWidgetPlugin(this));
   m_plugins.append(new XURLLabelPlugin(this));
+  m_plugins.append(new XTextEditPlugin(this));
 }
 
 QList<QDesignerCustomWidgetInterface*> OpenMFGPlugin::customWidgets() const

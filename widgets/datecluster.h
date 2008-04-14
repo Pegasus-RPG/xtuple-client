@@ -62,6 +62,7 @@
 #include <QDateTime>
 
 #include "xlineedit.h"
+#include "xdatawidgetmapper.h"
 
 class QLabel;
 class DLineEdit;
@@ -77,7 +78,8 @@ QString OPENMFGWIDGETS_EXPORT formatDate(const QDate &);
 class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
 {
   Q_OBJECT
-  Q_PROPERTY(QDate date READ date WRITE setDate )
+  Q_PROPERTY(QDate   date        READ date        WRITE setDate)
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
 
   public:
     DLineEdit(QWidget *parent, const char *name = 0);
@@ -94,8 +96,12 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
     inline int year()                                     { return ((_valid) ? _currentDate.year() : -1);  }
     inline int month()                                    { return ((_valid) ? _currentDate.month() : -1); }
     inline int day()                                      { return ((_valid) ? _currentDate.day() : -1);   }
+    virtual QString fieldName()   const                   { return _fieldName;                             };
 
   public slots:
+    virtual void setDataWidgetMap(XDataWidgetMapper* m);
+    virtual void setFieldName(QString p) { _fieldName = p; };
+
     void setNull();
     void setDate(const QDate &, bool);
     void setDate(const QDate &);
@@ -112,6 +118,7 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
     bool fixMonthEnd(int *, int, int);
 
     QString _dateString;
+    QString _fieldName;
     QString _nullString;
     QDate   _currentDate;
     QDate   _nullDate;
@@ -124,6 +131,10 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
 class OPENMFGWIDGETS_EXPORT DateCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QDate   startDate        READ startDate        WRITE setStartDate)
+  Q_PROPERTY(QDate   endDate          READ endDate          WRITE setEndDate)
+  Q_PROPERTY(QString fieldNameStart   READ fieldNameStart   WRITE setFieldNameStart)
+  Q_PROPERTY(QString fieldNameEnd     READ fieldNameEnd     WRITE setFieldNameEnd)
 
   public:
     DateCluster(QWidget *, const char * = 0);
@@ -133,6 +144,9 @@ class OPENMFGWIDGETS_EXPORT DateCluster : public QWidget
 
     void appendValue(ParameterList &);
     void bindValue(XSqlQuery &);
+    
+    inline QString fieldNameStart()   const { return _fieldNameStart; };
+    inline QString fieldNameEnd()     const { return _fieldNameEnd; };
 
     inline QDate startDate() { return _startDate->date(); };
     inline QDate endDate()   { return _endDate->date();   };
@@ -145,6 +159,11 @@ class OPENMFGWIDGETS_EXPORT DateCluster : public QWidget
     void setStartCaption(const QString &);
     void setEndCaption(const QString &);
 
+  public slots:
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldNameStart(QString p) { _fieldNameStart = p; };
+    void setFieldNameEnd  (QString p) { _fieldNameEnd   = p; };
+
   signals:
     void updated();
 
@@ -155,6 +174,8 @@ class OPENMFGWIDGETS_EXPORT DateCluster : public QWidget
   private:
     QLabel    *_startDateLit;
     QLabel    *_endDateLit;
+    QString   _fieldNameStart;
+    QString   _fieldNameEnd;
 };
 
 #endif

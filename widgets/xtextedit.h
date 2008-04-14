@@ -55,61 +55,29 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
+#ifndef __XTEXTEDIT_H__
+#define __XTEXTEDIT_H__
 
-#ifndef xlineedit_h
-#define xlineedit_h
-
-#include <QLineEdit>
-#include <QFocusEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
+#include <QTextEdit>
 
 #include "OpenMFGWidgets.h"
 #include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+class OPENMFGWIDGETS_EXPORT XTextEdit : public QTextEdit
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  
+
   public:
-    XLineEdit(QWidget *, const char * = 0);
-
-    Q_INVOKABLE bool isValid();
-    Q_INVOKABLE int  id();
-
-    double toDouble(bool * = 0);
+    XTextEdit(QWidget * = 0);
+    
     virtual QString fieldName()   const { return _fieldName; };
 
-    void   setText(const QVariant &);
-
   public slots:
-    virtual void sParse();
     virtual void setDataWidgetMap(XDataWidgetMapper* m);
     virtual void setFieldName(QString p) { _fieldName = p; };
 
-  signals:
-    void clicked();
-    void requestList();
-    void requestSearch();
-    void requestInfo();
-    void requestAlias();
-
-  protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
-
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
-    
   private:
-    QString _fieldName;
-};
+    QString _fieldName;};
 
 #endif
-

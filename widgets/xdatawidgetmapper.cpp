@@ -55,61 +55,36 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
+// xdatawidgetmapper.cpp
+// Created 04/12/2008 JDR
+// Copyright (c) 2006-2008, OpenMFG, LLC
 
-#ifndef xlineedit_h
-#define xlineedit_h
-
-#include <QLineEdit>
-#include <QFocusEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
-
-#include "OpenMFGWidgets.h"
 #include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+XDataWidgetMapper::XDataWidgetMapper(QObject *parent) : 
+  QDataWidgetMapper(parent)
 {
-  Q_OBJECT
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  
-  public:
-    XLineEdit(QWidget *, const char * = 0);
+}
 
-    Q_INVOKABLE bool isValid();
-    Q_INVOKABLE int  id();
+XDataWidgetMapper::~XDataWidgetMapper()
+{
+}
 
-    double toDouble(bool * = 0);
-    virtual QString fieldName()   const { return _fieldName; };
+void XDataWidgetMapper::setSqlTableModel(QSqlTableModel *model)
+{
+  _model.setTable(static_cast<QSqlTableModel*>(model)->tableName());
+  setModel(model);
+}
 
-    void   setText(const QVariant &);
+void XDataWidgetMapper::addFieldMapping(QWidget *widget, QString fieldName)
+{
+  addMapping(widget, _model.fieldIndex(fieldName));
+}
 
-  public slots:
-    virtual void sParse();
-    virtual void setDataWidgetMap(XDataWidgetMapper* m);
-    virtual void setFieldName(QString p) { _fieldName = p; };
+void XDataWidgetMapper::addFieldMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName)
+{
+  addMapping(widget, _model.fieldIndex(fieldName), propertyName);
+}
 
-  signals:
-    void clicked();
-    void requestList();
-    void requestSearch();
-    void requestInfo();
-    void requestAlias();
 
-  protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
-
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
-    
-  private:
-    QString _fieldName;
-};
-
-#endif
 

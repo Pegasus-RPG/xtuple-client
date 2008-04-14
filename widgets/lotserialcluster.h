@@ -131,8 +131,6 @@ class OPENMFGWIDGETS_EXPORT LotserialCluster : public VirtualCluster
     Q_OBJECT
 
     Q_PROPERTY(bool     strict          READ  strict          WRITE setStrict);
-    Q_PROPERTY(QString  itemNumber      READ  itemNumber      WRITE setItemNumber);
-    Q_PROPERTY(QString  lotSerialNumber READ  number          WRITE setNumber);
 
     friend class LotserialLineEdit;
 

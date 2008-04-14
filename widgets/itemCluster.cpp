@@ -628,6 +628,11 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   setFocusProxy(_itemNumber);
 }
 
+void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_itemNumber, _fieldName);
+}
+
 void ItemCluster::setReadOnly(bool pReadOnly)
 {
   if (pReadOnly)

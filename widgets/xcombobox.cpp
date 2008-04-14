@@ -108,6 +108,11 @@ enum XComboBox::XComboBoxTypes XComboBox::type()
   return _type;
 }
 
+void XComboBox::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldName, QByteArray("code"));
+}
+
 void XComboBox::setType(XComboBoxTypes pType)
 {
   if (_type == pType)

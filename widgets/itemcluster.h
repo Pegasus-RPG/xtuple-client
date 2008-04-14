@@ -191,7 +191,7 @@ friend class ItemCluster;
 class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
-  Q_PROPERTY(QString  itemNumber      READ  itemNumber      WRITE setItemNumber);
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
   
   public:
     ItemCluster(QWidget *, const char * = 0);
@@ -209,16 +209,19 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     Q_INVOKABLE inline int id()               { return _itemNumber->id();                   }
     inline int isValid()                      { return _itemNumber->isValid();              }
     inline QString uom()                      { return _itemNumber->uom();                  }
+    inline QString fieldName()   const        { return _fieldName;                          }
 
     inline void addExtraClause(const QString & pClause) { _itemNumber->addExtraClause(pClause); }
     inline QStringList getExtraClauseList() const { return _itemNumber->getExtraClauseList(); }
     inline void clearExtraClauseList() { _itemNumber->clearExtraClauseList(); }
 
   public slots:
-    void silentSetId(int);
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(QString p) { _fieldName = p; };
     void setId(int);
     void setItemNumber(QString);
     void setItemsiteid(int);
+    void silentSetId(int);
 
   signals:
     void privateIdChanged(int);
@@ -235,6 +238,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     QLabel       *_uom;
     QLabel       *_descrip1;
     QLabel       *_descrip2;
+    QString _fieldName;
 };
 
 #endif

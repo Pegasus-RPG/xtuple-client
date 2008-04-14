@@ -149,6 +149,11 @@ void VirtualCluster::clear()
   _description->clear();
 }
 
+void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(static_cast<VirtualClusterLineEdit*>(_number), _fieldName);
+}
+
 void VirtualCluster::setEnabled(const bool p)
 {
     QList<QWidget*> child = findChildren<QWidget*>();

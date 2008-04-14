@@ -114,6 +114,11 @@ double XLineEdit::toDouble(bool *pIsValid)
   return value.toDouble(pIsValid);
 }
 
+void XLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldName);
+}
+
 void XLineEdit::setText(const QVariant &pVariant)
 {
   QLineEdit::setText(pVariant.toString());

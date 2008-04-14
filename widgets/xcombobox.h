@@ -68,6 +68,7 @@
 #include <QList>
 
 #include "OpenMFGWidgets.h"
+#include "xdatawidgetmapper.h"
 
 class XSqlQuery;
 
@@ -81,6 +82,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
   Q_PROPERTY(QString     nullStr READ nullStr   WRITE setNullStr   )
   Q_PROPERTY(XComboBoxTypes type READ type      WRITE setType      )
   Q_PROPERTY(QString        code READ code      WRITE setCode      )
+  Q_PROPERTY(QString fieldName   READ fieldName WRITE setFieldName);
 
   public:
     XComboBox(QWidget * = 0, const char * = 0);
@@ -140,6 +142,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     int     id(int) const;
     int     id() const;
     QString code() const;
+    QString fieldName()   const { return _fieldName; };
 
     QSize sizeHint() const;
 
@@ -150,6 +153,8 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     void populate(XSqlQuery &, int = -1);
     void populate(const char *, int = -1);
     void populate();
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(QString p) { _fieldName = p; };
     void setId(int);
 
   private slots:
@@ -171,6 +176,9 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
     QList<int>          _ids;
     QList<QString>      _codes;
     QString             _nullStr;
+    
+  private:
+    QString _fieldName;
 };
 
 #endif

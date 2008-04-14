@@ -55,61 +55,29 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-//  xlineedit.h
-//  Created 01/03/2003 JSL
-//  Copyright (c) 2003-2008, OpenMFG, LLC
+#ifndef XDATAWIDGETMAPPER_H
 
-#ifndef xlineedit_h
-#define xlineedit_h
+#define XDATAWIDGETMAPPER_H
 
-#include <QLineEdit>
-#include <QFocusEvent>
-#include <QKeyEvent>
-#include <QMouseEvent>
-
+#include <QSqlTableModel>
+#include <QDataWidgetMapper> 
 #include "OpenMFGWidgets.h"
-#include "xdatawidgetmapper.h"
 
-class OPENMFGWIDGETS_EXPORT XLineEdit : public QLineEdit
+class OPENMFGWIDGETS_EXPORT XDataWidgetMapper : public QDataWidgetMapper
 {
-  Q_OBJECT
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  
-  public:
-    XLineEdit(QWidget *, const char * = 0);
+    Q_OBJECT
 
-    Q_INVOKABLE bool isValid();
-    Q_INVOKABLE int  id();
+    public:
+      XDataWidgetMapper(QObject *parent = 0);
+      ~XDataWidgetMapper();
+      
+      void addFieldMapping(QWidget *widget, QString fieldName);
+      void addFieldMapping(QWidget *widget, QString fieldName, const QByteArray &propertyName);
+      void setSqlTableModel(QSqlTableModel *model);
 
-    double toDouble(bool * = 0);
-    virtual QString fieldName()   const { return _fieldName; };
+    private:
+      QSqlTableModel _model;
 
-    void   setText(const QVariant &);
-
-  public slots:
-    virtual void sParse();
-    virtual void setDataWidgetMap(XDataWidgetMapper* m);
-    virtual void setFieldName(QString p) { _fieldName = p; };
-
-  signals:
-    void clicked();
-    void requestList();
-    void requestSearch();
-    void requestInfo();
-    void requestAlias();
-
-  protected:
-    int   _id;
-    bool _valid;
-    bool _parsed;
-
-    void mousePressEvent(QMouseEvent *);
-    void keyPressEvent(QKeyEvent *);
-    void focusInEvent(QFocusEvent *);
-    
-  private:
-    QString _fieldName;
 };
 
 #endif
-

@@ -88,7 +88,8 @@ HEADERS += \
            plugins/xcomboboxplugin.h \
            plugins/xlineeditplugin.h \
            plugins/xtreewidgetplugin.h \
-           plugins/xurllabelplugin.h
+           plugins/xurllabelplugin.h \
+           plugins/xtexteditplugin.h \
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
@@ -124,7 +125,9 @@ SOURCES    += OpenMFGWidgets.cpp \
               lotserialCluster.cpp \
               shipmentCluster.cpp \
               racluster.cpp \
-              revisionCluster.cpp
+              revisionCluster.cpp \
+	      xdatawidgetmapper.cpp \
+              xtextedit.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -160,7 +163,9 @@ HEADERS    += OpenMFGWidgets.h \
               lotserialCluster.h \
               shipmentcluster.h \
               racluster.h \
-              revisioncluster.h
+              revisioncluster.h \
+              xdatawidgetmapper.h \
+              xtextedit.h \
 
 FORMS += accountSearch.ui
 

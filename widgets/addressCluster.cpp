@@ -90,11 +90,11 @@ void AddressCluster::init()
     _cityLit       = new QLabel(tr("City:"), this);
     _city          = new QLineEdit(this);
     _stateLit      = new QLabel(tr("State:"));
-    _state         = new QComboBox(this);
+    _state         = new XComboBox(this);
     _postalcodeLit = new QLabel(tr("Postal Code:"));
     _postalcode    = new QLineEdit(this);
     _countryLit    = new QLabel(tr("Country:"));
-    _country       = new QComboBox(this);
+    _country       = new XComboBox(this);
     _active        = new QCheckBox(tr("Active"), this);
 
     _addrLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -163,22 +163,20 @@ void AddressCluster::populateStateComboBox()
 {
   _state->clear();
   XSqlQuery state;
-  state.prepare("SELECT DISTINCT addr_state AS state "
+  state.prepare("SELECT DISTINCT -1, addr_state, addr_state AS state "
                 "FROM addr ORDER BY state;");
   state.exec();
-  while (state.next())
-    _state->addItem(state.value("state").toString());
+  _state->populate(state);
 }
 
 void AddressCluster::populateCountryComboBox()
 {
   _country->clear();
   XSqlQuery country;
-  country.prepare("SELECT country_name "
+  country.prepare("SELECT country_id, country_name, country_name "
                   "FROM country ORDER BY country_name;");
   country.exec();
-  while (country.next())
-    _country->addItem(country.value("country_name").toString());
+  _country->populate(country);
 }
 
 void AddressCluster::setId(const int pId)
@@ -520,6 +518,20 @@ void AddressCluster::setActiveVisible(const bool p)
     _grid->removeWidget(_country);
     _grid->addWidget(_country, 5, 1, 1, 4);
   }
+}
+
+void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_active    ,  _fieldNameActive);
+  m->addFieldMapping(_addr1 	,  _fieldNameLine1);
+  m->addFieldMapping(_addr2     ,  _fieldNameLine2);
+  m->addFieldMapping(_addr3     ,  _fieldNameLine3);
+  m->addFieldMapping(_city    	,  _fieldNameCity);
+  m->addFieldMapping(_postalcode,  _fieldNamePostalCode);
+  _state->setFieldName(_fieldNameState);
+  _state->setDataWidgetMap(m);
+  _country->setFieldName(_fieldNameCountry);
+  _country->setDataWidgetMap(m);
 }
 
 ///////////////////////////////////////////////////////////////////////////

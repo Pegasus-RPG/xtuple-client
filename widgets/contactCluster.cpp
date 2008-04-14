@@ -200,6 +200,32 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
     init();
 }
 
+void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_active    ,    _fieldNameActive);
+  m->addFieldMapping(_first       ,  _fieldNameFirst);
+  m->addFieldMapping(_last        ,  _fieldNameLast);
+  m->addFieldMapping(_initials    ,  _fieldNameInitials);
+  m->addFieldMapping(_title       ,  _fieldNameTitle);
+  m->addFieldMapping(_phone       ,  _fieldNamePhone);
+  m->addFieldMapping(_phone2      ,  _fieldNamePhone2);
+  m->addFieldMapping(_fax         ,  _fieldNameFax);
+  m->addFieldMapping(_email       ,  _fieldNameEmailAddress);
+  m->addFieldMapping(_webaddr     ,  _fieldNameWebAddress);
+  _honorific->setFieldName(_fieldNameHonorific);
+  _honorific->setDataWidgetMap(m);
+  _crmAcct->setFieldName(_fieldNameCrmAccount);
+  _crmAcct->setDataWidgetMap(m);
+  _address->setFieldNameLine1(_fieldNameLine1);
+  _address->setFieldNameLine2(_fieldNameLine2);
+  _address->setFieldNameLine3(_fieldNameLine3);
+  _address->setFieldNameCity(_fieldNameCity);
+  _address->setFieldNameState(_fieldNameState);
+  _address->setFieldNamePostalCode(_fieldNamePostalCode);
+  _address->setFieldNameCountry(_fieldNameCountry);
+  _address->setDataWidgetMap(m);
+}
+
 void ContactCluster::setId(const int pId)
 {
     if (pId == _id)

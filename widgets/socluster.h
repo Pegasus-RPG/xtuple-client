@@ -63,7 +63,7 @@
 #define soCluster_h
 
 #include "xlineedit.h"
-
+#include "xdatawidgetmapper.h"
 #include "OpenMFGWidgets.h"
 #include <QLabel>
 
@@ -91,7 +91,7 @@ friend class SoCluster;
   public slots:
     void setId(int);
     void setCustId(int);
-    void setNumber(int);
+    void setNumber(QString);
     void clear();
     void sParse();
 
@@ -105,8 +105,9 @@ friend class SoCluster;
 
   private:
     int  _custid;
-    int  _number;
     int  _type;
+    QString  _number;
+
 };
 
 
@@ -115,6 +116,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString label       READ label       WRITE setLabel);
   Q_PROPERTY(bool    readOnly    READ isReadOnly  WRITE setReadOnly);
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)
 
   public:
     SoCluster(QWidget *, const char * = 0);
@@ -123,15 +125,19 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     inline int id()                { return _soNumber->_id;      }
     inline int custid()            { return _soNumber->_custid;  }
     inline bool isValid()          { return _soNumber->_valid;   }
-    inline int  number()           { return _soNumber->text().toInt();  }
+    inline QString  number()           { return _soNumber->text();  }
     inline void setType(int pType) { _soNumber->_type = pType;   }
     inline virtual QString label() const { return _soNumberLit->text(); }
     inline bool isReadOnly()       { return _readOnly; } 
+    QString fieldName() const { return _fieldName; };
 
   public slots:
     void setReadOnly(bool);
     void setId(int);
     void setCustId(int);
+    void setDataWidgetMap(XDataWidgetMapper* m);
+    void setFieldName(QString p) { _fieldName = p; };
+    void setNumber(QString);
     inline virtual void setLabel(const QString& p)  { _soNumberLit->setText(p); };
 
   signals:
@@ -152,6 +158,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     QPushButton  *_list;
     QLabel       *_custName;
     bool         _readOnly;
+    QString      _fieldName;
 };
 
 #endif

@@ -138,7 +138,7 @@ void SoLineEdit::setCustId(int pId)
   emit custidChanged(_custid);
 }
 
-void SoLineEdit::setNumber(int pNumber)
+void SoLineEdit::setNumber(QString pNumber)
 {
   XSqlQuery sohead;
 
@@ -191,15 +191,7 @@ void SoLineEdit::clear()
 void SoLineEdit::sParse()
 {
   if (!_parsed)
-  {
-    bool numeric;
-    int  salesOrderNumber = text().toInt(&numeric);
-
-    if (numeric)
-      setNumber(salesOrderNumber);
-    else
-      setId(-1);
-  }
+    setNumber(text());
 }
 
 
@@ -273,6 +265,16 @@ void SoCluster::setId(int pSoid)
 void SoCluster::setCustId(int pCustid)
 {
   _soNumber->setCustId(pCustid);
+}
+
+void SoCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(_soNumber, _fieldName);
+}
+
+void SoCluster::setNumber(QString pNumber)
+{
+  _soNumber->setNumber(pNumber);
 }
 
 void SoCluster::sList()

@@ -84,6 +84,11 @@ int addCentury(int intYear)
     return (intYear + 1900);
 }
 
+void DLineEdit::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldName, QByteArray("date"));
+}
+
 void DLineEdit::validateDate()
 {
   QString dateString = text().stripWhiteSpace();
@@ -442,6 +447,12 @@ DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
   //setTabOrder(_startDate, _endDate);
   //setTabOrder(_endDate, _startDate);
   setFocusProxy(_startDate);
+}
+
+void DateCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(static_cast<DLineEdit*>(_startDate), _fieldNameStart, QByteArray("startDate"));
+  m->addFieldMapping(static_cast<DLineEdit*>(_endDate),   _fieldNameEnd,  QByteArray("endDate"));
 }
 
 void DateCluster::setStartNull(const QString &pString, const QDate &pDate, bool pSetNull)

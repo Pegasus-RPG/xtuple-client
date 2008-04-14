@@ -63,6 +63,7 @@
 #include "xlineedit.h"
 #include "xtreewidget.h"
 #include "xcheckbox.h"
+#include "xdatawidgetmapper.h"
 
 #include <QCheckBox>
 #include <QDialog>
@@ -272,6 +273,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    listVisible READ listVisible WRITE setListVisible);
     Q_PROPERTY(bool    nameVisible READ nameVisible WRITE setNameVisible);
     Q_PROPERTY(bool    readOnly    READ readOnly    WRITE setReadOnly);
+    Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
 
     friend class VirtualClusterLineEdit;
 
@@ -290,12 +292,14 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual QString name()        const { return _name->text(); };
         inline virtual bool    isStrict()    const { return _number->isStrict(); };
         inline virtual bool    readOnly()    const { return _readOnly; };
+        inline virtual QString fieldName()   const { return _fieldName; };
 
     public slots:
         // most of the heavy lifting is done by VirtualClusterLineEdit _number
         inline virtual void clearExtraClause() { _number->clearExtraClause(); };
-        inline virtual void setExtraClause(const QString& p) { _number->setExtraClause(p); };
         inline virtual void setDescription(const QString& p) { _description->setText(p); };
+        inline virtual void setExtraClause(const QString& p) { _number->setExtraClause(p); };
+        inline virtual void setFieldName(QString p) { _fieldName = p; };
         inline virtual void setId(const int p)           { _number->setId(p); };
         inline virtual void setInfoVisible(const bool p) { _info->setHidden(!p); };
         inline virtual void setListVisible(const bool p) { _list->setHidden(!p); };
@@ -306,6 +310,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         inline virtual void setNumber(const QString& p) { _number->setNumber(p); };
 
         virtual void clear();
+        virtual void setDataWidgetMap(XDataWidgetMapper* m);
         virtual void setEnabled(const bool p);
         virtual void setStrict(const bool b);
         virtual void setReadOnly(const bool b);
@@ -329,6 +334,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
 
     private:
         virtual void init();
+        QString _fieldName;
 };
 
 #endif

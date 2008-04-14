@@ -61,9 +61,9 @@
 #include "OpenMFGWidgets.h"
 #include "virtualCluster.h"
 #include "xcheckbox.h"
+#include "xcombobox.h"
 
 #include <QCheckBox>
-#include <QComboBox>
 #include <QLabel>
 #include <QLineEdit>
 #include <QPushButton>
@@ -127,14 +127,15 @@ class OPENMFGWIDGETS_EXPORT AddressSearch : public VirtualSearch
 class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 {
     Q_OBJECT
-    Q_PROPERTY(bool     activeVisible READ activeVisible  WRITE setActiveVisible);
-    Q_PROPERTY(QString  line1         READ line1          WRITE setLine1);
-    Q_PROPERTY(QString  line2         READ line2          WRITE setLine2);
-    Q_PROPERTY(QString  line3         READ line3          WRITE setLine3);
-    Q_PROPERTY(QString  city          READ city           WRITE setCity);
-    Q_PROPERTY(QString  postalCode    READ postalCode     WRITE setPostalCode);
-    Q_PROPERTY(QString  state         READ state          WRITE setState);
-    Q_PROPERTY(QString  country       READ country        WRITE setCountry);
+    Q_PROPERTY(bool     activeVisible 	       READ activeVisible           WRITE setActiveVisible)
+    Q_PROPERTY(QString  fieldNameActive        READ fieldNameActive         WRITE setFieldNameActive)
+    Q_PROPERTY(QString  fieldNameLine1         READ fieldNameLine1          WRITE setFieldNameLine1)
+    Q_PROPERTY(QString  fieldNameLine2         READ fieldNameLine2	    WRITE setFieldNameLine2)
+    Q_PROPERTY(QString  fieldNameLine3         READ fieldNameLine3          WRITE setFieldNameLine3)
+    Q_PROPERTY(QString  fieldNameCity          READ fieldNameCity           WRITE setFieldNameCity)
+    Q_PROPERTY(QString  fieldNameState         READ fieldNameState          WRITE setFieldNameState)
+    Q_PROPERTY(QString  fieldNamePostalCode    READ fieldNamePostalCode     WRITE setFieldNamePostalCode)
+    Q_PROPERTY(QString  fieldNameCountry       READ fieldNameCountry        WRITE setFieldNameCountry)
 
     friend class AddressInfo;
     friend class AddressList;
@@ -158,6 +159,16 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	inline virtual QString notes()	     const { return _notes; };
 	inline virtual QString postalCode()  const { return _postalcode->text(); };
 	inline virtual QString state()       const { return _state->currentText(); };
+	
+	// Return data map values
+	virtual QString  fieldNameActive()	const { return _fieldNameActive; };
+	virtual QString  fieldNameLine1() 	const { return _fieldNameLine1; };
+	virtual QString  fieldNameLine2()  	const { return _fieldNameLine2; };
+	virtual QString  fieldNameLine3()   	const { return _fieldNameLine3; };
+	virtual QString  fieldNameCity()   	const { return _fieldNameCity; };
+	virtual QString  fieldNamePostalCode()  const { return _fieldNamePostalCode; };
+	virtual QString  fieldNameState()  	const { return _fieldNameState; };
+	virtual QString  fieldNameCountry() 	const { return _fieldNameCountry; };
 
     public slots:
 	inline virtual void clearExtraClause()	{ };
@@ -182,6 +193,17 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	virtual void	sList();
 	virtual void	sSearch();
 	virtual void	setId(const int);
+	
+	// Set data map values
+        virtual void 	setDataWidgetMap(XDataWidgetMapper* m);
+	virtual void  	setFieldNameActive(QString p)       { _fieldNameActive = p ; };
+	virtual void  	setFieldNameLine1(QString p)        { _fieldNameLine1 = p ; };
+	virtual void  	setFieldNameLine2(QString p)        { _fieldNameLine2 = p ; };
+	virtual void  	setFieldNameLine3(QString p)        { _fieldNameLine3 = p ; };
+	virtual void  	setFieldNameCity(QString p)         { _fieldNameCity = p ; };
+	virtual void  	setFieldNamePostalCode(QString p)   { _fieldNamePostalCode = p ; };
+	virtual void  	setFieldNameState(QString p)        { _fieldNameState = p ; };
+	virtual void  	setFieldNameCountry(QString p)      { _fieldNameCountry = p ; };
 
     signals:
 	void newId(int);
@@ -197,11 +219,11 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QLabel*		_cityLit;
 	QLineEdit*	_city;
 	QLabel*		_stateLit;
-	QComboBox*	_state;
+	XComboBox*	_state;
 	QLabel*		_postalcodeLit;
 	QLineEdit*	_postalcode;
 	QLabel*		_countryLit;
-	QComboBox*	_country;
+	XComboBox*	_country;
 	QCheckBox*	_active;
 
     private:
@@ -226,6 +248,16 @@ class OPENMFGWIDGETS_EXPORT AddressCluster : public VirtualCluster
 	QString		c_country;
 	bool		c_active;
 	QString		c_notes;
+	
+	// data map values
+	QString  _fieldNameActive;
+	QString  _fieldNameLine1;
+	QString  _fieldNameLine2;
+	QString  _fieldNameLine3;
+	QString  _fieldNameCity;
+	QString  _fieldNamePostalCode;
+	QString  _fieldNameState;
+	QString  _fieldNameCountry;
 };
 
 #endif
