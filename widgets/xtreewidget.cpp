@@ -630,13 +630,11 @@ void XTreeWidget::populateCalculatedColumns()
   QMap<int, double> totals; // col, current value
   for (int col = 0; col < topLevelItem(0)->columnCount(); col++)
   {
-    qDebug("anything to do for column %d?", col);
     if (headerItem()->data(col, Qt::UserRole).toString() == "xtrunningrole")
     {
       QMap<int, double> subtotals;
       for (int row = 0; row < topLevelItemCount(); row++)
       {
-        qDebug("running %d, row %d", col, row);
         QVariantMap role = topLevelItem(row)->data(col, Qt::UserRole).toMap();
         if (role.contains("runningset"))
         {
@@ -655,13 +653,11 @@ void XTreeWidget::populateCalculatedColumns()
       totals.insert(col, 0.0);
       for (int row = 0; row < topLevelItemCount(); row++)
       {
-        qDebug("total %d, row %d", col, row);
         totals.insert(col, totals.value(col) +
                            topLevelItem(row)->data(col, Qt::UserRole).toMap()["raw"].toDouble());
       }
     }
   }
-  qDebug("about to create totals row");
   if (totals.size() > 0)
   {
     XTreeWidgetItem *last = new XTreeWidgetItem(this, -1, -1, tr("Totals"));
@@ -669,7 +665,6 @@ void XTreeWidget::populateCalculatedColumns()
     QMapIterator<int, double> it(totals);
     while (it.hasNext())
     {
-      qDebug("setting total for %d", it.key());
       it.next();
       last->setData(it.key(), Qt::DisplayRole, it.value());
     }
