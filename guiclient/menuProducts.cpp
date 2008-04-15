@@ -150,25 +150,45 @@ menuProducts::menuProducts(GUIClient *Pparent) :
   if (_preferences->boolean("ShowPDToolbar"))
     parent->addToolBar(toolBar);
     
-  mainMenu	= new QMenu();
-  itemsMenu	= new QMenu();
-  bomMenu	= new QMenu();
-  booMenu = new QMenu();
-  breederBOMMenu = new QMenu();
-  costingMenu = new QMenu();
-  costingUpdActMenu = new QMenu();
-  costingPostActMenu = new QMenu();
-  costingUpdStdMenu = new QMenu();
-  costingReportsMenu = new QMenu();
-  costingReportsCostedMenu = new QMenu();
-  costingReportsItemCostsMenu = new QMenu();
-  reportsMenu = new QMenu();
-  reportsItemsMenu = new QMenu();
-  reportsBomsMenu = new QMenu();
-  reportsWhereUsdMenu = new QMenu();
-  reportsCapUomMenu = new QMenu();
-  masterInfoMenu = new QMenu();
-  utilitiesMenu = new QMenu();
+  mainMenu	= new QMenu(parent);
+  itemsMenu	= new QMenu(parent);
+  bomMenu	= new QMenu(parent);
+  booMenu = new QMenu(parent);
+  breederBOMMenu = new QMenu(parent);
+  costingMenu = new QMenu(parent);
+  costingUpdActMenu = new QMenu(parent);
+  costingPostActMenu = new QMenu(parent);
+  costingUpdStdMenu = new QMenu(parent);
+  costingReportsMenu = new QMenu(parent);
+  costingReportsCostedMenu = new QMenu(parent);
+  costingReportsItemCostsMenu = new QMenu(parent);
+  reportsMenu = new QMenu(parent);
+  reportsItemsMenu = new QMenu(parent);
+  reportsBomsMenu = new QMenu(parent);
+  reportsWhereUsdMenu = new QMenu(parent);
+  reportsCapUomMenu = new QMenu(parent);
+  masterInfoMenu = new QMenu(parent);
+  utilitiesMenu = new QMenu(parent);
+
+  mainMenu->setObjectName("menu.prod");
+  itemsMenu->setObjectName("menu.prod.items");
+  bomMenu->setObjectName("menu.prod.bom");
+  booMenu->setObjectName("menu.prod.boo");
+  breederBOMMenu->setObjectName("menu.prod.breeder");
+  costingMenu->setObjectName("menu.prod.costing");
+  costingUpdActMenu->setObjectName("menu.prod.costingupdact");
+  costingPostActMenu->setObjectName("menu.prod.costingpostact");
+  costingUpdStdMenu->setObjectName("menu.prod.costingupdstd");
+  costingReportsMenu->setObjectName("menu.prod.costingreports");
+  costingReportsCostedMenu->setObjectName("menu.prod.costingreportscosted");
+  costingReportsItemCostsMenu->setObjectName("menu.prod.costingreportsitemcosts");
+  reportsMenu->setObjectName("menu.prod.reports");
+  reportsItemsMenu->setObjectName("menu.prod.reportsitems");
+  reportsBomsMenu->setObjectName("menu.prod.reportsboms");
+  reportsWhereUsdMenu->setObjectName("menu.prod.reportswhereusd");
+  reportsCapUomMenu->setObjectName("menu.prod.reportscapuom");
+  masterInfoMenu->setObjectName("menu.prod.masterinfo");
+  utilitiesMenu->setObjectName("menu.prod.utilities");
 
   actionProperties acts[] = {
   

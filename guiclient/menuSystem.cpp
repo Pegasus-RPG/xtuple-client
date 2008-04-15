@@ -141,16 +141,23 @@ menuSystem::menuSystem(GUIClient *Pparent) :
   _lastActive = 0;
   geometryMenu = 0;
 
-  systemMenu		= new QMenu();
-  configModulesMenu	= new QMenu();
-  masterInfoMenu	= new QMenu();
-  sysUtilsMenu		= new QMenu();
-  windowMenu		= new QMenu();
-  helpMenu		= new QMenu();
-  designMenu            = new QMenu();
+  systemMenu		= new QMenu(parent);
+  configModulesMenu	= new QMenu(parent);
+  masterInfoMenu	= new QMenu(parent);
+  sysUtilsMenu		= new QMenu(parent);
+  windowMenu		= new QMenu(parent);
+  helpMenu		= new QMenu(parent);
+  designMenu            = new QMenu(parent);
+
+  systemMenu->setObjectName("menu.sys");
+  configModulesMenu->setObjectName("menu.sys.configmodules");
+  masterInfoMenu->setObjectName("menu.sys.masterinfo");
+  sysUtilsMenu->setObjectName("menu.sys.utilities");
+  windowMenu->setObjectName("menu.window");
+  helpMenu->setObjectName("menu.help");
+  designMenu->setObjectName("menu.sys.design");
 
 //  Window
-  windowMenu = new QMenu();
   windowMenu->setCheckable(TRUE);
 
   cascade = new Action( parent, "window.cascade", tr("&Cascade"), parent->workspace(), SLOT(cascade()), windowMenu, true);

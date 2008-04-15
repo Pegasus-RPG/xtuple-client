@@ -150,26 +150,47 @@ menuManufacture::menuManufacture(GUIClient *Pparent) :
   if (_preferences->boolean("ShowWOToolbar"))
     parent->addToolBar(toolBar);
 
-  mainMenu	 = new QMenu();
-  ordersMenu	 = new QMenu();
-  formsMenu = new QMenu();
-  materialsMenu	 = new QMenu();
-  materialsIssueMenu = new QMenu();
-  materialsReturnMenu = new QMenu();
-  operationsMenu = new QMenu();
-  transactionsMenu = new QMenu();
-  reportsMenu	 = new QMenu();
-  reportsScheduleMenu = new QMenu();
-  reportsBufrStsMenu = new QMenu();
-  reportsHistoryMenu = new QMenu();
-  reportsMatlReqMenu = new QMenu();
-  reportsOperationsMenu = new QMenu();
-  reportsWoTcMenu = new QMenu();
-  reportsMatlUseVarMenu = new QMenu();
-  reportsLaborVarMenu = new QMenu();
-  reportsBrdrDistVarMenu = new QMenu();
-  reportsOpenWoMenu = new QMenu();
-  utilitiesMenu = new QMenu;
+  mainMenu	 = new QMenu(parent);
+  ordersMenu	 = new QMenu(parent);
+  formsMenu = new QMenu(parent);
+  materialsMenu	 = new QMenu(parent);
+  materialsIssueMenu = new QMenu(parent);
+  materialsReturnMenu = new QMenu(parent);
+  operationsMenu = new QMenu(parent);
+  transactionsMenu = new QMenu(parent);
+  reportsMenu	 = new QMenu(parent);
+  reportsScheduleMenu = new QMenu(parent);
+  reportsBufrStsMenu = new QMenu(parent);
+  reportsHistoryMenu = new QMenu(parent);
+  reportsMatlReqMenu = new QMenu(parent);
+  reportsOperationsMenu = new QMenu(parent);
+  reportsWoTcMenu = new QMenu(parent);
+  reportsMatlUseVarMenu = new QMenu(parent);
+  reportsLaborVarMenu = new QMenu(parent);
+  reportsBrdrDistVarMenu = new QMenu(parent);
+  reportsOpenWoMenu = new QMenu(parent);
+  utilitiesMenu = new QMenu(parent);
+
+  mainMenu->setObjectName("menu.manu");
+  ordersMenu->setObjectName("menu.manu.orders");
+  formsMenu->setObjectName("menu.manu.forms");
+  materialsMenu->setObjectName("menu.manu.materials");
+  materialsIssueMenu->setObjectName("menu.manu.materialsissue");
+  materialsReturnMenu->setObjectName("menu.manu.materialsreturn");
+  operationsMenu->setObjectName("menu.manu.operations");
+  transactionsMenu->setObjectName("menu.manu.transactions");
+  reportsMenu->setObjectName("menu.manu.reports");
+  reportsScheduleMenu->setObjectName("menu.manu.reportsschedule");
+  reportsBufrStsMenu->setObjectName("menu.manu.reportsbufrsts");
+  reportsHistoryMenu->setObjectName("menu.manu.reportshistory");
+  reportsMatlReqMenu->setObjectName("menu.manu.reportsmatlreq");
+  reportsOperationsMenu->setObjectName("menu.manu.reportsoperations");
+  reportsWoTcMenu->setObjectName("menu.manu.reportswotc");
+  reportsMatlUseVarMenu->setObjectName("menu.manu.reportsmatlusevar");
+  reportsLaborVarMenu->setObjectName("menu.manu.reportslaborvar");
+  reportsBrdrDistVarMenu->setObjectName("menu.manu.reportsbrdrdistvar");
+  reportsOpenWoMenu->setObjectName("menu.manu.reportsopenwo");
+  utilitiesMenu->setObjectName("menu.manu.utilities");
 
   actionProperties acts[] = {
     // Production | Control

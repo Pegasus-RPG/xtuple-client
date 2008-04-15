@@ -148,23 +148,41 @@ menuPurchase::menuPurchase(GUIClient *Pparent) :
   if (_preferences->boolean("ShowPOToolbar"))
     parent->addToolBar(toolBar);
     
-  mainMenu = new QMenu();
-  requestMenu = new QMenu();
-  ordersMenu = new QMenu();
-  vouchersMenu = new QMenu();
-  itemSourcesMenu = new QMenu();
-  vendorMenu = new QMenu();
-  formsMenu = new QMenu();
-  reportsMenu = new QMenu();
-  reportsPrMenu = new QMenu();
-  reportsPoMenu = new QMenu();
-  reportsPoItemsMenu = new QMenu();
-  reportsItemSrcMenu = new QMenu();
-  reportsRcptRtrnMenu = new QMenu();
-  reportsPriceVarMenu = new QMenu();
-  reportsDelvVarMenu = new QMenu();
-  masterInfoMenu = new QMenu();
-  utilitiesMenu = new QMenu();
+  mainMenu = new QMenu(parent);
+  requestMenu = new QMenu(parent);
+  ordersMenu = new QMenu(parent);
+  vouchersMenu = new QMenu(parent);
+  itemSourcesMenu = new QMenu(parent);
+  vendorMenu = new QMenu(parent);
+  formsMenu = new QMenu(parent);
+  reportsMenu = new QMenu(parent);
+  reportsPrMenu = new QMenu(parent);
+  reportsPoMenu = new QMenu(parent);
+  reportsPoItemsMenu = new QMenu(parent);
+  reportsItemSrcMenu = new QMenu(parent);
+  reportsRcptRtrnMenu = new QMenu(parent);
+  reportsPriceVarMenu = new QMenu(parent);
+  reportsDelvVarMenu = new QMenu(parent);
+  masterInfoMenu = new QMenu(parent);
+  utilitiesMenu = new QMenu(parent);
+
+  mainMenu->setObjectName("menu.purch");
+  requestMenu->setObjectName("menu.purch.request");
+  ordersMenu->setObjectName("menu.purch.orders");
+  vouchersMenu->setObjectName("menu.purch.vouchers");
+  itemSourcesMenu->setObjectName("menu.purch.itemsources");
+  vendorMenu->setObjectName("menu.purch.vendor");
+  formsMenu->setObjectName("menu.purch.forms");
+  reportsMenu->setObjectName("menu.purch.reports");
+  reportsPrMenu->setObjectName("menu.purch.reportspr");
+  reportsPoMenu->setObjectName("menu.purch.reportspo");
+  reportsPoItemsMenu->setObjectName("menu.purch.reportpoitems");
+  reportsItemSrcMenu->setObjectName("menu.purch.reportsitemsrc");
+  reportsRcptRtrnMenu->setObjectName("menu.purch.reportsrcptrtrn");
+  reportsPriceVarMenu->setObjectName("menu.purch.reportspricevar");
+  reportsDelvVarMenu->setObjectName("menu.purch.reportsdelvvar");
+  masterInfoMenu->setObjectName("menu.purch.masterinfo");
+  utilitiesMenu->setObjectName("menu.purch.utilities");
 
   actionProperties acts[] = {
     //  Purchase | Requisitions

@@ -112,19 +112,33 @@ menuCRM::menuCRM(GUIClient *Pparent) :
     parent->addToolBar(toolBar);
 
   // Menus
-  crmMenu           = new QMenu();
-  projectsMenu      = new QMenu();
-  incidentMenu      = new QMenu();
-  todoMenu          = new QMenu();
-  reportsMenu       = new QMenu();
-  accountsMenu      = new QMenu();
-  contactsMenu      = new QMenu();
-  addressMenu       = new QMenu();
-  utilitiesMenu     = new QMenu();
-  masterMenu        = new QMenu();
-  masterIncdMenu    = new QMenu();
-  opportunityMenu   = new QMenu();
-  masterOppMenu     = new QMenu();
+  crmMenu           = new QMenu(parent);
+  projectsMenu      = new QMenu(parent);
+  incidentMenu      = new QMenu(parent);
+  todoMenu          = new QMenu(parent);
+  reportsMenu       = new QMenu(parent);
+  accountsMenu      = new QMenu(parent);
+  contactsMenu      = new QMenu(parent);
+  addressMenu       = new QMenu(parent);
+  utilitiesMenu     = new QMenu(parent);
+  masterMenu        = new QMenu(parent);
+  masterIncdMenu    = new QMenu(parent);
+  opportunityMenu   = new QMenu(parent);
+  masterOppMenu     = new QMenu(parent);
+
+  crmMenu->setObjectName("menu.crm");
+  projectsMenu->setObjectName("menu.crm.projects");
+  incidentMenu->setObjectName("menu.crm.incident");
+  todoMenu->setObjectName("menu.crm.todo");
+  reportsMenu->setObjectName("menu.crm.reports");
+  accountsMenu->setObjectName("menu.crm.accounts");
+  contactsMenu->setObjectName("menu.crm.contacts");
+  addressMenu->setObjectName("menu.crm.address");
+  utilitiesMenu->setObjectName("menu.crm.utilities");
+  masterMenu->setObjectName("menu.crm.master");
+  masterIncdMenu->setObjectName("menu.crm.masterincd");
+  opportunityMenu->setObjectName("menu.crm.opportunity");
+  masterOppMenu->setObjectName("menu.crm.masteropp");
 
   actionProperties acts[] = {
     // CRM | Incident

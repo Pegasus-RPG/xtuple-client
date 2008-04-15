@@ -129,19 +129,33 @@ menuSchedule::menuSchedule(GUIClient *Pparent) :
   if (_preferences->boolean("ShowMSToolbar"))
     parent->addToolBar(toolBar);
 
-  mainMenu = new QMenu();
-  planningMenu = new QMenu();
-  plannedOrdersMenu = new QMenu();
-  plannedOrdersMrpMenu = new QMenu();
-  capacityPlanMenu = new QMenu();
-  capacityPlanTpPrdMenu = new QMenu();
-  bufferMenu = new QMenu();
-  bufferRunMenu = new QMenu();
-  bufferInvMenu = new QMenu();
-  bufferWoMenu = new QMenu();
-  reportsMenu = new QMenu();
-  reportsPlannedMenu = new QMenu();
-  masterInfoMenu = new QMenu();
+  mainMenu = new QMenu(parent);
+  planningMenu = new QMenu(parent);
+  plannedOrdersMenu = new QMenu(parent);
+  plannedOrdersMrpMenu = new QMenu(parent);
+  capacityPlanMenu = new QMenu(parent);
+  capacityPlanTpPrdMenu = new QMenu(parent);
+  bufferMenu = new QMenu(parent);
+  bufferRunMenu = new QMenu(parent);
+  bufferInvMenu = new QMenu(parent);
+  bufferWoMenu = new QMenu(parent);
+  reportsMenu = new QMenu(parent);
+  reportsPlannedMenu = new QMenu(parent);
+  masterInfoMenu = new QMenu(parent);
+
+  mainMenu->setObjectName("menu.sched");
+  planningMenu->setObjectName("menu.sched.planning");
+  plannedOrdersMenu->setObjectName("menu.sched.plannedorders");
+  plannedOrdersMrpMenu->setObjectName("menu.sched.plannedordersmrp");
+  capacityPlanMenu->setObjectName("menu.sched.capacityplan");
+  capacityPlanTpPrdMenu->setObjectName("menu.sched.capacityplantpprd");
+  bufferMenu->setObjectName("menu.sched.buffer");
+  bufferRunMenu->setObjectName("menu.sched.bufferrun");
+  bufferInvMenu->setObjectName("menu.sched.bufferinv");
+  bufferWoMenu->setObjectName("menu.sched.bufferwo");
+  reportsMenu->setObjectName("menu.sched.reports");
+  reportsPlannedMenu->setObjectName("menu.sched.reportsplanned");
+  masterInfoMenu->setObjectName("menu.sched.masterinfo");
 
   actionProperties acts[] = {
   
