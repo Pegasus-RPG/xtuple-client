@@ -59,6 +59,8 @@
 
 #include <QAction>
 #include <QApplication>
+#include <QDate>
+#include <QDateTime>
 #include <QDrag>
 #include <QFileDialog>
 #include <QFont>
@@ -297,7 +299,6 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 
       if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
-	QMap<int, double> totals; // col, current value
 	QStringList knownroles;
 	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
 		   << "qtbackgroundrole"   << "qtforegroundrole"
@@ -316,8 +317,10 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	    {
 	      role->insert(knownroles.at(k),
 			   QString(colname + "_" + knownroles.at(k)));
-	      if (knownroles.at(k) == "xttotalrole")
-		totals.insert(wcol, 0.0);
+              if (knownroles.at(k) == "xtrunningrole")
+                headerItem()->setData(wcol, Qt::UserRole, "xtrunningrole");
+              else if (knownroles.at(k) == "xttotalrole")
+                headerItem()->setData(wcol, Qt::UserRole, "xttotalrole");
 	    }
 	  }
 	}
@@ -335,13 +338,14 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	  for (int col = 0; col < _roles.size(); col++)
 	  {
 	    QVariantMap *role = _roles.value(col);
-            QVariantMap *userrole = new QVariantMap();
+            QVariantMap userrole;
             QVariant    rawValue = pQuery.value(role->value("qteditrole").toString());
 
-            userrole->insert("raw", rawValue);
+            userrole.insert("raw", rawValue);
 
             // TODO: this isn't necessary for all columns so do less often?
             int scale = getDecimalPlaces(pQuery.value(role->value("xtnumericrole").toString()).toString());
+            userrole.insert("scale", scale);
 
 	    if (role->contains("qtdisplayrole"))
 	      last->setData(col, Qt::DisplayRole,
@@ -389,38 +393,12 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 
 	    if (role->contains("xtrunninginit") &&
 		! pQuery.value(role->value("xtrunninginit").toString()).isNull() )
-	    {
-	      headerItem()->setData(col, Qt::UserRole, 
-				    pQuery.value(role->value("xtrunninginit").toString()));
-	    }
+              userrole.insert("runninginit",
+                               pQuery.value(role->value("xtrunninginit").toString()));
 
 	    if (role->contains("xtrunningrole"))
-	    {
-	      int runningset = pQuery.value(role->value("xtrunningrole").toString()).toInt();
-              userrole->insert("runningset", runningset);
-              double subtotal = rawValue.toDouble();
-
-	      // look for the previous item in this set
-	      QTreeWidgetItem *prev = 0;
-	      for (prev = itemAbove(last); prev; prev = itemAbove(prev))
-              {
-                if (prev->data(col, Qt::UserRole).type() == QVariant::Map &&
-                    prev->data(col, Qt::UserRole).toMap().contains("runningset") &&
-                    prev->data(col, Qt::UserRole).toMap()["runningset"].toInt() == runningset)
-		break;
-              }
-	      if (prev)
-                subtotal += prev->data(col, Qt::UserRole).toMap()["subtotal"].toDouble();
-              else
-                subtotal += headerItem()->data(col, Qt::UserRole).toDouble();
-
-              last->setData(col, Qt::DisplayRole,
-                            QLocale().toString(subtotal, 'f', scale));
-              userrole->insert("subtotal", subtotal);
-	    }
-
-	    if (role->contains("xttotalrole"))
-	      totals.insert(col, totals.value(col) + rawValue.toDouble());
+              userrole.insert("runningset",
+                              pQuery.value(role->value("xtrunningrole").toString()).toInt());
 
 	    /*
 	    if (role->contains("xtkeyrole"))
@@ -432,12 +410,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
             last->setData(col, Qt::UserRole, userrole);
 	  }
 	} while (pQuery.next());
-	if (totals.size() > 0)
-	{
-	  last = new XTreeWidgetItem(this, last, -1, -1, tr("Totals"));
-	  for (QMap<int, double>::iterator i = totals.begin(); i != totals.end(); i++)
-	    last->setData(i.key(), Qt::DisplayRole, i.value());
-	}
+        populateCalculatedColumns();
       }
       else // assume xtreewidget columns are defined 1-to-1 with query columns
       {
@@ -534,7 +507,11 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
   setColumnCount(column + 1);
 
   QTreeWidgetItem * hitem = headerItem();
+#ifdef Q_WS_MAC       // bug 6117
+  hitem->setText(column, QString(pString).replace(QRegExp("\\s+"), " "));
+#else
   hitem->setText(column, pString);
+#endif
   hitem->setTextAlignment(column, pAlignment);
 
   if (! pEditColumn.isEmpty())
@@ -560,6 +537,143 @@ void XTreeWidget::addColumn(const QString & pString, int pWidth, int pAlignment,
     _stretch.append(column);
   }
   setColumnVisible(column, _savedVisibleColumns.value(column, pVisible));
+}
+
+bool XTreeWidget::itemAsc(const QVariant &v1, const QVariant &v2)
+{
+  bool returnVal = false;
+
+  switch (v1.type())
+  {
+    case QVariant::Bool:
+      returnVal = (! v1.toBool() && v1 != v2);
+      break;
+    case QVariant::Date:
+      returnVal = (v1.toDate() < v2.toDate());
+      break;
+    case QVariant::DateTime:
+      returnVal = (v1.toDateTime() < v2.toDateTime());
+      break;
+    case QVariant::Double:
+      returnVal = (v1.toDouble() < v2.toDouble());
+      break;
+    case QVariant::Int:
+      returnVal = (v1.toInt() < v2.toInt());
+      break;
+    case QVariant::LongLong:
+      returnVal = (v1.toLongLong() < v2.toLongLong());
+      break;
+    case QVariant::String:
+      if (v1.toString().toDouble() == 0.0 && v2.toDouble() == 0.0)
+        returnVal = (v1.toString() < v2.toString());
+      else
+        returnVal = (v1.toDouble() < v2.toDouble());
+      break;
+    default:            returnVal = false;
+  }
+
+  return returnVal;
+}
+
+bool XTreeWidget::itemDesc(const QVariant &v1, const QVariant &v2)
+{
+  return !itemAsc(v1, v2);
+}
+
+void XTreeWidget::sortItems(int column, Qt::SortOrder order)
+{
+  // if old style then maintain backwards compatibility
+  if (_roles.size() <= 0)
+  {
+    QTreeWidget::sortItems(column, order);
+    return;
+  }
+
+  if (column < 0 || column >= columnCount() ||
+      headerItem()->data(column, Qt::UserRole).toString() == "xtrunningrole")
+    return;
+
+  header()->setSortIndicator(column, order);
+
+  // remove the top level items from the XTreeWidget
+  QList<QTreeWidgetItem*> itemlist;
+  while (topLevelItem(0))
+    if (topLevelItem(0)->data(0, Qt::UserRole).toString() == "totalrole")
+      takeTopLevelItem(0);
+    else
+      itemlist.append(takeTopLevelItem(0));
+
+  // grab the column of data we want to sort on
+  QList<QVariant> rawlist;
+  for (int i = 0; i < itemlist.size(); i++)
+    rawlist.append(itemlist.at(i)->data(column, Qt::UserRole).toMap()["raw"]);
+
+  // sort the data
+  if (order == Qt::AscendingOrder)
+    qStableSort(rawlist.begin(), rawlist.end(), itemAsc);
+  else if (order == Qt::DescendingOrder)
+    qStableSort(rawlist.begin(), rawlist.end(), itemDesc);
+
+  // and re-insert the rows in order
+  for (int i = 0; i < rawlist.size(); i++)
+  {
+    for (int j = 0; j < itemlist.size(); j++)
+      if (itemlist.at(j)->data(column, Qt::UserRole).toMap()["raw"] == rawlist.at(i))
+        addTopLevelItem(itemlist.takeAt(j));
+  }
+
+  populateCalculatedColumns();
+}
+
+void XTreeWidget::populateCalculatedColumns()
+{
+  QMap<int, double> totals; // col, current value
+  for (int col = 0; col < topLevelItem(0)->columnCount(); col++)
+  {
+    qDebug("anything to do for column %d?", col);
+    if (headerItem()->data(col, Qt::UserRole).toString() == "xtrunningrole")
+    {
+      QMap<int, double> subtotals;
+      for (int row = 0; row < topLevelItemCount(); row++)
+      {
+        qDebug("running %d, row %d", col, row);
+        QVariantMap role = topLevelItem(row)->data(col, Qt::UserRole).toMap();
+        if (role.contains("runningset"))
+        {
+          int set = role.value("runningset").toInt();
+          if (! subtotals.contains(set))
+            subtotals[set] = role.value("runninginit").toDouble();
+          subtotals[set] += role.value("raw").toDouble();
+          topLevelItem(row)->setData(col, Qt::DisplayRole,
+                                    QLocale().toString(subtotals[set], 'f',
+                                                       role.value("scale").toDouble()));
+        }
+      }
+    }
+    else if (headerItem()->data(col, Qt::UserRole).toString() == "xttotalrole")
+    {
+      totals.insert(col, 0.0);
+      for (int row = 0; row < topLevelItemCount(); row++)
+      {
+        qDebug("total %d, row %d", col, row);
+        totals.insert(col, totals.value(col) +
+                           topLevelItem(row)->data(col, Qt::UserRole).toMap()["raw"].toDouble());
+      }
+    }
+  }
+  qDebug("about to create totals row");
+  if (totals.size() > 0)
+  {
+    XTreeWidgetItem *last = new XTreeWidgetItem(this, -1, -1, tr("Totals"));
+    last->setData(0, Qt::UserRole, "totalrole");
+    QMapIterator<int, double> it(totals);
+    while (it.hasNext())
+    {
+      qDebug("setting total for %d", it.key());
+      it.next();
+      last->setData(it.key(), Qt::DisplayRole, it.value());
+    }
+  }
 }
 
 int XTreeWidget::id() const

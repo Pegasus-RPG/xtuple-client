@@ -187,7 +187,6 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void populate(const QString &, bool = FALSE);
     void populate(const QString &, int, bool = FALSE);
 
-    void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
 
     QString dragString() const;
     void setDragString(QString);
@@ -195,8 +194,6 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     void setAltDragString(QString);
 
     void clear();
-    //void closeAll();
-    //void openAll();
 
     int  id() const;
     int  altId() const;
@@ -212,8 +209,15 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 
+    virtual void sortItems(int, Qt::SortOrder);
+    static  bool itemAsc(const QVariant &, const QVariant &);
+    static  bool itemDesc(const QVariant &, const QVariant &);
+
     static int    getDecimalPlaces(QString);
     static QColor getNamedColor(QString);
+
+  public slots:
+    void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
 
   signals:
     void  valid(bool);
@@ -224,6 +228,7 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
 
   protected slots:
     void sHeaderClicked(int);
+    void populateCalculatedColumns();
 
   protected:
     QPoint dragStartPosition;
