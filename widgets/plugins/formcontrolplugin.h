@@ -63,25 +63,25 @@
 #include <QDesignerCustomWidgetInterface>
 #include <QtPlugin>
 
-class FormControlPlugin : public QObject, public QDesignerCustomWidgetInterface
+class formControlPlugin : public QObject, public QDesignerCustomWidgetInterface
 {
     Q_OBJECT
     Q_INTERFACES(QDesignerCustomWidgetInterface)
 
   public:
-    FormControlPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
+    formControlPlugin(QObject *parent = 0) : QObject(parent), initialized(false) {}
 
     bool isContainer() const { return false; }
     bool isInitialized() const { return initialized; }
     QIcon icon() const { return QIcon(); }
     QString domXml() const
     {
-      return "<widget class=\"FormControl\" name=\"formControl\">\n"
+      return "<widget class=\"formControl\" name=\"formControl\">\n"
              "</widget>\n";
     }
     QString group() const { return "OpenMFG Custom Widgets"; }
     QString includeFile() const { return "formcontrol.h"; }
-    QString name() const { return "FormControl"; }
+    QString name() const { return "formControl"; }
     QString toolTip() const { return ""; }
     QString whatsThis() const { return ""; }
     QWidget *createWidget(QWidget *parent) { return new formControl(parent); }

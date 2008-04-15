@@ -61,6 +61,7 @@
 formControl::formControl(QWidget *parent) : 
   QWidget(parent)
 {
+  setupUi(this);
   _autoSave=false;
   _searchType=Query;
   

@@ -59,7 +59,7 @@
 #define FORMCONTROL_H
 
 #include "OpenMFGWidgets.h"
-#include "XDataWidgetMapper.h"
+#include "xdatawidgetmapper.h"
 
 #include <QWidget>
 #include <QSqlTableModel>
