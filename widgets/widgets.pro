@@ -90,6 +90,7 @@ HEADERS += \
            plugins/xtreewidgetplugin.h \
            plugins/xurllabelplugin.h \
            plugins/xtexteditplugin.h \
+	   plugins/formcontrolplugin.h\
 
 SOURCES    += OpenMFGWidgets.cpp \
               addressCluster.cpp contactCluster.cpp crmacctCluster.cpp \
@@ -128,6 +129,7 @@ SOURCES    += OpenMFGWidgets.cpp \
               revisionCluster.cpp \
 	      xdatawidgetmapper.cpp \
               xtextedit.cpp \
+	      formcontrol.cpp \
 
 HEADERS    += OpenMFGWidgets.h \
               addresscluster.h contactcluster.h crmacctcluster.h \
@@ -166,8 +168,10 @@ HEADERS    += OpenMFGWidgets.h \
               revisioncluster.h \
               xdatawidgetmapper.h \
               xtextedit.h \
+	      formcontrol.h \
 
-FORMS += accountSearch.ui
+FORMS += accountSearch.ui \
+	 formControl.ui \
 
 RESOURCES += widgets.qrc
 
