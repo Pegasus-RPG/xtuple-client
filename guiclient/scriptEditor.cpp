@@ -60,6 +60,8 @@
 #include <QMessageBox>
 #include <QSqlError>
 #include <QVariant>
+#include <QFileDialog>
+#include <QTextStream>
 
 scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -67,6 +69,8 @@ scriptEditor::scriptEditor(QWidget* parent, const char* name, bool modal, Qt::WF
   setupUi(this);
 
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
+  connect(_import, SIGNAL(clicked()), this, SLOT(sImport()));
+  connect(_export, SIGNAL(clicked()), this, SLOT(sExport()));
 }
 
 scriptEditor::~scriptEditor()
@@ -203,3 +207,44 @@ void scriptEditor::populate()
     return;
   }
 }
+
+void scriptEditor::sImport()
+{
+  QString filename = QFileDialog::getOpenFileName(this, tr("Open File"), QString::null, tr("Script (*.script)"));
+  if(filename.isNull())
+    return;
+
+  QFile file(filename);
+  if(!file.open(QIODevice::ReadOnly | QIODevice::Text))
+  {
+    QMessageBox::critical(this, tr("Could not import file"), file.errorString());
+    return;
+  }
+  QTextStream ts(&file);
+  _source->setText(ts.readAll());
+  file.close();
+}
+
+void scriptEditor::sExport()
+{
+  QString filename = QFileDialog::getSaveFileName( this, tr("Save File"), QString::null, tr("Script (*.script)"));
+  if(filename.isNull())
+    return;
+
+  QFileInfo fi(filename);
+  if(fi.suffix().isEmpty())
+    filename += ".script";
+
+  QFile file(filename);
+  if(!file.open(QIODevice::WriteOnly))
+  {
+    QMessageBox::critical(this, tr("Could not export file"), file.errorString());
+    return;
+  }
+
+  QTextStream ts(&file);
+  ts.setCodec("UTF-8");
+  ts << _source->text();
+  file.close();
+}
+

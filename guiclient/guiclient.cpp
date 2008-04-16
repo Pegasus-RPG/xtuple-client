@@ -1131,6 +1131,7 @@ void GUIClient::sCustomCommand()
         QVBoxLayout *layout = new QVBoxLayout;
         layout->addWidget(ui);
         dlg.setLayout(layout);
+        dlg.setWindowTitle(ui->windowTitle());
         dlg.exec();
       }
       else
@@ -1138,6 +1139,7 @@ void GUIClient::sCustomCommand()
         XMainWindow * wnd = new XMainWindow();
         wnd->setObjectName(q.value("uiform_name").toString());
         wnd->setCentralWidget(ui);
+        wnd->setWindowTitle(ui->windowTitle());
         handleNewWindow(wnd);
       }
     }

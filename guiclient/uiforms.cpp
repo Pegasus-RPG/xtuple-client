@@ -180,6 +180,7 @@ void uiforms::sTest()
     return;
   }
   QWidget *ui = loader.load(&uiFile);
+  wnd->setWindowTitle(ui->windowTitle());
   uiFile.close();
   wnd->setCentralWidget(ui);
 
