@@ -448,6 +448,8 @@ void BOM::sFillList(int pItemid, bool)
                  "       <? value(\"always\") ?> AS effective_xtnullrole,"
                  "       <? value(\"never\") ?>  AS expires_xtnullrole,"
                  "       CASE WHEN (bomitem_configtype<>'N') THEN 'emphasis'"
+                 "            WHEN (bomitem_expires < CURRENT_DATE) THEN 'expired'"
+                 "            WHEN (bomitem_effective >= CURRENT_DATE) THEN 'future'"
                  "       END AS qtforegroundrole "
                  "FROM bomitem(<? value(\"item_id\") ?>,"
                  "             <? value(\"revision_id\") ?>), item, uom "
