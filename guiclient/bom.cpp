@@ -64,6 +64,7 @@
 #include <QVariant>
 #include <QSqlError>
 
+#include <metasql.h>
 #include <openreports.h>
 
 #include "bomItem.h"
@@ -93,15 +94,15 @@ BOM::BOM(QWidget* parent, const char* name, Qt::WFlags fl)
   _item->setType(ItemLineEdit::cGeneralManufactured | ItemLineEdit::cGeneralPurchased | ItemLineEdit::cPlanning | ItemLineEdit::cJob);
   _batchSize->setValidator(omfgThis->qtyVal());
   
-  _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft   );
-  _bomitem->addColumn(tr("Issue UOM"),    _uomColumn,   Qt::AlignCenter );
-  _bomitem->addColumn(tr("Issue Method"), _itemColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Qty. Per"),     _qtyColumn,   Qt::AlignRight  );
-  _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight  );
-  _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter );
-  _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter );
+  _bomitem->addColumn(tr("#"),            _seqColumn,   Qt::AlignCenter, true, "bomitem_seqnumber");
+  _bomitem->addColumn(tr("Item Number"),  _itemColumn,  Qt::AlignLeft,   true, "item_number");
+  _bomitem->addColumn(tr("Description"),  -1,           Qt::AlignLeft,   true, "item_description");
+  _bomitem->addColumn(tr("Issue UOM"),    _uomColumn,   Qt::AlignCenter, true, "issueuom");
+  _bomitem->addColumn(tr("Issue Method"), _itemColumn,  Qt::AlignCenter, true, "issuemethod");
+  _bomitem->addColumn(tr("Qty. Per"),     _qtyColumn,   Qt::AlignRight,  true, "bomitem_qtyper" );
+  _bomitem->addColumn(tr("Scrap %"),      _prcntColumn, Qt::AlignRight,  true, "bomitem_scrap" );
+  _bomitem->addColumn(tr("Effective"),    _dateColumn,  Qt::AlignCenter, true, "effective");
+  _bomitem->addColumn(tr("Expires"),      _dateColumn,  Qt::AlignCenter, true, "expires");
   _bomitem->setDragString("bomid=");
   _bomitem->setAltDragString("itemid=");
   
@@ -244,18 +245,36 @@ void BOM::sSave()
   close();
 }
 
+bool BOM::setParams(ParameterList &pParams)
+{
+  pParams.append("item_id",     _item->id());
+  pParams.append("revision_id", _revision->id());
+  pParams.append("push",        tr("Push"));
+  pParams.append("pull",        tr("Pull"));
+  pParams.append("mixed",       tr("Mixed"));
+  pParams.append("error",       tr("Error"));
+  pParams.append("always",      tr("Always"));
+  pParams.append("never",       tr("Never"));
+
+  if (_showExpired->isChecked())
+  {
+    pParams.append("showExpired");
+    pParams.append("expiredDays", 999);
+  }
+  
+  if (_showFuture->isChecked())
+  {
+    pParams.append("showFuture");
+    pParams.append("futureDays", 999);
+  }
+  
+  return true;
+}
+
 void BOM::sPrint()
 {
   ParameterList params;
-  params.append("item_id", _item->id());
-  params.append("revision_id", _revision->id());
-
-  if (_showExpired->isChecked())
-    params.append("expiredDays", 999);
-  
-  if (_showFuture->isChecked())
-    params.append("futureDays", 999);
-  
+  setParams(params);
   orReport report("SingleLevelBOM", params);
   if (report.isValid())
     report.print();
@@ -412,92 +431,66 @@ void BOM::sFillList(int pItemid, bool)
       _batchSize->clear();
     }
     
-    QString sql( "SELECT bomitem_id, item_id, bomitem_seqnumber,"
-                 "       item_number, (item_descrip1 || ' ' || item_descrip2) AS item_description,"
+    QString sql( "SELECT bomitem_id, item_id, *,"
+                 "       (item_descrip1 || ' ' || item_descrip2) AS item_description,"
                  "       uom_name AS issueuom,"
-                 "       CASE WHEN (bomitem_issuemethod = 'S') THEN :push"
-                 "            WHEN (bomitem_issuemethod = 'L') THEN :pull"
-                 "            WHEN (bomitem_issuemethod = 'M') THEN :mixed"
-                 "            ELSE :error"
+                 "       CASE WHEN (bomitem_issuemethod = 'S') THEN <? value(\"push\") ?>"
+                 "            WHEN (bomitem_issuemethod = 'L') THEN <? value(\"pull\") ?>"
+                 "            WHEN (bomitem_issuemethod = 'M') THEN <? value(\"mixed\") ?>"
+                 "            ELSE <? value(\"error\") ?>"
                  "       END AS issuemethod,"
-                 "       formatQtyPer(bomitem_qtyper) AS f_qtyper,"
-                 "       formatScrap(bomitem_scrap) AS f_scrap,"
-                 "       formatDate(bomitem_effective, :always) AS f_effective,"
-                 "       formatDate(bomitem_expires, :never) AS f_expires,"
-                 "       (bomitem_configtype<>'N') AS config "
-				 "FROM bomitem(:item_id,:revision_id), item, uom "
+                 "       'qtyper' AS bomitem_qtyper_xtnumericrole,"
+                 "       'percent' AS bomitem_scrap_xtnumericrole,"
+                 "       CASE WHEN (bomitem_effective = startOfTime()) THEN NULL "
+                 "            ELSE bomitem_effective END AS effective,"
+                 "       CASE WHEN (bomitem_expires = endOfTime()) THEN NULL "
+                 "            ELSE bomitem_expires END AS expires,"
+                 "       <? value(\"always\") ?> AS effective_xtnullrole,"
+                 "       <? value(\"never\") ?>  AS expires_xtnullrole,"
+                 "       CASE WHEN (bomitem_configtype<>'N') THEN 'emphasis'"
+                 "       END AS qtforegroundrole "
+                 "FROM bomitem(<? value(\"item_id\") ?>,"
+                 "             <? value(\"revision_id\") ?>), item, uom "
                  "WHERE ((bomitem_item_id=item_id)"
-                 " AND (bomitem_uom_id=uom_id)" );
+                 " AND (bomitem_uom_id=uom_id)"
+                 "<? if not exists(\"showExpired\") ?>"
+                 " AND (bomitem_expires > CURRENT_DATE)"
+                 "<? endif ?>"
+                 "<? if not exists(\"showFuture\") ?>"
+                 " AND (bomitem_effective <= CURRENT_DATE)"
+                 "<? endif ?>"
+                 ") "
+                 "ORDER BY bomitem_seqnumber, bomitem_effective;"
+                 );
+    ParameterList params;
+    setParams(params);
+    MetaSQLQuery mql(sql);
+    q = mql.toQuery(params);
     
-    if (!_showExpired->isChecked())
-      sql += " AND (bomitem_expires > CURRENT_DATE)";
-    
-    if (!_showFuture->isChecked())
-      sql += " AND (bomitem_effective <= CURRENT_DATE)";
-    
-    sql += ") "
-           "ORDER BY bomitem_seqnumber, bomitem_effective";
-    
-    int bomitemid = _bomitem->id();
-    _bomitem->clear();
-    
-    XTreeWidgetItem *selected = 0;
-    
-    q.prepare(sql);
-    q.bindValue(":push", tr("Push"));
-    q.bindValue(":pull", tr("Pull"));
-    q.bindValue(":mixed", tr("Mixed"));
-    q.bindValue(":error", tr("Error"));
-    q.bindValue(":always", tr("Always"));
-    q.bindValue(":never", tr("Never"));
-    q.bindValue(":item_id", _item->id());
-	q.bindValue(":revision_id", _revision->id());
-    q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
+    _bomitem->populate(q);
+    if (q.lastError().type() != QSqlError::None)
     {
-      last = new XTreeWidgetItem(_bomitem, last,
-				 q.value("bomitem_id").toInt(),
-				 q.value("item_id").toInt(),
-				 q.value("bomitem_seqnumber"),
-				 q.value("item_number"),
-				 q.value("item_description"),
-				 q.value("issueuom"),
-				 q.value("issuemethod"), q.value("f_qtyper"),
-				 q.value("f_scrap"), q.value("f_effective"),
-				 q.value("f_expires") );
-      if (q.value("config").toBool())
-        last->setTextColor("blue");
-      
-      if (q.value("bomitem_id").toInt() == bomitemid)
-        selected = last;
-    }
-    
-    if (selected)
-    {
-      _bomitem->setCurrentItem(selected);
-      _bomitem->scrollToItem(selected);
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
     
     sql = "SELECT item_picklist,"
           "       COUNT(*) AS total,"
           "       COALESCE(SUM(bomitem_qtyper * (1 + bomitem_scrap))) AS qtyper "
-		  "FROM bomitem(:item_id,:revision_id), item "
-          "WHERE ( (bomitem_item_id=item_id)";
+          "FROM bomitem(<? value(\"item_id\") ?>,"
+          "             <? value(\"revision_id\") ?>), item "
+          "WHERE ( (bomitem_item_id=item_id)"
+          "<? if not exists(\"showExpired\") ?>"
+          " AND (bomitem_expires > CURRENT_DATE)"
+          "<? endif ?>"
+          "<? if not exists(\"showFuture\") ?>"
+          " AND (bomitem_effective <= CURRENT_DATE)"
+          "<? endif ?>"
+          " ) "
+          "GROUP BY item_picklist;";
+    MetaSQLQuery picklistmql(sql);
+    q = picklistmql.toQuery(params);
     
-    if (!_showExpired->isChecked())
-      sql += " AND (bomitem_expires > CURRENT_DATE)";
-    
-    if (!_showFuture->isChecked())
-      sql += " AND (bomitem_effective <= CURRENT_DATE)";
-    
-    sql += " ) "
-           "GROUP BY item_picklist;";
-    
-    q.prepare(sql);
-    q.bindValue(":item_id", _item->id());
-	q.bindValue(":revision_id", _revision->id());
-    q.exec();
     bool   foundPick    = FALSE;
     bool   foundNonPick = FALSE;
     int    totalNumber  = 0;
@@ -520,6 +513,11 @@ void BOM::sFillList(int pItemid, bool)
         _nonPickQtyPer->setText(formatQtyPer(q.value("qtyper").toDouble()));
       }
     }
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
     
     if (!foundPick)
     {
@@ -530,7 +528,7 @@ void BOM::sFillList(int pItemid, bool)
     if (!foundNonPick)
     {
       _nonPickNumber->setText("0");
-      _nonPickQtyPer->setText(formatQty(0.0));
+      _nonPickQtyPer->setText(formatQtyPer(0.0));
     }
     
     _totalNumber->setText(QString("%1").arg(totalNumber));
@@ -542,28 +540,30 @@ void BOM::sFillList(int pItemid, bool)
       sql = "SELECT formatCost(p.item_maxcost) AS f_maxcost,"
             "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * stdCost(c.item_id)))) AS f_stdcost,"
             "       formatCost(COALESCE(SUM(itemuomtouom(bomitem_item_id, bomitem_uom_id, NULL, bomitem_qtyper * (1 + bomitem_scrap)) * ROUND(actCost(c.item_id),4)))) AS f_actcost "
-			"FROM bomitem(:item_id,:revision_id), item AS c, item AS p "
+            "FROM bomitem(<? value(\"item_id\") ?>,"
+            "             <? value(\"revision_id\") ?>), item AS c, item AS p "
             "WHERE ( (bomitem_item_id=c.item_id)"
-            " AND (p.item_id=:item_id)";
-      
-      if (!_showExpired->isChecked())
-        sql += " AND (bomitem_expires > CURRENT_DATE)";
-      
-      if (!_showFuture->isChecked())
-        sql += " AND (bomitem_effective <= CURRENT_DATE)";
-      
-      sql += " ) "
-             "GROUP BY p.item_maxcost;";
-      
-      q.prepare(sql);
-      q.bindValue(":item_id", _item->id());
-      q.bindValue(":revision_id", _revision->id());
-      q.exec();
+            " AND (p.item_id=<? value(\"item_id\") ?>)"
+            "<? if not exists(\"showExpired\") ?>"
+            " AND (bomitem_expires > CURRENT_DATE)"
+            "<? endif ?>"
+            "<? if not exists(\"showFuture\") ?>"
+            " AND (bomitem_effective <= CURRENT_DATE)"
+            "<? endif ?>"
+            " ) "
+            "GROUP BY p.item_maxcost;";
+      MetaSQLQuery costsmql(sql);
+      q = costsmql.toQuery(params);
       if (q.first())
       {
         _currentStdCost->setText(q.value("f_stdcost").toString());
         _currentActCost->setText(q.value("f_actcost").toString());
         _maxCost->setText(q.value("f_maxcost").toString());
+      }
+      if (q.lastError().type() != QSqlError::None)
+      {
+        systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+        return;
       }
     }
   }

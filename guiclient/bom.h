@@ -74,6 +74,7 @@ public:
 
 public slots:
     virtual SetResponse set( const ParameterList & pParams );
+    virtual bool setParams(ParameterList &pParams);
     virtual void sSave();
     virtual void sPrint();
     virtual void sPopulateMenu( QMenu * menuThis );

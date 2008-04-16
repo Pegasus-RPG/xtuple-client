@@ -213,9 +213,6 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     static  bool itemAsc(const QVariant &, const QVariant &);
     static  bool itemDesc(const QVariant &, const QVariant &);
 
-    static int    getDecimalPlaces(QString);
-    static QColor getNamedColor(QString);
-
   public slots:
     void addColumn(const QString &, int, int, bool = true, const QString = QString(), const QString = QString());
 
