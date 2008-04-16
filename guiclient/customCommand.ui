@@ -6,61 +6,17 @@
     <x>0</x>
     <y>0</y>
     <width>447</width>
-    <height>324</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="windowTitle" >
    <string>Custom Command</string>
   </property>
   <layout class="QVBoxLayout" >
-   <property name="margin" >
-    <number>5</number>
-   </property>
-   <property name="spacing" >
-    <number>5</number>
-   </property>
    <item>
     <layout class="QHBoxLayout" >
-     <property name="margin" >
-      <number>0</number>
-     </property>
-     <property name="spacing" >
-      <number>5</number>
-     </property>
      <item>
       <layout class="QGridLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
-       <property name="spacing" >
-        <number>5</number>
-       </property>
-       <item row="3" column="1" >
-        <widget class="QLineEdit" name="_executable" />
-       </item>
-       <item row="2" column="0" >
-        <widget class="QLabel" name="_privnameLit" >
-         <property name="text" >
-          <string>Priv. Name:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1" >
-        <widget class="QLineEdit" name="_title" />
-       </item>
-       <item row="1" column="0" >
-        <widget class="QLabel" name="_titleLit" >
-         <property name="text" >
-          <string>Menu Label:</string>
-         </property>
-         <property name="alignment" >
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
        <item row="0" column="0" >
         <widget class="QLabel" name="_moduleLit" >
          <property name="text" >
@@ -69,14 +25,26 @@
          <property name="alignment" >
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
+         <property name="buddy" >
+          <cstring>_module</cstring>
+         </property>
         </widget>
        </item>
        <item row="0" column="1" >
         <layout class="QHBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
@@ -176,7 +144,59 @@
          </item>
         </layout>
        </item>
+       <item row="1" column="0" >
+        <widget class="QLabel" name="_titleLit" >
+         <property name="text" >
+          <string>Menu Label:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_title</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1" >
+        <widget class="QLineEdit" name="_title" />
+       </item>
+       <item row="2" column="0" >
+        <widget class="QLabel" name="_privnameLit" >
+         <property name="text" >
+          <string>Priv. Name:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_privname</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1" >
+        <widget class="QLineEdit" name="_privname" />
+       </item>
        <item row="3" column="0" >
+        <widget class="QLabel" name="_nameLit" >
+         <property name="text" >
+          <string>Action Name:</string>
+         </property>
+         <property name="alignment" >
+          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+         </property>
+         <property name="buddy" >
+          <cstring>_name</cstring>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1" >
+        <widget class="QLineEdit" name="_name" >
+         <property name="text" >
+          <string/>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0" >
         <widget class="QLabel" name="_executableLit" >
          <property name="text" >
           <string>Executable:</string>
@@ -184,28 +204,49 @@
          <property name="alignment" >
           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
          </property>
+         <property name="buddy" >
+          <cstring>_executable</cstring>
+         </property>
         </widget>
        </item>
-       <item row="2" column="1" >
-        <widget class="QLineEdit" name="_privname" />
+       <item row="4" column="1" >
+        <widget class="QLineEdit" name="_executable" />
        </item>
       </layout>
      </item>
      <item>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
+       <property name="spacing" >
         <number>0</number>
        </property>
-       <property name="spacing" >
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
         <number>0</number>
        </property>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
-          <number>0</number>
-         </property>
          <property name="spacing" >
           <number>5</number>
+         </property>
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
+          <number>0</number>
          </property>
          <item>
           <widget class="QPushButton" name="_close" >
@@ -251,16 +292,28 @@
    </item>
    <item>
     <widget class="QTabWidget" name="_tab" >
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
      <widget class="QWidget" name="descrip" >
       <attribute name="title" >
        <string>Description</string>
       </attribute>
       <layout class="QVBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="QTextEdit" name="_description" />
@@ -272,30 +325,57 @@
        <string>Arguments</string>
       </attribute>
       <layout class="QHBoxLayout" >
-       <property name="margin" >
-        <number>0</number>
-       </property>
        <property name="spacing" >
         <number>5</number>
+       </property>
+       <property name="leftMargin" >
+        <number>0</number>
+       </property>
+       <property name="topMargin" >
+        <number>0</number>
+       </property>
+       <property name="rightMargin" >
+        <number>0</number>
+       </property>
+       <property name="bottomMargin" >
+        <number>0</number>
        </property>
        <item>
         <widget class="XTreeWidget" name="_arguments" />
        </item>
        <item>
         <layout class="QVBoxLayout" >
-         <property name="margin" >
+         <property name="spacing" >
           <number>0</number>
          </property>
-         <property name="spacing" >
+         <property name="leftMargin" >
+          <number>0</number>
+         </property>
+         <property name="topMargin" >
+          <number>0</number>
+         </property>
+         <property name="rightMargin" >
+          <number>0</number>
+         </property>
+         <property name="bottomMargin" >
           <number>0</number>
          </property>
          <item>
           <layout class="QVBoxLayout" >
-           <property name="margin" >
-            <number>0</number>
-           </property>
            <property name="spacing" >
             <number>5</number>
+           </property>
+           <property name="leftMargin" >
+            <number>0</number>
+           </property>
+           <property name="topMargin" >
+            <number>0</number>
+           </property>
+           <property name="rightMargin" >
+            <number>0</number>
+           </property>
+           <property name="bottomMargin" >
+            <number>0</number>
            </property>
            <item>
             <widget class="QPushButton" name="_new" >
@@ -363,8 +443,8 @@
   <tabstop>_module</tabstop>
   <tabstop>_title</tabstop>
   <tabstop>_privname</tabstop>
+  <tabstop>_name</tabstop>
   <tabstop>_executable</tabstop>
-  <tabstop>_description</tabstop>
   <tabstop>_tab</tabstop>
   <tabstop>_arguments</tabstop>
   <tabstop>_new</tabstop>
@@ -372,8 +452,8 @@
   <tabstop>_delete</tabstop>
   <tabstop>_accept</tabstop>
   <tabstop>_close</tabstop>
+  <tabstop>_description</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>

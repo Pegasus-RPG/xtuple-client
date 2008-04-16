@@ -172,14 +172,15 @@ void customCommand::sSave()
   if(cNew == _mode)
     q.prepare("INSERT INTO cmd"
               "      (cmd_id, cmd_module, cmd_title, cmd_privname,"
-              "       cmd_descrip, cmd_executable) "
+              "       cmd_name, cmd_descrip, cmd_executable) "
               "VALUES(:cmd_id, :cmd_module, :cmd_title, :cmd_privname,"
-              "       :cmd_descrip, :cmd_executable);");
+              "       :cmd_name, :cmd_descrip, :cmd_executable);");
   else if(cEdit == _mode)
     q.prepare("UPDATE cmd"
               "   SET cmd_module=:cmd_module,"
               "       cmd_title=:cmd_title,"
               "       cmd_privname=:cmd_privname,"
+              "       cmd_name=:cmd_name,"
               "       cmd_descrip=:cmd_descrip,"
               "       cmd_executable=:cmd_executable "
               " WHERE (cmd_id=:cmd_id);");
@@ -188,6 +189,8 @@ void customCommand::sSave()
   q.bindValue(":cmd_module", _module->currentText());
   q.bindValue(":cmd_title", _title->text());
   q.bindValue(":cmd_privname", _privname->text());
+  if(!_name->text().isEmpty())
+    q.bindValue(":cmd_name", _name->text());
   q.bindValue(":cmd_descrip", _description->text());
   q.bindValue(":cmd_executable", _executable->text());
   if(!q.exec())

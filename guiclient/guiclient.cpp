@@ -996,7 +996,8 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
 {
   QMenu *customMenu = 0;
   XSqlQuery qry;
-  qry.prepare("SELECT cmd_id, cmd_title, cmd_privname"
+  qry.prepare("SELECT cmd_id, cmd_title, cmd_privname,"
+              "       COALESCE(cmd_name, cmd_title) AS cmd_name"
               "  FROM cmd"
               " WHERE (cmd_module=:module)"
               " ORDER BY cmd_title, cmd_id; ");
@@ -1012,7 +1013,7 @@ void GUIClient::populateCustomMenu(QMenu * menu, const QString & module)
     if(!privname.isEmpty())
       allowed = _privileges->check("Custom"+privname);
 
-    Action * action = new Action( this, QString("custom.")+qry.value("cmd_title").toString(), qry.value("cmd_title").toString(),
+    Action * action = new Action( this, QString("custom.")+qry.value("cmd_name").toString(), qry.value("cmd_title").toString(),
       this, SLOT(sCustomCommand()), customMenu, allowed);
 
     _customCommands.insert(action, qry.value("cmd_id").toInt());
