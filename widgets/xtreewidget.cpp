@@ -251,16 +251,20 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
                     nullValue :
                     pQuery.value(role->value("qtdisplayrole").toString()));
             else if (role->contains("xtnumericrole") &&
-                     role->value("xtnumericrole").toString() == "percent")
+                     pQuery.value(role->value("xtnumericrole").toString()).toString() == "percent")
+            {
 	      last->setData(col, Qt::DisplayRole,
                             rawValue.isNull() ?  nullValue :
                             QLocale().toString(rawValue.toDouble() * 100.0,
                                                'f', scale));
+            }
             else if (rawValue.type() == QVariant::Double ||
                      role->contains("xtnumericrole"))
+            {
 	      last->setData(col, Qt::DisplayRole,
                             rawValue.isNull() ? nullValue :
                             QLocale().toString(rawValue.toDouble(), 'f', scale));
+            }
             else
               last->setData(col, Qt::EditRole,
                             rawValue.isNull() ? nullValue : rawValue);
