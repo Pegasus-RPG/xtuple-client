@@ -64,6 +64,9 @@
 #include <QFileDialog>
 #include <QFile>
 
+#include "scriptEditor.h"
+#include "customCommand.h"
+
 uiform::uiform(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
@@ -72,6 +75,21 @@ uiform::uiform(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_import, SIGNAL(clicked()), this, SLOT(sImport()));
   connect(_export, SIGNAL(clicked()), this, SLOT(sExport()));
+  connect(_name, SIGNAL(lostFocus()), this, SLOT(sFillList()));
+  connect(_cmdNew, SIGNAL(clicked()), this, SLOT(sCmdNew()));
+  connect(_cmdEdit, SIGNAL(clicked()), this, SLOT(sCmdEdit()));
+  connect(_cmdDelete, SIGNAL(clicked()), this, SLOT(sCmdDelete()));
+  connect(_scriptNew, SIGNAL(clicked()), this, SLOT(sScriptNew()));
+  connect(_scriptEdit, SIGNAL(clicked()), this, SLOT(sScriptEdit()));
+  connect(_scriptDelete, SIGNAL(clicked()), this, SLOT(sScriptDelete()));
+
+  _script->addColumn(tr("Name"),        _itemColumn, Qt::AlignLeft );
+  _script->addColumn(tr("Description"), -1,          Qt::AlignLeft );
+  _script->addColumn(tr("Order"),       _ynColumn,   Qt::AlignCenter );
+  _script->addColumn(tr("Enabled"),     _ynColumn,   Qt::AlignCenter );
+
+  _commands->addColumn(tr("Module"), _itemColumn, Qt::AlignCenter );
+  _commands->addColumn(tr("Menu Label"), -1,     Qt::AlignLeft );
 }
 
 uiform::~uiform()
@@ -200,6 +218,8 @@ void uiform::populate()
     _enabled->setChecked(q.value("uiform_enabled").toBool());
     _source = q.value("uiform_source").toString();
     _notes->setText(q.value("uiform_notes").toString());
+
+    sFillList();
   }
   else if (q.lastError().type() != QSqlError::None)
   {
@@ -246,5 +266,101 @@ void uiform::sExport()
   ts.setCodec("UTF-8");
   ts << _source;
   file.close();
+}
+
+void uiform::sScriptNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  scriptEditor newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void uiform::sScriptEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("script_id", _script->id());
+
+  scriptEditor newdlg(this, "", TRUE);
+  newdlg.set(params);
+
+  if (newdlg.exec() != XDialog::Rejected)
+    sFillList();
+}
+
+void uiform::sScriptDelete()
+{
+  q.prepare( "DELETE FROM script "
+             "WHERE (script_id=:script_id);" );
+  q.bindValue(":script_id", _script->id());
+  q.exec();
+
+  sFillList();
+}
+
+void uiform::sCmdNew()
+{
+  ParameterList params;
+  params.append("mode", "new");
+
+  customCommand newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if(newdlg.exec() == XDialog::Accepted)
+    sFillList();
+}
+
+void uiform::sCmdEdit()
+{
+  ParameterList params;
+  params.append("mode", "edit");
+  params.append("cmd_id", _commands->id());
+
+  customCommand newdlg(this, "", TRUE);
+  newdlg.set(params);
+  if(newdlg.exec() == XDialog::Accepted)
+    sFillList();
+}
+
+void uiform::sCmdDelete()
+{
+  q.prepare("BEGIN; "
+            "DELETE FROM cmdarg WHERE (cmdarg_cmd_id=:cmd_id); "
+            "DELETE FROM cmd WHERE (cmd_id=:cmd_id); "
+            "SELECT updateCustomPrivs(); "
+            "COMMIT; ");
+  q.bindValue(":cmd_id", _commands->id());
+  if(q.exec())
+    sFillList();
+  else
+    systemError( this, tr("A System Error occurred at customCommands::%1")
+                             .arg(__LINE__) );
+}
+
+void uiform::sFillList()
+{
+  q.prepare( "SELECT script_id, script_name, script_notes,"
+             "       script_order, formatBoolYN(script_enabled)"
+             "  FROM script"
+             " WHERE(script_name=:name)"
+             " ORDER BY script_name, script_order, script_id;" );
+  q.bindValue(":name", _name->text());
+  q.exec();
+  _script->populate(q);
+
+  q.prepare("SELECT DISTINCT cmd_id, cmd_module, cmd_title"
+            "  FROM cmd JOIN cmdarg ON (cmdarg_cmd_id=cmd_id)"
+            "  WHERE((cmd_module IN ('CRM', 'Products','Inventory','Schedule','Purchase', "
+            "                        'Manufacture','CRM','Sales','Accounting','System'))"
+            "    AND (cmdarg_arg='uiform='||:name)) "
+            " ORDER BY cmd_module, cmd_title;");
+  q.bindValue(":name", _name->text());
+  q.exec();
+  _commands->populate(q);
+
 }
 

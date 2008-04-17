@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>454</width>
-    <height>150</height>
+    <width>490</width>
+    <height>391</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -241,6 +241,153 @@
      </item>
     </layout>
    </item>
+   <item>
+    <widget class="QTabWidget" name="tabWidget" >
+     <property name="sizePolicy" >
+      <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+       <horstretch>0</horstretch>
+       <verstretch>1</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="currentIndex" >
+      <number>0</number>
+     </property>
+     <widget class="QWidget" name="_scriptTab" >
+      <attribute name="title" >
+       <string>Scripts</string>
+      </attribute>
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="XTreeWidget" name="_script" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_scriptNew" >
+           <property name="text" >
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_scriptEdit" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_scriptDelete" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>77</width>
+             <height>92</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="_cmdTab" >
+      <attribute name="title" >
+       <string>Commands</string>
+      </attribute>
+      <layout class="QHBoxLayout" >
+       <item>
+        <widget class="XTreeWidget" name="_commands" >
+         <property name="sizePolicy" >
+          <sizepolicy vsizetype="Expanding" hsizetype="Expanding" >
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <layout class="QVBoxLayout" >
+         <property name="spacing" >
+          <number>0</number>
+         </property>
+         <item>
+          <widget class="QPushButton" name="_cmdNew" >
+           <property name="text" >
+            <string>&amp;New</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_cmdEdit" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Edit</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="_cmdDelete" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="text" >
+            <string>&amp;Delete</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType" >
+            <enum>QSizePolicy::Expanding</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+   </item>
   </layout>
  </widget>
  <layoutdefault spacing="6" margin="11" />
@@ -251,6 +398,11 @@
    <extends>QLineEdit</extends>
    <header>xlineedit.h</header>
   </customwidget>
+  <customwidget>
+   <class>XTreeWidget</class>
+   <extends>QTreeWidget</extends>
+   <header>xtreewidget.h</header>
+  </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>_name</tabstop>
@@ -259,6 +411,15 @@
   <tabstop>_enabled</tabstop>
   <tabstop>_import</tabstop>
   <tabstop>_export</tabstop>
+  <tabstop>_script</tabstop>
+  <tabstop>_scriptNew</tabstop>
+  <tabstop>_scriptEdit</tabstop>
+  <tabstop>_scriptDelete</tabstop>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>_commands</tabstop>
+  <tabstop>_cmdNew</tabstop>
+  <tabstop>_cmdEdit</tabstop>
+  <tabstop>_cmdDelete</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
  </tabstops>
@@ -271,12 +432,108 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>20</x>
-     <y>20</y>
+     <x>423</x>
+     <y>32</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
      <y>20</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_script</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_scriptEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>383</x>
+     <y>229</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>443</x>
+     <y>233</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_script</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_scriptDelete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>382</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>413</x>
+     <y>256</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_script</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_scriptEdit</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>376</x>
+     <y>216</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>416</x>
+     <y>218</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_commands</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_cmdEdit</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>312</x>
+     <y>228</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>445</x>
+     <y>226</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_commands</sender>
+   <signal>valid(bool)</signal>
+   <receiver>_cmdDelete</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>331</x>
+     <y>267</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>439</x>
+     <y>253</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_commands</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_cmdEdit</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>379</x>
+     <y>202</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>435</x>
+     <y>220</y>
     </hint>
    </hints>
   </connection>

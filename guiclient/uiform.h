@@ -78,6 +78,13 @@ public slots:
     virtual void populate();
     virtual void sImport();
     virtual void sExport();
+    virtual void sCmdNew();
+    virtual void sCmdEdit();
+    virtual void sCmdDelete();
+    virtual void sScriptNew();
+    virtual void sScriptEdit();
+    virtual void sScriptDelete();
+    virtual void sFillList();
 
 protected slots:
     virtual void languageChange();
