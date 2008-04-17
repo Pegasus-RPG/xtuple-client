@@ -4,8 +4,8 @@ TARGET   = xtuple
 CONFIG   += qt warn_on assistant uitools
 TEMPLATE = app
 
-INCLUDEPATH += ../common ../widgets .
-DEPENDPATH  += ../common ../widgets
+INCLUDEPATH += ../common ../widgets ../widgets/tmp/lib .
+DEPENDPATH  += ../common ../widgets ../widgets/tmp/lib
 LIBS        += -L../lib -L../$${OPENRPT_DIR}/lib -lxtuplecommon -lxtuplewidgets -lwrtembed -lcommon -lrenderer
 #LIBS        += -L../../payflowpro/win32/lib -lpfpro
 
