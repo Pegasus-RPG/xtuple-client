@@ -128,6 +128,7 @@ bool enterPoitemReceipt::correctReceipt(int pRecvid, QWidget *pParent)
         return true;
     }
   }
+  return false;
 }
 
 enum SetResponse enterPoitemReceipt::set(const ParameterList &pParams)
