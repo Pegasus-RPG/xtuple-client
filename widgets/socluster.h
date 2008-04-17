@@ -116,7 +116,8 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   Q_OBJECT
   Q_PROPERTY(QString label       READ label       WRITE setLabel);
   Q_PROPERTY(bool    readOnly    READ isReadOnly  WRITE setReadOnly);
-  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName)
+  Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString number	 READ number      WRITE setNumber);
 
   public:
     SoCluster(QWidget *, const char * = 0);

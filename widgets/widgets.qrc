@@ -1,5 +1,11 @@
-<RCC version="1.0">
-  <qresource prefix="widgets">
-    <file>images/xcheckbox.png</file>
-  </qresource>
+<RCC>
+    <qresource prefix="/widgets" >
+        <file>images/add_16.png</file>
+        <file>images/binoculars_16.png</file>
+        <file>images/diskette_16.png</file>
+        <file>images/next_16.png</file>
+        <file>images/printer_16.png</file>
+        <file>images/window_16.png</file>
+        <file>images/xcheckbox.png</file>
+    </qresource>
 </RCC>

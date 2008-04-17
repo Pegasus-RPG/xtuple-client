@@ -630,7 +630,7 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 
 void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_itemNumber, _fieldName);
+  m->addFieldMapping(this, _fieldName, QByteArray("number"));
 }
 
 void ItemCluster::setReadOnly(bool pReadOnly)

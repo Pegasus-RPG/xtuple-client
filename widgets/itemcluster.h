@@ -192,6 +192,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
+  Q_PROPERTY(QString number      READ itemNumber  WRITE setItemNumber);
   
   public:
     ItemCluster(QWidget *, const char * = 0);

@@ -64,14 +64,16 @@ formControl::formControl(QWidget *parent) :
   setupUi(this);
   _autoSave=false;
   _searchType=Query;
+  _shown=false;
   
-  connect (_new,	SIGNAL(clicked()),	this,	SLOT(new()));
+  connect (_new,	SIGNAL(clicked()),	this,	SLOT(newRow()));
   connect (_save,	SIGNAL(clicked()),	this,	SLOT(save()));
-  connect (_undo,	SIGNAL(clicked()),	this,   SLOT(undo()));
+  //connect (_undo,	SIGNAL(clicked()),	this,   SLOT(undo()));
   connect (_print,	SIGNAL(clicked()),	this,	SLOT(print()));
   connect (_prev,	SIGNAL(clicked()),	this,	SLOT(toPrevious()));
   connect (_next,	SIGNAL(clicked()),	this,	SLOT(toNext()));
   connect (_search,	SIGNAL(clicked()),	this,	SLOT(search()));
+
 }
 
 formControl::Modes formControl::mode()
@@ -87,6 +89,17 @@ formControl::SearchTypes formControl::searchType()
 void formControl::languageChange()
 {
     retranslateUi(this);
+}
+
+/* When the widget is first shown, set up table mappings if they exist*/
+void formControl::showEvent(QShowEvent *event)
+{
+  if(!_shown)
+  {
+    _shown = true;
+    setTable(_schemaName, _tableName);
+  }
+  QWidget::showEvent(event);
 }
 
 void formControl::close()
@@ -106,12 +119,14 @@ void formControl::close()
 void formControl::toNext()
 {
   _mapper.toNext();
-  _next->setEnabled(_mapper.currentIndex() == _model.rowCount()-1);
+  _prev->setEnabled(true);
+  _next->setEnabled(_mapper.currentIndex() < _model.rowCount()-1);
 }
 
 void formControl::toPrevious()
 {
   _mapper.toPrevious();
+  _next->setEnabled(true);
   _prev->setEnabled(_mapper.currentIndex());
 }
 
@@ -119,7 +134,7 @@ void formControl::newRow()
 {
   _new->setEnabled(true);
   _save->setEnabled(true);
-  _undo->setEnabled(true);
+  //_undo->setEnabled(true);
   _view->setEnabled(true);
   _print->setEnabled(true);
   _model.insertRows(_model.rowCount(),1);
@@ -182,15 +197,15 @@ void formControl::select()
   if (_model.rowCount())
   {
     _mapper.toFirst();
+    _new->setEnabled(true);
     _save->setEnabled(true);
-    _undo->setEnabled(true);
+    //_undo->setEnabled(true);
     _view->setEnabled(true);
     _next->setEnabled(_model.rowCount() > 1);
   }
   else
   {
-    _save->setEnabled(false);
-    _undo->setEnabled(false);
+    _new->setEnabled(false);
     _view->setEnabled(false);
     _next->setEnabled(false);
     _prev->setEnabled(false);
@@ -228,19 +243,41 @@ void formControl::setSearchType(SearchTypes p)
   //to do: set button to change label between list and query
 }
 
-void formControl::setTable(QString p)
+/* Pass in a schema name and a table name.  If schema name is blank, it will be ignored.
+     If there is a table name to set, data widget mappings will be set as well. */
+void formControl::setTable(QString s, QString t)
 {
-  _model.setTable(p);
-  _mapper.setSqlTableModel(&_model);
-  emit newTable(&_model);
-  _search->setEnabled(true);
-  _searchText->setEnabled(true);
+  if (t.length())
+  {
+    QString tableName="";
+    if (s.length())
+      tableName=s + ".";
+    tableName+=t;
+    if (_model.tableName() != tableName)
+    {
+      _model.setTable(tableName);
+      setDataWidgetMapper(&_model);
+      _search->setEnabled(true);
+      _searchText->setEnabled(true);
+    }
+  }
+  else
+  {
+    _search->setEnabled(false);
+    _searchText->setEnabled(false);
+  }
 }
 
+void formControl::setDataWidgetMapper(QSqlTableModel *p)
+{
+  _mapper.setSqlTableModel(&_model);
+  emit newDataWidgetMapper(&_mapper);
+}
+/*
 void formControl::undo()
 {
 }
-
+*/
 
 
 

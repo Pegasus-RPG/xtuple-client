@@ -269,7 +269,7 @@ void SoCluster::setCustId(int pCustid)
 
 void SoCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(_soNumber, _fieldName);
+  m->addFieldMapping(this, _fieldName, QByteArray("number"));
 }
 
 void SoCluster::setNumber(QString pNumber)

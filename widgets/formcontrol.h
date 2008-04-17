@@ -66,16 +66,15 @@
 
 #include "ui_formControl.h"
 
-class ParameterList;
-
 class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 {
 	Q_OBJECT
 		
 	Q_ENUMS(Modes)
 	Q_ENUMS(SearchTypes)
-		
-	Q_PROPERTY (QString 		tableName 	READ tableName 		WRITE setTable)
+	
+	Q_PROPERTY (QString		schemaName	READ schemaName		WRITE setSchemaName)
+	Q_PROPERTY (QString 		tableName 	READ tableName 		WRITE setTableName)
 	Q_PROPERTY (QString 		formReportName	READ formReportName	WRITE setFormReportName)
 	Q_PROPERTY (QString		listReportName	READ listReportName	WRITE setListReportName)
 	Q_PROPERTY (Modes		mode		READ mode		WRITE setMode)
@@ -83,18 +82,19 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 	Q_PROPERTY (bool     		newVisible	READ newVisible		WRITE setNewVisible)
 	Q_PROPERTY (bool     		printVisible	READ printVisible	WRITE setPrintVisible)
 	Q_PROPERTY (bool     		saveVisible	READ saveVisible	WRITE setSaveVisible)
-	Q_PROPERTY (bool     		undoVisible	READ undoVisible	WRITE setUndoVisible)
+	//Q_PROPERTY (bool     		undoVisible	READ undoVisible	WRITE setUndoVisible)
 	Q_PROPERTY (bool     		viewVisible	READ viewVisible	WRITE setViewVisible)
 	Q_PROPERTY (bool		autoSave	READ autoSave		WRITE setAutoSave)
 
 	public:
 		formControl(QWidget * = 0);
+		void showEvent ( QShowEvent * event );
 	
 	        bool autoSave()         const   { return _autoSave;};
 		bool newVisible()	const   { return _new->isVisible();};
 		bool printVisible() 	const	{ return _print->isVisible();};
 		bool saveVisible()	const   { return _save->isVisible();};
-		bool undoVisible()	const	{ return _undo->isVisible();};
+	//	bool undoVisible()	const	{ return _undo->isVisible();};
 		bool viewVisible()	const   { return _view->isVisible();};
 		
 		enum Modes { New, Edit, View };
@@ -102,7 +102,8 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 		Modes mode();
 		SearchTypes searchType();
 	
-		QString tableName()   	  const { return _model.tableName(); };
+	        QString schemaName()      const { return _schemaName; };
+		QString tableName()   	  const { return _tableName; };
 		QString formReportName()  const	{ return _formReportName;    };
 		QString listReportName()  const	{ return _listReportName;    };
        	
@@ -126,19 +127,22 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 		void setListReportName(QString p) 	{ _listReportName = p ; };
 		void setNewVisible(bool p) 		{ _new->setVisible(p) ; };
 		void setSaveVisible(bool p) 		{ _save->setVisible(p) ; };
-		void setUndoVisible(bool p) 		{ _undo->setVisible(p) ; };
+	//	void setUndoVisible(bool p) 		{ _undo->setVisible(p) ; };
 		void setViewVisible(bool p) 		{ _view->setVisible(p) ; };
 		void setPrintVisible(bool p) 		{ _print->setVisible(p) ; };
 		void setSearchType(SearchTypes p);
-		void setTable(QString p);
-		void undo();
+		void setSchemaName(QString p)  		{ _schemaName = p;};
+		void setTableName(QString p)		{ _tableName = p;};
+		void setTable(QString s, QString t);
+		void setDataWidgetMapper(QSqlTableModel *p);
+	//	void undo();
 	
 	protected slots:
 		void languageChange();
 	
 	signals:
 		void newClicked();
-		void newTable(QSqlTableModel *model);
+		void newDataWidgetMapper(XDataWidgetMapper *m);
 		void previewFormClicked();
 		void previewListClicked();
 		void printClicked();
@@ -147,16 +151,20 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 		void saveClicked();
 		void saved(bool);
 		void searchTypeChanged(SearchTypes);
-		void undoClicked();
+		//void undoClicked();
 
 	private:
 	
 		bool			_autoSave;
+		bool			_hasSearch;
+		bool			_shown;
 		enum  Modes		_mode;
 		enum  SearchTypes	_searchType;
 		QSqlTableModel		_model;
 		QString 		_formReportName;
 		QString           	_listReportName;
+		QString			_schemaName;
+		QString			_tableName;
 		XDataWidgetMapper	_mapper;
 };
 

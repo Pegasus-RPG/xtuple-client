@@ -151,7 +151,7 @@ void VirtualCluster::clear()
 
 void VirtualCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(static_cast<VirtualClusterLineEdit*>(_number), _fieldName);
+  m->addFieldMapping(this, _fieldName, QByteArray("number"));
 }
 
 void VirtualCluster::setEnabled(const bool p)
