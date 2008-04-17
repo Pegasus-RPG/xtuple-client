@@ -214,12 +214,12 @@ void lotSerial::sNewReg()
   ParameterList params;
   params.append("mode", "new");
   params.append("ls_id", _lotSerial->id());
-
+/*
   lotSerialRegistration newdlg(this, "", TRUE);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    sFillList(); */
 }
 
 void lotSerial::sEditReg()
@@ -228,12 +228,16 @@ void lotSerial::sEditReg()
   ParameterList params;
   params.append("mode", "edit");
   params.append("number", reg->text(0));
-
+/*
   lotSerialRegistration newdlg(this, "", TRUE);
   newdlg.set(params);
 
   if (newdlg.exec() != XDialog::Rejected)
-    sFillList();
+    sFillList();*/
+
+  lotSerialRegistration *newdlg = new lotSerialRegistration();
+  newdlg->set(params);
+  omfgThis->handleNewWindow(newdlg);
 }
 
 void lotSerial::sDeleteReg()

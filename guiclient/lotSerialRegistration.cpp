@@ -71,12 +71,13 @@
  *  name 'name' and widget flags set to 'f'.
  *
  */
-lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
-    : XDialog(parent, name, modal, fl)
+lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, Qt::WFlags fl)
+    : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
   // signals and slots connections
+  /*
   connect(_save,	SIGNAL(clicked()),	this,	SLOT(sSave()));
  
   _lotSerial->setStrict(true);
@@ -97,7 +98,7 @@ lotSerialRegistration::lotSerialRegistration(QWidget* parent, const char* name, 
   _shipment->setDataWidgetMap(&_mapper);
   _cntct->setDataWidgetMap(&_mapper);
   _notes->setDataWidgetMap(&_mapper);
-  resize(minimumSize());
+  resize(minimumSize()); */
 }
 
 /*
@@ -143,7 +144,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
     else if (param.toString() == "view")
     {
       _mode = cView;
-
+/*
       _regDate->setEnabled(false);
       _soldDate->setEnabled(false);
       _expireDate->setEnabled(false);
@@ -158,7 +159,7 @@ enum SetResponse lotSerialRegistration::set(const ParameterList &pParams)
       _notes->setEnabled(false);
       _save->hide();
       _cancel->setText(tr("&Close"));
-      _cancel->setFocus();
+      _cancel->setFocus();*/
     }
   }
 
@@ -223,23 +224,23 @@ void lotSerialRegistration::sNew()
 void lotSerialRegistration::sEdit()
 {
   _mode = cEdit;
-  _save->setFocus();
+ /* _save->setFocus();
   
-  _model.setFilter("registration_number = '" + _number + "'");
+  _model.setFilter("registration_number ~ '" + _number + "'");
   _model.select();  
-  _mapper.toFirst();
+  _mapper.toFirst(); */
 }
 
 void lotSerialRegistration::sSave()
-{
+{ /*
   _mapper.submit();
   _model.submitAll();
-  accept(); 
+  accept(); */
 }
 
 void lotSerialRegistration::sUndo()
 {
-  _mapper.revert();
+ // _mapper.revert();
 }
 
 
