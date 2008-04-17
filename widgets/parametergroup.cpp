@@ -217,6 +217,22 @@ void ParameterGroup::setPattern(const QString &pPattern)
   _pattern->setText(pPattern);
 }
 
+void ParameterGroup::setState(enum ParameterGroupStates pState)
+{
+  switch(pState)
+  {
+    case Selected:
+      _selected->setChecked(true);
+      break;
+    case Pattern:
+      _usePattern->setChecked(true);
+      break;
+    case All:
+    default:
+      _all->setChecked(true);
+  }
+}
+
 void ParameterGroup::appendValue(ParameterList &pParams)
 {
   if (_selected->isChecked())

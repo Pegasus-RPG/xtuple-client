@@ -177,13 +177,15 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
   Q_OBJECT
   Q_PROPERTY(QString dragString READ dragString WRITE setDragString)
   Q_PROPERTY(QString altDragString READ altDragString WRITE setAltDragString)
+  Q_PROPERTY(int id READ id WRITE setId DESIGNABLE false)
+  Q_PROPERTY(int altId READ altId DESIGNABLE false)
 
   public:
     XTreeWidget(QWidget *);
     ~XTreeWidget();
 
-    void populate(XSqlQuery &, bool = FALSE);
-    void populate(XSqlQuery &, int, bool = FALSE);
+    Q_INVOKABLE void populate(XSqlQuery &, bool = FALSE);
+    Q_INVOKABLE void populate(XSqlQuery &, int, bool = FALSE);
     void populate(const QString &, bool = FALSE);
     void populate(const QString &, int, bool = FALSE);
 
@@ -204,8 +206,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
       return (XTreeWidgetItem*)QTreeWidget::topLevelItem(idx);
     }
 
-    void setColumnVisible(int, bool);
-    void setColumnLocked(int, bool);
+    Q_INVOKABLE void setColumnVisible(int, bool);
+    Q_INVOKABLE void setColumnLocked(int, bool);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidget *ptree, const int pid);
     XTreeWidgetItem *findXTreeWidgetItemWithId(const XTreeWidgetItem *ptreeitem, const int pid);
 

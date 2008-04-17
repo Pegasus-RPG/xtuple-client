@@ -62,6 +62,8 @@
 #include <QVariant>
 #include <QScriptValue>
 
+#include <parametergroup.h>
+
 #include "parameter.h"
 #include "guiclient.h"
 
@@ -74,12 +76,20 @@ class QScriptEngine;
 
 Q_DECLARE_METATYPE(ParameterList)
 Q_DECLARE_METATYPE(enum SetResponse)
+Q_DECLARE_METATYPE(enum ParameterGroupStates);
+Q_DECLARE_METATYPE(enum ParameterGroupTypes);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
 void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
 
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr);
 void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr);
+
+QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroupStates &en);
+void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroupStates &en);
+
+QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroupTypes &en);
+void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroupTypes &en);
 
 class ScriptToolbox : public QObject
 {

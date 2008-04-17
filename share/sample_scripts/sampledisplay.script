@@ -1,0 +1,71 @@
+function getParams()
+{
+  var params = new Object;
+  params.startDate = mywindow.findChild("_dates").startDate;
+  params.endDate = mywindow.findChild("_dates").endDate;
+  if(mywindow.findChild("_group").state == 1)
+  {
+    params.id = mywindow.findChild("_group").id;
+  }
+  else if(mywindow.findChild("_group).state == 2)
+  {
+    params.pattern = mywindow.findChild("_group").pattern;
+  }
+
+  return params;
+}
+function query()
+{
+  var params = getParams();
+  var qry = toolbox.executeQuery("SELECT cntct_first_name, cntct_last_name, cntct_phone"
+                                +"  FROM cntct"
+                                +" WHERE((cntct_phone = <? value(\"search\") ?>)"
+                                +"    OR (cntct_phone2 = <? value(\"search\") ?>))", params);
+  mywindow.findChild("_list").populate(qry);
+}
+
+function print()
+{
+  // Todo: Add some code here to get your parameters
+  //       and call the print functionality with the
+  //       report you want to print out.
+}
+
+/*
+ * get the update checkbox widget then
+ * check to make sure that it is valid and see if it's checked
+ * calling the query function to update the list if it is.
+ */
+function tick()
+{
+  var updateWidget = mywindow.findChild("_update");
+  if(updateWidget && updateWidget.checked)
+  {
+    query();
+  }
+}
+
+/*
+ * Now we have to setup our display and connect the various objects
+ * together in a way that will make the display work when users
+ * click the buttons
+ */
+// first connect the buttons to the appropriate functions
+// the _close button can be connected directly to the mywindow close function
+mywindow.findChild("_close").clicked.connect(mywindow, "close");
+mywindow.findChild("_query").clicked.connect(query);
+mywindow.findChild("_print").clicked.connect(print);
+
+// to handle the auto update we are going to connect a system timer
+// to a local function that will check if we want the autoupdate
+// turned on and to call the query function if it is
+mainwindow.sTick.connect(tick);
+
+mywindow.findChild("_group").setType(3);
+
+var list = mywindow.findChild("_list");
+list.addColumn("Class Code", 100, 0);
+list.addColumn("Item", 100, 0);
+list.addColumn("First Date", 100, 1);
+list.addColumn("Last Date", 100, 2);
+

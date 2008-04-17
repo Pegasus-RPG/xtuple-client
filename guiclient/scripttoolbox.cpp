@@ -264,3 +264,24 @@ void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr)
 {
   sr = (enum SetResponse)obj.toInt32();
 }
+
+QScriptValue ParameterGroupStatestoScriptValue(QScriptEngine *engine, const enum ParameterGroupStates &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+void ParameterGroupStatesfromScriptValue(const QScriptValue &obj, enum ParameterGroupStates &en)
+{
+  en = (enum ParameterGroupStates)obj.toInt32();
+}
+
+QScriptValue ParameterGroupTypestoScriptValue(QScriptEngine *engine, const enum ParameterGroupTypes &en)
+{
+  return QScriptValue(engine, (int)en);
+}
+
+void ParameterGroupTypesfromScriptValue(const QScriptValue &obj, enum ParameterGroupTypes &en)
+{
+  en = (enum ParameterGroupTypes)obj.toInt32();
+}
+
