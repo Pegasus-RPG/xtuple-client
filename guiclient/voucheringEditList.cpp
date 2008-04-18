@@ -57,61 +57,45 @@
 
 #include "voucheringEditList.h"
 
-#include <QVariant>
-#include <QMessageBox>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include <openreports.h>
+
 #include "voucher.h"
 #include "miscVoucher.h"
-/*
- *  Constructs a voucheringEditList as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+
 voucheringEditList::voucheringEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_vo, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu*,QTreeWidgetItem*)));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
 
-  statusBar()->hide();
-  
   _vo->setRootIsDecorated(TRUE);
-  _vo->addColumn(tr("Vchr. #"),          (_orderColumn + _vo->indentation()), Qt::AlignRight  );
-  _vo->addColumn(tr("P/O #"),            _orderColumn,                         Qt::AlignRight  );
-  _vo->addColumn(tr("Invc./Item #"),     _itemColumn,                          Qt::AlignRight  );
-  _vo->addColumn(tr("Vendor #"),         _itemColumn,                          Qt::AlignRight  );
-  _vo->addColumn(tr("Name/Description"), -1,                                   Qt::AlignLeft   );
-  _vo->addColumn(tr("Vend. Type"),       _itemColumn,                          Qt::AlignLeft   );
-  _vo->addColumn(tr("UOM"),              _uomColumn,                           Qt::AlignCenter );
-  _vo->addColumn(tr("Qty. Vchrd."),      _qtyColumn,                           Qt::AlignRight  );
-  _vo->addColumn(tr("Cost"),             _moneyColumn,                         Qt::AlignRight  );
+  _vo->addColumn(tr("Vchr. #"), _orderColumn + _vo->indentation(), Qt::AlignRight, true, "vouchernumber"  );
+  _vo->addColumn(tr("P/O #"),       _orderColumn, Qt::AlignRight, true, "ponumber");
+  _vo->addColumn(tr("Invc./Item #"), _itemColumn, Qt::AlignRight, true, "itemnumber");
+  _vo->addColumn(tr("Vendor #"),     _itemColumn, Qt::AlignRight, true, "vendnumber");
+  _vo->addColumn(tr("Name/Description"),      -1, Qt::AlignLeft,  true, "description");
+  _vo->addColumn(tr("Vend. Type"),   _itemColumn, Qt::AlignLeft,  true, "itemtype");
+  _vo->addColumn(tr("UOM"),           _uomColumn, Qt::AlignCenter,true, "iteminvuom");
+  _vo->addColumn(tr("Qty. Vchrd."),   _qtyColumn, Qt::AlignRight, true, "f_qty");
+  _vo->addColumn(tr("Cost"),        _moneyColumn, Qt::AlignRight, true, "cost");
 
   connect(omfgThis, SIGNAL(vouchersUpdated()), this, SLOT(sFillList()));
 
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 voucheringEditList::~voucheringEditList()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void voucheringEditList::languageChange()
 {
   retranslateUi(this);
@@ -198,133 +182,63 @@ void voucheringEditList::sView()
 
 void voucheringEditList::sFillList()
 {
-  _vo->clear();
+  /* indent: order
+                line item
+                  credit account
+                line item
+                  credit account
+                debit account for entire order
+  */
+  q.prepare("SELECT orderid, seq,"
+            "       CASE WHEN seq = 0 THEN vouchernumber"
+            "            ELSE ''"
+            "       END AS vouchernumber, ponumber, itemnumber,"
+            "       vendnumber, description, itemtype, iteminvuom, f_qty, cost,"
+            "       'curr' AS cost_xtnumericrole,"
+            "       seq AS cost_xttotalrole,"
+            "       CASE WHEN seq = 3 THEN 1"
+            "            ELSE seq END AS xtindentrole,"
+            "       CASE WHEN findAPAccount(vendid) < 0 THEN 'error'"
+            "       END AS qtforegroundrole "
+            "FROM (SELECT orderid,"
+            "       CASE WHEN length(ponumber) > 0 THEN 0 ELSE 1 END AS seq,"
+            "       vouchernumber, ponumber,"
+            "       CASE WHEN (itemid = 1) THEN invoicenumber"
+            "            ELSE itemnumber END AS itemnumber,"
+            "       CASE WHEN (itemid = 1) THEN itemnumber"
+            "            ELSE ''         END AS vendnumber,"
+            "       vendid, description,"
+            "       itemtype, iteminvuom, f_qty, cost "
+            "FROM voucheringEditList "
+            "UNION "    // pull out the credits
+            "SELECT DISTINCT orderid, 2 AS seq, vouchernumber, '' AS ponumber,"
+            "       :credit AS itemnumber, '' AS vendnumber, vendid,"
+            "       account AS description,"
+            "       '' AS itemtype, '' AS iteminvuom, NULL as f_qty, cost "
+            "FROM voucheringEditList "
+            "WHERE itemid = 2 "
+            "UNION "    // calculate the debits
+            "SELECT orderid, 3 AS seq, vouchernumber, '' AS ponumber,"
+            "       :debit AS itemnumber, '' AS vendnumber, vendid,"
+            "       CASE WHEN findAPAccount(vendid) < 0 THEN :notassigned"
+            "            ELSE formatGLAccountLong(findAPAccount(vendid))"
+            "       END AS description,"
+            "       '' AS itemtype, '' AS iteminvuom, NULL as f_qty,"
+            "       SUM(cost) AS cost "
+            "FROM voucheringEditList "
+            "WHERE itemid = 2 "
+            "GROUP BY orderid, vouchernumber, vendid "
+            "ORDER BY vouchernumber, ponumber desc, seq) AS sub;");
+  q.bindValue(":credit",      tr("Credit"));
+  q.bindValue(":debit",       tr("Debit"));
+  q.bindValue(":notassigned", tr("Not Assigned"));
+  q.exec();
+  _vo->populate(q);
+  // TODO: implement indentation
 
-  q.exec("SELECT * FROM voucheringEditList;");
-  if (q.first())
+  if (q.lastError().type() != QSqlError::None)
   {
-    int           thisOrderid;
-    int           orderid    = -9999;
-    int           vendid     = -1;
-    double        amount     = 0;
-    double        thisAmount = 0;
-    XTreeWidgetItem *orderLine = NULL;
-    XTreeWidgetItem *lastLine  = NULL;
-
-//  Fill the list with the query contents
-    do
-    {
-      thisOrderid = q.value("orderid").toInt();
-
-//  Check to see if this a new order number
-      if (thisOrderid != orderid)
-      {
-//  If there was a previous line, add the Debit distribution
-        if (orderLine)
-        {
-          QString   account;
-          bool      notAssigned = TRUE;
-          XSqlQuery debit;
-          debit.prepare( "SELECT formatGLAccountLong(accnt_id) AS account "
-                         "FROM accnt "
-                         "WHERE (accnt_id=findAPAccount(:vend_id));" );
-          debit.bindValue(":vend_id", vendid);
-          debit.exec();
-          if (debit.first())
-          {
-            notAssigned = FALSE;
-            account = debit.value("account").toString();
-          }
-          else
-            account = tr("Not Assigned");
-
-          XTreeWidgetItem *debitLine = new XTreeWidgetItem(orderLine, lastLine, q.value("orderid").toInt(), -1);
-          debitLine->setText(2, tr("Debit"));
-          debitLine->setText(4, account);
-          debitLine->setText(8, formatMoney(thisAmount));
-
-          if (notAssigned)
-          {
-            debitLine->setTextColor("red");
-            orderLine->setTextColor("red");
-          }
-        }
-
-//  New order number, make a new list item header
-        orderid  = thisOrderid;
-        vendid   = q.value("vendid").toInt();
-        lastLine = NULL;
-
-        orderLine = new XTreeWidgetItem( _vo, orderLine, q.value("orderid").toInt(), -1,
-                                       q.value("vouchernumber"), q.value("ponumber"),
-                                       q.value("invoicenumber"), q.value("itemnumber"),
-                                       q.value("description"), q.value("itemtype") );
-        orderLine->setText(8, q.value("f_cost").toString());
-
-        thisAmount = 0;
-        amount += q.value("cost").toDouble();
-      }
-      else
-      {
-        XTreeWidgetItem *itemLine = new XTreeWidgetItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
-                                                     "", "",
-                                                     q.value("itemnumber"), q.value("invoicenumber"), q.value("description"), q.value("itemtype"),
-                                                     q.value("iteminvuom"), q.value("f_qty"),
-                                                     q.value("f_cost") );
-
-//  Add the distribution lines
-        XTreeWidgetItem *thisLine = new XTreeWidgetItem(itemLine, q.value("orderid").toInt(), q.value("itemid").toInt());
-        thisLine->setText(2, tr("Credit"));
-        thisLine->setText(4, q.value("account").toString());
-        thisLine->setText(8, q.value("f_cost").toString());
-        thisAmount += q.value("cost").toDouble();
-
-        if (q.value("account").toString() == "Not Assigned")
-        {
-          thisLine->setTextColor("red");
-          itemLine->setTextColor("red");
-          orderLine->setTextColor("red");
-        }
-
-        lastLine = itemLine;
-      }
-    }
-    while (q.next());
-
-//  If there was a previous line, add the Debit distribution
-    if (orderLine)
-    {
-      q.prev();
-      QString   account;
-      bool      notAssigned = TRUE;
-      XSqlQuery debit;
-      debit.prepare( "SELECT formatGLAccountLong(accnt_id) AS account "
-                     "FROM accnt "
-                     "WHERE (accnt_id=findAPAccount(:vend_id));" );
-      debit.bindValue(":vend_id", vendid);
-      debit.exec();
-      if (debit.first())
-      {
-        notAssigned = FALSE;
-        account = debit.value("account").toString();
-      }
-      else
-        account = tr("Not Assigned");
-
-      XTreeWidgetItem *debitLine = new XTreeWidgetItem(orderLine, lastLine, q.value("orderid").toInt(), -1);
-      debitLine->setText(2, tr("Debit"));
-      debitLine->setText(4, account);
-      debitLine->setText(8, formatMoney(thisAmount));
-
-      if (notAssigned)
-      {
-        debitLine->setTextColor("red");
-        orderLine->setTextColor("red");
-      }
-    }
-
-    XTreeWidgetItem *totals = new XTreeWidgetItem(_vo, orderLine, -1, -1, tr("Total"));
-    totals->setText(8, formatMoney(amount));
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
-
