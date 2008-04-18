@@ -121,11 +121,6 @@
 
 OpenMFGPlugin::OpenMFGPlugin(QObject * parent) : QObject(parent)
 {
-  _x_preferences = 0;
-  _x_metrics = 0;
-  _x_workspace = 0;
-  _x_privileges = 0;
-
   m_plugins.append(new AddressClusterPlugin(this));
   m_plugins.append(new CalendarComboBoxPlugin(this));
   m_plugins.append(new CLineEditPlugin(this));
@@ -196,10 +191,10 @@ QList<QDesignerCustomWidgetInterface*> OpenMFGPlugin::customWidgets() const
 
 Q_EXPORT_PLUGIN(OpenMFGPlugin)
 
-Preferences *_x_preferences;
-Metrics     *_x_metrics;
-QWorkspace  *_x_workspace;
-Privileges  *_x_privileges;
+Preferences *_x_preferences = 0;
+Metrics     *_x_metrics = 0;
+QWorkspace  *_x_workspace = 0;
+Privileges  *_x_privileges = 0;
 
 void initializePlugin(Preferences *pPreferences, Metrics *pMetrics, Privileges *pPrivileges, QWorkspace *pWorkspace)
 {
