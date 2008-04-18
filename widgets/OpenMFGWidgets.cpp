@@ -189,7 +189,11 @@ QList<QDesignerCustomWidgetInterface*> OpenMFGPlugin::customWidgets() const
   return m_plugins;
 }
 
+#ifndef QT_STATICPLUGIN
 Q_EXPORT_PLUGIN(OpenMFGPlugin)
+#else
+Q_EXPORT_STATIC_PLUGIN(OpenMFGPlugin)
+#endif
 
 Preferences *_x_preferences = 0;
 Metrics     *_x_metrics = 0;

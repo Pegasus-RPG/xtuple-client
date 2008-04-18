@@ -1,7 +1,7 @@
 include( ../global.pri )
 
 TARGET   = xtuple
-CONFIG   += qt warn_on assistant uitools
+CONFIG   += qt warn_on assistant uitools designer
 TEMPLATE = app
 
 INCLUDEPATH += ../common ../widgets ../widgets/tmp/lib .
@@ -648,7 +648,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                zeroUncountedCountTagsByWarehouse.h                                                    \
 	       creditcardprocessor.h authorizedotnetprocessor.h verisignprocessor.h                   \
 	       yourpayprocessor.h                                                                     \
-               xmainwindow.h xdialog.h                                                                \
+               xmainwindow.h xdialog.h xuiloader.h                                                    \
                idleShutdown.h storedProcErrorLookup.h xdateinputdialog.h xsltMap.h
 
 
@@ -966,7 +966,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                zeroUncountedCountTagsByWarehouse.cpp                                                  \
 	       creditcardprocessor.cpp authorizedotnetprocessor.cpp verisignprocessor.cpp             \
 	       yourpayprocessor.cpp                                                                   \
-               xmainwindow.cpp xdialog.cpp                                                            \
+               xmainwindow.cpp xdialog.cpp xuiloader.cpp                                              \
                idleShutdown.cpp storedProcErrorLookup.cpp xdateinputdialog.cpp xsltMap.cpp
 
 QT += xml assistant sql script network

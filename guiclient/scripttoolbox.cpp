@@ -66,13 +66,13 @@
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 #include <QDateTime>
-#include <QUiLoader>
 #include <QList>
 #include <QMenu>
 
 #include <parameter.h>
 #include <metasql.h>
 
+#include "xuiloader.h"
 #include "scriptquery.h"
 
 QWidget * ScriptToolbox::_lastWindow = 0;
@@ -157,7 +157,7 @@ QObject * ScriptToolbox::menuAddAction(QObject * menu, const QString & text)
 
 QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * parent, const QString & name)
 {
-  QUiLoader ui;
+  XUiLoader ui;
   return ui.createWidget(className, parent, name);
 }
 

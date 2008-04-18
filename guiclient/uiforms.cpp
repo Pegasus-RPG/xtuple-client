@@ -61,8 +61,8 @@
 #include <QMessageBox>
 #include <QStatusBar>
 #include <QBuffer>
-#include <QUiLoader>
 #include <parameter.h>
+#include "xuiloader.h"
 #include "uiform.h"
 #include "guiclient.h"
 
@@ -170,7 +170,7 @@ void uiforms::sTest()
   XMainWindow * wnd = new XMainWindow();
   wnd->setObjectName(q.value("uiform_name").toString());
 
-  QUiLoader loader;
+  XUiLoader loader;
   QByteArray ba = q.value("uiform_source").toByteArray();
   QBuffer uiFile(&ba);
   if(!uiFile.open(QIODevice::ReadOnly))

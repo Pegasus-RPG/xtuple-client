@@ -91,7 +91,6 @@
 #include <QDebug>
 #include <QScriptEngine>
 #include <QScriptValue>
-#include <QUiLoader>
 #include <QBuffer>
 
 #include <parameter.h>
@@ -99,6 +98,7 @@
 #include <quuencode.h>
 #include <xvariant.h>
 
+#include "xuiloader.h"
 #include "guiclient.h"
 #include "version.h"
 #include "xmainwindow.h"
@@ -1112,7 +1112,7 @@ void GUIClient::sCustomCommand()
         return;
       }
 
-      QUiLoader loader;
+      XUiLoader loader;
       QByteArray ba = q.value("uiform_source").toByteArray();
       QBuffer uiFile(&ba);
       if(!uiFile.open(QIODevice::ReadOnly))
