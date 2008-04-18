@@ -6,6 +6,7 @@ SELECT aropen_id,
             WHEN (aropen_doctype='I') THEN <? value("invoice") ?>
        END AS doctype,
        aropen_docnumber, aropen_ordernumber,
+       aropen_docdate, aropen_duedate,
        formatDate(aropen_docdate) AS f_docdate,
        formatDate(aropen_duedate) AS f_duedate,
        (aropen_amount - aropen_paid) AS balance,
@@ -29,7 +30,10 @@ SELECT aropen_id,
        currConcat(arcreditapply_curr_id) AS applied_curr,
 <? endif ?>
        calcpendingarapplications(aropen_id) AS pending,
-       formatMoney(calcpendingarapplications(aropen_id)) AS f_pending
+       formatMoney(calcpendingarapplications(aropen_id)) AS f_pending,
+       CASE WHEN (calcpendingarapplications(aropen_id) >
+                  (aropen_amount - aropen_paid)) THEN 'error'
+       END AS qtforegroundrole
  FROM aropen LEFT OUTER JOIN
  <? if exists("cashrcpt_id") ?>
       cashrcptitem s ON (s.cashrcptitem_aropen_id=aropen_id

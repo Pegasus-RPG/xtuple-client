@@ -186,6 +186,13 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 
       if (_roles.size() > 0) // xtreewidget columns are tied to query columns
       {
+        // apply the indent role to col 0 if the caller requested indentation
+        if (pQuery.record().indexOf("xtindentrole") >= 0)
+        {
+          qDebug("setting xtindentrole");
+          _roles.value(0)->insert("xtindentrole", "xtindentrole");
+        }
+
 	QStringList knownroles;
 	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
 		   << "qtbackgroundrole"   << "qtforegroundrole"
@@ -193,8 +200,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 		   << "qtfontrole"	   << "xtkeyrole"
 		   << "xtrunningrole"	   << "xtrunninginit"
 		   << "xtgrouprunningrole" << "xttotalrole"
-                   << "xtnumericrole"      << "xtnullrole"
-                   << "xtindentrole";
+                   << "xtnumericrole"      << "xtnullrole";
 	for (int wcol = 0; wcol < _roles.size(); wcol++)
 	{
 	  QVariantMap *role = _roles.value(wcol);
@@ -204,11 +210,6 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
             // apply Qt roles to a whole row by applying to each column
             if (knownroles.at(k).startsWith("qt") &&
                 pQuery.record().indexOf(knownroles.at(k)) >= 0)
-	      role->insert(knownroles.at(k),
-			   QString(knownroles.at(k)));
-
-            // apply the indent role just to the 0th column
-            else if (wcol == 0 && knownroles.at(k) == "xtindentrole")
 	      role->insert(knownroles.at(k),
 			   QString(knownroles.at(k)));
 
@@ -225,16 +226,20 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	  }
 	}
 
+
 	do
 	{
           int id = pQuery.value(0).toInt();
           int altId = (pUseAltId) ? pQuery.value(1).toInt() : -1;
           int indent = 0;
-          if (pQuery.value("xtindentrole").toInt() > 0)
-            indent = pQuery.value("xtindentrole").toInt();
           int lastindent = 0;
-          if (last && last->data(0, Qt::UserRole).toMap().contains("xtindentrole"))
-            lastindent = last->data(0, Qt::UserRole).toMap().value("xtindentrole").toInt();
+          if (_roles.value(0)->contains("xtindentrole") &&
+              pQuery.value("xtindentrole").toInt() > 0)
+          {
+            indent = pQuery.value("xtindentrole").toInt();
+            if (last && last->data(0, Qt::UserRole).toMap().contains("xtindentrole"))
+              lastindent = last->data(0, Qt::UserRole).toMap().value("xtindentrole").toInt();
+          }
 
           if (indent == 0)
 	    last = new XTreeWidgetItem(this,
@@ -269,6 +274,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
             if (role->contains("xtnullrole"))
               nullValue = pQuery.value(role->value("xtnullrole").toString()).toString();
             userrole.insert("raw", rawValue);
+
 
             // TODO: this isn't necessary for all columns so do less often?
             int scale = decimalPlaces(role->contains("xtnumericrole") ?

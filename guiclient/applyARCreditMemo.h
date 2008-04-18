@@ -92,9 +92,6 @@ protected slots:
 private:
     int    _aropenid;
     bool   _captive;
-    double _cachedAmount;
-    double _cachedApplied;
-    bool   _overapplied;
 
 };
 
