@@ -280,6 +280,64 @@ void initErrorLookupHash()
 			       "there is no Due Date."),	0, "" },
   { "createWo",	-2, TR("Work Order can not be exploded because items on "
 			       "the BOM exist without itemsites."),	0, "" }, 
+
+  { "deleteAccount",  -1, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Cost Categories."
+                             "  You must reassign these Cost Category "
+                             "assignments before you may delete the selected "
+                             "G/L Account."),                           0, "" },
+  { "deleteAccount",  -2, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Sales Account "
+                             "Assignment. You must reassign these Sales "
+                             "Account Assignments before you may delete "
+                             "the selected G/L Account."),              0, "" },
+  { "deleteAccount",  -3, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Customer A/R "
+                             "Account assignments. You must reassign these "
+                             "Customer A/R Account assignments before you may "
+                             "delete the selected G/L Account."),       0, "" },
+  { "deleteAccount",  -4, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used as the default Account one or "
+                             "more Warehouses. You must reassign the default "
+                             "Account for these Warehouses before you may delete "
+                             "the selected G/L Account."),              0, "" },
+  { "deleteAccount",  -5, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Bank Accounts. "
+                             "You must reassign these Bank Accounts before you "
+                             "may delete the selected G/L Account."),   0, "" },
+  { "deleteAccount",  -6, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Expense "
+                             "Categories. You must reassign these Expense "
+                             "Categories before you may delete the selected "
+                             "G/L Account."),                           0, "" },
+  { "deleteAccount",  -7, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Tax Codes. "
+                             "You must reassign these Tax Codes before you "
+                             "may delete the selected G/L Account."),   0, "" },
+  { "deleteAccount",  -8, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Standard "
+                             "Journals. You must reassign these Standard "
+                             "Journal Items before you may delete the selected "
+                             "G/L Account."),                           0, "" },
+  { "deleteAccount",  -9, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Customer A/P "
+                             "Account assignments. You must reassign these "
+                             "Customer A/P Account assignments before you may "
+                             "delete the selected G/L Account."),       0, "" },
+  { "deleteAccount", -10, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more Currency "
+                             "definition. You must reassign these Currency "
+                             "definitions before you may delete the selected "
+                             "G/L Account."),                           0, "" },
+  { "deleteAccount", -11, TR("The selected G/L Account cannot be deleted as it "
+                             "is currently used in one or more A/R Open Items. "
+                             "You must reassign these Currency definitions "
+                             "before you may delete the selected G/L Account."),
+                                                                        0, "" },
+  { "deleteAccount", -99, TR("The selected G/L Account cannot be deleted as "
+                             "there have been G/L Transactions posted "
+                             "against it."),                            0, "" },
+
   { "deleteAccountingPeriod", -4, TR("The selected Accounting Period has G/L "
 				     "Transactions posted against it and, thus, "
 				     "cannot be deleted."), 0, "" },
@@ -711,8 +769,9 @@ void initErrorLookupHash()
 	       " is no exchange rate for one of the applications."),	0, "" },
   { "postARCreditMemoApplication", -3,
 	    TR("The total value of the applications that you are attempting to "
-	       "post is greater than the value of the A/R Credit Memo itself."),
-									0, "" },
+	       "post is greater than the value of the A/R Credit Memo itself. "
+               "Please reduce the applications to total less than the value "
+               "of the Credit Memo."),                                  0, "" },
   { "postARCreditMemoApplication", -4,
 	    TR("At least one A/R Credit Memo application cannot be posted "
 	       "because there is no current exchange rate for its currency."),
