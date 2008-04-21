@@ -497,7 +497,7 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case OpportunityTypes:
-      query.exec("SELECT optype_id, opttype_name, optype_name "
+      query.exec("SELECT optype_id, optype_name, optype_name "
                  "  FROM optype;");
       break;
 
