@@ -1276,6 +1276,30 @@ int CreditCardProcessor::updateCCPay(int &pccpayid, ParameterList &pparams)
 
   if (pccpayid > 0)
   {
+    param = pparams.value("status", &valid);
+    QString r_status;
+    if (valid)
+      r_status = param.toString();
+    if (r_status == "X" || r_status == "D")
+    {
+      // ccpay_r_ordernum because it's used to build postauth/capture messages
+      ccq.prepare("INSERT INTO ccpay ("
+                  "    ccpay_ccard_id, ccpay_cust_id, ccpay_amount,"
+                  "    ccpay_status, ccpay_type, ccpay_auth_charge,"
+                  "    ccpay_order_number, ccpay_order_number_seq,"
+                  "    ccpay_by_username, ccpay_curr_id, ccpay_r_ordernum "
+                  ") SELECT "
+                  "    ccpay_ccard_id, ccpay_cust_id, ccpay_amount,"
+                  "    ccpay_status, ccpay_type, ccpay_auth_charge,"
+                  "    ccpay_order_number, ccpay_order_number_seq + 1,"
+                  "    ccpay_by_username, ccpay_curr_id, ccpay_r_ordernum "
+                  "  FROM ccpay"
+                  "  WHERE ((ccpay_id=:id)"
+                  "     AND (ccpay_type='A'));");
+      ccq.bindValue(":id", pccpayid);
+      ccq.exec();
+    }
+
     sql =  "UPDATE ccpay SET"
 	   "<? if exists(\"fromcurr\") ?>"
 	   "      ccpay_amount=ROUND(currToCurr(<? value(\"fromcurr\") ?>,"
