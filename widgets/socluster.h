@@ -122,15 +122,15 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   public:
     SoCluster(QWidget *, const char * = 0);
     SoCluster(int, QWidget *);
-
+		
     inline int id()                { return _soNumber->_id;      }
-    inline int custid()            { return _soNumber->_custid;  }
+    inline int custid()            { return _soNumber->_custid;  } 
     inline bool isValid()          { return _soNumber->_valid;   }
     inline QString  number()           { return _soNumber->text();  }
     inline void setType(int pType) { _soNumber->_type = pType;   }
-    inline virtual QString label() const { return _soNumberLit->text(); }
+    inline virtual QString label() const { return _label; }
     inline bool isReadOnly()       { return _readOnly; } 
-    QString fieldName() const { return _fieldName; };
+    QString fieldName() const 	{ return _fieldName; };
 
   public slots:
     void setReadOnly(bool);
@@ -139,7 +139,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     void setDataWidgetMap(XDataWidgetMapper* m);
     void setFieldName(QString p) { _fieldName = p; };
     void setNumber(QString);
-    inline virtual void setLabel(const QString& p)  { _soNumberLit->setText(p); };
+    void setLabel(const QString p);
 
   signals:
     void newId(int);
@@ -160,6 +160,8 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
     QLabel       *_custName;
     bool         _readOnly;
     QString      _fieldName;
+    QString      _label;
+    
 };
 
 #endif
