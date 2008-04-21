@@ -130,14 +130,14 @@ todoList::todoList(QWidget* parent, const char* name, Qt::WFlags fl)
   connect(_usr,		SIGNAL(updated()),	this,	SLOT(handlePrivs()));
   connect(_view,	SIGNAL(clicked()),	this,	SLOT(sView()));
 
-  _todoList->addColumn(tr("Type"),    _statusColumn,	Qt::AlignCenter);
-  _todoList->addColumn(tr("Seq"),	 _seqColumn,	Qt::AlignRight);
-  _todoList->addColumn(tr("User"),	_userColumn,	Qt::AlignLeft );
-  _todoList->addColumn(tr("Name"),		100,	Qt::AlignLeft );
-  _todoList->addColumn(tr("Description"),	 -1,	Qt::AlignLeft );
-  _todoList->addColumn(tr("Status"),  _statusColumn,	Qt::AlignLeft );
-  _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft );
-  _todoList->addColumn(tr("Incident"), _orderColumn,	Qt::AlignLeft );
+  _todoList->addColumn(tr("Type"),    _statusColumn,	Qt::AlignCenter, true, "type");
+  _todoList->addColumn(tr("Seq"),	 _seqColumn,	Qt::AlignRight,  true, "seq");
+  _todoList->addColumn(tr("User"),	_userColumn,	Qt::AlignLeft,   true, "usr");
+  _todoList->addColumn(tr("Name"),		100,	Qt::AlignLeft,   true, "name");
+  _todoList->addColumn(tr("Description"),	 -1,	Qt::AlignLeft,   true, "descrip");
+  _todoList->addColumn(tr("Status"),  _statusColumn,	Qt::AlignLeft,   true, "status");
+  _todoList->addColumn(tr("Due Date"),	_dateColumn,	Qt::AlignLeft,   true, "due");
+  _todoList->addColumn(tr("Incident"), _orderColumn,	Qt::AlignLeft,   true, "incdt");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -414,7 +414,12 @@ void todoList::sFillList()
 		"       todoitem_name AS name, "
 		"       firstLine(todoitem_description) AS descrip, "
 		"       todoitem_status AS status, todoitem_due_date AS due, "
-		"       usr_username AS usr, incdt_number AS incdt "
+		"       usr_username AS usr, incdt_number AS incdt,"
+                "       CASE WHEN (todoitem_status != 'C'AND "
+                "                  todoitem_due_date < CURRENT_DATE) THEN 'expired'"
+                "            WHEN (todoitem_status != 'C'AND "
+                "                  todoitem_due_date > CURRENT_DATE) THEN 'future'"
+                "       END AS due_qtforegroundrole "
 		"FROM usr, todoitem LEFT OUTER JOIN "
 		"     incdt ON (incdt_id=todoitem_incdt_id) "
 		"WHERE ( (todoitem_usr_id=usr_id)"
@@ -439,7 +444,8 @@ void todoList::sFillList()
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
 		"       incdt_status AS status,  NULL AS due, "
-		"       incdt_assigned_username AS usr, incdt_number AS incdt "
+		"       incdt_assigned_username AS usr, incdt_number AS incdt,"
+                "       NULL AS due_qtforegroundrole "
 		"FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)"
 		"WHERE ((incdt_timestamp BETWEEN <? value(\"incdtStartDate\") ?>"
 		"                            AND <? value(\"incdtEndDate\") ?>)"
@@ -455,7 +461,7 @@ void todoList::sFillList()
 		"  <? endif ?>"
 		"       ) "
 		"<? endif ?>"
-		"ORDER BY seq, usr;";
+		"ORDER BY due, seq, usr;";
 
   ParameterList params;
   setParams(params);
@@ -463,37 +469,12 @@ void todoList::sFillList()
   MetaSQLQuery mql(sql);
   XSqlQuery itemQ = mql.toQuery(params);
 
+  _todoList->populate(itemQ, true);
+
   if (itemQ.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
     return;
-  }
-
-  _todoList->clear();
-  XTreeWidgetItem *last = 0;
-  while (itemQ.next())
-  {
-    last = new XTreeWidgetItem(_todoList, last,
-			     itemQ.value("id").toInt(),
-			     itemQ.value("altId").toInt(),
-			     itemQ.value("type").toString(),
-			     itemQ.value("seq").isNull() ? "" :
-				    itemQ.value("seq").toString(),
-			     itemQ.value("usr").toString(),
-			     itemQ.value("name").toString(),
-			     itemQ.value("descrip").toString(),
-			     itemQ.value("status").toString(),
-			     itemQ.value("due").isNull() ? "" :
-				    itemQ.value("due").toString(),
-			     itemQ.value("incdt").isNull() ? "" :
-				    itemQ.value("incdt").toString());
-    if (itemQ.value("status") != "C")
-    {
-      if (itemQ.value("due").toDate() < QDate::currentDate())
-	last->setTextColor("red");
-      else if (itemQ.value("due").toDate() > QDate::currentDate())
-	last->setTextColor("green");
-    }
   }
   handlePrivs();
 }
