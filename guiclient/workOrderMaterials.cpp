@@ -86,17 +86,17 @@ workOrderMaterials::workOrderMaterials(QWidget* parent, const char* name, Qt::WF
 
   omfgThis->inputManager()->notify(cBCWorkOrder, this, _wo, SLOT(setId(int)));
 
-  _womatl->addColumn(tr("Component Item"), _itemColumn,  Qt::AlignLeft   );
-  _womatl->addColumn(tr("Description"),    -1,           Qt::AlignLeft   );
-  _womatl->addColumn(tr("Iss. Meth."),     _orderColumn, Qt::AlignCenter );
-  _womatl->addColumn(tr("Iss. UOM"),       _uomColumn,   Qt::AlignLeft   );
-  _womatl->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight  );
-  _womatl->addColumn(tr("Required"),       _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Issued"),         _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Scrapped"),       _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Balance"),        _qtyColumn,   Qt::AlignRight  );
-  _womatl->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter );
+  _womatl->addColumn(tr("Component Item"), _itemColumn,  Qt::AlignLeft,  true, "item_number");
+  _womatl->addColumn(tr("Description"),    -1,           Qt::AlignLeft,  true, "description");
+  _womatl->addColumn(tr("Iss. Meth."),     _orderColumn, Qt::AlignCenter, true, "issuemethod");
+  _womatl->addColumn(tr("Iss. UOM"),       _uomColumn,   Qt::AlignLeft,  true, "uom_name");
+  _womatl->addColumn(tr("Qty. Per"),       _qtyColumn,   Qt::AlignRight, true, "womatl_qtyper");
+  _womatl->addColumn(tr("Scrap %"),        _prcntColumn, Qt::AlignRight, true, "womatl_scrap");
+  _womatl->addColumn(tr("Required"),       _qtyColumn,   Qt::AlignRight, true, "womatl_qtyreq");
+  _womatl->addColumn(tr("Issued"),         _qtyColumn,   Qt::AlignRight, true, "womatl_qtyiss");
+  _womatl->addColumn(tr("Scrapped"),       _qtyColumn,   Qt::AlignRight, true, "womatl_qtywipscrap");
+  _womatl->addColumn(tr("Balance"),        _qtyColumn,   Qt::AlignRight, true, "balance");
+  _womatl->addColumn(tr("Due Date"),       _dateColumn,  Qt::AlignCenter,true, "womatl_duedate");
   
   if (_privileges->check("MaintainWoMaterials"))
   {
@@ -388,31 +388,24 @@ void workOrderMaterials::sCatchMaterialsUpdated(int pWoid, int, bool)
 
 void workOrderMaterials::sFillList()
 {
-  _womatl->clear();
-
   if (_wo->isValid())
   {
-    int womatlid = _womatl->id();
-    XTreeWidgetItem *selected = 0;
-
-    q.prepare( "SELECT womatl_id, item_number, (item_descrip1 || ' ' || item_descrip2) AS description,"
-               "       CASE WHEN (womatl_issuemethod = 'S') THEN 'Push'"
-               "            WHEN (womatl_issuemethod = 'L') THEN 'Pull'"
-               "            WHEN (womatl_issuemethod = 'M') THEN 'Mixed'"
-               "            ELSE 'Error'"
+    q.prepare( "SELECT womatl_id, *,"
+               "       (item_descrip1 || ' ' || item_descrip2) AS description,"
+               "       CASE WHEN (womatl_issuemethod = 'S') THEN :push"
+               "            WHEN (womatl_issuemethod = 'L') THEN :pull"
+               "            WHEN (womatl_issuemethod = 'M') THEN :mixed"
+               "            ELSE :error"
                "       END AS issuemethod,"
-               "       uom_name,"
-               "       formatQtyper(womatl_qtyper) AS qtyper,"
-               "       formatScrap(womatl_scrap) AS scrap,"
-               "       formatQty(womatl_qtyreq) AS qtyreq,"
-               "       formatQty(womatl_qtyiss) AS qtyiss,"
-               "       formatQty(womatl_qtywipscrap) AS scrapped,"
-               "       formatQty(noNeg(womatl_qtyreq - womatl_qtyiss)) AS balance,"
-               "       formatDate(womatl_duedate) AS duedate, "
-               "       (womatl_duedate <= CURRENT_DATE) AS latedue,"
-               "       CASE WHEN (womatl_qtyiss <> 0) THEN 1"
-               "            ELSE 0"
-               "       END AS issued "
+               "       'qtyper' AS womatl_qtyper_xtnumericrole,"
+               "       'percent' AS womatl_scrap_xtnumericrole,"
+               "       'qty' AS womatl_qtyreq_xtnumericrole,"
+               "       'qty' AS womatl_qtyiss_xtnumericrole,"
+               "       'qty' AS womatl_qtywipscrap_xtnumericrole,"
+               "       noNeg(womatl_qtyreq - womatl_qtyiss) AS balance,"
+               "       'qty' AS balance_xtnumericrole,"
+               "       CASE WHEN (womatl_duedate <= CURRENT_DATE) THEN 'expired'"
+               "       END AS womatl_duedate_qtforegroundrole "
                "FROM wo, womatl, itemsite, item, uom "
                "WHERE ( (womatl_wo_id=wo_id)"
                " AND (womatl_uom_id=uom_id)"
@@ -421,35 +414,16 @@ void workOrderMaterials::sFillList()
                " AND (wo_id=:wo_id) ) "
                "ORDER BY item_number;" );
     q.bindValue(":wo_id", _wo->id());
+    q.bindValue(":push",  tr("Push"));
+    q.bindValue(":pull",  tr("Pull"));
+    q.bindValue(":mixed", tr("Mixed"));
+    q.bindValue(":error", tr("Error"));
     q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem( _womatl, last,
-				 q.value("womatl_id").toInt(),
-				 q.value("issued").toInt(),
-				 q.value("item_number"), q.value("description"),
-				 q.value("issuemethod"), q.value("uom_name"), q.value("qtyper"),
-				 q.value("scrap"), q.value("qtyreq"),
-				 q.value("qtyiss"), q.value("scrapped"),
-				 q.value("balance"), q.value("duedate") );
-
-      if (q.value("latedue").toBool())
-        last->setTextColor(10, "red");
-
-      if (q.value("womatl_id").toInt() == womatlid)
-        selected = last;
-    }
+    _womatl->populate(q);
     if (q.lastError().type() != QSqlError::None)
     {
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
       return;
-    }
-
-    if (selected)
-    {
-      _womatl->setCurrentItem(selected);
-      _womatl->scrollToItem(selected);
     }
 
     q.prepare( "SELECT item_picklist,"
@@ -493,13 +467,13 @@ void workOrderMaterials::sFillList()
     if (!foundPick)
     {
       _pickNumber->setText("0");
-      _pickQtyPer->setText(formatQty(0.0));
+      _pickQtyPer->setText(formatQtyPer(0.0));
     }
 
     if (!foundNonPick)
     {
       _nonPickNumber->setText("0");
-      _nonPickQtyPer->setText(formatQty(0.0));
+      _nonPickQtyPer->setText(formatQtyPer(0.0));
     }
 
     _totalNumber->setText(QString("%1").arg(totalNumber));
@@ -543,4 +517,3 @@ void workOrderMaterials::sFillList()
     _totalQtyPer->clear();
   }
 }
-

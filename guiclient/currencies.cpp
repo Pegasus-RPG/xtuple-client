@@ -124,10 +124,10 @@ void currencies::init()
     connect(_curr, SIGNAL(itemSelected(int)), _view, SLOT(animateClick()));
   }
     
-  _curr->addColumn( tr("Base"),		_ynColumn,       Qt::AlignCenter );
-  _curr->addColumn( tr("Name"),		-1,              Qt::AlignLeft   );
-  _curr->addColumn( tr("Symbol"),	_currencyColumn, Qt::AlignCenter );
-  _curr->addColumn( tr("Abbreviation"),	_currencyColumn, Qt::AlignLeft   );
+  _curr->addColumn( tr("Base"),		_ynColumn,       Qt::AlignCenter, true, "flag");
+  _curr->addColumn( tr("Name"),		-1,              Qt::AlignLeft,   true, "curr_name");
+  _curr->addColumn( tr("Symbol"),	_currencyColumn, Qt::AlignCenter, true, "curr_symbol");
+  _curr->addColumn( tr("Abbreviation"),	_currencyColumn, Qt::AlignLeft,   true, "curr_abbr");
     
   sFillList();
 }
@@ -214,24 +214,19 @@ void currencies::sDelete()
 
 void currencies::sFillList()
 {
-    _curr->clear();
-    q.prepare( "SELECT curr_id,"
-	       "	CASE WHEN curr_base = TRUE THEN 'Y' "
-	       "	ELSE '' END AS flag, "
-	       "	curr_name, curr_symbol, curr_abbr "
-	       "FROM curr_symbol "
-	       "ORDER BY flag DESC, curr_name;" );
-    q.exec();
-    XTreeWidgetItem *last = 0;
-    while (q.next())
-    {
-      last = new XTreeWidgetItem(_curr, last,
-				 q.value("curr_id").toInt(),
-				 q.value("flag"),
-				 q.value("curr_name"),
-				 q.value("curr_symbol"),
-				 q.value("curr_abbr") );
-    }
+  _curr->clear();
+  q.prepare( "SELECT *, "
+             "	CASE WHEN curr_base = TRUE THEN 'Y' "
+             "	ELSE '' END AS flag "
+             "FROM curr_symbol "
+             "ORDER BY flag DESC, curr_name;" );
+  q.exec();
+  _curr->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void currencies::sPopulateMenu(QMenu* pMenu)
