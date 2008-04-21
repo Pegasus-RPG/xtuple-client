@@ -501,6 +501,12 @@ void XComboBox::setType(XComboBoxTypes pType)
                  "  FROM optype;");
       break;
 
+    case Locales:
+      query.exec("SELECT locale_id, locale_code, locale_code "
+                 "  FROM locale"
+                 " ORDER BY locale_code;");
+      break;
+
     case LocaleLanguages:
       query.exec("SELECT lang_id, lang_name, lang_name "
                  "  FROM lang"

@@ -58,77 +58,54 @@
 #include "batchManager.h"
 
 #include <QMenu>
-#include <qvariant.h>
-#include <qmessagebox.h>
-#include <qstatusbar.h>
-#include <qsqldatabase.h>
+#include <QMessageBox>
+#include <QSqlError>
 
+#include "metasql.h"
 #include "xsqlquery.h"
+
 #include "batchItem.h"
 
-/*
- *  Constructs a batchManager as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
 batchManager::batchManager(QWidget* parent, const char* name, Qt::WFlags fl)
     : QMainWindow(parent, name, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
-    (void)statusBar();
+  QButtonGroup * buttonGroup = new QButtonGroup(this);
+  buttonGroup->addButton(_currentUser);
+  buttonGroup->addButton(_allUsers);
+  buttonGroup->addButton(_selectedUser);
 
-    QButtonGroup * buttonGroup = new QButtonGroup(this);
-    buttonGroup->addButton(_currentUser);
-    buttonGroup->addButton(_allUsers);
-    buttonGroup->addButton(_selectedUser);
+  connect(_autoUpdate,   SIGNAL(toggled(bool)), this, SLOT(sFillList()));
+  connect(_batch, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
+  connect(_cancel,       SIGNAL(clicked()),          this, SLOT(sCancel()));
+  connect(_reschedule,   SIGNAL(clicked()),          this, SLOT(sReschedule()));
+  connect(_showCompleted,SIGNAL(toggled(bool)),      this, SLOT(sFillList()));
+  connect(_usr,          SIGNAL(newID(int)),         this, SLOT(sFillList()));
+  connect(buttonGroup,   SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
 
-    // signals and slots connections
-    connect(_selectedUser, SIGNAL(toggled(bool)), _usr, SLOT(setEnabled(bool)));
-    connect(_usr, SIGNAL(newID(int)), this, SLOT(sFillList()));
-    connect(buttonGroup, SIGNAL(buttonClicked(int)), this, SLOT(sFillList()));
-    connect(_showCompleted, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_batch, SIGNAL(populateMenu(QMenu*,QTreeWidgetItem*,int)), this, SLOT(sPopulateMenu(QMenu*)));
-    connect(_autoUpdate, SIGNAL(toggled(bool)), this, SLOT(sFillList()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-    connect(_batch, SIGNAL(valid(bool)), _reschedule, SLOT(setEnabled(bool)));
-    connect(_batch, SIGNAL(valid(bool)), _cancel, SLOT(setEnabled(bool)));
-    connect(_reschedule, SIGNAL(clicked()), this, SLOT(sReschedule()));
-    connect(_cancel, SIGNAL(clicked()), this, SLOT(sCancel()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-batchManager::~batchManager()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void batchManager::languageChange()
-{
-    retranslateUi(this);
-}
-
-void batchManager::init()
-{
   _db = QSqlDatabase();
-  statusBar()->hide();
   
   _timer = new QTimer(this);
 
-  _batch->addColumn( tr("User"),        _dateColumn,     Qt::AlignCenter );
-  _batch->addColumn( tr("Action"),      _itemColumn,     Qt::AlignCenter );
-  _batch->addColumn( tr("Scheduled"),   _timeDateColumn, Qt::AlignLeft   );
-  _batch->addColumn( tr("Completed"),   _timeDateColumn, Qt::AlignLeft   );
-  _batch->addColumn( tr("Exit Status"), -1,              Qt::AlignLeft   );
+  _batch->addColumn( tr("User"),          _dateColumn, Qt::AlignLeft, true, "batch_user");
+  _batch->addColumn( tr("Action"),        _itemColumn, Qt::AlignLeft, true, "batch_action");
+  _batch->addColumn( tr("Scheduled"), _timeDateColumn, Qt::AlignLeft, true, "batch_scheduled");
+  _batch->addColumn( tr("Run Status"),_timeDateColumn, Qt::AlignLeft, true, "runstatus");
+  _batch->addColumn( tr("Completed"), _timeDateColumn, Qt::AlignLeft, true, "batch_completed");
+  _batch->addColumn( tr("Exit Status"),            -1, Qt::AlignLeft, true, "exitstatus" );
 
   setDatabase(_db);
+}
+
+batchManager::~batchManager()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void batchManager::languageChange()
+{
+  retranslateUi(this);
 }
 
 void batchManager::sPopulateMenu(QMenu *)
@@ -137,34 +114,45 @@ void batchManager::sPopulateMenu(QMenu *)
 
 void batchManager::sFillList()
 {
-  QString sql( "SELECT batch_id, batch_user, batch_action,"
-               "       formatDateTime(batch_scheduled),"
-               "       CASE WHEN (batch_started IS NULL) THEN :scheduled"
-               "            WHEN ( (batch_started IS NOT NULL) AND (batch_completed IS NULL) ) THEN :inProcess"
-               "            ELSE formatDateTime(batch_completed)"
-               "       END,"
-               "       firstLine(batch_exitstatus) "
+  QString sql( "SELECT batch_id, *,"
+               "       CASE WHEN (batch_started IS NULL)   THEN <? value(\"scheduled\") ?>"
+               "            WHEN (batch_completed IS NULL) THEN <? value(\"inProcess\") ?>"
+               "            ELSE <? value(\"completed\") ?>"
+               "       END AS runstatus,"
+               "       firstLine(batch_exitstatus) AS exitstatus "
                "FROM batch, usr "
-               "WHERE ( (batch_user=usr_username)" );
+               "WHERE ( (batch_user=usr_username)"
+               "<? if not exists(\"showCompleted\") ?>"
+               "    AND (batch_completed IS NULL)"
+               "<? endif ?>"
+               "<? if exists(\"userid\") ?>"
+               "    AND (usr_id=<? value(\"userid\") ?>)"
+               "<? else ?>"
+               "    AND (usr_username=CURRENT_USER)"
+               "<? endif ?>"
+               ") "
+               "ORDER BY batch_scheduled, batch_completed;" );
 
-  if (!_showCompleted->isChecked())
-    sql += " AND (batch_completed IS NULL)";
-
-  if (_currentUser->isChecked())
-    sql += " AND (usr_username=CURRENT_USER)";
-  else if (_selectedUser->isChecked())
-    sql += " AND (usr_id=:usr_id)";
- 
-  sql += ") "
-         "ORDER BY batch_scheduled, batch_completed;";
+  ParameterList params;
+  params.append("scheduled", tr("Scheduled"));
+  params.append("inProcess", tr("In-Process"));
+  params.append("completed", tr("Done"));
+  if (_showCompleted->isChecked())
+    params.append("showCompleted");
+  if (_selectedUser->isChecked())
+    params.append("userid", _usr->id());
 
   XSqlQuery batch(_db);
-  batch.prepare(sql);
-  batch.bindValue(":scheduled", tr("Scheduled"));
-  batch.bindValue(":inProcess", tr("In-Process"));
-  batch.bindValue(":usr_id", _usr->id());
-  batch.exec();
+  MetaSQLQuery mql(sql);
+  batch = mql.toQuery(params);
   _batch->populate(batch);
+  if (batch.lastError().type() != QSqlError::None)
+  {
+    QMessageBox::critical(this,
+                          tr("System Error in %1::%2").arg(__FILE__, __LINE__),
+                          batch.lastError().databaseText());
+    return;
+  }
 
   _timer->stop();
   if (_autoUpdate->isChecked())
@@ -207,10 +195,7 @@ void batchManager::setDatabase( QSqlDatabase db )
   //if(_db.isValid())
   //  connect(&_db, SIGNAL(destroyed()), this, SLOT(close()));
 
-  XSqlQuery users( "SELECT usr_id, usr_username "
-                  "FROM usr "
-                  "ORDER BY usr_username", _db );
-  _usr->populate(users);
+  _usr->setType(XComboBox::Users);
   
   sFillList();
 }
@@ -222,4 +207,3 @@ void batchManager::setViewOtherEvents( bool viewOtherEvents )
   if (!viewOtherEvents)
     _currentUser->setChecked(TRUE);
 }
-

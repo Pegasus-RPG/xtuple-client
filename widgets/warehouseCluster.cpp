@@ -91,7 +91,7 @@ void WComboBox::setType(WComboBoxTypes pType)
 
   int warehousid = ((_x_preferences) ? _x_preferences->value("PreferredWarehouse").toInt() : -1);
 
-  QString whss("SELECT warehous_id, warehous_code "
+  QString whss("SELECT warehous_id, warehous_code, warehous_code "
              "FROM whsinfo "
              "WHERE (true"
              "<? if exists(\"active\") ?>  AND (warehous_active)  <? endif ?>"

@@ -101,7 +101,7 @@ class OPENMFGWIDGETS_EXPORT XComboBox : public QComboBox
       FinancialLayouts,	FiscalYears,		Honorifics,
       IncidentCategory,
       IncidentPriority,	IncidentResolution,	IncidentSeverity,
-      ItemCommentTypes,	ItemGroups,
+      ItemCommentTypes,	ItemGroups,             Locales,
       LocaleCountries,  LocaleLanguages,        LotSerialCommentTypes,
       OpportunityStages, OpportunitySources,    OpportunityTypes,
       PlannerCodes,	PoProjects,		ProductCategories,

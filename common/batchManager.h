@@ -58,9 +58,8 @@
 #ifndef BATCHMANAGER_H
 #define BATCHMANAGER_H
 
-#include <QSqlDatabase>
-
 #include <QMainWindow>
+#include <QSqlDatabase>
 
 #include "ui_batchManager.h"
 
@@ -82,7 +81,6 @@ public slots:
 protected slots:
     virtual void languageChange();
 
-    virtual void init();
     virtual void sPopulateMenu( QMenu * );
     virtual void sFillList();
 

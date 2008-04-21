@@ -99,9 +99,7 @@ user::user(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
   _availableGroup->addColumn("Available Groups", -1, Qt::AlignLeft);
   _grantedGroup->addColumn("Granted Groups", -1, Qt::AlignLeft);
 
-  _locale->populate( "SELECT locale_id, locale_code "
-                     "FROM locale "
-                     "ORDER BY locale_code" );
+  _locale->setType(XComboBox::Locales);
 
   q.exec( "SELECT DISTINCT priv_module "
           "FROM priv "
