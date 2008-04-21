@@ -135,37 +135,37 @@ crmaccount::crmaccount(QWidget* parent, Qt::WFlags fl)
   connect(_prospect, SIGNAL(toggled(bool)), this, SLOT(sProspectToggled()));
   connect(_oplist, SIGNAL(populateMenu(QMenu*, QTreeWidgetItem*, int)), this, SLOT(sPopulateOplistMenu(QMenu*)));
 
-  _contacts->addColumn(tr("First Name"),	 50, Qt::AlignLeft );
-  _contacts->addColumn(tr("Last Name"),		 -1, Qt::AlignLeft );
-  _contacts->addColumn(tr("Phone"),		100, Qt::AlignLeft );
-  _contacts->addColumn(tr("Alternate"),		100, Qt::AlignLeft );
-  _contacts->addColumn(tr("Fax"),		100, Qt::AlignLeft );
-  _contacts->addColumn(tr("E-Mail"),		100, Qt::AlignLeft );
-  _contacts->addColumn(tr("Web Address"),	100, Qt::AlignLeft );
+  _contacts->addColumn(tr("First Name"),   50, Qt::AlignLeft, true, "cntct_first_name");
+  _contacts->addColumn(tr("Last Name"),	   -1, Qt::AlignLeft, true, "cntct_last_name");
+  _contacts->addColumn(tr("Phone"),	  100, Qt::AlignLeft, true, "cntct_phone");
+  _contacts->addColumn(tr("Alternate"),	  100, Qt::AlignLeft, true, "cntct_phone2");
+  _contacts->addColumn(tr("Fax"),	  100, Qt::AlignLeft, true, "cntct_fax");
+  _contacts->addColumn(tr("E-Mail"),	  100, Qt::AlignLeft, true, "cntct_email");
+  _contacts->addColumn(tr("Web Address"), 100, Qt::AlignLeft, true, "cntct_webaddr");
 
-  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft );
-  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft );
+  _charass->addColumn(tr("Characteristic"), _itemColumn, Qt::AlignLeft, true, "char_name");
+  _charass->addColumn(tr("Value"),          -1,          Qt::AlignLeft, true, "charass_value");
 
-  _todo->addColumn(tr("Type"),    _statusColumn, Qt::AlignCenter );	
-  _todo->addColumn(tr("Seq"),	     _seqColumn, Qt::AlignRight);
-  _todo->addColumn(tr("User"),      _userColumn, Qt::AlignLeft );
-  _todo->addColumn(tr("Name"),		    100, Qt::AlignLeft );
-  _todo->addColumn(tr("Description"),        -1, Qt::AlignLeft );
-  _todo->addColumn(tr("Status"),  _statusColumn, Qt::AlignLeft );
-  _todo->addColumn(tr("Due Date"),  _dateColumn, Qt::AlignLeft );
-  _todo->addColumn(tr("Incident"), _orderColumn, Qt::AlignLeft );
+  _todo->addColumn(tr("Type"),    _statusColumn, Qt::AlignCenter, true, "type");	
+  _todo->addColumn(tr("Seq"),	     _seqColumn, Qt::AlignRight,  true, "seq");
+  _todo->addColumn(tr("User"),      _userColumn, Qt::AlignLeft,   true, "usr");
+  _todo->addColumn(tr("Name"),		    100, Qt::AlignLeft,   true, "name");
+  _todo->addColumn(tr("Description"),        -1, Qt::AlignLeft,   true, "descrip");
+  _todo->addColumn(tr("Status"),  _statusColumn, Qt::AlignLeft,   true, "status");
+  _todo->addColumn(tr("Due Date"),  _dateColumn, Qt::AlignLeft,   true, "due");
+  _todo->addColumn(tr("Incident"), _orderColumn, Qt::AlignLeft,   true, "incdt");
 
-  _oplist->addColumn(tr("Name"),        _itemColumn,     Qt::AlignLeft );
-  _oplist->addColumn(tr("CRM Acct."),   _userColumn,     Qt::AlignLeft );
-  _oplist->addColumn(tr("Owner"),       _userColumn,     Qt::AlignLeft );
-  _oplist->addColumn(tr("Stage"),       _orderColumn,    Qt::AlignLeft );
-  _oplist->addColumn(tr("Source"),      _orderColumn,    Qt::AlignLeft,   false );
-  _oplist->addColumn(tr("Type"),        _orderColumn,    Qt::AlignLeft,   false );
-  _oplist->addColumn(tr("Prob.%"),      _prcntColumn,    Qt::AlignCenter, false );
-  _oplist->addColumn(tr("Amount"),      _moneyColumn,    Qt::AlignRight,  false );
-  _oplist->addColumn(tr("Currency"),    _currencyColumn, Qt::AlignLeft,   false );
-  _oplist->addColumn(tr("Target Date"), _dateColumn,     Qt::AlignLeft );
-  _oplist->addColumn(tr("Actual Date"), _dateColumn,     Qt::AlignLeft,   false );
+  _oplist->addColumn(tr("Name"),         _itemColumn, Qt::AlignLeft,  true, "ophead_name");
+  _oplist->addColumn(tr("CRM Acct."),    _userColumn, Qt::AlignLeft,  true, "crmacct_number");
+  _oplist->addColumn(tr("Owner"),        _userColumn, Qt::AlignLeft,  true, "ophead_owner_username");
+  _oplist->addColumn(tr("Stage"),       _orderColumn, Qt::AlignLeft,  true, "opstage_name");
+  _oplist->addColumn(tr("Source"),      _orderColumn, Qt::AlignLeft,  false,"opsource_name");
+  _oplist->addColumn(tr("Type"),        _orderColumn, Qt::AlignLeft,  false, "optype_name");
+  _oplist->addColumn(tr("Prob.%"),      _prcntColumn, Qt::AlignRight, false,"ophead_probability_prcnt");
+  _oplist->addColumn(tr("Amount"),      _moneyColumn, Qt::AlignRight, false,"ophead_amount");
+  _oplist->addColumn(tr("Currency"), _currencyColumn, Qt::AlignLeft,  false,"ophead_currabbr");
+  _oplist->addColumn(tr("Target Date"),  _dateColumn, Qt::AlignLeft,  true, "ophead_target_date");
+  _oplist->addColumn(tr("Actual Date"),  _dateColumn, Qt::AlignLeft,   false,"ophead_actual_date");
 
   if (_preferences->boolean("XCheckBox/forgetful"))
   {
@@ -807,7 +807,7 @@ void crmaccount::sDeleteCharacteristic()
 
 void crmaccount::sGetCharacteristics()
 {
-  q.prepare( "SELECT charass_id, char_name, charass_value "
+  q.prepare( "SELECT charass_id, * "
              "FROM charass, char "
              "WHERE ( (charass_target_type='CRMACCT')"
              " AND (charass_char_id=char_id)"
@@ -874,15 +874,12 @@ void crmaccount::sPopulate()
 
 void crmaccount::sPopulateContacts()
 {
-  q.prepare("SELECT cntct_id, cntct_first_name, "
-	    "       cntct_last_name, cntct_phone, "
-	    "       cntct_phone2, cntct_fax, cntct_email, cntct_webaddr "
+  q.prepare("SELECT * "
 	    "FROM cntct "
 	    "WHERE (cntct_crmacct_id=:crmacct_id) "
 	    "ORDER BY cntct_last_name, cntct_first_name;");
   q.bindValue(":crmacct_id", _crmacctId);
   q.exec();
-  _contacts->clear();
   _contacts->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
@@ -898,7 +895,14 @@ void crmaccount::sPopulateTodo()
   if (! _showTodo->isChecked() && ! _showIncdt->isChecked())
     return;
 
-  QString sql = "<? if exists(\"showTodo\") ?>"
+  QString sql = "SELECT *, "
+                "       CASE WHEN (status != 'C' AND due < CURRENT_DATE) THEN"
+                "            'expired'"
+                "            WHEN (status != 'C' AND due > CURRENT_DATE) THEN"
+                "            'future'"
+                "       END AS due_qtforegroundrole "
+                "FROM ("
+                "<? if exists(\"showTodo\") ?>"
 		"SELECT todoitem_id AS id, todoitem_usr_id AS altId, "
 		"       'T' AS type, todoitem_seq AS seq, "
 		"       todoitem_name AS name, "
@@ -923,18 +927,20 @@ void crmaccount::sPopulateTodo()
 		"<? endif ?>"
 		"<? if exists(\"showIncidents\")?>"
 		"SELECT incdt_id AS id, usr_id AS altId, "
-		"       'I' AS type, NULL AS seq, "
+		"       'I' AS type, CAST(NULL AS INTEGER) AS seq, "
 		"       incdt_summary AS name, "
 		"       firstLine(incdt_descrip) AS descrip, "
-		"       incdt_status AS status,  NULL AS due, "
+		"       incdt_status AS status, CAST(NULL AS DATE) AS due, "
 		"       incdt_assigned_username AS usr, incdt_number AS incdt "
-		"FROM incdt LEFT OUTER JOIN usr ON (usr_username=incdt_assigned_username)"
+		"FROM incdt LEFT OUTER JOIN"
+                "     usr ON (usr_username=incdt_assigned_username)"
 		"WHERE ((incdt_crmacct_id=<? value(\"crmacct_id\") ?>)"
 		"  <? if not exists(\"completed\") ?> "
 		"   AND (incdt_status != 'L')"
 		"  <? endif ?>"
 		"       ) "
 		"<? endif ?>"
+                ") AS sub "
 		"ORDER BY incdt, seq ASC, usr;" ;
 
   ParameterList params;
@@ -955,38 +961,13 @@ void crmaccount::sPopulateTodo()
 
   MetaSQLQuery mql(sql);
   XSqlQuery itemQ = mql.toQuery(params);
-
+  _todo->populate(itemQ, true);
   if (itemQ.lastError().type() != QSqlError::NoError)
   {
     systemError(this, itemQ.lastError().databaseText(), __FILE__, __LINE__);
     return;
   }
 
-  XTreeWidgetItem *last = 0;
-  while (itemQ.next())
-  {
-    last = new XTreeWidgetItem(_todo, last,
-			     itemQ.value("id").toInt(),
-			     itemQ.value("altId").toInt(),
-			     itemQ.value("type").toString(),
-			     itemQ.value("seq").isNull() ? "" :
-				    itemQ.value("seq").toString(),
-			     itemQ.value("usr").toString(),
-			     itemQ.value("name").toString(),
-			     itemQ.value("descrip").toString(),
-			     itemQ.value("status").toString(),
-			     itemQ.value("due").isNull() ? "" :
-				    itemQ.value("due").toString(),
-			     itemQ.value("incdt").isNull() ? "" :
-				    itemQ.value("incdt").toString());
-    if (itemQ.value("status") != "C")
-    {
-      if (itemQ.value("due").toDate() < QDate::currentDate())
-	last->setTextColor("red");
-      else if (itemQ.value("due").toDate() > QDate::currentDate())
-	last->setTextColor("green");
-    }
-  }
   sHandleTodoPrivs();
 }
 
