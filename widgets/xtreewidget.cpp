@@ -366,6 +366,8 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	  }
 	} while (pQuery.next());
         populateCalculatedColumns();
+        if (sortColumn() >= 0)
+          sortItems(sortColumn(), header()->sortIndicatorOrder());
       }
       else // assume xtreewidget columns are defined 1-to-1 with query columns
       {
