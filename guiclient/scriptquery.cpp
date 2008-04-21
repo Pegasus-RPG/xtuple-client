@@ -74,6 +74,11 @@ ScriptQuery::~ScriptQuery()
 {
 }
 
+XSqlQuery ScriptQuery::query() const
+{
+  return _query;
+}
+
 void ScriptQuery::setQuery(XSqlQuery query)
 {
   _query = query;

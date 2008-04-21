@@ -87,16 +87,8 @@ ScriptToolbox::~ScriptToolbox()
 {
 }
 
-QObject * ScriptToolbox::executeQuery(const QString & query, QVariantMap parameters)
+QObject * ScriptToolbox::executeQuery(const QString & query, const ParameterList & params)
 {
-  ParameterList params;
-  QMapIterator<QString, QVariant> i(parameters);
-  while (i.hasNext())
-  {
-    i.next();
-    params.append(i.key(), i.value());
-  }
-
   ScriptQuery * sq = new ScriptQuery(_engine);
   MetaSQLQuery mql(query);
   sq->setQuery(mql.toQuery(params));
@@ -230,7 +222,6 @@ void ScriptToolbox::setLastWindow(QWidget * lw)
   _lastWindow = lw;
 }
 
-
 // ParameterList Conversion functions
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params)
 {
@@ -252,6 +243,23 @@ void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params
     if(it.flags() & QScriptValue::SkipInEnumeration)
       continue;
     params.append(it.name(), it.value().toVariant());
+  }
+}
+
+QScriptValue XSqlQuerytoScriptValue(QScriptEngine *engine, const XSqlQuery &qry)
+{
+  ScriptQuery * sq = new ScriptQuery(engine);
+  sq->setQuery(qry);
+  QScriptValue obj = engine->newQObject(sq);
+  return obj;
+}
+
+void XSqlQueryfromScriptValue(const QScriptValue &obj, XSqlQuery &qry)
+{
+  ScriptQuery * sq = qobject_cast<ScriptQuery*>(obj.toQObject());
+  if(sq)
+  {
+    qry = sq->query();
   }
 }
 

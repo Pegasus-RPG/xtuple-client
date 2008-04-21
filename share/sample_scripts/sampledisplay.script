@@ -7,7 +7,7 @@ function getParams()
   {
     params.id = mywindow.findChild("_group").id;
   }
-  else if(mywindow.findChild("_group).state == 2)
+  else if(mywindow.findChild("_group").state == 2)
   {
     params.pattern = mywindow.findChild("_group").pattern;
   }
@@ -17,10 +17,19 @@ function getParams()
 function query()
 {
   var params = getParams();
-  var qry = toolbox.executeQuery("SELECT cntct_first_name, cntct_last_name, cntct_phone"
-                                +"  FROM cntct"
-                                +" WHERE((cntct_phone = <? value(\"search\") ?>)"
-                                +"    OR (cntct_phone2 = <? value(\"search\") ?>))", params);
+  var qry = toolbox.executeQuery("SELECT item_id, classcode_code, item_number, min(cohist_orderdate), max(cohist_orderdate)"
+                                +"  FROM classcode JOIN item ON (item_classcode_id=classcode_id)"
+                                +"                 JOIN itemsite ON (itemsite_item_id=item_id)"
+                                +"                 JOIN cohist ON (cohist_itemsite_id=itemsite_id)"
+                                +" WHERE((cohist_orderdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
+                                +"<? if exists(\"id\") ?>"
+                                +"       (classcode_id=<? value(\"id\") ?>)"
+                                +"<? elseif exists(\"pattern\") ?>"
+                                +"       (classcode_name ~ <? value(\"pattern\") ?>)"
+                                +"<? endif ?>"
+                                +"      )"
+                                +" GROUP BY classcode_code, item_id, item_number"
+                                +" ORDER BY classcode_code, item_number;", params);
   mywindow.findChild("_list").populate(qry);
 }
 
@@ -59,7 +68,7 @@ mywindow.findChild("_print").clicked.connect(print);
 // to handle the auto update we are going to connect a system timer
 // to a local function that will check if we want the autoupdate
 // turned on and to call the query function if it is
-mainwindow.sTick.connect(tick);
+mainwindow.tick.connect(tick);
 
 mywindow.findChild("_group").setType(3);
 

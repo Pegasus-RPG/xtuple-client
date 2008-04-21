@@ -89,7 +89,8 @@
 #define _currencyColumn    80
 
 
-class XSqlQuery;
+#include "xsqlquery.h"
+
 class XTreeWidget;
 class QMenu;
 class QAction;
@@ -184,8 +185,8 @@ class OPENMFGWIDGETS_EXPORT XTreeWidget : public QTreeWidget
     XTreeWidget(QWidget *);
     ~XTreeWidget();
 
-    Q_INVOKABLE void populate(XSqlQuery &, bool = FALSE);
-    Q_INVOKABLE void populate(XSqlQuery &, int, bool = FALSE);
+    Q_INVOKABLE void populate(XSqlQuery, bool = FALSE);
+    Q_INVOKABLE void populate(XSqlQuery, int, bool = FALSE);
     void populate(const QString &, bool = FALSE);
     void populate(const QString &, int, bool = FALSE);
 

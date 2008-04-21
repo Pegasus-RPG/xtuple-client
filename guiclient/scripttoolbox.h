@@ -75,12 +75,16 @@ class QStackedLayout;
 class QScriptEngine;
 
 Q_DECLARE_METATYPE(ParameterList)
+Q_DECLARE_METATYPE(XSqlQuery);
 Q_DECLARE_METATYPE(enum SetResponse)
 Q_DECLARE_METATYPE(enum ParameterGroupStates);
 Q_DECLARE_METATYPE(enum ParameterGroupTypes);
 
 QScriptValue ParameterListtoScriptValue(QScriptEngine *engine, const ParameterList &params);
 void ParameterListfromScriptValue(const QScriptValue &obj, ParameterList &params);
+
+QScriptValue XSqlQuerytoScriptValue(QScriptEngine *engine, const XSqlQuery &qry);
+void XSqlQueryfromScriptValue(const QScriptValue &obj, XSqlQuery &qry);
 
 QScriptValue SetResponsetoScriptValue(QScriptEngine *engine, const enum SetResponse &sr);
 void SetResponsefromScriptValue(const QScriptValue &obj, enum SetResponse &sr);
@@ -104,7 +108,7 @@ class ScriptToolbox : public QObject
 
   public slots:
 
-    QObject * executeQuery(const QString & query, QVariantMap parameters);
+    QObject * executeQuery(const QString & query, const ParameterList & params);
 
     QObject * widgetGetLayout(QWidget * w);
     void layoutBoxInsertWidget(QObject *, int index, QWidget *, int stretch = 0, int alignment = 0);

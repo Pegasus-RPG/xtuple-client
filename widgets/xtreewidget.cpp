@@ -163,12 +163,12 @@ void XTreeWidget::populate(const QString &pSql, int pIndex, bool pUseAltId)
   qApp->restoreOverrideCursor();
 }
 
-void XTreeWidget::populate(XSqlQuery &pQuery, bool pUseAltId)
+void XTreeWidget::populate(XSqlQuery pQuery, bool pUseAltId)
 {
   populate(pQuery, id(), pUseAltId);
 }
 
-void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
+void XTreeWidget::populate(XSqlQuery pQuery, int pIndex, bool pUseAltId)
 {
   qApp->setOverrideCursor(Qt::waitCursor);
 
