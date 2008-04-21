@@ -57,8 +57,10 @@
 
 #include "booItem.h"
 
-#include <qvariant.h>
-#include <qmessagebox.h>
+#include <QMessageBox>
+#include <QSqlError>
+#include <QVariant>
+
 #include "booitemImage.h"
 
 static char *costReportTypes[] = { "D", "O", "N" };
@@ -68,22 +70,17 @@ booItem::booItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
 {
   setupUi(this);
 
-  // signals and slots connections
   connect(_runTime, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
   connect(_runTimePer, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-  connect(_prodUOM, SIGNAL(textChanged(const QString&)), _prodUOM2, SLOT(setText(const QString&)));
   connect(_stdopn, SIGNAL(newID(int)), this, SLOT(sHandleStdopn(int)));
   connect(_fixedFont, SIGNAL(toggled(bool)), this, SLOT(sHandleFont(bool)));
   connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
   connect(_invProdUOMRatio, SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateInvRunTime()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
   connect(_wrkcnt, SIGNAL(newID(int)), this, SLOT(sPopulateLocations()));
   connect(_newImage, SIGNAL(clicked()), this, SLOT(sNewImage()));
   connect(_editImage, SIGNAL(clicked()), this, SLOT(sEditImage()));
   connect(_deleteImage, SIGNAL(clicked()), this, SLOT(sDeleteImage()));
-  connect(_booimage, SIGNAL(itemSelected(int)), _editImage, SLOT(animateClick()));
-  connect(_booimage, SIGNAL(valid(bool)), _editImage, SLOT(setEnabled(bool)));
-  connect(_booimage, SIGNAL(valid(bool)), _deleteImage, SLOT(setEnabled(bool)));
+
   _booitemid = -1;
   _item->setReadOnly(TRUE);
 
@@ -252,6 +249,11 @@ void booItem::sSave()
                "WHERE (booitem_item_id=:item_id);" );
     q.bindValue(":item_id", _item->id());
     q.exec();
+    if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
   }
 
   if (_mode == cNew)
@@ -259,7 +261,11 @@ void booItem::sSave()
     q.exec("SELECT NEXTVAL('booitem_booitem_id_seq') AS _booitem_id;");
     if (q.first())
       _booitemid = q.value("_booitem_id").toInt();
-//  ToDo
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
       q.prepare( "INSERT INTO booitem "
                  "( booitem_effective, booitem_expires, booitem_execday,"
@@ -290,7 +296,7 @@ void booItem::sSave()
                  "  :booitem_issuecomp, :booitem_rcvinv,"
                  "  :booitem_pullthrough, :booitem_overlap,"
                  "  :booitem_configtype, :booitem_configid, :booitem_configflag,"
-				 "  :booitem_instruc, :booitem_wip_location_id, :booitem_rev_id );" );
+		 "  :booitem_instruc, :booitem_wip_location_id, :booitem_rev_id );" );
   }
   else if (_mode == cEdit)
     q.prepare( "UPDATE booitem "
@@ -337,6 +343,11 @@ void booItem::sSave()
   q.bindValue(":booitem_configflag", QVariant(FALSE, 0));
   q.bindValue(":booitem_rev_id", _revisionid);
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   omfgThis->sBOOsUpdated(_booitemid, TRUE);
   done(_booitemid);
@@ -391,6 +402,11 @@ void booItem::sHandleStdopn(int pStdopnid)
         else if (q.value("stdopn_rncosttype").toString() == "N")
           _runReport->setCurrentItem(2);
       }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
     }
   }
   else
@@ -510,6 +526,11 @@ void booItem::populate()
     sCalculateInvRunTime();
     sFillImageList();
   }
+  else if (booitem.lastError().type() != QSqlError::None)
+  {
+    systemError(this, booitem.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void booItem::sPopulateLocations()
@@ -536,6 +557,11 @@ void booItem::sPopulateLocations()
   loc.exec();
 
   _wipLocation->populate(loc, locid);
+  if (loc.lastError().type() != QSqlError::None)
+  {
+    systemError(this, loc.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
 
 void booItem::sNewImage()
@@ -577,6 +603,11 @@ void booItem::sDeleteImage()
              "WHERE (booimage_id=:booimage_id);" );
   q.bindValue(":booimage_id", _booimage->id());
   q.exec();
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 
   sFillImageList();
 }
@@ -602,5 +633,9 @@ void booItem::sFillImageList()
   q.bindValue(":booitem_id", _booitemid);
   q.exec();
   _booimage->populate(q);
+  if (q.lastError().type() != QSqlError::None)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
+  }
 }
-
