@@ -449,12 +449,6 @@ DateCluster::DateCluster(QWidget *pParent, const char *pName) : QWidget(pParent)
   setFocusProxy(_startDate);
 }
 
-void DateCluster::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addFieldMapping(static_cast<DLineEdit*>(_startDate), _fieldNameStart, QByteArray("startDate"));
-  m->addFieldMapping(static_cast<DLineEdit*>(_endDate),   _fieldNameEnd,  QByteArray("endDate"));
-}
-
 void DateCluster::setStartNull(const QString &pString, const QDate &pDate, bool pSetNull)
 {
   _startDate->setAllowNullDate(TRUE);
