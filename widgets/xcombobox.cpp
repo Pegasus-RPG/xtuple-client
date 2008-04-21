@@ -245,14 +245,14 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case ARBankAccounts:
-      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip), bankacct_name "
+      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip), bankaccnt_name "
                   "FROM bankaccnt "
                   "WHERE (bankaccnt_ar) "
                   "ORDER BY bankaccnt_name;" );
       break;
 
     case APBankAccounts:
-      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip), bankacct_name "
+      query.exec( "SELECT bankaccnt_id, (bankaccnt_name || '-' || bankaccnt_descrip), bankaccnt_name "
                   "FROM bankaccnt "
                   "WHERE (bankaccnt_ap) "
                   "ORDER BY bankaccnt_name;" );
