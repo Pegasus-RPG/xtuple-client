@@ -188,10 +188,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
       {
         // apply the indent role to col 0 if the caller requested indentation
         if (pQuery.record().indexOf("xtindentrole") >= 0)
-        {
-          qDebug("setting xtindentrole");
           _roles.value(0)->insert("xtindentrole", "xtindentrole");
-        }
 
 	QStringList knownroles;
 	knownroles << "qtdisplayrole"      << "qttextalignmentrole"
@@ -366,7 +363,7 @@ void XTreeWidget::populate(XSqlQuery &pQuery, int pIndex, bool pUseAltId)
 	  }
 	} while (pQuery.next());
         populateCalculatedColumns();
-        if (sortColumn() >= 0)
+        if (sortColumn() >= 0 && header()->isSortIndicatorShown())
           sortItems(sortColumn(), header()->sortIndicatorOrder());
       }
       else // assume xtreewidget columns are defined 1-to-1 with query columns
@@ -574,7 +571,8 @@ void XTreeWidget::populateCalculatedColumns()
 {
   QMap<int, QMap<int, double> > totals; // <col <totalset, subtotal> >
   QMap<int, int> scales;        // keep scale for the col, not col[totalset]
-  for (int col = 0; col < topLevelItem(0)->columnCount(); col++)
+  for (int col = 0; topLevelItem(0) &&
+                    col < topLevelItem(0)->columnCount(); col++)
   {
     if (headerItem()->data(col, Qt::UserRole).toString() == "xtrunningrole")
     {
