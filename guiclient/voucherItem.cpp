@@ -82,13 +82,13 @@ voucherItem::voucherItem(QWidget* parent, const char* name, bool modal, Qt::WFla
   _item->setReadOnly(TRUE);
   _qtyToVoucher->setValidator(omfgThis->qtyVal());
 
-  _vodist->addColumn(tr("Cost Element"), -1,           Qt::AlignLeft  );
-  _vodist->addColumn(tr("Amount"),       _priceColumn, Qt::AlignRight );
+  _vodist->addColumn(tr("Cost Element"), -1,           Qt::AlignLeft, true, "costelem_type");
+  _vodist->addColumn(tr("Amount"),       _priceColumn, Qt::AlignRight,true, "vodist_amount");
 
-  _uninvoiced->addColumn(tr("Receipt/Reject"), -1,          Qt::AlignCenter );
-  _uninvoiced->addColumn(tr("Date"),           _dateColumn, Qt::AlignCenter );
-  _uninvoiced->addColumn(tr("Qty."),           _qtyColumn,  Qt::AlignRight  );
-  _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter );
+  _uninvoiced->addColumn(tr("Receipt/Reject"), -1,          Qt::AlignCenter, true, "action");
+  _uninvoiced->addColumn(tr("Date"),           _dateColumn, Qt::AlignCenter, true, "item_date");
+  _uninvoiced->addColumn(tr("Qty."),           _qtyColumn,  Qt::AlignRight,  true, "qty");
+  _uninvoiced->addColumn(tr("Tagged"),         _ynColumn,   Qt::AlignCenter, true, "f_tagged");
   
   _rejectedMsg = tr("The application has encountered an error and must "
                     "stop editing this Voucher Item.\n%1");
@@ -565,8 +565,8 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
 void voucherItem::sFillList()
 {
   q.prepare( "SELECT vodist_id,"
-             "       COALESCE(costelem_type, :none),"
-             "       formatMoney(vodist_amount) AS amount "
+             "       COALESCE(costelem_type, :none) AS costelem_type,"
+             "       vodist_amount, 'currval' AS vodist_amount_xtnumericrole "
              "FROM vodist "
              "     LEFT OUTER JOIN costelem ON (vodist_costelem_id=costelem_id) "
              "WHERE ( (vodist_poitem_id=:poitem_id)"
@@ -604,20 +604,21 @@ void voucherItem::sFillList()
           
   //Fill univoiced receipts list
   q.prepare( "SELECT porecv_id AS item_id, 1 AS item_type, :receiving AS action,"
-             "       formatDate(porecv_date) AS f_item_date,"
-             "       formatQty(porecv_qty) AS f_qty,"
+             "       porecv_date AS item_date,"
+             "       porecv_qty AS qty, 'qty' AS qty_xtnumericrole,"
              "       formatBoolYN(porecv_vohead_id=:vohead_id) AS f_tagged,"
-             "       porecv_qty AS qty "
+             "       0 AS qty_xttotalrole "
              "FROM porecv "
              "WHERE ( (NOT porecv_invoiced)"
              " AND ((porecv_vohead_id IS NULL) OR (porecv_vohead_id=:vohead_id))"
              " AND (porecv_poitem_id=:poitem_id) ) "
 
-             "UNION SELECT poreject_id AS item_id, 2 AS item_type, :reject AS action,"
-             "             formatDate(poreject_date) AS f_item_date,"
-             "             formatQty(poreject_qty) AS f_qty,"
-             "             formatBoolYN(poreject_vohead_id=:vohead_id) AS f_tagged,"
-             "             (poreject_qty * -1) AS qty "
+             "UNION "
+             "SELECT poreject_id AS item_id, 2 AS item_type, :reject AS action,"
+             "       poreject_date AS item_date,"
+             "       poreject_qty * -1 AS qty, 'qty', "
+             "       formatBoolYN(poreject_vohead_id=:vohead_id) AS f_tagged,"
+             "       0 AS qty_xttotalrole "
              "FROM poreject "
              "WHERE ( (poreject_posted)"
              " AND (NOT poreject_invoiced)"
@@ -628,28 +629,7 @@ void voucherItem::sFillList()
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":poitem_id", _poitemid);
   q.exec();
-  if (q.first())
-  {
-    _uninvoiced->clear();
-    double totalQty = 0;
-    XTreeWidgetItem *last = 0;
-
-    do
-    {
-      last = new XTreeWidgetItem( _uninvoiced, last,
-               q.value("item_id").toInt(),
-               q.value("item_type").toInt(),
-               q.value("action"),
-               q.value("f_item_date"),
-               q.value("f_qty"),
-               q.value("f_tagged") );
-
-      totalQty += q.value("qty").toDouble();
-    }
-    while (q.next());
-
-    new XTreeWidgetItem(_uninvoiced, last, -1, QVariant(tr("Uninvoiced")), "", formatQty(totalQty));
-  }
+  _uninvoiced->populate(q);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),

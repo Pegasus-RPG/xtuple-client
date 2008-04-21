@@ -98,9 +98,9 @@ woTimeClock::woTimeClock(QWidget* parent, const char* name, Qt::WFlags fl)
   _wooperLit-> setHidden(! (_metrics->value("WOTCPostStyle") == "Operations"));
   _wooper->    setHidden(! (_metrics->value("WOTCPostStyle") == "Operations"));
   
-  _wooperList->addColumn(tr("W/O #"),	  _orderColumn,    Qt::AlignLeft);
-  _wooperList->addColumn(tr("Operation"), -1,              Qt::AlignLeft);
-  _wooperList->addColumn(tr("Clock In"),  _timeDateColumn, Qt::AlignLeft);
+  _wooperList->addColumn(tr("W/O #"),	  _orderColumn,    Qt::AlignLeft, true, "wonum");
+  _wooperList->addColumn(tr("Operation"), -1,              Qt::AlignLeft, true, "woseq");
+  _wooperList->addColumn(tr("Clock In"),  _timeDateColumn, Qt::AlignLeft, true, "wotc_timein");
 
   if (! (_metrics->value("WOTCPostStyle") == "Operations"))
     _wooperList->hideColumn(1);
@@ -351,7 +351,7 @@ void woTimeClock::sCheckValid()
     QString sql = "SELECT wotc_wooper_id, wotc_wo_id, formatWoNumber(wo_id) AS wonum,"
 		  "      (wooper_seqnumber || ' - ' || wooper_descrip1 ||"
 		  "                  ' - ' || wooper_descrip2) AS woseq,"
-		  "      formatDateTime(wotc_timein) AS wotc_timein "
+		  "      wotc_timein "
 		  "FROM wo, wotc LEFT OUTER JOIN"
 		  "     wooper ON (wooper_id=wotc_wooper_id) "
 		  "WHERE ((wo_id=wotc_wo_id)"
@@ -367,20 +367,12 @@ void woTimeClock::sCheckValid()
 
     MetaSQLQuery mql(sql);
     XSqlQuery cnt = mql.toQuery(params);
+    _wooperList->populate(cnt, true);
     if (cnt.lastError().type() != QSqlError::NoError)
     {
       systemError(this, cnt.lastError().databaseText(), __FILE__, __LINE__);
       return;
     }
-
-    _wooperList->clear();
-    XTreeWidgetItem *last = 0;
-    while (cnt.next())
-      last = new XTreeWidgetItem(_wooperList, last,
-				 cnt.value("wotc_wooper_id").toInt(),
-				 cnt.value("wotc_wo_id").toInt(),
-				 cnt.value("wonum"), cnt.value("woseq"),
-				 cnt.value("wotc_timein"));
 
     if (_wooperList->topLevelItemCount() > 0)
       _clockOut->setFocus();
