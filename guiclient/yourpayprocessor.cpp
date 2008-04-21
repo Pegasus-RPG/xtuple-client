@@ -344,7 +344,7 @@ int  YourPayProcessor::doCharge(const int pccardid, const int pcvv, const double
 	      "       AS next_seq "
 	      "  FROM ccpay "
 	      " WHERE (ccpay_order_number=:ccpay_order_number);");
-  ypq.bindValue(":ccpay_order_number", pneworder.toInt());
+  ypq.bindValue(":ccpay_order_number", pneworder);
   ypq.exec();
   if (ypq.first() && ! ypq.value("next_seq").isNull())
     oidstr = oidstr + "-" + ypq.value("next_seq").toString();

@@ -816,7 +816,7 @@ int CreditCardProcessor::credit(const int pccardid, const int pcvv, const double
 		"       AS next_seq "
 		"  FROM ccpay "
 		" WHERE (ccpay_order_number=:ccpay_order_number);");
-    ccq.bindValue(":ccpay_order_number", preforder.toInt());
+    ccq.bindValue(":ccpay_order_number", preforder);
     ccq.exec();
     if (ccq.first())
       next_seq = ccq.value("next_seq").toInt();
