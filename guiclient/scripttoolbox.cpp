@@ -71,6 +71,7 @@
 
 #include <parameter.h>
 #include <metasql.h>
+#include <openreports.h>
 
 #include "xuiloader.h"
 #include "scriptquery.h"
@@ -156,6 +157,19 @@ QWidget * ScriptToolbox::createWidget(const QString & className, QWidget * paren
 QWidget * ScriptToolbox::lastWindow() const
 {
   return _lastWindow;
+}
+
+bool ScriptToolbox::printReport(const QString & name, const ParameterList & params)
+{
+  orReport report(name, params);
+  if(report.isValid())
+    report.print();
+  else
+  {
+    report.reportError(NULL);
+    return false;
+  } 
+  return true;
 }
 
 int ScriptToolbox::messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons, int defaultButton)

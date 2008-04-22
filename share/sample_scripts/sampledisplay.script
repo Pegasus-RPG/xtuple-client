@@ -1,8 +1,20 @@
+//
+// This function creates an object that acts like a ParameterList.
+// This object defines one or more properties that act as key=value pairs
+// and are used to pass to queries for execution and printing.
+// Having one function that creates the object list makes it easier
+// to manage and maintain when it is used in more than one location.
+//
 function getParams()
 {
+  // create an object hold the parameters
   var params = new Object;
+
+  // add the start and end dates to the params object
   params.startDate = mywindow.findChild("_dates").startDate;
   params.endDate = mywindow.findChild("_dates").endDate;
+
+  // check to see if our ParameterGroup object is all (0), group (1), or pattern (2)
   if(mywindow.findChild("_group").state == 1)
   {
     params.id = mywindow.findChild("_group").id;
@@ -12,53 +24,76 @@ function getParams()
     params.pattern = mywindow.findChild("_group").pattern;
   }
 
+  // return the params object
   return params;
 }
+
+//
+// This function executes a query and passes the results of that query
+// to the list object for populating the list.
+//
 function query()
 {
+  // get a copy of the params from the getParams function.
   var params = getParams();
+
+  // execute the following sql statement passing the params
+  // and saving the results into a variable
   var qry = toolbox.executeQuery("SELECT item_id, classcode_code, item_number, min(cohist_orderdate), max(cohist_orderdate)"
-                                +"  FROM classcode JOIN item ON (item_classcode_id=classcode_id)"
-                                +"                 JOIN itemsite ON (itemsite_item_id=item_id)"
-                                +"                 JOIN cohist ON (cohist_itemsite_id=itemsite_id)"
+                                +"  FROM cohist, itemsite, item, classcode"
                                 +" WHERE((cohist_orderdate BETWEEN <? value(\"startDate\") ?> AND <? value(\"endDate\") ?>)"
+                                +"   AND (cohist_itemsite_id=itemsite_id)"
+                                +"   AND (itemsite_item_id=item_id)"
+                                +"   AND (item_classcode_id=classcode_id)"
                                 +"<? if exists(\"id\") ?>"
-                                +"       (classcode_id=<? value(\"id\") ?>)"
+                                +"   AND (classcode_id=<? value(\"id\") ?>)"
                                 +"<? elseif exists(\"pattern\") ?>"
-                                +"       (classcode_name ~ <? value(\"pattern\") ?>)"
+                                +"   AND (classcode_code ~ <? value(\"pattern\") ?>)"
                                 +"<? endif ?>"
                                 +"      )"
                                 +" GROUP BY classcode_code, item_id, item_number"
                                 +" ORDER BY classcode_code, item_number;", params);
+
+  // find the list object and populate the list with the query results
   mywindow.findChild("_list").populate(qry);
 }
 
+//
+// This function will call the print engine for a specified report name
+// and using the provided parameters.
+//
 function print()
 {
-  // Todo: Add some code here to get your parameters
-  //       and call the print functionality with the
-  //       report you want to print out.
+  // Call the printReport function from the toolbox passing in
+  // the name of the report you want to print long with the
+  // parameters you want to use while printing.
+  toolbox.printReport("SampleDisplayReport", getParams());
 }
 
-/*
- * get the update checkbox widget then
- * check to make sure that it is valid and see if it's checked
- * calling the query function to update the list if it is.
- */
+//
+// This function gets the update checkbox widget then
+// check to make sure that it is valid and see if it's checked
+// calling the query function to update the list if it is.
+//
 function tick()
 {
+  // find the update widget if it exists
   var updateWidget = mywindow.findChild("_update");
+
+  // make sure the widget exists and if it is in a checked state
+  // go ahead and call the query() function to refresh the screen.
   if(updateWidget && updateWidget.checked)
   {
     query();
   }
 }
 
-/*
- * Now we have to setup our display and connect the various objects
- * together in a way that will make the display work when users
- * click the buttons
- */
+//
+// Now we have to setup our display and connect the various objects
+// together in a way that will make the display work when users
+// click the buttons
+//
+
 // first connect the buttons to the appropriate functions
 // the _close button can be connected directly to the mywindow close function
 mywindow.findChild("_close").clicked.connect(mywindow, "close");
@@ -70,11 +105,19 @@ mywindow.findChild("_print").clicked.connect(print);
 // turned on and to call the query function if it is
 mainwindow.tick.connect(tick);
 
+// set the type for the ParameterGroup object
+// in this case ClassCode = 3.
 mywindow.findChild("_group").setType(3);
 
+// find the _list object and add the desired columns to it
 var list = mywindow.findChild("_list");
-list.addColumn("Class Code", 100, 0);
-list.addColumn("Item", 100, 0);
-list.addColumn("First Date", 100, 1);
-list.addColumn("Last Date", 100, 2);
+// the first argument is column name
+// the second argument is column width in pixels
+// the third argument is default column alignment See Qt::Alignment documentation
+// the fourth optional argument is default visible
+// the fifth optional argument is column name for enhanced processing
+list.addColumn("Class Code", 100, 1);
+list.addColumn("Item", 100, 1);
+list.addColumn("First Date", 100, 4);
+list.addColumn("Last Date", 100, 4);
 

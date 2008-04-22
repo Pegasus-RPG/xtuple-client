@@ -131,6 +131,8 @@ class OPENMFGWIDGETS_EXPORT DLineEdit : public XLineEdit
 class OPENMFGWIDGETS_EXPORT DateCluster : public QWidget
 {
   Q_OBJECT
+  Q_PROPERTY(QDate startDate READ startDate WRITE setStartDate)
+  Q_PROPERTY(QDate endDate   READ endDate   WRITE setEndDate)
 
   public:
     DateCluster(QWidget *, const char * = 0);

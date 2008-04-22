@@ -121,6 +121,8 @@ class ScriptToolbox : public QObject
     QWidget * createWidget(const QString & className, QWidget * parent = 0, const QString & name = QString());
     QWidget * lastWindow() const;
 
+    bool printReport(const QString & name, const ParameterList & params);
+
     int messageBox(const QString & type, QWidget * parent, const QString & title, const QString & text, int buttons = 0x00000400, int defaultButton = 0x00000000);
   private:
     QScriptEngine * _engine;
