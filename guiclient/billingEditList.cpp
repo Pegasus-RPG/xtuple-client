@@ -57,15 +57,16 @@
 
 #include "billingEditList.h"
 
-#include <QVariant>
 #include <QMenu>
 #include <QMessageBox>
+#include <QSqlError>
 
 #include <openreports.h>
 
-#include "selectOrderForBilling.h"
-#include "selectBillingQty.h"
 #include "printInvoices.h"
+#include "selectBillingQty.h"
+#include "selectOrderForBilling.h"
+#include "storedProcErrorLookup.h"
 
 billingEditList::billingEditList(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
@@ -76,14 +77,14 @@ billingEditList::billingEditList(QWidget* parent, const char* name, Qt::WFlags f
   connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
 
   _cobill->setRootIsDecorated(TRUE);
-  _cobill->addColumn(tr("Document #"),       (_itemColumn+ _cobill->indentation()),  Qt::AlignLeft   );
-  _cobill->addColumn(tr("Order #"),          _orderColumn,                            Qt::AlignLeft   );
-  _cobill->addColumn(tr("Cust./Item #"),     _itemColumn,                             Qt::AlignLeft   );
-  _cobill->addColumn(tr("Name/Description"), -1,                                      Qt::AlignLeft   );
-  _cobill->addColumn(tr("UOM"),              _uomColumn,                              Qt::AlignCenter );
-  _cobill->addColumn(tr("Qty. to Bill"),     _qtyColumn,                              Qt::AlignRight  );
-  _cobill->addColumn(tr("Price"),            _costColumn,                             Qt::AlignRight  );
-  _cobill->addColumn(tr("Ext. Price"),       _moneyColumn,                            Qt::AlignRight  );
+  _cobill->addColumn(tr("Document #"), (_itemColumn+ _cobill->indentation()),  Qt::AlignLeft, true, "documentnumber");
+  _cobill->addColumn(tr("Order #"),    _orderColumn, Qt::AlignLeft,  true, "ordernumber");
+  _cobill->addColumn(tr("Cust./Item #"),_itemColumn, Qt::AlignLeft,  true, "shortname");
+  _cobill->addColumn(tr("Name/Description"),     -1, Qt::AlignLeft,  true, "longname");
+  _cobill->addColumn(tr("UOM"),          _uomColumn, Qt::AlignCenter,true, "iteminvuom");
+  _cobill->addColumn(tr("Qty. to Bill"), _qtyColumn, Qt::AlignRight, true, "qtytobill");
+  _cobill->addColumn(tr("Price"),       _costColumn, Qt::AlignRight, true, "price");
+  _cobill->addColumn(tr("Ext. Price"), _moneyColumn, Qt::AlignRight, true, "extprice");
 
   connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
 
@@ -122,6 +123,20 @@ void billingEditList::sCancelBillingOrd()
                "WHERE (cobmisc_cohead_id=:sohead_id);" );
     q.bindValue(":sohead_id", _cobill->id());
     q.exec();
+    if (q.first())
+    {
+      int result = q.value("result").toInt();
+      if (result < 0)
+      {
+        systemError(this, storedProcErrorLookup("cancelBillingSelection", result), __FILE__, __LINE__);
+        return;
+      }
+    }
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+      return;
+    }
 
     sFillList();
   }
@@ -163,80 +178,58 @@ void billingEditList::sPopulateMenu(QMenu *pMenu, QTreeWidgetItem *pSelected)
 
 void billingEditList::sFillList()
 {
-  _cobill->clear();
-
-  q.exec("SELECT * FROM billingEditList;");
-  if (q.first())
+  /* indent: order
+                line item
+                  credit account
+                line item
+                  credit account
+                debit account for entire order
+  */
+  q.exec("SELECT orderid, itemid, seq, documentnumber, ordernumber,"
+         "       shortname, longname, iteminvuom, qtytobill, price, extprice,"
+         "       'qty'        AS qtytobill_xtnumericrole,"
+         "       'salesprice' AS price_xtnumericrole,"
+         "       'extprice'   AS extprice_xtnumericrole,"
+         "       CASE WHEN seq = 3 THEN 1"
+         "            ELSE seq END AS xtindentrole,"
+         "       CASE WHEN account = 'Not Assigned' THEN 'error'"
+         "       END AS qtforegroundrole "
+         "FROM ("
+         "  SELECT orderid, itemid, 0 AS seq,"      // order info
+         "        documentnumber, ordernumber, cust_number AS shortname,"
+         "        billtoname AS longname, '' AS iteminvuom, NULL AS qtytobill,"
+         "        NULL AS price, NULL AS extprice, account,"
+         "        ordernumber AS sortord, linenumber "
+         "  FROM billingEditList "
+         "  WHERE (itemid = -2) "
+         "  UNION "       // line item info
+         "  SELECT orderid, itemid, 1,"
+         "        documentnumber, '', item,"
+         "        itemdescrip, iteminvuom, qtytobill, price, extprice, account,"
+         "        ordernumber, linenumber "
+         "  FROM billingEditList "
+         "  WHERE (itemid >= 0) "
+         "  UNION "       // credits
+         "  SELECT orderid, itemid, 2,"
+         "         documentnumber, '', sence,"
+         "         account, '', NULL, NULL, extprice, account,"
+         "        ordernumber, linenumber "
+         "  FROM billingEditList "
+         "  WHERE (itemid >= 0) "
+         "  UNION "       // debits
+         "  SELECT orderid, itemid, 3,"
+         "         '', '', sence,"
+         "         account, '', NULL, NULL, extprice, account,"
+         "        ordernumber, 9999999999 "
+         "  FROM billingEditList "
+         "  WHERE (itemid = -2) "
+         ") AS sub "
+         "ORDER BY sortord, linenumber, seq;");
+  _cobill->populate(q, true);
+  if (q.lastError().type() != QSqlError::None)
   {
-    int           thisOrderid;
-    int           orderid    = -9999;
-    XTreeWidgetItem *orderLine = NULL;
-    XTreeWidgetItem *lastLine  = NULL;
-    XTreeWidgetItem *selected  = NULL;
-
-//  Fill the list with the query contents
-    do
-    {
-      thisOrderid = q.value("orderid").toInt();
-
-//  Check to see if this a new order number
-      if (thisOrderid != orderid)
-      {
-//  New order number, make a new list item header
-        orderid  = thisOrderid;
-        lastLine = NULL;
-
-        XTreeWidgetItem *thisLine = new XTreeWidgetItem( _cobill, orderLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
-                                                     q.value("documentnumber"), q.value("ordernumber"),
-                                                     q.value("cust_number"), q.value("billtoname") );
-        orderLine = thisLine;
-
-//  Add the distribution line
-        thisLine = new XTreeWidgetItem( orderLine, q.value("orderid").toInt(), -1,
-                                      "", "",
-                                      q.value("sence"), q.value("account"),
-                                      "", "", "", q.value("extprice") );
-        if (q.value("account") == "Not Assigned")
-        {
-          thisLine->setTextColor("red");
-          orderLine->setTextColor("red");
-        }
-
-//  If we are looking for a selected order and this is it, cache it
-        if (thisOrderid == _orderid)
-          selected = orderLine;
-      }
-      else
-      {
-        XTreeWidgetItem *itemLine = new XTreeWidgetItem( orderLine, lastLine, q.value("orderid").toInt(), q.value("itemid").toInt(),
-                                                     "", "",
-                                                     q.value("item"), q.value("itemdescrip"),
-                                                     q.value("iteminvuom"), q.value("qtytobill"),
-                                                     q.value("price"), q.value("extprice") );
-
-//  Add the distribution line
-        XTreeWidgetItem *thisLine = new XTreeWidgetItem( itemLine, q.value("orderid").toInt(), -1,
-                                                     "", "",
-                                                     q.value("sence"), q.value("account"),
-                                                     "", "", "", q.value("extprice") );
-        if (q.value("account") == "Not Assigned")
-        {
-          thisLine->setTextColor("red");
-          itemLine->setTextColor("red");
-          orderLine->setTextColor("red");
-        }
-
-        lastLine = itemLine;
-      }
-    }
-    while (q.next());
-
-//  Select and show the select item, if any
-    if (selected != NULL)
-    {
-      _cobill->setCurrentItem(selected);
-      _cobill->scrollToItem(selected);
-    }
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    return;
   }
 }
 
