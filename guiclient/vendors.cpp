@@ -57,42 +57,28 @@
 
 #include "vendors.h"
 
-#include <QVariant>
 #include <QMessageBox>
-#include <QStatusBar>
-#include <QWorkspace>
 #include <QMenu>
+
 #include <openreports.h>
 #include "vendor.h"
 #include "storedProcErrorLookup.h"
-/*
- *  Constructs a vendors as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- */
+
 vendors::vendors(QWidget* parent, const char* name, Qt::WFlags fl)
     : XMainWindow(parent, name, fl)
 {
   setupUi(this);
 
-  (void)statusBar();
-
-  // signals and slots connections
-  connect(_vendor, SIGNAL(valid(bool)), _view, SLOT(setEnabled(bool)));
-  connect(_vendor, SIGNAL(itemSelected(int)), _edit, SLOT(animateClick()));
-  connect(_close, SIGNAL(clicked()), this, SLOT(close()));
-  connect(_print, SIGNAL(clicked()), this, SLOT(sPrint()));
-  connect(_new, SIGNAL(clicked()), this, SLOT(sNew()));
-  connect(_edit, SIGNAL(clicked()), this, SLOT(sEdit()));
   connect(_delete, SIGNAL(clicked()), this, SLOT(sDelete()));
+  connect(_edit,   SIGNAL(clicked()), this, SLOT(sEdit()));
+  connect(_new,    SIGNAL(clicked()), this, SLOT(sNew()));
+  connect(_print,  SIGNAL(clicked()), this, SLOT(sPrint()));
   connect(_vendor, SIGNAL(populateMenu(QMenu *, QTreeWidgetItem *)), this, SLOT(sPopulateMenu(QMenu*)));
-  connect(_view, SIGNAL(clicked()), this, SLOT(sView()));
+  connect(_view,   SIGNAL(clicked()), this, SLOT(sView()));
 
-  statusBar()->hide();
-  
-  _vendor->addColumn(tr("Type"),   _itemColumn, Qt::AlignCenter );
-  _vendor->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft   );
-  _vendor->addColumn(tr("Name"),   -1,          Qt::AlignLeft   );
+  _vendor->addColumn(tr("Type"),   _itemColumn, Qt::AlignCenter, true, "vendtype_code");
+  _vendor->addColumn(tr("Number"), _itemColumn, Qt::AlignLeft,   true, "vend_number");
+  _vendor->addColumn(tr("Name"),   -1,          Qt::AlignLeft,   true, "vend_name");
 
   connect(omfgThis, SIGNAL(vendorsUpdated()), SLOT(sFillList()));
 
@@ -111,18 +97,11 @@ vendors::vendors(QWidget* parent, const char* name, Qt::WFlags fl)
   sFillList();
 }
 
-/*
- *  Destroys the object and frees any allocated resources
- */
 vendors::~vendors()
 {
   // no need to delete child widgets, Qt does it all for us
 }
 
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
 void vendors::languageChange()
 {
   retranslateUi(this);
@@ -213,7 +192,7 @@ void vendors::sPopulateMenu(QMenu *menuThis)
 
 void vendors::sFillList()
 {
-  _vendor->populate( "SELECT vend_id, vendtype_code, vend_number, vend_name "
+  _vendor->populate( "SELECT vend_id, * "
                      "FROM vend, vendtype "
                      "WHERE (vend_vendtype_id=vendtype_id) "
                      "ORDER BY vend_number;" );
