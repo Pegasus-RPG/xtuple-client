@@ -96,17 +96,17 @@ issueToShipping::issueToShipping(QWidget* parent, const char* name, Qt::WFlags f
   omfgThis->inputManager()->notify(cBCTransferOrderLineItem, this, this, SLOT(sCatchToitemid(int)));
   omfgThis->inputManager()->notify(cBCWorkOrder, this, this, SLOT(sCatchWoid(int)));
 
-  _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter );
-  _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft   );
-  _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft   );
-  _soitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter );
-  _soitem->addColumn(tr("Scheduled Date"),_qtyColumn, Qt::AlignRight  );
-  _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft   );
-  _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight  );
-  _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight  );
+  _soitem->addColumn(tr("#"),           _seqColumn,   Qt::AlignCenter, true, "linenumber");
+  _soitem->addColumn(tr("Item Number"), _itemColumn,  Qt::AlignLeft,   true, "item_number");
+  _soitem->addColumn(tr("Description"),  -1,          Qt::AlignLeft,   true, "itemdescrip");
+  _soitem->addColumn(tr("Whs."),        _whsColumn,   Qt::AlignCenter, true, "warehous_code");
+  _soitem->addColumn(tr("Scheduled Date"),_qtyColumn, Qt::AlignRight,  true, "scheddate");
+  _soitem->addColumn(tr("UOM"),         _uomColumn,   Qt::AlignLeft,   true, "uom_name");
+  _soitem->addColumn(tr("Ordered"),     _qtyColumn,   Qt::AlignRight,  true, "qtyord");
+  _soitem->addColumn(tr("Shipped"),     _qtyColumn,   Qt::AlignRight,  true, "qtyshipped");
+  _soitem->addColumn(tr("Returned"),    _qtyColumn,   Qt::AlignRight,  true, "qtyreturned");
+  _soitem->addColumn(tr("Balance"),     _qtyColumn,   Qt::AlignRight,  true, "balance");
+  _soitem->addColumn(tr("At Shipping"), _qtyColumn,   Qt::AlignRight,  true, "atshipping");
   _soitem->setSelectionMode(QAbstractItemView::ExtendedSelection);
 
   _so->setFocus();
@@ -696,22 +696,29 @@ void issueToShipping::sFillList()
     listp.append("tohead_id", _to->id());
   listp.append("ordertype", _ordertype);
 
-  QString sql = "<? if exists(\"sohead_id\") ?>"
+  QString sql = "SELECT *, "
+             "       noNeg(qtyord - qtyshipped + qtyreturned) AS balance,"
+             "       'qty' AS qtyord_xtnumericrole,"
+             "       'qty' AS qtyshipped_xtnumericrole,"
+             "       'qty' AS qtyreturned_xtnumericrole,"
+             "       'qty' AS balance_xtnumericrole,"
+             "       'qty' AS atshipping_xtnumericrole,"
+             "       CASE WHEN (scheddate > CURRENT_DATE AND"
+             "                  noNeg(qtyord - qtyshipped + qtyreturned) <> atshipping) THEN 'future'"
+             "            WHEN (noNeg(qtyord - qtyshipped + qtyreturned) <> atshipping) THEN 'expired'"
+             "       END AS qtforegroundrole "
+             "FROM ("
+             "<? if exists(\"sohead_id\") ?>"
 	     "SELECT coitem_id AS lineitem_id,"
 	     "       coitem_linenumber AS linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 	     "       warehous_code,"
-             "       formatDate(coitem_scheddate) AS f_scheddate,"
+             "       coitem_scheddate AS scheddate,"
              "       uom_name,"
-             "       formatQty(coitem_qtyord) AS f_qtyord,"
-             "       formatQty(coitem_qtyshipped) AS f_qtyshipped,"
-             "       formatQty(coitem_qtyreturned) AS f_qtyreturned,"
-             "       formatQty(noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned)) AS f_balance,"
-             "       formatQty(COALESCE(SUM(shipitem_qty), 0)) AS f_atshipping,"
-             "       (noNeg(coitem_qtyord - coitem_qtyshipped + coitem_qtyreturned) <> COALESCE(SUM(shipitem_qty), 0)) AS tagged, "
-             "       CASE WHEN coitem_scheddate > current_date THEN 1 "
-             "            ELSE 0 "
-             "       END AS in_future "
+             "       coitem_qtyord AS qtyord,"
+             "       coitem_qtyshipped AS qtyshipped,"
+             "       coitem_qtyreturned AS qtyreturned,"
+             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping "
              "FROM itemsite, item, whsinfo, uom,"
              "     coitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
@@ -727,23 +734,17 @@ void issueToShipping::sFillList()
              "         item_descrip1, item_descrip2, warehous_code,"
              "         coitem_scheddate, uom_name,"
              "         coitem_qtyord, coitem_qtyshipped, coitem_qtyreturned "
-             "ORDER BY coitem_scheddate, linenumber;"
 	     "<? elseif exists(\"tohead_id\") ?>"
 	     "SELECT toitem_id AS lineitem_id,"
 	     "       toitem_linenumber AS linenumber, item_number,"
              "       (item_descrip1 || ' ' || item_descrip2) AS itemdescrip,"
 	     "       tohead_srcname AS warehous_code,"
-             "       formatDate(toitem_schedshipdate) AS f_scheddate,"
+             "       toitem_schedshipdate AS scheddate,"
              "       uom_name,"
-             "       formatQty(toitem_qty_ordered) AS f_qtyord,"
-             "       formatQty(toitem_qty_shipped) AS f_qtyshipped,"
-             "       formatQty(0) AS f_qtyreturned,"
-             "       formatQty(noNeg(toitem_qty_ordered - toitem_qty_shipped)) AS f_balance,"
-             "       formatQty(COALESCE(SUM(shipitem_qty), 0)) AS f_atshipping,"
-             "       (noNeg(toitem_qty_ordered - toitem_qty_shipped) <> COALESCE(SUM(shipitem_qty), 0)) AS tagged, "
-             "       CASE WHEN toitem_schedshipdate > CURRENT_DATE THEN 1 "
-             "            ELSE 0 "
-             "       END AS in_future "
+             "       toitem_qty_ordered AS qtyord,"
+             "       toitem_qty_shipped AS qtyshipped,"
+             "       0 AS qtyreturned,"
+             "       COALESCE(SUM(shipitem_qty), 0) AS atshipping "
              "FROM item, tohead, uom,"
              "     toitem LEFT OUTER JOIN"
              "      ( shipitem JOIN shiphead"
@@ -758,32 +759,13 @@ void issueToShipping::sFillList()
              "         item_descrip1, item_descrip2, tohead_srcname,"
              "         toitem_schedshipdate, uom_name,"
              "         toitem_qty_ordered, toitem_qty_shipped "
-             "ORDER BY toitem_schedshipdate, linenumber;"
 	     "<? endif ?>"
+             ") AS sub "
+             "ORDER BY scheddate, linenumber;"
 	     ;
   MetaSQLQuery listm(sql);
   XSqlQuery listq = listm.toQuery(listp);
-  XTreeWidgetItem *last = 0;
-  while (listq.next())
-  {
-    last = new XTreeWidgetItem(_soitem, last,
-			     listq.value("lineitem_id").toInt(),
-			     listq.value("linenumber"),
-			     listq.value("item_number"),
-			     listq.value("itemdescrip"),
-			     listq.value("warehous_code"),
-			     listq.value("f_scheddate"),
-                             listq.value("uom_name"),
-			     listq.value("f_qtyord"),
-			     listq.value("f_qtyshipped"),
-			     listq.value("f_qtyreturned"),
-			     listq.value("f_balance"),
-			     listq.value("f_atshipping") );
-    if (listq.value("tagged").toBool())
-      last->setTextColor("red");
-    if ((listq.value("in_future").toBool()) && (listq.value("tagged").toBool()))
-      last->setTextColor("darkgreen");
-  }
+  _soitem->populate(listq);
   if (listq.lastError().type() != QSqlError::None)
   {
     systemError(this, listq.lastError().databaseText(), __FILE__, __LINE__);
