@@ -85,6 +85,7 @@ billingEditList::billingEditList(QWidget* parent, const char* name, Qt::WFlags f
   _cobill->addColumn(tr("Qty. to Bill"), _qtyColumn, Qt::AlignRight, true, "qtytobill");
   _cobill->addColumn(tr("Price"),       _costColumn, Qt::AlignRight, true, "price");
   _cobill->addColumn(tr("Ext. Price"), _moneyColumn, Qt::AlignRight, true, "extprice");
+  _cobill->addColumn(tr("Currency"),_currencyColumn, Qt::AlignLeft,  true, "currabbr");
 
   connect(omfgThis, SIGNAL(billingSelectionUpdated(int, int)), this, SLOT(sFillList()));
 
@@ -187,6 +188,7 @@ void billingEditList::sFillList()
   */
   q.exec("SELECT orderid, itemid, seq, documentnumber, ordernumber,"
          "       shortname, longname, iteminvuom, qtytobill, price, extprice,"
+         "       currConcat(curr_id) AS currabbr,"
          "       'qty'        AS qtytobill_xtnumericrole,"
          "       'salesprice' AS price_xtnumericrole,"
          "       'extprice'   AS extprice_xtnumericrole,"
@@ -198,28 +200,28 @@ void billingEditList::sFillList()
          "  SELECT orderid, itemid, 0 AS seq,"      // order info
          "        documentnumber, ordernumber, cust_number AS shortname,"
          "        billtoname AS longname, '' AS iteminvuom, NULL AS qtytobill,"
-         "        NULL AS price, NULL AS extprice, account,"
+         "        NULL AS price, NULL AS extprice, account, NULL AS curr_id,"
          "        ordernumber AS sortord, linenumber "
          "  FROM billingEditList "
          "  WHERE (itemid = -2) "
          "  UNION "       // line item info
          "  SELECT orderid, itemid, 1,"
          "        documentnumber, '', item,"
-         "        itemdescrip, iteminvuom, qtytobill, price, extprice, account,"
+         "        itemdescrip, iteminvuom, qtytobill, price, extprice, account, curr_id,"
          "        ordernumber, linenumber "
          "  FROM billingEditList "
          "  WHERE (itemid >= 0) "
          "  UNION "       // credits
          "  SELECT orderid, itemid, 2,"
          "         documentnumber, '', sence,"
-         "         account, '', NULL, NULL, extprice, account,"
+         "         account, '', NULL, NULL, extprice, account, curr_id,"
          "        ordernumber, linenumber "
          "  FROM billingEditList "
          "  WHERE (itemid >= 0) "
          "  UNION "       // debits
          "  SELECT orderid, itemid, 3,"
          "         '', '', sence,"
-         "         account, '', NULL, NULL, extprice, account,"
+         "         account, '', NULL, NULL, extprice, account, curr_id,"
          "        ordernumber, 9999999999 "
          "  FROM billingEditList "
          "  WHERE (itemid = -2) "

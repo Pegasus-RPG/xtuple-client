@@ -30,14 +30,15 @@
        COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip)
                    FROM accnt
                    WHERE (accnt_id=findARAccount(cust_id)) ), 'Not Assigned') AS debit,
-       '' AS credit
+       '' AS credit,
+       currConcat(cobmisc_curr_id)      AS currabbr
 FROM cobmisc, cohead, cust 
 WHERE ( (cobmisc_cohead_id=cohead_id)
  AND (cohead_cust_id=cust_id)
  AND (NOT cobmisc_posted)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cobmisc_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cobmisc_printed)
 &lt;? endif ?>
 )
@@ -56,17 +57,18 @@ SELECT cohead_id 			AS orderid,
        formatExtPrice(cobmisc_freight) 	AS price,
        formatExtPrice(cobmisc_freight) 	AS extprice,
        cobmisc_freight			AS subextprice,
-       cobmisc_freight			AS runningextprice,
+       currtobase(cobmisc_curr_id, cobmisc_freight, cobmisc_invcdate) AS runningextprice,
        '' AS debit,
-       (formatGLAccount(freight.accnt_id) || ' - ' || freight.accnt_descrip) 	AS credit
+       (formatGLAccount(freight.accnt_id) || ' - ' || freight.accnt_descrip) 	AS credit,
+       currConcat(cobmisc_curr_id)      AS currabbr
 FROM cobmisc, cohead, accnt AS freight
 WHERE ( (cobmisc_cohead_id=cohead_id)
  AND (freight.accnt_id=findFreightAccount(cohead_cust_id))
  AND (NOT cobmisc_posted)
  AND (cobmisc_freight &lt;> 0)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cobmisc_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cobmisc_printed)
 &lt;? endif ?>
 )
@@ -85,17 +87,18 @@ SELECT cohead_id 								AS orderid,
         formatExtPrice(cobmisc_misc) 						AS price,
         formatExtPrice(cobmisc_misc) 						AS extprice,
 	cobmisc_misc								AS subextprice,
-	cobmisc_misc								AS runningextprice,
+	currToBase(cobmisc_curr_id, cobmisc_misc, cobmisc_invcdate)				AS runningextprice,
        '' AS debit,
-        (formatGLAccount(misc.accnt_id) || ' - ' || misc.accnt_descrip) 	AS credit
+        (formatGLAccount(misc.accnt_id) || ' - ' || misc.accnt_descrip) 	AS credit,
+        currConcat(cobmisc_curr_id)     AS currabbr
 FROM cobmisc, cohead, accnt AS misc
 WHERE ( (cobmisc_cohead_id=cohead_id)
  AND (cobmisc_misc_accnt_id=misc.accnt_id)
  AND (NOT cobmisc_posted)
  AND (cobmisc_misc &lt;> 0)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cobmisc_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cobmisc_printed)
 &lt;? endif ?>
 )
@@ -114,18 +117,19 @@ SELECT  cohead_id 								AS orderid,
         formatExtPrice(cobmisc_tax) 						AS price,
         formatExtPrice(cobmisc_tax) 						AS extprice,
 	cobmisc_tax								AS subextprice,
-	cobmisc_tax								AS runningextprice,
+	currtobase(cobmisc_tax_curr_id, cobmisc_tax, cobmisc_invcdate)				AS runningextprice,
        '' AS debit,
-        (formatGLAccount(taxaccnt.accnt_id) || ' - ' || taxaccnt.accnt_descrip) AS credit
+        (formatGLAccount(taxaccnt.accnt_id) || ' - ' || taxaccnt.accnt_descrip) AS credit,
+        currConcat(cobmisc_tax_curr_id)     AS currabbr
 FROM cobmisc, cohead, accnt AS taxaccnt, tax 
 WHERE ( (cobmisc_cohead_id=cohead_id)
  AND (tax_sales_accnt_id=taxaccnt.accnt_id)
  AND (cohead_tax_id=tax_id)
  AND (NOT cobmisc_posted)
  AND (cobmisc_tax &lt;> 0)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cobmisc_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cobmisc_printed)
 &lt;? endif ?>
 )
@@ -144,12 +148,13 @@ SELECT  cohead_id 								AS orderid,
         formatPrice(coitem_price) 						AS price,
         formatExtPrice((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)) 		AS extprice,
 	((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio))			AS subextprice,
-	((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio))			AS runningextprice,
+	currtobase(cobmisc_curr_id, ((cobill_qty * coitem_qty_invuomratio) * (coitem_price / coitem_price_invuomratio)), cobmisc_invcdate) AS runningextprice,
         '' AS debit,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip)
                     FROM accnt, salesaccnt
                     WHERE ((salesaccnt_sales_accnt_id=accnt_id)
-                     AND (salesaccnt_id=findSalesAccnt(itemsite_id, cohead_cust_id)))), 'Not Assigned') AS credit
+                     AND (salesaccnt_id=findSalesAccnt(itemsite_id, cohead_cust_id)))), 'Not Assigned') AS credit,
+        currConcat(cobmisc_curr_id)     AS currabbr
 FROM item, itemsite, cobmisc, cohead, cobill, coitem, uom
 WHERE ( (coitem_itemsite_id=itemsite_id)
  AND (cobill_coitem_id=coitem_id)
@@ -159,9 +164,9 @@ WHERE ( (coitem_itemsite_id=itemsite_id)
  AND (item_inv_uom_id=uom_id)
  AND (cobill_cobmisc_id=cobmisc_id)
  AND (NOT cobmisc_posted)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cobmisc_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cobmisc_printed)
 &lt;? endif ?>
 )
@@ -184,14 +189,15 @@ SELECT 	cmhead_id 					AS orderid,
         '' AS debit,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip)
                     FROM accnt
-                    WHERE (accnt_id=findARAccount(cmhead_cust_id)) ), 'Not Assigned') AS credit
+                    WHERE (accnt_id=findARAccount(cmhead_cust_id)) ), 'Not Assigned') AS credit,
+        currConcat(cmhead_curr_id)     AS currabbr
 FROM cmhead, cust
 WHERE ( (cmhead_cust_id=cust_id)
  AND (NOT cmhead_posted)
  AND (NOT cmhead_hold)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cmhead_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cmhead_printed)
 &lt;? endif ?>
 )
@@ -210,17 +216,18 @@ SELECT  cmhead_id 								AS orderid,
         formatExtPrice(cmhead_freight) 						AS price,
         formatExtPrice(cmhead_freight) 						AS extprice,
 	(cmhead_freight * -1)							AS subextprice,
-	(cmhead_freight * -1)							AS runningextprice,
+	currtobase(cmhead_curr_id, cmhead_freight * -1, cmhead_gldistdate)				AS runningextprice,
         (formatGLAccount(freight.accnt_id) || ' - ' || freight.accnt_descrip) 	AS credit,
-        '' AS debit
+        '' AS debit,
+        currConcat(cmhead_curr_id)     AS currabbr
 FROM cmhead, accnt AS freight
 WHERE ( (freight.accnt_id=findFreightAccount(cmhead_cust_id))
  AND (NOT cmhead_posted)
  AND (NOT cmhead_hold)
  AND (cmhead_freight &lt;> 0)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cmhead_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cmhead_printed)
 &lt;? endif ?>
 )
@@ -239,12 +246,13 @@ SELECT  cmhead_id 								AS orderid,
         formatPrice(cmitem_unitprice) 						AS price,
         formatExtPrice((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio)) 	AS extprice,
 	((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) * -1)			AS subextprice,
-	((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) * -1)			AS runningextprice,
+	currtobase(cmhead_curr_id, ((cmitem_qtycredit * cmitem_qty_invuomratio) * (cmitem_unitprice / cmitem_price_invuomratio) * -1), cmhead_gldistdate) AS runningextprice,
         COALESCE( ( SELECT (formatGLAccount(accnt_id) || ' - ' || accnt_descrip) 
                     FROM accnt, salesaccnt 
                     WHERE ((salesaccnt_sales_accnt_id=accnt_id) 
                      AND (salesaccnt_id=findSalesAccnt(itemsite_id, cmhead_cust_id)))), 'Not Assigned') AS credit,
-        '' AS debit
+        '' AS debit,
+        currConcat(cmhead_curr_id)     AS currabbr
 FROM item, itemsite, cmhead, cmitem, uom
 WHERE ( (cmitem_itemsite_id=itemsite_id)
  AND (cmitem_cmhead_id=cmhead_id)
@@ -252,9 +260,9 @@ WHERE ( (cmitem_itemsite_id=itemsite_id)
  AND (item_inv_uom_id=uom_id)
  AND (NOT cmhead_posted)
  AND (NOT cmhead_hold)
-&lt;? if exists(&quot;showPrinted&quot;) ?>
+&lt;? if exists("showPrinted") ?>
  AND (cmhead_printed)
-&lt;? elseif exists(&quot;showUnprinted&quot;) ?>
+&lt;? elseif exists("showUnprinted") ?>
  AND (NOT cmhead_printed)
 &lt;? endif ?>
 )
@@ -263,55 +271,7 @@ ORDER BY ordernumber, linenumber;
 </sql>
  </querysource>
  <rpthead>
-  <height>136</height>
-  <label>
-   <rect>
-    <x>285</x>
-    <y>100</y>
-    <width>50</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>UOM</string>
-  </label>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>100</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>112</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. to Bill</string>
-  </label>
+  <height>135</height>
   <label>
    <rect>
     <x>280</x>
@@ -328,22 +288,6 @@ ORDER BY ordernumber, linenumber;
    <vcenter/>
    <string>Billing Edit List</string>
   </label>
-  <label>
-   <rect>
-    <x>180</x>
-    <y>100</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Cust./Item #</string>
-  </label>
   <line>
    <xstart>5</xstart>
    <ystart>130</ystart>
@@ -353,7 +297,39 @@ ORDER BY ordernumber, linenumber;
   </line>
   <label>
    <rect>
-    <x>112</x>
+    <x>340</x>
+    <y>100</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>A/R Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>590</x>
+    <y>111</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. to Bill</string>
+  </label>
+  <label>
+   <rect>
+    <x>111</x>
     <y>100</y>
     <width>60</width>
     <height>15</height>
@@ -369,24 +345,8 @@ ORDER BY ordernumber, linenumber;
   </label>
   <label>
    <rect>
-    <x>5</x>
-    <y>100</y>
-    <width>60</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Invoice #</string>
-  </label>
-  <label>
-   <rect>
     <x>340</x>
-    <y>112</y>
+    <y>111</y>
     <width>80</width>
     <height>15</height>
    </rect>
@@ -401,9 +361,9 @@ ORDER BY ordernumber, linenumber;
   </label>
   <label>
    <rect>
-    <x>75</x>
-    <y>112</y>
-    <width>100</width>
+    <x>590</x>
+    <y>100</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -411,9 +371,9 @@ ORDER BY ordernumber, linenumber;
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Name/Description</string>
+   <string>Price</string>
   </label>
   <label>
    <rect>
@@ -433,9 +393,25 @@ ORDER BY ordernumber, linenumber;
   </label>
   <label>
    <rect>
-    <x>340</x>
+    <x>5</x>
     <y>100</y>
-    <width>80</width>
+    <width>60</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Invoice #</string>
+  </label>
+  <label>
+   <rect>
+    <x>285</x>
+    <y>100</y>
+    <width>50</width>
     <height>15</height>
    </rect>
    <font>
@@ -445,15 +421,47 @@ ORDER BY ordernumber, linenumber;
    </font>
    <hcenter/>
    <vcenter/>
-   <string>A/R Account</string>
+   <string>UOM</string>
+  </label>
+  <label>
+   <rect>
+    <x>180</x>
+    <y>100</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Cust./Item #</string>
+  </label>
+  <label>
+   <rect>
+    <x>75</x>
+    <y>111</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Name/Description</string>
   </label>
  </rpthead>
  <pghead>
   <firstpage/>
-  <height>6</height>
+  <height>5</height>
  </pghead>
  <pghead>
-  <height>36</height>
+  <height>35</height>
   <label>
    <rect>
     <x>5</x>
@@ -469,102 +477,6 @@ ORDER BY ordernumber, linenumber;
    <left/>
    <vcenter/>
    <string>Invoice #</string>
-  </label>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>0</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>A/R Account</string>
-  </label>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Price</string>
-  </label>
-  <label>
-   <rect>
-    <x>590</x>
-    <y>15</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Qty. to Bill</string>
-  </label>
-  <label>
-   <rect>
-    <x>340</x>
-    <y>15</y>
-    <width>80</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <hcenter/>
-   <vcenter/>
-   <string>Sales Account</string>
-  </label>
-  <label>
-   <rect>
-    <x>180</x>
-    <y>0</y>
-    <width>75</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Cust./Item #</string>
-  </label>
-  <label>
-   <rect>
-    <x>112</x>
-    <y>0</y>
-    <width>60</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <left/>
-   <vcenter/>
-   <string>Order #</string>
   </label>
   <label>
    <rect>
@@ -584,9 +496,9 @@ ORDER BY ordernumber, linenumber;
   </label>
   <label>
    <rect>
-    <x>180</x>
-    <y>15</y>
-    <width>100</width>
+    <x>590</x>
+    <y>0</y>
+    <width>75</width>
     <height>15</height>
    </rect>
    <font>
@@ -594,9 +506,9 @@ ORDER BY ordernumber, linenumber;
     <size>8</size>
     <weight>normal</weight>
    </font>
-   <left/>
+   <hcenter/>
    <vcenter/>
-   <string>Name/Description</string>
+   <string>Price</string>
   </label>
   <line>
    <xstart>5</xstart>
@@ -605,6 +517,22 @@ ORDER BY ordernumber, linenumber;
    <yend>30</yend>
    <weight>2</weight>
   </line>
+  <label>
+   <rect>
+    <x>340</x>
+    <y>15</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Sales Account</string>
+  </label>
   <label>
    <rect>
     <x>670</x>
@@ -621,6 +549,86 @@ ORDER BY ordernumber, linenumber;
    <vcenter/>
    <string>Ext. Price</string>
   </label>
+  <label>
+   <rect>
+    <x>111</x>
+    <y>0</y>
+    <width>60</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Order #</string>
+  </label>
+  <label>
+   <rect>
+    <x>340</x>
+    <y>0</y>
+    <width>80</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>A/R Account</string>
+  </label>
+  <label>
+   <rect>
+    <x>180</x>
+    <y>15</y>
+    <width>100</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Name/Description</string>
+  </label>
+  <label>
+   <rect>
+    <x>180</x>
+    <y>0</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <left/>
+   <vcenter/>
+   <string>Cust./Item #</string>
+  </label>
+  <label>
+   <rect>
+    <x>590</x>
+    <y>15</y>
+    <width>75</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <hcenter/>
+   <vcenter/>
+   <string>Qty. to Bill</string>
+  </label>
  </pghead>
  <section>
   <name>detail</name>
@@ -628,14 +636,23 @@ ORDER BY ordernumber, linenumber;
    <name>detail</name>
    <column>orderid</column>
    <foot>
-    <height>26</height>
-    <line>
-     <xstart>5</xstart>
-     <ystart>20</ystart>
-     <xend>745</xend>
-     <yend>20</yend>
-     <weight>2</weight>
-    </line>
+    <height>25</height>
+    <label>
+     <rect>
+      <x>590</x>
+      <y>5</y>
+      <width>75</width>
+      <height>15</height>
+     </rect>
+     <font>
+      <face>Arial</face>
+      <size>8</size>
+      <weight>normal</weight>
+     </font>
+     <right/>
+     <vcenter/>
+     <string>Subtotal:</string>
+    </label>
     <field>
      <rect>
       <x>670</x>
@@ -656,22 +673,13 @@ ORDER BY ordernumber, linenumber;
      </data>
      <tracktotal subtotal="true" builtin="true" >extprice</tracktotal>
     </field>
-    <label>
-     <rect>
-      <x>590</x>
-      <y>5</y>
-      <width>75</width>
-      <height>15</height>
-     </rect>
-     <font>
-      <face>Arial</face>
-      <size>8</size>
-      <weight>normal</weight>
-     </font>
-     <right/>
-     <vcenter/>
-     <string>Subtotal:</string>
-    </label>
+    <line>
+     <xstart>5</xstart>
+     <ystart>20</ystart>
+     <xend>745</xend>
+     <yend>20</yend>
+     <weight>2</weight>
+    </line>
    </foot>
   </group>
   <detail>
@@ -681,59 +689,21 @@ ORDER BY ordernumber, linenumber;
    <height>31</height>
    <field>
     <rect>
-     <x>340</x>
+     <x>562</x>
      <y>0</y>
-     <width>240</width>
+     <width>25</width>
      <height>15</height>
     </rect>
     <font>
      <face>Arial</face>
      <size>8</size>
-     <weight>bold</weight>
+     <weight>normal</weight>
     </font>
-    <left/>
+    <right/>
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>debit</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>112</x>
-     <y>0</y>
-     <width>60</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>f_ordernumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>685</x>
-     <y>15</y>
-     <width>40</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <hcenter/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>shiptostate</column>
+     <column>currabbr</column>
     </data>
    </field>
    <field>
@@ -757,47 +727,9 @@ ORDER BY ordernumber, linenumber;
    </field>
    <field>
     <rect>
-     <x>670</x>
+     <x>285</x>
      <y>0</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>extprice</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>590</x>
-     <y>15</y>
-     <width>75</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <right/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>qtytobill</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>5</x>
-     <y>0</y>
-     <width>70</width>
+     <width>50</width>
      <height>15</height>
     </rect>
     <font>
@@ -809,26 +741,7 @@ ORDER BY ordernumber, linenumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>documentnumber</column>
-    </data>
-   </field>
-   <field>
-    <rect>
-     <x>70</x>
-     <y>15</y>
-     <width>260</width>
-     <height>15</height>
-    </rect>
-    <font>
-     <face>Arial</face>
-     <size>8</size>
-     <weight>bold</weight>
-    </font>
-    <left/>
-    <vcenter/>
-    <data>
-     <query>detail</query>
-     <column>descrip</column>
+     <column>iteminvuom</column>
     </data>
    </field>
    <field>
@@ -852,9 +765,47 @@ ORDER BY ordernumber, linenumber;
    </field>
    <field>
     <rect>
-     <x>285</x>
-     <y>0</y>
-     <width>50</width>
+     <x>590</x>
+     <y>15</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>qtytobill</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>70</x>
+     <y>15</y>
+     <width>260</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>descrip</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>685</x>
+     <y>15</y>
+     <width>40</width>
      <height>15</height>
     </rect>
     <font>
@@ -866,7 +817,83 @@ ORDER BY ordernumber, linenumber;
     <vcenter/>
     <data>
      <query>detail</query>
-     <column>iteminvuom</column>
+     <column>shiptostate</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>111</x>
+     <y>0</y>
+     <width>60</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>f_ordernumber</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>670</x>
+     <y>0</y>
+     <width>75</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <right/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>extprice</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>340</x>
+     <y>0</y>
+     <width>240</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <left/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>debit</column>
+    </data>
+   </field>
+   <field>
+    <rect>
+     <x>5</x>
+     <y>0</y>
+     <width>70</width>
+     <height>15</height>
+    </rect>
+    <font>
+     <face>Arial</face>
+     <size>8</size>
+     <weight>bold</weight>
+    </font>
+    <hcenter/>
+    <vcenter/>
+    <data>
+     <query>detail</query>
+     <column>documentnumber</column>
     </data>
    </field>
    <field>
@@ -891,7 +918,7 @@ ORDER BY ordernumber, linenumber;
   </detail>
  </section>
  <pgfoot>
-  <height>16</height>
+  <height>15</height>
   <field>
    <rect>
     <x>90</x>
@@ -913,22 +940,6 @@ ORDER BY ordernumber, linenumber;
   </field>
   <label>
    <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>85</width>
-    <height>15</height>
-   </rect>
-   <font>
-    <face>Arial</face>
-    <size>8</size>
-    <weight>normal</weight>
-   </font>
-   <right/>
-   <vcenter/>
-   <string>Report Date:</string>
-  </label>
-  <label>
-   <rect>
     <x>615</x>
     <y>0</y>
     <width>85</width>
@@ -942,6 +953,22 @@ ORDER BY ordernumber, linenumber;
    <right/>
    <vcenter/>
    <string>Page:</string>
+  </label>
+  <label>
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>85</width>
+    <height>15</height>
+   </rect>
+   <font>
+    <face>Arial</face>
+    <size>8</size>
+    <weight>normal</weight>
+   </font>
+   <right/>
+   <vcenter/>
+   <string>Report Date:</string>
   </label>
   <field>
    <rect>
