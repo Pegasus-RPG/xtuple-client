@@ -1,11 +1,12 @@
 <RCC>
     <qresource prefix="/widgets" >
-        <file>images/add_16.png</file>
-        <file>images/binoculars_16.png</file>
-        <file>images/diskette_16.png</file>
-        <file>images/next_16.png</file>
-        <file>images/printer_16.png</file>
-        <file>images/window_16.png</file>
+        <file>images/add_24.png</file>
+        <file>images/binoculars_24.png</file>
+        <file>images/diskette_24.png</file>
+        <file>images/next_24.png</file>
+        <file>images/prev_24.png</file>
+        <file>images/printer_24.png</file>
+        <file>images/window_24.png</file>
         <file>images/xcheckbox.png</file>
     </qresource>
 </RCC>

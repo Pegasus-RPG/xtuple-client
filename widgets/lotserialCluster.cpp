@@ -87,7 +87,10 @@ LotserialSearch::LotserialSearch(QWidget* pParent, Qt::WindowFlags flags)
 LotserialCluster::LotserialCluster(QWidget* pParent, const char* pName) :
     VirtualCluster(pParent, pName)
 {
-    addNumberWidget(new LotserialLineEdit(this, pName));
+    LotserialLineEdit* lsle=new LotserialLineEdit(this, pName);
+    addNumberWidget(lsle);
+    
+    connect(lsle, SIGNAL(newItemId(int)), this, SIGNAL(newItemId(int)));
 }
 
 LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
@@ -146,7 +149,9 @@ void LotserialCluster::setStrict(const bool p)
 
 void LotserialLineEdit::setItemId(const int itemid)
 {
-  if (itemid <= 0)
+  if (_itemid = itemid)
+    return;
+  else if (itemid <= 0)
   {
     _itemid = -1;
     _itemNumber = QString::Null();
@@ -209,6 +214,7 @@ void LotserialLineEdit::sParse()
                 _name = (numQ.value("name").toString());
                 _itemNumber = (numQ.value("name").toString());
                 _itemid = (numQ.value("description").toInt());
+		emit newItemId(_itemid);
             }
             else if (numQ.lastError().type() != QSqlError::None)
             {

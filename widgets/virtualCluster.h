@@ -274,7 +274,7 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
     Q_PROPERTY(bool    nameVisible READ nameVisible WRITE setNameVisible);
     Q_PROPERTY(bool    readOnly    READ readOnly    WRITE setReadOnly);
     Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-    Q_PROPERTY(QString number      READ number      WRITE setNumber);
+    Q_PROPERTY(int     id          READ id          WRITE setId);
 
     friend class VirtualClusterLineEdit;
 
@@ -332,10 +332,10 @@ class OPENMFGWIDGETS_EXPORT VirtualCluster : public QWidget
         QLabel*         _description;
         QLabel*         _name;
         bool            _readOnly;
+	QString         _fieldName;
 
     private:
         virtual void init();
-        QString _fieldName;
 };
 
 #endif

@@ -119,7 +119,10 @@ class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 	virtual LotserialList*		listFactory();
 	virtual LotserialSearch*	searchFactory();
 	// virtual LotserialInfo*	infoFactory();
-
+	
+    signals:
+        void newItemId(int);
+	
     private:
 	int	_itemid;
 	bool	_strict;
@@ -145,6 +148,10 @@ class OPENMFGWIDGETS_EXPORT LotserialCluster : public VirtualCluster
 	virtual void	setItemId           (const int);
         virtual void    setItemNumber       (const QString);
 	virtual void	setStrict           (const bool);
+	
+    signals:
+        void newItemId(int);
+
 };
 
 #endif

@@ -75,24 +75,23 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 	
 	Q_PROPERTY (QString		schemaName	READ schemaName		WRITE setSchemaName)
 	Q_PROPERTY (QString 		tableName 	READ tableName 		WRITE setTableName)
-	Q_PROPERTY (QString 		formReportName	READ formReportName	WRITE setFormReportName)
-	Q_PROPERTY (QString		listReportName	READ listReportName	WRITE setListReportName)
+	//Q_PROPERTY (QString 		formReportName	READ formReportName	WRITE setFormReportName)
+	//Q_PROPERTY (QString		listReportName	READ listReportName	WRITE setListReportName)
 	Q_PROPERTY (Modes		mode		READ mode		WRITE setMode)
 	Q_PROPERTY (SearchTypes 	searchType	READ searchType		WRITE setSearchType)
 	Q_PROPERTY (bool     		newVisible	READ newVisible		WRITE setNewVisible)
-	Q_PROPERTY (bool     		printVisible	READ printVisible	WRITE setPrintVisible)
+	//Q_PROPERTY (bool     		printVisible	READ printVisible	WRITE setPrintVisible)
 	Q_PROPERTY (bool     		saveVisible	READ saveVisible	WRITE setSaveVisible)
-	//Q_PROPERTY (bool     		undoVisible	READ undoVisible	WRITE setUndoVisible)
-	Q_PROPERTY (bool     		viewVisible	READ viewVisible	WRITE setViewVisible)
-	Q_PROPERTY (bool		autoSave	READ autoSave		WRITE setAutoSave)
+	//Q_PROPERTY (bool     		viewVisible	READ viewVisible	WRITE setViewVisible)
+	//Q_PROPERTY (bool			autoSave	READ autoSave	WRITE setAutoSave)
 
 	public:
 		formControl(QWidget * = 0);
 		void showEvent ( QShowEvent * event );
 	
-	        bool autoSave()         const   { return _autoSave;};
+	//                 bool autoSave()         const   { return _autoSave;};
 		bool newVisible()	const   { return _new->isVisible();};
-		bool printVisible() 	const	{ return _print->isVisible();};
+	//	bool printVisible() 	const	{ return _print->isVisible();};
 		bool saveVisible()	const   { return _save->isVisible();};
 	//	bool undoVisible()	const	{ return _undo->isVisible();};
 		bool viewVisible()	const   { return _view->isVisible();};
@@ -104,38 +103,36 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 	
 	        QString schemaName()      const { return _schemaName; };
 		QString tableName()   	  const { return _tableName; };
-		QString formReportName()  const	{ return _formReportName;    };
-		QString listReportName()  const	{ return _listReportName;    };
+	//	QString formReportName()  const	{ return _formReportName;    };
+	//	QString listReportName()  const	{ return _listReportName;    };
        	
 	public slots:
-		void close();
 		void toNext();
 		void toPrevious();
 		void newRow();
-		void previewForm();
-		void previewList();
-		void print();
-		void printForm();
-		void printList();
+	//	void previewForm();
+	//	void previewList();
+	//	void print();
+	//	void printForm();
+	//	void printList();
 		void save();
 		void search();
 		void select();
-		void setAutoSave(bool p);
+	//	void setAutoSave(bool p);
 		void setFilter(QString p) 		{ _model.setFilter(p) ; };
 		void setMode(Modes p);
-		void setFormReportName(QString p) 	{ _formReportName = p ; };
-		void setListReportName(QString p) 	{ _listReportName = p ; };
+	//	void setFormReportName(QString p) 	{ _formReportName = p ; };
+	//	void setListReportName(QString p) 	{ _listReportName = p ; };
 		void setNewVisible(bool p) 		{ _new->setVisible(p) ; };
 		void setSaveVisible(bool p) 		{ _save->setVisible(p) ; };
 	//	void setUndoVisible(bool p) 		{ _undo->setVisible(p) ; };
-		void setViewVisible(bool p) 		{ _view->setVisible(p) ; };
-		void setPrintVisible(bool p) 		{ _print->setVisible(p) ; };
+	//	void setViewVisible(bool p) 		{ _view->setVisible(p) ; };
+	//	void setPrintVisible(bool p) 		{ _print->setVisible(p) ; };
 		void setSearchType(SearchTypes p);
 		void setSchemaName(QString p)  		{ _schemaName = p;};
 		void setTableName(QString p)		{ _tableName = p;};
 		void setTable(QString s, QString t);
 		void setDataWidgetMapper(QSqlTableModel *p);
-	//	void undo();
 	
 	protected slots:
 		void languageChange();
@@ -143,15 +140,14 @@ class OPENMFGWIDGETS_EXPORT formControl : public QWidget, public Ui::formControl
 	signals:
 		void newClicked();
 		void newDataWidgetMapper(XDataWidgetMapper *m);
-		void previewFormClicked();
-		void previewListClicked();
-		void printClicked();
-		void printFormClicked();
-		void printListClicked();
+	//	void previewFormClicked();
+	//	void previewListClicked();
+	//	void printClicked();
+	//	void printFormClicked();
+	//	void printListClicked();
 		void saveClicked();
 		void saved(bool);
 		void searchTypeChanged(SearchTypes);
-		//void undoClicked();
 
 	private:
 	

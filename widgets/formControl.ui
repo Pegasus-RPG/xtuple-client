@@ -61,7 +61,13 @@
          <string>New</string>
         </property>
         <property name="icon" >
-         <iconset resource="widgets.qrc" >:/widgets/images/add_16.png</iconset>
+         <iconset resource="widgets.qrc" >:/widgets/images/add_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="shortcut" >
          <string>Ctrl+N</string>
@@ -80,7 +86,13 @@
          <string>Save</string>
         </property>
         <property name="icon" >
-         <iconset resource="widgets.qrc" >:/widgets/images/diskette_16.png</iconset>
+         <iconset resource="widgets.qrc" >:/widgets/images/diskette_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="checkable" >
          <bool>false</bool>
@@ -102,7 +114,13 @@
          <string>View</string>
         </property>
         <property name="icon" >
-         <iconset resource="widgets.qrc" >:/widgets/images/window_16.png</iconset>
+         <iconset resource="widgets.qrc" >:/widgets/images/window_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="flat" >
          <bool>true</bool>
@@ -118,7 +136,13 @@
          <string>Print</string>
         </property>
         <property name="icon" >
-         <iconset resource="widgets.qrc" >:/widgets/images/printer_16.png</iconset>
+         <iconset resource="widgets.qrc" >:/widgets/images/printer_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="shortcut" >
          <string>Ctrl+P</string>
@@ -149,6 +173,15 @@
         <property name="text" >
          <string>Prev</string>
         </property>
+        <property name="icon" >
+         <iconset resource="widgets.qrc" >:/widgets/images/prev_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
+        </property>
         <property name="shortcut" >
          <string>Ctrl+Up</string>
         </property>
@@ -166,7 +199,13 @@
          <string>Next</string>
         </property>
         <property name="icon" >
-         <iconset resource="widgets.qrc" >:/widgets/images/next_16.png</iconset>
+         <iconset resource="widgets.qrc" >:/widgets/images/next_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="shortcut" >
          <string>Ctrl+Down</string>
@@ -234,7 +273,13 @@
          <string>Search</string>
         </property>
         <property name="icon" >
-         <iconset resource="widgets.qrc" >:/widgets/images/binoculars_16.png</iconset>
+         <iconset resource="widgets.qrc" >:/widgets/images/binoculars_24.png</iconset>
+        </property>
+        <property name="iconSize" >
+         <size>
+          <width>24</width>
+          <height>24</height>
+         </size>
         </property>
         <property name="flat" >
          <bool>true</bool>

@@ -102,6 +102,9 @@ friend class SoCluster;
     void custNameChanged(const QString &);
     void numberChanged(int);
     void numberChanged(const QString &);
+    
+  protected:
+    XDataWidgetMapper *_mapper;
 
   private:
     int  _custid;
@@ -117,7 +120,7 @@ class OPENMFGWIDGETS_EXPORT SoCluster : public QWidget
   Q_PROPERTY(QString label       READ label       WRITE setLabel);
   Q_PROPERTY(bool    readOnly    READ isReadOnly  WRITE setReadOnly);
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  Q_PROPERTY(QString number	 READ number      WRITE setNumber);
+  Q_PROPERTY(int     id 	 READ id          WRITE setId);
 
   public:
     SoCluster(QWidget *, const char * = 0);

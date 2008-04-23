@@ -258,9 +258,12 @@ void ItemLineEdit::silentSetId(int pId)
 
 void ItemLineEdit::setId(int pId)
 {
-  silentSetId(pId);
-  emit privateIdChanged(_id);
-  emit newId(_id);
+  if (pId != _id)
+  {
+    silentSetId(pId);
+    emit privateIdChanged(_id);
+    emit newId(_id);
+  }
 }
 
 void ItemLineEdit::setItemsiteid(int pItemsiteid)
@@ -609,6 +612,8 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
   _descrip2->setAlignment(Qt::AlignVCenter | Qt::AlignLeft);
   mainLayout->addWidget(_descrip2);
   setLayout(mainLayout);
+  
+  _mapper = new XDataWidgetMapper(this);
 
 //  Make some internal connections
   connect(_itemNumber, SIGNAL(aliasChanged(const QString &)), this, SIGNAL(aliasChanged(const QString &)));
@@ -630,7 +635,8 @@ ItemCluster::ItemCluster(QWidget *pParent, const char *name) : QWidget(pParent)
 
 void ItemCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("number"));
+  m->addFieldMapping(this, _fieldName, QByteArray("id"));
+  _mapper=m;
 }
 
 void ItemCluster::setReadOnly(bool pReadOnly)

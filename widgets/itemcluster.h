@@ -192,7 +192,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
 {
   Q_OBJECT
   Q_PROPERTY(QString fieldName   READ fieldName   WRITE setFieldName);
-  Q_PROPERTY(QString number      READ itemNumber  WRITE setItemNumber);
+  Q_PROPERTY(int     id          READ id          WRITE setId);
   
   public:
     ItemCluster(QWidget *, const char * = 0);
@@ -240,6 +240,7 @@ class OPENMFGWIDGETS_EXPORT ItemCluster : public QWidget
     QLabel       *_descrip1;
     QLabel       *_descrip2;
     QString _fieldName;
+    XDataWidgetMapper *_mapper;
 };
 
 #endif

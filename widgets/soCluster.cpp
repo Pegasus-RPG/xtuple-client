@@ -79,7 +79,8 @@ SoLineEdit::SoLineEdit(QWidget *pParent, const char *name) : XLineEdit(pParent, 
   _custid = -1;
 
   setValidator(new QIntValidator(0, 9999999, this));
-
+  _mapper = new XDataWidgetMapper(this);
+  
   connect(this, SIGNAL(lostFocus()), this, SLOT(sParse()));
 }
 
@@ -106,6 +107,10 @@ void SoLineEdit::setId(int pId)
     emit custNameChanged(sohead.value("cohead_billtoname").toString());
 
     setText(sohead.value("cohead_number").toString());
+    
+    QString s;
+    if (_mapper->model())
+      _mapper->model()->setData(_mapper->model()->index(_mapper->currentIndex(),_mapper->mappedSection(this)), _id);
   }
   else
   {
@@ -268,7 +273,8 @@ void SoCluster::setCustId(int pCustid)
 
 void SoCluster::setDataWidgetMap(XDataWidgetMapper* m)
 {
-  m->addFieldMapping(this, _fieldName, QByteArray("number"));
+  m->addFieldMapping(this, _fieldName, QByteArray("id"));
+  _soNumber->_mapper=m;
 }
 
 void SoCluster::setLabel(QString p)

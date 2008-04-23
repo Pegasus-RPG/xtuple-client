@@ -67,12 +67,16 @@ formControl::formControl(QWidget *parent) :
   _shown=false;
   
   connect (_new,	SIGNAL(clicked()),	this,	SLOT(newRow()));
+  connect (_save,       SIGNAL(clicked()),      this,   SIGNAL(saveClicked()));
   connect (_save,	SIGNAL(clicked()),	this,	SLOT(save()));
-  //connect (_undo,	SIGNAL(clicked()),	this,   SLOT(undo()));
   connect (_print,	SIGNAL(clicked()),	this,	SLOT(print()));
   connect (_prev,	SIGNAL(clicked()),	this,	SLOT(toPrevious()));
   connect (_next,	SIGNAL(clicked()),	this,	SLOT(toNext()));
   connect (_search,	SIGNAL(clicked()),	this,	SLOT(search()));
+  
+  //Hiding future functionality that has been commented out for now
+  _print->setVisible(FALSE);
+  _view->setVisible(FALSE);
 
 }
 
@@ -102,20 +106,6 @@ void formControl::showEvent(QShowEvent *event)
   QWidget::showEvent(event);
 }
 
-void formControl::close()
-{
-  if (!_autoSave) //&& (_model.isDirty(_mapper.currentIndex())))
-  {/*
-    if (QMessageBox::question(0,tr("Unsaved Changes"),tr("You have made some changes that "
-                        "have not been saved. Save your changes before closing?"),
-			QMessageBox::Yes | QMessageBox::Default,
-                        QMessageBox::No ) == QMessageBox::Yes)
-      save();*/
-  }
-  else
-    save();
-}
-
 void formControl::toNext()
 {
   _mapper.toNext();
@@ -134,13 +124,12 @@ void formControl::newRow()
 {
   _new->setEnabled(true);
   _save->setEnabled(true);
-  //_undo->setEnabled(true);
   _view->setEnabled(true);
   _print->setEnabled(true);
   _model.insertRows(_model.rowCount(),1);
   _mapper.toLast();
 }
-
+/* Future functionality
 void formControl::previewForm()
 {
 }
@@ -160,7 +149,7 @@ void formControl::printForm()
 void formControl::printList()
 {
 }
-
+*/
 void formControl::save()
 {
   _mapper.submit();
@@ -199,7 +188,6 @@ void formControl::select()
     _mapper.toFirst();
     _new->setEnabled(true);
     _save->setEnabled(true);
-    //_undo->setEnabled(true);
     _view->setEnabled(true);
     _next->setEnabled(_model.rowCount() > 1);
   }
@@ -212,11 +200,14 @@ void formControl::select()
     _next->setEnabled(false);
   }
 }
+
+/* Future functionality
 void formControl::setAutoSave(bool p)
 {
   _autoSave=p;
   _save->setVisible(p);
 }
+*/ 
 
 void formControl::setMode(Modes p)
 {
@@ -273,11 +264,7 @@ void formControl::setDataWidgetMapper(QSqlTableModel *p)
   _mapper.setSqlTableModel(&_model);
   emit newDataWidgetMapper(&_mapper);
 }
-/*
-void formControl::undo()
-{
-}
-*/
+
 
 
 
