@@ -1163,7 +1163,7 @@ void salesOrderItem::sSave()
       type = "QI";
 
     QModelIndex idx1, idx2, idx3;
-    if (_item->itemType() == "J")
+    if (_item->isConfigured())
       q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value, CAST(:char_price AS NUMERIC)) AS result;"); 
     else
       q.prepare("SELECT updateCharAssignment(:target_type, :target_id, :char_id, :char_value) AS result;");
@@ -1427,7 +1427,7 @@ void salesOrderItem::sDeterminePrice(bool p)
       }
     }
     
-    if ((_item->itemType() == "J") && (_qtyOrdered->toDouble() != _orderQtyChanged) ) //For job items, update characteristic pricing if qty changed
+    if ((_item->isConfigured()) && (_qtyOrdered->toDouble() != _orderQtyChanged) ) //For configured items, update characteristic pricing if qty changed
     {
       disconnect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
       _charVars.replace(QTY, _qtyOrdered->toDouble() * _qtyinvuomratio);
@@ -1463,7 +1463,7 @@ void salesOrderItem::sDeterminePrice(bool p)
       connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
     }
     
-    if (_item->itemType() == "J") //Total up price for job item characteristics
+    if (_item->isConfigured()) //Total up price for configured item characteristics
     {
       QModelIndex idx;
 
@@ -1708,7 +1708,7 @@ void salesOrderItem::sPopulateItemInfo(int pItemid)
     }
     
     //Setup widgets and signals needed to handle configuration
-    if (_item->itemType() == "J")
+    if (_item->isConfigured())
     {
       connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcPrice()));
       connect(_itemchar, SIGNAL(itemChanged(QStandardItem*)), this, SLOT(sRecalcAvailability()));
@@ -1840,7 +1840,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
 	     "          WHERE (bomdata_item_id > 0)");
              
              
-          if (_item->itemType() == "J") // For job items limit to bomitems associated with selected characteristic values
+          if (_item->isConfigured()) // For configured items limit to bomitems associated with selected characteristic values
           {
             QModelIndex charidx;
             QModelIndex valueidx;
@@ -1946,7 +1946,7 @@ void salesOrderItem::sDetermineAvailability( bool p )
                                 "        AND (bomitem_parent_item_id=ps.itemsite_item_id)"
                                 "        AND (:schedDate BETWEEN bomitem_effective AND (bomitem_expires-1))");
 
-          if (_item->itemType() == "J") // For job items limit to bomitems associated with selected characteristic values
+          if (_item->isConfigured()) // For configured items limit to bomitems associated with selected characteristic values
           {
             QModelIndex charidx;
             QModelIndex valueidx;
@@ -2045,7 +2045,7 @@ void salesOrderItem::sCalculateDiscountPrcnt()
       _discountFromCust->setText(formatSalesPrice((1 - (netUnitPrice / _customerPrice->baseValue())) * 100));
   }
   
-  if (_item->itemType() == "J") //Total up price for job item characteristics
+  if (_item->isConfigured()) //Total up price for configured item characteristics
   {
     QModelIndex idx;
 

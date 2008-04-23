@@ -650,7 +650,7 @@ void item::sSave()
   q.bindValue(":item_active", QVariant(_active->isChecked(), 0));
   q.bindValue(":item_picklist", QVariant(_pickListItem->isChecked(), 0));
   q.bindValue(":item_fractional", QVariant(_fractional->isChecked(), 0));
-  q.bindValue(":item_config", QVariant(FALSE, 0));
+  q.bindValue(":item_config", QVariant(_configured->isChecked(), 0));  
   q.bindValue(":item_inv_uom_id", _inventoryUOM->id());
   q.bindValue(":item_maxcost", _maximumDesiredCost->localValue());
   q.bindValue(":item_prodweight", _prodWeight->toDouble());
@@ -713,7 +713,7 @@ void item::sNew()
   ParameterList params;
   params.append("mode", "new");
   params.append("item_id", _itemid);
-  if (itemType == "J")
+  if (_configured->isChecked())
     params.append("showPrices", TRUE);
 
   characteristicAssignment newdlg(this, "", TRUE);
@@ -729,7 +729,7 @@ void item::sEdit()
   ParameterList params;
   params.append("mode", "edit");
   params.append("charass_id", _charass->id());
-  if (itemType == "J")
+  if (_configured->isChecked())
     params.append("showPrices", TRUE);
 
   characteristicAssignment newdlg(this, "", TRUE);
@@ -938,6 +938,7 @@ void item::populate()
     _inventoryUOM->setId(item.value("item_inv_uom_id").toInt());
     _pickListItem->setChecked(item.value("item_picklist").toBool());
     _fractional->setChecked(item.value("item_fractional").toBool());
+    _configured->setChecked(item.value("item_config").toBool());
     _prodWeight->setText(formatWeight(item.value("item_prodweight").toDouble()));
     _packWeight->setText(formatWeight(item.value("item_packweight").toDouble()));
     _maximumDesiredCost->setLocalValue(item.value("item_maxcost").toDouble());
@@ -994,6 +995,7 @@ void item::clear()
   _itemtype->setCurrentItem(0);
   _classcode->setNull();
   _prodcat->setNull();
+  _configured->setChecked(false);
 
   _notes->clear();
   _extDescription->clear();
@@ -1028,6 +1030,8 @@ void item::sHandleItemtype()
   bool capUOM   = FALSE;
   bool planType = FALSE;
   bool charPrice= FALSE;
+  
+  _configured->setEnabled(FALSE);
 
   if (itemType == "P")
   {
@@ -1058,6 +1062,7 @@ void item::sHandleItemtype()
     capUOM   = TRUE;
     shipUOM  = TRUE;
     charPrice= TRUE;
+    _configured->setEnabled(TRUE);
   }
 
   if (itemType == "F")

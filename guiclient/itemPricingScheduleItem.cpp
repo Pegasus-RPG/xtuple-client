@@ -414,7 +414,7 @@ void itemPricingScheduleItem::sUpdateCosts(int pItemid)
     _priceUOM->setId(cost.value("item_price_uom_id").toInt());
   }
   
-  if (_item->itemType() == "J")
+  if (_item->isConfigured())
     _tab->setTabEnabled(_tab->indexOf(_configuredPrices),TRUE);
   else
     _tab->setTabEnabled(_tab->indexOf(_configuredPrices),FALSE);

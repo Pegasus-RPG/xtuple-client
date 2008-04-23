@@ -16,11 +16,8 @@
    <layout class="QGridLayout" >
     <item row="0" column="0" colspan="6" >
      <widget class="formControl" name="_control" >
-      <property name="schemaName" >
-       <string>api</string>
-      </property>
       <property name="tableName" >
-       <string>lotserialreg</string>
+       <string>lsreg</string>
       </property>
       <property name="mode" >
        <enum>formControl::Edit</enum>
@@ -40,7 +37,7 @@
     <item row="1" column="1" >
      <widget class="XLineEdit" name="_regNumber" >
       <property name="fieldName" >
-       <string>registration_number</string>
+       <string>lsreg_number</string>
       </property>
      </widget>
     </item>
@@ -63,7 +60,7 @@
        <enum>XComboBox::RegistrationTypes</enum>
       </property>
       <property name="fieldName" >
-       <string>registration_type</string>
+       <string>lsreg_regtype_id</string>
       </property>
      </widget>
     </item>
@@ -91,9 +88,6 @@
          <property name="focusPolicy" >
           <enum>Qt::TabFocus</enum>
          </property>
-         <property name="fieldName" >
-          <string>item_number</string>
-         </property>
         </widget>
        </item>
        <item row="1" column="0" >
@@ -108,7 +102,7 @@
           <bool>false</bool>
          </property>
          <property name="fieldName" >
-          <string>lotserial_number</string>
+          <string>lsreg_ls_id</string>
          </property>
         </widget>
        </item>
@@ -147,7 +141,7 @@
           <string>sold_date</string>
          </property>
          <property name="fieldName" >
-          <string>sold_date</string>
+          <string>lsreg_solddate</string>
          </property>
         </widget>
        </item>
@@ -179,8 +173,15 @@
          <property name="toolTip" >
           <string>expire_date</string>
          </property>
+         <property name="date" >
+          <date>
+           <year>2000</year>
+           <month>1</month>
+           <day>1</day>
+          </date>
+         </property>
          <property name="fieldName" >
-          <string>expire_date</string>
+          <string>lsreg_expiredate</string>
          </property>
         </widget>
        </item>
@@ -190,7 +191,7 @@
           <string>register_date</string>
          </property>
          <property name="fieldName" >
-          <string>register_date</string>
+          <string>lsreg_regdate</string>
          </property>
         </widget>
        </item>
@@ -212,7 +213,7 @@
           <string>CRM Account:</string>
          </property>
          <property name="fieldName" >
-          <string>crm_account</string>
+          <string>lsreg_crmacct_id</string>
          </property>
         </widget>
        </item>
@@ -270,7 +271,7 @@
           <string/>
          </property>
          <property name="fieldName" >
-          <string>sales_order_number</string>
+          <string>lsreg_cohead_id</string>
          </property>
         </widget>
        </item>
@@ -316,7 +317,7 @@
           <bool>true</bool>
          </property>
          <property name="fieldName" >
-          <string>shipment_number</string>
+          <string>lsreg_shiphead_id</string>
          </property>
         </widget>
        </item>
@@ -338,62 +339,14 @@
           <property name="label" >
            <string/>
           </property>
+          <property name="fieldName" >
+           <string>lsreg_cntct_id</string>
+          </property>
           <property name="accountVisible" >
            <bool>false</bool>
           </property>
           <property name="activeVisible" >
            <bool>false</bool>
-          </property>
-          <property name="fieldNameHonorific" >
-           <string>honorific</string>
-          </property>
-          <property name="fieldNameFirst" >
-           <string>first</string>
-          </property>
-          <property name="fieldNameLast" >
-           <string>last</string>
-          </property>
-          <property name="fieldNameInitials" >
-           <string>initials</string>
-          </property>
-          <property name="fieldNameTitle" >
-           <string>job_title</string>
-          </property>
-          <property name="fieldNamePhone" >
-           <string>voice</string>
-          </property>
-          <property name="fieldNamePhone2" >
-           <string>alternate</string>
-          </property>
-          <property name="fieldNameFax" >
-           <string>fax</string>
-          </property>
-          <property name="fieldNameEmailAddress" >
-           <string>email</string>
-          </property>
-          <property name="fieldNameWebAddress" >
-           <string>web</string>
-          </property>
-          <property name="fieldNameLine1" >
-           <string>address1</string>
-          </property>
-          <property name="fieldNameLine2" >
-           <string>address2</string>
-          </property>
-          <property name="fieldNameLine3" >
-           <string>address3</string>
-          </property>
-          <property name="fieldNameCity" >
-           <string>city</string>
-          </property>
-          <property name="fieldNameState" >
-           <string>state</string>
-          </property>
-          <property name="fieldNamePostalCode" >
-           <string>postal_code</string>
-          </property>
-          <property name="fieldNameCountry" >
-           <string>country</string>
           </property>
          </widget>
         </item>
@@ -486,7 +439,7 @@
         <item>
          <widget class="XTextEdit" name="_notes" >
           <property name="fieldName" >
-           <string>notes</string>
+           <string>lsreg_notes</string>
           </property>
          </widget>
         </item>
@@ -591,8 +544,8 @@
      <y>96</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>238</x>
-     <y>151</y>
+     <x>257</x>
+     <y>198</y>
     </hint>
    </hints>
   </connection>
@@ -607,8 +560,8 @@
      <y>237</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>660</x>
-     <y>267</y>
+     <x>847</x>
+     <y>335</y>
     </hint>
    </hints>
   </connection>
@@ -623,8 +576,8 @@
      <y>27</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>96</x>
-     <y>56</y>
+     <x>184</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -687,8 +640,8 @@
      <y>26</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>460</x>
-     <y>49</y>
+     <x>523</x>
+     <y>78</y>
     </hint>
    </hints>
   </connection>
@@ -703,8 +656,8 @@
      <y>37</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>592</x>
-     <y>101</y>
+     <x>678</x>
+     <y>122</y>
     </hint>
    </hints>
   </connection>
@@ -735,8 +688,8 @@
      <y>30</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>631</x>
-     <y>165</y>
+     <x>678</x>
+     <y>190</y>
     </hint>
    </hints>
   </connection>
@@ -783,8 +736,8 @@
      <y>25</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>180</x>
-     <y>511</y>
+     <x>147</x>
+     <y>521</y>
     </hint>
    </hints>
   </connection>
@@ -801,6 +754,38 @@
     <hint type="destinationlabel" >
      <x>180</x>
      <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_control</sender>
+   <signal>saveClicked()</signal>
+   <receiver>_cntct</receiver>
+   <slot>save()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>329</x>
+     <y>17</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>335</x>
+     <y>416</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_lotSerial</sender>
+   <signal>newItemId(int)</signal>
+   <receiver>_item</receiver>
+   <slot>setId(int)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>311</x>
+     <y>164</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>310</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>

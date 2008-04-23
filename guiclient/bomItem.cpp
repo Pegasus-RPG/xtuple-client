@@ -177,15 +177,15 @@ enum SetResponse bomItem::set(const ParameterList &pParams)
 	return UndefinedError;
       }
   
-      //Set up configuration tab if parent item is Job type
-      q.prepare("SELECT item_type "
+      //Set up configuration tab if parent item is configured
+      q.prepare("SELECT item_config "
                 "FROM item "
                 "WHERE (item_id=:item_id); ");
       q.bindValue(":item_id", _itemid);
       q.exec();
       if (q.first())
       {
-        if (q.value("item_type").toString() == "J")
+        if (q.value("item_config").toBool())
           _char->populate(QString( "SELECT -1 AS charass_char_id, '' AS char_name "
                                    "UNION "
                                    "SELECT DISTINCT charass_char_id, char_name "
@@ -519,7 +519,7 @@ void bomItem::populate()
         q.value("item_type").toString() == "J")
       _createWo->setChecked(q.value("bomitem_createwo").toBool());
       
-    if (q.value("item_type").toString() == "J")
+    if (q.value("item_config").toBool())
     {
       _char->populate(QString( "SELECT -1 AS charass_char_id, '' AS char_name "
                                "UNION "
