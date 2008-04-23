@@ -364,7 +364,7 @@
          </widget>
         </item>
         <item row="1" column="0" >
-         <widget class="QLabel" name="_controlMethodLit_2" >
+         <widget class="QLabel" name="_costingLit" >
           <property name="text" >
            <string>Costing:</string>
           </property>
@@ -374,7 +374,7 @@
          </widget>
         </item>
         <item row="1" column="1" >
-         <widget class="XComboBox" name="xcomboBox" >
+         <widget class="XComboBox" name="_costing" >
           <item>
            <property name="text" >
             <string>Average</string>
@@ -1487,7 +1487,7 @@
   <tabstop>_sold</tabstop>
   <tabstop>_soldRanking</tabstop>
   <tabstop>_controlMethod</tabstop>
-  <tabstop>xcomboBox</tabstop>
+  <tabstop>_costing</tabstop>
   <tabstop>_plannerCode</tabstop>
   <tabstop>_costcat</tabstop>
   <tabstop>_tab</tabstop>

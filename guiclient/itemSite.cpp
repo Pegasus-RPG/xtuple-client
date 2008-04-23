@@ -137,6 +137,12 @@ itemSite::itemSite(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     _mpsTimeFence->hide();
     _mpsTimeFenceDaysLit->hide();
   }
+  
+  //These things will be implemented at the site level later
+  _costing->hide();
+  _costingLit->hide();
+  _planningType->hide();
+  _planningTypeLit->hide();
 }
 
 itemSite::~itemSite()
