@@ -66,6 +66,7 @@
 #include <QVBoxLayout>
 
 #include <metasql.h>
+#include <QMessageBox>
 
 #include "xsqlquery.h"
 
@@ -92,11 +93,22 @@ void ContactCluster::init()
     _grid->setMargin(0);
     _grid->setSpacing(2);
 
+    //_numberBox          = new QHBoxLayout;
+    //_numberBox->setSpacing(2);
     _nameBox		= new QHBoxLayout;
     _nameBox->setSpacing(2);
     _titleBox		= new QHBoxLayout;
     _titleBox->setSpacing(2);
 
+    _numberLit		= new QLabel(tr("Number:"), this, "_numberLit");
+    _number		= new QLineEdit(this, "_number");
+  
+    //_numberBox->addWidget(_numberLit,	0);
+    //_numberBox->addWidget(_number,	0);
+    
+    _number->hide();
+    _numberLit->hide();
+    
     _honorific		= new XComboBox(this, "_honorific");
     _firstLit		= new QLabel(tr("First:"), this, "_firstLit");
     _first		= new QLineEdit(this, "_first");
@@ -107,6 +119,8 @@ void ContactCluster::init()
     _initials->resize(_initials->size().width() / 3, _initials->size().height());
     _titleLit		= new QLabel(tr("Job Title:"), this, "_titleLit");
     _title		= new QLineEdit(this, "_title");
+    
+    _mapper		= new XDataWidgetMapper(this);
 
     _nameBox->addWidget(_honorific,	0);
     _nameBox->addWidget(_firstLit,	0);
@@ -140,6 +154,7 @@ void ContactCluster::init()
     _webaddr		= new QLineEdit(this, "_webaddr");
     _address		= new AddressCluster(this, "_address");
 
+    _numberLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _label->setAlignment(Qt::AlignLeft | Qt::AlignVCenter);
     _firstLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _lastLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -200,32 +215,6 @@ ContactCluster::ContactCluster(QWidget* pParent, const char* pName) :
     init();
 }
 
-void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addFieldMapping(_active    ,    _fieldNameActive);
-  m->addFieldMapping(_first       ,  _fieldNameFirst);
-  m->addFieldMapping(_last        ,  _fieldNameLast);
-  m->addFieldMapping(_initials    ,  _fieldNameInitials);
-  m->addFieldMapping(_title       ,  _fieldNameTitle);
-  m->addFieldMapping(_phone       ,  _fieldNamePhone);
-  m->addFieldMapping(_phone2      ,  _fieldNamePhone2);
-  m->addFieldMapping(_fax         ,  _fieldNameFax);
-  m->addFieldMapping(_email       ,  _fieldNameEmailAddress);
-  m->addFieldMapping(_webaddr     ,  _fieldNameWebAddress);
-  _honorific->setFieldName(_fieldNameHonorific);
-  _honorific->setDataWidgetMap(m);
-  _crmAcct->setFieldName(_fieldNameCrmAccount);
-  _crmAcct->setDataWidgetMap(m);
-  _address->setFieldNameLine1(_fieldNameLine1);
-  _address->setFieldNameLine2(_fieldNameLine2);
-  _address->setFieldNameLine3(_fieldNameLine3);
-  _address->setFieldNameCity(_fieldNameCity);
-  _address->setFieldNameState(_fieldNameState);
-  _address->setFieldNamePostalCode(_fieldNamePostalCode);
-  _address->setFieldNameCountry(_fieldNameCountry);
-  _address->setDataWidgetMap(m);
-}
-
 void ContactCluster::setId(const int pId)
 {
     if (pId == _id)
@@ -259,6 +248,7 @@ void ContactCluster::silentSetId(const int pId)
 
 	    _id = pId;
 	    _valid = true;
+	    _number->setText(idQ.value("cntct_number").toString());
 	    _honorific->setEditText(idQ.value("cntct_honorific").toString());
 	    _first->setText(idQ.value("cntct_first_name").toString());
 	    _last->setText(idQ.value("cntct_last_name").toString());
@@ -273,21 +263,6 @@ void ContactCluster::silentSetId(const int pId)
 	    _address->setId(idQ.value("cntct_addr_id").toInt());
 	    _active->setChecked(idQ.value("cntct_active").toBool());
             _notes = idQ.value("cntct_notes").toString();
-
-	    c_honorific = _honorific->currentText();
-	    c_first	= _first->text();
-	    c_last	= _last->text();
-	    c_initials = _initials->text();
-	    c_crmAcct	= _crmAcct->id();
-	    c_title	= _title->text();
-	    c_phone	= _phone->text();
-	    c_phone2	= _phone2->text();
-	    c_fax	= _fax->text();
-	    c_email	= _email->text();
-	    c_webaddr	= _webaddr->text();
-	    c_active	= _active->isChecked();
-	    c_address	= _address->id();
-            c_notes     = _notes;
 
             _ignoreSignals = false;
 	}
@@ -306,22 +281,6 @@ void ContactCluster::clear()
 {
   _id = -1;
   _valid = false;
-
-  // reset cache
-  c_honorific	= "";
-  c_first	= "";
-  c_last	= "";
-  c_initials	= "";
-  c_crmAcct	= -1;
-  c_title	= "";
-  c_phone	= "";
-  c_phone2	= "";
-  c_fax		= "";
-  c_email	= "";
-  c_webaddr	= "";
-  c_active	= true;
-  c_address	= -1;
-  c_notes       = "";
 
   _honorific->clearEditText();
   _first->clear();
@@ -374,81 +333,11 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
   if (addrSave < 0)
     return addrSave;
 
-  QString	new_honorific	= _honorific->currentText();
-  QString	new_first	= _first->text();
-  QString	new_last	= _last->text();
-  QString	new_initials	= _initials->text();
-  QString	new_title	= _title->text();
-  int		new_crmAcct	= _crmAcct->id();
-  QString	new_phone	= _phone->text();
-  QString	new_phone2	= _phone2->text();
-  QString	new_fax		= _fax->text();
-  QString	new_email	= _email->text();
-  QString	new_webaddr	= _webaddr->text();
-  bool		new_active	= _active->isChecked();
-  int		new_address	= _address->id();
-  QString       new_notes       = _notes;
-
-  // blank is not an error, so return 0 instead of id()
-  if ("" == new_honorific && "" == new_first	&&
-      "" == new_last	&& "" == new_initials	&&
-      "" == new_title	&&
-      "" == new_phone	&&
-      "" == new_phone2	&& "" == new_fax	&&
-      "" == new_email	&& "" == new_webaddr	&&
-       0 >  new_address	)
-  {
-    silentSetId(-1);
-    return 0;
-  }
-
-  // if none of the contact data changed, there's nothing to do
-  // but had to save address first because its data might have changed
-  // without changing its id
-  if (c_honorific.upper() == new_honorific.upper() &&
-      c_first == new_first	&&
-      c_last == new_last	&& c_initials == new_initials	&&
-      c_crmAcct == new_crmAcct	&& c_title == new_title		&&
-      c_phone == new_phone	&& c_notes == new_notes         &&
-      c_phone2 == new_phone2	&& c_fax == new_fax		&&
-      c_email == new_email	&& c_webaddr == new_webaddr	&&
-      c_active == new_active	&& c_address == new_address	)
-    return id();
-
-  if (id() > 0 && c_first != new_first && c_last != new_last &&
-      flag == AddressCluster::CHECK)
-    return -10;
-
-  QString sql;
-  if ((id() > 0 && c_first == new_first && c_last == new_last) ||
-      (id() > 0 && flag == AddressCluster::CHANGEALL))
-  {
-    sql = "UPDATE cntct SET "
-	  "    cntct_honorific = :honorific, cntct_addr_id = :addr_id, "
-	  "    cntct_first_name = :first, cntct_last_name = :last, "
-	  "    cntct_initials = :initials, cntct_active = :active, "
-	  "    cntct_title = :title, "
-	  "    cntct_phone = :phone, cntct_phone2 = :phone2, cntct_fax = :fax, "
-	  "    cntct_email = :email, cntct_webaddr = :webaddr, "
-	  "    cntct_notes = :notes, cntct_crmacct_id = :crmacct_id "
-	  "WHERE cntct_id = :cntct_id;";
-  }
-  else
-  {
-    sql = "INSERT INTO cntct ("
-	  "    cntct_honorific, cntct_addr_id, cntct_first_name, cntct_last_name, "
-	  "    cntct_initials, cntct_title, "
-	  "    cntct_active, cntct_phone, cntct_phone2, cntct_fax, "
-	  "    cntct_email, cntct_webaddr, cntct_notes, cntct_crmacct_id "
-	  ") VALUES ("
-	  "    :honorific, :addr_id, :first, :last, "
-	  "    :initials, :title,"
-	  "    :active, :phone, :phone2, :fax, "
-	  "    :email, :webaddr, :notes, :crmacct_id); ";
-  }
-
   XSqlQuery datamodQ;
-  datamodQ.prepare(sql);
+  datamodQ.prepare("SELECT saveCntct(:cntct_id,:cntct_number,:crmacct_id,:addr_id,"
+		   ":first,:last,:honorific,:initials,:active,:phone,:phone2,:fax,:email,:webaddr,"
+		   ":notes,:title,:flag) AS result;");
+  datamodQ.bindValue(":cntct_number", _number->text());
   datamodQ.bindValue(":cntct_id",  id());
   datamodQ.bindValue(":honorific", _honorific->currentText());
   if (_address->id() > 0)
@@ -463,25 +352,60 @@ int ContactCluster::save(AddressCluster::SaveFlags flag)
   datamodQ.bindValue(":email",	   _email->text());
   datamodQ.bindValue(":webaddr",   _webaddr->text());
   datamodQ.bindValue(":notes",	   _notes);
+  if (flag == AddressCluster::CHECK)
+    datamodQ.bindValue(":flag", QString("CHECK"));
+  else if (flag == AddressCluster::CHANGEALL)
+    datamodQ.bindValue(":flag", QString("CHANGEALL"));
+  else if (flag == AddressCluster::CHANGEONE)
+    datamodQ.bindValue(":flag", QString("CHANGEONE"));
+  else
+    return -1;
   if (_crmAcct->id() > 0)
     datamodQ.bindValue(":crmacct_id",_crmAcct->id());	// else NULL
   datamodQ.bindValue(":active",    QVariant(_active->isChecked(), 0));
-  if (!datamodQ.exec())
-    return -1;		// error
-
-  if (sql.startsWith("INSERT"))
+  datamodQ.exec();
+  if (datamodQ.first())
   {
-    XSqlQuery newId;
-    if (newId.exec("SELECT CURRVAL('cntct_cntct_id_seq') AS newId;") && newId.first())
-      silentSetId(newId.value("newId").toInt());
+    if (datamodQ.value("result").toInt() > 0)
+      silentSetId(datamodQ.value("result").toInt());
+    else if (datamodQ.value("result").toInt() == -10)
+    {
+      if (_mapper->model())
+      {
+        int answer;
+        answer = QMessageBox::question(this,
+		    tr("Question Saving %1").arg(label()),
+		    tr("<p>Would you like to update the existing Contact or "
+		       "create a new one?"),
+		    tr("Create New"),
+		    tr("Change Existing"),
+		    tr("Cancel"),
+		    2, 2);
+	if (0 == answer)
+	  return save(AddressCluster::CHANGEONE);
+	else if (1 == answer)
+	  return save(AddressCluster::CHANGEALL);
+	else
+	  silentSetId(_id);		// error
+      }
+      return -10;
+    }
   }
-
+  else
+    return -1;
   return id();
 }
 
 void ContactCluster::setAccount(const int p)
 {
   _crmAcct->setId(p);
+}
+
+void ContactCluster::setNumberVisible(const bool vis)
+{
+  _number->setVisible(vis);
+  _numberLit->setVisible(vis);
+  layout();
 }
 
 void ContactCluster::setAddressVisible(const bool vis)
@@ -567,12 +491,20 @@ void ContactCluster::setMinimalLayout(const bool p)
   layout();
 }
 
+void ContactCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldName, QByteArray("id"));
+  _mapper=m;
+  _address->setDataWidgetMap(m);
+}
+
 void ContactCluster::layout()
 {
   QLayout* currLayout = (_layoutDone) ? _grid : parentWidget()->layout();
 
   if (_layoutDone)
   {
+    currLayout->removeItem(_numberBox);
     currLayout->removeItem(_nameBox);
     currLayout->removeItem(_buttonBox);
     currLayout->removeItem(_titleBox);
@@ -581,6 +513,7 @@ void ContactCluster::layout()
   if (currLayout)
   {
     currLayout->removeWidget(_label);
+    currLayout->removeItem(_numberBox);
     currLayout->removeItem(_nameBox);
     currLayout->removeItem(_buttonBox);
     currLayout->removeItem(_titleBox);
@@ -598,6 +531,7 @@ void ContactCluster::layout()
   }
 
   _grid->addWidget(_label,	0, 0, 1, -1);
+  //_grid->addItem(_numberBox,    1, 0, 1, -1);  Possible implement at a later time
   _grid->addItem(_nameBox,	1, 0, 1, -1);
   _grid->addItem(_buttonBox,	2, 0, 1, -1);
   _grid->addItem(_titleBox,	3, 0, 1, -1);
@@ -618,11 +552,11 @@ void ContactCluster::layout()
     _grid->addWidget(_emailLit,	4, 4);
     _grid->addWidget(_email,	4, 5);
 
-    _grid->addWidget(_phone2Lit,	5, 0);
-    _grid->addWidget(_phone2,		5, 1);
-    _grid->addWidget(_webaddrLit,	5, 4);
-    _grid->addWidget(_webaddr,		6, 0);
-    _grid->addWidget(_address,		6, 1); //, -1, -1);
+    _grid->addWidget(_phone2Lit,	4, 0);
+    _grid->addWidget(_phone2,		4, 1);
+    _grid->addWidget(_webaddrLit,	4, 4);
+    _grid->addWidget(_webaddr,		5, 0);
+    _grid->addWidget(_address,		5, 1); //, -1, -1);
   }
   else if (_address->isVisibleTo(this))
   {
@@ -651,17 +585,17 @@ void ContactCluster::layout()
     _grid->setColumnStretch(4, 0);
     _grid->setColumnStretch(5, 2);
 
-    _grid->addWidget(_phoneLit,		4, 0);
-    _grid->addWidget(_phone,		4, 1);
-    _grid->addWidget(_faxLit,		4, 2);
-    _grid->addWidget(_fax,		4, 3);
-    _grid->addWidget(_webaddrLit,	4, 4);
-    _grid->addWidget(_webaddr,		4, 5);
-    _grid->addWidget(_phone2Lit,	5, 0);
-    _grid->addWidget(_phone2,		5, 1);
-    _grid->addWidget(_emailLit,		5, 2);
-    _grid->addWidget(_email,		5, 3);
-    _grid->addWidget(_address,		6, 0, 1, -1);
+    _grid->addWidget(_phoneLit,		5, 0);
+    _grid->addWidget(_phone,		5, 1);
+    _grid->addWidget(_faxLit,		5, 2);
+    _grid->addWidget(_fax,		5, 3);
+    _grid->addWidget(_webaddrLit,	5, 4);
+    _grid->addWidget(_webaddr,		5, 5);
+    _grid->addWidget(_phone2Lit,	6, 0);
+    _grid->addWidget(_phone2,		6, 1);
+    _grid->addWidget(_emailLit,		6, 2);
+    _grid->addWidget(_email,		6, 3);
+    _grid->addWidget(_address,		7, 0, 1, -1);
   }
 
   _layoutDone = true;
