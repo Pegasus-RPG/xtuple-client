@@ -65,20 +65,16 @@
 
 class databaseInformation : public XDialog, public Ui::databaseInformation
 {
-    Q_OBJECT
+  Q_OBJECT
 
-public:
+  public:
     databaseInformation(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
     ~databaseInformation();
 
-    virtual void init();
-
-protected slots:
+  protected slots:
     virtual void languageChange();
 
     virtual void sSave();
-
-
 };
 
 #endif // DATABASEINFORMATION_H

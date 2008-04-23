@@ -57,48 +57,18 @@
 
 #include "databaseInformation.h"
 
-#include <qvariant.h>
+#include <QVariant>
+
 #include <dbtools.h>
 
-/*
- *  Constructs a databaseInformation as a child of 'parent', with the
- *  name 'name' and widget flags set to 'f'.
- *
- *  The dialog will by default be modeless, unless you set 'modal' to
- *  true to construct a modal dialog.
- */
 databaseInformation::databaseInformation(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
 {
-    setupUi(this);
+  setupUi(this);
 
+  // signals and slots connections
+  connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
 
-    // signals and slots connections
-    connect(_save, SIGNAL(clicked()), this, SLOT(sSave()));
-    connect(_close, SIGNAL(clicked()), this, SLOT(reject()));
-    init();
-}
-
-/*
- *  Destroys the object and frees any allocated resources
- */
-databaseInformation::~databaseInformation()
-{
-    // no need to delete child widgets, Qt does it all for us
-}
-
-/*
- *  Sets the strings of the subwidgets using the current
- *  language.
- */
-void databaseInformation::languageChange()
-{
-    retranslateUi(this);
-}
-
-
-void databaseInformation::init()
-{
   QString server;
   QString database;
   QString port;
@@ -109,6 +79,10 @@ void databaseInformation::init()
   _comments->setText(_metrics->value("DatabaseComments"));
   _version->setText(_metrics->value("OpenMFGServerVersion"));
   _patch->setText(_metrics->value("ServerPatchVersion"));
+
+  int val = _metrics->value("updateTickInterval").toInt();
+  if(val < 1) val = 1;
+  _interval->setValue(val);
 
   //Disable batch manager if PostBooks
   if ( (_metrics->value("Application") != "OpenMFG")
@@ -151,6 +125,16 @@ void databaseInformation::init()
   }
 }
 
+databaseInformation::~databaseInformation()
+{
+  // no need to delete child widgets, Qt does it all for us
+}
+
+void databaseInformation::languageChange()
+{
+  retranslateUi(this);
+}
+
 void databaseInformation::sSave()
 {
   _metrics->set("DatabaseName", _description->text().stripWhiteSpace());
@@ -158,6 +142,7 @@ void databaseInformation::sSave()
   _metrics->set("DatabaseComments", _comments->text().stripWhiteSpace());
 
   _metrics->set("EnableBatchManager", _enableBatchManager->isChecked());
+  _metrics->set("updateTickInterval", _interval->value());
 
   _metrics->load();
 

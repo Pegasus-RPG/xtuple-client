@@ -159,6 +159,9 @@ bool _evaluation;
 #include <SaveSizePositionEventFilter.h>
 static SaveSizePositionEventFilter * __saveSizePositionEventFilter = 0;
 
+static int __interval = 0;
+static int __intervalCount = 0;
+
 Action::Action( QWidget *pParent, const char *pName, const QString &pDisplayName,
                 QObject *pTarget, const char *pActivateSlot,
                 QWidget *pAddTo, bool pEnabled ) :
@@ -430,6 +433,10 @@ GUIClient::GUIClient(const QString &pDatabaseURL, const QString &pUsername)
 
   _eventButton = NULL;
   _registerButton = NULL;
+  __interval = _metrics->value("updateTickInterval").toInt();
+  if(__interval < 1)
+    __interval = 1;
+  __intervalCount = 0;
   sTick();
 
   _timeoutHandler = new TimeoutHandler(this);
@@ -724,7 +731,12 @@ void GUIClient::sTick()
       }
     }
 
-    emit(tick());
+    __intervalCount++;
+    if(__intervalCount >= __interval)
+    {
+      emit(tick());
+      __intervalCount = 0;
+    }
 
     _tick.singleShot(60000, this, SLOT(sTick()));
   }
