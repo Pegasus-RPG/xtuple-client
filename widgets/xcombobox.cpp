@@ -156,7 +156,7 @@ void XComboBox::setType(XComboBoxTypes pType)
       break;
 
     case ProductCategories:
-      query.exec( "SELECT prodcat_id, (prodcat_code || ' - ' || prodcat_descrip), product_code "
+      query.exec( "SELECT prodcat_id, (prodcat_code || ' - ' || prodcat_descrip), prodcat_code "
                   "FROM prodcat "
                   "ORDER BY prodcat_code;" );
       break;
