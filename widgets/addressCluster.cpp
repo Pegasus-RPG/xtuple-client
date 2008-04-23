@@ -83,6 +83,7 @@ void AddressCluster::init()
     _grid->removeWidget(_info);
     delete _description;
 
+    _number        = new QLineEdit(this);
     _addrLit       = new QLabel(tr("Street\nAddress:"), this);
     _addr1         = new QLineEdit(this);
     _addr2         = new QLineEdit(this);
@@ -96,7 +97,9 @@ void AddressCluster::init()
     _countryLit    = new QLabel(tr("Country:"));
     _country       = new XComboBox(this);
     _active        = new QCheckBox(tr("Active"), this);
+    _mapper        = new XDataWidgetMapper(this);
 
+    _number->hide();
     _addrLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _cityLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
     _stateLit->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
@@ -179,15 +182,26 @@ void AddressCluster::populateCountryComboBox()
   _country->populate(country);
 }
 
+void AddressCluster::setNumber(QString pNumber)
+{
+  XSqlQuery address;
+  address.prepare("SELECT addr_id FROM addr WHERE (addr_number=:addr_number);");
+  address.bindValue(":addr_number", pNumber);
+  address.exec();
+  if (address.first())
+    setId(address.value("addr_id").toInt());
+  else if (address.lastError().type() != QSqlError::None)
+    QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
+                                          .arg(__FILE__)
+                                          .arg(__LINE__),
+                                  address.lastError().databaseText()); 
+}
 void AddressCluster::setId(const int pId)
 {
   if (pId == _id)
     return;
-  else
-  {
-    silentSetId(pId);
-    emit newId(pId);
-  }
+  silentSetId(pId);
+  emit newId(pId);  
 }
 
 void AddressCluster::silentSetId(const int pId)
@@ -198,8 +212,6 @@ void AddressCluster::silentSetId(const int pId)
       _valid = false;
       clear();
     }
-    else if (pId == _id)
-      return;
     else
     {
         clear();
@@ -211,6 +223,7 @@ void AddressCluster::silentSetId(const int pId)
         {
             _id = pId;
             _valid = true;
+	    _number->setText(idQ.value("addr_number").toString());
             _addr1->setText(idQ.value("addr_line1").toString());
             _addr2->setText(idQ.value("addr_line2").toString());
             _addr3->setText(idQ.value("addr_line3").toString());
@@ -221,15 +234,16 @@ void AddressCluster::silentSetId(const int pId)
             _active->setChecked(idQ.value("addr_active").toBool());
             _notes = idQ.value("addr_notes").toString();
 
+            c_number     = _number->text();
             c_addr1      = _addr1->text();
             c_addr2      = _addr2->text();
-            c_addr3      = _addr3->text();
-            c_city       = _city->text();
-            c_state      = _state->currentText();
-            c_postalcode = _postalcode->text();
-            c_country    = _country->currentText();
-            c_active     = _active->isChecked();
-            c_notes      = _notes;
+	    c_addr3      = _addr3->text();
+	    c_city       = _city->text();
+	    c_state      = _state->currentText();
+	    c_postalcode = _postalcode->text();
+	    c_country    = _country->currentText();
+	    c_active     = _active->isChecked();
+	    c_notes      = _notes;;
         }
         else if (idQ.lastError().type() != QSqlError::None)
             QMessageBox::critical(this, tr("A System Error Occurred at %1::%2.")
@@ -270,152 +284,40 @@ void AddressCluster::clear()
   _active->setChecked(c_active);
   _selected = false;
 }
-
+   
+void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
+{
+  m->addFieldMapping(this, _fieldName, QByteArray("id"));
+  _mapper=m;
+}
+   
 /* this should probably be a simple call to a saveAddr stored procedure
    with the logic moved from here to that stored procedure
    return +N addr_id if save is successful or if found another addr with the same info
    return  0 if there is no address to save
    return -1 if there was an error
    return -2 if there are N contacts sharing this address
+   
+   TO DO:  Both sove functions can and should be removed when all references
+   to them have been removed from the application and replaced by API views
  */
 int AddressCluster::save(enum SaveFlags flag)
 {
-  QString new_addr1      = _addr1->text();
-  QString new_addr2      = _addr2->text();
-  QString new_addr3      = _addr3->text();
-  QString new_city       = _city->text();
-  QString new_state      = _state->currentText();
-  QString new_postalcode = _postalcode->text();
-  QString new_country    = _country->currentText();
-  bool    new_active     = _active->isChecked();
-  QString new_notes      = _notes;
-
-  if (new_addr1 == "" && new_addr2 == "" &&
-      new_addr3 == "" && new_city == "" &&
-      new_state == "" && new_postalcode == "" &&
-      new_country == "")
+  if (_number->text() == "" &&
+      _addr1->text() == "" && _addr2->text() == "" &&
+      _addr3->text() == "" && _city->text() == "" &&
+      _state->currentText() == "" && _postalcode->text() == "" &&
+      _country->currentText() == "")
   {
     silentSetId(-1);
     return 0;
   }
-
-  // if nothing changed, there's nothing to do
-  if (c_addr1 == new_addr1 && c_addr2 == new_addr2 &&
-      c_addr3 == new_addr3 && c_city == new_city &&
-      c_state == new_state && c_postalcode == new_postalcode &&
-      c_country == new_country && c_active == new_active &&
-      c_notes == new_notes)
-    return id();
-
-  // look for existing records that match the new values
-  XSqlQuery dupcheck;
-  dupcheck.prepare("SELECT addr_id, addr_notes "
-                   "FROM addr "
-                   "WHERE ((addr_id <> :addr_id)"
-                   "  AND  (UPPER(addr_line1) = UPPER(:addr1))"
-                   "  AND  (UPPER(addr_line2) = UPPER(:addr2))"
-                   "  AND  (UPPER(addr_line3) = UPPER(:addr3))"
-                   "  AND  (UPPER(addr_city) = UPPER(:city))"
-                   "  AND  (UPPER(addr_state) = UPPER(:state))"
-                   "  AND  (UPPER(addr_postalcode) = UPPER(:postalcode))"
-                   "  AND  (UPPER(addr_country) = UPPER(:country)));");
-  dupcheck.bindValue(":addr_id", id());
-  dupcheck.bindValue(":addr1", new_addr1);
-  dupcheck.bindValue(":addr2", new_addr2);
-  dupcheck.bindValue(":addr3", new_addr3);
-  dupcheck.bindValue(":city", new_city);
-  dupcheck.bindValue(":state", new_state);
-  dupcheck.bindValue(":postalcode", new_postalcode);
-  dupcheck.bindValue(":country", new_country);
-  dupcheck.exec();
-  if (dupcheck.first())
-  {
-    int dupId = dupcheck.value("addr_id").toInt();
-    QString dupNotes = dupcheck.value("addr_notes").toString();
-    if (dupNotes != _notes)
-    {
-      _notes = dupNotes.append("\n").append(_notes);
-      XSqlQuery writeNotes;
-      writeNotes.prepare("UPDATE addr SET addr_notes = :notes "
-                         "WHERE addr_id = :addr_id;");
-      writeNotes.bindValue(":notes", _notes);
-      writeNotes.bindValue(":addr_id", dupId);
-      if (! writeNotes.exec())
-        return -1; // error
-    }
-
-    silentSetId(dupId);
-    return dupId; // a matching addr is already in the db
-  }
-  else if (dupcheck.lastError().type() != QSqlError::None)
-    return -1; // error
-
-
-  if (id() <= 0) // this is a new address
-    flag = CHANGEONE;
-
-  if (flag == CHECK)
-  {
-    int numUses = 0;
-    XSqlQuery numUsesQ;
-    numUsesQ.prepare("SELECT COUNT(*) AS cnt FROM ("
-                     "   SELECT cntct_id, 'cntct' FROM cntct "
-                     "    WHERE cntct_addr_id = :addr_id "
-                     "   UNION "
-                     "   SELECT vend_id, 'vendinfo' FROM vendinfo"
-                     "    WHERE vend_addr_id = :addr_id "
-                     "   UNION "
-                     "   SELECT shipto_id, 'shiptoinfo' FROM shiptoinfo"
-                     "    WHERE shipto_addr_id = :addr_id "
-                     "   UNION "
-                     "   SELECT vendaddr_id, 'vendaddrinfo' FROM vendaddrinfo"
-                     "    WHERE vendaddr_addr_id = :addr_id "
-                     "   UNION "
-                     "   SELECT warehous_id, 'whsinfo' FROM whsinfo"
-                     "    WHERE warehous_addr_id = :addr_id) AS useQ;");
-    numUsesQ.bindValue(":addr_id", id());
-    numUsesQ.exec();
-    if (numUsesQ.first())
-      numUses = numUsesQ.value("cnt").toInt();
-    else
-      return -1; // error
-
-    if (numUses > 1)
-      return -2; // ask user if s/he wants to overwrite or save new
-    else if (1 == numUses && _selected)
-      flag = CHANGEONE; // maybe the user copied an address to change one part
-    else // this will be caught when purging if not earlier
-      flag = CHANGEALL;
-  }
-
-  QString   sql;
-  switch (flag)
-  {
-    case CHANGEALL:
-      sql = "UPDATE addr SET "
-            "    addr_line1 = :addr1, addr_line2 = :addr2, addr_line3 = :addr3, "
-            "    addr_city = :city, addr_state = :state, "
-            "    addr_postalcode = :postalcode, addr_country = :country, "
-            "    addr_active = :active, addr_notes = :notes "
-            "WHERE addr_id = :addr_id;";
-      break;
-    case CHANGEONE:
-      sql = "INSERT INTO addr ("
-            "  addr_line1, addr_line2, addr_line3, "
-            "  addr_city, addr_state, addr_postalcode, addr_country, "
-            "  addr_active, addr_notes "
-            ") VALUES ("
-            "  :addr1, :addr2, :addr3, "
-            "  :city, :state, :postalcode, :country, "
-            "  :active, :notes);";
-      break;
-    default:
-      return -1; // error
-  }
-
+  
   XSqlQuery datamodQ;
-  datamodQ.prepare(sql);
+  datamodQ.prepare("SELECT saveAddr(:addr_id,:addr_number,:addr1,:addr2,:addr3," 
+		   ":city,:state,:postalcode,:country,:active,:notes,:flag) AS result;");
   datamodQ.bindValue(":addr_id", id());
+  datamodQ.bindValue(":addr_number", _number->text());
   datamodQ.bindValue(":addr1", _addr1->text());
   datamodQ.bindValue(":addr2", _addr2->text());
   datamodQ.bindValue(":addr3", _addr3->text());
@@ -425,18 +327,50 @@ int AddressCluster::save(enum SaveFlags flag)
   datamodQ.bindValue(":country", _country->currentText());
   datamodQ.bindValue(":active", QVariant(_active->isChecked(), 0));
   datamodQ.bindValue(":notes", _notes);
-  if (!datamodQ.exec())
-    return -1; // error
+  if (flag == CHECK)
+    datamodQ.bindValue(":flag", QString("CHECK"));
+  else if (flag == CHANGEALL)
+    datamodQ.bindValue(":flag", QString("CHANGEALL"));
   else if (flag == CHANGEONE)
+    datamodQ.bindValue(":flag", QString("CHANGEALL"));
+  else
+    return -1;
+    
+  datamodQ.exec();
+  if (datamodQ.first())
   {
-    datamodQ.exec("SELECT CURRVAL('addr_addr_id_seq') AS id;");
-    if (datamodQ.first())
-      _id = datamodQ.value("id").toInt();
+    if (datamodQ.value("result").toInt() > 0)
+    {
+      _id=datamodQ.value("result").toInt();
+      _selected = FALSE;
+      _valid = true;
+      return id();
+    }
+    if (datamodQ.value("result").toInt() == -2)
+    {
+      if (_mapper->model())
+      {
+        int answer = 2;	// Cancel
+        answer = QMessageBox::question(this, tr("Question Saving Address"),
+		    tr("There are multiple Contacts sharing this Address.\n"
+		       "What would you like to do?"),
+		    tr("Change This One"),
+		    tr("Change Address for All"),
+		    tr("Cancel"),
+		    2, 2);
+         if (answer==0)
+	   return save(CHANGEONE);
+	 else if (answer==1)
+	   return save(CHANGEALL);
+	 else
+	   silentSetId(_id);
+      }
+      else
+        return -2;
+    }
     else
-      return -1; // error
+      return -1; //error
   }
-  _selected = FALSE;
-  _valid = true;
   return id();
 }
 
@@ -518,20 +452,6 @@ void AddressCluster::setActiveVisible(const bool p)
     _grid->removeWidget(_country);
     _grid->addWidget(_country, 5, 1, 1, 4);
   }
-}
-
-void AddressCluster::setDataWidgetMap(XDataWidgetMapper* m)
-{
-  m->addFieldMapping(_active    ,  _fieldNameActive);
-  m->addFieldMapping(_addr1 	,  _fieldNameLine1);
-  m->addFieldMapping(_addr2     ,  _fieldNameLine2);
-  m->addFieldMapping(_addr3     ,  _fieldNameLine3);
-  m->addFieldMapping(_city    	,  _fieldNameCity);
-  m->addFieldMapping(_postalcode,  _fieldNamePostalCode);
-  _state->setFieldName(_fieldNameState);
-  _state->setDataWidgetMap(m);
-  _country->setFieldName(_fieldNameCountry);
-  _country->setDataWidgetMap(m);
 }
 
 ///////////////////////////////////////////////////////////////////////////
