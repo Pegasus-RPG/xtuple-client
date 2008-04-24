@@ -198,31 +198,30 @@ void itemSubstitute::sSave()
 {
   if (_type == cItemSub)
   {
-    if (_mode == cNew)
+    if (_item->id() == _substitute->id())
     {
-      if (_item->id() == _substitute->id())
-      {
-        QMessageBox::critical( this, tr("Cannot Create Substitute"),
-                               tr("You cannot define an Item to be a substitute for itself.") );
-        _substitute->setFocus();
-        return;
-      }
+      QMessageBox::critical( this, tr("Cannot Create Substitute"),
+                             tr("You cannot define an Item to be a substitute for itself.") );
+      _substitute->setFocus();
+      return;
+    }
 
-      q.prepare( "SELECT itemsub_id "
-                 "FROM itemsub "
-                 "WHERE ( (itemsub_parent_item_id=:parentItem_id)"
-                 " AND (itemsub_sub_item_id=:item_id) );" );
-      q.bindValue(":parentItem_id", _item->id());
-      q.bindValue(":item_id", _substitute->id());
-      q.exec();
-      if (q.first())
-      {
-        QMessageBox::critical( this, tr("Cannot Create Duplicate Substitute"),
-                               tr( "This substitution has already been defined for the selected Item.\n"
-                                   "You may edit the existing Substitution but you may not create a duplicate." ) );
-        _substitute->setFocus();
-        return;
-      }
+    q.prepare( "SELECT itemsub_id "
+               "  FROM itemsub "
+               " WHERE((itemsub_parent_item_id=:parentItem_id)"
+               "   AND (itemsub_sub_item_id=:item_id)"
+               "   AND (itemsub_id != :itemsub_id) );" );
+    q.bindValue(":parentItem_id", _item->id());
+    q.bindValue(":item_id", _substitute->id());
+    q.bindValue(":itemsub_id", _itemsubid);
+    q.exec();
+    if (q.first())
+    {
+      QMessageBox::critical( this, tr("Cannot Create Duplicate Substitute"),
+                             tr( "This substitution has already been defined for the selected Item.\n"
+                                 "You may edit the existing Substitution but you may not create a duplicate." ) );
+      _substitute->setFocus();
+      return;
     }
 
     if (_mode == cNew)
@@ -241,8 +240,10 @@ void itemSubstitute::sSave()
     }
     else if (_mode == cEdit)
       q.prepare( "UPDATE itemsub "
-                 "SET itemsub_uomratio=:itemsub_uomratio, itemsub_rank=:itemsub_rank "
-                 "WHERE (itemsub_id=:itemsub_id);" );
+                 "   SET itemsub_uomratio=:itemsub_uomratio,"
+                 "       itemsub_rank=:itemsub_rank,"
+                 "       itemsub_sub_item_id=:itemsub_sub_item_id"
+                 " WHERE(itemsub_id=:itemsub_id);" );
 
     q.bindValue(":itemsub_id", _itemsubid);
     q.bindValue(":itemsub_parent_item_id", _item->id());
