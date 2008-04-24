@@ -1062,7 +1062,7 @@ void salesOrderItem::sSave()
 
     q.prepare( "INSERT INTO quitem "
                "( quitem_id, quitem_quhead_id, quitem_linenumber, quitem_itemsite_id,"
-               "  quitem_item_id, quitem_scheddate, quitem_qtyord,"
+               "  quitem_item_id, quitem_scheddate, quitem_promdate, quitem_qtyord,"
                "  quitem_qty_uom_id, quitem_qty_invuomratio,"
                "  quitem_unitcost, quitem_custprice, quitem_price,"
                "  quitem_price_uom_id, quitem_price_invuomratio,"
@@ -1070,7 +1070,7 @@ void salesOrderItem::sSave()
 	       "  quitem_order_warehous_id, quitem_prcost, quitem_tax_id ) "
                "VALUES(:quitem_id, :quitem_quhead_id, :quitem_linenumber,"
                "       (SELECT itemsite_id FROM itemsite WHERE ((itemsite_item_id=:item_id) AND (itemsite_warehous_id=:warehous_id))),"
-               "       :item_id, :quitem_scheddate, :quitem_qtyord,"
+               "       :item_id, :quitem_scheddate, :quitem_promdate, :quitem_qtyord,"
                "       :qty_uom_id, :qty_invuomratio,"
                "       stdCost(:item_id), :quitem_custprice, :quitem_price,"
                "       :price_uom_id, :price_invuomratio,"
@@ -1080,6 +1080,7 @@ void salesOrderItem::sSave()
     q.bindValue(":quitem_quhead_id", _soheadid);
     q.bindValue(":quitem_linenumber", _lineNumber->text().toInt());
     q.bindValue(":quitem_scheddate", _scheduledDate->date());
+    q.bindValue(":quitem_promdate", promiseDate);
     q.bindValue(":quitem_qtyord", _qtyOrdered->toDouble());
     q.bindValue(":qty_uom_id", _qtyUOM->id());
     q.bindValue(":qty_invuomratio", _qtyinvuomratio);
@@ -1108,6 +1109,7 @@ void salesOrderItem::sSave()
   {
     q.prepare( "UPDATE quitem "
                "SET quitem_scheddate=:quitem_scheddate,"
+               "    quitem_promdate=:quitem_promdate,"
                "    quitem_qtyord=:quitem_qtyord,"
                "    quitem_qty_uom_id=:qty_uom_id, quitem_qty_invuomratio=:qty_invuomratio,"
                "    quitem_price=:quitem_price,"
@@ -2295,7 +2297,7 @@ void salesOrderItem::populate()
 	"       quitem_price AS coitem_price,"
         "       quitem_price_uom_id AS price_uom_id,"
         "       quitem_price_invuomratio AS price_invuomratio,"
-	"       NULL AS promdate,"
+	"       quitem_promdate AS promdate,"
 	"       -1 AS coitem_substitute_item_id, quitem_prcost AS coitem_prcost,"
 	"       0 AS coship_qty,"
 	"       quitem_tax_id AS coitem_tax_id,"
