@@ -136,6 +136,8 @@ void createPlannedOrdersByItem::sCreate()
     return;
   }
 
+  if(!_explodeChildren->isChecked())
+  {
   q.prepare( "SELECT createPlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, FALSE) "
              "FROM itemsite "
              "WHERE ( (itemsite_item_id=:item_id)"
@@ -146,6 +148,20 @@ void createPlannedOrdersByItem::sCreate()
   q.bindValue(":item_id", _item->id());
   q.bindValue(":warehous_id", _warehouse->id());
   q.exec();
+  }
+  else
+  {
+    q.prepare( "SELECT createAndExplodePlannedOrders(itemsite_id, :cutOffDate, :deleteFirmed, false)"
+               "FROM itemsite "
+               "WHERE ( (itemsite_item_id=:item_id)"
+               " AND (itemsite_active)"
+               " AND (itemsite_warehous_id=:warehous_id) );" );
+    q.bindValue(":cutOffDate", _cutOffDate->date());
+    q.bindValue(":deleteFirmed", QVariant(_deleteFirmed->isChecked(), 0));
+    q.bindValue(":item_id", _item->id());
+    q.bindValue(":warehous_id", _warehouse->id());
+    q.exec();
+  }   
 
   if (_captive)
     accept();
