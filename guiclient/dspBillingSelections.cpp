@@ -100,6 +100,12 @@ dspBillingSelections::dspBillingSelections(QWidget* parent, const char* name, Qt
   _cobill->addColumn(tr("Order #"),    _orderColumn,  Qt::AlignLeft   );
   _cobill->addColumn(tr("Cust. #"),    _itemColumn,   Qt::AlignLeft   );
   _cobill->addColumn(tr("Name"),        -1,           Qt::AlignLeft   );
+  _cobill->addColumn(tr("Subtotal"),   _priceColumn,  Qt::AlignLeft, false );
+  _cobill->addColumn(tr("Misc."),      _priceColumn,  Qt::AlignLeft, false ); 
+  _cobill->addColumn(tr("Freight"),    _priceColumn,  Qt::AlignLeft, false );
+  _cobill->addColumn(tr("Tax"),        _priceColumn,  Qt::AlignLeft, false );
+  _cobill->addColumn(tr("Total"),      _priceColumn,  Qt::AlignLeft, false );
+  _cobill->addColumn(tr("Payment rec'd"), _priceColumn, Qt::AlignLeft, false );
 
   if (_privileges->check("PostARDocuments"))
     connect(_cobill, SIGNAL(valid(bool)), _post, SLOT(setEnabled(bool)));
@@ -142,12 +148,20 @@ void dspBillingSelections::sFillList()
 {
   q.exec( "SELECT cobmisc_id, cohead_id,"
           "       COALESCE(TEXT(cobmisc_invcnumber), '?') AS docnumber,"
-          "       cohead_number, cust_number, cust_name "
-          "FROM cobmisc, cohead, cust "
-          "WHERE ( (cobmisc_cohead_id=cohead_id)"
+          "       cohead_number, cust_number, cust_name,"
+          "       formatmoney(sum(round(coitem_price*coitem_qtyord,2))),"
+          "       formatmoney(cobmisc_misc),formatmoney(cobmisc_freight),"
+          "       formatmoney(cobmisc_tax),"
+          "       formatmoney(sum(round(coitem_price*coitem_qtyord,2))+cobmisc_misc+cobmisc_freight+cobmisc_tax),"
+          "       formatmoney(cobmisc_payment)"
+          "  FROM cobmisc, cohead, cust, coitem "
+          " WHERE((cobmisc_cohead_id=cohead_id)"
           " AND (cohead_cust_id=cust_id)"
-          " AND (NOT cobmisc_posted) ) "
-          "ORDER BY docnumber, cohead_number;" );
+          "   AND (coitem_cohead_id=cohead_id)"
+          "   AND (NOT cobmisc_posted)) "
+          " GROUP BY cobmisc_id, cohead_id, cobmisc_invcnumber, cohead_number, cust_number,"
+          "          cust_name, cobmisc_misc,cobmisc_freight,cobmisc_tax,cobmisc_payment "
+          " ORDER BY docnumber, cohead_number;" );
   _cobill->populate(q, TRUE);
 }
 
