@@ -130,6 +130,7 @@ voucher::voucher(QWidget* parent, const char* name, Qt::WFlags fl)
   _poitem->addColumn(tr("Vend. Item #"), -1,           Qt::AlignLeft   );
   _poitem->addColumn(tr("UOM"),          _uomColumn,   Qt::AlignCenter );
   _poitem->addColumn(tr("Ordered"),      _qtyColumn,   Qt::AlignRight  );
+  _poitem->addColumn(tr("Invoiced"),     _qtyColumn,   Qt::AlignRight, false );
   _poitem->addColumn(tr("Uninvoiced"),   _qtyColumn,   Qt::AlignRight  );
   _poitem->addColumn(tr("Rejected"),     _qtyColumn,   Qt::AlignRight  );
   _poitem->addColumn(tr("Amount"),       _moneyColumn, Qt::AlignRight  );
@@ -621,6 +622,12 @@ void voucher::sFillList()
                "       COALESCE(uom_name, poitem_vend_uom),"
                "       poitem_vend_item_number, poitem_vend_uom,"
                "       formatQty(poitem_qty_ordered) AS qtyordered,"
+               "       formatQty(( SELECT COALESCE(SUM(porecv_qty), 0)"
+               "                   FROM porecv"
+               "                   WHERE ( (porecv_posted)"
+               "                    AND (porecv_invoiced)"
+               "                    AND (porecv_vohead_id IS NULL)"
+               "                    AND (porecv_poitem_id=poitem_id) ) )) AS f_qtyreceived,"
                "       formatQty(( SELECT COALESCE(SUM(porecv_qty), 0)"
                "                   FROM porecv"
                "                   WHERE ( (porecv_posted)"
