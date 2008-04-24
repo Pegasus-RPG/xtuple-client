@@ -143,6 +143,14 @@ enum SetResponse taxCode::set(const ParameterList &pParams)
 
 void taxCode::sSave()
 {
+  if(_code->text().stripWhiteSpace().isEmpty())
+  {
+    QMessageBox::warning( this, tr("No Tax Name Code"),
+                          tr("You must specify a name code for this Tax.") );
+    _code->setFocus();
+    return;
+  }
+
   double ratea = (_taxRateA->toDouble() / 100.0);
   double rateb = (_taxRateB->toDouble() / 100.0);
   double ratec = (_taxRateC->toDouble() / 100.0);
