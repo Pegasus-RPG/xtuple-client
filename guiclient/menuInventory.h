@@ -150,6 +150,7 @@ class menuInventory : public QObject
     void sDspSummarizedBacklogByWarehouse();
     void sDspShipmentsBySalesOrder();
     void sDspShipmentsByDate();
+    void sDspShipmentsByShipment();
 
     void sDspItemAvailabilityWorkbench();
 

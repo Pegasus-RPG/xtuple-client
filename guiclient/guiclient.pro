@@ -156,7 +156,8 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                dspSalesOrderStatus.ui dspSalesOrdersByItem.ui dspSalesOrdersByCustomer.ui             \
                dspSalesOrdersByCustomerPO.ui dspSalesOrdersByParameterList.ui                         \
                dspSequencedBOM.ui dspSingleLevelBOM.ui dspSingleLevelWhereUsed.ui                     \
-               dspShipmentsByDate.ui dspShipmentsBySalesOrder.ui dspSlowMovingInventoryByClassCode.ui \
+               dspShipmentsByDate.ui dspShipmentsBySalesOrder.ui dspShipmentsByShipment.ui            \
+               dspSlowMovingInventoryByClassCode.ui                                                   \
                dspStandardJournalHistory.ui dspStandardOperationsByWorkCenter.ui maintainShipping.ui  \
                dspSubstituteAvailabilityByItem.ui dspSummarizedBacklogByWarehouse.ui                  \
                dspSummarizedBankrecHistory.ui                                                         \
@@ -464,7 +465,8 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                dspSalesOrderStatus.h dspSalesOrdersByItem.h dspSalesOrdersByCustomer.h                \
                dspSalesOrdersByCustomerPO.h dspSalesOrdersByParameterList.h                           \
                dspSequencedBOM.h dspSingleLevelBOM.h dspSingleLevelWhereUsed.h                        \
-               dspShipmentsByDate.h dspShipmentsBySalesOrder.h dspSlowMovingInventoryByClassCode.h    \
+               dspShipmentsByDate.h dspShipmentsBySalesOrder.h dspShipmentsByShipment.h               \
+               dspSlowMovingInventoryByClassCode.h                                                    \
                dspStandardJournalHistory.h dspStandardOperationsByWorkCenter.h maintainShipping.h     \
                dspSubstituteAvailabilityByItem.h dspSummarizedBacklogByWarehouse.h                    \
                dspSummarizedBankrecHistory.h                                                          \
@@ -779,7 +781,8 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                dspSalesOrderStatus.cpp dspSalesOrdersByItem.cpp dspSalesOrdersByCustomer.cpp          \
                dspSalesOrdersByCustomerPO.cpp dspSalesOrdersByParameterList.cpp                       \
                dspSequencedBOM.cpp dspSingleLevelBOM.cpp dspSingleLevelWhereUsed.cpp                  \
-               dspShipmentsByDate.cpp dspShipmentsBySalesOrder.cpp dspSlowMovingInventoryByClassCode.cpp \
+               dspShipmentsByDate.cpp dspShipmentsBySalesOrder.cpp dspShipmentsByShipment.cpp         \
+               dspSlowMovingInventoryByClassCode.cpp                                                  \
                dspStandardJournalHistory.cpp dspStandardOperationsByWorkCenter.cpp maintainShipping.cpp \
                dspSubstituteAvailabilityByItem.cpp dspSummarizedBacklogByWarehouse.cpp                \
                dspSummarizedBankrecHistory.cpp                                                        \

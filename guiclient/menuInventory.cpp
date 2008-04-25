@@ -129,6 +129,7 @@
 #include "dspSummarizedBacklogByWarehouse.h"
 #include "dspShipmentsBySalesOrder.h"
 #include "dspShipmentsByDate.h"
+#include "dspShipmentsByShipment.h"
 
 #include "dspFrozenItemSites.h"
 #include "dspCountSlipEditList.h"
@@ -380,6 +381,7 @@ menuInventory::menuInventory(GUIClient *Pparent) :
     { "menu",				tr("&Shipments"),				(char*)reportsShipmentsMenu,		    shippingReportsMenu,	 true,					NULL, NULL, true , NULL },
     { "sr.dspShipmentsBySalesOrder", tr("by Sales &Order..."), SLOT(sDspShipmentsBySalesOrder()), reportsShipmentsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
     { "sr.dspShipmentsByDate", tr("by &Date..."), SLOT(sDspShipmentsByDate()), reportsShipmentsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
+    { "sr.dspShipmentsByShipment", tr("by &Shipment..."), SLOT(sDspShipmentsByShipment()), reportsShipmentsMenu, _privileges->check("ViewShipping"), NULL, NULL, true, NULL },
     
     //  Inventory |  Transactions
     { "menu",				tr("&Transactions"),	  (char*)transactionsMenu,	mainMenu,	  true,	NULL, NULL, true	, NULL },
@@ -936,6 +938,11 @@ void menuInventory::sDspShipmentsBySalesOrder()
 void menuInventory::sDspShipmentsByDate()
 {
   omfgThis->handleNewWindow(new dspShipmentsByDate());
+}
+
+void menuInventory::sDspShipmentsByShipment()
+{
+  omfgThis->handleNewWindow(new dspShipmentsByShipment());
 }
 
 

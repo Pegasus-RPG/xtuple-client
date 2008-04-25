@@ -65,6 +65,7 @@
 #include "invoice.h"
 #include "purchaseOrder.h"
 #include "glTransactionDetail.h"
+#include "dspShipmentsByShipment.h"
 
 /*
  *  Constructs a dspGLTransactions as a child of 'parent', with the
@@ -175,6 +176,8 @@ void dspGLTransactions::sPopulateMenu(QMenu * menuThis, QTreeWidgetItem* pItem)
     menuThis->insertItem(tr("View Invoice..."), this, SLOT(sViewDocument()));
   else if(item->text(2) == "PO")
     menuThis->insertItem(tr("View Purchase Order..."), this, SLOT(sViewDocument()));
+  else if(item->text(2) == "SH")
+    menuThis->insertItem(tr("View Shipment..."), this, SLOT(sViewDocument()));
 }
 
 void dspGLTransactions::sPrint()
@@ -311,6 +314,22 @@ void dspGLTransactions::sViewDocument()
     params.append("mode", "view");
 
     purchaseOrder *newdlg = new purchaseOrder();
+    newdlg->set(params);
+    omfgThis->handleNewWindow(newdlg);
+  }
+  else if(item->text(2) == "SH")
+  {
+    q.prepare("SELECT shiphead_id"
+              "  FROM shiphead"
+              " WHERE (shiphead_number=:shiphead_number)");
+    q.bindValue(":shiphead_number", item->text(3));
+    q.exec();
+    if(!q.first())
+      return;
+
+    params.append("shiphead_id", q.value("shiphead_id").toInt());
+
+    dspShipmentsByShipment *newdlg = new dspShipmentsByShipment();
     newdlg->set(params);
     omfgThis->handleNewWindow(newdlg);
   }
