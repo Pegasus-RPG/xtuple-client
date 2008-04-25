@@ -489,22 +489,22 @@ void voucherItem::sToggleReceiving(QTreeWidgetItem *pItem)
   else
   {
 //  Get next voitem id
-  q.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
-  q.exec();
-  if (q.first())
-    _voitemid = (q.value("voitemid").toInt());
-  else if (q.lastError().type() != QSqlError::None)
-  {
-    systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
-                __FILE__, __LINE__);
-    reject();
-    return;
-  }
-  
-  q.prepare( "INSERT INTO voitem "
-             "(voitem_id,voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
-             "VALUES "
-             "(:voitem_id,:vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight);" );
+    q.prepare("SELECT NEXTVAL('voitem_voitem_id_seq') AS voitemid");
+    q.exec();
+    if (q.first())
+      _voitemid = (q.value("voitemid").toInt());
+    else if (q.lastError().type() != QSqlError::None)
+    {
+      systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
+                  __FILE__, __LINE__);
+      reject();
+      return;
+    }
+    
+    q.prepare( "INSERT INTO voitem "
+               "(voitem_id, voitem_vohead_id, voitem_poitem_id, voitem_close, voitem_qty, voitem_freight) "
+               "VALUES "
+               "(:voitem_id, :vohead_id, :poitem_id, :voitem_close, :voitem_qty, :voitem_freight);" );
   }
 
   q.bindValue(":voitem_id", _voitemid);
@@ -629,7 +629,7 @@ void voucherItem::sFillList()
   q.bindValue(":vohead_id", _voheadid);
   q.bindValue(":poitem_id", _poitemid);
   q.exec();
-  _uninvoiced->populate(q);
+  _uninvoiced->populate(q, true);
   if (q.lastError().type() != QSqlError::None)
   {
     systemError(this, _rejectedMsg.arg(q.lastError().databaseText()),
