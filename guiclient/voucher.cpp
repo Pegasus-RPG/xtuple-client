@@ -193,7 +193,7 @@ enum SetResponse voucher::set(const ParameterList &pParams)
       q.prepare("INSERT INTO vohead (vohead_id,   vohead_number, vohead_posted)"
 		"            VALUES (:vohead_id, :vohead_number, false);" );
       q.bindValue(":vohead_id",     _voheadid);
-      q.bindValue(":vohead_number", _voucherNumber->text().toInt());
+      q.bindValue(":vohead_number", _voucherNumber->text());
       q.exec();
       if (q.lastError().type() != QSqlError::None)
       {
@@ -390,7 +390,7 @@ void voucher::sHandleVoucherNumber()
     q.prepare( "SELECT vohead_id "
                "FROM vohead "
                "WHERE (vohead_number=:vohead_number);" );
-    q.bindValue(":vohead_number", _voucherNumber->text().toInt());
+    q.bindValue(":vohead_number", _voucherNumber->text());
     q.exec();
     if (q.first())
     {
@@ -815,7 +815,7 @@ void voucher::closeEvent(QCloseEvent *pEvent)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
     q.prepare("SELECT releaseVoNumber(:voucherNumber);" );
-    q.bindValue(":voucherNumber", _voucherNumber->text().toInt());
+    q.bindValue(":voucherNumber", _voucherNumber->text());
     q.exec();
     if (q.lastError().type() != QSqlError::None)
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
