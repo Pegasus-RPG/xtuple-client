@@ -385,10 +385,10 @@ void itemSource::sPopulateMenu(QMenu *pMenu)
 
 void itemSource::sVendorList()
 {
-  CRMAcctList newdlg(this);
-  newdlg.setSubtype(CRMAcctLineEdit::Vend);
-  newdlg.setId(_vendor->id());
-  _vendor->setId(newdlg.exec());
+  CRMAcctList * newdlg = new CRMAcctList(this);
+  newdlg->setSubtype(CRMAcctLineEdit::Vend);
+  newdlg->setId(_vendor->id());
+  _vendor->setId(newdlg->exec());
 }
 
 void itemSource::sFillPriceList()
