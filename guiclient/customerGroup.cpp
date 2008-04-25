@@ -239,11 +239,11 @@ void customerGroup::sNew()
 {
   ParameterList params;
 
-  CRMAcctList newdlg(this, "", TRUE);
-  newdlg.setSubtype(CRMAcctLineEdit::Cust);
+  CRMAcctList *newdlg = new CRMAcctList(this);
+  newdlg->setSubtype(CRMAcctLineEdit::Cust);
 
   int custid;
-  if ((custid = newdlg.exec()) != XDialog::Rejected)
+  if ((custid = newdlg->exec()) != XDialog::Rejected)
   {
     q.prepare( "SELECT custgrpitem_id "
                "FROM custgrpitem "
