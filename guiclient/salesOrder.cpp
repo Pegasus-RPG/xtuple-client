@@ -1805,6 +1805,7 @@ void salesOrder::sDelete()
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
           omfgThis->sSalesOrdersUpdated(_soheadid);
+          _captive = false;
           clear();
         }
       }
@@ -1837,6 +1838,7 @@ void salesOrder::sDelete()
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
 
         omfgThis->sQuotesUpdated(_soheadid);
+        _captive = false;
         clear();
       }
     }
@@ -2530,6 +2532,7 @@ void salesOrder::sClear()
 {
   if (! deleteForCancel())
     return;
+  _captive = false;
   clear();
 }
 
