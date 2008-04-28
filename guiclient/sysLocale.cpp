@@ -330,12 +330,12 @@ void sysLocale::sUpdateSamples()
   if (q.first())
   {
     QLocale sampleLocale = QLocale(localeLang, localeCountry);
-    _dateSample->setText(sampleLocale.toString(q.value("dateSample").toDate()));
-    _timeSample->setText(sampleLocale.toString(q.value("timeSample").toTime()));
-    _timestampSample->setText(sampleLocale.toString(q.value("timestampSample").toDate()) +
+    _dateSample->setText(sampleLocale.toString(q.value("dateSample").toDate(), QLocale::ShortFormat));
+    _timeSample->setText(sampleLocale.toString(q.value("timeSample").toTime(), QLocale::ShortFormat));
+    _timestampSample->setText(sampleLocale.toString(q.value("timestampSample").toDate(), QLocale::ShortFormat) +
                               " " +
-                              sampleLocale.toString(q.value("timestampSample").toTime()));
-    _intervalSample->setText(sampleLocale.toString(q.value("intervalSample").toTime()));
+                              sampleLocale.toString(q.value("timestampSample").toTime(), QLocale::ShortFormat));
+    _intervalSample->setText(sampleLocale.toString(q.value("intervalSample").toTime(), QLocale::ShortFormat));
 
     _currencySample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _currencyScale->value()));
     _salesPriceSample->setText(sampleLocale.toString(q.value("doubleSample").toDouble(), 'f', _salesPriceScale->value()));
