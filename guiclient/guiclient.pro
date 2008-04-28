@@ -276,7 +276,7 @@ FORMS        = absoluteCalendarItem.ui accountNumber.ui accountNumbers.ui       
                reschedulePoitem.ui  rescheduleSoLineItems.ui rescheduleWo.ui                          \
                reserveSalesOrderItem.ui                                                               \
                resetQOHBalances.ui returnAuthCheck.ui returnAuthorization.ui                          \
-               returnAuthorizationItem.ui                                                             \
+               returnAuthorizationItem.ui returnAuthItemLotSerial.ui                                  \
                returnAuthorizationWorkbench.ui returnWoMaterialBatch.ui returnWoMaterialItem.ui       \
                reverseGLSeries.ui                                                                     \
                runMPSByPlannerCode.ui                                                                 \
@@ -589,6 +589,7 @@ HEADERS      = version.h inputManager.h guiclient.h timeoutHandler.h rwInterface
                reschedulePoitem.h  rescheduleSoLineItems.h rescheduleWo.h                             \
                reserveSalesOrderItem.h                                                                \
                resetQOHBalances.h returnAuthCheck.h returnAuthorization.h returnAuthorizationItem.h   \
+	       returnAuthItemLotSerial.h                                                              \
                returnAuthorizationWorkbench.h returnWoMaterialBatch.h returnWoMaterialItem.h          \
                reverseGLSeries.h                                                                      \
                runMPSByPlannerCode.h                                                                  \
@@ -907,7 +908,7 @@ SOURCES      = main.cpp inputManager.cpp guiclient.cpp timeoutHandler.cpp rwInte
                reschedulePoitem.cpp  rescheduleSoLineItems.cpp rescheduleWo.cpp                       \
                reserveSalesOrderItem.cpp                                                              \
                resetQOHBalances.cpp returnAuthCheck.cpp returnAuthorization.cpp                       \
-               returnAuthorizationItem.cpp                                                            \
+               returnAuthorizationItem.cpp returnAuthItemLotSerial.cpp                                \
                returnAuthorizationWorkbench.cpp returnWoMaterialBatch.cpp returnWoMaterialItem.cpp    \
                reverseGLSeries.cpp                                                                    \
                runMPSByPlannerCode.cpp                                                                \

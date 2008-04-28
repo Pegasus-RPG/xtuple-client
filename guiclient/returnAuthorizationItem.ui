@@ -8,8 +8,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>725</width>
-    <height>802</height>
+    <width>727</width>
+    <height>803</height>
    </rect>
   </property>
   <property name="sizePolicy" >
@@ -415,7 +415,7 @@
        </property>
        <layout class="QGridLayout" >
         <item row="0" column="0" >
-         <widget class="QLabel" name="_qtyUOMLit_2" >
+         <widget class="QLabel" name="_qtyAuthLit" >
           <property name="text" >
            <string>Qty. &amp;Auth.:</string>
           </property>
@@ -775,11 +775,11 @@
         </sizepolicy>
        </property>
        <property name="currentIndex" >
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="_supply" >
         <attribute name="title" >
-         <string>Supply</string>
+         <string>&amp;Supply</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -1094,9 +1094,86 @@
          </item>
         </layout>
        </widget>
+       <widget class="QWidget" name="_lotserial" >
+        <attribute name="title" >
+         <string>&amp;Lot/Serial</string>
+        </attribute>
+        <layout class="QGridLayout" >
+         <item row="0" column="0" >
+          <widget class="QCheckBox" name="_authLotSerial" >
+           <property name="text" >
+            <string>Authorize &amp;only these lot/serial numbers</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" >
+          <widget class="QGroupBox" name="_authLotSerialGroup" >
+           <property name="enabled" >
+            <bool>false</bool>
+           </property>
+           <property name="title" >
+            <string/>
+           </property>
+           <layout class="QGridLayout" >
+            <item rowspan="3" row="0" column="0" >
+             <widget class="XTreeWidget" name="_raitemls" >
+              <property name="focusPolicy" >
+               <enum>Qt::NoFocus</enum>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="1" >
+             <layout class="QVBoxLayout" >
+              <property name="spacing" >
+               <number>0</number>
+              </property>
+              <item>
+               <widget class="QPushButton" name="_new" >
+                <property name="text" >
+                 <string>&amp;New</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_edit" >
+                <property name="text" >
+                 <string>&amp;Edit</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="QPushButton" name="_delete" >
+                <property name="focusPolicy" >
+                 <enum>Qt::NoFocus</enum>
+                </property>
+                <property name="text" >
+                 <string>Delete</string>
+                </property>
+               </widget>
+              </item>
+             </layout>
+            </item>
+            <item row="2" column="1" >
+             <spacer>
+              <property name="orientation" >
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" >
+               <size>
+                <width>111</width>
+                <height>114</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </item>
+        </layout>
+       </widget>
        <widget class="QWidget" name="_detail" >
         <attribute name="title" >
-         <string>Detail</string>
+         <string>&amp;Detail</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -1321,7 +1398,7 @@
        </widget>
        <widget class="QWidget" name="_comments" >
         <attribute name="title" >
-         <string>Notes</string>
+         <string>No&amp;tes</string>
         </attribute>
         <layout class="QGridLayout" >
          <property name="leftMargin" >
@@ -1359,7 +1436,7 @@
        </widget>
        <widget class="QWidget" name="_accounts" >
         <attribute name="title" >
-         <string>Accounting</string>
+         <string>A&amp;ccounting</string>
         </attribute>
         <layout class="QGridLayout" >
          <item row="0" column="0" >
@@ -1401,139 +1478,6 @@
             <size>
              <width>20</width>
              <height>0</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="_lotserial" >
-        <attribute name="title" >
-         <string>Lot/Serial</string>
-        </attribute>
-        <layout class="QGridLayout" >
-         <item row="0" column="0" >
-          <widget class="QGroupBox" name="_authorizeLotSerial" >
-           <property name="title" >
-            <string>Authorize only these lot/serial numbers</string>
-           </property>
-           <property name="checkable" >
-            <bool>true</bool>
-           </property>
-           <layout class="QGridLayout" >
-            <property name="leftMargin" >
-             <number>9</number>
-            </property>
-            <property name="topMargin" >
-             <number>9</number>
-            </property>
-            <property name="rightMargin" >
-             <number>9</number>
-            </property>
-            <property name="bottomMargin" >
-             <number>9</number>
-            </property>
-            <property name="horizontalSpacing" >
-             <number>6</number>
-            </property>
-            <property name="verticalSpacing" >
-             <number>6</number>
-            </property>
-            <item row="1" column="2" >
-             <widget class="QPushButton" name="_clearAuthorization" >
-              <property name="focusPolicy" >
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text" >
-               <string>Clear Authorization</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="2" >
-             <widget class="QPushButton" name="_authorizeLine" >
-              <property name="focusPolicy" >
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text" >
-               <string>Authorize Line</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="2" >
-             <widget class="QPushButton" name="_authorizeAll" >
-              <property name="focusPolicy" >
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text" >
-               <string>Authorize All</string>
-              </property>
-             </widget>
-            </item>
-            <item row="1" column="1" >
-             <widget class="QPushButton" name="_edit" >
-              <property name="text" >
-               <string>&amp;Edit</string>
-              </property>
-             </widget>
-            </item>
-            <item row="2" column="1" >
-             <widget class="QPushButton" name="_delete" >
-              <property name="focusPolicy" >
-               <enum>Qt::NoFocus</enum>
-              </property>
-              <property name="text" >
-               <string>Delete</string>
-              </property>
-             </widget>
-            </item>
-            <item row="0" column="1" >
-             <widget class="QPushButton" name="_new" >
-              <property name="text" >
-               <string>&amp;New</string>
-              </property>
-             </widget>
-            </item>
-            <item rowspan="4" row="0" column="0" >
-             <widget class="XTreeWidget" name="_authls" >
-              <property name="sizePolicy" >
-               <sizepolicy vsizetype="Preferred" hsizetype="Preferred" >
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="focusPolicy" >
-               <enum>Qt::NoFocus</enum>
-              </property>
-             </widget>
-            </item>
-            <item row="3" column="1" colspan="2" >
-             <spacer>
-              <property name="orientation" >
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" >
-               <size>
-                <width>181</width>
-                <height>0</height>
-               </size>
-              </property>
-             </spacer>
-            </item>
-           </layout>
-          </widget>
-         </item>
-         <item row="0" column="1" >
-          <spacer>
-           <property name="orientation" >
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeType" >
-            <enum>QSizePolicy::Preferred</enum>
-           </property>
-           <property name="sizeHint" >
-            <size>
-             <width>100</width>
-             <height>20</height>
             </size>
            </property>
           </spacer>
@@ -1618,20 +1562,19 @@
   <tabstop>_createOrder</tabstop>
   <tabstop>_orderQty</tabstop>
   <tabstop>_orderDueDate</tabstop>
+  <tabstop>_authLotSerial</tabstop>
+  <tabstop>_new</tabstop>
+  <tabstop>_edit</tabstop>
   <tabstop>_taxType</tabstop>
   <tabstop>_taxCode</tabstop>
   <tabstop>_tax</tabstop>
   <tabstop>_notes</tabstop>
   <tabstop>_altcosAccntid</tabstop>
-  <tabstop>_authorizeLotSerial</tabstop>
-  <tabstop>_new</tabstop>
-  <tabstop>_edit</tabstop>
   <tabstop>_save</tabstop>
   <tabstop>_close</tabstop>
   <tabstop>_disposition</tabstop>
   <tabstop>_rsnCode</tabstop>
  </tabstops>
- <includes/>
  <resources/>
  <connections>
   <connection>
@@ -1641,8 +1584,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>535</x>
-     <y>30</y>
+     <x>713</x>
+     <y>35</y>
     </hint>
     <hint type="destinationlabel" >
      <x>20</x>
@@ -1657,12 +1600,12 @@
    <slot>findItemsites(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>189</x>
-     <y>109</y>
+     <x>209</x>
+     <y>193</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>496</x>
-     <y>83</y>
+     <x>612</x>
+     <y>140</y>
     </hint>
    </hints>
   </connection>
@@ -1673,12 +1616,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>189</x>
-     <y>109</y>
+     <x>209</x>
+     <y>193</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>591</x>
-     <y>65</y>
+     <x>713</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>
@@ -1689,12 +1632,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>441</x>
-     <y>250</y>
+     <x>575</x>
+     <y>332</y>
     </hint>
    </hints>
   </connection>
@@ -1705,12 +1648,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>248</x>
-     <y>395</y>
+     <x>214</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
@@ -1721,12 +1664,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>248</x>
-     <y>427</y>
+     <x>214</x>
+     <y>542</y>
     </hint>
    </hints>
   </connection>
@@ -1737,12 +1680,12 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>248</x>
-     <y>472</y>
+     <x>214</x>
+     <y>572</y>
     </hint>
    </hints>
   </connection>
@@ -1753,12 +1696,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>441</x>
-     <y>250</y>
+     <x>575</x>
+     <y>332</y>
     </hint>
    </hints>
   </connection>
@@ -1769,12 +1712,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>248</x>
-     <y>395</y>
+     <x>214</x>
+     <y>512</y>
     </hint>
    </hints>
   </connection>
@@ -1785,12 +1728,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>248</x>
-     <y>472</y>
+     <x>214</x>
+     <y>572</y>
     </hint>
    </hints>
   </connection>
@@ -1801,12 +1744,12 @@
    <slot>setEffective(QDate)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>441</x>
-     <y>196</y>
+     <x>556</x>
+     <y>276</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>248</x>
-     <y>427</y>
+     <x>214</x>
+     <y>542</y>
     </hint>
    </hints>
   </connection>
@@ -1821,8 +1764,56 @@
      <y>189</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>545</x>
-     <y>190</y>
+     <x>612</x>
+     <y>166</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authLotSerial</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_authLotSerialGroup</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>111</x>
+     <y>473</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>113</x>
+     <y>496</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_authLotSerial</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>_qtyAuth</receiver>
+   <slot>setDisabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>53</x>
+     <y>469</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>102</x>
+     <y>240</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_raitemls</sender>
+   <signal>itemSelected(int)</signal>
+   <receiver>_edit</receiver>
+   <slot>animateClick()</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>436</x>
+     <y>517</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>572</x>
+     <y>540</y>
     </hint>
    </hints>
   </connection>

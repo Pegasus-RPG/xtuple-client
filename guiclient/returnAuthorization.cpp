@@ -1252,7 +1252,7 @@ void returnAuthorization::closeEvent(QCloseEvent *pEvent)
          (_metrics->value("RANumberGeneration") == "O")   )
       q.prepare("SELECT releaseRaNumber(:number) AS result;");
 
-    q.bindValue(":number", _authNumber->text().toInt());
+    q.bindValue(":number", _authNumber->text());
     q.exec();
     if (q.lastError().type() != QSqlError::None)
     {

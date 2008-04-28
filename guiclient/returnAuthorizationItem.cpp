@@ -65,6 +65,7 @@
 #include "priceList.h"
 #include "taxDetail.h"
 #include "storedProcErrorLookup.h"
+#include "returnAuthItemLotSerial.h"
 
 returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* name, bool modal, Qt::WFlags fl)
     : XDialog(parent, name, modal, fl)
@@ -106,7 +107,7 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalculateExtendedPrice()));
   connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sPopulateOrderInfo()));
   connect(_qtyAuth,       SIGNAL(textChanged(const QString&)), this, SLOT(sCalcWoUnitCost()));
-  connect(_save,          SIGNAL(clicked()),      this, SLOT(sSave()));
+  connect(_save,          SIGNAL(clicked()),      this, SLOT(sSaveClicked()));
   connect(_taxCode,       SIGNAL(newID(int)),     this, SLOT(sLookupTax()));
   connect(_taxLit, SIGNAL(leftClickedURL(const QString&)), this, SLOT(sTaxDetail()));
   connect(_taxType,       SIGNAL(newID(int)),     this, SLOT(sLookupTaxCode()));
@@ -119,6 +120,18 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
   connect(_qtyAuth, SIGNAL(lostFocus()), this, SLOT(sDetermineAvailability()));
   connect(_createOrder, SIGNAL(toggled(bool)), this, SLOT(sHandleWo(bool)));
   connect(_showAvailability, SIGNAL(toggled(bool)), this, SLOT(sDetermineAvailability()));
+  connect(this, SIGNAL(rejected()), this, SLOT(rejectEvent()));
+  
+  connect(_new,		SIGNAL(clicked()),	this,	SLOT(sNew()));
+  connect(_edit,	SIGNAL(clicked()),	this,	SLOT(sEdit()));
+  connect(_delete,	SIGNAL(clicked()),	this,	SLOT(sDelete()));
+    
+  _raitemls->addColumn(tr("Lot/Serial"),  _itemColumn,  Qt::AlignLeft   );
+  _raitemls->addColumn(tr("Reg. Number"), -1,           Qt::AlignLeft   );
+  _raitemls->addColumn(tr("Warranty"),	  _dateColumn,  Qt::AlignRight  );
+  _raitemls->addColumn(tr("Registered"),  _qtyColumn,   Qt::AlignRight  );
+  _raitemls->addColumn(tr("Authorized"),  _qtyColumn,   Qt::AlignRight  );
+  _raitemls->addColumn(tr("Received"),    _qtyColumn,   Qt::AlignRight  );
 
   _qtyAuth->setValidator(omfgThis->qtyVal());
   _discountFromSale->setValidator(new QDoubleValidator(-9999, 100, 2, this));
@@ -135,10 +148,13 @@ returnAuthorizationItem::returnAuthorizationItem(QWidget* parent, const char* na
     _shipWhsLit->hide();
   } 
 
-  //Remove lot/serial for now until we get to advanced warranty tracking
-  _tab->removePage(_tab->page(4));
+  //Remove lot/serial  if no lot/serial tracking
+  if (!_metrics->boolean("LotSerialControl"))
+    _tab->removeTab(_tab->indexOf(_lotserial));
   
   resize(minimumSize());
+  
+  q.exec("BEGIN;"); //In case problems or we cancel out
 }
 
 returnAuthorizationItem::~returnAuthorizationItem()
@@ -306,16 +322,25 @@ enum SetResponse returnAuthorizationItem::set(const ParameterList &pParams)
   return NoError; 
 }
 
-void returnAuthorizationItem::sSave()
+void returnAuthorizationItem::sSaveClicked()
+{
+  if (sSave())
+  {
+    q.exec("COMMIT;");
+    done(_raitemid);
+  }
+}
+
+bool returnAuthorizationItem::sSave()
 { 
   char *dispositionTypes[] = { "C", "R", "P", "V", "S" };
   
   if (!(_scheduledDate->isValid()) && _scheduledDate->isEnabled())
   {
-    QMessageBox::warning( this, tr("Cannot Save Sales Order Item"),
-                          tr("<p>You must enter a valid Schedule Date before saving.") );
+    QMessageBox::warning( this, windowTitle(),
+                          tr("<p>You must enter a valid Schedule Date.") );
     _scheduledDate->setFocus();
-    return;
+    return false;
   }
   
   if ( (_coitemid != -1) && (_qtyAuth->toDouble() > _soldQty) )
@@ -328,13 +353,9 @@ void returnAuthorizationItem::sSave()
                QMessageBox::No  | QMessageBox::Escape) == QMessageBox::Yes)
   {
       _qtyAuth->setFocus();
-      return;
+      return false;
   }
 
-  XSqlQuery rollback;
-  rollback.prepare("ROLLBACK;");
-
-  q.exec("BEGIN;"); //In case of problems saving w/o.
   if (_mode == cNew)
   {
     q.exec("SELECT NEXTVAL('raitem_raitem_id_seq') AS _raitem_id");
@@ -342,9 +363,8 @@ void returnAuthorizationItem::sSave()
       _raitemid  = q.value("_raitem_id").toInt();
     else if (q.lastError().type() != QSqlError::None)
     {
-      rollback.exec();
       systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-      return;
+      reject();
     }
 
     q.prepare( "INSERT INTO raitem "
@@ -417,9 +437,8 @@ void returnAuthorizationItem::sSave()
   q.exec();
   if (q.lastError().type() != QSqlError::None)
   {
-    rollback.exec();
     systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-    return;
+    reject();
   }
   
 //  Check to see if a S/O should be re-scheduled
@@ -444,17 +463,15 @@ void returnAuthorizationItem::sSave()
           int result = q.value("result").toInt();
           if (result < 0)
           {
-            rollback.exec();
             systemError(this, storedProcErrorLookup("changeWoDates", result),
             __FILE__, __LINE__);
-            return;
+            reject();
           }
         }
         else if (q.lastError().type() != QSqlError::None)
         {
-          rollback.exec();
           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-          return;
+          reject();
         }
       }
     }
@@ -480,17 +497,15 @@ void returnAuthorizationItem::sSave()
             int result = q.value("result").toInt();
             if (result < 0)
             {
-              rollback.exec();
               systemError(this, storedProcErrorLookup("changeWoQty", result),
               __FILE__, __LINE__);
-              return;
+              reject();
             }
           }
           else if (q.lastError().type() != QSqlError::None)
           {
-            rollback.exec();
             systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-            return;
+            reject();
           }
         }
       }
@@ -545,10 +560,9 @@ void returnAuthorizationItem::sSave()
               procname = "createWo";
             else
               procname = "unnamed stored procedure";
-            rollback.exec();
             systemError(this, storedProcErrorLookup(procname, _orderId),
                 __FILE__, __LINE__);
-            return;
+            reject();
           }
 
           if ((_item->itemType() == "M") || (_item->itemType() == "J"))
@@ -564,18 +578,16 @@ void returnAuthorizationItem::sSave()
             q.exec();
             if (q.lastError().type() != QSqlError::None)
             {
-              rollback.exec();
               systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
-              return;
+              reject();
             }
           }
         }
       }
     }
   }
-
-  q.exec("COMMIT;");
-  done(_raitemid); 
+  _mode = cEdit;
+  return true; 
 }
 
 void returnAuthorizationItem::sPopulateItemInfo()
@@ -652,7 +664,7 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
   if (_item->isValid())
   {
     XSqlQuery itemsite;
-    itemsite.prepare( "SELECT itemsite_leadtime, "
+    itemsite.prepare( "SELECT itemsite_leadtime, itemsite_controlmethod, "
                       "       itemsite_createwo, itemsite_createpr "
                       "FROM item, itemsite "
                       "WHERE ( (itemsite_item_id=item_id)"
@@ -682,6 +694,10 @@ void returnAuthorizationItem::sPopulateItemsiteInfo()
           _createOrder->setEnabled(FALSE);
         }
       }
+      
+       _tab->setTabEnabled(_tab->indexOf(_lotserial),
+       (itemsite.value("itemsite_controlmethod").toString() == "L" ||
+        itemsite.value("itemsite_controlmethod").toString() == "S"));
     }
     else if (itemsite.lastError().type() != QSqlError::None)
     {
@@ -856,6 +872,7 @@ void returnAuthorizationItem::populate()
     systemError(this, raitem.lastError().databaseText(), __FILE__, __LINE__);
     return;
   } 
+  sFillList();
 }
 
 void returnAuthorizationItem::sCalculateExtendedPrice()
@@ -1212,7 +1229,7 @@ void returnAuthorizationItem::sDispositionChanged()
   
   if (_disposition->currentIndex() >= 2)
   {
-    _tab->setTabEnabled(0,TRUE);
+    _tab->setTabEnabled(_tab->indexOf(_supply),TRUE);
     _scheduledDate->setEnabled(TRUE);
     _altcosAccntid->setEnabled(TRUE);
     _shipWhsLit->setVisible(TRUE);
@@ -1220,7 +1237,7 @@ void returnAuthorizationItem::sDispositionChanged()
   }
   else
   {
-    _tab->setTabEnabled(0,FALSE);
+    _tab->setTabEnabled(_tab->indexOf(_supply),FALSE);
     _scheduledDate->clear();
     _scheduledDate->setEnabled(FALSE);
     _altcosAccntid->setEnabled(FALSE);
@@ -1426,3 +1443,107 @@ void returnAuthorizationItem::sCalcWoUnitCost()
       _unitCost->setBaseValue(q.value("wo_value").toDouble() / _qtyAuth->toDouble() * _qtyinvuomratio);
   }
 }
+
+void returnAuthorizationItem::sNew()
+{
+	if (sSave())
+	{
+		ParameterList params;
+		params.append("raitem_id", _raitemid);
+		params.append("item_id", _item->id());
+		params.append("warehouse_id", _warehouse->id());
+		params.append("uom", _qtyUOM->currentText());
+		params.append("mode", "new");
+
+		returnAuthItemLotSerial newdlg(this, "", TRUE);
+		newdlg.set(params);
+		int raitemlsid = newdlg.exec();
+		if (raitemlsid > 0)
+			populate();
+		else if (raitemlsid == -1)
+			reject();
+	}
+}
+
+void returnAuthorizationItem::sEdit()
+{
+	if (sSave())
+	{
+		bool fill;
+		fill = FALSE;
+		QList<QTreeWidgetItem*> selected = _raitemls->selectedItems();
+		for (int i = 0; i < selected.size(); i++)
+		{
+			ParameterList params;
+			params.append("raitemls_id", ((XTreeWidgetItem*)(selected[i]))->id());
+			params.append("raitem_id", _raitemid);
+
+			if (_mode==cView)
+				params.append("mode", "view");
+			else
+				params.append("mode", "edit");
+
+			returnAuthItemLotSerial newdlg(this, "", TRUE);
+			newdlg.set(params);
+	  
+			int raitemlsid = newdlg.exec();
+			if (raitemlsid > 0)
+				fill = TRUE;
+			else if (raitemlsid == -1)
+				reject();
+		}
+		if (fill)
+			populate();
+	}
+}
+
+void returnAuthorizationItem::sDelete()
+{
+  QList<QTreeWidgetItem*> selected = _raitemls->selectedItems();
+  for (int i = 0; i < selected.size(); i++)
+  {
+        QString sql ( "DELETE FROM raitemls "
+			"WHERE (raitemls_id=:raitemls_id);" );
+        q.prepare(sql);
+        q.bindValue(":raitemls_id",  ((XTreeWidgetItem*)(selected[i]))->id());
+        q.exec();
+        if (q.lastError().type() != QSqlError::NoError)
+        {
+           systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+           reject();
+        }
+  }
+  populate(); 
+}
+
+void returnAuthorizationItem::sFillList()
+{ 
+  q.prepare("SELECT raitemls_id, ls_number, COALESCE(lsreg_number,:na), "
+		" lsreg_expiredate, COALESCE(lsreg_qty,0), raitemls_qtyauthorized, "
+		" raitemls_qtyreceived "
+		"FROM raitemls "
+		"  LEFT OUTER JOIN lsreg ON (lsreg_ls_id=raitemls_ls_id), "
+		"  ls "
+		"WHERE ((raitemls_raitem_id=:raitem_id) "
+		"AND (raitemls_ls_id=ls_id));" );
+  q.bindValue(":raitem_id", _raitemid);
+  q.bindValue(":na", tr("N/A"));
+  q.exec();
+  _authLotSerial->setDisabled(q.first());
+  _authLotSerial->setChecked(q.first());
+  _raitemls->populate(q);
+  if (q.lastError().type() != QSqlError::NoError)
+  {
+    systemError(this, q.lastError().databaseText(), __FILE__, __LINE__);
+    reject();
+  }
+}
+
+void returnAuthorizationItem::rejectEvent()
+{
+  q.exec("ROLLBACK");
+  QMessageBox::warning(this,tr("Return Authorization Item"),tr("Changes Canceled."));
+}
+
+
+

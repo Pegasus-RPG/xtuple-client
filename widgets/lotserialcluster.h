@@ -106,13 +106,11 @@ class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
 
 	inline virtual int	itemId() const		{ return _itemid; };
 	inline virtual bool	strict() const		{ return _strict; };
-        inline virtual QString  itemNumber() const      { return _itemNumber;};
 
     public slots:
 	virtual void clear();
 	virtual void sParse();
 	virtual void setItemId(const int);
-        virtual void setItemNumber(const QString);
 	inline virtual void	setStrict(const bool p)	{ _strict = p; };
 
     protected slots:
@@ -126,7 +124,6 @@ class OPENMFGWIDGETS_EXPORT LotserialLineEdit : public VirtualClusterLineEdit
     private:
 	int	_itemid;
 	bool	_strict;
-        QString _itemNumber;
 };
 
 class OPENMFGWIDGETS_EXPORT LotserialCluster : public VirtualCluster
@@ -142,11 +139,9 @@ class OPENMFGWIDGETS_EXPORT LotserialCluster : public VirtualCluster
 
 	virtual bool	strict()          const;
 	virtual int	itemId()          const;
-        virtual QString itemNumber()      const;
 
     public slots:
 	virtual void	setItemId           (const int);
-        virtual void    setItemNumber       (const QString);
 	virtual void	setStrict           (const bool);
 	
     signals:

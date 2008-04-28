@@ -55,96 +55,42 @@
  * portions thereof with code not governed by the terms of the CPAL.
  */
 
-#ifndef RETURNAUTHORIZATIONITEM_H
-#define RETURNAUTHORIZATIONITEM_H
+#ifndef RETURNAUTHITEMLOTSERIAL_H
+#define RETURNAUTHITEMLOTSERIAL_H
 
 #include "guiclient.h"
 #include "xdialog.h"
 #include <parameter.h>
 
-#include "taxCache.h"
-#include "ui_returnAuthorizationItem.h"
+#include "ui_returnAuthItemLotSerial.h"
 
-class returnAuthorizationItem : public XDialog, public Ui::returnAuthorizationItem
+class returnAuthItemLotSerial : public XDialog, public Ui::returnAuthItemLotSerial
 {
     Q_OBJECT
 
 public:
-    returnAuthorizationItem(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
-    ~returnAuthorizationItem();
+    returnAuthItemLotSerial(QWidget* parent = 0, const char* name = 0, bool modal = false, Qt::WFlags fl = 0);
+    ~returnAuthItemLotSerial();
 
 public slots:
-	
-    SetResponse set(const ParameterList & pParams );
-    void sPopulateItemInfo();
-    void sPopulateItemsiteInfo();
+    enum SetResponse set(const ParameterList & pParams );
+    void sSave();
+    void sCheck();
     void populate();
-    void sCalculateDiscountPrcnt();
-    void sCalculateFromDiscount();
-    void sListPrices();
-    void sLookupTax();
-    void sLookupTaxCode();
-    void sPriceGroup();
-    void sTaxDetail();
-    void sQtyUOMChanged();
-    void sPriceUOMChanged();
-    void sDispositionChanged();
-    void sDetermineAvailability();
-    void sHandleWo( bool pCreate );
-    void sPopulateOrderInfo();
-    void sCalcWoUnitCost();
-    
-    //Lot/Serial page
-    void sNew();
-    void sEdit();
-    void sDelete();
-    void sFillList();
-   
+    void populateItemsite();
+    void populateLotSerial();
+
 protected slots:
     void languageChange();
-
-    bool sSave();
-    void sSaveClicked();
-    void sCalculateExtendedPrice();
-    void updatePriceInfo();
-    void rejectEvent();
+    void closeEvent();
 
 private:
-	
-    int      _mode;
-    int      _raitemid;
-    int	     _raheadid;
-    int      _custid;
-    int	     _coitemid;
-    int	     _shiptoid;
-    QString  _creditmethod;
-    double   _priceRatio;
-    double   _listPriceCache;
-    double   _salePriceCache;
-    double   _qtyAuthCache;
-    int	     _taxauthid;
-    taxCache _taxCache;
-    double	 _qtySoldCache;
-    double   _qtycredited;
-	int	     _dispositionCache;
-    int      _invuomid;
-    double   _qtyinvuomratio;
-    double   _priceinvuomratio;
-
-    int      _orderId;
-
-    int      _availabilityLastItemid;
-    int      _availabilityLastWarehousid;
-    QDate    _availabilityLastSchedDate;
-    bool     _availabilityLastShow;
-    double   _availabilityQtyOrdered;
-    int      _leadTime;
-    QDate    _cScheduledDate;
-    double   _cQtyOrdered;
-    int      _preferredWarehouseid;
-    QString  _status;
-    double   _soldQty;
+    int _crmacctid;
+    int _mode;
+    int _raitemid;
+    int _raitemlsid;
+    int _warehouseid;
 
 };
 
-#endif // RETURNAUTHORIZATIONITEM_H
+#endif //  RETURNAUTHITEMLOTSERIAL_H

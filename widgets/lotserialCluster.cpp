@@ -96,6 +96,7 @@ LotserialCluster::LotserialCluster(QWidget* pParent, const char* pName) :
 LotserialLineEdit::LotserialLineEdit(QWidget* pParent, const char* pName) :
     VirtualClusterLineEdit(pParent, "ls", "ls_id", "ls_number", "item_number", "item_id", 0, pName)
 {
+    _itemid = -1;
     setTitles(tr("Lot/Serial Number"), tr("Lot/Serial Numbers"));
     _query = QString("SELECT ls_id AS id, "
                      "       ls_number AS number, "
@@ -115,23 +116,10 @@ int LotserialCluster::itemId() const
   return true;
 }
 
-QString LotserialCluster::itemNumber() const
-{
-  if (_number && _number->inherits("LotserialLineEdit"))
-    return ((LotserialLineEdit*)(_number))->itemNumber();
-  return QString::Null();
-}
-
 void LotserialCluster::setItemId(const int p)
 {
   if (_number && _number->inherits("LotserialLineEdit"))
     ((LotserialLineEdit*)(_number))->setItemId(p);
-}
-
-void LotserialCluster::setItemNumber(const QString p)
-{
-  if (_number && _number->inherits("LotserialLineEdit"))
-    ((LotserialLineEdit*)(_number))->setItemNumber(p);
 }
 
 bool LotserialCluster::strict() const
@@ -149,12 +137,11 @@ void LotserialCluster::setStrict(const bool p)
 
 void LotserialLineEdit::setItemId(const int itemid)
 {
-  if (_itemid = itemid)
+  if (_itemid == itemid)
     return;
   else if (itemid <= 0)
   {
     _itemid = -1;
-    _itemNumber = QString::Null();
     _extraClause = "";
     VirtualClusterLineEdit::clear();
   }
@@ -162,24 +149,6 @@ void LotserialLineEdit::setItemId(const int itemid)
   {
     _itemid = itemid;
     _extraClause = QString(" (item_id=%1) ").arg(itemid);
-    _parsed=false;
-    sParse();
-  }
-}
-
-void LotserialLineEdit::setItemNumber(const QString itemNumber)
-{
-  if (itemNumber == QString::Null())
-  {
-    _itemid = -1;
-    _extraClause = "";
-    VirtualClusterLineEdit::clear();
-  }
-  else
-  {
-    _extraClause = QString(" (item_number=%1) ").arg(itemNumber);
-    _parsed=false;
-    sParse();
   }
 }
 
@@ -212,9 +181,7 @@ void LotserialLineEdit::sParse()
                 _valid = true;
                 setId(numQ.value("id").toInt());
                 _name = (numQ.value("name").toString());
-                _itemNumber = (numQ.value("name").toString());
                 _itemid = (numQ.value("description").toInt());
-		emit newItemId(_itemid);
             }
             else if (numQ.lastError().type() != QSqlError::None)
             {

@@ -5,8 +5,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>867</width>
-    <height>576</height>
+    <width>650</width>
+    <height>584</height>
    </rect>
   </property>
   <property name="windowTitle" >
@@ -83,7 +83,7 @@
        <string/>
       </property>
       <layout class="QGridLayout" >
-       <item row="0" column="0" >
+       <item row="0" column="0" colspan="3" >
         <widget class="ItemCluster" name="_item" >
          <property name="focusPolicy" >
           <enum>Qt::TabFocus</enum>
@@ -105,6 +105,57 @@
           <string>lsreg_ls_id</string>
          </property>
         </widget>
+       </item>
+       <item row="1" column="1" >
+        <layout class="QVBoxLayout" >
+         <item>
+          <layout class="QHBoxLayout" >
+           <item>
+            <widget class="QLabel" name="_qty" >
+             <property name="text" >
+              <string>Qty:</string>
+             </property>
+             <property name="alignment" >
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="XLineEdit" name="xlineEdit" >
+             <property name="fieldName" >
+              <string>lsreg_qty</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <spacer>
+           <property name="orientation" >
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" >
+            <size>
+             <width>20</width>
+             <height>16</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item row="1" column="2" >
+        <spacer>
+         <property name="orientation" >
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" >
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
        </item>
       </layout>
      </widget>
@@ -515,6 +566,26 @@
    <header>formcontrol.h</header>
   </customwidget>
  </customwidgets>
+ <tabstops>
+  <tabstop>_regNumber</tabstop>
+  <tabstop>_type</tabstop>
+  <tabstop>_item</tabstop>
+  <tabstop>_lotSerial</tabstop>
+  <tabstop>xlineEdit</tabstop>
+  <tabstop>_regDate</tabstop>
+  <tabstop>_soldDate</tabstop>
+  <tabstop>_expireDate</tabstop>
+  <tabstop>_crmacct</tabstop>
+  <tabstop>_so</tabstop>
+  <tabstop>_shipment</tabstop>
+  <tabstop>_tab</tabstop>
+  <tabstop>_cntct</tabstop>
+  <tabstop>_charass</tabstop>
+  <tabstop>_newChar</tabstop>
+  <tabstop>_editChar</tabstop>
+  <tabstop>_deleteChar</tabstop>
+  <tabstop>_notes</tabstop>
+ </tabstops>
  <resources/>
  <connections>
   <connection>
@@ -544,7 +615,7 @@
      <y>96</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>257</x>
+     <x>208</x>
      <y>198</y>
     </hint>
    </hints>
@@ -556,11 +627,11 @@
    <slot>limitToOrder(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>654</x>
-     <y>237</y>
+     <x>630</x>
+     <y>266</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>847</x>
+     <x>630</x>
      <y>335</y>
     </hint>
    </hints>
@@ -640,7 +711,7 @@
      <y>26</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>523</x>
+     <x>422</x>
      <y>78</y>
     </hint>
    </hints>
@@ -656,7 +727,7 @@
      <y>37</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>678</x>
+     <x>577</x>
      <y>122</y>
     </hint>
    </hints>
@@ -672,8 +743,8 @@
      <y>31</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>607</x>
-     <y>139</y>
+     <x>577</x>
+     <y>156</y>
     </hint>
    </hints>
   </connection>
@@ -688,7 +759,7 @@
      <y>30</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>678</x>
+     <x>577</x>
      <y>190</y>
     </hint>
    </hints>
@@ -704,8 +775,8 @@
      <y>27</y>
     </hint>
     <hint type="destinationlabel" >
-     <x>650</x>
-     <y>226</y>
+     <x>630</x>
+     <y>266</y>
     </hint>
    </hints>
   </connection>
@@ -780,12 +851,28 @@
    <slot>setId(int)</slot>
    <hints>
     <hint type="sourcelabel" >
-     <x>311</x>
-     <y>164</y>
+     <x>208</x>
+     <y>198</y>
     </hint>
     <hint type="destinationlabel" >
      <x>310</x>
      <y>140</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>_control</sender>
+   <signal>newDataWidgetMapper(XDataWidgetMapper*)</signal>
+   <receiver>xlineEdit</receiver>
+   <slot>setDataWidgetMap(XDataWidgetMapper*)</slot>
+   <hints>
+    <hint type="sourcelabel" >
+     <x>272</x>
+     <y>29</y>
+    </hint>
+    <hint type="destinationlabel" >
+     <x>272</x>
+     <y>164</y>
     </hint>
    </hints>
   </connection>
